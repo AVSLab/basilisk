@@ -598,7 +598,7 @@ def run(show_plots):
     plt.plot(dataTime_TS * macros.NANO2HOUR, rData_TS, color='#555555', label='Time Switch')
     plt.plot(dataTime_JC * macros.NANO2HOUR, rData_JC, color='orangered', label='Jupiter Centered')
     plt.yscale('log')
-    plt.legend()
+    plt.legend(loc='upper right')
     plt.xlabel('Time [h]')
     plt.ylabel('Heliocentric Radius [km]')
     pltName = fileName + "5"

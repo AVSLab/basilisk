@@ -541,7 +541,7 @@ def run(show_plots, damping_parameter, timeStep):
         plt.figure(6, figsize=(5, 4))
         plt.plot(rhoj1Out[:, 0] * 1e-9, rhoj1Out[:, 1], rhoj2Out[:, 0] *
                  1e-9, rhoj2Out[:, 1], rhoj3Out[:, 0] * 1e-9, rhoj3Out[:, 1])
-        plt.legend(['Particle 1', 'Particle 2', 'Particle 3'])
+        plt.legend(['Particle 1', 'Particle 2', 'Particle 3'], loc='lower right')
         plt.xlabel('Time (s)')
         plt.ylabel('Displacement (m)')
         pltName = fileName + "ParticleMotion"

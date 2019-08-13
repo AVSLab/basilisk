@@ -499,7 +499,7 @@ def EarthResonantOrbit(v_inf_in, V1, R1, v_inf_out, V2, N):
 
     plt.plot(PHI_GA1, rp_GA1, 'm', PHI_GA2, rp_GA2, 'b')
     plt.axhline(E_radius, color='k')
-    plt.legend(['EGA 1', 'EGA 2', 'r$_{P, min}$'])
+    plt.legend(['EGA 1', 'EGA 2', 'r$_{P, min}$'], loc='lower right')
     plt.xlabel(r'$\phi$ [rad]')
     plt.ylabel('Perigee Radius [km]')
     # plt.show()

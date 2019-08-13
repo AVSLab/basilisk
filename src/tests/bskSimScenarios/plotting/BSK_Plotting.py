@@ -59,18 +59,18 @@ def plot3components(vec):
 
 def plot_sigma(sigma):
     plot3components(sigma)
-    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
+    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'], loc='upper right')
     plt.ylabel('MRP')
 
 
 def plot_omega(omega):
     plot3components(omega)
     plt.ylabel('Angular Rate, rad/s')
-    plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'])
+    plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'], loc='upper right')
 
 def subplot_sigma(subplot, sigma):
     plot3components(sigma)
-    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
+    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'], loc='upper right')
     plt.ylabel('MRP')
 
 
