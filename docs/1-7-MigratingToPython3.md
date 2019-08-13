@@ -48,7 +48,8 @@ r"..."
 ```
 
 ##Pyswice Imports
-Changes to BSK module importing has changed the pyswice importing convention to be completely explicit:
+Changes to BSK module importing has changed the pyswice importing convention to be completely explicit: 
+
 From:
 ```
 from Basilisk import pyswice
