@@ -296,7 +296,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         plt.legend()
         plt.xlabel('Time(s)')
         plt.ylim(-1.5, 2)
-        plt.legend(loc=1)
+        plt.legend(loc='upper right')
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
@@ -414,7 +414,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 plt.legend()
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
-                plt.legend(loc=2)
+                plt.legend(loc='upper left')
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
@@ -527,7 +527,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 plt.legend()
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
-                plt.legend(loc=2)
+                plt.legend(loc='upper left')
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
@@ -631,7 +631,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             plt.legend()
             plt.xlabel('Time(s)')
             plt.ylim(-1.5, 2)
-            plt.legend(loc=2)
+            plt.legend(loc='upper left')
             unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
             if show_plots == True:
                 plt.show()

@@ -106,11 +106,10 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
                     unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
                                                ephemData, "SpicePlanetStateSimMsg")
 
-
-    if (kwargs.has_key('numRW')):
+    if 'numRW' in kwargs:
         vizMessenger.numRW = kwargs['numRW']
 
-    if (kwargs.has_key('thrDevices')):
+    if 'thrDevices' in kwargs:
         thrDevices = kwargs['thrDevices']
         thList = []
         for thClusterInfo in thrDevices:
