@@ -12,6 +12,11 @@ We are very excited by the great capabilities that this software already has, an
 * live plotting capability during a BSK run
 
 
+## Upcoming Version 0.X.X
+<ul>
+    <li>text goes here</li>
+</ul>
+
 ## Version 0.8.0
 <ul>
     <li>ADDED PYTHON 3 SUPPORT!  This is a major step for Basilisk.  Python 2 remains suppored, but is now treated as a depreciated capability.  It is possible to compile BSK for P3 into a `dist3` folder, and for P2 into a `dist` folder at the same time.</li>
