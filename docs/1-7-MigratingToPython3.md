@@ -42,7 +42,7 @@ print(x)
 ```
 
 ##Strings
-External python packages will give warnings if python strings include '\x' where x is not a valid escape character. These warnings did not appear using Python 2, when using strings as input for latex or for other text processing, they should be made a raw string by appending an r:
+External python packages will give warnings if python strings include '\x' where x is not a pythonic valid escape character. These warnings did not appear using Python 2, when using strings as input for latex or for other text processing, they should be made a raw string by appending an r:
 ```
 r"..."
 ```
