@@ -473,7 +473,7 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
             configData->obs[5] = radius - configData->obs[2];
         }
         for(i=0; i<3; i++){
-//            configData->obs[i+3] = round(configData->obs[i+3]);
+            configData->obs[i+3] = round(configData->obs[i+3]);
             if (i<2){
                 configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = centers[i] - configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
             }
@@ -604,9 +604,9 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
     mMultM(kMat, configData->numStates, configData->numObs, tempYVec,
            configData->numObs, 1, xHat);
     vAdd(configData->state, configData->numStates, xHat, configData->state);
-//    for (i=6;i<9;i++){
-//        configData->state[i] = round(configData->state[i]);
-//    }
+    for (i=6;i<9;i++){
+        configData->state[i] = round(configData->state[i]);
+    }
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it
      so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, configData->numStates, configData->numObs, sy,
