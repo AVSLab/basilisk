@@ -159,7 +159,7 @@ else:
 
 setup(
     name='Basilisk',
-    version='0.7.2',
+    version='0.8.0',
     description="Astrodynamic Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),

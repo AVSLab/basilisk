@@ -9,11 +9,10 @@ We are very excited by the great capabilities that this software already has, an
 * atmospheric drag evaluation using multi-faceted spacecraft model
 * Updates to the Vizard Unity-based Basilisk visualization tool
 * Ability to playback BSK simulation file within Vizard
-* Python 3 support
 * live plotting capability during a BSK run
 
 
-## Upcoming Version 0.X.X
+## Version 0.8.0
 <ul>
     <li>ADDED PYTHON 3 SUPPORT!  This is a major step for Basilisk.  Python 2 remains suppored, but is now treated as a depreciated capability.  It is possible to compile BSK for P3 into a `dist3` folder, and for P2 into a `dist` folder at the same time.</li>
     <li>Updated the BSK installation notes to reflect a default installation using Python 3</li>
