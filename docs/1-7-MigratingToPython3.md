@@ -40,12 +40,27 @@ Print is treated as a statement in Python 2 and strictly a function in Python 3.
 ```
 print(x)
 ```
+A sample warning is:
+```
+File "scenarioAttitudeFeedbackRW.py", line 715
+    print dataUsReq
+                  ^
+SyntaxError: Missing parentheses in call to 'print'. Did you mean print(dataUsReq)?
+```
 
 ##Strings
-External python packages will give warnings if python strings include '\x' where x is not a pythonic valid escape character. These warnings did not appear using Python 2, when using strings as input for latex or for other text processing, they should be made a raw string by appending an r:
+External python packages will give warnings in `pytest` if python strings include '\x' where x is not a pythonic valid escape character. These warnings did not appear using Python 2, when using strings as input for latex or for other text processing, they should be made a raw string by appending an r:
 ```
 r"..."
 ```
+A sample warning is:
+```
+  /Users/hp/Documents/Research/Basilisk/src/tests/testScripts/../scenarios/scenarioAttitudeFeedbackRW.py:91: DeprecationWarning: invalid escape sequence \o
+    label='$\omega_{BR,' + str(idx) + '}$')
+
+-- Docs: https://docs.pytest.org/en/latest/warnings.html
+```
+
 
 ##Pyswice Imports
 Changes to BSK module importing has changed the pyswice importing convention to be completely explicit: 
