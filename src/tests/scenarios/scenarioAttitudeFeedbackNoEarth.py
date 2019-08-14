@@ -63,7 +63,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioAttitudeFeedbackNoEarthGroup
+## \page scenarioAttitudeFeedbackNoEarthGroup
 ##   @{
 # Demonstrates how to simulate an attitude control scenario without having any gravity
 # bodies present. In essence, the spacecraft is hovering in deep space.  The goal is to

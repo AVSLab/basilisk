@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup scenario_AttGuidHyperbolicGroup
+## \page scenario_AttGuidHyperbolicGroup
 ## @{
 # Demonstrates how to use the velocity pointing model within the BSK_Sim architecture.
 #

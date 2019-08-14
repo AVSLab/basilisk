@@ -50,7 +50,7 @@ from Basilisk.utilities import vizSupport
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioMagneticFieldCenteredDipoleGroup
+## \page scenarioMagneticFieldCenteredDipoleGroup
 ## @{
 ## Demonstration of setting up a centered dipole magnetic field model about a planet
 #

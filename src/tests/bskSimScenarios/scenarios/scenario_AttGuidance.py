@@ -18,7 +18,7 @@
 
 '''
 
-## \defgroup scenario_AttGuidanceGroup
+## \page scenario_AttGuidanceGroup
 ## @{
 # Demonstrates how to use the hill pointing model within the BSK_Sim architecture.
 #

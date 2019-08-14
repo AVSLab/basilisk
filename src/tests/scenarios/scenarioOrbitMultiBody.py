@@ -59,7 +59,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioOrbitMultiBodyGroup
+## \page scenarioOrbitMultiBodyGroup
 ##   @{
 ## How to setup orbital simulation with multiple gravitational bodies.
 #

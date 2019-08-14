@@ -51,7 +51,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 from Basilisk.utilities import vizSupport
 
 
-## \defgroup scenarioMagneticFieldWMM
+## \page scenarioMagneticFieldWMM
 ## @{
 ## Demonstration of setting up a World Magnetic Model (WMM) for an Earth simulation
 #

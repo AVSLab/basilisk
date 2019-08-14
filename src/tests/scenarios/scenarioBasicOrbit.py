@@ -46,9 +46,8 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 
-## \defgroup scenarioBasicOrbitGroup
+## @page scenarioBasicOrbitGroup
 ## @{
-## Demonstration of setup basic 3-DOF orbit simulation setup.
 #
 # Basic Orbit Setup and Translational Motion Simulation {#scenarioBasicOrbit}
 # ====

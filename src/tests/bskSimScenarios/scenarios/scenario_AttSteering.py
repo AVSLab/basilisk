@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup scenario_AttSteeringGroup
+## \page scenario_AttSteeringGroup
 ## @{
 # Demonstrates how to use the MRP_Steering() module to stabilize the attitude relative to the Hill Frame using the
 # BSK_sim architecture.

@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup scenario_AttEclipseGroup
+## \page scenario_AttEclipseGroup
 ## @{
 # Demonstrates how to use sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator, and
 # CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
