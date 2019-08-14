@@ -7,8 +7,8 @@ The preferred method is to use Python 3.  For now support is also provided to us
 In order to run Basilisk, the following software will be necessary.  This document outline how to install this support software.
 
 * [Cmake](https://cmake.org/)
-* [Python 2.7 OR Python 3.x (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/mac-osx/)
-* [SWIG](http://www.swig.org/)
+* [Python](https://www.python.org/) 3.x OR Python 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)
+* [SWIG](http://www.swig.org/) (version 3.x.x)
 * [GCC](https://gcc.gnu.org/)
 
 
@@ -79,6 +79,8 @@ For Basilisk Python 2 and Python 3 inter-compatability, build using both followi
 ```
 
 ### Python 3
+
+
 ```
     # Create directory for build and change directory to that
     $ mkdir dist3
