@@ -113,7 +113,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
-        imageCV = imread(this->filename, cv::IMREAD_COLOR);
+        imageCV = cv::imread(this->filename, cv::IMREAD_COLOR);
     }
     else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
         /*! - Recast image pointer to CV type*/

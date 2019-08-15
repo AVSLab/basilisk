@@ -88,6 +88,8 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     int circlesFound=0;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
+    /*! - Load in the trained CNN model*/
+    cv::dnn::Net net;
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
