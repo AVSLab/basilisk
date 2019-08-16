@@ -28,6 +28,7 @@
 /* modify the path to reflect the new module names */
 #include <string.h>
 #include "centerRadiusCNN.h"
+#include <opencv2/dnn/dnn.hpp>
 
 
 /*! The constructor for the CenterRadiusCNN module. It also sets some default values at its creation.  */
@@ -89,7 +90,8 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
     /*! - Load in the trained CNN model*/
-    cv::dnn::Net net;
+    cv::dnn::Net CNN;
+    cv::dnn::readNetFromTensorflow(this->filename, filenamePre);
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -116,7 +118,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
         /*! - If no image is present, write zeros in message */
         SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
         return;}
-    cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
+    cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
