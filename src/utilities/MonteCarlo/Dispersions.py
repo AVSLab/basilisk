@@ -22,6 +22,7 @@ import random
 import numpy as np
 import abc
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import orbitalMotion
 import collections
 
 
@@ -368,3 +369,53 @@ class InertiaTensorDispersion:
 
     def getName(self):
         return self.varName
+
+
+class OrbitalElementDispersion:
+    def __init__(self, varName1, varName2, dispDict):
+        """
+        Args:
+            varName1 (str): A string representation of the position variable to be dispersed
+            varName2 (str): A string representation of the velocity variable to be dispersed
+            dispDict (dict): A dictionnary containing the dispersions for each of the orbital elements. The values are lists
+            with first element 'normal' or 'uniform' followed by mean, std or lower bound, upper bound respectively,
+        """
+        self.numberOfSubDisps = 2
+        self.varName1 = varName1
+        self.varName1Components = self.varName.split(".")
+        self.varName2 = varName2
+        self.varName2Components = self.varName.split(".")
+        self.oeDict = dispDict
+        for key in dispDict.keys():
+            if dispDict[key] is None:
+                dispDict.drop(key)
+
+
+    def generate(self, sim=None):
+        elems = orbitalMotion.ClassicElements
+        for key in self.oeDict.keys():
+            if key=="mu":
+                continue
+            else:
+                eval("elems."+ key + " = np.random." + self.oeDict[key][0] + "(" +  str(self.oeDict[key][1]) + ', ' +  str(self.oeDict[key][2]) + ")")
+
+        r, v =orbitalMotion.elem2rv_parab( self.oeDict["mu"], elems)
+
+        self.dispR = r
+        self.dispV = v
+
+
+    def generateString(self, sim=None, index):
+        if index == 1:
+            nextValue = self.dispR
+        if index == 2:
+            nextValue = self.dispV
+        val = '['
+        for i in range(3):
+            val += str(nextValue[i]) + ','
+        val = val[0:-1] + ']'
+        return val
+
+    def getName(self, index):
+        return eval(str(self.varName) + str(index))
+

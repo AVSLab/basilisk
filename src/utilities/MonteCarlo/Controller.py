@@ -885,9 +885,17 @@ class SimulationExecutor:
 
             # we may want to disperse parameters
             for disp in simParams.dispersions:
-                name = disp.getName()
-                if name not in modifications:  # could be using a saved parameter.
-                    modifications[name] = disp.generateString(simInstance)
+                try:
+                    name = disp.getName()
+                    if name not in modifications:  # could be using a saved parameter.
+                        modifications[name] = disp.generateString(simInstance)
+                except TypeError:
+                    # This accomodates dispersion variables that are co-dependent
+                    disp.generate()
+                    for i in range(1, disp.numberOfSubDisps+1):
+                        name = disp.getName(i)
+                        if name not in modifications:  # could be using a saved parameter.
+                            modifications[name] = disp.generateString(simInstance, i)
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchiveParameters:
