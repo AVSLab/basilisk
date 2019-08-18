@@ -895,7 +895,7 @@ class SimulationExecutor:
                     for i in range(1, disp.numberOfSubDisps+1):
                         name = disp.getName(i)
                         if name not in modifications:  # could be using a saved parameter.
-                            modifications[name] = disp.generateString(simInstance, i)
+                            modifications[name] = disp.generateString(i, simInstance)
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchiveParameters:

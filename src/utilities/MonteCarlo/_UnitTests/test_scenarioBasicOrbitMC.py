@@ -32,7 +32,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
+from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, OrbitalElementDispersion
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import orbitalMotion
@@ -150,6 +150,17 @@ def test_MonteCarloSimulation(show_plots):
     disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
     disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+    disp5Name = 'TaskList[0].TaskModels[0].hub.r_CN_NInit'
+    disp6Name = 'TaskList[0].TaskModels[0].hub.v_CN_NInit'
+    dispDict = {}
+    dispDict["mu"] = 0.3986004415E+15
+    dispDict["a"] = ["normal", 10000 * 1E3, 500 * 1E3]
+    dispDict["e"] = ["uniform", 0, 0.5]
+    dispDict["i"] = ["uniform", np.deg2rad(-80), np.deg2rad(80)]
+    dispDict["Omega"] = None
+    dispDict["omega"] = None
+    dispDict["f"] = ["uniform", np.deg2rad(0), np.deg2rad(359)]
+    monteCarlo.addDispersion(OrbitalElementDispersion(disp5Name, disp6Name, dispDict))
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
     monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))

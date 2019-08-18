@@ -382,22 +382,20 @@ class OrbitalElementDispersion:
         """
         self.numberOfSubDisps = 2
         self.varName1 = varName1
-        self.varName1Components = self.varName.split(".")
+        self.varName1Components = self.varName1.split(".")
         self.varName2 = varName2
-        self.varName2Components = self.varName.split(".")
+        self.varName2Components = self.varName2.split(".")
         self.oeDict = dispDict
-        for key in dispDict.keys():
-            if dispDict[key] is None:
-                dispDict.drop(key)
 
 
     def generate(self, sim=None):
         elems = orbitalMotion.ClassicElements
         for key in self.oeDict.keys():
-            if key=="mu":
-                continue
+            if self.oeDict[key] is not None and key != "mu":
+                exec("elems."+ key + " = np.random." + self.oeDict[key][0] + "(" +  str(self.oeDict[key][1]) + ', ' +  str(self.oeDict[key][2]) + ")")
             else:
-                eval("elems."+ key + " = np.random." + self.oeDict[key][0] + "(" +  str(self.oeDict[key][1]) + ', ' +  str(self.oeDict[key][2]) + ")")
+                if key != "mu":
+                    exec("elems." + key + " = 0.")
 
         r, v =orbitalMotion.elem2rv_parab( self.oeDict["mu"], elems)
 
@@ -405,7 +403,7 @@ class OrbitalElementDispersion:
         self.dispV = v
 
 
-    def generateString(self, sim=None, index):
+    def generateString(self, index, sim=None):
         if index == 1:
             nextValue = self.dispR
         if index == 2:
@@ -417,5 +415,8 @@ class OrbitalElementDispersion:
         return val
 
     def getName(self, index):
-        return eval(str(self.varName) + str(index))
+        if index == 1:
+            return self.varName1
+        if index == 2:
+            return self.varName2
 
