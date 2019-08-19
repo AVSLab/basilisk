@@ -374,6 +374,7 @@ class InertiaTensorDispersion:
 class OrbitalElementDispersion:
     def __init__(self, varName1, varName2, dispDict):
         """
+        A function that disperses position and velocity of the spacecraft using orbital elements as a dispersion metric.
         Args:
             varName1 (str): A string representation of the position variable to be dispersed
             varName2 (str): A string representation of the velocity variable to be dispersed
