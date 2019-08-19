@@ -12,7 +12,7 @@
 
     <tab type="user" url="@ref bskManual" visible="yes" title="Manual"/>
     <tab type="modules" visible="yes" title="Documentation" intro="This page contains documentation for the C++ and C
-Basilisk modules."/>
+Basilisk modules.  The links provide information about modules, classes, methods used, as well as message declarations."/>
 
     <tab type="namespaces" visible="no" title="">
       <tab type="namespacelist" visible="no" title="" intro=""/>
