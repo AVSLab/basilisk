@@ -6,6 +6,8 @@
     <tab type="user" url="@ref vizard" visible="yes" title="Vizard"/>
     <tab type="pages" visible="no" title="Support-old" intro=""/>
 
+    <tab type="user" url="@ref bskInstall" visible="yes" title="Install"/>
+
     <tab type="user" url="@ref bskSupport" visible="yes" title="Support"/>
 
     <tab type="user" url="@ref bskManual" visible="yes" title="Manual"/>
