@@ -42,6 +42,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 import shutil
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 import numpy as np
 import pytest
 
@@ -125,11 +126,15 @@ var2 = "r_BN_N"
 dataType1 = list(range(3))
 dataType2 = list(range(3))
 
+colorList = ['b', 'r', 'g', 'k']
 
 def myDataCallback(monteCarloData, retentionPolicy):
-    plt.close("all")
-    data = np.array(monteCarloData["messages"]["inertial_state_output.v_BN_N"])
-    plt.plot(data[:, 1], data[:, 2])
+    data = np.array(monteCarloData["messages"]["inertial_state_output.r_BN_N"])
+    plt.plot(data[:, 1], data[:, 2], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
+    plt.xlabel('X-coordinate')
+    plt.ylabel('Y-coordinate')
+    plt.legend()
+
 
 
 @pytest.mark.slowtest
@@ -154,12 +159,12 @@ def test_MonteCarloSimulation(show_plots):
     disp6Name = 'TaskList[0].TaskModels[0].hub.v_CN_NInit'
     dispDict = {}
     dispDict["mu"] = 0.3986004415E+15
-    dispDict["a"] = ["normal", 10000 * 1E3, 500 * 1E3]
+    dispDict["a"] = ["normal", 42000 * 1E3, 2000 * 1E3]
     dispDict["e"] = ["uniform", 0, 0.5]
-    dispDict["i"] = ["uniform", np.deg2rad(-80), np.deg2rad(80)]
+    dispDict["i"] = ["uniform", -80, 80]
     dispDict["Omega"] = None
-    dispDict["omega"] = None
-    dispDict["f"] = ["uniform", np.deg2rad(0), np.deg2rad(359)]
+    dispDict["omega"] = ["uniform", 80, 90]
+    dispDict["f"] = ["uniform", 0, 359]
     monteCarlo.addDispersion(OrbitalElementDispersion(disp5Name, disp6Name, dispDict))
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
