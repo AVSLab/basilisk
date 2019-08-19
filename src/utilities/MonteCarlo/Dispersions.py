@@ -398,7 +398,8 @@ class OrbitalElementDispersion:
             else:
                 if key != "mu":
                     exec("elems." + key + " = 0.")
-
+        if elems.e < 0:
+            elems.e = 0
         r, v =orbitalMotion.elem2rv_parab( self.oeDict["mu"], elems)
 
         self.dispR = r
