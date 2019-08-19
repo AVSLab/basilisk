@@ -379,7 +379,8 @@ class OrbitalElementDispersion:
             varName1 (str): A string representation of the position variable to be dispersed
             varName2 (str): A string representation of the velocity variable to be dispersed
             dispDict (dict): A dictionnary containing the dispersions for each of the orbital elements. The values are lists
-            with first element 'normal' or 'uniform' followed by mean, std or lower bound, upper bound respectively,
+            with first element 'normal' or 'uniform' followed by mean, std or lower bound, upper bound respectively. If no dispersion
+            is added for a specific orbital elemenet, None should be the values for the corresponding key
         """
         self.numberOfSubDisps = 2
         self.varName1 = varName1
