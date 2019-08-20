@@ -129,7 +129,7 @@ def run(show_plots, orbitCase, setEpoch):
     mu = planet.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
@@ -180,7 +180,7 @@ def run(show_plots, orbitCase, setEpoch):
         unitTestSupport.setMessage(scSim.TotalSim, simProcessName, msgName, msgData)
 
     numDataPoints = 2
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = int(simulationTime / (numDataPoints-1))
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
 
@@ -234,11 +234,11 @@ def run(show_plots, orbitCase, setEpoch):
     snippentName = "unitTestPassFail" + str(orbitCase) + str(setEpoch)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + newAtmo.ModelTag
+        print("PASSED: " + newAtmo.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + newAtmo.ModelTag
+        print("Failed: " + newAtmo.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
