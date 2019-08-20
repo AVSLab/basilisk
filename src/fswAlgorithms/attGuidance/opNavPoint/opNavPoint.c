@@ -118,7 +118,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
 
     /*! - Compute the current error vector if it is valid*/
     hNorm = v3Norm(opNavMsg.r_B);
-    if(hNorm > configData->minUnitMag)
+    if(opNavMsg.valid == 1)
     {
         /* a good opNav direction vector is available */
         cthNormalized = v3Dot(configData->opNavHeading, opNavMsg.r_B)/hNorm;

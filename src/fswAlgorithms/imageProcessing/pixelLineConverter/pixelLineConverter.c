@@ -113,7 +113,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double rHat_BN_C[3], rHat_BN_N[3], rHat_BN_B[3];
     double rNorm = 1;
     double planetRad, denom;
-    double covar_map_C[3*3], covar_In_C[3*3];
+    double covar_map_C[3*3], covar_In_C[3*3], covar_In_B[3*3];
     double covar_In_N[3*3];
     double x_map, y_map, rho_map;
     rtilde_C[0] = (X*reCentered[0])/cameraSpecs.focalLength;
@@ -156,6 +156,9 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         /*! - Changer the mapped covariance to inertial frame */
         mMultM(dcm_NC, 3, 3, covar_In_C, 3, 3, covar_In_N);
         mMultMt(covar_In_N, 3, 3, dcm_NC, 3, 3, covar_In_N);
+        /*! - Changer the mapped covariance to body frame */
+        mtMultM(dcm_CB, 3, 3, covar_In_C, 3, 3, covar_In_B);
+        mMultM(covar_In_B, 3, 3, dcm_CB, 3, 3, covar_In_B);
     }
     
     /*! - write output message */
@@ -164,7 +167,9 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     v3Scale(rNorm*1E3, rHat_BN_B, opNavMsgOut.r_BN_B); //in m
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
     vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
-    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_B);
+    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_C);
+    vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_C);//in m
+    mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;
     opNavMsgOut.valid =1;
