@@ -96,35 +96,35 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, uint64_t 
 void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
-    NavAttIntMsg navMsg;
+    OpNavFswMsg opNavMsg;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double ctSNormalized;
-    double sNorm;                   /*!< --- Norm of measured direction vector */
+    double cthNormalized;
+    double hNorm;                   /*!< --- Norm of measured direction vector */
     double e_hat[3];                /*!< --- Eigen Axis */
     double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
     double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
 
     NavAttIntMsg localImuDataInBuffer;
     /* zero the input message containers */
-    memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
+    memset(&(opNavMsg), 0x0, sizeof(OpNavFswMsg));
     memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
     /*! - Read the current target body vector estimate*/
     ReadMessage(configData->opnavDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(OpNavFswMsg), (void*) &(navMsg), moduleID);
+                sizeof(OpNavFswMsg), (void*) &(opNavMsg), moduleID);
     ReadMessage(configData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
 
     /*! - Compute the current error vector if it is valid*/
-    sNorm = v3Norm(navMsg.vehSunPntBdy);
-    if(sNorm > configData->minUnitMag)
+    hNorm = v3Norm(opNavMsg.r_B);
+    if(hNorm > configData->minUnitMag)
     {
         /* a good opNav direction vector is available */
-        ctSNormalized = v3Dot(configData->opNavHeading, navMsg.vehSunPntBdy)/sNorm;
-        ctSNormalized = fabs(ctSNormalized) > 1.0 ?
-        ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
-        configData->opNavAngleErr = acos(ctSNormalized);
+        cthNormalized = v3Dot(configData->opNavHeading, opNavMsg.r_B)/hNorm;
+        cthNormalized = fabs(cthNormalized) > 1.0 ?
+        cthNormalized/fabs(cthNormalized) : cthNormalized;
+        configData->opNavAngleErr = acos(cthNormalized);
 
         /*
             Compute the opNav error relative to the opNav direction vector
@@ -138,7 +138,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
                 v3Copy(configData->eHat180_B, e_hat);
             } else {
                 /* normal case where opNav and commanded body vectors are not aligned */
-                v3Cross(navMsg.vehSunPntBdy, configData->opNavHeading, e_hat);
+                v3Cross(opNavMsg.r_B, configData->opNavHeading, e_hat);
             }
             v3Normalize(e_hat, configData->opNavMnvrVec);
             v3Scale(tan(configData->opNavAngleErr*0.25), configData->opNavMnvrVec,
@@ -147,7 +147,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
-        v3Scale(configData->opNavAxisSpinRate/sNorm, navMsg.vehSunPntBdy, omega_RN_B);
+        v3Scale(configData->opNavAxisSpinRate/hNorm, opNavMsg.r_B, omega_RN_B);
         v3Subtract(omega_BN_B, omega_RN_B, configData->attGuidanceOutBuffer.omega_BR_B);
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
