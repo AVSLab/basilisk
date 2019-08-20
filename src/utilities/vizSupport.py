@@ -45,10 +45,10 @@ def toRGBA255(color):
         answer = np.array(colors.to_rgba(color)) * 255
     else:
         if not isinstance(color, list):
-            print 'ERROR: lineColor must be a 4D array of integers'
+            print('ERROR: lineColor must be a 4D array of integers')
             exit(1)
         if max(color) > 255 or min(color)<0:
-            print 'ERROR: lineColor values must be between [0,255]'
+            print('ERROR: lineColor values must be between [0,255]')
             exit(1)
         answer = color
     return answer
@@ -57,29 +57,29 @@ pointLineList = []
 def createPointLine(viz, **kwargs):
     vizElement = vizInterface.PointLine()
 
-    if kwargs.has_key('fromBodyName'):
+    if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
         if not isinstance(fromName, basestring):
-            print 'ERROR: fromBodyName must be a string'
+            print('ERROR: fromBodyName must be a string')
             exit(1)
         vizElement.fromBodyName = fromName
     else:
         vizElement.fromBodyName = viz.spacecraftName
 
-    if kwargs.has_key('toBodyName'):
+    if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
         if not isinstance(toName, basestring):
-            print 'ERROR: toBodyName must be a string'
+            print('ERROR: toBodyName must be a string')
             exit(1)
         vizElement.toBodyName = toName
     else:
-        print 'ERROR: toBodyName must be a specified'
+        print('ERROR: toBodyName must be a specified')
         exit(1)
 
-    if kwargs.has_key('lineColor'):
+    if 'lineColor' in kwargs:
         vizElement.lineColor = toRGBA255(kwargs['lineColor'])
     else:
-        print 'ERROR: lineColor must be a specified'
+        print('ERROR: lineColor must be a specified')
         exit(1)
 
     pointLineList.append(vizElement)
@@ -91,84 +91,84 @@ coneInOutList = []
 def createConeInOut(viz, **kwargs):
     vizElement = vizInterface.KeepOutInCone()
 
-    if kwargs.has_key('fromBodyName'):
+    if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
         if not isinstance(fromName, basestring):
-            print 'ERROR: fromBodyName must be a string'
+            print('ERROR: fromBodyName must be a string')
             exit(1)
         vizElement.fromBodyName = fromName
     else:
         vizElement.fromBodyName = viz.spacecraftName
 
-    if kwargs.has_key('toBodyName'):
+    if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
         if not isinstance(toName, basestring):
-            print 'ERROR: toBodyName must be a string'
+            print('ERROR: toBodyName must be a string')
             exit(1)
         vizElement.toBodyName = toName
     else:
-        print 'ERROR: toBodyName must be a specified'
+        print('ERROR: toBodyName must be a specified')
         exit(1)
 
-    if kwargs.has_key('coneColor'):
+    if 'coneColor' in kwargs:
         vizElement.coneColor = toRGBA255(kwargs['coneColor'])
     else:
-        print 'ERROR: coneColor must be a specified'
+        print('ERROR: coneColor must be a specified')
         exit(1)
 
-    if kwargs.has_key('isKeepIn'):
+    if 'isKeepIn' in kwargs:
         keepInFlag = kwargs['isKeepIn']
         if not isinstance(keepInFlag, bool):
-            print 'ERROR: isKeepIn must be a BOOL'
+            print('ERROR: isKeepIn must be a BOOL')
             exit(1)
         vizElement.isKeepIn = keepInFlag
     else:
-        print 'ERROR: isKeepIn must be a specified'
+        print('ERROR: isKeepIn must be a specified')
         exit(1)
 
-    if kwargs.has_key('position_B'):
+    if 'position_B' in kwargs:
         pos_B = kwargs['position_B']
         if not isinstance(pos_B, list):
-            print 'ERROR: position_B must be a 3D array of doubles'
+            print('ERROR: position_B must be a 3D array of doubles')
             exit(1)
         vizElement.position_B = pos_B
     else:
         vizElement.position_B = [0.0, 0.0, 0.0]
 
-    if kwargs.has_key('normalVector_B'):
+    if 'normalVector_B' in kwargs:
         n_B = kwargs['normalVector_B']
         if not isinstance(n_B, list):
-            print 'ERROR: normalVector_B must be a 3D array of doubles'
+            print('ERROR: normalVector_B must be a 3D array of doubles')
             exit(1)
         vizElement.normalVector_B = n_B
     else:
-        print 'ERROR: normalVector_B must be a specified'
+        print('ERROR: normalVector_B must be a specified')
         exit(1)
 
-    if kwargs.has_key('incidenceAngle'):
+    if 'incidenceAngle' in kwargs:
         angle = kwargs['incidenceAngle']
         if not isinstance(angle, float):
-            print 'ERROR: incidenceAngle must be a float value'
+            print('ERROR: incidenceAngle must be a float value')
             exit(1)
         vizElement.incidenceAngle = angle
     else:
-        print 'ERROR: incidenceAngle must be a specified'
+        print('ERROR: incidenceAngle must be a specified')
         exit(1)
 
-    if kwargs.has_key('coneHeight'):
+    if 'coneHeight' in kwargs:
         height = kwargs['coneHeight']
         if not isinstance(height, float):
-            print 'ERROR: coneHeight must be a float value'
+            print('ERROR: coneHeight must be a float value')
             exit(1)
         vizElement.coneHeight = height
     else:
-        print 'ERROR: coneHeight must be a specified'
+        print('ERROR: coneHeight must be a specified')
         exit(1)
 
-    if kwargs.has_key('coneName'):
+    if 'coneName' in kwargs:
         coneName = kwargs['coneName']
         if not isinstance(coneName, basestring):
-            print 'ERROR: coneName must be a string'
+            print('ERROR: coneName must be a string')
             exit(1)
         vizElement.coneName = coneName
     else:
@@ -187,75 +187,75 @@ def createCameraViewPanel(viz, camName, **kwargs):
     elif camName == "Planet":
         cam = viz.settings.cameraPlanet
     else:
-        print 'ERROR: camera name ' + camName + ' is not know.  Supported camera names are One, Two and Planet'
+        print('ERROR: camera name ' + camName + ' is not know.  Supported camera names are One, Two and Planet')
         exit(1)
 
-    if kwargs.has_key('spacecraftName'):
+    if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
         if not isinstance(scName, basestring):
-            print 'ERROR: ' + camName + ' spacecraftName must be a string'
+            print('ERROR: ' + camName + ' spacecraftName must be a string')
             exit(1)
         cam.spacecraftName = scName
     else:
         cam.spacecraftName = viz.spacecraftName
 
-    if kwargs.has_key('viewPanel'):
+    if 'viewPanel' in kwargs:
         viewPanel = kwargs['viewPanel']
         if not isinstance(viewPanel, bool):
-            print 'ERROR: ' + camName + ' viewPanel must be a bool'
+            print('ERROR: ' + camName + ' viewPanel must be a bool')
             exit(1)
         cam.viewPanel = viewPanel
 
-    if kwargs.has_key('setView'):
+    if 'setView' in kwargs:
         setView = kwargs['setView']
         if not isinstance(setView, int):
-            print 'ERROR: ' + camName + ' setView must be an integer'
+            print('ERROR: ' + camName + ' setView must be an integer')
             exit(1)
         if camName=="Planet":
             if setView < 0 or setView > 2:
-                print 'ERROR: ' + camName + ' setView must be a number of [0,5]'
-                print '0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track'
+                print('ERROR: ' + camName + ' setView must be a number of [0,5]')
+                print('0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track')
                 exit(1)
         else:
             if setView < 0 or setView > 5:
-                print 'ERROR: ' + camName + ' setView must be a number of [0,5]'
-                print '0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z'
+                print('ERROR: ' + camName + ' setView must be a number of [0,5]')
+                print('0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z')
                 exit(1)
         cam.setView = setView
     else:
-        print 'ERROR: ' + camName + ' setView must be a specified'
+        print('ERROR: ' + camName + ' setView must be a specified')
         exit(1)
 
-    if kwargs.has_key('spacecraftVisible'):
+    if 'spacecraftVisible' in kwargs:
         spacecraftVisible = kwargs['spacecraftVisible']
         if not isinstance(spacecraftVisible, bool):
-            print 'ERROR: ' + camName + ' spacecraftVisible must be a bool'
+            print('ERROR: ' + camName + ' spacecraftVisible must be a bool')
             exit(1)
         cam.spacecraftVisible = spacecraftVisible
     else:
         cam.spacecraftVisible = False
 
-    if kwargs.has_key('fieldOfView'):
+    if 'fieldOfView' in kwargs:
         fieldOfView = kwargs['fieldOfView']
         if not isinstance(fieldOfView, float):
-            print 'ERROR: ' + camName + ' spacecraftVisible must be a float in degrees'
+            print('ERROR: ' + camName + ' spacecraftVisible must be a float in degrees')
             exit(1)
         cam.fieldOfView = fieldOfView
     else:
         cam.fieldOfView = -1.0
 
-    if kwargs.has_key('targetBodyName'):
+    if 'targetBodyName' in kwargs:
         if camName=="Planet":
             targetBodyName = kwargs['targetBodyName']
             if not isinstance(targetBodyName, basestring):
-                print 'ERROR: ' + camName + ' targetBodyName must be a string'
+                print('ERROR: ' + camName + ' targetBodyName must be a string')
                 exit(1)
             cam.targetBodyName = targetBodyName
         else:
-            print 'WARNING: targetBodyName is not used for camera view One and Two'
+            print('WARNING: targetBodyName is not used for camera view One and Two')
     else:
         if camName=="Planet":
-            print 'ERROR: targetBodyName must be a specified'
+            print('ERROR: targetBodyName must be a specified')
             exit(1)
 
     return
@@ -315,7 +315,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
 
     # see if celestial body planet ephemeris messages must be created
-    if ('gravBodies' in kwargs):
+    if 'gravBodies' in kwargs:
         gravFactory = kwargs['gravBodies']
         gravBodies = gravFactory.gravBodies
         if (gravBodies):
