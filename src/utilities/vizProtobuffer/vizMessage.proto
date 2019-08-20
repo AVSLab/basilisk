@@ -1,5 +1,8 @@
 /* vizMessage is a protobuffer message template to relay messages from the 
- * Basilisk Sim to an external visualization application. */
+ * Basilisk Sim to an external visualization application.
+ * To generate the asscociate files for C++, run from a terminal window
+ * protoc --cpp_out=./ vizMessage.proto
+ */
 
 syntax = "proto3";
 package vizProtobufferMessage;
@@ -131,7 +134,15 @@ message VizMessage{
         double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
         string targetBodyName = 6; //What body should this camera point at?
     }
-    
+
+    message ActuatorSettings{
+        string spacecraftName = 1; //Which spacecraft's thrusters to set
+        int32 viewThrusterPanel = 2; // Value of -1 to use viz default, 0 for false, 1 for true
+        int32 viewThrusterHUD = 3; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 viewRWPanel = 4; // Value of -1 to use viz default, 0 for false, 1 for true
+        int32 viewRWHUD = 5; //Value of -1 to use viz default, 0 for false, 1 for true
+    }
+
 
     message VizSettingsPb{
         double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 8
@@ -143,6 +154,9 @@ message VizMessage{
         CameraOneSettings cameraOne = 7;
         CameraTwoSettings cameraTwo = 8;
         PlanetCameraSettings planetCamera = 9;
+        ActuatorSettings actuatorSettings = 10;
+        string skybox = 11; //None or 'default' for NASA SVS Starmap, "ESO" use ESO Milky Way skybox, or provide a filepath to custom background
+
     }
 
     TimeStamp currentTime = 1;
