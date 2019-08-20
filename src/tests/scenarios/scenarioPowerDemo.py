@@ -91,7 +91,7 @@ def run_scenario():
     planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()

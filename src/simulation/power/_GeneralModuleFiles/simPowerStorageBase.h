@@ -45,15 +45,15 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void addPowerNodeToModel(std::string tmpNodeMsgName);
+    void addPowerNodeToModel(std::string tmpNodeMsgName); //!< Function to add additional power devices to the storage module.
     void UpdateState(uint64_t CurrentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void integratePowerStatus(double currentTime);
-    double sumAllInputs();
-    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double time) = 0;
+    double sumAllInputs(); //!< Sums over the input power consumption messages.
+    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double time) = 0; //!< Virtual function to represent power storage computation or losses.
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
