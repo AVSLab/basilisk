@@ -1,0 +1,57 @@
+% !TEX root = ./Basilisk-msisAtmosphere-20190221.tex
+
+\section{User Guide}
+
+\subsection{General Module Setup}
+This section outlines the steps needed to add an MsisAtmosphere module to a sim.
+First, the atmosphere must be imported and initialized:
+\begin{verbatim}
+from Basilisk.simulation import msisAtmosphere
+newAtmo = msisAtmosphere.MsisAtmosphere()
+newAtmo.ModelTag = "MsisAtmo"
+\end{verbatim}
+
+By design this module is only applicable to Earth.  The earth radius is set automatically within the module.  As with all planetary environment models, the epoch case be set in three ways:
+\begin{enumerate}
+	\item  {\bfseries Default:} If no epoch information is provided, then the BSK default epoch date and time are set.
+	\item  {\bfseries Use Epoch Message:}  An epoch message input message name is specified.  This is read in on reset.
+	\begin{verbatim}
+		newAtmo.epochInMsgName = "simEpoch"
+	\end{verbatim}
+	\item  {\bfseries Direct Setting:} The module variable {\tt epochDoy} can be set directly as well.  However, note that if the input message is specified, the {\tt epochDoy} value is not used.
+	\begin{verbatim}
+		newAtmo.epochDoy = 1
+	\end{verbatim}	
+\end{enumerate}
+
+The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft.
+
+To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method common to environmental models:
+\begin{verbatim}
+scObject = spacecraftPlus.SpacecraftPlus()
+scObject.ModelTag = "spacecraftBody"
+newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+\end{verbatim}
+
+\subsection{Planet Ephemeris Information}
+The optional planet state message name can be set by directly adjusting that attribute of the class:
+\begin{verbatim}
+newAtmo.planetPosInMsgName = "PlanetSPICEMsgName"
+\end{verbatim}
+If SPICE is not being used, the planet is assumed to reside at the origin.
+
+\subsection{Setting the Model Reach}
+By default the model doesn't perform any checks on the altitude to see if the specified atmosphere model should be used.  This is set through the parameters {\tt envMinReach} and {\tt envMaxReach}.  Their default values are -1.  If these are set to positive values, then if the altitude is smaller than {\tt envMinReach} or larger than {\tt envMaxReach}, the density is set to zero.
+
+
+\subsection{NRLMSISE-00 atmosphere user guide}
+NRLMSISE-00 is dependent on a variety of space weather indexes, times, and locations. During initialization, a starting date must be set; this will be updated as the sim progresses using the simulation time. NRLMSISE-00 will attempt to subscribe to a standard set of message names that can be produced by the WIP space-weather data factory module, or set by hand. These messages are
+\begin{verbatim}
+sw_msg_names = [
+"ap_24_0", "ap_3_0", "ap_3_-3","ap_3_-6","ap_3_-9",
+"ap_3_-12","ap_3_-15","ap_3_-18","ap_3_-21","ap_3_-24",
+"ap_3_-27", "ap_3_-30","ap_3_-33","ap_3_-36","ap_3_-39",
+"ap_3_-42", "ap_3_-45", "ap_3_-48","ap_3_-51","ap_3_-54",
+"ap_3_-57","f107_1944_0","f107_24_-24"
+]
+\end{verbatim}

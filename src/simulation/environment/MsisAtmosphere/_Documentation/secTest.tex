@@ -1,0 +1,58 @@
+% !TEX root = ./Basilisk-msisAtmosphere-20190221.tex
+
+\section{Test Description and Success Criteria}
+This section describes the specific unit tests conducted on this module.
+
+\subsection{General Functionality}
+The unit test check the neutral density calculation for a single spacecraft at a particular epoch time.  The epoch is either specified through an epoch input message, or set directly by specifying the {\tt epochDoy} day of year value.  
+
+\subsection{Model-Specific Tests}
+
+By design, this module shares much of its functionality with \verb|exponentialAtmosphere|; shared functionality is not checked by redundant tests.
+
+\subsubsection{test\_unitTestNrlmsise00.py}
+This integrated test evaluates the NRLMSISE-00 model at a given point in an orbit with zero'd (i.e., nonphysical) space weather inputs and verifies its outputs against the outputs of the base C model with identical inputs. This is a comprehensive test of the NRLMSISE-00 implementation in BSK, as it checks out the end-to-end functionality of the space weather messaging system, the geodetic conversion, and the interface to NRLMSISE-00 itself.
+
+\section{Test Parameters}
+The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{Output Neutral Mass Density}        & {\input{AutoTeX/unitTestToleranceValue} (relative) }  \\
+		{Output Temperature}        & \input{AutoTeX/unitTestToleranceValue} (relative)  \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+The following two tables show the test results.  All tests are expected to pass.
+
+
+\begin{table}[H]
+	\caption{Test result for test\_unitMsisAtmosphere.py}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c  | c  | c} % Column formatting, 
+		\hline\hline
+		{\tt orbitCase} & {\tt setEpoch} &  \textbf{Pass/Fail} \\ 
+		\hline
+		LPO & Direct &  \input{AutoTeX/unitTestPassFailLPODirect} \\ 
+		LTO & Direct &  \input{AutoTeX/unitTestPassFailLTODirect} \\ 
+		LPO & Msg &  \input{AutoTeX/unitTestPassFailLPOMsg} \\ 
+		LTO & Msg &  \input{AutoTeX/unitTestPassFailLTOMsg} \\ 
+		LPO & Default &  \input{AutoTeX/unitTestPassFailLPODefault} \\ 
+		LTO & Default &  \input{AutoTeX/unitTestPassFailLTODefault} \\ 
+		\hline
+		\hline
+	\end{tabular}
+\end{table}
+
+

@@ -45,7 +45,6 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void setEpoch(double julianDate);
     void addSpacecraftToModel(std::string tmpScMsgName);
     void UpdateState(uint64_t CurrentSimNanos);
 
@@ -54,12 +53,13 @@ protected:
     bool readMessages();
     void updateLocalAtmosphere(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState);
-    virtual void evaluateAtmosphereModel(AtmoPropsSimMsg *msg) = 0;
+    virtual void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();
+    virtual void customSetEpochFromVariable();
 
 public:
     std::vector<std::string> scStateInMsgNames;    //!< Vector of the spacecraft position/velocity message names
@@ -67,7 +67,6 @@ public:
     std::string planetPosInMsgName;          //!< Message name for the planet's SPICE position message
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
-    double epochDate;                       //!< [JD2000] Specified epoch date, default is a Julian date format
     double planetRadius;                    //!< [m]      Radius of the planet
 
 protected:
@@ -82,6 +81,8 @@ protected:
     int64_t planetPosInMsgId;               //!< ID of the planet state message
     std::vector<SCPlusStatesSimMsg> scStates;//!< vector of the spacecraft state messages
     SpicePlanetStateSimMsg planetState;     //!< planet state message
+    struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
+    int64_t epochInMsgId;                   //!< ID of the epoch message
 
 };
 

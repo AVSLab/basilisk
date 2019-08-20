@@ -46,7 +46,7 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
  @param msg magnetic field message structure
  @return void
  */
-void ExponentialAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg)
+void ExponentialAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime)
 {
     msg->neutralDensity = this->baseDensity * exp(-(this->orbitAltitude) / this->scaleHeight);
     msg->localTemp = this->localTemp;
