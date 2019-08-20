@@ -56,8 +56,7 @@ PowerNodeBase::~PowerNodeBase()
     return;
 }
 
-/*! SelfInit for this method creates a seperate magnetic field message for each of the spacecraft
-that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.
+/*! SelfInit creates a PowerNodeUsageSimMsg using the provided message output name.
  @return void
 */
 void PowerNodeBase::SelfInit()
@@ -71,7 +70,7 @@ void PowerNodeBase::SelfInit()
     return;
 }
 
-/*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
+/*! This method subscribes to anything that would tell the power node to turn on/off.
  @return void
  */
 void PowerNodeBase::CrossInit()
@@ -88,7 +87,7 @@ void PowerNodeBase::CrossInit()
     return;
 }
 
-/*! This method is used to reset the module.
+/*! This method is used to reset the module. In general, no functionality must be reset.
  @return void
  */
 void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
@@ -123,8 +122,7 @@ void PowerNodeBase::customReset(uint64_t CurrentClock)
     return;
 }
 
-/*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
- @param CurrentClock The current time used for time-stamping the message
+/*! This method writes out a message.
  @return void
  */
 void PowerNodeBase::writeMessages(uint64_t CurrentClock)
@@ -151,7 +149,7 @@ void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
     return;
 }
 
-/*! This method is used to read the incoming power supply/usage messages and store them for future use.
+/*! This method is used to read incoming power status messages.
  @return void
  */
 bool PowerNodeBase::readMessages()
@@ -191,7 +189,7 @@ bool PowerNodeBase::customReadMessages()
     return true;
 }
 
-/*! Computes the current power consumption for the module.
+/*! Core compute operation that implements switching logic and computes module-wise power consumption.
  */
 
 void PowerNodeBase::computePowerStatus(double currentTime)
@@ -208,8 +206,7 @@ void PowerNodeBase::computePowerStatus(double currentTime)
     return;
 }
 
-/*! Computes the current local magnetic field for each spacecraft and writes their respective messages.
- @return void
+/*! Provides logic for running the read / compute / write operation that is the module's function.
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
