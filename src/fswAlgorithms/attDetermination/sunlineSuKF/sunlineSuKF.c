@@ -202,6 +202,10 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                 configData->stateInit[5] = maxSens;
             }
         }
+        if(maxSens < configData->sensorUseThresh)
+        {
+            return;
+        }
         /*! The normal of the max activated sensor is the initial state*/
         vCopy(configData->stateInit, configData->numStates, configData->state);
         configData->filterInitialized = 1;
@@ -378,8 +382,6 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
 	}
-    /*! - Scale sQNoise matrix depending on the number of measurements*/
-    mScale(configData->numObs/3.0, procNoise, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, procNoise);
     
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
 	memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
@@ -438,11 +440,27 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
     for(i=0; i<configData->numCSSTotal; i++)
     {
-        if(configData->cssSensorInBuffer.CosValue[i] > configData->sensorUseThresh)
+        v3Scale(configData->CBias[i], &(configData->cssNHat_B[i*3]), sensorNormal);
+        stateNorm = v3Norm(configData->state);
+        v3Normalize(configData->state, normalizedState);
+        expectedMeas = v3Dot(normalizedState, sensorNormal);
+        expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
+        kellDelta = 1.0;
+        /*! - Scale the measurement by the kelly factor.*/
+        if(configData->kellFits[i].cssKellFact > 0.0)
+        {
+            kellDelta -= exp(-pow(expectedMeas,configData->kellFits[i].cssKellPow) /
+                             configData->kellFits[i].cssKellFact);
+            expectedMeas *= kellDelta;
+            expectedMeas *= configData->kellFits[i].cssRelScale;
+        }
+        expectedMeas *= configData->state[5];
+        expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
+        if(configData->cssSensorInBuffer.CosValue[i] > configData->sensorUseThresh ||
+           expectedMeas > configData->sensorUseThresh)
         {
             /*! - For each valid measurement, copy observation value and compute expected obs value 
                   on a per sigma-point basis.*/
-            v3Scale(configData->CBias[i], &(configData->cssNHat_B[i*3]), sensorNormal);
             configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<configData->countHalfSPs*2+1; j++)
             {
