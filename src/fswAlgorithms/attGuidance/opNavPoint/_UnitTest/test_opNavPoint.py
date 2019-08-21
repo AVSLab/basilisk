@@ -19,7 +19,7 @@
 '''
 #
 #   Copy of the unit test for sunSafe Point adapted to any heading
-#   Module Name:        headingPoint
+#   Module Name:        opNavPoint
 #   Author:             Thibaud Teil
 #   Creation Date:      August 20, 2019
 #
@@ -38,7 +38,8 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.headingPoint import headingPoint                   # import the module that is to be tested
+from Basilisk.fswAlgorithms.opNavPoint import opNavPoint                   # import the module that is to be tested
+from Basilisk.fswAlgorithms.fswMessages import OpNavFswMsg
 from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 from Basilisk.utilities import macros as mc
 
@@ -87,21 +88,19 @@ def sunSafePointTestFunction(show_plots, case):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = headingPoint.HeadingPointConfig()
+    moduleConfig = opNavPoint.OpNavPointConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "headingPoint"
+    moduleWrap.ModelTag = "opNavPoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
     moduleConfig.attGuidanceOutMsgName = "outputName"
-    moduleConfig.sunDirectionInMsgName = "inputOpNavName"
+    moduleConfig.opnavDataInMsgName = "inputOpNavName"
     moduleConfig.imuInMsgName = "inputIMUDataName"
-    sHat_Cmd_B = np.array([0.0, 0.0 ,1.0])
-    if (case == 5):
-        sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
-    moduleConfig.sHatBdyCmd = sHat_Cmd_B
+    camera_Z = [0.,0.,1.]
+    moduleConfig.opNavHeading = camera_Z
     moduleConfig.minUnitMag = 0.1
     if (case == 2):
         omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
@@ -110,19 +109,13 @@ def sunSafePointTestFunction(show_plots, case):
 
     # Create input messages
     #
-    inputSunVecData = simFswInterfaceMessages.NavAttIntMsg()  # Create a structure for the input message
-    sunVec_B = np.array([1.0, 1.0, 0.0])
-    if (case == 2 or case == 6): # no sun visible, providing a near zero norm direction vector */
-        sunVec_B = [0.0, moduleConfig.minUnitMag/2, 0.0]
-    if (case == 3):
-        sunVec_B = sHat_Cmd_B
-    if (case == 4 or case == 5):
-        sunVec_B = -sHat_Cmd_B
-    inputSunVecData.vehSunPntBdy = sunVec_B
+    planet_B = [1.,1.,0.]
+    inputOpNavData = OpNavFswMsg()  # Create a structure for the input message
+    inputOpNavData.r_B = planet_B
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
-                               moduleConfig.sunDirectionInMsgName,
-                               inputSunVecData)
+                               moduleConfig.opnavDataInMsgName,
+                               inputOpNavData)
 
     inputIMUData = simFswInterfaceMessages.NavAttIntMsg()  # Create a structure for the input message
     omega_BN_B = np.array([0.01, 0.50, -0.2])
@@ -134,7 +127,7 @@ def sunSafePointTestFunction(show_plots, case):
 
     if (case == 7):
         moduleConfig.sunAxisSpinRate = 1.5*mc.D2R;
-        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * moduleConfig.sunAxisSpinRate
+        omega_RN_B_Search = np.array(planet_B)/np.linalg.norm(np.array(planet_B)) * moduleConfig.sunAxisSpinRate
 
 
 
@@ -165,16 +158,16 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   list(range(3)))
     # set the filtered output truth states
-    if (case == 1 or case == 7):
-        eHat = np.cross(sunVec_B,sHat_Cmd_B)
-        eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
-        sigmaTrue = eHat * np.tan(Phi/4.0)
-        trueVector = [
-                    sigmaTrue.tolist(),
-                    sigmaTrue.tolist(),
-                    sigmaTrue.tolist()
-                   ]
+
+    eHat = np.cross(np.array(planet_B),np.array(camera_Z))
+    eHat = eHat / np.linalg.norm(eHat)
+    Phi = np.arccos(np.dot(np.array(planet_B)/np.linalg.norm(np.array(planet_B)),np.array(camera_Z)))
+    sigmaTrue = eHat * np.tan(Phi/4.0)
+    trueVector = [
+                sigmaTrue.tolist(),
+                sigmaTrue.tolist(),
+                sigmaTrue.tolist()
+               ]
     if (case == 2 or case == 3 or case == 6):
         trueVector = [
             [0, 0, 0],
@@ -182,9 +175,9 @@ def sunSafePointTestFunction(show_plots, case):
             [0, 0, 0]
         ]
     if (case == 4):
-        eHat = np.cross(sHat_Cmd_B,np.array([1,0,0]))
+        eHat = np.cross(np.array(camera_Z),np.array([1,0,0]))
         eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
+        Phi = np.arccos(np.dot(np.array(planet_B)/np.linalg.norm(np.array(planet_B)),np.array(camera_Z)))
         sigmaTrue = eHat * np.tan(Phi/4.0)
         trueVector = [
                     sigmaTrue.tolist(),
@@ -192,9 +185,9 @@ def sunSafePointTestFunction(show_plots, case):
                     sigmaTrue.tolist()
                ]
     if (case == 5):
-        eHat = np.cross(sHat_Cmd_B, np.array([0, 1, 0]))
+        eHat = np.cross(np.array(camera_Z), np.array([0, 1, 0]))
         eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B), sHat_Cmd_B))
+        Phi = np.arccos(np.dot(np.array(planet_B)/np.linalg.norm(np.array(planet_B)), np.array(camera_Z)))
         sigmaTrue = eHat * np.tan(Phi / 4.0)
         trueVector = [
             sigmaTrue.tolist(),
@@ -222,12 +215,11 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   list(range(3)))
     # set the filtered output truth states
-    if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
-        trueVector = [
-            omega_BN_B.tolist(),
-            omega_BN_B.tolist(),
-            omega_BN_B.tolist()
-        ]
+    trueVector = [
+        omega_BN_B.tolist(),
+        omega_BN_B.tolist(),
+        omega_BN_B.tolist()
+    ]
     if (case == 2 or case == 7):
         trueVector = [
             (omega_BN_B - omega_RN_B_Search).tolist(),
@@ -252,12 +244,11 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   list(range(3)))
     # set the filtered output truth states
-    if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
-        trueVector = [
-            [0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0]
-        ]
+    trueVector = [
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0]
+    ]
     if (case == 2 or case == 7):
         trueVector = [
             omega_RN_B_Search,
@@ -300,14 +291,14 @@ def sunSafePointTestFunction(show_plots, case):
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
-#    if show_plots:
-#        # plot a sample variable.
-#        plt.figure(1)
-#        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-#        plt.legend(loc='upper left')
-#        plt.xlabel('Time [s]')
-#        plt.ylabel('Variable Description [unit]')
-#        plt.show()
+   # if show_plots:
+   #     # plot a sample variable.
+   #     plt.figure(1)
+   #     plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
+   #     plt.legend(loc='upper left')
+   #     plt.xlabel('Time [s]')
+   #     plt.ylabel('Variable Description [unit]')
+   #     plt.show()
 
 
     #   print out success message if no error were found
@@ -334,4 +325,4 @@ def sunSafePointTestFunction(show_plots, case):
 # stand-along python script
 #
 if __name__ == "__main__":
-    sunSafePointTestFunction(False, 5)
+    sunSafePointTestFunction(False, 1)
