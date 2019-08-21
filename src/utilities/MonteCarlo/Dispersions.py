@@ -22,6 +22,7 @@ import random
 import numpy as np
 import abc
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import orbitalMotion
 import collections
 
 
@@ -368,3 +369,57 @@ class InertiaTensorDispersion:
 
     def getName(self):
         return self.varName
+
+
+class OrbitalElementDispersion:
+    def __init__(self, varName1, varName2, dispDict):
+        """
+        A function that disperses position and velocity of the spacecraft using orbital elements as a dispersion metric.
+        Args:
+            varName1 (str): A string representation of the position variable to be dispersed
+            varName2 (str): A string representation of the velocity variable to be dispersed
+            dispDict (dict): A dictionnary containing the dispersions for each of the orbital elements. The values are lists
+            with first element 'normal' or 'uniform' followed by mean, std or lower bound, upper bound respectively. If no dispersion
+            is added for a specific orbital elemenet, None should be the values for the corresponding key
+        """
+        self.numberOfSubDisps = 2
+        self.varName1 = varName1
+        self.varName1Components = self.varName1.split(".")
+        self.varName2 = varName2
+        self.varName2Components = self.varName2.split(".")
+        self.oeDict = dispDict
+
+
+    def generate(self, sim=None):
+        elems = orbitalMotion.ClassicElements
+        for key in self.oeDict.keys():
+            if self.oeDict[key] is not None and key != "mu":
+                exec("elems."+ key + " = np.random." + self.oeDict[key][0] + "(" +  str(self.oeDict[key][1]) + ', ' +  str(self.oeDict[key][2]) + ")")
+            else:
+                if key != "mu":
+                    exec("elems." + key + " = 0.")
+        if elems.e < 0:
+            elems.e = 0
+        r, v =orbitalMotion.elem2rv_parab( self.oeDict["mu"], elems)
+
+        self.dispR = r
+        self.dispV = v
+
+
+    def generateString(self, index, sim=None):
+        if index == 1:
+            nextValue = self.dispR
+        if index == 2:
+            nextValue = self.dispV
+        val = '['
+        for i in range(3):
+            val += str(nextValue[i]) + ','
+        val = val[0:-1] + ']'
+        return val
+
+    def getName(self, index):
+        if index == 1:
+            return self.varName1
+        if index == 2:
+            return self.varName2
+
