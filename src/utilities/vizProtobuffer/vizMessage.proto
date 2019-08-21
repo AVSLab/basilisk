@@ -77,20 +77,9 @@ message VizMessage{
         repeated double cameraPos_B = 7;  //[mm] Camera position in body frame
         repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
         uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
-        string skyBoxFilepath = 10; // “none”-> black background, null or “default” -> viz default skybox, or a file path may be passed to use a custom image
-    }
-   
-    message CameraImage{
-        int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
-        double timeTag = 2;  //[ns] Sim time at which the image was captured
-        string imageFileName = 3;  //[-] Filepath for captured camera image
-        repeated uint32 imageFile=4;  //[-] Image data
+        string skybox = 10; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
     }
 
-    message ImageRequest{
-        int64 cameraID = 1; //[-] ID of the camera that should take an image
-        double timeTag = 2; //[ns] simElapsedTime at which to capture image
-    }
     
     message PointLine{
         string fromBodyName = 1;
@@ -155,7 +144,7 @@ message VizMessage{
         CameraTwoSettings cameraTwo = 8;
         PlanetCameraSettings planetCamera = 9;
         ActuatorSettings actuatorSettings = 10;
-        string skybox = 11; //None or 'default' for NASA SVS Starmap, "ESO" use ESO Milky Way skybox, or provide a filepath to custom background
+        string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
 
     }
 
@@ -163,7 +152,5 @@ message VizMessage{
     repeated CelestialBody celestialBodies = 2;
     repeated Spacecraft spacecraft = 3;
     repeated CameraConfig cameras = 4;
-    repeated CameraImage  cameraImages = 5;
-    repeated ImageRequest imageRequests = 6;
-    VizSettingsPb settings = 7;
+    VizSettingsPb settings = 5;
 }
