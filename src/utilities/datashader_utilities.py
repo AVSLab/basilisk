@@ -173,6 +173,6 @@ class DS_Plot():
                 {n: hv.Points([np.nan, np.nan], label=str(n)).opts(style=dict(color=c)) for n, c in color_key})
             image = image*legend
 
-        return image
+        return image, self.title
 
 
