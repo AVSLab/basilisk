@@ -33,6 +33,12 @@ from Basilisk.simulation import spice_interface
 
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
+# set the string type that works with Python 2 and 3
+try:
+  basestring
+except NameError:
+  basestring = str
+
 try:
     from Basilisk.simulation import vizInterface
     vizFound = True
