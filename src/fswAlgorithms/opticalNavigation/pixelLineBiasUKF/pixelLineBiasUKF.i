@@ -34,11 +34,16 @@
 GEN_SIZEOF(NavTransIntMsg);
 GEN_SIZEOF(PixelLineFilterFswMsg);
 GEN_SIZEOF(PixelLineBiasUKFConfig);
+GEN_SIZEOF(CirclesOpNavMsg);
+GEN_SIZEOF(CameraConfigMsg);
+GEN_SIZEOF(NavAttIntMsg);
 %include "pixelLineBiasUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/pixelLineFilterFswMsg.h"
 %include "simFswInterfaceMessages/navTransIntMsg.h"
-
+%include "simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
+%include "simFswInterfaceMessages/navAttIntMsg.h"
 
 %pythoncode %{
 import sys
