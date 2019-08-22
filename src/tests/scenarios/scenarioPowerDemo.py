@@ -24,6 +24,20 @@
 #   Creation Date:      July 17th 2019
 #
 
+
+
+## \defgroup scenarioBasicOrbitGroup
+## @{
+## Demonstration of setup basic 3-DOF orbit simulation setup.
+#
+# Simple Power System Analysis with 6-DOF Attitude/Orbit Motion {#scenarioPowerDemo}
+# ====
+#
+# Scenario Description
+# -----
+# This script simulates a spacecraft in LEO with a simple power system consisting of a single body-fixed solar panel, a battery,
+# and a sink representing spacecraft electronics. The spacecraft orbits the Earth once while in an uncontrolled tumble, demonstrating
+# both the attitude and orbit dependence of the power system.
 import pytest
 import os, inspect
 import numpy as np
