@@ -759,7 +759,7 @@ void AddDescriptorsImpl() {
       "\010 \001(\01323.vizProtobufferMessage.VizMessage"
       ".CameraTwoSettings\022L\n\014planetCamera\030\t \001(\013"
       "26.vizProtobufferMessage.VizMessage.Plan"
-      "etCameraSettings\022L\n\020actuatorSettings\030\n \001"
+      "etCameraSettings\022L\n\020actuatorSettings\030\n \003"
       "(\01322.vizProtobufferMessage.VizMessage.Ac"
       "tuatorSettings\022\016\n\006skybox\030\013 \001(\tb\006proto3"
   };
@@ -7228,8 +7228,6 @@ void VizMessage_VizSettingsPb::InitAsDefaultInstance() {
       ::vizProtobufferMessage::VizMessage_CameraTwoSettings::internal_default_instance());
   ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->planetcamera_ = const_cast< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings*>(
       ::vizProtobufferMessage::VizMessage_PlanetCameraSettings::internal_default_instance());
-  ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->actuatorsettings_ = const_cast< ::vizProtobufferMessage::VizMessage_ActuatorSettings*>(
-      ::vizProtobufferMessage::VizMessage_ActuatorSettings::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage_VizSettingsPb::kAmbientFieldNumber;
@@ -7258,6 +7256,7 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
       _internal_metadata_(NULL),
       pointlines_(from.pointlines_),
       keepoutincones_(from.keepoutincones_),
+      actuatorsettings_(from.actuatorsettings_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -7278,11 +7277,6 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
     planetcamera_ = new ::vizProtobufferMessage::VizMessage_PlanetCameraSettings(*from.planetcamera_);
   } else {
     planetcamera_ = NULL;
-  }
-  if (from.has_actuatorsettings()) {
-    actuatorsettings_ = new ::vizProtobufferMessage::VizMessage_ActuatorSettings(*from.actuatorsettings_);
-  } else {
-    actuatorsettings_ = NULL;
   }
   ::memcpy(&ambient_, &from.ambient_,
     static_cast<size_t>(reinterpret_cast<char*>(&planetcson_) -
@@ -7308,7 +7302,6 @@ void VizMessage_VizSettingsPb::SharedDtor() {
   if (this != internal_default_instance()) delete cameraone_;
   if (this != internal_default_instance()) delete cameratwo_;
   if (this != internal_default_instance()) delete planetcamera_;
-  if (this != internal_default_instance()) delete actuatorsettings_;
 }
 
 void VizMessage_VizSettingsPb::SetCachedSize(int size) const {
@@ -7342,6 +7335,7 @@ void VizMessage_VizSettingsPb::Clear() {
 
   pointlines_.Clear();
   keepoutincones_.Clear();
+  actuatorsettings_.Clear();
   skybox_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && cameraone_ != NULL) {
     delete cameraone_;
@@ -7355,10 +7349,6 @@ void VizMessage_VizSettingsPb::Clear() {
     delete planetcamera_;
   }
   planetcamera_ = NULL;
-  if (GetArenaNoVirtual() == NULL && actuatorsettings_ != NULL) {
-    delete actuatorsettings_;
-  }
-  actuatorsettings_ = NULL;
   ::memset(&ambient_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&planetcson_) -
       reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
@@ -7489,12 +7479,11 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
+      // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
       case 10: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(82u /* 82 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_actuatorsettings()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_actuatorsettings()));
         } else {
           goto handle_unusual;
         }
@@ -7595,10 +7584,11 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
       9, *this->planetcamera_, output);
   }
 
-  // .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
-  if (this->has_actuatorsettings()) {
+  // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->actuatorsettings_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      10, *this->actuatorsettings_, output);
+      10, this->actuatorsettings(static_cast<int>(i)), output);
   }
 
   // string skybox = 11;
@@ -7682,11 +7672,12 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
         9, *this->planetcamera_, deterministic, target);
   }
 
-  // .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
-  if (this->has_actuatorsettings()) {
+  // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->actuatorsettings_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        10, *this->actuatorsettings_, deterministic, target);
+        10, this->actuatorsettings(static_cast<int>(i)), deterministic, target);
   }
 
   // string skybox = 11;
@@ -7739,6 +7730,17 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
     }
   }
 
+  // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
+  {
+    unsigned int count = static_cast<unsigned int>(this->actuatorsettings_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->actuatorsettings(static_cast<int>(i)));
+    }
+  }
+
   // string skybox = 11;
   if (this->skybox().size() > 0) {
     total_size += 1 +
@@ -7765,13 +7767,6 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
         *this->planetcamera_);
-  }
-
-  // .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
-  if (this->has_actuatorsettings()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->actuatorsettings_);
   }
 
   // double ambient = 1;
@@ -7831,6 +7826,7 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
 
   pointlines_.MergeFrom(from.pointlines_);
   keepoutincones_.MergeFrom(from.keepoutincones_);
+  actuatorsettings_.MergeFrom(from.actuatorsettings_);
   if (from.skybox().size() > 0) {
 
     skybox_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.skybox_);
@@ -7843,9 +7839,6 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   }
   if (from.has_planetcamera()) {
     mutable_planetcamera()->::vizProtobufferMessage::VizMessage_PlanetCameraSettings::MergeFrom(from.planetcamera());
-  }
-  if (from.has_actuatorsettings()) {
-    mutable_actuatorsettings()->::vizProtobufferMessage::VizMessage_ActuatorSettings::MergeFrom(from.actuatorsettings());
   }
   if (from.ambient() != 0) {
     set_ambient(from.ambient());
@@ -7887,11 +7880,11 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   using std::swap;
   pointlines_.InternalSwap(&other->pointlines_);
   keepoutincones_.InternalSwap(&other->keepoutincones_);
+  actuatorsettings_.InternalSwap(&other->actuatorsettings_);
   skybox_.Swap(&other->skybox_);
   swap(cameraone_, other->cameraone_);
   swap(cameratwo_, other->cameratwo_);
   swap(planetcamera_, other->planetcamera_);
-  swap(actuatorsettings_, other->actuatorsettings_);
   swap(ambient_, other->ambient_);
   swap(orbitlineson_, other->orbitlineson_);
   swap(spacecraftcson_, other->spacecraftcson_);

@@ -57,6 +57,7 @@ VizInterface::VizInterface()
     this->settings.orbitLinesOn = -1;
     this->settings.spacecraftCSon = -1;
     this->settings.planetCSon = -1;
+    this->settings.skyBox = "";
 
     this->settings.cameraOne.spacecraftName = "";
     this->settings.cameraOne.viewPanel = false;
@@ -76,7 +77,6 @@ VizInterface::VizInterface()
     this->settings.cameraPlanet.spacecraftVisible = false;
     this->settings.cameraPlanet.fieldOfView = -1.0;
     this->settings.cameraPlanet.targetBodyName = "";
-
 
     return;
 }
@@ -432,6 +432,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             BSK_PRINT(MSG_WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
         }
 
+        // define the skyBox variable
+        if (this->settings.skyBox.length() > 0) {
+            vizSettings->set_skybox(this->settings.skyBox);
+        }
+
         // define any pointing lines for Vizard
         for (int idx = 0; idx < this->settings.pointLineList.size(); idx++) {
             vizProtobufferMessage::VizMessage::PointLine* pl = vizSettings->add_pointlines();
@@ -458,6 +463,15 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 cone->add_conecolor(this->settings.coneList[idx].coneColor[i]);
             }
             cone->set_conename(this->settings.coneList[idx].coneName);
+        }
+
+        // define actuator GUI settings
+        for (int idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
+            al->set_viewthrusterpanel(this->settings.actuatorGuiSettingsList[idx].viewThrusterPanel);
+            al->set_viewthrusterhud(this->settings.actuatorGuiSettingsList[idx].viewThrusterHUD);
+            al->set_viewrwpanel(this->settings.actuatorGuiSettingsList[idx].viewRWPanel);
+            al->set_viewrwhud(this->settings.actuatorGuiSettingsList[idx].viewRWHUD);
         }
 
         // define camera one settings

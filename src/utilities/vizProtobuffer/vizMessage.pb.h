@@ -2356,6 +2356,18 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_KeepOutInCone >&
       keepoutincones() const;
 
+  // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
+  int actuatorsettings_size() const;
+  void clear_actuatorsettings();
+  static const int kActuatorSettingsFieldNumber = 10;
+  const ::vizProtobufferMessage::VizMessage_ActuatorSettings& actuatorsettings(int index) const;
+  ::vizProtobufferMessage::VizMessage_ActuatorSettings* mutable_actuatorsettings(int index);
+  ::vizProtobufferMessage::VizMessage_ActuatorSettings* add_actuatorsettings();
+  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings >*
+      mutable_actuatorsettings();
+  const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings >&
+      actuatorsettings() const;
+
   // string skybox = 11;
   void clear_skybox();
   static const int kSkyboxFieldNumber = 11;
@@ -2397,15 +2409,6 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* mutable_planetcamera();
   void set_allocated_planetcamera(::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera);
 
-  // .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
-  bool has_actuatorsettings() const;
-  void clear_actuatorsettings();
-  static const int kActuatorSettingsFieldNumber = 10;
-  const ::vizProtobufferMessage::VizMessage_ActuatorSettings& actuatorsettings() const;
-  ::vizProtobufferMessage::VizMessage_ActuatorSettings* release_actuatorsettings();
-  ::vizProtobufferMessage::VizMessage_ActuatorSettings* mutable_actuatorsettings();
-  void set_allocated_actuatorsettings(::vizProtobufferMessage::VizMessage_ActuatorSettings* actuatorsettings);
-
   // double ambient = 1;
   void clear_ambient();
   static const int kAmbientFieldNumber = 1;
@@ -2436,11 +2439,11 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PointLine > pointlines_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_KeepOutInCone > keepoutincones_;
+  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings > actuatorsettings_;
   ::google::protobuf::internal::ArenaStringPtr skybox_;
   ::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone_;
   ::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo_;
   ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera_;
-  ::vizProtobufferMessage::VizMessage_ActuatorSettings* actuatorsettings_;
   double ambient_;
   ::google::protobuf::int32 orbitlineson_;
   ::google::protobuf::int32 spacecraftcson_;
@@ -4961,54 +4964,34 @@ inline void VizMessage_VizSettingsPb::set_allocated_planetcamera(::vizProtobuffe
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
 }
 
-// .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
-inline bool VizMessage_VizSettingsPb::has_actuatorsettings() const {
-  return this != internal_default_instance() && actuatorsettings_ != NULL;
+// repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
+inline int VizMessage_VizSettingsPb::actuatorsettings_size() const {
+  return actuatorsettings_.size();
 }
 inline void VizMessage_VizSettingsPb::clear_actuatorsettings() {
-  if (GetArenaNoVirtual() == NULL && actuatorsettings_ != NULL) {
-    delete actuatorsettings_;
-  }
-  actuatorsettings_ = NULL;
+  actuatorsettings_.Clear();
 }
-inline const ::vizProtobufferMessage::VizMessage_ActuatorSettings& VizMessage_VizSettingsPb::actuatorsettings() const {
-  const ::vizProtobufferMessage::VizMessage_ActuatorSettings* p = actuatorsettings_;
+inline const ::vizProtobufferMessage::VizMessage_ActuatorSettings& VizMessage_VizSettingsPb::actuatorsettings(int index) const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.actuatorSettings)
-  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_ActuatorSettings*>(
-      &::vizProtobufferMessage::_VizMessage_ActuatorSettings_default_instance_);
+  return actuatorsettings_.Get(index);
 }
-inline ::vizProtobufferMessage::VizMessage_ActuatorSettings* VizMessage_VizSettingsPb::release_actuatorsettings() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.actuatorSettings)
-  
-  ::vizProtobufferMessage::VizMessage_ActuatorSettings* temp = actuatorsettings_;
-  actuatorsettings_ = NULL;
-  return temp;
-}
-inline ::vizProtobufferMessage::VizMessage_ActuatorSettings* VizMessage_VizSettingsPb::mutable_actuatorsettings() {
-  
-  if (actuatorsettings_ == NULL) {
-    actuatorsettings_ = new ::vizProtobufferMessage::VizMessage_ActuatorSettings;
-  }
+inline ::vizProtobufferMessage::VizMessage_ActuatorSettings* VizMessage_VizSettingsPb::mutable_actuatorsettings(int index) {
   // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.actuatorSettings)
-  return actuatorsettings_;
+  return actuatorsettings_.Mutable(index);
 }
-inline void VizMessage_VizSettingsPb::set_allocated_actuatorsettings(::vizProtobufferMessage::VizMessage_ActuatorSettings* actuatorsettings) {
-  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == NULL) {
-    delete actuatorsettings_;
-  }
-  if (actuatorsettings) {
-    ::google::protobuf::Arena* submessage_arena = NULL;
-    if (message_arena != submessage_arena) {
-      actuatorsettings = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, actuatorsettings, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  actuatorsettings_ = actuatorsettings;
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.actuatorSettings)
+inline ::vizProtobufferMessage::VizMessage_ActuatorSettings* VizMessage_VizSettingsPb::add_actuatorsettings() {
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.VizSettingsPb.actuatorSettings)
+  return actuatorsettings_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings >*
+VizMessage_VizSettingsPb::mutable_actuatorsettings() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.actuatorSettings)
+  return &actuatorsettings_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings >&
+VizMessage_VizSettingsPb::actuatorsettings() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.actuatorSettings)
+  return actuatorsettings_;
 }
 
 // string skybox = 11;

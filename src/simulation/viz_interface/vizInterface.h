@@ -80,16 +80,26 @@ typedef struct {
 }CameraSettings;
 
 typedef struct {
+    std::string spacecraftName; //!< Which spacecraft's camera 1
+    int viewThrusterPanel;
+    int viewThrusterHUD;
+    int viewRWPanel;
+    int viewRWHUD;
+}ActuatorGuiSettings;
+
+typedef struct {
     double      ambient;        //!< [-] Ambient background lighting. Should be a value between 0 and 8.  A value of -1 means it is not set.
-    int32_t     orbitLinesOn;   // toogle for showing orbit lines (-1, 0, 1)
-    int32_t     spacecraftCSon; // toogle for showing spacecraft CS (-1, 0, 1)
-    int32_t     planetCSon;     // toogle for showing planet CS (-1, 0, 1)
-    std::vector<PointLine> pointLineList;   // vector of powerLine structures
-    std::vector<KeepOutInCone> coneList;    // vector of keep in/out cones
-    CameraSettings cameraOne;   // msg containing camera one settings
-    CameraSettings cameraTwo;   // msg containing camera one settings
-    CameraSettings cameraPlanet;// msg containing the planet camera settings
-    bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted
+    int32_t     orbitLinesOn;   //! toogle for showing orbit lines (-1, 0, 1)
+    int32_t     spacecraftCSon; //! toogle for showing spacecraft CS (-1, 0, 1)
+    int32_t     planetCSon;     //! toogle for showing planet CS (-1, 0, 1)
+    std::vector<PointLine> pointLineList;   //! vector of powerLine structures
+    std::vector<KeepOutInCone> coneList;    //! vector of keep in/out cones
+    CameraSettings cameraOne;   //! msg containing camera one settings
+    CameraSettings cameraTwo;   //! msg containing camera one settings
+    CameraSettings cameraPlanet;//! msg containing the planet camera settings
+    std::vector<ActuatorGuiSettings> actuatorGuiSettingsList; //! msg containing the flags on displaying the actuator GUI elements
+    std::string skyBox;         //! string containing the star field options, '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
+    bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,
 }VizSettings;
 
 /*! @brief Abstract class that is used to implement an effector impacting a GRAVITY body

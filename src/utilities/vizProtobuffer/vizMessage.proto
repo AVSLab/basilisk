@@ -143,7 +143,7 @@ message VizMessage{
         CameraOneSettings cameraOne = 7;
         CameraTwoSettings cameraTwo = 8;
         PlanetCameraSettings planetCamera = 9;
-        ActuatorSettings actuatorSettings = 10;
+        repeated ActuatorSettings actuatorSettings = 10;
         string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
 
     }

@@ -97,6 +97,66 @@ def createPointLine(viz, **kwargs):
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
 
+
+actuatorGuiSettingList = []
+def setActuatorGuiSetting(viz, **kwargs):
+    vizElement = vizInterface.ActuatorGuiSettings()
+
+    unitTestSupport.checkMethodKeyword(
+        ['spacecraftName', 'viewThrusterPanel', 'viewThrusterHUD', 'viewRWPanel', 'viewRWHUD'],
+        kwargs)
+
+    if 'spacecraftName' in kwargs:
+        scName = kwargs['spacecraftName']
+        if not isinstance(scName, basestring):
+            print('ERROR: spacecraftName must be a string')
+            exit(1)
+        vizElement.spacecraftName = scName
+    else:
+        vizElement.spacecraftName = viz.spacecraftName
+
+    if 'viewThrusterPanel' in kwargs:
+        setting = kwargs['viewThrusterPanel']
+        if not isinstance(setting, bool):
+            print('ERROR: viewThrusterPanel must be True or False')
+            exit(1)
+        vizElement.viewThrusterPanel = setting
+    else:
+        vizElement.viewThrusterPanel = -1
+
+    if 'viewThrusterHUD' in kwargs:
+        setting = kwargs['viewThrusterHUD']
+        if not isinstance(setting, bool):
+            print('ERROR: viewThrusterHUD must be True or False')
+            exit(1)
+        vizElement.viewThrusterHUD = setting
+    else:
+        vizElement.viewThrusterHUD = -1
+
+    if 'viewRWPanel' in kwargs:
+        setting = kwargs['viewRWPanel']
+        if not isinstance(setting, bool):
+            print('ERROR: viewRWPanel must be True or False')
+            exit(1)
+        vizElement.viewRWPanel = setting
+    else:
+        vizElement.viewRWPanel = -1
+
+    if 'viewRWHUD' in kwargs:
+        setting = kwargs['viewRWHUD']
+        if not isinstance(setting, bool):
+            print('ERROR: viewRWHUD must be an integer value')
+            exit(1)
+        vizElement.viewRWHUD = setting
+    else:
+        vizElement.viewRWHUD = -1
+
+    actuatorGuiSettingList.append(vizElement)
+    del viz.settings.actuatorGuiSettingsList[:]  # clear settings list to replace it with updated list
+    viz.settings.actuatorGuiSettingsList = vizInterface.ActuatorGuiSettingsConfig(actuatorGuiSettingList)
+    return
+
+
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
     vizElement = vizInterface.KeepOutInCone()
@@ -288,6 +348,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
     # clear the list of point line elements
     del pointLineList[:]
+    del actuatorGuiSettingList[:]
     del coneInOutList[:]
 
     unitTestSupport.checkMethodKeyword(
