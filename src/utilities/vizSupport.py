@@ -63,6 +63,10 @@ pointLineList = []
 def createPointLine(viz, **kwargs):
     vizElement = vizInterface.PointLine()
 
+    unitTestSupport.checkMethodKeyword(
+        ['fromBodyName', 'toBodyName', 'lineColor'],
+        kwargs)
+
     if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
         if not isinstance(fromName, basestring):
@@ -96,6 +100,11 @@ def createPointLine(viz, **kwargs):
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
     vizElement = vizInterface.KeepOutInCone()
+
+    unitTestSupport.checkMethodKeyword(
+        ['fromBodyName', 'toBodyName', 'coneColor', 'isKeepIn', 'position_B', 'normalVector_B',
+         'incidenceAngle', 'coneHeight', 'coneName'],
+        kwargs)
 
     if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
@@ -196,6 +205,10 @@ def createCameraViewPanel(viz, camName, **kwargs):
         print('ERROR: camera name ' + camName + ' is not know.  Supported camera names are One, Two and Planet')
         exit(1)
 
+    unitTestSupport.checkMethodKeyword(
+        ['spacecraftName', 'viewPanel', 'setView', 'spacecraftVisible', 'fieldOfView', 'targetBodyName'],
+        kwargs)
+
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
         if not isinstance(scName, basestring):
@@ -275,6 +288,11 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
     # clear the list of point line elements
     del pointLineList[:]
+    del coneInOutList[:]
+
+    unitTestSupport.checkMethodKeyword(
+        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices'],
+        kwargs)
 
     # setup the Vizard interface module
     vizMessenger = vizInterface.VizInterface()

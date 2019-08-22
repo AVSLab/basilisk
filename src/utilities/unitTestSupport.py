@@ -475,3 +475,14 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     epochMsg.seconds = datetime_object.second + datetime_object.microsecond / 1e6
 
     return epochMsg
+
+
+#
+#   loop through list of method keyword arguments and make sure that an approved keyword is used.
+#
+def checkMethodKeyword(karglist, kwargs):
+    for key in kwargs:
+        if key not in karglist:
+            print('ERROR: you tried to use an incorrect keyword ' + key + '. Options include:')
+            print(karglist)
+            exit(1)
