@@ -123,28 +123,12 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
-    msg = pixelLineBiasUKF.OpNavFswMsg()
-    msg.r_N = [300, 200, 100]
+    msg = pixelLineBiasUKF.CirclesOpNavMsg()
+    msg.circlesCenters = [100, 200]
+    msg.circlesRadii = [100]
+    data.cirlcesInMsg = msg
     data.planetId = 2
-    data.opNavInMsg = msg
     data.countHalfSPs = len(state)
-
-    Covar = np.eye(len(state))
-    SPexp = np.zeros([len(state), 2*len(state)+1])
-    SPexp[:,0] = np.array(state)
-    for i in range(1, len(state)+1):
-        SPexp[:,i] = np.array(state) + Covar[:,i-1]
-        SPexp[:, i+len(state)] = np.array(state) - Covar[:,i-1]
-
-
-    data.SP =  np.transpose(SPexp).flatten().tolist()
-    pixelLineBiasUKF.pixelLineBiasUKFMeasModel(data)
-
-    measurements = data.yMeas
-
-    if np.linalg.norm(np.array(measurements) - np.transpose(SPexp[0:3,:]).flatten()) > 1.0E-15:
-        testFailCount += 1
-        testMessages.append("Measurement Model Failure")
 
     # Dynamics Model Test
     data.planetId = 2
@@ -153,7 +137,7 @@ def relOD_method_test(show_plots):
     for i in range(len(state)):
         pixelLineBiasUKF.doubleArray_setitem(stateIn, i, state[i])
 
-    pixelLineBiasUKF.pixelLineBiasUKFTwoBodyDyn(data, stateIn, dt)
+    pixelLineBiasUKF.relODStateProp(data, stateIn, dt)
 
     propedState = []
     for i in range(len(state)):
@@ -345,6 +329,10 @@ def StatePropRelOD(show_plots):
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "relodSuKF"
 
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    setupFilterData(moduleConfig)
+
     # Create the input messages.
     inputCamera = pixelLineBiasUKF.CameraConfigMsg()
     inputAtt = pixelLineBiasUKF.NavAttIntMsg()
@@ -354,17 +342,12 @@ def StatePropRelOD(show_plots):
     inputCamera.sensorSize = [10, 10]  # In mm
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLineBiasUKF.cameraConfigMsgName, inputCamera)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.cameraConfigMsgName, inputCamera)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLineBiasUKF.attInMsgName, inputAtt)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.attInMsgName, inputAtt)
 
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-
-    setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
     timeSim = 60
@@ -375,13 +358,13 @@ def StatePropRelOD(show_plots):
     time = np.linspace(0,timeSim*60,timeSim*60/dt+1)
     dydt = np.zeros(len(state))
     energy = np.zeros(len(time))
-    expected=np.zeros([len(time), 7])
+    expected=np.zeros([len(time), len(state)+1])
     expected[0,1:] = moduleConfig.stateInit
     mu = 42828.314*1E9
-    energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
+    energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:7]).a)
     expected = rk4(twoBodyGrav, time, moduleConfig.stateInit)
     for i in range(1, len(time)):
-        energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
+        energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:7]).a)
 
     stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(len(state)))
     covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(len(state) * len(state)))
@@ -411,6 +394,6 @@ def StatePropRelOD(show_plots):
 
 
 if __name__ == "__main__":
-    # relOD_method_test(True)
+    relOD_method_test(True)
     # StatePropRelOD(True)
-    StateUpdateRelOD(True)
+    # StateUpdateRelOD(True)
