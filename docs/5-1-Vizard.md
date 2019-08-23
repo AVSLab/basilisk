@@ -11,6 +11,9 @@ The Vizard Unity-based Basilisk visualization is able to display in a three-dime
 
 In the above Vizard window interface illustration, the slider on the lower-left allows the user to skim forwards and backwards through the simulation data.  The Play/Pause button at the bottom-center allows for the Visualization to be paused and resumed.  The +/- buttons on the lower-right allow the simulation to speed and and slow down.  Note that with 1x the visualization is moving through the data with 1 frame per simulation time step.  To see a [video](https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4) of the interface, click on the image above.
 
+## Installing Vizard
+The application can be downloaded as a complete binary file from the [Overview](http://hanspeterschaub.info/bskMain.html) page.
+
 ## Vizard Startup
 When starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above.  There is an option on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key.  Note that the Vizard screen size can be dynamically changed after startup as well.
 \image html Images/doc/vizard-img0.png "Vizard Startup Panel" width=300px
