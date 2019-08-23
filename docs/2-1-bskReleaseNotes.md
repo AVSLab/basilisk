@@ -15,6 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 ## Upcoming Version 0.X.X
 <ul>
     <li>Added a new kind of dispersion for Monte Carlos which disperses the orbit with classic orbital elements instead of cartesian postion and velocity. </li>
+    <li>Added a new module that provides the Earth atmospheric neutral density using the MSIS model.</li>
 </ul>
 
 ## Version 0.8.0
