@@ -10,8 +10,8 @@
 
     <tab type="user" url="@ref bskSupport" visible="yes" title="Support"/>
 
-    <tab type="user" url="@ref bskManual" visible="yes" title="Manual"/>
-    <tab type="modules" visible="yes" title="Documentation" intro="This page contains documentation for the C++ and C
+    <tab type="user" url="@ref bskTutorials" visible="yes" title="Tutorials"/>
+    <tab type="modules" visible="yes" title="Modules" intro="This page contains documentation for the C++ and C
 Basilisk modules.  The links provide information about modules, classes, methods used, as well as message declarations."/>
 
     <tab type="namespaces" visible="no" title="">

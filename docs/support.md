@@ -16,7 +16,8 @@
 - @ref FAQ                  "General Questions"
 - @ref FAQmacOS             "macOS Specific Questions"
 - [Basilisk Forum](https://hanspeterschaub.info/bskGoogleForum.html)
-
+- @ref useDoxygen           "How to build the Doxygen HTML documentation"
+- @ref migratingToPython3   "Migrating BSK Python 2 script to support
 
 @section chCoding Code Development Support
 The documentation on how to program custom Basilisk modules is still sparse.  For now the reader is encouraged to study existing Basilisk modules to learn how to program new modules.

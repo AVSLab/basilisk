@@ -1,7 +1,7 @@
 
 
 
-@page bskManual Basilisk Manual
+@page bskTutorials Basilisk Tutorials
 @tableofcontents
 
 
