@@ -42,7 +42,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 
-## \defgroup scenarioFuelSloshGroup
+## \page scenarioFuelSloshGroup
 ## @{
 ## Demonstration of basic 6-DOF orbit and fuel slosh simulation setup.
 #

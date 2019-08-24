@@ -61,7 +61,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioAttitudePointingGroup
+## \page scenarioAttitudePointingGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble without translational motion.
 #

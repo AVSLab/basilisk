@@ -63,7 +63,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 # run and does not prove the functionality of any of the modules used.
 
 
-## \defgroup scenarioHingedRigidBodyGroup
+## \page scenarioHingedRigidBodyGroup
 ## @{
 ## Demonstrates setting up hinged panels on a rigid spacecraft hub
 #

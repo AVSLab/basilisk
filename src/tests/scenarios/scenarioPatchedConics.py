@@ -38,7 +38,7 @@ from Basilisk.simulation import spacecraftPlus, simMessages, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 
 
-## \defgroup scenarioPatchedConicGroup
+## \page scenarioPatchedConicGroup
 ## @{
 ## Simulating a patched conic trajectory solution using a continuous integration with multiple gravity bodies.
 #

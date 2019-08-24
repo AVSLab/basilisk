@@ -1,4 +1,4 @@
-# Creating the HTML Basilisk Documentation using Doxygen
+# Creating the HTML Basilisk Documentation using Doxygen {#useDoxygen}
 
 
 ## Doxygen Documentation

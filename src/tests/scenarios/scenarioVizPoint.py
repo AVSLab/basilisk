@@ -60,7 +60,7 @@ from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import vizSupport
 
 
-## \defgroup scenarioVizPointGroup
+## \page scenarioVizPointGroup
 ## @{
 ## Demonstration the viz/camera capabilities.
 #

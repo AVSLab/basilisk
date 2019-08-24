@@ -54,7 +54,7 @@ from Basilisk.utilities import vizSupport
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioCentralBodyGroup
+## \page scenarioCentralBodyGroup
 ## @{
 ## Demonstration of using planetStates.planetPositionVelocity and isCentralBody to set
 ## spacecraft initial states in an absolute or relative frame

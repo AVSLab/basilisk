@@ -67,7 +67,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-## \defgroup scenarioAttitudeFeedback2TGroup
+## \page scenarioAttitudeFeedback2TGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling, but uses 2 separate threads.

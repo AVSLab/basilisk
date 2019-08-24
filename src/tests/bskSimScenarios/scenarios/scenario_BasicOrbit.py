@@ -19,7 +19,7 @@
 '''
 
 
-## \defgroup scenario_BasicOrbitGroup
+## \page scenario_BasicOrbitGroup
 ## @{
 # Demonstrates how to create a 3-DOF spacecraft which is orbiting Earth using the BSK_Sim architecture.
 #

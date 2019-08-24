@@ -50,7 +50,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 
-## \defgroup scenarioCSSGroup
+## \page scenarioCSSGroup
 ##   @{
 ## Demonstrates how to add a Coarse Sun Sensor (CSS) sensor to a spacecraft.
 #

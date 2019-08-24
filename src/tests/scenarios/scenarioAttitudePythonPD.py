@@ -73,7 +73,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioAttitudePythonPDGroup
+## \page scenarioAttitudePythonPDGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling, but uses 3 separate threads, one of them python.
@@ -526,7 +526,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     return dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW
 
 
-## \addtogroup scenarioAttitudePythonPDGroup
+## \page scenarioAttitudePythonPDGroup
 ##   @{
 # ====
 #

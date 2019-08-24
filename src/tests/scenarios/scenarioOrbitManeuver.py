@@ -55,7 +55,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioOrbitManeuverGroup
+## \page scenarioOrbitManeuverGroup
 ## @{
 ## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
 #

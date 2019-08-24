@@ -159,7 +159,7 @@ def setupSuKFData(filterObject):
     filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
 
 
-## \defgroup scenarioCSSFiltersGroup
+## \page scenarioCSSFiltersGroup
 ##   @{
 ## Demonstrates how Estimate spacecraft attitude using Coarse Sun Sensors Filters.
 #

@@ -120,7 +120,7 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
     plt.xlabel('Time [min]')
     plt.ylabel('OnTimeRequest [sec]')
 
-## \defgroup scenarioAttitudeFeedback2T_THGroup
+## \page scenarioAttitudeFeedback2T_THGroup
 ## @{
 # Demonstrates how to use thrusters to stabilize the tumble of a spacecraft orbiting the
 # Earth, using two separate threads.

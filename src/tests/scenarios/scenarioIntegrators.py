@@ -54,7 +54,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \defgroup scenarioIntegratorsGroup
+## \page scenarioIntegratorsGroup
 ##   @{
 ## How to setup different integration methods for a basic 3-DOF orbit scenario.
 #
