@@ -468,6 +468,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         // define actuator GUI settings
         for (int idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
+            al->set_spacecraftname(this->settings.actuatorGuiSettingsList[idx].spacecraftName);
             al->set_viewthrusterpanel(this->settings.actuatorGuiSettingsList[idx].viewThrusterPanel);
             al->set_viewthrusterhud(this->settings.actuatorGuiSettingsList[idx].viewThrusterHUD);
             al->set_viewrwpanel(this->settings.actuatorGuiSettingsList[idx].viewRWPanel);
