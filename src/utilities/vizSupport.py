@@ -340,6 +340,125 @@ def createCameraViewPanel(viz, camName, **kwargs):
     return
 
 
+def createCameraConfigMsg(viz, **kwargs):
+    unitTestSupport.checkMethodKeyword(
+        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'focalLength', 'sensorSize', 'cameraPos_B', 'sigma_CB', 'skyBox'],
+        kwargs)
+
+    if 'cameraID' in kwargs:
+        val = kwargs['cameraID']
+        if not isinstance(val, int) or val < 0:
+            print('ERROR: cameraID must be non-negative integer value.')
+            exit(1)
+        viz.cameraConfigMessage.cameraID = val
+    else:
+        print('ERROR: cameraID must be defined in createCameraConfigMsg()')
+        exit(1)
+
+    if 'parentName' in kwargs:
+        val = kwargs['parentName']
+        if not isinstance(val, basestring):
+            print('ERROR: parentName must be a string')
+            exit(1)
+        viz.cameraConfigMessage.parentName = val
+    else:
+        viz.cameraConfigMessage.parentName = viz.spacecraftName
+
+    if 'fieldOfView' in kwargs:
+        val = kwargs['fieldOfView']
+        if not isinstance(val, float):
+            print('ERROR: fieldOfView must be a float')
+            exit(1)
+        viz.cameraConfigMessage.fieldOfView = val
+    else:
+        print('ERROR: fieldOfView must be defined in createCameraConfigMsg()')
+        exit(1)
+
+    if 'resolution' in kwargs:
+        val = kwargs['resolution']
+        if not isinstance(val, list):
+            print('ERROR: resolution must be a list')
+            exit(1)
+        if len(val) != 2:
+            print('ERROR: resolution list ' + str(val) + 'must be of length 2')
+            exit(1)
+        if not isinstance(val[0], int) or not isinstance(val[1], int):
+            print('ERROR: resolution list ' + str(val) + ' must contain integers')
+            exit(1)
+        viz.cameraConfigMessage.resolution = val
+    else:
+        print('ERROR: resolution must be defined in createCameraConfigMsg()')
+        exit(1)
+
+    if 'renderRate' in kwargs:
+        val = kwargs['renderRate']
+        if not isinstance(val, int) or val <= 0:
+            print('ERROR: renderRate ' + str(val) + ' must be positive integer value.')
+            exit(1)
+        viz.cameraConfigMessage.renderRate = val
+    else:
+        print('ERROR: renderRate must be defined in createCameraConfigMsg()')
+        exit(1)
+
+    if 'sensorSize' in kwargs:
+        val = kwargs['sensorSize']
+        if not isinstance(val, list):
+            print('ERROR: sensorSize must be a list')
+            exit(1)
+        if len(val) != 2:
+            print('ERROR: sensorSize list ' + str(val) + 'must be of length 2')
+            exit(1)
+        if not isinstance(val[0], float) or not isinstance(val[1], float):
+            print('ERROR: sensorSize list ' + str(val) + ' must contain floats')
+            exit(1)
+        viz.cameraConfigMessage.sensorSize = val
+    else:
+        print('ERROR: sensorSize must be defined in createCameraConfigMsg()')
+        exit(1)
+
+    if 'cameraPos_B' in kwargs:
+        val = kwargs['cameraPos_B']
+        if not isinstance(val, list):
+            print('ERROR: cameraPos_B must be a list')
+            exit(1)
+        if len(val) != 3:
+            print('ERROR: cameraPos_B list ' + str(val) + 'must be of length 3')
+            exit(1)
+        if not isinstance(val[0], float) or not isinstance(val[1], float) or not isinstance(val[2], float):
+            print('ERROR: cameraPos_B list ' + str(val) + ' must contain floats')
+            exit(1)
+        viz.cameraConfigMessage.cameraPos_B = val
+    else:
+        print('ERROR: cameraPos_B must be defined in createCameraConfigMsg()')
+        exit(1)
+
+    if 'sigma_CB' in kwargs:
+        val = kwargs['sigma_CB']
+        if not isinstance(val, list):
+            print('ERROR: sigma_CB must be a list')
+            exit(1)
+        if len(val) != 3:
+            print('ERROR: camersigma_CBaPos_B list ' + str(val) + 'must be of length 3')
+            exit(1)
+        if not isinstance(val[0], float) or not isinstance(val[1], float) or not isinstance(val[2], float):
+            print('ERROR: sigma_CB list ' + str(val) + ' must contain floats')
+            exit(1)
+        viz.cameraConfigMessage.sigma_CB = val
+    else:
+        print('ERROR: sigma_CB must be defined in createCameraConfigMsg()')
+        exit(1)
+
+    if 'skyBox' in kwargs:
+        val = kwargs['skyBox']
+        if not isinstance(val, basestring):
+            print('ERROR: skyBox must be a string')
+            exit(1)
+        viz.cameraConfigMessage.skyBox = val
+    else:
+        viz.cameraConfigMessage.skyBox = ""
+
+    return
+
 
 def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     if not vizFound:

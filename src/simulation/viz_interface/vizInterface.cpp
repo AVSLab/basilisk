@@ -78,6 +78,10 @@ VizInterface::VizInterface()
     this->settings.cameraPlanet.fieldOfView = -1.0;
     this->settings.cameraPlanet.targetBodyName = "";
 
+    memset(&this->cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
+    this->cameraConfigMessage.cameraID = -1;
+    strcpy(this->cameraConfigMessage.skyBox, "");
+
     return;
 }
 
@@ -557,7 +561,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
         
         /*! Write camera output msg */
-        if (cameraConfMsgId.msgID != -1 && cameraConfMsgId.dataFresh){
+        if ((this->cameraConfMsgId.msgID != -1 && this->cameraConfMsgId.dataFresh)
+            || this->cameraConfigMessage.cameraID >= 0){
             /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
             double sigma_CuC[3], sigma_BCu[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
             v3Scale(-1, this->cameraConfigMessage.sigma_CB, sigma_BCu);
@@ -567,14 +572,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (int j=0; j<3; j++){
                 if (j < 2){
                 camera->add_resolution(this->cameraConfigMessage.resolution[j]);
-                camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]);
+                camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]*1000.);  // Unity expects millimeter
                 }
                 camera->add_cameradir_b(unityCameraMRP[j]);
                 camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
             camera->set_renderrate(this->cameraConfigMessage.renderRate);
             camera->set_cameraid(this->cameraConfigMessage.cameraID);
-            camera->set_fieldofview(this->cameraConfigMessage.fieldOfView);
+            camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees 
+            camera->set_skybox(this->cameraConfigMessage.skyBox);
+            camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2.*1e-3/tan(this->cameraConfigMessage.fieldOfView));
         }
+
+
         
         // Write CSS output msg
         //if (cssConfInMsgId != -1 and cssConfInMsgId != -1){

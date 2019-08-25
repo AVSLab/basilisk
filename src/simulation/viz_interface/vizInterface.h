@@ -146,6 +146,9 @@ public:
     int numThr;                               //! [-] Number of Thrusters set in python
     VizSettings settings;                     //! [-] container for the Viz settings that can be specified from BSK
 
+    CameraConfigMsg cameraConfigMessage;          //! [-] camera config message copy
+
+
 private:
     // ZeroMQ State
     void* context;
@@ -169,7 +172,6 @@ private:
     SCPlusStatesSimMsg scPlusMessage;         //! [-] s/c plus message
 //    CSSArraySensorIntMsg cssDataMessage;          //! [-] CSS message
     CSSConfigFswMsg cssConfigMessage;          //! [-] CSS config
-    CameraConfigMsg cameraConfigMessage;          //! [-] CSS config
     std::ofstream *outputStream;                       //! [-] Output file stream opened in reset
     
     std::map<uint32_t, SpicePlanetStateSimMsg> planetData; //!< -- Internal vector of planets

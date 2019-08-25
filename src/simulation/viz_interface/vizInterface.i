@@ -34,6 +34,7 @@ namespace std {
 }
 
 %include "vizInterface.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
 GEN_SIZEOF(ThrClusterMap);
 
 %pythoncode %{
