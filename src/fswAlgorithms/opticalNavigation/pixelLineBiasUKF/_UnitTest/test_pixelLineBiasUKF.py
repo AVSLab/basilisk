@@ -24,7 +24,7 @@ import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, unitTestSupport
 from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
-
+from Basilisk.utilities import RigidBodyKinematics as rbk
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
 
@@ -66,7 +66,7 @@ def setupFilterData(filterObject):
 
     mu = 42828.314*1E9 #m^3/s^2
     elementsInit = orbitalMotion.ClassicElements()
-    elementsInit.a = 4000*1E3 #m
+    elementsInit.a = 8000*1E3 #m
     elementsInit.e = 0.2
     elementsInit.i = 10
     elementsInit.Omega = 0.001
@@ -103,9 +103,6 @@ def test_methods_kf(show_plots):
     assert testResults < 1, testMessage
 def test_propagation_kf(show_plots):
     [testResults, testMessage] = StatePropRelOD(show_plots)
-    assert testResults < 1, testMessage
-def test_measurements_kf(show_plots):
-    [testResults, testMessage] = StateUpdateRelOD(show_plots)
     assert testResults < 1, testMessage
 
 
@@ -150,156 +147,6 @@ def relOD_method_test(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def StateUpdateRelOD(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
-
-    # Create test thread
-    dt = 1
-    t1 = 250
-    multT1 = 8
-    state = [250, 32000, 1000, 5, 3, 2, 1, 1, 1]
-
-    testProcessRate = macros.sec2nano(dt)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
-    # Construct algorithm and associated C++ container
-    moduleConfig = pixelLineBiasUKF.PixelLineBiasUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "relodSuKF"
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-
-    setupFilterData(moduleConfig)
-    unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
-
-    # Create the input messages.
-    inputCamera = pixelLineBiasUKF.CameraConfigMsg()
-    inputCircles = pixelLineBiasUKF.CirclesOpNavMsg()
-    inputAtt = pixelLineBiasUKF.NavAttIntMsg()
-
-    # Set camera
-    inputCamera.focalLength = 1.
-    inputCamera.sensorSize = [10, 10]  # In mm
-    inputCamera.resolution = [512, 512]
-    inputCamera.sigma_CB = [1., 0.3, 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.cameraConfigMsgName, inputCamera)
-
-    # Set attitude
-    inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.attInMsgName, inputAtt)
-
-
-    time = np.linspace(0,multT1*t1,multT1*t1/dt+1)
-    dydt = np.zeros(len(state))
-    energy = np.zeros(len(time))
-    expected=np.zeros([len(time), len(state)+1])
-    expected[0,1:] = moduleConfig.stateInit
-    mu = 42828.314*1E9
-    energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:7]).a)
-
-    kick = np.array([0.,0.,0.,-0.01, 0.01, 0.02, 0.,0.,0.]) * 10 *1E3
-
-    expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], moduleConfig.stateInit)
-    expected[t1:multT1*t1+1,:] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1,1:] + kick)
-    for i in range(1, len(time)):
-        energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:7]).a)
-
-    # Set circles
-    inputCircles.circlesCenters = [152, 251]
-    inputCircles.circlesRadii = [75]
-    inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
-    inputCircles.timeTag = 12345
-    inputCircles.valid = 1
-    inputCircles.planetIds = [2]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.circlesInMsgName, inputCircles)
-
-    inputCircles.circlesCenters = expected[0,1:4]
-
-    unitTestSim.InitializeSimulation()
-    for i in range(t1):
-        if i > 0 and i % 50 == 0:
-            inputCircles.timeTag = macros.sec2nano(i * dt)
-            inputCircles.circlesCenters = expected[i,1:4] + np.random.normal(0, 5*1E-2, 3)
-            inputCircles.circlesRadii = [1]
-            inputCircles.valid = 1
-            inputCircles.uncertainty = [5.*1E-2, 0.,0.,
-                                 0., 5.*1E-2, 0.,
-                                 0., 0., 5.*1E-2]
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.circlesInMsgName,
-                                                  inputCircles.getStructSize(),
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputCircles)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
-        unitTestSim.ExecuteSimulation()
-
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(len(state) * len(state)))
-
-    for i in range(len(state)):
-        if (covarLog[t1, i * len(state) + 1 + i] > covarLog[0, i * len(state) + 1 + i] / 100):
-            testFailCount += 1
-            testMessages.append("Covariance update failure at " + str(t1))
-
-    for i in range(t1, multT1*t1):
-        if i % 50 == 0:
-            inputCircles.timeTag = macros.sec2nano(i * dt)
-            inputCircles.circlesCenters = expected[i,1:4] + np.random.normal(0, 5*1E-2, 3)
-            inputCircles.circlesRadii = [1]
-            inputCircles.valid = 1
-            inputCircles.uncertainty = [5.*1E-2, 0.,0.,
-                                 0., 5.*1E-2, 0.,
-                                 0., 0., 5.*1E-2]
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.circlesInMsgName,
-                                                  inputCircles.getStructSize(),
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputCircles)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
-        unitTestSim.ExecuteSimulation()
-
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(len(state)))
-    stateErrorLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".stateError", range(len(state)))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(len(state) * len(state)))
-
-    diff = np.copy(stateLog)
-    diff[:,1:]-=expected[:,1:]
-    FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
-    FilterPlots.StatePlot(diff, 'Update', show_plots)
-    FilterPlots.plot_TwoOrbits(expected[:,0:4], stateLog[:,0:4])
-    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5*1E-2*1E6), 'Update', show_plots)
-
-    for i in range(len(state)):
-        if (covarLog[t1*multT1, i * len(state) + 1 + i] > covarLog[0, i * len(state) + 1 + i] / 100):
-            testFailCount += 1
-            testMessages.append("Covariance update failure at " + str(t1*multT1))
-
-    if (np.linalg.norm(diff[-1, 1:]/expected[-1,1:]) > 1.0E-1):
-        testFailCount += 1
-        testMessages.append("State propagation failure")
-
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
 
 def StatePropRelOD(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -338,7 +185,7 @@ def StatePropRelOD(show_plots):
     inputAtt = pixelLineBiasUKF.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 1.
+    inputCamera.focalLength = 0.01
     inputCamera.sensorSize = [10, 10]  # In mm
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
@@ -356,9 +203,9 @@ def StatePropRelOD(show_plots):
     unitTestSim.ExecuteSimulation()
 
     time = np.linspace(0,timeSim*60,timeSim*60/dt+1)
-    dydt = np.zeros(len(state))
+    dydt = np.zeros(len(moduleConfig.stateInit))
     energy = np.zeros(len(time))
-    expected=np.zeros([len(time), len(state)+1])
+    expected=np.zeros([len(time), len(moduleConfig.stateInit)+1])
     expected[0,1:] = moduleConfig.stateInit
     mu = 42828.314*1E9
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:7]).a)
@@ -366,8 +213,8 @@ def StatePropRelOD(show_plots):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:7]).a)
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(len(state)))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(len(state) * len(state)))
+    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(len(moduleConfig.stateInit)))
+    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(len(moduleConfig.stateInit) * len(moduleConfig.stateInit)))
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -386,7 +233,7 @@ def StatePropRelOD(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -394,6 +241,5 @@ def StatePropRelOD(show_plots):
 
 
 if __name__ == "__main__":
-    relOD_method_test(True)
+    # relOD_method_test(True)
     # StatePropRelOD(True)
-    # StateUpdateRelOD(True)
