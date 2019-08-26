@@ -15,6 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 ## Upcoming Version 0.X.X
 <ul>
     <li>Updated the MD help file on how to compile from the command line enironment using a custom configuration of Python.</li>
+     <li>Created new optical navigation filter that estimates bias in the measurements. This filter takes in pixel and line data directly.</li>
 </ul>
 
 ## Version 0.8.1
