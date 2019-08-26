@@ -102,6 +102,8 @@ typedef struct {
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     
     CirclesOpNavMsg cirlcesInMsg; //!< [-] ST sensor data read in from message bus
+    CameraConfigMsg cameraSpecs;  //!< [-] Camera specs for nav
+    NavAttIntMsg attInfo;         //!< [-] Att info for frame transformation
     int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
     int32_t circlesInMsgId;     //!< [-] Id for the incoming mass properties message

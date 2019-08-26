@@ -23,7 +23,7 @@ import pytest
 import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, unitTestSupport
-from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms.pixelLineBiasUKF import pixelLineBiasUKF  # import the module that is to be tested
 from Basilisk.utilities import RigidBodyKinematics as rbk
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
@@ -116,6 +116,7 @@ def relOD_method_test(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     state = [250, 32000, 1000, 5, 3, 2, 1, 1, 1]
+    covar = 10* np.eye(len(state))
     dt = 10
     mu = 42828.314
     # Measurement Model Test
@@ -123,9 +124,11 @@ def relOD_method_test(show_plots):
     msg = pixelLineBiasUKF.CirclesOpNavMsg()
     msg.circlesCenters = [100, 200]
     msg.circlesRadii = [100]
+    msg.planetIds = [2]
     data.cirlcesInMsg = msg
     data.planetId = 2
     data.countHalfSPs = len(state)
+    data.numStates = len(state)
 
     # Dynamics Model Test
     data.planetId = 2
@@ -144,6 +147,87 @@ def relOD_method_test(show_plots):
     if np.linalg.norm((np.array(propedState) - expected[-1,1:])/(expected[-1,1:])) > 1.0E-15:
         testFailCount += 1
         testMessages.append("State Prop Failure")
+
+    # Set up a measurement test
+    data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
+    # Set up a circle input message
+    msg = pixelLineBiasUKF.CirclesOpNavMsg()
+    msg.circlesCenters = [100, 200]
+    msg.circlesRadii = [100]
+    msg.planetIds = [2]
+    data.cirlcesInMsg = msg
+    data.planetId = 2
+    data.countHalfSPs = len(state)
+    data.numStates = len(state)
+
+    # Set up attitud message
+    att = pixelLineBiasUKF.NavAttIntMsg()
+    att.sigma_BN = [0, 0.2,-0.1]
+    att.omega_BN_B = [0.,0.,0.]
+    data.attInfo = att
+
+    # Set up a camera message
+    cam = pixelLineBiasUKF.CameraConfigMsg()
+    cam.sigma_CB = [-0.2, 0., 0.3]
+    cam.focalLength = 1
+    cam.sensorSize = [10,10]
+    cam.resolution = [512, 512]
+    data.cameraSpecs = cam
+
+    # Populate sigma points
+    SP = np.zeros([len(state), 2*len(state) +1])
+    for i in range(2*len(state) + 1):
+        if i ==0:
+            SP[:, i] = np.array(state)
+        if i < len(state) + 1 and i>0:
+            SP[:,i] = np.array(state) + covar[:,i-1]
+        if i > len(state):
+            SP[:,i] = np.array(state) - covar[:,i-(len(state)+1)]
+
+    data.SP = np.transpose(SP).flatten().tolist()
+    data.state = state
+    pixelLineBiasUKF.pixelLineBiasUKFMeasModel(data)
+
+    yMeasOut = data.yMeas
+    expectedMeas = np.zeros([6, 2*len(state)+1])
+
+    dcm_CB = rbk.MRP2C(cam.sigma_CB)
+    dcm_BN = rbk.MRP2C(att.sigma_BN)
+    dcm_CN = np.dot(dcm_CB.T, dcm_BN)
+
+    X = cam.sensorSize[0]*0.001/cam.resolution[0]
+    Y = cam.sensorSize[1] * 0.001 / cam.resolution[1]
+    planetRad = 3396.19
+    obs = np.array([msg.circlesCenters[0], msg.circlesCenters[1], msg.circlesRadii[0], 0, 0, 0])
+    for i in range(2*len(state)+1):
+        r_C = np.dot(dcm_CN, SP[0:3,i])
+        rNorm = np.linalg.norm(SP[0:3,i])
+        r_C = -1./r_C[2]*r_C
+
+        centerX = r_C[0]*cam.focalLength/X
+        centerY = r_C[1] * cam.focalLength / Y
+        centerX += cam.resolution[0]/2 - 0.5
+        centerY += cam.resolution[1] / 2 - 0.5
+
+        rad = cam.focalLength/X*np.tan(np.arcsin(planetRad/rNorm))
+
+        if i == 0:
+            obs[3:5] = np.array(msg.circlesCenters[0:2]) - obs[0:2]
+            obs[5] = rad - obs[2]
+        for j in range(3):
+            obs[3+j] = round(obs[3+j])
+        expectedMeas[0,i] = centerX - SP[6, i]
+        expectedMeas[1,i] = centerY - SP[7, i]
+        expectedMeas[2, i] = rad - SP[8, i]
+        expectedMeas[3:, i] = SP[6:, i]
+
+    yMeasTest = np.zeros([6, 2*len(state)+1])
+    for i in range(2*len(state)+1):
+        yMeasTest[:,i] = yMeasOut[i*6:i*6+6]
+    if np.linalg.norm((yMeasTest - expectedMeas))/np.linalg.norm(expectedMeas[:,0]) > 1.0E-15:
+        testFailCount += 1
+        testMessages.append("State Prop Failure")
+
     return [testFailCount, ''.join(testMessages)]
 
 
@@ -241,5 +325,5 @@ def StatePropRelOD(show_plots):
 
 
 if __name__ == "__main__":
-    # relOD_method_test(True)
+    relOD_method_test(True)
     # StatePropRelOD(True)

@@ -158,6 +158,16 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     memset(&inputCircles, 0x0, sizeof(CirclesOpNavMsg));
     ReadMessage(configData->circlesInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CirclesOpNavMsg), &inputCircles, moduleId);
+    
+    memset(&configData->cameraSpecs, 0x0, sizeof(CameraConfigMsg));
+    memset(&configData->attInfo, 0x0, sizeof(NavAttIntMsg));
+    
+    /*! - read input messages */
+    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CameraConfigMsg), &configData->cameraSpecs, configData->moduleId);
+    ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(NavAttIntMsg), &configData->attInfo, configData->moduleId);
+    
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
@@ -410,30 +420,18 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
 void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
 {
     int i, j;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double dcm_CN[3][3], dcm_CB[3][3], dcm_BN[3][3];
     double reCentered[2], rNorm, denom, planetRad;
     double r_C[3];
-    CameraConfigMsg cameraSpecs;
-    NavAttIntMsg attInfo;
-    memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
-    memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
-    
-    /*! - read input messages */
-    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CameraConfigMsg), &cameraSpecs, configData->moduleId);
-    ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), &attInfo, configData->moduleId);
-    
+
     v3Set(configData->cirlcesInMsg.circlesCenters[0], configData->cirlcesInMsg.circlesCenters[1], configData->cirlcesInMsg.circlesRadii[0], configData->obs);
 
-    MRP2C(cameraSpecs.sigma_CB, dcm_CB);
-    MRP2C(attInfo.sigma_BN, dcm_BN);
+    MRP2C(configData->cameraSpecs.sigma_CB, dcm_CB);
+    MRP2C(configData->attInfo.sigma_BN, dcm_BN);
     m33tMultM33(dcm_CB, dcm_BN, dcm_CN);
     double X, Y;
-    X = cameraSpecs.sensorSize[0]*0.001/cameraSpecs.resolution[0]; // mm to meters
-    Y = cameraSpecs.sensorSize[1]*0.001/cameraSpecs.resolution[1];
+    X = configData->cameraSpecs.sensorSize[0]*0.001/configData->cameraSpecs.resolution[0]; // mm to meters
+    Y = configData->cameraSpecs.sensorSize[1]*0.001/configData->cameraSpecs.resolution[1];
     
     if(configData->cirlcesInMsg.planetIds[0] > 0){
         if(configData->cirlcesInMsg.planetIds[0] ==1){
@@ -460,14 +458,14 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
         v3Scale(-1./r_C[2], r_C, r_C);
         
         /*! - Find pixel size using camera specs */
-        reCentered[0] = r_C[0]*cameraSpecs.focalLength/X;
-        reCentered[1] = r_C[1]*cameraSpecs.focalLength/Y;
+        reCentered[0] = r_C[0]*configData->cameraSpecs.focalLength/X;
+        reCentered[1] = r_C[1]*configData->cameraSpecs.focalLength/Y;
         
-        centers[0] = reCentered[0] + cameraSpecs.resolution[0]/2 - 0.5;
-        centers[1] = reCentered[1] + cameraSpecs.resolution[1]/2 - 0.5;
+        centers[0] = reCentered[0] + configData->cameraSpecs.resolution[0]/2 - 0.5;
+        centers[1] = reCentered[1] + configData->cameraSpecs.resolution[1]/2 - 0.5;
         
         denom = planetRad/rNorm;
-        radius = cameraSpecs.focalLength/X*tan(asin(denom));
+        radius = configData->cameraSpecs.focalLength/X*tan(asin(denom));
         if (j==0){
             v2Subtract(centers, configData->obs, &configData->obs[3]);
             configData->obs[5] = radius - configData->obs[2];
