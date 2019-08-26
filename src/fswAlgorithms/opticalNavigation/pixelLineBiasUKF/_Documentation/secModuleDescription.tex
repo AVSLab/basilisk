@@ -24,8 +24,37 @@ The following square-root uKF coefficients are used: $\alpha = 0.02$, and $\beta
 
 \subsection{Measurements}
 
-The measurement model is simple given the pre-processing by the pixelLineConverter, which extracts the pixel Line transformations from the filter code. This is done to simplify the upkeep and modularity of the filter for Optical Navigation. 
+\begin{figure}[H]
+	\centerline{
+		\includegraphics{Figures/CameraGeometry}
+	}
+	\caption{Camera Model}
+	\label{fig:camera}
+\end{figure}
 
-\begin{equation}\label{eq:meas}
-\bm G_i(\bm X) = \bm r
-\end{equation}
+
+This converter module processes the output of a circle finding method to extract spacecraft inertial position. It does this by reading spacecraft attitude (coming from star tracker or other means), camera parameters, and the circle properties. 
+
+Messages read:
+
+\begin{itemize}
+\item CameraConfigMsg: containing focal length, resolution, and sensor size. These values are needed for the following computations. Notably the camera frame relative to the body frame is used.
+\item CirclesInMsg: Circle radius, center pixel and line, and uncertainty around these values in pixels. 
+\item NavAttInMsg: Used for the spacecraft attitude. This allows to move from the body frame to the inertial frame.
+\end{itemize}
+
+Message written:
+\begin{itemize}
+\item OpNavFswMsg: Message containing $\leftexp{N}{\bm r}$ and it's covariance.
+\end{itemize}
+
+\subsection{Position computation}
+
+A geometrical method can be used to extract pose information from center and apparent diameter information. The norm of the position vector is given by the apparent size, it's direction is given by the pixel and line data. Using $\leftexp{C}{\bm r_c} = \leftexp{C}{\begin{bmatrix} r_1 & r_2 & r_3 \end{bmatrix}}^T$ as the relative vector of the camera with respect to the celestial center, $A$ as the apparent diameter of the celestial body, $D$ as the actual diameter:
+
+\begin{align}\label{eq:cad}
+|\bm r_c| = \frac{1}{2}\frac{D}{\sin\left(\frac{1}{2} A\right)} \hspace{2cm} \frac{1}{r_3}\begin{bmatrix} r_1 \\ r_2 \end{bmatrix}= \frac{1}{r_3}\tilde{\bm r} = \frac{1}{f}\begin{bmatrix} x \\ y \end{bmatrix}
+\end{align}
+
+These equations have been used in multiple instances~\cite{Battin, Owen_OpNav}. The third component of $\bm r_c$ provides the range measurement to the body which can be extracted using the apparent diameter measurements. Hence the definition of $\tilde{\bm r}$ which only contains the first two components of $\bm r_c$. The vector components of $\bm r_{c}$ can be expressed relative to the inertial frame assuming inertial attitude knowledge from other instruments. Using the position of the camera on the spacecraft this provides the measurement value for an orbit determination filter using a circle-finding algorithm.  
+

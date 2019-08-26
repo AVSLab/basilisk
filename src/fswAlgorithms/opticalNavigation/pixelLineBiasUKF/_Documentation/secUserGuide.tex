@@ -22,26 +22,33 @@ In order for the filter to run, the user must set a few parameters:
  \texttt{    r, v = orbitalMotion.elem2rv(mu, elementsInit)} 
 \item The initial covariance: \\
  \texttt{Filter.covar =} \\
-  \texttt{[1000*1E6, 0.0, 0.0, 0.0, 0.0, 0.0,\\
-                              0.0, 1000.*1E6, 0.0, 0.0, 0.0, 0.0,\\
-                              0.0, 0.0, 1000.*1E6, 0.0, 0.0, 0.0,\\
-                              0.0, 0.0, 0.0, 5.*1E6, 0.0, 0.0,\\
-                              0.0, 0.0, 0.0, 0.0, 5.*1E6, 0.0,\\
-                              0.0, 0.0, 0.0, 0.0, 0.0, 5.*1E6]}
+  \texttt{[1000*1E6, 0.0, 0.0, 0.0, 0.0, 0.0,0.0, 0.0, 0.0,\\
+                              0.0, 1000.*1E6, 0.0, 0.0, 0.0, 0.0,0.0, 0.0, 0.0,\\
+                              0.0, 0.0, 1000.*1E6, 0.0, 0.0, 0.0,0.0, 0.0, 0.0,\\
+                              0.0, 0.0, 0.0, 5.*1E6, 0.0, 0.0,0.0, 0.0, 0.0,\\
+                              0.0, 0.0, 0.0, 0.0, 5.*1E6, 0.0,0.0, 0.0, 0.0,\\
+                              0.0, 0.0, 0.0, 0.0, 0.0, 5.*1E6, 0.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0, 0.0, 0.0,0.0, 0.0, 5.0, 0.0,
+                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,]}
  \item The initial state :\\
-  \texttt{      filterObject.stateInit = r.tolist() + v.tolist()} 
+  \texttt{     bias = [1,1,1] } \\ 
+  \texttt{      filterObject.stateInit = r.tolist() + v.tolist() + bias }
     \item The process noise :\\
-  \texttt{     qNoiseIn = np.identity(6)} \\
+  \texttt{     qNoiseIn = np.identity(9)} \\
   \texttt{     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*1E-8*1E-8} \\
-  \texttt{     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*1E7*1E7} \\
-  \texttt{     filterObject.qNoise = qNoiseIn.reshape(36).tolist()}
+  \texttt{     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*1E-7*1E-7} \\
+  \texttt{     qNoiseIn[6:, 6:] = qNoiseIn[6:, 6:]*1E-1*1E-1} \\
+  \texttt{     filterObject.qNoise = qNoiseIn.reshape(9*9).tolist()}
 \end{itemize}
 
 The messages must also be set as such:
 
 \begin{itemize}
-\item    \texttt{    filterObject.navStateOutMsgName = "relod\_state\_estimate"}
- \item    \texttt{   filterObject.filtDataOutMsgName = "relod\_filter\_data"}
- \item    \texttt{   filterObject.opNavInMsgName = "reold\_opnav\_meas"}
+ \item    \texttt{   filterObject.navStateOutMsgName = "pixelLine\_state\_estimate"}
+ \item    \texttt{   filterObject.filtDataOutMsgName = "pixelLine\_filter\_data"}
+ \item    \texttt{   filterObject.circlesInMsgName = "circles\_data"}
+ \item    \texttt{   filterObject.cameraConfigMsgName = "camera\_config\_data"}
+ \item    \texttt{   filterObject.attInMsgName = "simple\_att\_nav\_output"}
 \end{itemize}
 
