@@ -1,27 +1,45 @@
 # Vizard - BSK Scripting Settings  {#vizardSettings}
 
-
-
-
-
 ## Overview
-The [Vizard](@ref vizard) Unity-based visualization can have its settings scripted from a Basilisk python simulation script.  When calling the `enableUnityVisualization` macro method a copy of the vizInterface module is returned.  All scriptable Vizard settings are stored inside the `settings` variable.  For example, to set the Vizard ambient lighting the following code is used:
+The [Vizard](@ref vizard) Unity-based visualization can have its settings scripted from a Basilisk python simulation script.  This allows the user to write a BSK simulation script and specify in the same script what Vizard options should be used.  Within Vizard the user can change these gain if needed. The BSK scripted Vizard settings are only used once at the beginning of the playback. 
+
+When calling the `enableUnityVisualization` macro method a copy of the vizInterface module is returned.  All scriptable Vizard settings are stored inside the `settings` variable.  For example, to set the Vizard ambient lighting the following code is used:
 ~~~~~~~~~~~~~~~{.py}
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
     viz.settings.ambient = 0.5
 ~~~~~~~~~~~~~~~
+If a setting is not provided, then the Vizard defaults are used.  This allows the user to specify just a few or a lot of settings, as is appropriate.
 
 
 ## Listing of all BSK scriptable Vizard settings
-The following list contains the optinal Vizard settings that can be specified.  Only the settings used will be applied to Vizard.  If a variable below is not specified, then it is not applied to Vizard and the Vizard default values are used.
+The following list contains the optional Vizard settings that can be specified.  Only the settings used will be applied to Vizard.  If a variable below is not specified, then it is not applied to Vizard and the Vizard default values are used.
 
 ### General Settings
-Variable      |  Range | Description
+Variable      |  Type | Description
 ------------- | ---------|-----------------
 ambient | [0,8]| value to specify the ambient Vizard lighting.
 orbitLinesOn | (0,1) | flag to show (1) or hide (0) the orbit trajectory lines
 spacecraftCSon | (0,1) | flag to show (1) or hide (0) the spacecraft coordinate axes
 planetCSon | (0,1) | flag to show (1) or hide (0) the planet coordinate axes
+skyBox | String | Used determine what star background should be shown.  The empty string "" provides default NASA SVS Starmap, "ESO" shows the ESO Milky Way skybox, "black" provides a black background, or the user can provide a filepath to custom background image file. 
+
+
+
+### Setting Actuator GUI Options
+To specify the actuator GUI settings use the `setActuatorGuiSetting` helper method in Python.  An example is
+```
+vizSupport.setActuatorGuiSetting(viz, viewRWPanel=True, viewRWHUD=True)
+```
+The following table includes the keword options for this method.
+
+| Variable 	| Type 	| Required | Description 	|
+|:---------:|:-------:	| :--------: | :-------------	|
+| `viewThrusterPanel`	| Boolean  	| No |  Show the thruster panel  |
+| `viewThrusterHUD`	| Boolean   	| No | Show the thruster particle streams |
+| `viewRWPanel`	| Boolean   	| No | Show the reaction wheel panel  |
+| `viewRWHUD`	| Boolean   	| No | Show the reaction wheel disks configuration outside the spacecraft |
+| `spacecraftName`	| String   	| No, sc name default | Specify which spacecraft should show actuator information.  If not provided then the name specified in `viz.spacecraftName` is used.   |
+
 
 
 ### Defining a Pointing Line
@@ -35,7 +53,7 @@ The `createPointLine` support macro requires the parameters `toBodyName` and `li
 
 Each pointing line message contains the three variables listed in the next table.
 
-Variable      |  Range | Required | Description
+Variable      |  Type | Required | Description
 ------------- | ---------|------|-----------
 fromBodyName | string| No, sc name default | contains the name of the originating body
 toBodyName | string | Yes | contains the name of the body to point towards
@@ -50,7 +68,8 @@ Vizard can create cones relative to the spacecraft which illustrated if a body a
     vizSupport.createConeInOut(viz, toBodyName="earth", coneColor="blue", normalVector_B=[0, 1, 0], incidenceAngle=30*macros.D2R, isKeepIn=False, coneHeight=5.0, coneName='comCone')
 ~~~~~~~~~~~~~~~
 The following table illustrates the arguments for the `createConeInOut` method:
-Variable      |  Range | Units | Required | Description
+
+Variable      |  Type | Units | Required | Description
 ------------- | -------|-------|----------|---------
 isKeepIn | bool | | Yes | make cone keep in (True) or keep out (False)
 fromBodyName | string| | No, sc name default | contains the name of the originating body
@@ -72,7 +91,8 @@ Vizard can create two spacecraft relative camera panels (camera One and Two) and
     vizSupport.createCameraViewPanel(viz, "Planet", viewPanel=True, setView=2, spacecraftVisible=True, fieldOfView=50., targetBodyName='earth')
 ~~~~~~~~~~~~~~~
 The following table illustrates the arguments for the `createCameraViewPanel` method if invoking the spacecraft relative camera headings for cameras `One` and `Two`.
-Variable      |  Range | Units | Required | Description
+
+Variable      |  Type | Units | Required | Description
 ------------- | -------|-------|----------|---------
 spacecraftName | string | | No, sc name default | name of the spacecraft with respect to which the camera is shown
 viewPanel | bool | | No, default is false | flag indicating if a panel should be shown (true) or not (false)
@@ -82,7 +102,8 @@ fieldOfView | float | deg | No, default -1 | camera field of view, to use the Vi
 
 
 The following tale illustrates the arguments for the `createCameraViewPanel` method if a planet pointing camera is setup.
-Variable      |  Range | Units | Required | Description
+
+Variable      |  Type | Units | Required | Description
 ------------- | -------|-------|----------|---------
 spacecraftName | string | | No, sc name default | name of the spacecraft with respect to which the camera is shown
 viewPanel | bool | | No, default is false | flag indicating if a panel should be shown (true) or not (false)
@@ -90,6 +111,5 @@ setView | int | | Yes | index specifying along which orbit axis the camera is po
 spacecraftVisible| bool | | No, default is false | flag indicating if the spacecraft should be shown in the camera view
 fieldOfView | float | deg | No, default -1 | camera field of view, to use the Vizard default set it to -1
 targetBodyName | string | | Yes | name of the planet to point at
-
 
 
