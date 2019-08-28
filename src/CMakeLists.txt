@@ -31,7 +31,7 @@ include(conan)
 conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
 conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-community/conan)
 
-set(required_conan_libraries eigen/3.3.5@conan/stable)
+set(required_conan_libraries eigen/3.3.7@conan/stable)
 
 
 option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
@@ -47,10 +47,10 @@ list(APPEND requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i
 list(APPEND requires_opencv_modules "imageProcessing/limbFinding/limbFinding.i")
 
 if(USE_PROTOBUFFERS)
-  list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
+  list(APPEND required_conan_libraries protobuf/3.5.2@bincrafters/stable)
 endif()
 if(USE_OPENCV)
-  list(APPEND required_conan_libraries opencv/3.4.5@conan/stable)
+  list(APPEND required_conan_libraries opencv/4.1.1@conan/stable)
 endif()
 
 if(USE_ZMQ)
@@ -70,7 +70,7 @@ endif()
 
 if(USE_OPENCV)
    #! OPEN_CV
-   find_package(opencv CONFIG REQUIRED)
+   #find_package(opencv CONFIG REQUIRED)
    message(STATUS "Using OpenCV ${opencv_VERSION}")
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
