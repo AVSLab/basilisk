@@ -26,7 +26,7 @@ In the case that you are using a 3rd party Python install such as Homebrew you m
         pip uninstall pytest
 then run
 
-        pip install --user pytest==3.6.1
+        pip install --user pytest
 
 
 ### Take aways:
