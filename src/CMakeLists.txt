@@ -58,6 +58,7 @@ if(USE_ZMQ)
 endif()
 
 conan_cmake_run(REQUIRES ${required_conan_libraries}
+                OPTIONS opencv:contrib=True
 	              BASIC_SETUP KEEP_RPATHS
                 BUILD missing )
 
