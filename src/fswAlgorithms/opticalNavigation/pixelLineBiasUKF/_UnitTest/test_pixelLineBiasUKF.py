@@ -286,7 +286,7 @@ def StatePropRelOD(show_plots):
     unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
     unitTestSim.ExecuteSimulation()
 
-    time = np.linspace(0,timeSim*60,timeSim*60/dt+1)
+    time = np.linspace(0, timeSim*60, (int) (timeSim*60/dt+1))
     dydt = np.zeros(len(moduleConfig.stateInit))
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), len(moduleConfig.stateInit)+1])
