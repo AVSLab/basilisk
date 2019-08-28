@@ -2,20 +2,21 @@
 
 \section{Model Description}
 
-This module implements a square-root unscented Kalman Filter in order to achieve it's best state estimate of the inertial spacecraft attitude states. The estimated state is the attitude (MRPs) and the spacecraft rotation rate in the body frame. 
+This module implements a square-root unscented Kalman Filter in order to achieve it's best state estimate of the inertial spacecraft attitude states. The estimated state is spacecraft rotation and velocity in the inertial frame, as well as a bias on the measurements in pixels $\bm b$. 
 
 \textbf{Important:} The default units in Basilisk are meters for distance, and meters per second for speed. These are the units to be used for this filter, though the internals use km and km/s for numerical precision. 
 
 \subsection{Filter Setup} %%%
 
 The equations and algorithm for the square root uKF are given in "inertialUKF$\_$DesignBasis.pdf" [\citenum{Wan2001}] alongside this document.
-The filter is therefore derived with the states being $\bm X =\begin{bmatrix} \leftexp{N}{\bm r}&  \leftexp{N}{\bm v} \end{bmatrix}^{T}$
+The filter is therefore derived with the states being $\bm X =\begin{bmatrix} \leftexp{N}{\bm r}&  \leftexp{N}{\bm v}  &  \bm b \end{bmatrix}^{T}$
 
 The dynamics of the filter are given in Equations \eqref{eq:dynInertial}. $\tau$ is the total torque read in by the wheels. 
 \begin{align}
 \label{eq:dynInertial}
 \dot{\bm r} &=\bm v \\
 \dot{\bm v} & = - \frac{\mu}{|\bm r|^3} \bm r
+\dot{\bm b} & = \bm 0
 \end{align}
 
 The propagation is done using an RK4 integrator. 
