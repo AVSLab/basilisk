@@ -130,6 +130,7 @@
 #           \defgroup ukfUtilities ukfUtilities
 #       @}
 #       \defgroup relativeODuKF relativeODuKF
+#       \defgroup PixelLineBiasUKF PixelLineBiasUKF
 #   @}
 #
 #   \defgroup vehicleConfigData vehicleConfigData

@@ -92,14 +92,15 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     std::string filenamePre;
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
+    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
+    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
+    
     cv::Mat imageCV, blurred;
     int circlesFound=0;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
-    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
     if(this->imageInMsgName != "")
     {
         SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
@@ -137,10 +138,10 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.circlesCenters[2*i] = circles[i][0];
         circleBuffer.circlesCenters[2*i+1] = circles[i][1];
         circleBuffer.circlesRadii[i] = circles[i][2];
-        for(int j=0; j<3; j++){
-            circleBuffer.uncertainty[j+3*j] = 3;
+        for(int j=0; j<2; j++){
+            circleBuffer.uncertainty[j+3*j] = 20;
         }
-        circleBuffer.uncertainty[2+3*2] = 1;
+        circleBuffer.uncertainty[2+3*2] = 20;
         circlesFound+=1;
     }
     /*!- If no circles are found do not validate the image as a measurement */
@@ -150,7 +151,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
     
     SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
-    
+
 //    free(imageBuffer.imagePointer);
     return;
 }

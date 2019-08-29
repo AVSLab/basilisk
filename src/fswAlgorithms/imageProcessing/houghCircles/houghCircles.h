@@ -33,6 +33,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 
 
+
 /*! \defgroup houghCircles
 
  @brief Module reads in a message containing a pointer to an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
@@ -59,6 +60,7 @@ public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
+    
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels

@@ -20,21 +20,21 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "relativeODuKF.h"
+#include "pixelLineBiasUKF.h"
 #include "../_GeneralModuleFiles/ukfUtilities.h"
 
 /*! This method creates the two moduel output messages.
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
+void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t moduleId)
 {
     /*! - Create a navigation message to be used for control */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
                                                     sizeof(NavTransIntMsg), "NavTransIntMsg", moduleId);
     /*! - Create filter states output message for filter states, covariance, postfits, and debugging*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-                                                    sizeof(OpNavFilterFswMsg), "OpNavFilterFswMsg", moduleId);
+                                                    sizeof(PixelLineFilterFswMsg), "PixelLineFilterFswMsg", moduleId);
     
 }
 
@@ -42,11 +42,12 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
+void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t moduleId)
 {
     /*! Read in the treated position measurement from pixelLineConverter */
-    configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
-                                                      sizeof(OpNavFswMsg), moduleId);
+    configData->circlesInMsgId = subscribeToMessage(configData->circlesInMsgName, sizeof(CirclesOpNavMsg), moduleId);
+    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleId);
+    configData->attInMsgID = subscribeToMessage(configData->attInMsgName, sizeof(NavAttIntMsg),moduleId);
     
 }
 
@@ -56,20 +57,20 @@ void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
+void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                        uint64_t moduleId)
 {
     
     int32_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
-    double tempMatrix[ODUKF_N_STATES*ODUKF_N_STATES];
+    double tempMatrix[PIXLINE_N_STATES*PIXLINE_N_STATES];
     
     /*! - Initialize filter parameters to max values */
     configData->timeTag = callTime*NANO2SEC;
     configData->dt = 0.0;
-    configData->numStates = ODUKF_N_STATES;
-    configData->countHalfSPs = ODUKF_N_STATES;
-    configData->numObs = 3;
+    configData->numStates = PIXLINE_N_STATES;
+    configData->countHalfSPs = PIXLINE_N_STATES;
+    configData->numObs = PIXLINE_N_MEAS;
     configData->firstPassComplete = 0;
     configData->planetId = configData->planetIdInit;
     
@@ -81,7 +82,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     mSetZero(configData->SP, configData->countHalfSPs * 2 + 1,
              configData->numStates);
     mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
-    mSetZero(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
+    mSetZero(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
     
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
@@ -105,10 +106,10 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->sBar);
-    vScale(1E-6, configData->sBar, ODUKF_N_STATES*ODUKF_N_STATES, configData->sBar); // Convert to km
+    vScale(1E-6, configData->sBar, PIXLINE_DYN_STATES*PIXLINE_N_STATES + PIXLINE_DYN_STATES, configData->sBar); // Convert to km
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
-    vScale(1E-6, configData->covar, ODUKF_N_STATES*ODUKF_N_STATES, configData->covar); // Convert to km
+    vScale(1E-6, configData->covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES + PIXLINE_DYN_STATES, configData->covar); // Convert to km
     
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
@@ -136,54 +137,63 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
+void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                         uint64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
     uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
-    double yBar[3], tempYVec[3];
+    double yBar[PIXLINE_N_MEAS], tempYVec[PIXLINE_N_MEAS];
     int i, computePostFits;
-    OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
+    PixelLineFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
-    OpNavFswMsg inputRelOD;
+    CirclesOpNavMsg inputCircles;
+    configData->moduleId = moduleId;
     
     computePostFits = 0;
     v3SetZero(configData->postFits);
     memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
-    memset(&opNavOutBuffer, 0x0, sizeof(OpNavFswMsg));
-    memset(&inputRelOD, 0x0, sizeof(OpNavFswMsg));
-    ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(OpNavFswMsg), &inputRelOD, moduleId);
-    v3Scale(1E-3, inputRelOD.r_N, inputRelOD.r_N);
-    vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS*ODUKF_N_MEAS,inputRelOD.covar_N);
+    memset(&opNavOutBuffer, 0x0, sizeof(PixelLineFilterFswMsg));
+    memset(&inputCircles, 0x0, sizeof(CirclesOpNavMsg));
+    ReadMessage(configData->circlesInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CirclesOpNavMsg), &inputCircles, moduleId);
+    
+    memset(&configData->cameraSpecs, 0x0, sizeof(CameraConfigMsg));
+    memset(&configData->attInfo, 0x0, sizeof(NavAttIntMsg));
+    
+    /*! - read input messages */
+    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CameraConfigMsg), &configData->cameraSpecs, configData->moduleId);
+    ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(NavAttIntMsg), &configData->attInfo, configData->moduleId);
+    
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
     newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0 && inputRelOD.valid ==1)
+    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0 && inputCircles.valid ==1)
     {
-        configData->opNavInMsg = inputRelOD;
-        configData->planetId = inputRelOD.planetID;
-        relODuKFTimeUpdate(configData, newTimeTag);
-        relODuKFMeasUpdate(configData);
+        configData->cirlcesInMsg = inputCircles;
+        configData->planetId = inputCircles.planetIds[0];
+        pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
+        pixelLineBiasUKFMeasUpdate(configData);
         computePostFits = 1;
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag >= configData->timeTag)
+    if(newTimeTag > configData->timeTag)
     {
-        relODuKFTimeUpdate(configData, newTimeTag);
+        pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
     }
 
     
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit residuals*/
     if(computePostFits == 1){
         /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
-        relODuKFMeasModel(configData);
+        pixelLineBiasUKFMeasModel(configData);
         
         /*! - Compute the value for the yBar parameter (equation 23)*/
         vSetZero(yBar, configData->numObs);
@@ -194,7 +204,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
             vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
             vAdd(yBar, configData->numObs, tempYVec, yBar);
         }
-        mSubtract(configData->obs, ODUKF_N_MEAS, 1, yBar, configData->postFits);
+        mSubtract(configData->obs, PIXLINE_N_MEAS, 1, yBar, configData->postFits);
     }
     
    
@@ -205,20 +215,18 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     v3Copy(&configData->state[3], outputRelOD.v_BN_N);
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
     outputRelOD.timeTag = configData->timeTagOut;
-    
     WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavTransIntMsg),
                  &(outputRelOD), moduleId);
     
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
     memmove(opNavOutBuffer.covar, configData->covar,
-            ODUKF_N_STATES*ODUKF_N_STATES*sizeof(double));
-    memmove(opNavOutBuffer.state, configData->state, ODUKF_N_STATES*sizeof(double));
-    memmove(opNavOutBuffer.postFitRes, configData->postFits, ODUKF_N_MEAS*sizeof(double));
+            PIXLINE_N_STATES*PIXLINE_N_STATES*sizeof(double));
+    memmove(opNavOutBuffer.state, configData->state, PIXLINE_N_STATES*sizeof(double));
+    memmove(opNavOutBuffer.postFitRes, configData->postFits, PIXLINE_N_MEAS*sizeof(double));
     v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
-    v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes); // Convert to m
-    vScale(1E6, opNavOutBuffer.covar, ODUKF_N_STATES*ODUKF_N_STATES, opNavOutBuffer.covar); // Convert to m
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(OpNavFilterFswMsg),
+    vScale(1E6, opNavOutBuffer.covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES+PIXLINE_DYN_STATES, opNavOutBuffer.covar); // Convert to m
+    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(PixelLineFilterFswMsg),
                  &opNavOutBuffer, moduleId);
     
     return;
@@ -229,42 +237,42 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
  @return void
  @param stateInOut The state that is propagated
  */
-void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
+void relODStateProp(PixelLineBiasUKFConfig *configData, double *stateInOut, double dt)
 {
     
     double muPlanet;
-    double k1[ODUKF_N_STATES], k2[ODUKF_N_STATES], k3[ODUKF_N_STATES], k4[ODUKF_N_STATES];
-    double states1[ODUKF_N_STATES], states2[ODUKF_N_STATES], states3[ODUKF_N_STATES];
+    double k1[PIXLINE_DYN_STATES], k2[PIXLINE_DYN_STATES], k3[PIXLINE_DYN_STATES], k4[PIXLINE_DYN_STATES];
+    double states1[PIXLINE_DYN_STATES], states2[PIXLINE_DYN_STATES], states3[PIXLINE_DYN_STATES];
     if(configData->planetId ==1){muPlanet = MU_EARTH;} //in km
     if(configData->planetId ==2){muPlanet = MU_MARS;} //in km
     if(configData->planetId ==3){muPlanet = MU_JUPITER;} //in km
     
     /*! Start RK4 */
     /*! - Compute k1 */
-    relODuKFTwoBodyDyn(stateInOut, muPlanet, &k1[0]);
-    vScale(dt/2, k1, ODUKF_N_STATES, k1); // k1 is now k1/2
+    pixelLineBiasUKFTwoBodyDyn(stateInOut, muPlanet, &k1[0]);
+    vScale(dt/2, k1, PIXLINE_DYN_STATES, k1); // k1 is now k1/2
     /*! - Compute k2 */
-    vAdd(stateInOut, ODUKF_N_STATES, k1, states1);
-    relODuKFTwoBodyDyn(states1, muPlanet, &k2[0]);
-    vScale(dt/2, k2, ODUKF_N_STATES, k2); // k2 is now k2/2
+    vAdd(stateInOut, PIXLINE_DYN_STATES, k1, states1);
+    pixelLineBiasUKFTwoBodyDyn(states1, muPlanet, &k2[0]);
+    vScale(dt/2, k2, PIXLINE_DYN_STATES, k2); // k2 is now k2/2
     /*! - Compute k3 */
-    vAdd(stateInOut, ODUKF_N_STATES, k2, states2);
-    relODuKFTwoBodyDyn(states2, muPlanet, &k3[0]);
-    vScale(dt, k3, ODUKF_N_STATES, k3);
+    vAdd(stateInOut, PIXLINE_DYN_STATES, k2, states2);
+    pixelLineBiasUKFTwoBodyDyn(states2, muPlanet, &k3[0]);
+    vScale(dt, k3, PIXLINE_DYN_STATES, k3);
     /*! - Compute k4 */
-    vAdd(stateInOut, ODUKF_N_STATES, k3, states3);
-    relODuKFTwoBodyDyn(states3, muPlanet, &k4[0]);
-    vScale(dt, k4, ODUKF_N_STATES, k4);
+    vAdd(stateInOut, PIXLINE_DYN_STATES, k3, states3);
+    pixelLineBiasUKFTwoBodyDyn(states3, muPlanet, &k4[0]);
+    vScale(dt, k4, PIXLINE_DYN_STATES, k4);
     /*! - Gather all terms with proper scales */
-    vScale(1./3., k1, ODUKF_N_STATES, k1); // k1 is now k1/6
-    vScale(2./3., k2, ODUKF_N_STATES, k2); // k2 is now k2/3
-    vScale(1./3., k3, ODUKF_N_STATES, k3); // k3 is now k2/3
-    vScale(1./6., k4, ODUKF_N_STATES, k4); // k4 is now k2/6
+    vScale(1./3., k1, PIXLINE_DYN_STATES, k1); // k1 is now k1/6
+    vScale(2./3., k2, PIXLINE_DYN_STATES, k2); // k2 is now k2/3
+    vScale(1./3., k3, PIXLINE_DYN_STATES, k3); // k3 is now k2/3
+    vScale(1./6., k4, PIXLINE_DYN_STATES, k4); // k4 is now k2/6
     
-    vAdd(stateInOut, ODUKF_N_STATES, k1, stateInOut);
-    vAdd(stateInOut, ODUKF_N_STATES, k2, stateInOut);
-    vAdd(stateInOut, ODUKF_N_STATES, k3, stateInOut);
-    vAdd(stateInOut, ODUKF_N_STATES, k4, stateInOut);
+    vAdd(stateInOut, PIXLINE_DYN_STATES, k1, stateInOut);
+    vAdd(stateInOut, PIXLINE_DYN_STATES, k2, stateInOut);
+    vAdd(stateInOut, PIXLINE_DYN_STATES, k3, stateInOut);
+    vAdd(stateInOut, PIXLINE_DYN_STATES, k4, stateInOut);
     
     return;
 }
@@ -273,7 +281,7 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
  @return double Next state
  @param state The starting state
  */
-void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *stateDeriv)
+void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlanet, double *stateDeriv)
 {
     double rNorm;
     double dvdt[3];
@@ -292,15 +300,15 @@ void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *s
  @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
+int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double updateTime)
 {
     int i, Index;
-    double sBarT[ODUKF_N_STATES*ODUKF_N_STATES]; // Sbar transpose (chol decomp of covar)
-    double xComp[ODUKF_N_STATES], AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES)*ODUKF_N_STATES]; // Intermediate state, process noise chol decomp
-    double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES*ODUKF_N_STATES], xErr[ODUKF_N_STATES]; //Row of A mat, R of QR decomp of A, state error
-    double sBarUp[ODUKF_N_STATES*ODUKF_N_STATES]; // S bar cholupdate
+    double sBarT[PIXLINE_N_STATES*PIXLINE_N_STATES]; // Sbar transpose (chol decomp of covar)
+    double xComp[PIXLINE_N_STATES], AT[(2 * PIXLINE_N_STATES + PIXLINE_N_STATES)*PIXLINE_N_STATES]; // Intermediate state, process noise chol decomp
+    double aRow[PIXLINE_N_STATES], rAT[PIXLINE_N_STATES*PIXLINE_N_STATES], xErr[PIXLINE_N_STATES]; //Row of A mat, R of QR decomp of A, state error
+    double sBarUp[PIXLINE_N_STATES*PIXLINE_N_STATES]; // S bar cholupdate
     double *spPtr; //sigma point intermediate varaible
-    double procNoise[ODUKF_N_STATES*ODUKF_N_STATES]; //process noise
+    double procNoise[PIXLINE_N_STATES*PIXLINE_N_STATES]; //process noise
     int32_t badUpdate=0;
     
     configData->dt = updateTime - configData->timeTag;
@@ -311,7 +319,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0){BSK_PRINT(MSG_ERROR, "Need a planet to navigate")}
     
-    mCopy(configData->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);
+    mCopy(configData->sQnoise, PIXLINE_N_STATES, PIXLINE_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
     vCopy(configData->state, configData->numStates,
           &(configData->SP[0 * configData->numStates + 0]));
@@ -359,7 +367,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
              &(configData->SP[(i+1)*configData->numStates]), aRow);
         /*Check sign of wC to know if the sqrt will fail*/
         if (configData->wC[i+1]<=0){
-            relODuKFCleanUpdate(configData);
+            pixelLineBiasUKFCleanUpdate(configData);
             return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
         memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
@@ -396,7 +404,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     vCopy(&(configData->SP[0]), configData->numStates, configData->state);
     
     if (badUpdate<0){
-        relODuKFCleanUpdate(configData);
+        pixelLineBiasUKFCleanUpdate(configData);
         return(-1);}
     else{
         configData->timeTag = updateTime;
@@ -409,19 +417,72 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void relODuKFMeasModel(RelODuKFConfig *configData)
+void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
 {
     int i, j;
-    v3Copy(configData->opNavInMsg.r_N, configData->obs);
-    for(j=0; j<configData->countHalfSPs*2+1; j++)
-    {
-        for(i=0; i<3; i++)
-            configData->yMeas[i*(configData->countHalfSPs*2+1) + j] =
-            configData->SP[i + j*ODUKF_N_STATES];
+    double dcm_CN[3][3], dcm_CB[3][3], dcm_BN[3][3];
+    double reCentered[2], rNorm, denom, planetRad;
+    double r_C[3];
+
+    v3Set(configData->cirlcesInMsg.circlesCenters[0], configData->cirlcesInMsg.circlesCenters[1], configData->cirlcesInMsg.circlesRadii[0], configData->obs);
+
+    MRP2C(configData->cameraSpecs.sigma_CB, dcm_CB);
+    MRP2C(configData->attInfo.sigma_BN, dcm_BN);
+    m33tMultM33(dcm_CB, dcm_BN, dcm_CN);
+    double X, Y;
+    X = configData->cameraSpecs.sensorSize[0]*0.001/configData->cameraSpecs.resolution[0]; // mm to meters
+    Y = configData->cameraSpecs.sensorSize[1]*0.001/configData->cameraSpecs.resolution[1];
+    
+    if(configData->cirlcesInMsg.planetIds[0] > 0){
+        if(configData->cirlcesInMsg.planetIds[0] ==1){
+            planetRad = REQ_EARTH;//in km
+        }
+        if(configData->cirlcesInMsg.planetIds[0] ==2){
+            planetRad = REQ_MARS;//in km
+        }
+        if(configData->cirlcesInMsg.planetIds[0] ==3){
+            planetRad = REQ_JUPITER;//in km
+        }
     }
     
+    for(j=0; j<configData->countHalfSPs*2+1; j++)
+    {
+        double centers[2], r_N_bar[3], radius=0;
+        v2SetZero(centers);
+        v3SetZero(r_N_bar);
+        
+        v3Copy(&configData->SP[j*configData->numStates], r_N_bar);
+        rNorm = v3Norm(r_N_bar);
+        
+        m33MultV3(dcm_CN, r_N_bar, r_C);
+        v3Scale(-1./r_C[2], r_C, r_C);
+        
+        /*! - Find pixel size using camera specs */
+        reCentered[0] = r_C[0]*configData->cameraSpecs.focalLength/X;
+        reCentered[1] = r_C[1]*configData->cameraSpecs.focalLength/Y;
+        
+        centers[0] = reCentered[0] + configData->cameraSpecs.resolution[0]/2 - 0.5;
+        centers[1] = reCentered[1] + configData->cameraSpecs.resolution[1]/2 - 0.5;
+        
+        denom = planetRad/rNorm;
+        radius = configData->cameraSpecs.focalLength/X*tan(asin(denom));
+        if (j==0){
+            v2Subtract(centers, configData->obs, &configData->obs[3]);
+            configData->obs[5] = radius - configData->obs[2];
+        }
+        for(i=0; i<3; i++){
+            configData->obs[i+3] = round(configData->obs[i+3]);
+            if (i<2){
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = centers[i] - configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
+            }
+            if (i==2){
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = radius - configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
+            }
+            configData->yMeas[(i+PIXLINE_N_MEAS/2)*(configData->countHalfSPs*2+1) + j] = configData->SP[j*configData->numStates+ PIXLINE_DYN_STATES + i];
+        }
+    }
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
-    mTranspose(configData->yMeas, ODUKF_N_MEAS, configData->countHalfSPs*2+1,
+    mTranspose(configData->yMeas, PIXLINE_N_MEAS, configData->countHalfSPs*2+1,
                configData->yMeas);
     
 }
@@ -433,23 +494,23 @@ void relODuKFMeasModel(RelODuKFConfig *configData)
  @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int relODuKFMeasUpdate(RelODuKFConfig *configData)
+int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
 {
     uint32_t i;
-    double yBar[3], syInv[3*3]; //measurement, Sy inv
-    double kMat[ODUKF_N_STATES*3], cholNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];//Kalman Gain, chol decomp of noise
-    double xHat[ODUKF_N_STATES], Ucol[ODUKF_N_STATES], sBarT[ODUKF_N_STATES*ODUKF_N_STATES], tempYVec[3];// state error, U column eq 28, intermediate variables
-    double AT[(2 * ODUKF_N_STATES + 3)*3]; //Process noise matrix
-    double rAT[3*3], syT[3*3]; //QR R decomp, Sy transpose
-    double sy[3*3]; // Chol of covariance
-    double updMat[3*3], pXY[ODUKF_N_STATES*3], Umat[ODUKF_N_STATES*3]; // Intermediate variable, covariance eq 26, U eq 28
+    double yBar[PIXLINE_N_MEAS], syInv[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; //measurement, Sy inv
+    double kMat[PIXLINE_N_STATES*PIXLINE_N_MEAS], cholNoise[PIXLINE_N_MEAS*PIXLINE_N_MEAS];//Kalman Gain, chol decomp of noise
+    double xHat[PIXLINE_N_STATES], Ucol[PIXLINE_N_STATES], sBarT[PIXLINE_N_STATES*PIXLINE_N_STATES], tempYVec[PIXLINE_N_MEAS];// state error, U column eq 28, intermediate variables
+    double AT[(2 * PIXLINE_N_STATES + PIXLINE_N_MEAS)*PIXLINE_N_MEAS]; //Process noise matrix
+    double rAT[PIXLINE_N_MEAS*PIXLINE_N_MEAS], syT[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; //QR R decomp, Sy transpose
+    double sy[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; // Chol of covariance
+    double updMat[PIXLINE_N_MEAS*PIXLINE_N_MEAS], pXY[PIXLINE_N_STATES*PIXLINE_N_MEAS], Umat[PIXLINE_N_STATES*PIXLINE_N_MEAS]; // Intermediate variable, covariance eq 26, U eq 28
     int32_t badUpdate=0;
     
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     /*! - Compute the valid observations and the measurement model for all observations*/
-    relODuKFMeasModel(configData);
+    pixelLineBiasUKFMeasModel(configData);
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
      time update section of the reference document*/
@@ -481,9 +542,10 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
      decomposition of the observation variance matrix constructed for our number
      of observations*/
-    mSetIdentity(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
-    mCopy(configData->opNavInMsg.covar_N, ODUKF_N_MEAS, ODUKF_N_MEAS, configData->measNoise);
-    badUpdate += ukfCholDecomp(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS, cholNoise);
+    mSetZero(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
+    mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 3,3);
+    mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 0, 0);
+    badUpdate += ukfCholDecomp(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, cholNoise);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            cholNoise, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
@@ -540,6 +602,9 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
     mMultM(kMat, configData->numStates, configData->numObs, tempYVec,
            configData->numObs, 1, xHat);
     vAdd(configData->state, configData->numStates, xHat, configData->state);
+    for (i=6;i<9;i++){
+        configData->state[i] = round(configData->state[i]);
+    }
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it
      so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, configData->numStates, configData->numObs, sy,
@@ -563,7 +628,7 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
            configData->covar);
     
     if (badUpdate<0){
-        relODuKFCleanUpdate(configData);
+        pixelLineBiasUKFCleanUpdate(configData);
         return(-1);}
     return(0);
 }
@@ -574,7 +639,7 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void relODuKFCleanUpdate(RelODuKFConfig *configData){
+void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig *configData){
     int i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(configData->obs, configData->numObs);
