@@ -28,8 +28,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 
 include(conan)
-conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
 conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-community/conan)
+conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
 
 set(required_conan_libraries eigen/3.3.7@conan/stable)
 
