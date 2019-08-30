@@ -152,5 +152,7 @@ message VizMessage{
     repeated CelestialBody celestialBodies = 2;
     repeated Spacecraft spacecraft = 3;
     repeated CameraConfig cameras = 4;
-    VizSettingsPb settings = 5;
+    //repeated cameraImage cameraImages = 5;  // unused field, not re-using the number
+    //repeated ImageRequest imageRequests = 6;  // unused field, not re-using the number
+    VizSettingsPb settings = 7;
 }

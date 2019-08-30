@@ -696,7 +696,7 @@ void AddDescriptorsImpl() {
       "spacecraft\030\003 \003(\0132,.vizProtobufferMessage"
       ".VizMessage.Spacecraft\022\?\n\007cameras\030\004 \003(\0132"
       "..vizProtobufferMessage.VizMessage.Camer"
-      "aConfig\022A\n\010settings\030\005 \001(\0132/.vizProtobuff"
+      "aConfig\022A\n\010settings\030\007 \001(\0132/.vizProtobuff"
       "erMessage.VizMessage.VizSettingsPb\0328\n\tTi"
       "meStamp\022\023\n\013frameNumber\030\001 \001(\003\022\026\n\016simTimeE"
       "lapsed\030\002 \001(\001\032W\n\rCelestialBody\022\020\n\010bodyNam"
@@ -8059,10 +8059,10 @@ bool VizMessage::MergePartialFromCodedStream(
         break;
       }
 
-      // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 5;
-      case 5: {
+      // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
+      case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_settings()));
         } else {
@@ -8124,10 +8124,10 @@ void VizMessage::SerializeWithCachedSizes(
       4, this->cameras(static_cast<int>(i)), output);
   }
 
-  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 5;
+  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
   if (this->has_settings()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, *this->settings_, output);
+      7, *this->settings_, output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -8175,11 +8175,11 @@ void VizMessage::SerializeWithCachedSizes(
         4, this->cameras(static_cast<int>(i)), deterministic, target);
   }
 
-  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 5;
+  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
   if (this->has_settings()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        5, *this->settings_, deterministic, target);
+        7, *this->settings_, deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -8239,7 +8239,7 @@ size_t VizMessage::ByteSizeLong() const {
         *this->currenttime_);
   }
 
-  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 5;
+  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
   if (this->has_settings()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(

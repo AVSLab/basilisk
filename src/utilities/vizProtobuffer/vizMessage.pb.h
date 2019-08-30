@@ -2597,10 +2597,10 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::vizProtobufferMessage::VizMessage_TimeStamp* mutable_currenttime();
   void set_allocated_currenttime(::vizProtobufferMessage::VizMessage_TimeStamp* currenttime);
 
-  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 5;
+  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
   bool has_settings() const;
   void clear_settings();
-  static const int kSettingsFieldNumber = 5;
+  static const int kSettingsFieldNumber = 7;
   const ::vizProtobufferMessage::VizMessage_VizSettingsPb& settings() const;
   ::vizProtobufferMessage::VizMessage_VizSettingsPb* release_settings();
   ::vizProtobufferMessage::VizMessage_VizSettingsPb* mutable_settings();
@@ -5191,7 +5191,7 @@ VizMessage::cameras() const {
   return cameras_;
 }
 
-// .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 5;
+// .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
 inline bool VizMessage::has_settings() const {
   return this != internal_default_instance() && settings_ != NULL;
 }
