@@ -113,3 +113,27 @@ fieldOfView | float | deg | No, default -1 | camera field of view, to use the Vi
 targetBodyName | string | | Yes | name of the planet to point at
 
 
+\image html Images/doc/vizard-ImgCustomCam.png "Illustration of custom camera panel Panel" width=400px
+
+
+It is also possible to create a custom camera view which points in an arbitrary direction as illustrate in the image above.  The following helper method is an example of how such a custom camera view can be created:
+```
+vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
+                                     resolution=[1024, 1024], renderRate=int(1e9 / 10), sensorSize=[0.2, 0.2],
+                                     cameraPos_B=[0.2, 0.1, 0.3], sigma_CB=[-1./3., 1./3., -1./3.])
+```
+The following tale illustrates the arguments for the `createCameraConfigMsg` method.
+
+Variable      |  Type | Units | Required | Description
+------------- | -------|-------|----------|---------
+cameraID | Int | | Yes | ID of the Vizard camera
+parentName | string | | No, sc name default | name of the spacecraft with respect to which the camera is shown
+fieldOfView | Float | Rad | Yes | field of view 
+resolution | Int(2) |  | Yes | image sensor pixels
+renderRate | Int |  ns | Yes | time between image grabs
+sensorSize | Float(2) | m | Yes | sensor dimensions
+cameraPos_B | Float(3) | m | Yes | camera location relative to body frame in B frame components
+sigma_CB | Float(3) | | Yes | camera orientation relative to teh body frame in MRPs
+skyBox | String | | No | Used determine what star background should be shown.  The empty string "" provides default NASA SVS Starmap, "ESO" shows the ESO Milky Way skybox, "black" provides a black background, or the user can provide a filepath to custom background image file.
+
+
