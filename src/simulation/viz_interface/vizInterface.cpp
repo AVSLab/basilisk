@@ -444,8 +444,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         // define any pointing lines for Vizard
         for (int idx = 0; idx < this->settings.pointLineList.size(); idx++) {
             vizProtobufferMessage::VizMessage::PointLine* pl = vizSettings->add_pointlines();
-            pl->set_tobodyname(this->settings.pointLineList[idx].fromBodyName);
-            pl->set_frombodyname(this->settings.pointLineList[idx].toBodyName);
+            pl->set_tobodyname(this->settings.pointLineList[idx].toBodyName);
+            pl->set_frombodyname(this->settings.pointLineList[idx].fromBodyName);
             for (int i=0; i<4; i++){
                 pl->add_linecolor(this->settings.pointLineList[idx].lineColor[i]);
             }
