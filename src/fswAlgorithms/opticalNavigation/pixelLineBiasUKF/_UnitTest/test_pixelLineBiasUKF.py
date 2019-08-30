@@ -170,7 +170,7 @@ def relOD_method_test(show_plots):
     cam = pixelLineBiasUKF.CameraConfigMsg()
     cam.sigma_CB = [-0.2, 0., 0.3]
     cam.focalLength = 1
-    cam.sensorSize = [10,10]
+    cam.sensorSize = [10*1E-3,10*1E-3]
     cam.resolution = [512, 512]
     data.cameraSpecs = cam
 
@@ -193,10 +193,10 @@ def relOD_method_test(show_plots):
 
     dcm_CB = rbk.MRP2C(cam.sigma_CB)
     dcm_BN = rbk.MRP2C(att.sigma_BN)
-    dcm_CN = np.dot(dcm_CB.T, dcm_BN)
+    dcm_CN = np.dot(dcm_CB, dcm_BN)
 
-    X = cam.sensorSize[0]*0.001/cam.resolution[0]
-    Y = cam.sensorSize[1] * 0.001 / cam.resolution[1]
+    X = cam.sensorSize[0] / cam.resolution[0]
+    Y = cam.sensorSize[1] / cam.resolution[1]
     planetRad = 3396.19
     obs = np.array([msg.circlesCenters[0], msg.circlesCenters[1], msg.circlesRadii[0], 0, 0, 0])
     for i in range(2*len(state)+1):
