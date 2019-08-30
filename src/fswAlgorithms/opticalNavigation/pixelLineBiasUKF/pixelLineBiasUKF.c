@@ -428,10 +428,10 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
 
     MRP2C(configData->cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(configData->attInfo.sigma_BN, dcm_BN);
-    m33tMultM33(dcm_CB, dcm_BN, dcm_CN);
+    m33MultM33(dcm_CB, dcm_BN, dcm_CN);
     double X, Y;
-    X = configData->cameraSpecs.sensorSize[0]*0.001/configData->cameraSpecs.resolution[0]; // mm to meters
-    Y = configData->cameraSpecs.sensorSize[1]*0.001/configData->cameraSpecs.resolution[1];
+    X = configData->cameraSpecs.sensorSize[0]/configData->cameraSpecs.resolution[0]; // mm to meters
+    Y = configData->cameraSpecs.sensorSize[1]/configData->cameraSpecs.resolution[1];
     
     if(configData->cirlcesInMsg.planetIds[0] > 0){
         if(configData->cirlcesInMsg.planetIds[0] ==1){

@@ -579,7 +579,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             camera->set_cameraid(this->cameraConfigMessage.cameraID);
             camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees 
             camera->set_skybox(this->cameraConfigMessage.skyBox);
-            camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2.*1e-3/tan(this->cameraConfigMessage.fieldOfView));
+            camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2./tan(this->cameraConfigMessage.fieldOfView));
             camera->set_parentname(this->cameraConfigMessage.parentName);
         }
 

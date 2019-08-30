@@ -100,13 +100,13 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     configData->planetTarget = circlesIn.planetIds[0];
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
-    m33tMultM33(dcm_CB, dcm_BN, dcm_NC);
+    m33MultM33(dcm_CB, dcm_BN, dcm_NC);
     m33Transpose(dcm_NC, dcm_NC);
 
     /*! - Find pixel size using camera specs */
     double X, Y;
-    X = cameraSpecs.sensorSize[0]*0.001/cameraSpecs.resolution[0]; // mm to meters
-    Y = cameraSpecs.sensorSize[1]*0.001/cameraSpecs.resolution[1];
+    X = cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0]; // mm to meters
+    Y = cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1];
 
     /*! - Get the heading */
     double rtilde_C[2];
