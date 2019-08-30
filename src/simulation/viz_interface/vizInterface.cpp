@@ -30,6 +30,7 @@
 #include "utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+#include "utilities/astroConstants.h"
 
 void message_buffer_deallocate(void *data, void *hint);
 
@@ -50,6 +51,36 @@ VizInterface::VizInterface()
     this->numThr = 0;
     this->planetNames = {};
     this->spacecraftName = "spacecraft";
+
+    // turn off all Viz settings by default
+    this->settings.ambient = -1.0;
+    this->settings.orbitLinesOn = -1;
+    this->settings.spacecraftCSon = -1;
+    this->settings.planetCSon = -1;
+    this->settings.skyBox = "";
+
+    this->settings.cameraOne.spacecraftName = "";
+    this->settings.cameraOne.viewPanel = false;
+    this->settings.cameraOne.setView = 0;
+    this->settings.cameraOne.spacecraftVisible = false;
+    this->settings.cameraOne.fieldOfView = -1.0;
+
+    this->settings.cameraTwo.spacecraftName = "";
+    this->settings.cameraTwo.viewPanel = false;
+    this->settings.cameraTwo.setView = 0;
+    this->settings.cameraTwo.spacecraftVisible = false;
+    this->settings.cameraTwo.fieldOfView = -1.0;
+
+    this->settings.cameraPlanet.spacecraftName = "";
+    this->settings.cameraPlanet.viewPanel = false;
+    this->settings.cameraPlanet.setView = 0;
+    this->settings.cameraPlanet.spacecraftVisible = false;
+    this->settings.cameraPlanet.fieldOfView = -1.0;
+    this->settings.cameraPlanet.targetBodyName = "";
+
+    memset(&this->cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
+    this->cameraConfigMessage.cameraID = -1;
+    strcpy(this->cameraConfigMessage.skyBox, "");
 
     return;
 }
@@ -234,6 +265,8 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     if (this->saveFile == 1) {
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
     }
+
+    this->settings.dataFresh = true;        // reset flag to transmit Vizard settings
     return;
 }
 
@@ -373,6 +406,111 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 {
     vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
 
+    /*! Send the Vizard settings once */
+    if (this->settings.dataFresh) {
+        vizProtobufferMessage::VizMessage::VizSettingsPb* vizSettings;
+        vizSettings = new vizProtobufferMessage::VizMessage::VizSettingsPb;
+
+        // define the viz ambient light setting
+        vizSettings->set_ambient(this->settings.ambient);
+        if (this->settings.ambient > 8.0 ||
+            (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
+            BSK_PRINT(MSG_WARNING, "The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
+        }
+
+        // define if orbit lines should be shown
+        vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
+        if (abs(this->settings.orbitLinesOn)>1) {
+            BSK_PRINT(MSG_WARNING, "The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
+        }
+
+        // define if spacecraft axes should be shown
+        vizSettings->set_spacecraftcson(this->settings.spacecraftCSon);
+        if (abs(this->settings.spacecraftCSon)>1) {
+            BSK_PRINT(MSG_WARNING, "The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
+        }
+
+        // define if planet axes should be shown
+        vizSettings->set_planetcson(this->settings.planetCSon);
+        if (abs(this->settings.planetCSon)>1) {
+            BSK_PRINT(MSG_WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
+        }
+
+        // define the skyBox variable
+        if (this->settings.skyBox.length() > 0) {
+            vizSettings->set_skybox(this->settings.skyBox);
+        }
+
+        // define any pointing lines for Vizard
+        for (int idx = 0; idx < this->settings.pointLineList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::PointLine* pl = vizSettings->add_pointlines();
+            pl->set_tobodyname(this->settings.pointLineList[idx].toBodyName);
+            pl->set_frombodyname(this->settings.pointLineList[idx].fromBodyName);
+            for (int i=0; i<4; i++){
+                pl->add_linecolor(this->settings.pointLineList[idx].lineColor[i]);
+            }
+        }
+
+        // define any keep in/out cones for Vizard
+        for (int idx = 0; idx < this->settings.coneList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::KeepOutInCone* cone = vizSettings->add_keepoutincones();
+            cone->set_iskeepin(this->settings.coneList[idx].isKeepIn);
+            for (int i=0; i<3; i++) {
+                cone->add_position(this->settings.coneList[idx].position_B[i]);
+                cone->add_normalvector(this->settings.coneList[idx].normalVector_B[i]);
+            }
+            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle*R2D);  // Unity expects degrees
+            cone->set_coneheight(this->settings.coneList[idx].coneHeight);
+            cone->set_tobodyname(this->settings.coneList[idx].toBodyName);
+            cone->set_frombodyname(this->settings.coneList[idx].fromBodyName);
+            for (int i=0; i<4; i++){
+                cone->add_conecolor(this->settings.coneList[idx].coneColor[i]);
+            }
+            cone->set_conename(this->settings.coneList[idx].coneName);
+        }
+
+        // define actuator GUI settings
+        for (int idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
+            al->set_spacecraftname(this->settings.actuatorGuiSettingsList[idx].spacecraftName);
+            al->set_viewthrusterpanel(this->settings.actuatorGuiSettingsList[idx].viewThrusterPanel);
+            al->set_viewthrusterhud(this->settings.actuatorGuiSettingsList[idx].viewThrusterHUD);
+            al->set_viewrwpanel(this->settings.actuatorGuiSettingsList[idx].viewRWPanel);
+            al->set_viewrwhud(this->settings.actuatorGuiSettingsList[idx].viewRWHUD);
+        }
+
+        // define camera one settings
+        vizProtobufferMessage::VizMessage::CameraOneSettings* camOne = new vizProtobufferMessage::VizMessage::CameraOneSettings;
+        camOne->set_spacecraftname(this->settings.cameraOne.spacecraftName);
+        camOne->set_viewpanel(this->settings.cameraOne.viewPanel);
+        camOne->set_setview(this->settings.cameraOne.setView);
+        camOne->set_spacecraftvisible(this->settings.cameraOne.spacecraftVisible);
+        camOne->set_fieldofview(this->settings.cameraOne.fieldOfView*R2D);  // Unity expects degrees
+        vizSettings->set_allocated_cameraone(camOne);
+
+        // define camera two settings
+        vizProtobufferMessage::VizMessage::CameraTwoSettings* camTwo = new vizProtobufferMessage::VizMessage::CameraTwoSettings;
+        camTwo->set_spacecraftname(this->settings.cameraTwo.spacecraftName);
+        camTwo->set_viewpanel(this->settings.cameraTwo.viewPanel);
+        camTwo->set_setview(this->settings.cameraTwo.setView);
+        camTwo->set_spacecraftvisible(this->settings.cameraTwo.spacecraftVisible);
+        camTwo->set_fieldofview(this->settings.cameraTwo.fieldOfView*R2D);  // Unity expects degrees
+        vizSettings->set_allocated_cameratwo(camTwo);
+
+        // define planet camera settings
+        vizProtobufferMessage::VizMessage::PlanetCameraSettings* camPlanet = new vizProtobufferMessage::VizMessage::PlanetCameraSettings;
+        camPlanet->set_spacecraftname(this->settings.cameraPlanet.spacecraftName);
+        camPlanet->set_viewpanel(this->settings.cameraPlanet.viewPanel);
+        camPlanet->set_setview(this->settings.cameraPlanet.setView);
+        camPlanet->set_spacecraftvisible(this->settings.cameraPlanet.spacecraftVisible);
+        camPlanet->set_fieldofview(this->settings.cameraPlanet.fieldOfView*R2D);  // Unity expects degrees
+        camPlanet->set_targetbodyname(this->settings.cameraPlanet.targetBodyName);
+        vizSettings->set_allocated_planetcamera(camPlanet);
+
+        message->set_allocated_settings(vizSettings);
+
+        this->settings.dataFresh = false;
+    }
 
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
@@ -423,24 +561,29 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
         
         /*! Write camera output msg */
-        if (cameraConfMsgId.msgID != -1 && cameraConfMsgId.dataFresh){
+        if ((this->cameraConfMsgId.msgID != -1 && this->cameraConfMsgId.dataFresh)
+            || this->cameraConfigMessage.cameraID >= 0){
             /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
-            double sigma_CuC[3], sigma_BCu[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
-            v3Scale(-1, this->cameraConfigMessage.sigma_CB, sigma_BCu);
+            double sigma_CuC[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
             v3Set(1./3, 1./3, -1./3, sigma_CuC);
-            addMRP(sigma_BCu, sigma_CuC, unityCameraMRP);
+            addMRP(this->cameraConfigMessage.sigma_CB, sigma_CuC, unityCameraMRP);
             vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
             for (int j=0; j<3; j++){
                 if (j < 2){
                 camera->add_resolution(this->cameraConfigMessage.resolution[j]);
-                camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]);
+                camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]*1000.);  // Unity expects millimeter
                 }
                 camera->add_cameradir_b(unityCameraMRP[j]);
                 camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
             camera->set_renderrate(this->cameraConfigMessage.renderRate);
             camera->set_cameraid(this->cameraConfigMessage.cameraID);
-            camera->set_fieldofview(this->cameraConfigMessage.fieldOfView);
+            camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees 
+            camera->set_skybox(this->cameraConfigMessage.skyBox);
+            camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2.*1e-3/tan(this->cameraConfigMessage.fieldOfView));
+            camera->set_parentname(this->cameraConfigMessage.parentName);
         }
+
+
         
         // Write CSS output msg
         //if (cssConfInMsgId != -1 and cssConfInMsgId != -1){

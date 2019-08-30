@@ -27,3 +27,8 @@ The documentation on how to program custom Basilisk modules is still sparse.  Fo
 @section chBsk Basilisk Architecture Documents
 The following list contains documents and resources to help understand the Basilisk simulation architecture.  All these resources are always *work in progress*:
 - [Understanding the Basilisk Architecture](UnderstandingBskArchitecture.pptx)
+
+
+@section chVizard Vizard Support 
+- @ref vizard               "Overview of Vizard"
+- @ref vizardSettings       "Specifying Vizard Settings from Basilisk"

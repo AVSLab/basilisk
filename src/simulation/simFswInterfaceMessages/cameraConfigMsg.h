@@ -17,15 +17,19 @@
 
  */
 
+#define MAX_STRING_LENGTH  256
+
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
     int64_t cameraID;          //!< [-]   ID of the camera that took the snapshot*/
-    double fieldOfView;        //!< [deg]   Camera Field of View in degrees*/
-    int resolution[2];      //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
-    uint64_t renderRate;       //!< [ns] Rate at which to capture images in nano sec */
-    double focalLength;        //!< [m]   Camera Focal Length in meters*/
-    double sensorSize[2];      //!< [mm]   Size of the camera sensor-paired with resolution gives you pixel size in mm*/
+    char   parentName[MAX_STRING_LENGTH];  // Name of the parent body to which the camera should be attached
+    double fieldOfView;        //!< [rad]   Camera Field of View */
+    int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
+    uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond */
+    double focalLength;        //!< [m] Camera Focal Length in meters*/
+    double sensorSize[2];      //!< [m] Size of the camera sensor-paired with resolution gives you pixel size in mm*/
     double cameraPos_B[3];     //!< [m] Camera position in body frame */
-    double sigma_CB[3];     //!< [-] MRP rotating from the camera frame to the body frame */
+    double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
+    char   skyBox[MAX_STRING_LENGTH]; //!< string containing the star field preference
 }CameraConfigMsg;
 

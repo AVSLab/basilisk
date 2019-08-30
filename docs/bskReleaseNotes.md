@@ -16,6 +16,11 @@ We are very excited by the great capabilities that this software already has, an
 <ul>
     <li>Updated the MD help file on how to compile from the command line enironment using a custom configuration of Python.</li>
      <li>Created new optical navigation filter that estimates bias in the measurements. This filter takes in pixel and line data directly.</li>
+    <li>Added the ability to specify Vizard settings from Basilisk `vizInterface` module settings.  This way Basilisk simulations can set the desired Vizard settings from within the simulation script. </li>
+    <li>Added a new MD help file to discuss the helper methods that setup Vizard features</li>
+    <li>Added a python helper function to setup cameraConfigMsg message and create a custom camera view. </li>
+    <li>Added the ability to script what starfield Vizard should use.</li>
+    <li>Made the Vizard helper check that correct keywords are being used.</li>
 </ul>
 
 ## Version 0.8.1

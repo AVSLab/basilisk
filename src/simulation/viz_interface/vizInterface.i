@@ -28,9 +28,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // Instantiate templates used by example
 namespace std {
     %template(VizThrConfig) vector<ThrClusterMap>;
+    %template(PointLineConfig) vector<PointLine>;
+    %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
+    %template(KeepOutInConeConfig) vector<KeepOutInCone>;
 }
 
 %include "vizInterface.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
 GEN_SIZEOF(ThrClusterMap);
 
 %pythoncode %{
