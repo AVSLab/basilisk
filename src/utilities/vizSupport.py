@@ -223,7 +223,7 @@ def createConeInOut(viz, **kwargs):
     if 'incidenceAngle' in kwargs:
         angle = kwargs['incidenceAngle']
         if not isinstance(angle, float):
-            print('ERROR: incidenceAngle must be a float value')
+            print('ERROR: incidenceAngle must be a float value in radians')
             exit(1)
         vizElement.incidenceAngle = angle
     else:
@@ -317,7 +317,7 @@ def createCameraViewPanel(viz, camName, **kwargs):
     if 'fieldOfView' in kwargs:
         fieldOfView = kwargs['fieldOfView']
         if not isinstance(fieldOfView, float):
-            print('ERROR: ' + camName + ' spacecraftVisible must be a float in degrees')
+            print('ERROR: ' + camName + ' spacecraftVisible must be a float in radians')
             exit(1)
         cam.fieldOfView = fieldOfView
     else:
@@ -367,7 +367,7 @@ def createCameraConfigMsg(viz, **kwargs):
     if 'fieldOfView' in kwargs:
         val = kwargs['fieldOfView']
         if not isinstance(val, float):
-            print('ERROR: fieldOfView must be a float')
+            print('ERROR: fieldOfView must be a float in radians')
             exit(1)
         viz.cameraConfigMessage.fieldOfView = val
     else:

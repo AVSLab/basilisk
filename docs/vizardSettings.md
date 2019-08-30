@@ -77,7 +77,7 @@ toBodyName | string | | Yes | contains the name of the body to point towards
 lineColor | int(4) | | Yes | color name or array on integer values specifying the RGBA values between 0 to 255
 position_B | float(3) | m | No, (0,0,0) default | position of the cone vertex
 normalVector_B | float(3) | | Yes | normal axis of the cone in body frame components
-incidenceAngle | float | deg | Yes | angle of the cone
+incidenceAngle | float | rad | Yes | angle of the cone
 coneHeight | float | m | Yes | height of the cone
 coneName | string |  | No | cone label name, if unspecified, viz will autogenerate name
 
@@ -87,8 +87,8 @@ Vizard can create two spacecraft relative camera panels (camera One and Two) and
 ~~~~~~~~~~~~~~~{.py}
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
     vizSupport.createCameraViewPanel(viz, "One", viewPanel=True, setView=0)
-    vizSupport.createCameraViewPanel(viz, "Two", viewPanel=True, setView=3, spacecraftVisible=True, fieldOfView=50.)
-    vizSupport.createCameraViewPanel(viz, "Planet", viewPanel=True, setView=2, spacecraftVisible=True, fieldOfView=50., targetBodyName='earth')
+    vizSupport.createCameraViewPanel(viz, "Two", viewPanel=True, setView=3, spacecraftVisible=True, fieldOfView=50.*macros.D2R)
+    vizSupport.createCameraViewPanel(viz, "Planet", viewPanel=True, setView=2, spacecraftVisible=True, fieldOfView=50.*macros.D2R, targetBodyName='earth')
 ~~~~~~~~~~~~~~~
 The following table illustrates the arguments for the `createCameraViewPanel` method if invoking the spacecraft relative camera headings for cameras `One` and `Two`.
 
@@ -98,7 +98,7 @@ spacecraftName | string | | No, sc name default | name of the spacecraft with re
 viewPanel | bool | | No, default is false | flag indicating if a panel should be shown (true) or not (false)
 setView | int | | Yes | index specifying along which axis the camera is pointing (0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z)
 spacecraftVisible| bool | | No, default is false | flag indicating if the spacecraft should be shown in the camera view
-fieldOfView | float | deg | No, default -1 | camera field of view, to use the Vizard default set it to -1
+fieldOfView | float | rad | No, default -1 | camera field of view, to use the Vizard default set it to -1
 
 
 The following tale illustrates the arguments for the `createCameraViewPanel` method if a planet pointing camera is setup.
@@ -109,7 +109,7 @@ spacecraftName | string | | No, sc name default | name of the spacecraft with re
 viewPanel | bool | | No, default is false | flag indicating if a panel should be shown (true) or not (false)
 setView | int | | Yes | index specifying along which orbit axis the camera is pointing (0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track)
 spacecraftVisible| bool | | No, default is false | flag indicating if the spacecraft should be shown in the camera view
-fieldOfView | float | deg | No, default -1 | camera field of view, to use the Vizard default set it to -1
+fieldOfView | float | rad | No, default -1 | camera field of view, to use the Vizard default set it to -1
 targetBodyName | string | | Yes | name of the planet to point at
 
 
@@ -128,7 +128,7 @@ Variable      |  Type | Units | Required | Description
 ------------- | -------|-------|----------|---------
 cameraID | Int | | Yes | ID of the Vizard camera
 parentName | string | | No, sc name default | name of the spacecraft with respect to which the camera is shown
-fieldOfView | Float | Rad | Yes | field of view 
+fieldOfView | Float | rad | Yes | field of view 
 resolution | Int(2) |  | Yes | image sensor pixels
 renderRate | Int |  ns | Yes | time between image grabs
 sensorSize | Float(2) | m | Yes | sensor dimensions

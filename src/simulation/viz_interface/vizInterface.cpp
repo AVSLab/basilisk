@@ -459,7 +459,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 cone->add_position(this->settings.coneList[idx].position_B[i]);
                 cone->add_normalvector(this->settings.coneList[idx].normalVector_B[i]);
             }
-            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle);
+            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle*R2D);  // Unity expects degrees
             cone->set_coneheight(this->settings.coneList[idx].coneHeight);
             cone->set_tobodyname(this->settings.coneList[idx].toBodyName);
             cone->set_frombodyname(this->settings.coneList[idx].fromBodyName);
@@ -485,7 +485,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         camOne->set_viewpanel(this->settings.cameraOne.viewPanel);
         camOne->set_setview(this->settings.cameraOne.setView);
         camOne->set_spacecraftvisible(this->settings.cameraOne.spacecraftVisible);
-        camOne->set_fieldofview(this->settings.cameraOne.fieldOfView);
+        camOne->set_fieldofview(this->settings.cameraOne.fieldOfView*R2D);  // Unity expects degrees
         vizSettings->set_allocated_cameraone(camOne);
 
         // define camera two settings
@@ -494,7 +494,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         camTwo->set_viewpanel(this->settings.cameraTwo.viewPanel);
         camTwo->set_setview(this->settings.cameraTwo.setView);
         camTwo->set_spacecraftvisible(this->settings.cameraTwo.spacecraftVisible);
-        camTwo->set_fieldofview(this->settings.cameraTwo.fieldOfView);
+        camTwo->set_fieldofview(this->settings.cameraTwo.fieldOfView*R2D);  // Unity expects degrees
         vizSettings->set_allocated_cameratwo(camTwo);
 
         // define planet camera settings
@@ -503,7 +503,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         camPlanet->set_viewpanel(this->settings.cameraPlanet.viewPanel);
         camPlanet->set_setview(this->settings.cameraPlanet.setView);
         camPlanet->set_spacecraftvisible(this->settings.cameraPlanet.spacecraftVisible);
-        camPlanet->set_fieldofview(this->settings.cameraPlanet.fieldOfView);
+        camPlanet->set_fieldofview(this->settings.cameraPlanet.fieldOfView*R2D);  // Unity expects degrees
         camPlanet->set_targetbodyname(this->settings.cameraPlanet.targetBodyName);
         vizSettings->set_allocated_planetcamera(camPlanet);
 
