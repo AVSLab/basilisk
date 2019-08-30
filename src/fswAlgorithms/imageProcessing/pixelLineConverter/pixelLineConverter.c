@@ -105,7 +105,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
 
     /*! - Find pixel size using camera specs */
     double X, Y;
-    X = cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0]; // mm to meters
+    X = cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0];
     Y = cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1];
 
     /*! - Get the heading */
