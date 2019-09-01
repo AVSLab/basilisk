@@ -53,22 +53,21 @@ from Basilisk.utilities import macros as mc
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("case", [
-     (1)        # sun is visible, vectors are not aligned
-    ,(2)        # sun is not visible, vectors are not aligned
-    ,(3)        # sun is visible, vectors are aligned
-    ,(4)        # sun is visible, vectors are oppositely aligned
-    ,(5)        # sun is visible, vectors are oppositely aligned, and command sc is b1
-    ,(6)        # sun is not visible, vectors are not aligned, no specified omega_RN_B value
-    ,(7)        # sun is visible, vectors not aligned, nominal spin rate specified about sun heading vector
+     (1)        # target is visible, vectors are not aligned
+    ,(2)        # target is not visible, vectors are not aligned
+    ,(3)        # target is visible, vectors are aligned
+    ,(4)        # target is visible, vectors are oppositely aligned
+    ,(5)        # target is visible, vectors are oppositely aligned, and command sc is b1
+    ,(6)        # target is not visible, vectors are not aligned, no specified omega_RN_B value
 ])
 
 def test_module(show_plots, case):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = sunSafePointTestFunction(show_plots, case)
+    [testResults, testMessage] = opNavPointTestFunction(show_plots, case)
     assert testResults < 1, testMessage
 
 
-def sunSafePointTestFunction(show_plots, case):
+def opNavPointTestFunction(show_plots, case):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -101,7 +100,7 @@ def sunSafePointTestFunction(show_plots, case):
     moduleConfig.imuInMsgName = "inputIMUDataName"
     camera_Z = [0.,0.,1.]
     moduleConfig.opNavHeading = camera_Z
-    moduleConfig.minUnitMag = 0.1
+    moduleConfig.minUnitMag = 0.01
     if (case == 2):
         omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
         moduleConfig.omega_RN_B = omega_RN_B_Search
@@ -112,6 +111,7 @@ def sunSafePointTestFunction(show_plots, case):
     planet_B = [1.,1.,0.]
     inputOpNavData = OpNavFswMsg()  # Create a structure for the input message
     inputOpNavData.r_B = planet_B
+    inputOpNavData.valid = 1
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                moduleConfig.opnavDataInMsgName,
@@ -125,10 +125,6 @@ def sunSafePointTestFunction(show_plots, case):
                                moduleConfig.imuInMsgName,
                                inputIMUData)
 
-    if (case == 7):
-        moduleConfig.sunAxisSpinRate = 1.5*mc.D2R;
-        omega_RN_B_Search = np.array(planet_B)/np.linalg.norm(np.array(planet_B)) * moduleConfig.sunAxisSpinRate
-
 
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -136,17 +132,7 @@ def sunSafePointTestFunction(show_plots, case):
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
     unitTestSim.ConfigureStopTime(mc.sec2nano(1.))  # seconds to stop simulation
-
-    # run the Reset() routine
-    moduleWrap.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
-
-    # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
@@ -220,7 +206,7 @@ def sunSafePointTestFunction(show_plots, case):
         omega_BN_B.tolist(),
         omega_BN_B.tolist()
     ]
-    if (case == 2 or case == 7):
+    if (case == 2):
         trueVector = [
             (omega_BN_B - omega_RN_B_Search).tolist(),
             (omega_BN_B - omega_RN_B_Search).tolist(),
@@ -325,4 +311,4 @@ def sunSafePointTestFunction(show_plots, case):
 # stand-along python script
 #
 if __name__ == "__main__":
-    sunSafePointTestFunction(False, 1)
+    opNavPointTestFunction(False, 1)
