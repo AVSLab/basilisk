@@ -56,9 +56,7 @@ from Basilisk.utilities import macros as mc
      (1)        # target is visible, vectors are not aligned
     ,(2)        # target is not visible, vectors are not aligned
     ,(3)        # target is visible, vectors are aligned
-    ,(4)        # target is visible, vectors are oppositely aligned
-    ,(5)        # target is visible, vectors are oppositely aligned, and command sc is b1
-    ,(6)        # target is not visible, vectors are not aligned, no specified omega_RN_B value
+    ,(4)        # target is not visible, search
 ])
 
 def test_module(show_plots, case):
@@ -101,9 +99,6 @@ def opNavPointTestFunction(show_plots, case):
     camera_Z = [0.,0.,1.]
     moduleConfig.opNavHeading = camera_Z
     moduleConfig.minUnitMag = 0.01
-    if (case == 2):
-        omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
-        moduleConfig.omega_RN_B = omega_RN_B_Search
     moduleConfig.smallAngle = 0.01*mc.D2R
 
     # Create input messages
@@ -112,6 +107,12 @@ def opNavPointTestFunction(show_plots, case):
     inputOpNavData = OpNavFswMsg()  # Create a structure for the input message
     inputOpNavData.r_B = planet_B
     inputOpNavData.valid = 1
+    if (case == 2): #No valid measurement
+        inputOpNavData.valid = 0
+    if (case == 3): #No valid measurement
+        inputOpNavData.r_B = [0.,0.,1.]
+    if (case == 4): #No valid measurement
+        inputOpNavData.valid = 0
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                moduleConfig.opnavDataInMsgName,
@@ -124,7 +125,9 @@ def opNavPointTestFunction(show_plots, case):
                                unitProcessName,
                                moduleConfig.imuInMsgName,
                                inputIMUData)
-
+    omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
+    if (case ==2 or case==4):
+        moduleConfig.omega_RN_B = omega_RN_B_Search
 
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -154,33 +157,12 @@ def opNavPointTestFunction(show_plots, case):
                 sigmaTrue.tolist(),
                 sigmaTrue.tolist()
                ]
-    if (case == 2 or case == 3 or case == 6):
+    if (case == 2 or case == 3 or case == 4):
         trueVector = [
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]
         ]
-    if (case == 4):
-        eHat = np.cross(np.array(camera_Z),np.array([1,0,0]))
-        eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(np.array(planet_B)/np.linalg.norm(np.array(planet_B)),np.array(camera_Z)))
-        sigmaTrue = eHat * np.tan(Phi/4.0)
-        trueVector = [
-                    sigmaTrue.tolist(),
-                    sigmaTrue.tolist(),
-                    sigmaTrue.tolist()
-               ]
-    if (case == 5):
-        eHat = np.cross(np.array(camera_Z), np.array([0, 1, 0]))
-        eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(np.array(planet_B)/np.linalg.norm(np.array(planet_B)), np.array(camera_Z)))
-        sigmaTrue = eHat * np.tan(Phi / 4.0)
-        trueVector = [
-            sigmaTrue.tolist(),
-            sigmaTrue.tolist(),
-            sigmaTrue.tolist()
-        ]
-
     # compare the module results to the truth values
     accuracy = 1e-12
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
@@ -206,7 +188,7 @@ def opNavPointTestFunction(show_plots, case):
         omega_BN_B.tolist(),
         omega_BN_B.tolist()
     ]
-    if (case == 2):
+    if (case == 2 or case==4):
         trueVector = [
             (omega_BN_B - omega_RN_B_Search).tolist(),
             (omega_BN_B - omega_RN_B_Search).tolist(),
@@ -235,7 +217,7 @@ def opNavPointTestFunction(show_plots, case):
         [0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0]
     ]
-    if (case == 2 or case == 7):
+    if (case == 2 or case == 4):
         trueVector = [
             omega_RN_B_Search,
             omega_RN_B_Search,
@@ -311,4 +293,4 @@ def opNavPointTestFunction(show_plots, case):
 # stand-along python script
 #
 if __name__ == "__main__":
-    opNavPointTestFunction(False, 1)
+    opNavPointTestFunction(False, 4)
