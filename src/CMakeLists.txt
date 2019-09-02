@@ -30,9 +30,9 @@ conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-co
 set(required_conan_libraries eigen/3.3.5@conan/stable)
 
 
-option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
+option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
-option(USE_ZMQ "Include modules which use ZMQ" OFF)
+option(USE_ZMQ "Include modules which use ZMQ" ON)
 option(USE_PYTHON3 "Build For Python 3" OFF)
 
 set(requires_protobuff_modules "viz_interface/vizInterface.i")
