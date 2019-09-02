@@ -42,6 +42,7 @@ typedef struct {
     double eHat180_B[3];     /*!< -- Eigen axis to use if commanded axis is 180 from opNav axis */
     double opNavMnvrVec[3];    /*!< -- The eigen axis that we want to rotate on to see target*/
     double opNavHeading[3];    /*!< -- Desired body vector to point at target*/
+    double prevHeadingCmd[3];   /*!< -- Previous heading command*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no opNav direction is available */
     double opNavAxisSpinRate;  /*!< r/s Desired constant spin rate about opNav vector */
     int32_t attGuidanceOutMsgID;/*!< -- ID for the outgoing body estimate message*/

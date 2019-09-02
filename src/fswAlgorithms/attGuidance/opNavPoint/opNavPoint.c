@@ -81,6 +81,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, uint64_t 
         v3Normalize(configData->eHat180_B, configData->eHat180_B);
     }
 
+    v3SetZero(configData->prevHeadingCmd);
     memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
     memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
 
@@ -117,11 +118,23 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
 
     /*! - Compute the current error vector if it is valid*/
-    hNorm = v3Norm(opNavMsg.r_B);
-    if(opNavMsg.valid == 1)
+    if(opNavMsg.valid == 1 || v3IsZero(configData->prevHeadingCmd, 1E-10) == 0)
     {
-        /* a good opNav direction vector is available */
-        cthNormalized = v3Dot(configData->opNavHeading, opNavMsg.r_B)/hNorm;
+        if (opNavMsg.valid == 1){
+            /*! If a valid image is in save the heading direction */
+            v3Copy(opNavMsg.r_B, configData->prevHeadingCmd);
+            hNorm = v3Norm(opNavMsg.r_B);
+            v3Scale(1/hNorm, opNavMsg.r_B, opNavMsg.r_B);
+        }
+        else{
+            /*! Else use the previous direction in order to continue guidance */
+            v3Copy(configData->prevHeadingCmd, opNavMsg.r_B);
+            hNorm = v3Norm(opNavMsg.r_B);
+            v3Scale(1/hNorm, opNavMsg.r_B, opNavMsg.r_B);
+        }
+        cthNormalized = v3Dot(configData->opNavHeading, opNavMsg.r_B);
+        /*! Save previous command in order to continue navigating */
+        v3Copy(configData->opNavHeading, configData->prevHeadingCmd);
         cthNormalized = fabs(cthNormalized) > 1.0 ?
         cthNormalized/fabs(cthNormalized) : cthNormalized;
         configData->opNavAngleErr = acos(cthNormalized);
@@ -147,7 +160,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
-        v3Scale(configData->opNavAxisSpinRate/hNorm, opNavMsg.r_B, omega_RN_B);
+        v3Scale(configData->opNavAxisSpinRate, opNavMsg.r_B, omega_RN_B);
         v3Subtract(omega_BN_B, omega_RN_B, configData->attGuidanceOutBuffer.omega_BR_B);
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
