@@ -44,11 +44,11 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{sunSafePoint}
-\newcommand{\subject}{Sun Pointing using a Body-Relative Sun Direction Vector and Rate Gyro Information}
+\newcommand{\ModuleName}{opNavPoint}
+\newcommand{\subject}{Pointing using a Body-Relative OpNav Direction and Rate Gyro Information}
 \newcommand{\status}{Released}
-\newcommand{\preparer}{H. Schaub}
-\newcommand{\summary}{This module provides the attitude guidance output for a sun pointing mode.  This could be used for safe mode, or a power generation mode.  The input is the sun direction vector which doesn't have to be normalized, as well as the body rate information.  The output is the standard BSK attitude reference state message.  The sun direction measurement is cross with the desired body axis that is to point at the sun to create a principle rotation vector.  The dot product between these two vectors is used to extract the principal rotation angle.  With these a tracking error MRP state is computer.  The body rate tracking errors relative to the reference frame are set equal to the measured body rates to bring the vehicle to rest when pointing at the sun.  Thus, the reference angular rate and acceleration vectors relative to the inertial frame are nominally set to zero.  If the sun vector is not available, then the reference rate is set to a body-fixed value while the attitude tracking error is set to zero.  Further, robustness cases}
+\newcommand{\preparer}{T. Teil}
+\newcommand{\summary}{This module provides the attitude guidance output for an opNav pointing mode. Typically this would be to point to a planet center, or a specific heading determined from a camera. The input is a optical navigation direction vector which doesn't have to be normalized, as well as the body rate information.  The output is the standard BSK attitude reference state message.  The target direction measurement is cross with the desired body axis that is to point at the sun to create a principle rotation vector.  The dot product between these two vectors is used to extract the principal rotation angle.  With these a tracking error MRP state is computer.  The body rate tracking errors relative to the reference frame are set equal to the measured body rates to bring the vehicle to rest when pointing at the target.  Thus, the reference angular rate and acceleration vectors relative to the inertial frame are nominally set to zero.  If no heading is available, then the reference rate is set to a body-fixed value while the attitude tracking error is set to zero.}
 
 \begin{document}
 
@@ -66,18 +66,13 @@
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-1.0 & First Documentation of this module, even though the module was one of the first BSK modules drafted. & H. Schaub & 2018-04-28\\
-1.1 & Can now handle the case where the sun direction vector is not available & H. Schaub & 2018-04-28 \\
-1.2 & Can now handle the case where the sun heading and commanded bod vectors are collinear & H. Schaub & 2018-04-28 \\
-1.3 & Corrected module input and output message to comply with BSK naming conventions & H. Schaub & 2018-04-29 \\
+1.0 & First Documentation of this module: Nearly Identical to sunSafePoint & T. Teil & 2019-09-01\\
 \hline
 
 \end{longtable}
 }
 
 
-
-\newpage
 \setcounter{page}{1}
 \pagestyle{fancy}
 
