@@ -98,7 +98,7 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         zeroBase = 'Sun'
         integFrame = 'j2000'
         stateOut = pyswice.spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
-        print stateOut
+        print(stateOut)
 
 
 def run():
