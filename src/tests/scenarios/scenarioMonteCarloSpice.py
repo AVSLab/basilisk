@@ -27,6 +27,7 @@
 
 import inspect
 import os
+import shutil
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -106,6 +107,7 @@ def run():
     monteCarlo = MyController()
     monteCarlo.setSimulationFunction(MySimulation)
     monteCarlo.setExecutionFunction(executeScenario)
+    numberICs = 12
     monteCarlo.setExecutionCount(12)
     monteCarlo.setShouldDisperseSeeds(True)
     monteCarlo.setThreadCount(6)
@@ -127,6 +129,9 @@ def run():
 
     # After the monteCarlo run is configured, it is executed.
     failures = monteCarlo.executeSimulations()
+
+    # Now we clean up data from this test
+    shutil.rmtree(dirName)
 
 def executeScenario(sim):
     sim.ConfigureStopTime(10.0)
