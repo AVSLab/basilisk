@@ -41,8 +41,10 @@ typedef struct {
     double smallAngle;       /*!< rad An angle value that specifies what is near 0 or 180 degrees */
     double eHat180_B[3];     /*!< -- Eigen axis to use if commanded axis is 180 from opNav axis */
     double opNavMnvrVec[3];    /*!< -- The eigen axis that we want to rotate on to see target*/
+    double lastTime; /*!< -- Last time a measurement came in to integrate pointing */
+    double timeOut;  /*!< -- If no images were seen in this much time, stop using past values */
     double opNavHeading[3];    /*!< -- Desired body vector to point at target*/
-    double prevHeadingCmd[3];   /*!< -- Previous heading command*/
+    double targetHeading_N[3];   /*!< -- Previous heading command*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no opNav direction is available */
     double opNavAxisSpinRate;  /*!< r/s Desired constant spin rate about opNav vector */
     int32_t attGuidanceOutMsgID;/*!< -- ID for the outgoing body estimate message*/
