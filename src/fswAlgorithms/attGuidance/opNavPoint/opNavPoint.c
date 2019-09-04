@@ -108,8 +108,6 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
     double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
     double dcm_BN[3][3];
-    
-    timeWithoutMeas=0;
     NavAttIntMsg localImuDataInBuffer;
     /* zero the input message containers */
     memset(&(opNavMsg), 0x0, sizeof(OpNavFswMsg));
@@ -120,13 +118,19 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     ReadMessage(configData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
     
+    if (configData->lastTime==0){
+        configData->lastTime=callTime*1E-9;
+        v3SetZero(configData->targetHeading_N);
+    }
+    timeWithoutMeas = callTime*1E-9 - configData->lastTime;
+
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
+    /*! Update the last time since a measurement was received */
     /*! - Compute the current error vector if it is valid*/
     if((opNavMsg.valid == 1 || v3IsZero(configData->targetHeading_N, 1E-10) == 0) && (timeWithoutMeas < configData->timeOut)){
         if (opNavMsg.valid == 1){
             /*! If a valid image is in save the heading direction */
-            timeWithoutMeas = callTime*1E-9 - configData->lastTime;
             configData->lastTime = callTime*1E-9;
             v3Scale(-1, opNavMsg.r_B, targetHeading_B);
             m33tMultV3(dcm_BN, opNavMsg.r_B, configData->targetHeading_N);
@@ -171,6 +175,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
     } else {
+        configData->lastTime=0;
         /* no proper opNav direction vector is available */
         v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
 
