@@ -95,11 +95,10 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         self.additionalReferences = [scObject]
 
     def accessSpiceKernel(self):
-        startCalendarTime = '2012 APR 29 15:18:14.907'
+        startCalendarTime = '2012 APR 29 15:18:14.907 (UTC)'
         zeroBase = 'Sun'
         integFrame = 'j2000'
         stateOut = pyswice.spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
-        print(stateOut)
 
 
 def run():
@@ -135,7 +134,7 @@ def run():
 
 def executeScenario(sim):
     sim.ConfigureStopTime(10.0)
-    sim.InitializeSimulation()
+    sim.InitializeSimulationAndDiscover()
 
     dataPath = bskPath + "/supportData/EphemerisData/"
     pyswice.furnsh_c(dataPath + 'naif0011.tls')
