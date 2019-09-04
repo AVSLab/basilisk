@@ -19,9 +19,9 @@
 '''
 
 #
-# Basilisk Pyswice Module Usage Example
+# Basilisk Integrated Test
 #
-# Purpose:  Example of a common incorrect usage of the pyswice module.
+# Purpose:  This Monte Carlo example shows how to properly use Spice in such simulations.
 #
 
 
@@ -46,6 +46,27 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import sim_model
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller
+
+
+
+## \page scenarioMonteCarloSpiceGroup
+##   @{
+## Demonstrates how to run a Monte-Carlo (MC) simulation using the Spice Library
+#
+# MC Simulation using the Spice Library {#MonteCarloSimulationSpice}
+# ====
+#
+# Scenario Description
+# -----
+# This script illustrates how to run a Monte Carlo simulation where the Spice is used within the Basilisk
+# setup.
+#
+# To run the MC simulation, call the python script from a Terminal window through
+#
+#       python3 scenarioMonteCarloSpice.py
+#
+
+
 
 
 class MyController(Controller):
