@@ -176,8 +176,11 @@ def run():
     # Now we clean up data from this test
     shutil.rmtree(dirName)
 
+    return
+
+
 def executeScenario(sim):
-    sim.ConfigureStopTime(10.0)
+    sim.ConfigureStopTime(macros.sec2nano(100.))
     sim.InitializeSimulationAndDiscover()
 
     dataPath = bskPath + "/supportData/EphemerisData/"
