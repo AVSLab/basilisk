@@ -40,6 +40,8 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk import pyswice
 
 from Basilisk.simulation import spacecraftPlus
@@ -95,10 +97,31 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
 
         self.dynProcess = self.CreateNewProcess(simProcessName)
 
-        self.dynProcess.addTask(self.CreateNewTask(simTaskName, macros.sec2nano(.1)))
+        self.dynProcess.addTask(self.CreateNewTask(simTaskName, macros.sec2nano(10.)))
 
         scObject = spacecraftPlus.SpacecraftPlus()
         self.AddModelToTask(simTaskName, scObject, None, 1)
+        scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd([7000000.0, 0.0, 0.0])  # m   - r_CN_N
+        scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd([0.0, 7500.0, 0.0])  # m/s - v_CN_N
+
+        # setup Gravity Bodies
+        gravFactory = simIncludeGravBody.gravBodyFactory()
+        gravBodies = gravFactory.createBodies(['earth', 'sun', 'moon'])
+        gravBodies['earth'].isCentralBody = True
+
+        # attach gravity model to spaceCraftPlus
+        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+        # setup simulation start date/time
+        timeInitString = "2012 MAY 1 00:28:30.0 (UTC)"
+
+        # setup SPICE module
+        gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
+        gravFactory.spiceObject.zeroBase = 'Earth'
+
+        # # add spice interface object to task list
+        self.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+
 
         # operate on pyswice
         dataPath = bskPath + "/supportData/EphemerisData/"
