@@ -380,7 +380,6 @@ def run(show_plots, scCase):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    MessagingAccess.findMessageMatches('earth', scSim.TotalSim)
     #
     #   retrieve the logged data
     #
