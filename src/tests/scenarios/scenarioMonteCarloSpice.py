@@ -60,13 +60,47 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller
 #
 # Scenario Description
 # -----
-# This script illustrates how to run a Monte Carlo simulation where the Spice is used within the Basilisk
-# setup.
+# This script illustrates how to run a Monte Carlo simulation where the Spice is used within the Python
+# setup.  Note that the Python Spice setup is separate from the BSK c++ Spice module setup.  In this tutorial
+# a very simple simulation is shown to showcase how to correctly perform Python-based Spice function calls with a
+# Basilisk Monte Carlo run.
 #
 # To run the MC simulation, call the python script from a Terminal window through
 #
 #       python3 scenarioMonteCarloSpice.py
 #
+# The simulation sets up a simple spacecraft and associated initial conditions.  Note that the basilisk spacecraft
+# simulation is setup within the class `MySimulation`.  Here the the code is added to load Spice kernels within
+# Python to pull the Hubble states from Spice.  Thus, this python Spice call is performed within each Monte Carlo
+# thread.  In this simple example the Hubble states are then printed to the terminal.
+# ~~~~~~~~~~~~~~{.py}
+#         dataPath = bskPath + "/supportData/EphemerisData/"
+#         self.scSpiceName = 'HUBBLE SPACE TELESCOPE'
+#         pyswice.furnsh_c(dataPath + 'naif0011.tls')
+#         pyswice.furnsh_c(dataPath + 'pck00010.tpc')
+#         pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
+#         pyswice.furnsh_c(dataPath + 'de430.bsp')
+#         pyswice.furnsh_c(dataPath + 'hst_edited.bsp')
+#
+#         self.accessSpiceKernel()
+# ~~~~~~~~~~~~~~
+# The method `accessSpiceKernel()` is defined as
+# ~~~~~~~~~~~~~~{.py}
+#     def accessSpiceKernel(self):
+#         startCalendarTime = '2012 APR 29 15:18:14.907 (UTC)'
+#         zeroBase = 'Sun'
+#         integFrame = 'j2000'
+#         stateOut = pyswice.spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
+#         print(stateOut)
+# ~~~~~~~~~~~~~~
+#
+# As this Monte Carlo scenario is setup to run 12 times, by running this script the user should see
+# no errors and the Hubble states printed out 12 times.
+#
+# In the Controller class `MyController` there is Spice kernel loading code that is commented out.
+# If the kernels are loaded within the controller class then this results in a Spice kernel loading error.
+#
+# The user should be careful to load the Spice or use within the Python code within the simulation class.
 
 
 
@@ -125,7 +159,7 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         zeroBase = 'Sun'
         integFrame = 'j2000'
         stateOut = pyswice.spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
-
+        print(stateOut)
 
 def run():
     # First, the `Controller` class is used in order to define the simulation
@@ -140,16 +174,16 @@ def run():
     dirName = "montecarlo_test" + str(os.getpid())
     monteCarlo.setArchiveDir(dirName)
 
-    dataPath = bskPath + "/supportData/EphemerisData/"
-    pyswice.furnsh_c(dataPath + 'naif0011.tls')
-    pyswice.furnsh_c(dataPath + 'pck00010.tpc')
-    pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
-    pyswice.furnsh_c(dataPath + 'de430.bsp')
-
-    startCalendarTime = '2012 AUG 05, 21:35:07.496 (UTC)'
-    startTimeArray = sim_model.new_doubleArray(1)
-    pyswice.str2et_c(startCalendarTime, startTimeArray)
-    sim_model.delete_doubleArray(startTimeArray)
+    # dataPath = bskPath + "/supportData/EphemerisData/"
+    # pyswice.furnsh_c(dataPath + 'naif0011.tls')
+    # pyswice.furnsh_c(dataPath + 'pck00010.tpc')
+    # pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
+    # pyswice.furnsh_c(dataPath + 'de430.bsp')
+    #
+    # startCalendarTime = '2012 AUG 05, 21:35:07.496 (UTC)'
+    # startTimeArray = sim_model.new_doubleArray(1)
+    # pyswice.str2et_c(startCalendarTime, startTimeArray)
+    # sim_model.delete_doubleArray(startTimeArray)
 
     # After the monteCarlo run is configured, it is executed.
     failures = monteCarlo.executeSimulations()
@@ -164,11 +198,11 @@ def executeScenario(sim):
     sim.ConfigureStopTime(macros.sec2nano(100.))
     sim.InitializeSimulationAndDiscover()
 
-    dataPath = bskPath + "/supportData/EphemerisData/"
-    pyswice.furnsh_c(dataPath + 'naif0011.tls')
-    pyswice.furnsh_c(dataPath + 'pck00010.tpc')
-    pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
-    pyswice.furnsh_c(dataPath + 'de430.bsp')
+    # dataPath = bskPath + "/supportData/EphemerisData/"
+    # pyswice.furnsh_c(dataPath + 'naif0011.tls')
+    # pyswice.furnsh_c(dataPath + 'pck00010.tpc')
+    # pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
+    # pyswice.furnsh_c(dataPath + 'de430.bsp')
 
     sim.ExecuteSimulation()
 
