@@ -395,7 +395,7 @@ def StateUpdateSunLine(show_plots):
     stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
     postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
-    stateTarget[:3] = (-testVector[:3]).tolist()
+    stateTarget[:3] = (-testVector[:3]/np.linalg.norm(testVector[:3])).tolist()
 
     for i in range(5):
         # check covariance immediately after measurement is taken,
@@ -428,7 +428,7 @@ def StateUpdateSunLine(show_plots):
     stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", list(range(5)))
     postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
-    stateTarget[:3] = (-testVector[:3]).tolist()
+    stateTarget[:3] = (-testVector[:3]/np.linalg.norm(testVector[:3])).tolist()
 
     for i in range(5):
         if(np.abs(covarLog[2*t1-10, i*5+1+i] - covarLog[0, i*5+1+i]/10)>1E-1):
