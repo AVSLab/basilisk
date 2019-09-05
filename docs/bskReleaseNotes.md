@@ -12,15 +12,16 @@ We are very excited by the great capabilities that this software already has, an
 * live plotting capability during a BSK run
 
 
-## Upcoming Version 0.X.X
+## Version 0.9.0
 <ul>
-    <li>Updated the MD help file on how to compile from the command line enironment using a custom configuration of Python.</li>
+    <li>Updated the MD help file on how to compile from the command line environment using a custom configuration of Python.</li>
      <li>Created new optical navigation filter that estimates bias in the measurements. This filter takes in pixel and line data directly.</li>
     <li>Added the ability to specify Vizard settings from Basilisk `vizInterface` module settings.  This way Basilisk simulations can set the desired Vizard settings from within the simulation script. </li>
     <li>Added a new MD help file to discuss the helper methods that setup Vizard features</li>
     <li>Added a python helper function to setup cameraConfigMsg message and create a custom camera view. </li>
     <li>Added the ability to script what starfield Vizard should use.</li>
     <li>Made the Vizard helper check that correct keywords are being used.</li>
+    <li>The cmake file now turns ON by default the `USE_PROTOBUFFERS` and `USE_ZMQ` build flag options.  This enables out of the box support for saving BSK data to Vizard binary files.</li>
 </ul>
 
 ## Version 0.8.1
