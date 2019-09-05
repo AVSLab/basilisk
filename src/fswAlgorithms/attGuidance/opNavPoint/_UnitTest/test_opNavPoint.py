@@ -105,12 +105,12 @@ def opNavPointTestFunction(show_plots, case):
     #
     planet_B = [1.,1.,0.]
     inputOpNavData = OpNavFswMsg()  # Create a structure for the input message
-    inputOpNavData.r_B = planet_B
+    inputOpNavData.r_BN_B = planet_B
     inputOpNavData.valid = 1
     if (case == 2): #No valid measurement
         inputOpNavData.valid = 0
     if (case == 3): #No valid measurement
-        inputOpNavData.r_B = [0.,0.,1.]
+        inputOpNavData.r_BN_B = [0.,0.,1.]
     if (case == 4): #No valid measurement
         inputOpNavData.valid = 0
     unitTestSupport.setMessage(unitTestSim.TotalSim,
