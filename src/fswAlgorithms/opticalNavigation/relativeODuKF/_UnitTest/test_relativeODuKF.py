@@ -117,7 +117,7 @@ def relOD_method_test(show_plots):
     # Measurement Model Test
     data = relativeODuKF.RelODuKFConfig()
     msg = relativeODuKF.OpNavFswMsg()
-    msg.r_N = [300, 200, 100]
+    msg.r_BN_N = [300, 200, 100]
     data.planetId = 2
     data.opNavInMsg = msg
     data.countHalfSPs = 6
@@ -218,13 +218,13 @@ def StateUpdateRelOD(show_plots):
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
 
     inputData.planetID = 2
-    inputData.r_B = expected[0,1:4]
+    inputData.r_BN_B = expected[0,1:4]
 
     unitTestSim.InitializeSimulation()
     for i in range(t1):
         if i > 0 and i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt)
-            inputData.r_N = expected[i,1:4] + np.random.normal(0, 5*1E-2, 3)
+            inputData.r_BN_N = expected[i,1:4] + np.random.normal(0, 5*1E-2, 3)
             inputData.valid = 1
             inputData.covar_N = [5.*1E-2, 0.,0.,
                                  0., 5.*1E-2, 0.,
@@ -246,7 +246,7 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1, multT1*t1):
         if i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt + 1)
-            inputData.r_N = expected[i,1:4] +  np.random.normal(0, 5*1E-2, 3)
+            inputData.r_BN_N = expected[i,1:4] +  np.random.normal(0, 5*1E-2, 3)
             inputData.valid = 1
             inputData.covar_N = [5.*1E-2, 0.,0.,
                                  0., 5.*1E-2, 0.,

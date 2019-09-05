@@ -375,16 +375,16 @@ def StateUpdateSunLine(show_plots):
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
     stateTarget = testVector.tolist()
-    inputData.r_B = stateTarget
+    inputData.r_BN_B = stateTarget
     stateTarget.extend([0.0, 0.0])
     moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
 
     unitTestSim.InitializeSimulation()
     t1 = 1000
     for i in range(t1):
-        if i > 0 and i%50 == 0:
+        if i > 0 and i%20 == 0:
             inputData.timeTag = macros.sec2nano(i * 0.5)
-            inputData.r_B += np.random.normal(0, 0.001, 3)
+            inputData.r_BN_B += np.random.normal(0, 0.001, 3)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
@@ -395,11 +395,12 @@ def StateUpdateSunLine(show_plots):
     stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
     postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
+    stateTarget[:3] = (-testVector[:3]).tolist()
 
     for i in range(5):
         # check covariance immediately after measurement is taken,
         # ensure order of magnitude less than initial covariance.
-        if(covarLog[951, i*5+1+i] > covarLog[0, i*5+1+i]/10):
+        if(np.abs(covarLog[t1-10, i*5+1+i] - covarLog[0, i*5+1+i]/10)>1E-1):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
@@ -409,13 +410,13 @@ def StateUpdateSunLine(show_plots):
 
     testVector = np.array([0.6, -0.1, 0.2])
     stateTarget = testVector.tolist()
-    inputData.r_B = stateTarget
+    inputData.r_BN_B = stateTarget
     stateTarget.extend([0.0, 0.0])
 
     for i in range(t1):
-        if i%50 == 0:
+        if i%20 == 0:
             inputData.timeTag = macros.sec2nano(i*0.5 +t1 +1)
-            inputData.r_B += np.random.normal(0, 0.001, 3)
+            inputData.r_BN_B += np.random.normal(0, 0.001, 3)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
@@ -427,13 +428,15 @@ def StateUpdateSunLine(show_plots):
     stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", list(range(5)))
     postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
+    stateTarget[:3] = (-testVector[:3]).tolist()
 
     for i in range(5):
-        if(covarLog[1951, i*5+1+i] > covarLog[0, i*5+1+i]/10):
+        if(np.abs(covarLog[2*t1-10, i*5+1+i] - covarLog[0, i*5+1+i]/10)>1E-1):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
             print(abs(stateLog[-1, i+1] - stateTarget[i]))
+            print("here")
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -509,5 +512,5 @@ def StatePropSunLine(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_all_heading_kf(True)
-    #StateUpdateSunLine(True)
+    # test_all_heading_kf(True)
+    StateUpdateSunLine(True)
