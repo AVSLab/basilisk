@@ -11,6 +11,10 @@ We are very excited by the great capabilities that this software already has, an
 * Ability to playback BSK simulation file within Vizard
 * live plotting capability during a BSK run
 
+## Upcoming Version X.X
+<ul>
+    <li>text here</li>
+</ul>
 
 ## Version 0.9.0
 <ul>
