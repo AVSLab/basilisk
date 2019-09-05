@@ -104,24 +104,6 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd([7000000.0, 0.0, 0.0])  # m   - r_CN_N
         scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd([0.0, 7500.0, 0.0])  # m/s - v_CN_N
 
-        # setup Gravity Bodies
-        gravFactory = simIncludeGravBody.gravBodyFactory()
-        gravBodies = gravFactory.createBodies(['earth', 'sun', 'moon'])
-        gravBodies['earth'].isCentralBody = True
-
-        # attach gravity model to spaceCraftPlus
-        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
-
-        # setup simulation start date/time
-        timeInitString = "2012 MAY 1 00:28:30.0 (UTC)"
-
-        # setup SPICE module
-        gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
-        gravFactory.spiceObject.zeroBase = 'Earth'
-
-        # # add spice interface object to task list
-        self.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
-
 
         # operate on pyswice
         dataPath = bskPath + "/supportData/EphemerisData/"
@@ -150,7 +132,6 @@ def run():
     monteCarlo = MyController()
     monteCarlo.setSimulationFunction(MySimulation)
     monteCarlo.setExecutionFunction(executeScenario)
-    numberICs = 12
     monteCarlo.setExecutionCount(12)
     monteCarlo.setShouldDisperseSeeds(True)
     monteCarlo.setThreadCount(6)
