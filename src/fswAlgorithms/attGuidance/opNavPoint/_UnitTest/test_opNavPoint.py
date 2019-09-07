@@ -100,6 +100,7 @@ def opNavPointTestFunction(show_plots, case):
     moduleConfig.opNavHeading = camera_Z
     moduleConfig.minUnitMag = 0.01
     moduleConfig.smallAngle = 0.01*mc.D2R
+    moduleConfig.timeOut = 100
 
     # Create input messages
     #
@@ -110,7 +111,7 @@ def opNavPointTestFunction(show_plots, case):
     if (case == 2): #No valid measurement
         inputOpNavData.valid = 0
     if (case == 3): #No valid measurement
-        inputOpNavData.r_BN_B = [0.,0.,1.]
+        inputOpNavData.r_BN_B = [0.,0.,-1.]
     if (case == 4): #No valid measurement
         inputOpNavData.valid = 0
     unitTestSupport.setMessage(unitTestSim.TotalSim,
@@ -148,9 +149,9 @@ def opNavPointTestFunction(show_plots, case):
                                                   list(range(3)))
     # set the filtered output truth states
 
-    eHat = np.cross(np.array(planet_B),np.array(camera_Z))
+    eHat = np.cross(-np.array(planet_B), np.array(camera_Z))
     eHat = eHat / np.linalg.norm(eHat)
-    Phi = np.arccos(np.dot(np.array(planet_B)/np.linalg.norm(np.array(planet_B)),np.array(camera_Z)))
+    Phi = np.arccos(np.dot(-np.array(planet_B)/np.linalg.norm(-np.array(planet_B)),np.array(camera_Z)))
     sigmaTrue = eHat * np.tan(Phi/4.0)
     trueVector = [
                 sigmaTrue.tolist(),
@@ -203,8 +204,6 @@ def opNavPointTestFunction(show_plots, case):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0] * mc.NANO2SEC) +
                                 "sec\n")
-
-
     #
     # check omega_RN_B
     #
@@ -293,4 +292,4 @@ def opNavPointTestFunction(show_plots, case):
 # stand-along python script
 #
 if __name__ == "__main__":
-    opNavPointTestFunction(False, 4)
+    opNavPointTestFunction(False, 1)
