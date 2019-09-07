@@ -27,8 +27,10 @@ typedef struct {
     int valid; /*!< Valid measurement if 1, invalid if 0 */
     double covar_N[3*3];    /*!< [m^2] Current covariance of the filter */
     double covar_B[3*3];    /*!< [m^2] Current covariance of the filter */
-    double r_N[3];                 /*!< [m] Current estimated state of the filter */
-    double r_B[3];                 /*!< [m] Current estimated state of the filter */
+    double covar_C[3*3];    /*!< [m^2] Current covariance of the filter */
+    double r_BN_N[3];                 /*!< [m] Current estimated state of the filter */
+    double r_BN_B[3];                 /*!< [m] Current estimated state of the filter */
+    double r_BN_C[3];                 /*!< [m] Current estimated state of the filter */
     int planetID;       /*!< [-] Planet being navigated, Earth=1, Mars=2, Jupiter=3 */
 }OpNavFswMsg;
 

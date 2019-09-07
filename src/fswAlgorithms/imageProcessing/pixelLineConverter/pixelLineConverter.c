@@ -110,7 +110,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
 
     /*! - Get the heading */
     double rtilde_C[2];
-    double rHat_C[3], rHat_N[3];
+    double rHat_BN_C[3], rHat_BN_N[3], rHat_BN_B[3];
     double rNorm = 1;
     double planetRad, denom;
     double covar_map_C[3*3], covar_In_C[3*3];
@@ -118,11 +118,12 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double x_map, y_map, rho_map;
     rtilde_C[0] = (X*reCentered[0])/cameraSpecs.focalLength;
     rtilde_C[1] = (Y*reCentered[1])/cameraSpecs.focalLength;
-    v3Set(rtilde_C[0], rtilde_C[1], 1.0, rHat_C);
-    v3Scale(-1, rHat_C, rHat_C);
-    v3Normalize(rHat_C, rHat_C);
+    v3Set(rtilde_C[0], rtilde_C[1], 1.0, rHat_BN_C);
+    v3Scale(-1, rHat_BN_C, rHat_BN_C);
+    v3Normalize(rHat_BN_C, rHat_BN_C);
     
-    m33MultV3(dcm_NC, rHat_C, rHat_N);
+    m33MultV3(dcm_NC, rHat_BN_C, rHat_BN_N);
+    m33MultV3(dcm_CB, rHat_BN_C, rHat_BN_B);
 
     if(configData->planetTarget > 0){
         if(configData->planetTarget ==1){
@@ -158,8 +159,9 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     }
     
     /*! - write output message */
-    v3Scale(rNorm*1E3, rHat_N, opNavMsgOut.r_N); //in m
-    v3Scale(rNorm*1E3, rHat_C, opNavMsgOut.r_B); //in m
+    v3Scale(rNorm*1E3, rHat_BN_N, opNavMsgOut.r_BN_N); //in m
+    v3Scale(rNorm*1E3, rHat_BN_C, opNavMsgOut.r_BN_C); //in m
+    v3Scale(rNorm*1E3, rHat_BN_B, opNavMsgOut.r_BN_B); //in m
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
     vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
     mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_B);

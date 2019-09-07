@@ -156,7 +156,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     memset(&inputRelOD, 0x0, sizeof(OpNavFswMsg));
     ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(OpNavFswMsg), &inputRelOD, moduleId);
-    v3Scale(1E-3, inputRelOD.r_N, inputRelOD.r_N);
+    v3Scale(1E-3, inputRelOD.r_BN_N, inputRelOD.r_BN_N);
     vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS*ODUKF_N_MEAS,inputRelOD.covar_N);
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
@@ -412,7 +412,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 void relODuKFMeasModel(RelODuKFConfig *configData)
 {
     int i, j;
-    v3Copy(configData->opNavInMsg.r_N, configData->obs);
+    v3Copy(configData->opNavInMsg.r_BN_N, configData->obs);
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         for(i=0; i<3; i++)

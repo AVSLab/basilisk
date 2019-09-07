@@ -143,7 +143,7 @@ def pixelLineConverterTestFunction():
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
-    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_N',  list(range(3)))
+    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_BN_N',  list(range(3)))
     outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar_N',  list(range(9)))
     outputTime = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.timeTag')
     #

@@ -214,7 +214,9 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     /*! - Write the heading estimate into the copy of the OpNav message structure*/
     opnavOutputBuffer.timeTag = configData->timeTag;
     m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar_B);
-    v3Copy(&states_BN[0], opnavOutputBuffer.r_B);
+    v3Copy(&states_BN[0], opnavOutputBuffer.r_BN_B);
+    v3Normalize(opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
+    v3Scale(-1, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
     WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpNavFswMsg),
                  &opnavOutputBuffer, moduleID);
     
@@ -361,7 +363,9 @@ void headingSuKFMeasModel(HeadingSuKFConfig *configData)
     /*! - Loop over sigma points */
     int j;
     int i;
-    v3Copy(configData->opnavInBuffer.r_B, configData->obs);
+    v3Copy(configData->opnavInBuffer.r_BN_B, configData->obs);
+    v3Normalize(configData->obs, configData->obs);
+    v3Scale(-1, configData->obs, configData->obs);
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         for(i=0; i<3; i++)
