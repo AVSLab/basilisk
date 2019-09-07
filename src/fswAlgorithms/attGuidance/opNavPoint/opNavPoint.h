@@ -22,6 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
+#include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/opNavFswMsg.h"
 #include <stdint.h>
@@ -36,6 +37,8 @@ typedef struct {
     char attGuidanceOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char opnavDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char imuInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the incoming IMU message*/
+    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
+
     double minUnitMag;       /*!< -- The minimally acceptable norm of opNav body vector*/
     double opNavAngleErr;      /*!< rad The current error between cmd and obs opNav angle*/
     double smallAngle;       /*!< rad An angle value that specifies what is near 0 or 180 degrees */
@@ -43,13 +46,14 @@ typedef struct {
     double opNavMnvrVec[3];    /*!< -- The eigen axis that we want to rotate on to see target*/
     double lastTime; /*!< -- Last time a measurement came in to integrate pointing */
     double timeOut;  /*!< -- If no images were seen in this much time, stop using past values */
-    double opNavHeading[3];    /*!< -- Desired body vector to point at target*/
-    double targetHeading_N[3];   /*!< -- Previous heading command*/
+    double alignAxis_C[3];    /*!< -- Desired camera vector to point at target*/
+    double currentHeading_N[3];   /*!< -- Previous heading command in intertial Frame*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no opNav direction is available */
     double opNavAxisSpinRate;  /*!< r/s Desired constant spin rate about opNav vector */
     int32_t attGuidanceOutMsgID;/*!< -- ID for the outgoing body estimate message*/
     int32_t opnavDataInMsgId;/*!< -- ID for the incoming CSS sensor message*/
     int32_t imuInMsgID;        /*!< -- ID for the incoming IMU sensor message*/
+    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
     AttGuidFswMsg attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
 }OpNavPointConfig;
 

@@ -123,7 +123,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     v3Normalize(rHat_BN_C, rHat_BN_C);
     
     m33MultV3(dcm_NC, rHat_BN_C, rHat_BN_N);
-    m33MultV3(dcm_CB, rHat_BN_C, rHat_BN_B);
+    m33tMultV3(dcm_CB, rHat_BN_C, rHat_BN_B);
 
     if(configData->planetTarget > 0){
         if(configData->planetTarget ==1){
@@ -168,7 +168,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
     vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
     mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_C);
-    vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_C);//in m
+    vScale(1E6, opNavMsgOut.covar_C, 3*3, opNavMsgOut.covar_C);//in m
     mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;

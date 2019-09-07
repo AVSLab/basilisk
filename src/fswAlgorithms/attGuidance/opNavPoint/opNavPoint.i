@@ -32,11 +32,13 @@
 %constant void Reset_opNavPoint(void*, uint64_t, uint64_t);
 %ignore Reset_opNavPoint;
 %include "simFswInterfaceMessages/navAttIntMsg.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
 %include "../../fswMessages/attGuidFswMsg.h"
 %include "../../fswMessages/opNavFswMsg.h"
 
 GEN_SIZEOF(OpNavPointConfig);
 GEN_SIZEOF(AttGuidFswMsg);
+GEN_SIZEOF(CameraConfigMsg)
 GEN_SIZEOF(OpNavFswMsg);
 GEN_SIZEOF(NavAttIntMsg);
 %include "opNavPoint.h"

@@ -54,6 +54,7 @@ void CrossInit_opNavPoint(OpNavPointConfig *configData, uint64_t moduleID)
                                                       sizeof(OpNavFswMsg), moduleID);
     configData->imuInMsgID = subscribeToMessage(configData->imuInMsgName,
         sizeof(NavAttIntMsg), moduleID);
+    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleID);
     
 }
 
@@ -66,22 +67,22 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, uint64_t 
 {
     double v1[3];
 
-    /* compute an Eigen axis orthogonal to opNavHeading */
-    if (v3Norm(configData->opNavHeading)  < 0.1) {
-        BSK_PRINT(MSG_ERROR,"The module vector opNavHeading is not setup as a unit vector [%f, %f %f]",
-                  configData->opNavHeading[0], configData->opNavHeading[1], configData->opNavHeading[2]);
+    /* compute an Eigen axis orthogonal to alignAxis_C */
+    if (v3Norm(configData->alignAxis_C)  < 0.1) {
+        BSK_PRINT(MSG_ERROR,"The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
+                  configData->alignAxis_C[0], configData->alignAxis_C[1], configData->alignAxis_C[2]);
     } else {
         v3Set(1., 0., 0., v1);
-        v3Normalize(configData->opNavHeading, configData->opNavHeading);    /* ensure that this vector is a unit vector */
-        v3Cross(configData->opNavHeading, v1, configData->eHat180_B);
+        v3Normalize(configData->alignAxis_C, configData->alignAxis_C);    /* ensure that this vector is a unit vector */
+        v3Cross(configData->alignAxis_C, v1, configData->eHat180_B);
         if (v3Norm(configData->eHat180_B) < 0.1) {
             v3Set(0., 1., 0., v1);
-            v3Cross(configData->opNavHeading, v1, configData->eHat180_B);
+            v3Cross(configData->alignAxis_C, v1, configData->eHat180_B);
         }
         v3Normalize(configData->eHat180_B, configData->eHat180_B);
     }
     configData->lastTime = 0;
-    v3SetZero(configData->targetHeading_N);
+    v3SetZero(configData->currentHeading_N);
     memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
     memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
 
@@ -102,13 +103,14 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     uint32_t sizeOfMsgWritten;
     double cthNormalized;
     double timeWithoutMeas;
-    double targetHeading_B[3];
+    double currentHeading_C[3];
     double hNorm;                   /*!< --- Norm of measured direction vector */
     double e_hat[3];                /*!< --- Eigen Axis */
     double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
     double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
-    double dcm_BN[3][3];
+    double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
     NavAttIntMsg localImuDataInBuffer;
+    CameraConfigMsg cameraSpecs;
     /* zero the input message containers */
     memset(&(opNavMsg), 0x0, sizeof(OpNavFswMsg));
     memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
@@ -117,35 +119,38 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
                 sizeof(OpNavFswMsg), (void*) &(opNavMsg), moduleID);
     ReadMessage(configData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
+    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CameraConfigMsg), &cameraSpecs, moduleID);
     
     if (configData->lastTime==0){
         configData->lastTime=callTime*1E-9;
-        v3SetZero(configData->targetHeading_N);
+        v3SetZero(configData->currentHeading_N);
     }
     timeWithoutMeas = callTime*1E-9 - configData->lastTime;
 
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
-    /*! Update the last time since a measurement was received */
+    MRP2C(cameraSpecs.sigma_CB, dcm_CB);
+    m33MultM33(dcm_CB, dcm_BN, dcm_CN);
     /*! - Compute the current error vector if it is valid*/
-    if((opNavMsg.valid == 1 || v3IsZero(configData->targetHeading_N, 1E-10) == 0) && (timeWithoutMeas < configData->timeOut)){
+    if((opNavMsg.valid == 1 || v3IsZero(configData->currentHeading_N, 1E-10) == 0) && (timeWithoutMeas < configData->timeOut)){
         if (opNavMsg.valid == 1){
             /*! If a valid image is in save the heading direction */
             configData->lastTime = callTime*1E-9;
-            m33tMultV3(dcm_BN, opNavMsg.r_BN_B, configData->targetHeading_N);
-            v3Copy(opNavMsg.r_BN_B, targetHeading_B);
-            v3Scale(-1, targetHeading_B, targetHeading_B);
-            hNorm = v3Norm(targetHeading_B);
-            v3Scale(1/hNorm, targetHeading_B, targetHeading_B);
+            v3Copy(opNavMsg.r_BN_N, configData->currentHeading_N);
+            v3Copy(opNavMsg.r_BN_C, currentHeading_C);
+            v3Scale(-1, currentHeading_C, currentHeading_C);
+            hNorm = v3Norm(currentHeading_C);
+            v3Scale(1/hNorm, currentHeading_C, currentHeading_C);
         }
         else{
             /*! Else use the previous direction in order to continue guidance */
-            m33MultV3(dcm_BN, configData->targetHeading_N, targetHeading_B);
-            v3Scale(-1, targetHeading_B, targetHeading_B);
-            hNorm = v3Norm(targetHeading_B);
-            v3Scale(1/hNorm, targetHeading_B, targetHeading_B);
+            m33MultV3(dcm_CN, configData->currentHeading_N, currentHeading_C);
+            v3Scale(-1, currentHeading_C, currentHeading_C);
+            hNorm = v3Norm(currentHeading_C);
+            v3Scale(1/hNorm, currentHeading_C, currentHeading_C);
         }
-        cthNormalized = v3Dot(configData->opNavHeading, targetHeading_B);
+        cthNormalized = v3Dot(configData->alignAxis_C, currentHeading_C);
         cthNormalized = fabs(cthNormalized) > 1.0 ?
         cthNormalized/fabs(cthNormalized) : cthNormalized;
         configData->opNavAngleErr = acos(cthNormalized);
@@ -162,7 +167,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
                 v3Copy(configData->eHat180_B, e_hat);
             } else {
                 /* normal case where opNav and commanded body vectors are not aligned */
-                v3Cross(targetHeading_B, configData->opNavHeading, e_hat);
+                v3Cross(currentHeading_C, configData->alignAxis_C, e_hat);
             }
             v3Normalize(e_hat, configData->opNavMnvrVec);
             v3Scale(tan(configData->opNavAngleErr*0.25), configData->opNavMnvrVec,
@@ -171,7 +176,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
-        v3Scale(configData->opNavAxisSpinRate, targetHeading_B, omega_RN_B);
+        v3Scale(configData->opNavAxisSpinRate, configData->alignAxis_C, omega_RN_B);
         v3Subtract(omega_BN_B, omega_RN_B, configData->attGuidanceOutBuffer.omega_BR_B);
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
