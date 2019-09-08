@@ -31,8 +31,9 @@
  * @{
  */
 
-/*! @brief Top level structure for the opNav attitude guidance routine.
- This algorithm is intended to be incredibly simple and robust*/
+/*! @brief Top level structure for the opNav point attitude guidance routine.
+ 
+ This algorithm is intended to be incredibly simple and robust: it finds the angle error between the camera boresight (or desired control axis in the camera frame) and the planet heading in the camera frame and brings them to zero. This is analoguous to sunSafePoint.  The file [PDF Description](Basilisk-opNavPoint-20190820.pdf) contains further information on this module's function, how to run it, as well as testing.*/
 typedef struct {
     char attGuidanceOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char opnavDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
@@ -40,8 +41,8 @@ typedef struct {
     char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
 
     double minUnitMag;       /*!< -- The minimally acceptable norm of opNav body vector*/
-    double opNavAngleErr;      /*!< rad The current error between cmd and obs opNav angle*/
-    double smallAngle;       /*!< rad An angle value that specifies what is near 0 or 180 degrees */
+    double opNavAngleErr;      /*!< -- rad The current error between cmd and obs opNav angle*/
+    double smallAngle;       /*!< -- rad An angle value that specifies what is near 0 or 180 degrees */
     double eHat180_B[3];     /*!< -- Eigen axis to use if commanded axis is 180 from opNav axis */
     double opNavMnvrVec[3];    /*!< -- The eigen axis that we want to rotate on to see target*/
     double lastTime; /*!< -- Last time a measurement came in to integrate pointing */
@@ -49,11 +50,11 @@ typedef struct {
     double alignAxis_C[3];    /*!< -- Desired camera vector to point at target*/
     double currentHeading_N[3];   /*!< -- Previous heading command in intertial Frame*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no opNav direction is available */
-    double opNavAxisSpinRate;  /*!< r/s Desired constant spin rate about opNav vector */
+    double opNavAxisSpinRate;  /*!< -- r/s Desired constant spin rate about opNav vector */
     int32_t attGuidanceOutMsgID;/*!< -- ID for the outgoing body estimate message*/
     int32_t opnavDataInMsgId;/*!< -- ID for the incoming CSS sensor message*/
     int32_t imuInMsgID;        /*!< -- ID for the incoming IMU sensor message*/
-    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
+    int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
     AttGuidFswMsg attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
 }OpNavPointConfig;
 

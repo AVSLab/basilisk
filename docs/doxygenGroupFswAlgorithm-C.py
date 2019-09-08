@@ -50,6 +50,7 @@
 #       \defgroup rasterManager rasterManager
 #       \defgroup simpleDeadband simpleDeadband
 #       \defgroup sunSafePoint sunSafePoint
+#       \defgroup opNavPoint opNavPoint
 #       \defgroup velocityPoint velocityPoint
 #   @}
 #

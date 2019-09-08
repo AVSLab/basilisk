@@ -89,7 +89,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, uint64_t 
     return;
 }
 
-/*! This method takes the estimated body-observed target vector and computes the
+/*! This method takes the estimated camera-observed target vector and computes the
  current attitude/attitude rate errors to pass on to control.
  @return void
  @param configData The configuration data associated with the opNav attitude guidance
@@ -104,17 +104,17 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     double cthNormalized;
     double timeWithoutMeas;
     double currentHeading_C[3];
-    double hNorm;                   /*!< --- Norm of measured direction vector */
-    double e_hat[3];                /*!< --- Eigen Axis */
-    double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
-    double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
+    double hNorm;                   /* Norm of measured direction vector */
+    double e_hat[3];                /* Principal rotation Axis */
+    double omega_BN_B[3];           /* r/s inertial body angular velocity vector in B frame components */
+    double omega_RN_B[3];           /* r/s local copy of the desired reference frame rate */
     double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
     NavAttIntMsg localImuDataInBuffer;
     CameraConfigMsg cameraSpecs;
     /* zero the input message containers */
     memset(&(opNavMsg), 0x0, sizeof(OpNavFswMsg));
     memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
-    /*! - Read the current target body vector estimate*/
+    /*! - Read the current target vector estimate*/
     ReadMessage(configData->opnavDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(OpNavFswMsg), (void*) &(opNavMsg), moduleID);
     ReadMessage(configData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -132,10 +132,10 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     m33MultM33(dcm_CB, dcm_BN, dcm_CN);
-    /*! - Compute the current error vector if it is valid*/
+    /*! Compute the current error vector if it is valid. This checks for a valid, non-stale, previous message, or a new fresh measurement.*/
     if((opNavMsg.valid == 1 || v3IsZero(configData->currentHeading_N, 1E-10) == 0) && (timeWithoutMeas < configData->timeOut)){
+        /*! - If a valid image is in save the heading direction for future use*/
         if (opNavMsg.valid == 1){
-            /*! If a valid image is in save the heading direction */
             configData->lastTime = callTime*1E-9;
             v3Copy(opNavMsg.r_BN_N, configData->currentHeading_N);
             v3Copy(opNavMsg.r_BN_C, currentHeading_C);
@@ -144,7 +144,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
             v3Scale(1/hNorm, currentHeading_C, currentHeading_C);
         }
         else{
-            /*! Else use the previous direction in order to continue guidance */
+            /*! - Else use the previous direction in order to continue guidance */
             m33MultV3(dcm_CN, configData->currentHeading_N, currentHeading_C);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);
@@ -159,14 +159,14 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
             Compute the opNav error relative to the opNav direction vector
          */
         if (configData->opNavAngleErr < configData->smallAngle) {
-            /* opNav heading and desired body axis are essentially aligned.  Set attitude error to zero. */
+            /* opNav heading and desired camera axis are essentially aligned.  Set attitude error to zero. */
              v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
         } else {
             if (M_PI - configData->opNavAngleErr < configData->smallAngle) {
-                /* the commanded body vector nearly is opposite the opNav heading */
+                /* the commanded camera vector nearly is opposite the opNav heading */
                 v3Copy(configData->eHat180_B, e_hat);
             } else {
-                /* normal case where opNav and commanded body vectors are not aligned */
+                /* normal case where opNav and commanded camera vectors are not aligned */
                 v3Cross(currentHeading_C, configData->alignAxis_C, e_hat);
             }
             v3Normalize(e_hat, configData->opNavMnvrVec);

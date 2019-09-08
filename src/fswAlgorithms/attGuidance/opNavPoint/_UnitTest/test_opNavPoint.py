@@ -96,8 +96,9 @@ def opNavPointTestFunction(show_plots, case):
     moduleConfig.attGuidanceOutMsgName = "outputName"
     moduleConfig.opnavDataInMsgName = "inputOpNavName"
     moduleConfig.imuInMsgName = "inputIMUDataName"
+    moduleConfig.cameraConfigMsgName = "camera_config_data"
     camera_Z = [0.,0.,1.]
-    moduleConfig.opNavHeading = camera_Z
+    moduleConfig.alignAxis_C = camera_Z
     moduleConfig.minUnitMag = 0.01
     moduleConfig.smallAngle = 0.01*mc.D2R
     moduleConfig.timeOut = 100
@@ -106,12 +107,12 @@ def opNavPointTestFunction(show_plots, case):
     #
     planet_B = [1.,1.,0.]
     inputOpNavData = OpNavFswMsg()  # Create a structure for the input message
-    inputOpNavData.r_BN_B = planet_B
+    inputOpNavData.r_BN_C = planet_B
     inputOpNavData.valid = 1
     if (case == 2): #No valid measurement
         inputOpNavData.valid = 0
     if (case == 3): #No valid measurement
-        inputOpNavData.r_BN_B = [0.,0.,-1.]
+        inputOpNavData.r_BN_C = [0.,0.,-1.]
     if (case == 4): #No valid measurement
         inputOpNavData.valid = 0
     unitTestSupport.setMessage(unitTestSim.TotalSim,
@@ -129,6 +130,13 @@ def opNavPointTestFunction(show_plots, case):
     omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
     if (case ==2 or case==4):
         moduleConfig.omega_RN_B = omega_RN_B_Search
+
+    cam = simFswInterfaceMessages.CameraConfigMsg()  # Create a structure for the input message
+    cam.sigma_CB = [0.,0.,0]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.cameraConfigMsgName,
+                               cam)
 
 
     # Setup logging on the test module output message so that we get all the writes to it

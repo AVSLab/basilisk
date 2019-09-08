@@ -11,7 +11,7 @@
 \end{figure}
 
 \subsection{Module Goal}
-This attitude guidance module has the goal of aligning a commanded body-fixed spacecraft vector $\hat{\bm h}_{c}$ with another input vector $\bm h$.  If $\hat{\bm h}_{c}$ is the camera boresight, this module will compute the attitude tracking errors to align the camera towards the target, i.e. achieve relative pointing. 
+This attitude guidance module has the goal of aligning a commanded camera-fixed spacecraft vector $\hat{\bm h}_{c}$ with another input vector $\bm h$.  If $\hat{\bm h}_{c}$ is the camera boresight, this module will compute the attitude tracking errors to align the camera towards the target, i.e. achieve relative pointing. 
 
 Besides $\bm h$, the second input vector is the inertial body angular velocity vector $\bm\omega_{B/N}$. As the desired planet pointing orientation is unknown, the inertial reference frame acceleration $\dot{\bm\omega}_{R/N}$ is set to zero,.  
 
@@ -19,7 +19,7 @@ Note that this module does not establish a unique target-pointing reference fram
 
 \subsection{Equations}
 \subsubsection{Good Planet Direction Vector Case}\label{sec:withHeading}
-In the following mathematical developments all vectors are assumed to be taken with respect to a body-fixed frame $\cal B$.  The attitude of the body $\cal B$ relative to the reference frame $\cal R$ is written as a principal rotation from $\cal R$ to $\cal B$.  Thus, the associated principal rotation vector $\hat{\bm e}$ is
+In the following mathematical developments all vectors are assumed to be taken with respect to a camera-fixed frame $\cal B$.  The attitude of the camera $\cal C$ relative to the reference frame $\cal R$ is written as a principal rotation from $\cal R$ to $\cal C$.  Thus, the associated principal rotation vector $\hat{\bm e}$ is
 \begin{equation}
 	\label{eq:ssp:1}
 	\hat{\bm e} = \frac{\bm h \times \hat{\bm h}_{c}}{|\bm h \times \hat{\bm h}_{c}|}
