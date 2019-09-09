@@ -17,7 +17,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-
 import matplotlib.pyplot as plt
 import numpy as np
 import math as m

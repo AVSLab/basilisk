@@ -318,7 +318,6 @@ class scenario_BasicOrbit(BSKScenario):
 
     def live_outputs(self, plotComm, rate):
         dataRequests = self.setup_live_outputs()
-        lock = Lock()
         while True:
             for request in dataRequests:
                 #send request for data
@@ -331,21 +330,17 @@ class scenario_BasicOrbit(BSKScenario):
                     return
                 pltArgs = []
                 if response["plotFun"] == "plot_orbit":
-                    lock.acquire()
                     for resp in response["dataResp"]:
                         pltArgs.append(np.array(resp))
                     pltArgs.append(response["plotID"])
                     getattr(BSK_plt, response["plotFun"])(*pltArgs)
-                    lock.release()
                     plt.pause(.01)
                 elif response["plotFun"] == "plot_orientation":
-                    lock.acquire()
                     pltArgs.append(response["dataResp"][0][:, 0] * macros.NANO2MIN)
                     for resp in response["dataResp"]:
                         pltArgs.append(np.array(resp))
                     pltArgs.extend((response["plotID"], True))
-                    getattr(BSK_plt, response["plotFun"])(*pltArgs)
-                    lock.release()
+                    #getattr(BSK_plt, response["plotFun"])(*pltArgs)
                     plt.pause(.01)
             sleep(rate/1000.)
 
@@ -390,9 +385,9 @@ def run(showPlots, livePlots):
     # Run simulation
     if livePlots:
         #plotting refresh rate in ms
-        refreshRate = 250
+        refreshRate = 100
         plotComm, simComm = Pipe()
-        simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (simComm, TheScenario,))
+        simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (simComm, TheScenario))
         plotProc = Process(target = TheScenario.live_outputs, args = (plotComm, refreshRate))
         # Execute simulation and live plotting
         simProc.start(), plotProc.start()
