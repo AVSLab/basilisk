@@ -648,7 +648,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
         if (this->opNavMode == 1 || ((this->opNavMode == 2 && CurrentSimNanos%this->cameraConfigMessage.renderRate == 0)||this->firstPass < 11)){
             // Receive pong
-            if (this->firstPass < 15){
+            if (this->firstPass < 11){
                 this->firstPass++;
             }
             zmq_msg_t receive_buffer;
