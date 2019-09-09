@@ -163,7 +163,7 @@ private:
     MsgCurrStatus cssConfInMsgId;                  //! [-] ID of the incoming css constellation data
     MsgCurrStatus cameraConfMsgId;                  //! [-] ID of the incoming camera  data
     int32_t imageOutMsgID;                           //! ID for the outgoing Image message */
-
+    int firstPass;                  //! Flag to intialize the viz at first timestep */
 
     std::vector <RWConfigLogSimMsg> rwInMessage;  //! [-] RW data message
     STSensorIntMsg STMessage;                 //! [-] ST data message
