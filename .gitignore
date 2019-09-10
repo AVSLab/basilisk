@@ -23,3 +23,5 @@ cmake-build*/*
 *.gz
 *.toc
 src/cmake-build-debug/*
+
+*.fdb_latexmk
