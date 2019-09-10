@@ -79,7 +79,8 @@ def replaceCode(editFile):
     move(path, editFile)
 
 if __name__ == '__main__':
-    if six.PY3:
-        overwriteSwigImports(sys.argv[1])
+    #Not currently needed. May change import scheme which would require these lines
+    #if six.PY3:
+        #overwriteSwigImports(sys.argv[1])
     if sys.argv[2] >= 4.0:
         overwriteSwigCode(sys.argv[1])
