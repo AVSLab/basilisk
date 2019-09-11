@@ -82,6 +82,5 @@ if __name__ == '__main__':
     #Not currently needed. May change import scheme which would require these lines
     #if six.PY3:
     #    overwriteSwigImports(sys.argv[1])
-    
-    if sys.argv[2] >= 4.0:
+    if int(sys.argv[2][0]) >= 4:
         overwriteSwigCode(sys.argv[1])
