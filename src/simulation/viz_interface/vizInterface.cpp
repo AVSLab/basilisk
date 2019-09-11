@@ -646,7 +646,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*! Enter in lock-step with the vizard to simulate a camera */
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
-        if (this->opNavMode == 1 || ((this->opNavMode == 2 && CurrentSimNanos%this->cameraConfigMessage.renderRate == 0)||this->firstPass < 11)){
+        if (this->opNavMode == 1 || (this->opNavMode == 2 && (CurrentSimNanos%this->cameraConfigMessage.renderRate == 0||this->firstPass < 11))){
             // Receive pong
             if (this->firstPass < 11){
                 this->firstPass++;
