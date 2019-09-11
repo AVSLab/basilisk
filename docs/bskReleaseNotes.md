@@ -13,7 +13,7 @@ We are very excited by the great capabilities that this software already has, an
 
 ## Upcoming Version X.X
 <ul>
-    <li>text here</li>
+<li>Created a new attitude guidance module for OpNav: opNavPoint. Similar to sunSafePoint, it matches a target heading with the OpNav heading for a simple and robust solution. </li>
 </ul>
 
 ## Version 0.9.0
