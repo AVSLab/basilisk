@@ -103,7 +103,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     uint32_t sizeOfMsgWritten;
     double cthNormalized;
     double timeWithoutMeas;
-    double currentHeading_C[3];
+    double currentHeading_C[3], alignAxis_B[3];
     double hNorm;                   /* Norm of measured direction vector */
     double e_hat[3];                /* Principal rotation Axis */
     double omega_BN_B[3];           /* r/s inertial body angular velocity vector in B frame components */
@@ -176,7 +176,8 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
-        v3Scale(configData->opNavAxisSpinRate, configData->alignAxis_C, omega_RN_B);
+        m33tMultV3(dcm_CB, configData->alignAxis_C, alignAxis_B);
+        v3Scale(configData->opNavAxisSpinRate, alignAxis_B, omega_RN_B);
         v3Subtract(omega_BN_B, omega_RN_B, configData->attGuidanceOutBuffer.omega_BR_B);
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
