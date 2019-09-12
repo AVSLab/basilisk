@@ -25,3 +25,4 @@ cmake-build*/*
 src/cmake-build-debug/*
 
 *.fdb_latexmk
+*.fls
