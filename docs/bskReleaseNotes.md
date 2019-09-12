@@ -14,6 +14,7 @@ We are very excited by the great capabilities that this software already has, an
 ## Upcoming Version X.X
 <ul>
 <li>Created a new attitude guidance module for OpNav: opNavPoint. Similar to sunSafePoint, it matches a target heading with the OpNav heading for a simple and robust solution. </li>
+    <li>Added Keplerian Orbit class. This first implementation takes in elliptical orbit elements and can produce a varietry of related outputs like position, velocity, orbital period, etc.</li>
 </ul>
 
 ## Version 0.9.0
