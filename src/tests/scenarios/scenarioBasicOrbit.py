@@ -44,7 +44,6 @@ from Basilisk.simulation import spacecraftPlus
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.simulation import keplerianOrbit
 
 ## @page scenarioBasicOrbitGroup
 ## @{
