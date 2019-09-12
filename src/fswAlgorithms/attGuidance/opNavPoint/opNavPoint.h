@@ -28,12 +28,12 @@
 #include <stdint.h>
 
 /*! \defgroup opNavPoint
+    @brief Top level structure for the opNav point attitude guidance routine.
+
+ This algorithm is intended to be incredibly simple and robust: it finds the angle error between the camera boresight (or desired control axis in the camera frame) and the planet heading in the camera frame and brings them to zero. This is analoguous to sunSafePoint.  The file [PDF Description](Basilisk-opNavPoint-20190820.pdf) contains further information on this module's function, how to run it, as well as testing.
  * @{
  */
 
-/*! @brief Top level structure for the opNav point attitude guidance routine.
- 
- This algorithm is intended to be incredibly simple and robust: it finds the angle error between the camera boresight (or desired control axis in the camera frame) and the planet heading in the camera frame and brings them to zero. This is analoguous to sunSafePoint.  The file [PDF Description](Basilisk-opNavPoint-20190820.pdf) contains further information on this module's function, how to run it, as well as testing.*/
 typedef struct {
     char attGuidanceOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char opnavDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
