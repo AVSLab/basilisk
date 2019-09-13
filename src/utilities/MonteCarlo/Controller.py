@@ -43,6 +43,8 @@ import time
 import numpy as np
 import multiprocessing as mp
 import pickle as pickle
+from DataWriter import DataWriter
+from RetentionPolicy import RetentionPolicy
 
 class Controller:
     """
@@ -56,6 +58,7 @@ class Controller:
         self.ICrunFlag = False
         self.icDirectory = ""
         self.archiveDir = None
+        self.varCast = None
         self.numProcess = mp.cpu_count()
 
         self.simParams = SimulationParameters(
@@ -189,6 +192,13 @@ class Controller:
         self.archiveDir = os.path.abspath(dirName) + "/"
         self.simParams.shouldArchiveParameters = dirName is not None
         self.simParams.filename = self.archiveDir
+
+    def setVarCast(self, varCast):
+        """ Set the variable type to downcast the data to
+        :param varCast: 'float', 'integer', 'signed', 'unsigned' (see pandas.to_numeric documentation)
+        :return:
+        """
+        self.varCast = varCast
 
     def setICDir(self, dirName):
         """ Set-up archives containing IC data
@@ -348,7 +358,8 @@ class Controller:
                 self.dataWriter.setLogDir(self.archiveDir)
                 self.dataWriter.start()
             else:
-                print "WARNING: The archive directory is set as the icDirectory. Proceeding would have overwriten all data within: " + self.archiveDir + " with the select rerun cases! Exiting.\n"
+                print "ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
+                      "within: " + self.archiveDir + " with the select rerun cases! Exiting.\n"
                 sys.exit("Change the archive directory to a new location when rerunning cases.")
         else:
             print "No archive data specified; no data will be logged to dataframes"
@@ -535,6 +546,7 @@ class Controller:
 
         # start data writer process
         self.dataWriter.setLogDir(self.archiveDir)
+        self.dataWriter.setVarCast(self.varCast)
         self.dataWriter.start()
 
         # Avoid building a full list of all simulations to run in memory,
@@ -655,229 +667,6 @@ class SimulationParameters():
         self.saveDispMag = False
 
 
-class VariableRetentionParameters:
-    """
-    Represents a variable's logging parameters.
-    """
-
-    def __init__(self, varName, varRate, startIndex=0, stopIndex=0, varType='double'):
-        self.varName = varName
-        self.varRate = varRate
-        self.startIndex = startIndex
-        self.stopIndex = stopIndex
-        self.varType = varType
-
-
-class MessageRetentionParameters:
-    """
-    Represents a message's logging parameters.
-    Args:
-        messageName: the name of the message to log
-        messageRate: rate to log the message at.
-        dataType: the dataType to pull
-    """
-
-    def __init__(self, messageName, messageRate, retainedVars):
-        self.messageName = messageName
-        self.messageRate = messageRate
-        self.retainedVars = retainedVars
-
-
-class RetentionPolicy():
-
-    def __init__(self, rate=int(1E10)):
-        self.logRate = rate
-        self.messageLogList = []
-        self.varLogList = []
-        self.dataCallback = None
-        self.retentionFunctions = []
-
-    def addMessageLog(self, messageName, retainedVars, logRate=None):
-        if logRate is None:
-            logRate = self.logRate
-        self.messageLogList.append(MessageRetentionParameters(messageName, logRate, retainedVars))
-
-    def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
-        if logRate is None:
-            logRate = self.logRate
-        varContainer = VariableRetentionParameters(variableName, logRate, startIndex, stopIndex, varType)
-        self.varLogList.append(varContainer)
-
-    def addLogsToSim(self, simInstance):
-        for message in self.messageLogList:
-            simInstance.TotalSim.logThisMessage(message.messageName, message.messageRate)
-        for variable in self.varLogList:
-            simInstance.AddVariableForLogging(variable.varName, variable.varRate,
-                                              variable.startIndex, variable.stopIndex, variable.varType)
-
-    def addRetentionFunction(self, function):
-        self.retentionFunctions.append(function)
-
-    def setDataCallback(self, dataCallback):
-        self.dataCallback = dataCallback
-
-    def executeCallback(self, data):
-        if self.dataCallback is not None:
-            self.dataCallback(data, self)
-
-    @staticmethod
-    def addRetentionPoliciesToSim(simInstance, retentionPolicies):
-        """ Adds logs for variables and messages to a simInstance
-        Args:
-            simInstance: The simulation instance to add logs to.
-            retentionPolicies: RetentionPolicy[] list that defines the data to log.
-        """
-
-        for retentionPolicy in retentionPolicies:
-            retentionPolicy.addLogsToSim(simInstance)
-
-        # TODO handle duplicates somehow?
-
-    @staticmethod
-    def getDataForRetention(simInstance, retentionPolicies):
-        """ Returns the data that should be retained given a simInstance and the retentionPolicies
-        Args:
-            simInstance: The simulation instance to retrive data from
-            retentionPolicies: A list of RetentionPolicy objects defining the data to retain
-        Returns:
-            Retained Data: In the form of a dictionary with two sub-dictionaries for messages and variables:
-            {
-                "messages": {
-                    "messageName": [value1,value2,value3]
-                },
-                "variables": {
-                    "variableName": [value1,value2,value3]
-                }
-            }
-        """
-        data = {"messages": {}, "variables": {}, "custom": {}}
-        df = pandas.DataFrame()
-        dataFrames = []
-        for retentionPolicy in retentionPolicies:
-            for message in retentionPolicy.messageLogList:
-                for (param, dataType) in message.retainedVars:
-                    name = message.messageName + "." + param
-                    if dataType is None:
-                        msg = simInstance.pullMessageLogData(name)
-                    else:
-                        msg = simInstance.pullMessageLogData(name, dataType)
-                    data["messages"][name] = msg
-
-            for variable in retentionPolicy.varLogList:
-                data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)
-
-            for func in retentionPolicy.retentionFunctions:
-                tmpModuleData = func(simInstance)
-                for (key, value) in tmpModuleData.items():
-                    data["custom"][key] = value
-        return data
-
-class DataWriter(mp.Process):
-    """ Class to be launched as separate process to pull data from queue and write out to .csv dataFrames
-        Args:
-            q: queue object from multiprocessing.Manager.queue
-        Returns:
-            Nil
-    """
-    def __init__(self, q):
-        super(DataWriter, self).__init__()
-        self._queue = q
-        self._endToken = None
-        self._logDir = ""
-        self._dataFiles = set()
-
-    def run(self):
-        """ The process run loop. Gets data from a queue and writes it out to per message csv files
-            Args:
-                Nil
-            Returns:
-                Nil
-        """
-        while self._endToken is None:
-            data, mcSimIndex, self._endToken = self._queue.get()
-            print("Starting to log: " + str(mcSimIndex))
-            if self._endToken:
-                continue
-            print("Logging Dataframes from run " + str(mcSimIndex))
-            for dictName, dictData in data.items(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
-                for itemName, itemData in dictData.items(): # Loop through all items and their data
-
-                    if itemName == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
-                        itemName = "OrbitalElements.Omega_Capital"
-
-                    filePath = self._logDir + itemName + ".data"
-                    self._dataFiles.add(filePath)
-
-                    # Is the data a vector, scalar, or non-existant?
-                    try:
-                        variLen = itemData[:,1:].shape[1]
-                    except:
-                        variLen = 0
-
-                    # Generate the MultiLabel
-                    outerLabel = [mcSimIndex]
-                    innerLabel = []
-
-                    for i in range(variLen):
-                        innerLabel.append(i)
-                    if variLen == 0:
-                        innerLabel.append(0) # May not be necessary, might be able to leave blank and get a None
-                    labels = pandas.MultiIndex.from_product([outerLabel, innerLabel], names=["runNum", "varIdx"])
-
-                    # Generate the individual run's dataframe
-                    if variLen >= 2:
-                        df = pandas.DataFrame(itemData[:, 1:].tolist(), index=itemData[:,0], columns=labels)
-                    elif variLen == 1:
-                        df = pandas.DataFrame(itemData[:, 1].tolist(), index=itemData[:,0], columns=labels)
-                    else:
-                        df = pandas.DataFrame([np.nan], columns=labels)
-
-                    for i in range(0, variLen):
-                        try: # if the data is numeric reduce it to float32 rather than float64 to reduce storage footprint
-                            # Note: You might think you can simplify these three lines into a single:
-                            # df.iloc[:,i] = df.iloc[:,i].apply(pandas.to_numeric, downcast="float")
-                            # but you'd be wrong.
-                            varComp = df.iloc[:,i]
-                            varComp = pandas.to_numeric(varComp, downcast='float')
-                            df.iloc[:,i] = varComp
-                        except:
-                            pass
-
-                    # If the .data file doesn't exist save the dataframe to create the file
-                    # and skip the remainder of the loop
-                    if not os.path.exists(filePath):
-                        pickle.dump([df], open(filePath, "wb"))
-                        continue
-
-                    # If the .data file does exists, append the message's pickle.
-                    with open(filePath, "a+b") as pkl:
-                        pickle.dump([df], pkl)
-
-            print("Finished logging dataframes from run" + str(mcSimIndex))
-
-        # Sort by the MultiIndex (first by run number then by variable component)
-        print("Starting to concatenate dataframes")
-        for filePath in self._dataFiles:
-            # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
-            allData = []
-            with open(filePath, 'rb') as pkl:
-                try:
-                    while True:
-                        allData.extend(pickle.load(pkl))
-                except EOFError:
-                    pass
-            allData = pandas.concat(allData, axis=1)
-            newMultInd = pandas.MultiIndex.from_product([list(range(allData.columns.min()[0], allData.columns.max()[0]+1)),
-                                                         list(range(allData.columns.min()[1], allData.columns.max()[1]+1))],
-                                                         names=["runNum", "varIdx"])
-            #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
-            allData = allData.reindex(columns=newMultInd)
-            allData.index.name = 'time[ns]'
-            allData.to_pickle(filePath)
-        print("Finished concatenating dataframes")
-
-    def setLogDir(self, logDir):
-        self._logDir = logDir
 
 class SimulationExecutor:
     '''
