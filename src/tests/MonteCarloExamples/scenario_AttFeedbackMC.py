@@ -20,6 +20,7 @@
 import inspect
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -85,13 +86,14 @@ def main():
 
     failures = monteCarlo.executeSimulations()
     monteCarlo.executeCallbacks()
+    plt.show()
 
 def displayPlots(data, retentionPolicy):
-    pos = data["messages"]["simple_trans_nav_output.r_BN_N"]
-    import matplotlib.pyplot as plt
-    plt.figure()
-    plt.plot(pos[:,0], pos[:,1])
-    plt.show()
+    wheelSpeeds = data["messages"]["reactionwheel_output_states.wheelSpeeds"]
+    plt.figure(1)
+    plt.plot(wheelSpeeds[:,0], wheelSpeeds[:,1],
+             wheelSpeeds[:,0], wheelSpeeds[:,2],
+             wheelSpeeds[:,0], wheelSpeeds[:,3])
 
 
 
