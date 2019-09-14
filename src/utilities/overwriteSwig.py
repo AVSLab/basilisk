@@ -72,7 +72,7 @@ def replaceCode(editFile):
         with open(editFile) as oldFile:
             for line in oldFile:
                 if 'if(hasattr(self, name) or name == \'this\')' in line:
-                    newFile.write(line.replace('this', '__swig_container'))
+                    newFile.write(line.replace('name == \'this\'', 'name == \'this\' or name == \'__swig_container\''))
                 else:
                     newFile.write(line)
     os.remove(editFile)
