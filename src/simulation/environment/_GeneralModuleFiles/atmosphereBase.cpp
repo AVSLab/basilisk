@@ -52,7 +52,7 @@ AtmosphereBase::AtmosphereBase()
     this->epochDateTime.tm_hour = EPOCH_HOUR;
     this->epochDateTime.tm_min = EPOCH_MIN;
     this->epochDateTime.tm_sec = (int) round(EPOCH_SEC);
-    this->epochDateTime.tm_isdst = -1;
+    this->epochDateTime.tm_isdst = 0;
 
     //! - turn off minimum and maximum reach features
     this->envMinReach = -1;
@@ -160,7 +160,7 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
             this->epochDateTime.tm_hour = epochMsg.hours;
             this->epochDateTime.tm_min = epochMsg.minutes;
             this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
-            this->epochDateTime.tm_isdst = -1;
+            this->epochDateTime.tm_isdst = 0;
             mktime(&this->epochDateTime);
         }
     } else {

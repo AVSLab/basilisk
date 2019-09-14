@@ -140,7 +140,7 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
     this->epochDateTime.tm_sec = (int) round(diff*(24.*60*60*daysInYear));
 
     //! - ensure that daylight saving flag is off
-    this->epochDateTime.tm_isdst = -1;
+    this->epochDateTime.tm_isdst = 0;
 
     //! - make sure a proper time structure is setup
     mktime(&this->epochDateTime);
