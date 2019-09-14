@@ -37,8 +37,7 @@ mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
 mpl.rc('figure', max_open_warning=30)
-
-
+mpl.rc('legend', loc='lower right')
 
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
@@ -375,7 +374,7 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
         texFigure.close()
 
         texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
-        plt.savefig(texFileName, transparent=True)
+        plt.savefig(texFileName, transparent=True, loc='')
 
     return
 
