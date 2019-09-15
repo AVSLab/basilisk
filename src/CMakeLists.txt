@@ -14,7 +14,7 @@ if(POLICY CMP0086)
 endif()
 
 if(POLICY CMP0046)
-  cmake_policy(SET CMP0046 NEW)
+  cmake_policy(SET CMP0046 OLD)
 endif()
 
 project("basilisk")
