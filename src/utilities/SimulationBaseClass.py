@@ -356,7 +356,7 @@ class SimBaseClass:
 
         #Live Plotting Thread
         if scenario is not None and scenario.livePlots:
-            shareDataThread = threading.Thread(target=self.shareData, args=(simComm, scenario))
+            shareDataThread = threading.Thread(target=self.shareData, args=(simComm,))
             shareDataThread.daemon = True
             shareDataThread.start()
         nextStopTime = self.TotalSim.NextTaskTime
@@ -397,7 +397,7 @@ class SimBaseClass:
         if scenario is not None and scenario.showPlots:
             scenario.pull_outputs(scenario.showPlots)
 
-    def shareData(self, simComm, scenario):
+    def shareData(self, simComm):
         while True:
             inComm = simComm.recv()
             outData = []

@@ -259,7 +259,7 @@ def plot_planet(oe, planet, id=None):
     plt.ylabel('$i_p$ Cord. [km]')
     plt.grid()
 
-def plot_peri_and_orbit(oe, mu, r_BN_N, v_BN_N):
+def plot_peri_and_orbit(oe, mu, r_BN_N, v_BN_N, id=None):
     # draw the actual orbit
     rData = []
     fData = []
@@ -268,6 +268,7 @@ def plot_peri_and_orbit(oe, mu, r_BN_N, v_BN_N):
         oeData = orbitalMotion.rv2elem(mu, r_BN_N[idx, 1:4], v_BN_N[idx, 1:4])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
+    plt.figure(id)
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0)
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0, 2 * np.pi, 100)
