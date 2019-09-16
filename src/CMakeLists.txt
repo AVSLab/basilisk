@@ -39,6 +39,7 @@ set(requires_protobuff_modules "viz_interface/vizInterface.i")
 set(requires_zmq_modules "viz_interface/vizInterface.i")
 
 set(requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
+set(requires_opencv_modules "imageProcessing/limbFinding/limbFinding.i")
 
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
