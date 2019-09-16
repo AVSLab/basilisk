@@ -25,7 +25,7 @@
 %include "stdint.i"
 %include "sys_model.h"
 %include "limbFinding.h"
-%include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "../simulation/simFswInterfaceMessages/limbOpNavMsg.h"
 %include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
 GEN_SIZEOF(LimbOpNavMsg)
 GEN_SIZEOF(CameraImageMsg)

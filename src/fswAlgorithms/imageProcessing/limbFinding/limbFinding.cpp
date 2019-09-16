@@ -36,8 +36,9 @@ LimbFinding::LimbFinding()
     this->filename = "";
     this->saveImages = 0;
     this->blurrSize = 5;
-    this->cannyThresh = 200;
-    this->voteThresh = 20;
+    this->cannyThreshHigh = 200;
+    this->cannyThreshLow = 100;
+    this->OutputBufferCount = 2;
 
 }
 
@@ -120,12 +121,16 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
-    cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
+//    cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
     std::vector<cv::Vec4f> limbPoints;
     /*! - Apply the Hough Transform to find the limbPoints*/
-    cv::Canny(blurred, edgeImage, this->voteThresh, this->cannyThresh, 3, true);
+    cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
+    cv::namedWindow("Canny");
+    cv::imshow("Canny", edgeImage);
+    cv::imwrite("Canny.png", edgeImage);
+    cv::imwrite("Canny_pre.png", blurred);
 
     if (cv::countNonZero(edgeImage)>0){
         limbFound=1;

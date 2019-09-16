@@ -64,8 +64,8 @@ public:
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels
-    int32_t cannyThresh;                 //!< [px] Canny edge detection Threshold
-    int32_t voteThresh;                  //!< [-] Threshold in number of votes to qualify a circle as detected
+    int32_t cannyThreshHigh;                 //!< [px] Canny edge detection Threshold
+    int32_t cannyThreshLow;                  //!< [-] Threshold in number of votes to qualify a circle as detected
     int32_t houghMinDist;                //!< [px] Min distance between 2 detected circles
     int32_t houghMinRadius;              //!< [-] Min radius of a detected circle
     int32_t houghMaxRadius;              //!< [-] Max radius of a detected circle

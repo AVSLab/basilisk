@@ -45,7 +45,6 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-
 try:
     from Basilisk.fswAlgorithms import limbFinding
 except ImportError:
@@ -60,8 +59,8 @@ except ImportError:
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, blur, cannyLow, cannyHigh, dp, saveImage", [
-                    ("mars.png",    5,    20,       200,   False), #Mars image
-                   ("moons.png",    5,    20,       200,   False) # Moon images
+                    ("mars.png",    5,    100,       200,   False), #Mars image
+                   ("moons.png",    5,    100,       200,   False) # Moon images
     ])
 
 # update "module" in this function name to reflect the module name
@@ -109,8 +108,8 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     moduleConfig.opnavLimbOutMsgName = "limbPoints"
 
     moduleConfig.filename = imagePath
-    moduleConfig.cannyThresh = cannyHigh
-    moduleConfig.voteThresh = cannyLow
+    moduleConfig.cannyThreshHigh = cannyHigh
+    moduleConfig.cannyThreshLow = cannyLow
     moduleConfig.blurrSize = blur
 
     circles = []
@@ -129,7 +128,7 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
                                inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.imageInMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.opnavLimbOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -143,10 +142,10 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    # pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
     points = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".limbPoints", list(range(3*200)))
     covar = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".pointSigmas", list(range(3*200)))
 
+    print(points)
     # Output image:
     output_image = Image.new("RGB", input_image.size)
     output_image.paste(input_image)
@@ -186,4 +185,4 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    limbFindingTest(True, "moons.png",     5,    20,       200,  True) # Moon images
+    limbFindingTest(True, "moons.jpg",     4,    200,       300,  True) # Moon images
