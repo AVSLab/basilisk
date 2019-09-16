@@ -19,9 +19,9 @@
 '''
 #
 #   Unit Test Script
-#   Module Name:        HoughCirlces
+#   Module Name:        LimbFinding
 #   Author:             Thibaud Teil
-#   Creation Date:      March 13, 2019
+#   Creation Date:      September 16, 2019
 #
 
 import pytest
@@ -40,17 +40,17 @@ try:
     from PIL import Image, ImageDraw
 except ImportError:
     importErr = True
-    reasonErr = "python Pillow package not installed---can't test HoughCircle module"
+    reasonErr = "python Pillow package not installed---can't test Limb Finding module"
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
 
 try:
-    from Basilisk.fswAlgorithms import houghCircles
+    from Basilisk.fswAlgorithms import limbFinding
 except ImportError:
     importErr = True
-    reasonErr = "Hough Circles not built---check OpenCV option"
+    reasonErr = "Limb Finding not built---check OpenCV option"
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -59,19 +59,19 @@ except ImportError:
 # Provide a unique test method name, starting with 'test_'.
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp, saveImage", [
-                    ("mars.png",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
-                   ("moons.png",    5,         10,      25,     10,       20,       200,   1, False) # Moon images
+@pytest.mark.parametrize("image, blur, cannyLow, cannyHigh, dp, saveImage", [
+                    ("mars.png",    5,    20,       200,   False), #Mars image
+                   ("moons.png",    5,    20,       200,   False) # Moon images
     ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
+def test_module(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage)
+    [testResults, testMessage] = limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage)
     assert testResults < 1, testMessage
 
 
-def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
+def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 
     # Truth values from python
     imagePath = path + '/' + image
@@ -100,23 +100,18 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = houghCircles.HoughCircles()
-    moduleConfig.ModelTag = "houghCircles"
+    moduleConfig = limbFinding.LimbFinding()
+    moduleConfig.ModelTag = "limbFind"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
     moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.opnavCirclesOutMsgName = "circles"
+    moduleConfig.opnavLimbOutMsgName = "limbPoints"
 
     moduleConfig.filename = imagePath
-    moduleConfig.expectedCircles = maxCircles
     moduleConfig.cannyThresh = cannyHigh
     moduleConfig.voteThresh = cannyLow
-    moduleConfig.houghMinDist = minDist
-    moduleConfig.houghMinRadius = minRad
     moduleConfig.blurrSize = blur
-    moduleConfig.dpValue = dp
-    moduleConfig.houghMaxRadius = int(input_image.size[0]/1.25)
 
     circles = []
     if image == "mars.png":
@@ -125,7 +120,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
         circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = houghCircles.CameraImageMsg()
+    inputMessageData = limbFinding.CameraImageMsg()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
     unitTestSupport.setMessage(unitTestSim.TotalSim,
@@ -149,19 +144,19 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     unitTestSim.ExecuteSimulation()
 
     # pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
-    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", list(range(10*2)))
-    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", list(range(10)))
+    points = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".limbPoints", list(range(3*200)))
+    covar = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".pointSigmas", list(range(3*200)))
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)
     output_image.paste(input_image)
     draw_result = ImageDraw.Draw(output_image)
 
-    imageProcCircles = []
+    imageProcLimb = []
     for j in range(len(radii[-1,1:])):
         if radii[-1,j] > 0:
-            imageProcCircles.append((centers[-1, 2*j+1], centers[-1, 2*j+2], radii[-1, j+1]))
-    for x, y, r in imageProcCircles:
+            imageProcLimb.append((centers[-1, 2*j+1], centers[-1, 2*j+2], radii[-1, j+1]))
+    for x, y, r in imageProcLimb:
         draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
 
     # Save output image
@@ -169,12 +164,12 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
         output_image.save("result_"+ image)
 
     if show_plots:
-        print(imageProcCircles[0])
+        print(imageProcLimb[0])
         output_image.show()
 
 
     #   print out success message if no error were found
-    for testCircle, refCircle in zip(imageProcCircles, circles):
+    for testCircle, refCircle in zip(imageProcLimb, Limb):
         for i in range(3):
             if np.abs((testCircle[i] - refCircle[i])/refCircle[i])>1:
                 testFailCount+=1
@@ -191,4 +186,4 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 # stand-along python script
 #
 if __name__ == "__main__":
-    houghCirclesTest(True, "moons.png",     5,         10,      25,     10,       20,       200,   1, True) # Moon images
+    limbFindingTest(True, "moons.png",     5,    20,       200,  True) # Moon images

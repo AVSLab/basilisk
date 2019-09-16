@@ -36,14 +36,9 @@ LimbFinding::LimbFinding()
     this->filename = "";
     this->saveImages = 0;
     this->blurrSize = 5;
-    this->dpValue = 1;
-    this->OutputBufferCount = 2;
-    this->expectedCircles = MAX_CIRCLE_NUM;
     this->cannyThresh = 200;
     this->voteThresh = 20;
-    this->houghMinDist = 50;
-    this->houghMinRadius = 0;
-    this->houghMaxRadius = 0; // Maximum circle radius. If <= 0, uses the maximum image dimension. If < 0, returns centers without finding the radius
+
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -53,7 +48,7 @@ LimbFinding::LimbFinding()
 void LimbFinding::SelfInit()
 {
     /*! - Create output message for module */
-    this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,sizeof(CirclesOpNavMsg),this->OutputBufferCount,"CirclesOpNavMsg",moduleID);
+    this->opnavLimbOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavLimbOutMsgName,sizeof(LimbOpNavMsg),this->OutputBufferCount,"LimbOpNavMsg",moduleID);
 }
 
 
@@ -90,13 +85,14 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
 void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string filenamePre;
+    int limbFound;
     CameraImageMsg imageBuffer;
-    CirclesOpNavMsg circleBuffer;
+    LimbOpNavMsg limbMsg;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
-    
-    cv::Mat imageCV, blurred;
-    int circlesFound=0;
+    memset(&limbMsg, 0x0, sizeof(LimbOpNavMsg));
+    limbFound = 0;
+
+    cv::Mat imageCV, blurred, edgeImage;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
     /*! - Read in the bitmap*/
@@ -121,36 +117,41 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+        SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
-    std::vector<cv::Vec4f> circles;
-    /*! - Apply the Hough Transform to find the circles*/
-    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, this->dpValue, this->houghMinDist, this->cannyThresh,this->voteThresh, this->houghMinRadius, this->houghMaxRadius );
+    std::vector<cv::Vec4f> limbPoints;
+    /*! - Apply the Hough Transform to find the limbPoints*/
+    cv::Canny(blurred, edgeImage, this->voteThresh, this->cannyThresh, 3, true);
 
-    circleBuffer.timeTag = this->sensorTimeTag;
-    circleBuffer.cameraID = imageBuffer.cameraID;
-    for( size_t i = 0; i < this->expectedCircles && i<circles.size(); i++ )
-    {
-        circleBuffer.circlesCenters[2*i] = circles[i][0];
-        circleBuffer.circlesCenters[2*i+1] = circles[i][1];
-        circleBuffer.circlesRadii[i] = circles[i][2];
-        for(int j=0; j<2; j++){
-            circleBuffer.uncertainty[j+3*j] = 20;
+    if (cv::countNonZero(edgeImage)>0){
+        limbFound=1;
+        std::vector<cv::Vec2i> locations;
+        cv::findNonZero(edgeImage, locations);
+        for(size_t i = 0; i<locations.size(); i++ )
+        {
+            limbMsg.limbPoints[2*i] = locations[i][0];
+            limbMsg.limbPoints[2*i+1] = locations[i][1];
+            limbMsg.limbPoints[2*i+2] = 1;
+            for(int j=0; j<2; j++){
+                limbMsg.pointSigmas[j+3*j] = 1;
+            }
         }
-        circleBuffer.uncertainty[2+3*2] = 20;
-        circlesFound+=1;
     }
+    else{limbFound=0;}
+    
+    limbMsg.timeTag = this->sensorTimeTag;
+    limbMsg.cameraID = imageBuffer.cameraID;
     /*!- If no circles are found do not validate the image as a measurement */
-    if (circlesFound >0){
-        circleBuffer.valid = 1;
-        circleBuffer.planetIds[0] = 2;
+    if (limbFound >0){
+        limbMsg.valid = 1;
+        limbMsg.planetIds = 2;
     }
     
-    SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+    SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
 
 //    free(imageBuffer.imagePointer);
     return;

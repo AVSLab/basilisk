@@ -28,7 +28,7 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-#include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
+#include "../simulation/simFswInterfaceMessages/limbOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
@@ -58,7 +58,7 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
+    std::string opnavLimbOutMsgName;  //!< The name of the CirclesOpnavMsg output message
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
     
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
@@ -70,11 +70,10 @@ public:
     int32_t houghMinRadius;              //!< [-] Min radius of a detected circle
     int32_t houghMaxRadius;              //!< [-] Max radius of a detected circle
     int32_t dpValue;                     //!< [-] Subscaling of image for circle searching, 1 searches full image
-    int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-    int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
+    int32_t opnavLimbOutMsgID;        //!< ID for the outgoing message
     int32_t imageInMsgID;                //!< ID for the outgoing message
 };
 
