@@ -10,7 +10,7 @@ In order to run Basilisk, the following software will be necessary:
 * [Python 3.7 or 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/windows/)
 * [pip](https://pip.pypa.io/en/stable/installing/)
 * Visual Studios 15 or Greater
-* [Swig](http://www.swig.org/download.html) version 3.0.12
+* [Swig](http://www.swig.org/download.html) version 4.x.x
 
 
 
@@ -28,7 +28,7 @@ C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
 
 #### Configuring Swig
 
-The standard windows swig version 3.0.12 setup is suitable for Basilisk (see [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe)). Note that swig version 4.0 is not currently compatible with Basilisk
+The standard windows swig version 4 setup is suitable for Basilisk (see [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe)). 
 
 Example added path formats:
 
