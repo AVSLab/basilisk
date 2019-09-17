@@ -58,9 +58,10 @@ except ImportError:
 # Provide a unique test method name, starting with 'test_'.
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, blur, cannyLow, cannyHigh, dp, saveImage", [
-                    ("mars.png",    5,    100,       200,   False), #Mars image
-                   ("moons.png",    5,    100,       200,   False) # Moon images
+@pytest.mark.parametrize("image,         blur,    cannyLow,  cannyHigh, saveImage", [
+                        ("MarsBright.jpg",    1,    100,       200,   False), #Mars image
+                        ("MarsDark.jpg",      1,    100,       200,   False),  # Mars image
+                        ("moons.jpg",         4,    200,       300,   False) # Moon images
     ])
 
 # update "module" in this function name to reflect the module name
@@ -112,11 +113,17 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     moduleConfig.cannyThreshLow = cannyLow
     moduleConfig.blurrSize = blur
 
-    circles = []
-    if image == "mars.png":
-        circles = [(250, 260, 110)]
-    if image == "moons.png":
-        circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
+    reference = []
+    refPoints = 0
+    if image == "MarsBright.jpg":
+        reference = [253.0, 110.0]
+        refPoints = 475.0
+    if image == "MarsDark.jpg":
+        reference = [187.0, 128.0]
+        refPoints = 192.0
+    if image == "moons.jpg":
+        reference = [221.0, 70.0]
+        refPoints = 232.0
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = limbFinding.CameraImageMsg()
@@ -142,37 +149,45 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    points = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".limbPoints", list(range(3*200)))
-    covar = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".pointSigmas", list(range(3*200)))
+    valid = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".valid", list(range(1)))
+    points = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".limbPoints", list(range(2*1000)))
+    covar = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".pointSigmas", list(range(2*1000)))
+    numPoints = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".numLimbPoints", list(range(1)))
 
-    print(points)
     # Output image:
     output_image = Image.new("RGB", input_image.size)
     output_image.paste(input_image)
     draw_result = ImageDraw.Draw(output_image)
 
     imageProcLimb = []
-    for j in range(len(radii[-1,1:])):
-        if radii[-1,j] > 0:
-            imageProcLimb.append((centers[-1, 2*j+1], centers[-1, 2*j+2], radii[-1, j+1]))
-    for x, y, r in imageProcLimb:
-        draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
+    for j in range(int(len(points[-1,1:])/2)):
+        if points[-1,2*j+1]>1E-2:
+            imageProcLimb.append((points[-1,2*j+1], points[-1,2*j+2]))
+    draw_result.point(imageProcLimb, fill=128)
 
     # Save output image
     if saveImage:
         output_image.save("result_"+ image)
 
     if show_plots:
-        print(imageProcLimb[0])
         output_image.show()
 
 
     #   print out success message if no error were found
-    for testCircle, refCircle in zip(imageProcLimb, Limb):
-        for i in range(3):
-            if np.abs((testCircle[i] - refCircle[i])/refCircle[i])>1:
-                testFailCount+=1
-                testMessages.append("Test failed processing " + image)
+    for i in range(2):
+        if np.abs((reference[i] - imageProcLimb[0][i])/reference[i])>1:
+            print(np.abs((reference[i] - imageProcLimb[0][i])/reference[i]))
+            testFailCount+=1
+            testMessages.append("Limb Test failed processing " + image)
+    if np.abs(valid[-1,0]-1)<1E-5:
+        testFailCount+=1
+        testMessages.append("Validity test failed processing " + image)
+    if np.abs(covar[-1,1]-1.)>1E-5:
+        testFailCount+=1
+        testMessages.append("Covar test failed processing " + image)
+    if np.abs(numPoints[-1,1]-refPoints)>1E-5:
+        testFailCount+=1
+        testMessages.append("NumPoints test failed processing " + image)
 
 
     # each test method requires a single assert method to be called
@@ -185,4 +200,4 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    limbFindingTest(True, "moons.jpg",     4,    200,       300,  True) # Moon images
+    limbFindingTest(True, "MarsDark.jpg",     1,    100,       200,  True) # Moon images

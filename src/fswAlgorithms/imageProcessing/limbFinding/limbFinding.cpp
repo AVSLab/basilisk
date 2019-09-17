@@ -121,30 +121,21 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
-//    cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
-    
-    std::vector<cv::Vec4f> limbPoints;
     /*! - Apply the Hough Transform to find the limbPoints*/
     cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
-    cv::namedWindow("Canny");
-    cv::imshow("Canny", edgeImage);
-    cv::imwrite("Canny.png", edgeImage);
-    cv::imwrite("Canny_pre.png", blurred);
-
     if (cv::countNonZero(edgeImage)>0){
         limbFound=1;
-        std::vector<cv::Vec2i> locations;
+        std::vector<cv::Point2i> locations;
         cv::findNonZero(edgeImage, locations);
         for(size_t i = 0; i<locations.size(); i++ )
         {
-            limbMsg.limbPoints[2*i] = locations[i][0];
-            limbMsg.limbPoints[2*i+1] = locations[i][1];
-            limbMsg.limbPoints[2*i+2] = 1;
-            for(int j=0; j<2; j++){
-                limbMsg.pointSigmas[j+3*j] = 1;
-            }
+            limbMsg.limbPoints[2*i] = locations[i].x;
+            limbMsg.limbPoints[2*i+1] = locations[i].y;
+            limbMsg.pointSigmas[2*i] = 1;
+            limbMsg.pointSigmas[2*i+1] = 1;
         }
+        limbMsg.numLimbPoints = locations.size()/2;
     }
     else{limbFound=0;}
     
@@ -156,7 +147,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         limbMsg.planetIds = 2;
     }
     
-    SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
+    SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint16_t *>(&limbMsg), this->moduleID);
 
 //    free(imageBuffer.imagePointer);
     return;
