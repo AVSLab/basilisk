@@ -79,7 +79,7 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
+/*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It performs a greyscale, and blur on the image to facilitate edge-detection.
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
@@ -120,9 +120,11 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         /*! - If no image is present, write zeros in message */
         SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
+    /*! - Greyscale the image */
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
+    /*! - Lightly blur it */
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
-    /*! - Apply the Hough Transform to find the limbPoints*/
+    /*! - Apply the Canny Transform to find the limbPoints*/
     cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
     if (cv::countNonZero(edgeImage)>0){
         limbFound=1;
@@ -130,6 +132,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         cv::findNonZero(edgeImage, locations);
         for(size_t i = 0; i<locations.size(); i++ )
         {
+            /*! - Store the non zero pixels of the canny transform and count them*/
             limbMsg.limbPoints[2*i] = locations[i].x;
             limbMsg.limbPoints[2*i+1] = locations[i].y;
             limbMsg.pointSigmas[2*i] = 1;
@@ -141,7 +144,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     
     limbMsg.timeTag = this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
-    /*!- If no circles are found do not validate the image as a measurement */
+    /*!- If no limb points are found do not validate the image as a measurement */
     if (limbFound >0){
         limbMsg.valid = 1;
         limbMsg.planetIds = 2;
@@ -149,7 +152,6 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     
     SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint16_t *>(&limbMsg), this->moduleID);
 
-//    free(imageBuffer.imagePointer);
     return;
 }
 

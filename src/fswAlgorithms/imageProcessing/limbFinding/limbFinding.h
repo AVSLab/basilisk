@@ -58,18 +58,14 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string opnavLimbOutMsgName;  //!< The name of the CirclesOpnavMsg output message
+    std::string opnavLimbOutMsgName;  //!< The name of the Limb output message
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
     
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
-    /* OpenCV specific arguments needed for HoughCircle finding*/
+    /* OpenCV specific arguments needed for Limb finding*/
     int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels
     int32_t cannyThreshHigh;                 //!< [px] Canny edge detection Threshold
-    int32_t cannyThreshLow;                  //!< [-] Threshold in number of votes to qualify a circle as detected
-    int32_t houghMinDist;                //!< [px] Min distance between 2 detected circles
-    int32_t houghMinRadius;              //!< [-] Min radius of a detected circle
-    int32_t houghMaxRadius;              //!< [-] Max radius of a detected circle
-    int32_t dpValue;                     //!< [-] Subscaling of image for circle searching, 1 searches full image
+    int32_t cannyThreshLow;                  //!< [-] Second Threshold for Canny detection
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
