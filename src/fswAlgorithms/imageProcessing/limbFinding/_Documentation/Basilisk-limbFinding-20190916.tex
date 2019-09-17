@@ -45,10 +45,10 @@
 
 
 \newcommand{\ModuleName}{houghCirlces}
-\newcommand{\subject}{Module to find circles in an image}
+\newcommand{\subject}{Module to find Planet Limb}
 \newcommand{\status}{1st Draft}
 \newcommand{\preparer}{T. Teil}
-\newcommand{\summary}{This module either reads in a message of type {\tt CameraImageMsg}, or a filename for an image. It then uses the OpenCV HoughCircles method to extract circles. It then writes these messages in a message of type {\tt CirclesOpNavMsg}. }
+\newcommand{\summary}{This module either reads in a message of type {\tt CameraImageMsg}, or a filename for an image. It then uses the OpenCV's Canny method to extract the limb points. It then writes these messages in a message of type {\tt LimbOpNavMsg}. }
 
 \begin{document}
 
@@ -65,7 +65,7 @@
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-1.0 & First release & T. Teil & May 24, 2019\\
+1.0 & First release & T. Teil & September 16, 2019\\
 \hline
 
 \end{longtable}

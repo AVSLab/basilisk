@@ -5,20 +5,15 @@ This section contains information directed specifically to users. It contains cl
 
 \begin{itemize}
 \item Construct algorithm and associated C++ container:\\
-\texttt{moduleConfig = houghCircles.HoughCircles()}\\
-\texttt{moduleConfig.ModelTag = "houghCircles"}\\
+\texttt{moduleConfig = limbFinding.LimbFinding()()}\\
+\texttt{moduleConfig.ModelTag = "limb"}\\
 \item Add test module to runtime call list: \\
 \texttt{unitTestSim.AddModelToTask(unitTaskName, moduleConfig)}\\
 \texttt{moduleConfig.imageInMsgName = "sample$\_$image"}\\
-\texttt{moduleConfig.opnavCirclesOutMsgName = "circles"}\\
+\texttt{moduleConfig.opnavLimbOutMsgName = "limbPoints"}\\
 \item Image processing parameters: \\
 \texttt{moduleConfig.filename = imagePath}\\
-\texttt{moduleConfig.expectedCircles = maxCircles}\\
-\texttt{moduleConfig.cannyThresh1 = cannyHigh}\\
-\texttt{moduleConfig.cannyThresh2 = cannyLow}\\
-\texttt{moduleConfig.houghMinDist = minDist}\\
-\texttt{moduleConfig.houghMinRadius = minRad}\\
+\texttt{moduleConfig.cannyThreshHigh = cannyHigh}\\
+\texttt{moduleConfig.cannyThreshLow = cannyLow}\\
 \texttt{moduleConfig.blurrSize = blur}\\
-\texttt{moduleConfig.dpValue = dp}\\
-\texttt{moduleConfig.houghMaxRadius = 0}
 \end{itemize}
