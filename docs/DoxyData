@@ -1268,6 +1268,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/simulation/sensors/imu/_Documentation/BasiliskCorruptions.pdf \
                          ../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf \
                          ../src/simulation/dynamics/LinearSpringMassDamper/_Documentation/Basilisk-LINEARSPRINGMASSDAMPER-20180102.pdf \
+                         ../src/simulation/dynamics/keplerianOrbit/_Documentation/Basilisk-KeplerianOrbit-20190910.pdf \
                          ../src/fswAlgorithms/attControl/lowPassFilterTorqueCommand/_Documentation/AVS-Sim-LowPassFilterControlTorque-20160108.pdf \
                          ../src/fswAlgorithms/attControl/MRP_Feedback/_Documentation/Basilisk-MRP_Feedback-2016-0108.pdf \
                          ../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/AVS-Sim-MRP_Steering-2016-0108.pdf \
