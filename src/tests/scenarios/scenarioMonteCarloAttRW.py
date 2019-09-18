@@ -624,7 +624,7 @@ def run(saveFigures, case, show_plots, useDatashader):
 
     #########################################################
     if case ==2:
-        # Now run initial cocnditions
+        # Now run initial conditions
         icName = bskPath + "/tests/testScripts/Support/run_MC_IC"
         monteCarlo.setICDir(icName)
         monteCarlo.setICRunFlag(True)
