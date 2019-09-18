@@ -39,6 +39,14 @@
 
 
 //! @brief General power source/sink base class.
+/*! The powerNodeBase class is used generate a standard interface and list of features for modules that consume or provide power. 
+Specifically, each PowerNodeBase:
+
+1. Writes out a PowerNodeUsageSimMsg describing its power consumption at each sim update;
+2. Can be switched on or off using a PowerNodeStatusIngMsg.
+
+Core functionality is wrapped in the evaluatePowerModel protected virtual void method, which is assumed to compute power usage based on a module specific mathematical model. 
+Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
 
 
 class PowerNodeBase: public SysModel  {
@@ -53,9 +61,9 @@ public:
 
 protected:
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages();
+    bool readMessages(); 
     virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
-    virtual void customSelfInit();
+    virtual void customSelfInit(); 
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
