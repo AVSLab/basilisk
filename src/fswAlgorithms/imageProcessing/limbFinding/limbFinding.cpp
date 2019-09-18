@@ -42,10 +42,11 @@ LimbFinding::LimbFinding()
 
 }
 
-/*! Selfinit performs the first stage of initialization for this module.
- It's primary function is to create messages that will be written to.
+
+/*! @brief This method creates the module output message of type [LimbOpNavMsg](\ref LimbOpNavMsg).
  @return void
  */
+
 void LimbFinding::SelfInit()
 {
     /*! - Create output message for module */
