@@ -140,7 +140,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #       timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
 # ~~~~~~~~~~~~~~~~~
 # The following is a support macro that creates a `spiceObject` instance, and fills in typical
-# default parameters.  By setting the epochInMsgName argument, this maacro provides an epoch date/time
+# default parameters.  By setting the epochInMsgName argument, this macro provides an epoch date/time
 # message as well.  The spiceObject is set to read in this epoch message.  Using the epoch message
 # makes it trivial to synchronize the epoch information across multiple moodules.
 # ~~~~~~~~~~~~~~~~~{.py}

@@ -50,6 +50,7 @@
 
 @section chMcSim Monte Carlo Simulations
 -# @ref scenarioMonteCarloAttRWGroup                   "MC run with RW control"
+-# @ref scenarioMonteCarloSpiceGroup                   "MC run using Spice within the Python simulation setup"
 
 
 @section chBskSim bskSim()-Based Simulation
