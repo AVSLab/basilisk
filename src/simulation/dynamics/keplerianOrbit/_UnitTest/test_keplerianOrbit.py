@@ -28,12 +28,16 @@
 #
 
 import pytest
-import os
+import os, inspect
 from Basilisk.simulation import keplerianOrbit
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion, unitTestSupport
 from copy import copy
 import numpy as np
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
 
 def test_unitKeplerianOrbit(show_plots=False):
     """
@@ -140,7 +144,7 @@ def test_unitKeplerianOrbit(show_plots=False):
         msg = 'PASSED'
     else:
         msg = 'FAILED'
-    unitTestSupport.writeTeXSnippet('KOpassFail', msg, '.')
+    unitTestSupport.writeTeXSnippet('KOpassFail', msg, path)
 
     return [testFailCount, ''.join(testMessages)]
 
