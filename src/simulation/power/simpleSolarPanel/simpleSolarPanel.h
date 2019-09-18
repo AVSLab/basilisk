@@ -12,6 +12,26 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 
+
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
+
+
+//! @brief Simple body-fixed solar panel model that considers shadowing from eclipse, body attitude, and panel parameters.
+
+/*! This module is intended to serve as a basic power node with a constant power load or draw. Specifically, it:
+
+1. Writes out a PowerNodeUsageSimMsg describing its power generation;
+2. Evaluates the impact of shadowing using an assigned EclipseSimMsg;
+3. Computes power generation using a cosine law based on the panel area, efficiency, and attitude
+4. Allows for the panel body-fixed attitude nHat_B, the panel area, and the panel efficiency to be set via setPanelParameters.
+
+Core functionality is wrapped in the evaluatePowerModel protected virtual void method, which uses a simple cosine law to compute the projected panel area and multiplies that by the panel efficiency and sunVisibilityFactor to arrive at wattage.
+*/
+
+
 class SimpleSolarPanel: public PowerNodeBase {
 
 public:
