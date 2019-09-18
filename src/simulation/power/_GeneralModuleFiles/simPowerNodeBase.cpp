@@ -33,7 +33,7 @@
 #include "simPowerNodeBase.h"
 
 
-/*! This method initializes some basic parameters for the module.
+/*! This method initializes the messaging parameters to either empty strings for message names or -1 for message IDs.
  @return void
  */
 PowerNodeBase::PowerNodeBase()
