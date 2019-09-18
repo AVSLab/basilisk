@@ -174,6 +174,8 @@ def run():
     dirName = "montecarlo_test" + str(os.getpid())
     monteCarlo.setArchiveDir(dirName)
 
+    # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
+    #
     # dataPath = bskPath + "/supportData/EphemerisData/"
     # pyswice.furnsh_c(dataPath + 'naif0011.tls')
     # pyswice.furnsh_c(dataPath + 'pck00010.tpc')
@@ -198,6 +200,8 @@ def executeScenario(sim):
     sim.ConfigureStopTime(macros.sec2nano(100.))
     sim.InitializeSimulationAndDiscover()
 
+    # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
+    #
     # dataPath = bskPath + "/supportData/EphemerisData/"
     # pyswice.furnsh_c(dataPath + 'naif0011.tls')
     # pyswice.furnsh_c(dataPath + 'pck00010.tpc')
