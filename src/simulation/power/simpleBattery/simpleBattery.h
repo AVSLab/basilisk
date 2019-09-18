@@ -30,7 +30,14 @@
 
 /*! @brief Power storage module that considers net power up to some capacity.
 
-    For more information on this module see this [PDF Documentation](TBD).
+/*! The SimpleBattery class is a minimal model of battery functionality that considers:
+
+1. Integrated net input power of the attached modules
+2. The battery's maximum storage capacity as defined by the storageCapacity attribute.
+
+Integration is performed with a simple Euler method.
+
+For more information on this module see this [PDF Documentation](TBD).
  */
 
 class SimpleBattery: public PowerStorageBase {
