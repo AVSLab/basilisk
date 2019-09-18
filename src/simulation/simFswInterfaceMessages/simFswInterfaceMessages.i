@@ -28,6 +28,7 @@
 #include "cssArraySensorIntMsg.h"
 #include "ephemerisIntMsg.h"
 #include "imuSensorIntMsg.h"
+#include "limbOpNavMsg.h"
 #include "navAttIntMsg.h"
 #include "navTransIntMsg.h"
 #include "rwArrayTorqueIntMsg.h"
@@ -59,6 +60,8 @@ GEN_SIZEOF(CSSArraySensorIntMsg)
 GEN_SIZEOF(EphemerisIntMsg)
 %include "imuSensorIntMsg.h"
 GEN_SIZEOF(IMUSensorIntMsg)
+%include "limbOpNavMsg.h"
+GEN_SIZEOF(LimbOpNavMsg)
 %include "navAttIntMsg.h"
 GEN_SIZEOF(NavAttIntMsg)
 %include "navTransIntMsg.h"
