@@ -10,7 +10,7 @@ In order to run Basilisk, the following software will be necessary:
 * [Python 3.7 or 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/windows/)
 * [pip](https://pip.pypa.io/en/stable/installing/)
 * Visual Studios 15 or Greater
-* [Swig](http://www.swig.org/download.html) version 4.x.x
+* [Swig](http://www.swig.org/download.html) version 3 or 4
 
 
 

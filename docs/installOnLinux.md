@@ -8,7 +8,7 @@ In order to run Basilisk, the following software will be necessary.  This docume
 
 * [Cmake](https://cmake.org/)
 * [Python](https://www.python.org/) 3.x OR Python 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)
-* [SWIG](http://www.swig.org/) (version 4.x.x)
+* [SWIG](http://www.swig.org/) (version 3 or 4)
 * [GCC](https://gcc.gnu.org/)
 
 
