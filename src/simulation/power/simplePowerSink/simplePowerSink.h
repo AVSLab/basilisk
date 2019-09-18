@@ -1,11 +1,43 @@
-//
-// Created by andrew on 7/12/19.
-//
+/*
+ ISC License
+
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+ */
+
 
 #ifndef BASILISK_SIMPLEPOWERSINK_H
 #define BASILISK_SIMPLEPOWERSINK_H
 
 #include "../_GeneralModuleFiles/simPowerNodeBase.h"
+
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
+
+
+//! @brief General power source/sink class.
+/*! This module is intended to serve as a basic power node with a constant power load or draw. Specifically, it:
+
+1. Writes out a PowerNodeUsageSimMsg describing its power consumption at each sim update based on its power consumption attribute;
+2. Can be switched on or off using a PowerNodeStatusIngMsg.
+
+Core functionality is wrapped in the evaluatePowerModel protected virtual void method, which is assumed to compute power usage based on a module specific mathematical model. 
+Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
+
 
 class SimplePowerSink: public PowerNodeBase {
 

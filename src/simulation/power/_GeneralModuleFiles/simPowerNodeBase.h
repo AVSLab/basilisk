@@ -1,11 +1,3 @@
-//
-// Created by andrew on 7/12/19.
-//
-
-#ifndef BASILISK_SIMPOWERNODEBASE_H
-#define BASILISK_SIMPOWERNODEBASE_H
-
-
 /*
  ISC License
 
@@ -24,6 +16,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
+
+#ifndef BASILISK_SIMPOWERNODEBASE_H
+#define BASILISK_SIMPOWERNODEBASE_H
+
+
 
 #include <Eigen/Dense>
 #include <vector>
