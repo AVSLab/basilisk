@@ -18,6 +18,7 @@
  */
 #include "simpleBattery.h"
 
+/*! The constructor creates a SimpleBattery instance with zero stored charge and a capacity of -1.*/
 SimpleBattery::SimpleBattery(){
 
     this->storageCapacity = -1;
@@ -30,7 +31,7 @@ SimpleBattery::~SimpleBattery(){
     return;
 }
 
-/*! This method is evaluates the centered dipole magnetic field model.
+/*! This method integrates the current net power, and checks to see whether the integrated power falls between 0 and the battery's storageCapacity.
  @param msg magnetic field message structure
  @return void
  */
