@@ -36,6 +36,19 @@
 
 
 //! @brief General power storage base class used to calculate net power in/out and stored power.
+/*! The simPowerStorageBase class is used generate a standard interface and list of features for modules that consume or provide power. 
+Specifically, each simPowerStorageBase:
+
+1. Writes out a storageStatusSimMsg containing the current stored power (in Watt-Hours), the current net power (in Watts), and the battery storage cappacity (in Watt-Hours). 
+2. Allows for multiple PowerNodeUsageSimMsg corresponding to individual simPowerNodeBase instances to be subscribed to using the addPowerNodeToModel method.
+3. Iterates through attached PowerNodeUsageSimMsg instances and computes the net power over all messages using sumAllInputs()
+4. Computes the conversion between net power in and storage using the evaluateBatteryModel method, which must be overriden in child classes and is therefore module-specific.
+
+Core functionality is wrapped in the evaluateBatteryModel protected virtual void method, which is assumed to compute power storage on a module specific mathematical model. 
+Integration of the net energy is performed using a simple one-step Euler method.
+Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
+
+
 
 
 class PowerStorageBase: public SysModel  {
@@ -51,7 +64,7 @@ public:
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
-    void integratePowerStatus(double currentTime);
+    void integratePowerStatus(double currentTime); //!< Integrates the net power given the current time using a simple Euler method.
     double sumAllInputs(); //!< Sums over the input power consumption messages.
     virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double time) = 0; //!< Virtual function to represent power storage computation or losses.
     virtual void customSelfInit();
@@ -72,7 +85,7 @@ protected:
     std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
     double previousTime; //! Previous time used for integration
     double currentTimestep;
-    double currentPowerSum;
+    double currentPowerSum;//!< [W] Current net power.
     uint64_t outputBufferCount;
 
 };
