@@ -22,6 +22,9 @@
 
 #include <stdio.h>
 
+/*! \addtogroup Sim Utility Group
+ * @{
+ */
 
 /* General vectors */
 #ifdef __cplusplus
@@ -239,4 +242,6 @@ extern "C" {
 }
 #endif
 
+/*! @} */
 #endif
+
