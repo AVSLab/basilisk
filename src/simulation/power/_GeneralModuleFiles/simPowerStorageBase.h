@@ -35,8 +35,9 @@
 
 
 
-//! @brief General power storage base class used to calculate net power in/out and stored power.
-/*! The simPowerStorageBase class is used generate a standard interface and list of features for modules that consume or provide power. 
+/*! @brief General power storage base class used to calculate net power in/out and stored power.
+
+ The simPowerStorageBase class is used generate a standard interface and list of features for modules that consume or provide power. 
 Specifically, each simPowerStorageBase:
 
 1. Writes out a storageStatusSimMsg containing the current stored power (in Watt-Hours), the current net power (in Watts), and the battery storage cappacity (in Watt-Hours). 
@@ -45,7 +46,10 @@ Specifically, each simPowerStorageBase:
 4. Computes the conversion between net power in and storage using the evaluateBatteryModel method, which must be overriden in child classes and is therefore module-specific.
 
 Core functionality is wrapped in the evaluateBatteryModel protected virtual void method, which is assumed to compute power storage on a module specific mathematical model. 
-Integration of the net energy is performed using a simple one-step Euler method.
+Integration of the net energy is performed using a simple one-step Euler method:
+\f[
+     W_{stored} = \dot{W}_{net} (t_{current} - t_{previous})
+\f]
 Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
 
 class PowerStorageBase: public SysModel  {
