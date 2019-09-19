@@ -11,7 +11,7 @@ We are very excited by the great capabilities that this software already has, an
 * Ability to playback BSK simulation file within Vizard
 * live plotting capability during a BSK run
 
-## Upcoming Version X.X
+##  Version 0.9.1
 <ul>
 <li>Created a new attitude guidance module for OpNav: opNavPoint. Similar to sunSafePoint, it matches a target heading with the OpNav heading for a simple and robust solution. </li>
     <li>added new tutorial on calling Python Spice functions within a Monte Carlo BSK simulation</li>
