@@ -62,13 +62,13 @@ from Basilisk.utilities import simIncludeGravBody
 def test_module():
     # each test method requires a single assert method to be called
 
-    defaultResults, defaultMessage = test_default()
+    shadowResults, shadowMessage = test_shadowing()
 
+    sunResults, sunMessage = test_sun_calcs()
 
-    assert defaultResults < 1, defaultMessage
+    assert shadowResults+sunResults < 1, [shadowMessage, sunMessage]
 
-
-def test_default():
+def test_shadowing():
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -82,7 +82,7 @@ def test_default():
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(1.0)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
