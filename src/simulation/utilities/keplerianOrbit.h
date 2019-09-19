@@ -23,22 +23,16 @@
 #include <../dynamics/_GeneralModuleFiles/gravityEffector.h>
 #include <utilities/orbitalMotion.h>
 
-/*! \addtogroup SimModelGroup
- *  This group is used to model parts of the vehicle and the surrounding environment
- *  in the simulation system.  All components/dynamics/environment models are a
- *  part of this group.
+/*! \addtogroup Sim Utility Group
+ *  This group contains the simulation utilities that are used globally on the
+ *  simulation side of the software.  Note that FSW should not generally use
+ *  these utilities once we reach a CDR level of maturity on a project.
  * @{
  */
 
-//! @brief The Keplerian Orbit class represents an elliptical orbit and provides outputs
-/*!
- The module
- [PDF Description](Basilisk-KeplerianOrbit-20190910.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
-
+//! @brief The KeplerianOrbit class represents an elliptical orbit and provides a coherent set of
+//! common outputs such as position and velocity, orbital period, semi-parameter, etc. It uses the
+//! utility orbitalMotion to do orbital element to position and velocity conversion.
 class KeplerianOrbit {
 public:
     KeplerianOrbit();

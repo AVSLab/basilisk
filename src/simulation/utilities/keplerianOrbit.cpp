@@ -21,6 +21,7 @@
 #include "utilities/astroConstants.h"
 #include <utilities/avsEigenSupport.h>
 
+/*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()
 {
     this->semi_major_axis = 1E5;
@@ -34,6 +35,7 @@ KeplerianOrbit::KeplerianOrbit()
     return;
 }
 
+/*! The constructor requires orbital elements and a planet */
 KeplerianOrbit::KeplerianOrbit(classicElements oe, GravBodyData* planet){
     this->set_planet(planet);
     this->semi_major_axis = oe.a;
@@ -44,8 +46,10 @@ KeplerianOrbit::KeplerianOrbit(classicElements oe, GravBodyData* planet){
     this->right_ascension = oe.Omega;
     this->mu = planet->mu;
     this->change_orbit();
+    return;
 }
 
+/*! The copy constructor works with python copy*/
 KeplerianOrbit::KeplerianOrbit(const KeplerianOrbit &orig){
     this->semi_major_axis = orig.semi_major_axis;
     this->eccentricity = orig.eccentricity;
@@ -56,9 +60,10 @@ KeplerianOrbit::KeplerianOrbit(const KeplerianOrbit &orig){
     this->mu = orig.mu;
     this->planet = orig.planet;
     this->change_orbit();
+    return;
 }
 
-
+/*! Generic Destructor */
 KeplerianOrbit::~KeplerianOrbit()
 {
     return;
@@ -82,7 +87,8 @@ classicElements KeplerianOrbit::oe(){
     return elements;
 }
 
-/*! This method populates all outputs from orbital elements */
+/*! This method populates all outputs from orbital elements coherently if any of the
+ * classical orbital elements are changed*/
 void KeplerianOrbit::change_orbit(){
     this->change_f();
     this->orbital_angular_momentum_P = this->position_BP_P.cross(this->velocity_BP_P);
@@ -94,7 +100,8 @@ void KeplerianOrbit::change_orbit(){
     this->r_perigee = this->a() * (1 - this->e());
     return;
 }
-/*! This method only changes the outputs dependent on TA */
+/*! This method only changes the outputs dependent on true anomaly so that one
+ * orbit may be queried at various points along the orbit*/
 void KeplerianOrbit::change_f(){
     double r[3];
     double v[3];
@@ -114,6 +121,7 @@ void KeplerianOrbit::change_f(){
 void KeplerianOrbit::set_planet(GravBodyData *plt){
     this->planet = plt;
     this->mu = plt->mu;
+    return;
 }
 
 
