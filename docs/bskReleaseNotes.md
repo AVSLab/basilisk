@@ -8,8 +8,16 @@ We are very excited by the great capabilities that this software already has, an
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 * Updates to the Vizard Unity-based Basilisk visualization tool
-* Ability to playback BSK simulation file within Vizard
 * live plotting capability during a BSK run
+* create power tracking capabilites within BSK where devices can provide or draw power
+* create modules to determine if a satellite can see a ground point such as a communication station
+
+
+
+##  Upcoming Version X.X.X
+<ul>
+    <li>Text goes here</li>
+</ul>
 
 ##  Version 0.9.1
 <ul>
