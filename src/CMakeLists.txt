@@ -35,11 +35,12 @@ option(USE_OPENCV "Include modules which use OpenCV" OFF)
 option(USE_ZMQ "Include modules which use ZMQ" ON)
 option(USE_PYTHON3 "Build For Python 3" OFF)
 
-set(requires_protobuff_modules "viz_interface/vizInterface.i")
-set(requires_zmq_modules "viz_interface/vizInterface.i")
+list(APPEND requires_protobuff_modules "viz_interface/vizInterface.i")
+list(APPEND requires_zmq_modules "viz_interface/vizInterface.i")
 
-set(requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
-set(requires_opencv_modules "imageProcessing/limbFinding/limbFinding.i")
+
+list(APPEND requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
+list(APPEND requires_opencv_modules "imageProcessing/limbFinding/limbFinding.i")
 
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
