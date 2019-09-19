@@ -48,9 +48,6 @@ Core functionality is wrapped in the evaluateBatteryModel protected virtual void
 Integration of the net energy is performed using a simple one-step Euler method.
 Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
 
-
-
-
 class PowerStorageBase: public SysModel  {
 public:
     PowerStorageBase();
