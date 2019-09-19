@@ -180,11 +180,6 @@ def test_default():
     storageData = unitTestSim.pullMessageLogData(testMonitorModule.batPowerOutMsgName + ".storageLevel")
     netData = unitTestSim.pullMessageLogData(testMonitorModule.batPowerOutMsgName + ".currentNetPower")
 
-
-
-
-
-
     # compare the module results to the truth values
     accuracy = 1e-16
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)

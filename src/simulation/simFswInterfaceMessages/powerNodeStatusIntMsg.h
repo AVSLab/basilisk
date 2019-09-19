@@ -1,10 +1,3 @@
-//
-// Created by andrew on 7/12/19.
-//
-
-#ifndef BASILISK_POWERNODESTATUSMSG_H
-#define BASILISK_POWERNODESTATUSMSG_H
-
 /*
  ISC License
 
@@ -23,11 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+#ifndef BASILISK_POWERNODESTATUSMSG_H
+#define BASILISK_POWERNODESTATUSMSG_H
+
+
 /*! \defgroup simFswInterfaceMessages
  *  @{
  */
 
-//! @brief Simulated IMU Sensor output message definition.
+//! @brief Power node command message used to change the state of power modules.
 typedef struct{
     uint64_t powerStatus;      //!< Power status indicator; 0 is off, 1 is on, additional values
 }PowerNodeStatusIntMsg;
