@@ -200,19 +200,6 @@ def test_default():
         trueStorageData, storageData, accuracy, "powerStorageAccumulatedCalculation",
         testFailCount, testMessages)
 
-    #   print out success or failure message
-    snippetName = "unitTestPassFailStatus"
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print "PASSED: " + testMonitorModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print "Failed: " + testMonitorModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
-
-
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
