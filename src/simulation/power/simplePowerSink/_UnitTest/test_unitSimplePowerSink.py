@@ -123,19 +123,6 @@ def test_default():
         [truePower]*3, drawData, accuracy, "powerSinkOutput",
         testFailCount, testMessages)
 
-    #   print out success or failure message
-    snippetName = "unitTestPassFailStatus"
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print "PASSED: " + testModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print "Failed: " + testModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
-
-
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
@@ -205,19 +192,6 @@ def test_status():
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         [truePower]*3, drawData, accuracy, "powerSinkStatusTest",
         testFailCount, testMessages)
-
-    #   print out success or failure message
-    snippetName = "unitTestPassFailStatus"
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print "PASSED: " + testModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print "Failed: " + testModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
-
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
