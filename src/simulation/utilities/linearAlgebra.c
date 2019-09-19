@@ -55,6 +55,15 @@ void vSetZero(double *v,
     }
 }
 
+void vSetOnes(double *v,
+              size_t dim)
+{
+    size_t i;
+    for(i = 0; i < dim; i++) {
+        v[i] = 1.0;
+    }
+}
+
 void vAdd(double *v1, size_t dim,
           double *v2,
           double *result)
