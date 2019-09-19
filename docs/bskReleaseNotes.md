@@ -15,8 +15,9 @@ We are very excited by the great capabilities that this software already has, an
 <ul>
 <li>Created a new attitude guidance module for OpNav: opNavPoint. Similar to sunSafePoint, it matches a target heading with the OpNav heading for a simple and robust solution. </li>
     <li>added new tutorial on calling Python Spice functions within a Monte Carlo BSK simulation</li>
-    <li>Added Keplerian Orbit class. This first implementation takes in elliptical orbit elements and can produce a varietry of related outputs like position, velocity, orbital period, etc.</li>
+    <li>Added Keplerian Orbit class. This first implementation takes in elliptical orbit elements and can produce a range of related outputs like position, velocity, orbital period, etc.</li>
     <li>Added a LimbFinding module for OpNav: limbFinding. This module performs a Canny transform to find the end of the planet and saves away the non-zero pixels for pose-estimation. </li>
+    <li>made BSK compatible with both swig version 3 and 4</li>
 </ul>
 
 ## Version 0.9.0

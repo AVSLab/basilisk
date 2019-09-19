@@ -37,13 +37,9 @@ To install Python 3 on macOS there are two common options:
 ## Install HomeBrew Support Packages
 1. Install [HomeBrew](http://brew.sh) using a Terminal window and pasting the install script from the HomeBrew web site.  
     * *Note:* that this must be done within a `bash` terminal window.  The type of terminal emulation is shown on the top of the terminal window.  If you are running another terminal type, type `bash` to engage the Bash terminal environment.  This is just required to install HomeBrew.  Once it is installed, you can run all other commands from any terminal type.
-2. Install the SWIG version 3 package.  The newer SWIG version 4 is not currently compatible with Basilisk.
+2. Install the SWIG software package.  The new SWIG version 4 is compatible with Basilisk.
 ```
-$ brew install swig@3
-```
-You need to create a link manually of this copy of swig to the usual binary folder using
-```
-$ ln /usr/local/Cellar/swig@3/3.0.12/bin/swig /usr/local/bin/swig
+$ brew install swig
 ```
 3. (Optional) If you want to install the HomeBrew version of `cmake`, you can do so with
 ```

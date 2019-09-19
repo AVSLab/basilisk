@@ -19,12 +19,13 @@
 '''
 import os
 import sys
+import six
 
 from time import sleep
 from shutil import move
 from tempfile import mkstemp
 
-def overwriteSwig(buildDir):
+def overwriteSwigImports(buildDir):
     initFiles = findInitFiles(buildDir)
     for initFile in initFiles:
         replaceImport(initFile)
@@ -52,5 +53,34 @@ def replaceImport(initFile):
     os.remove(initFile)
     move(path, initFile)
 
+def overwriteSwigCode(buildDir):
+    editFiles = findFiles(buildDir)
+    for editFile in editFiles:
+        replaceCode(editFile)
+
+def findFiles(buildDir):
+    editFiles = []
+    for root, dirs, files in os.walk(buildDir):
+        for file in files:
+            if file == 'thrusterDynamicEffector.py' or file == 'reactionWheelStateEffector.py' or file == 'vscmgStateEffector.py':
+                editFiles.append(os.path.join(root,file))
+    return editFiles
+
+def replaceCode(editFile):
+    fh, path = mkstemp()
+    with os.fdopen(fh,'w+') as newFile:
+        with open(editFile) as oldFile:
+            for line in oldFile:
+                if 'if(hasattr(self, name) or name == \'this\')' in line:
+                    newFile.write(line.replace('name == \'this\'', 'name == \'this\' or name == \'__swig_container\''))
+                else:
+                    newFile.write(line)
+    os.remove(editFile)
+    move(path, editFile)
+
 if __name__ == '__main__':
-    overwriteSwig(sys.argv[1])
+    #Not currently needed. May change import scheme which would require these lines
+    #if six.PY3:
+    #    overwriteSwigImports(sys.argv[1])
+    if int(sys.argv[2][0]) >= 4:
+        overwriteSwigCode(sys.argv[1])
