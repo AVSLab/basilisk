@@ -29,9 +29,9 @@
 
 import pytest
 import os, inspect
-from Basilisk.simulation import keplerianOrbit
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion, unitTestSupport
+from Basilisk.simulation import keplerianOrbit
 from copy import copy
 import numpy as np
 
@@ -139,12 +139,6 @@ def test_unitKeplerianOrbit(show_plots=False):
     if not dist == 0.0:
         testFailCount += 1
         testMessages.append('RV conversion failure')
-
-    if testFailCount < 1:
-        msg = 'PASSED'
-    else:
-        msg = 'FAILED'
-    unitTestSupport.writeTeXSnippet('KOpassFail', msg, path)
 
     return [testFailCount, ''.join(testMessages)]
 
