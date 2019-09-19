@@ -173,12 +173,11 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
 void QRDecomp(double *inMat, int32_t nRow, int32_t nCol, double *Q , double *R)
 {
     int32_t i, j, k, dimi, dimj;
-    double qMat[MAX_LIMB_PNTS*MAX_LIMB_PNTS];
-    double sourceMat[MAX_LIMB_PNTS*MAX_LIMB_PNTS];
+    double sourceMat[nRow*nCol];
     double sum;
     
-    mSetZero(qMat, MAX_LIMB_PNTS, MAX_LIMB_PNTS);
-    mSetZero(sourceMat, MAX_LIMB_PNTS, MAX_LIMB_PNTS);
+    mSetZero(Q, nRow, nRow);
+    mSetZero(sourceMat, nRow, nCol);
     mSetZero(R, nCol, nCol);
     mCopy(inMat, nRow, nCol, sourceMat);
     
@@ -193,7 +192,7 @@ void QRDecomp(double *inMat, int32_t nRow, int32_t nCol, double *Q , double *R)
         R[dimi] = sqrt(R[dimi]); /* Sum of squares, can't be negative */
         for (j = 0; j<nRow; j++)
         {
-            qMat[j*nCol + i] =
+            Q[j*nCol + i] =
             sourceMat[j*nCol + i] / R[dimi];
         }
         
@@ -203,14 +202,42 @@ void QRDecomp(double *inMat, int32_t nRow, int32_t nCol, double *Q , double *R)
             dimj = nCol * j;
             for (k = 0; k<nRow; k++)
             {
-                sum += sourceMat[k*nCol + j] * qMat[k*nCol + i];
+                sum += sourceMat[k*nCol + j] * Q[k*nCol + i];
             }
             R[i*nCol + j] = sum;
             for (k = 0; k<nRow; k++)
             {
-                sourceMat[k*nCol + j] -= sum*qMat[k*nCol + i];
+                sourceMat[k*nCol + j] -= sum*Q[k*nCol + i];
             }
         }
+    }
+    
+    return;
+}
+
+/*! This performs a backsubstitution solve. This methods solves for n given Rn = V with R an upper triangular matrix. 
+ @return void
+ @param R     The upper triangular matrix for the backsolve
+ @param inVec Vector on the Right-Hand-Side of the Rn = V equation
+ @param nRow  The number of rows/columns
+ @param n     The solution vector
+ */
+void BackSub(double *R, double *inVec, int32_t nRow, double *n)
+{
+    int32_t i, j;
+    double sum;
+    
+    vSetZero(n, nRow);
+    n[nRow-1] = inVec[nRow-1]/R[nRow*nRow-1];
+    for (i = nRow-2; i>=0; i--)
+    {
+        sum = 0;
+        for (j = i + 1; j<nRow; j++)
+        {
+            sum += R[i*nRow + j] * n[j];
+            
+        }
+        n[i] = (inVec[i] -sum)/R[i*nRow + i];
     }
     
     return;
