@@ -73,6 +73,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     uint32_t sizeOfMsgWritten;
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3], Q[3][3], B[3][3];
     double planetRad;
+    double covar_In_C[3][3], covar_In_B[3][3], covar_In_N[3][3];
     CameraConfigMsg cameraSpecs;
     LimbOpNavMsg limbIn;
     OpNavFswMsg opNavMsgOut;
@@ -170,6 +171,10 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     /*! Perform the QR decompostion of H, this will */
     double Q_decomp[numPoints*numPoints], R_decomp[3*3], jTemp[3];
     double RHS_vec[3], ones[numPoints], n[3], IminusOuter[3][3], outer[3][3], sNorm;
+    double scaleFactor, nNorm2;
+    nNorm2 = v3Dot(n, n);
+    scaleFactor = -1./sqrt(nNorm2-1);
+    
     QRDecomp(H, numPoints, 3, Q_decomp, R_decomp);
     /*! Backsup to get n */
     v3SetZero(RHS_vec);
@@ -195,6 +200,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     
     /*! - Covar from least squares */
     double Pn[3][3], R_yInv[numPoints][numPoints], Rtemp[numPoints][3];
+    double F[3][3];
     mInverse(R_y, numPoints, R_yInv);
     m33SetIdentity(Pn);
     mMultM(R_yInv, numPoints, numPoints, H, numPoints, 3, Rtemp);
@@ -202,29 +208,35 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     m33Inverse(Pn, Pn);
     
     /*! - Build F from eq (55) of engineering note */
-
+    v3OuterProduct(n, n, outer);
+    m33Scale(1/(nNorm2-1), outer, outer);
+    m33SetIdentity(IminusOuter);
+    m33Subtract(IminusOuter, outer, IminusOuter);
     
     /*! - Get the heading */
-    double scaleFactor, nNorm2;
-    nNorm2 = v3Dot(n, n);
-    scaleFactor = -1./sqrt(nNorm2-1);
     m33Inverse(B, B);
     m33MultV3(B, n, n);
     v3Scale(scaleFactor, n, opNavMsgOut.r_BN_C);
     
+    /*! - Build F from eq (55) of engineering note */
+    m33MultM33t(B, IminusOuter, F);
+    m33Scale(scaleFactor, F, F);
+    m33MultM33(F, Pn, covar_In_C);
+    m33MultM33t(covar_In_C, F, covar_In_C);
+    
     /*! - Transform to desireable frames */
     m33MultV3(dcm_NC, opNavMsgOut.r_BN_C, opNavMsgOut.r_BN_N);
     m33MultV3(dcm_BN, opNavMsgOut.r_BN_N, opNavMsgOut.r_BN_B);
+    m33MultM33(dcm_NC, covar_In_C, covar_In_N);
+    m33MultM33t(covar_In_N, dcm_NC, covar_In_N);
+    m33MultM33(dcm_BN, covar_In_N, covar_In_B);
+    m33MultM33t(covar_In_B, dcm_BN, covar_In_B);
 
 
-    
     /*! - write output message */
-//    mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
-//    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
-//    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_C);
-//    vScale(1E6, opNavMsgOut.covar_C, 3*3, opNavMsgOut.covar_C);//in m
-//    mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
-//    vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
+    mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
+    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_C);
+    mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     opNavMsgOut.timeTag = limbIn.timeTag;
     opNavMsgOut.valid =1;
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
