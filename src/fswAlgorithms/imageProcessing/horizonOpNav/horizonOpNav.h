@@ -47,7 +47,7 @@ typedef struct {
     char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
     char limbInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the limb message
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-
+    double noiseSF;   //!< A scale factor to control measurement noise
     int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t limbInMsgID;    //!< [-] The ID associated with the incoming circle message
