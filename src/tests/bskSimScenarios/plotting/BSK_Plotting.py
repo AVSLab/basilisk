@@ -155,8 +155,9 @@ def plot_sun_point(time, sunPoint):
     return
 
 
-def plot_orbit(r_BN):
-    plt.figure()
+def plot_orbit(r_BN, liveFlag):
+    if not liveFlag:
+        plt.figure()
     plt.xlabel('$R_x$, km')
     plt.ylabel('$R_y$, km')
     plt.plot(r_BN[:, 1] * m2km, r_BN[:, 2] * m2km, color_x)
