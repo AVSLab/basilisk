@@ -350,7 +350,7 @@ class scenario_BasicOrbit(BSKScenario):
             sleep(rate/1000.)
 
     def setup_live_outputs(self):
-        #define plots here
+        #define plots of interest here
         dataRequests = [{"plotID" : 0,
                         "plotFun" : "plot_orbit",
                         "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]},
