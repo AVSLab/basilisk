@@ -115,7 +115,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     mScale(planetRad, Q, 3, 3, Q);
     /* Set the number of limb points for ease of use*/
     int32_t numPoints;
-    double sigma_pix2, R_s[3][3];
+    double sigma_pix2;
     numPoints = limbIn.numLimbPoints;
     sigma_pix2 = cameraSpecs.resolution[0]/(configData->noiseSF*numPoints);
     
@@ -128,7 +128,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     
     /*! - Find pixel size using camera specs */
     double d_x, d_y, u_p, v_p, tranf[3][3], alpha;
-    double H[numPoints*3], s_bar[numPoints*2], s[3], R_y[numPoints*numPoints], J[3];
+    double H[numPoints*3]; /*! Matrix of all the limb points*/
+    double R_s[3][3], s_bar[numPoints*2], s[3], R_yInv[numPoints*numPoints], J[3]; /*! variables for covariance */
     int i;
     /* To do: replace alpha by a skew read from the camera message */
     alpha = 0;
@@ -137,16 +138,16 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     u_p = cameraSpecs.resolution[0]/2 - 0.5;
     v_p = cameraSpecs.resolution[1]/2 - 0.5;
     m33SetZero(tranf);
+    /*! Set the map from pixel to position eq (8) in Journal*/
+    m33Set(1/d_x, -alpha/(d_x*d_y), (alpha*v_p - d_y*u_p)/(d_x*d_y), 0, 1/d_y, -v_p/d_y, 0, 0, 1, tranf);
+    
     /*! Set the noise matrix in pix eq (53) in Engineering Note*/
     m33Set(sigma_pix2/(d_x*d_x), 0, 0, 0, sigma_pix2/(d_x*d_x), 0, 0, 0, 0, R_s);
     /*! Rotate R_s with B eq (52) in Journal*/
     m33MultM33(B, R_s, R_s);
     m33MultM33t(R_s, B, R_s);
-    mSetZero(R_y, numPoints, numPoints);
+    mSetZero(R_yInv, numPoints, numPoints);
 
-
-    /*! Set the map from pixel to position eq (8) in Journal*/
-    m33Set(1/d_x, -alpha/(d_x*d_y), (alpha*v_p - d_y*u_p)/(d_x*d_y), 0, 1/d_y, -v_p/d_y, 0, 0, 1, tranf);
 
     /*! Create the H matrix. This is the stacked vector of all the limb points eq (33) in Engineering Note attached*/
     for (i=0; i<numPoints;i++){
@@ -171,16 +172,16 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     /*! Perform the QR decompostion of H, this will */
     double Q_decomp[numPoints*numPoints], R_decomp[3*3], jTemp[3];
     double RHS_vec[3], ones[numPoints], n[3], IminusOuter[3][3], outer[3][3], sNorm;
-    double scaleFactor, nNorm2;
+    double scaleFactor, nNorm2; /*! Useful scalars for the rest of the implementation */
     nNorm2 = v3Dot(n, n);
     scaleFactor = -1./sqrt(nNorm2-1);
     
-    QRDecomp(H, numPoints, 3, Q_decomp, R_decomp);
-    /*! Backsup to get n */
+    /*! - QR decomp */
+    QRDecomp(H, numPoints, Q_decomp, R_decomp);
+    /*! Backsub to get n */
     v3SetZero(RHS_vec);
     vSetOnes(ones, numPoints);
-    mTranspose(Q_decomp, numPoints, numPoints, Q_decomp);
-    mMultV(Q_decomp, numPoints, numPoints, ones, RHS_vec);
+    mtMultV(Q_decomp, numPoints, numPoints, ones, RHS_vec);
     BackSub(R_decomp, RHS_vec, 3, n);
 
     /*! - With all the s_bar terms, and n, we can compute J eq(50) in journal, and get uncertainty */
@@ -195,13 +196,12 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
         v3tMultM33(n, IminusOuter, J);
         v3Scale(1/sNorm, J, J);
         v3tMultM33(J, R_s, jTemp);
-        R_y[numPoints*i+i] = v3Dot(jTemp, J);
+        R_yInv[numPoints*i+i] = 1/v3Dot(jTemp, J);
     }
     
-    /*! - Covar from least squares */
-    double Pn[3][3], R_yInv[numPoints][numPoints], Rtemp[numPoints][3];
+    /*! - Covar from least squares - probably the most computationally expensive segment*/
+    double Pn[3][3], Rtemp[numPoints][3];
     double F[3][3];
-    mInverse(R_y, numPoints, R_yInv);
     m33SetIdentity(Pn);
     mMultM(R_yInv, numPoints, numPoints, H, numPoints, 3, Rtemp);
     mtMultM(H, numPoints, 3, Rtemp, numPoints, 3, Pn);
@@ -221,6 +221,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     /*! - Build F from eq (55) of engineering note */
     m33MultM33t(B, IminusOuter, F);
     m33Scale(scaleFactor, F, F);
+    /*! - Get covar from eq (57) of engineering note */
     m33MultM33(F, Pn, covar_In_C);
     m33MultM33t(covar_In_C, F, covar_In_C);
     
@@ -254,48 +255,31 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
  @param Q     The output Q matrix
  @param R     The output R matrix
  */
-void QRDecomp(double *inMat, int32_t nRow, int32_t nCol, double *Q , double *R)
+void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
 {
-    int32_t i, j, k, dimi, dimj;
-    double sourceMat[nRow*nCol];
-    double sum;
+    int32_t i, j;
+    double sourceMatT[MAX_LIMB_PNTS*3], QT[MAX_LIMB_PNTS*3];
+    double proj[nRow];
     
-    mSetZero(Q, nRow, nRow);
-    mSetZero(sourceMat, nRow, nCol);
-    mSetZero(R, nCol, nCol);
-    mCopy(inMat, nRow, nCol, sourceMat);
+    mSetZero(Q, nRow, 3);
+    mSetZero(sourceMatT, 3, MAX_LIMB_PNTS);
+    mSetZero(QT, 3, MAX_LIMB_PNTS);
+    mSetZero(R, 3, 3);
+    mTranspose(inMat, nRow, 3, sourceMatT);
     
-    for (i = 0; i<nCol; i++)
-    {
-        dimi = i*nCol + i;
-        for (j = 0; j<nRow; j++)
+    for (i = 0; i<3; i++){
+        vSetZero(proj, nRow);
+        vCopy(&sourceMatT[i*nRow], nRow, &QT[i*nRow]);
+        for (j = 0; j<i; j++)
         {
-            dimj = nCol * j;
-            R[dimi] += sourceMat[dimj + i] * sourceMat[dimj + i];
+            R[j*3+i] = vDot(&QT[i*nRow], nRow, &QT[j*nRow]);
+            vScale(-R[j*3+i], &QT[j*nRow], nRow, proj);
+            vAdd(&QT[i*nRow], nRow, proj, &QT[i*nRow]);
         }
-        R[dimi] = sqrt(R[dimi]); /* Sum of squares, can't be negative */
-        for (j = 0; j<nRow; j++)
-        {
-            Q[j*nCol + i] =
-            sourceMat[j*nCol + i] / R[dimi];
-        }
-        
-        for (j = i + 1; j<nCol; j++)
-        {
-            sum = 0;
-            dimj = nCol * j;
-            for (k = 0; k<nRow; k++)
-            {
-                sum += sourceMat[k*nCol + j] * Q[k*nCol + i];
-            }
-            R[i*nCol + j] = sum;
-            for (k = 0; k<nRow; k++)
-            {
-                sourceMat[k*nCol + j] -= sum*Q[k*nCol + i];
-            }
-        }
+        R[i*3+i] = vNorm(&QT[i*nRow], nRow);
+        vScale(1/R[i*3+i], &QT[i*nRow], nRow,  &QT[i*nRow]);
     }
-    
+    mTranspose(QT, 3, nRow, Q);
     return;
 }
 
@@ -326,3 +310,4 @@ void BackSub(double *R, double *inVec, int32_t nRow, double *n)
     
     return;
 }
+
