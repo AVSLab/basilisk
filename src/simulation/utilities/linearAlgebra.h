@@ -34,6 +34,7 @@ extern "C" {
     /* N element vectors */
     void    vCopy(double *v, size_t dim, double *result);
     void    vSetZero(double *v, size_t dim);
+    void    vSetOnes(double *v, size_t dim);
     void    vAdd(double *v1, size_t dim, double *v2, double *result);
     void    vSubtract(double *v1, size_t dim, double *v2, double *result);
     void    vScale(double scaleFactor, double *v, size_t dim, double *result);

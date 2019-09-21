@@ -149,18 +149,18 @@ def horizonOpNav_update():
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    pixelLine = pixelLineConverter.PixelLineConvertData()  # Create a config struct
-    pixelLine.circlesInMsgName = "circles_name"
-    pixelLine.cameraConfigMsgName = "camera_config_name"
-    pixelLine.attInMsgName = "nav_att_name"
+    opNav = horizonOpNav.HorizonOpNavData()  # Create a config struct
+    opNav.limbInMsgName = "limb_name"
+    opNav.cameraConfigMsgName = "camera_config_name"
+    opNav.attInMsgName = "nav_att_name"
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
-    pixelLineWrap = unitTestSim.setModelDataWrap(pixelLine)
-    pixelLineWrap.ModelTag = "pixelLineConverter"
+    opNavWrap = unitTestSim.setModelDataWrap(opNav)
+    opNavWrap.ModelTag = "limbNav"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, pixelLineWrap, pixelLine)
+    unitTestSim.AddModelToTask(unitTaskName, opNavWrap, opNav)
 
     # These are example points for fitting used from an image processing algorithm
     inputPoints = [226., 113., 227., 113., 223., 114., 224., 114., 225., 114., 219.,
@@ -235,32 +235,31 @@ def horizonOpNav_update():
        384., 189., 384., 190., 385., 191., 385., 192., 386.]
 
     # Create the input messages.
-    inputCamera = pixelLineConverter.CameraConfigMsg()
-    inputCircles = pixelLineConverter.CirclesOpNavMsg()
-    inputAtt = pixelLineConverter.NavAttIntMsg()
+    inputCamera = horizonOpNav.CameraConfigMsg()
+    inputLimbMsg = horizonOpNav.LimbOpNavMsg()
+    inputAtt = horizonOpNav.NavAttIntMsg()
 
     # Set camera
     inputCamera.focalLength = 1.
     inputCamera.sensorSize = [10, 10] # In mm
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.3,0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.cameraConfigMsgName, inputCamera)
 
     # Set circles
-    inputCircles.circlesCenters = [152, 251]
-    inputCircles.circlesRadii = [75]
-    inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
-    inputCircles.timeTag = 12345
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
+    inputLimbMsg.limbPoints = inputPoints
+    inputLimbMsg.numLimbPoints = int(len(inputPoints)/2)
+    inputLimbMsg.timeTag = 12345
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.limbInMsgName, inputLimbMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.attInMsgName, inputAtt)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.attInMsgName, inputAtt)
 
     # Set module for Mars
-    pixelLine.planetTarget = 2
-    pixelLine.opNavOutMsgName = "output_nav_msg"
-    unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)
+    opNav.planetTarget = 2
+    opNav.opNavOutMsgName = "output_nav_msg"
+    unitTestSim.TotalSim.logThisMessage(opNav.opNavOutMsgName)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -269,37 +268,74 @@ def horizonOpNav_update():
     unitTestSim.ExecuteSimulation()
 
     # Truth Vlaues
-    planet = {}
-    camera = {}
-    planet["name"] = "Mars"
-    planet["diameter"] = 3396.19 * 2  # km
+    ############################
+    Q = np.eye(3)
+    B = np.zeros([3,3])
+    Q *= 1/3396.19*1E3  # km
 
-    camera["focal"] = inputCamera.focalLength  # m
-    camera["pixelSizeX"] = inputCamera.sensorSize[0]/inputCamera.resolution[0] * 1E-3  # m
-    camera["pixelSizeY"] = inputCamera.sensorSize[1]/inputCamera.resolution[1] * 1E-3  # m
+    numPoints = int(len(inputPoints)/2)
 
-    state = [inputCircles.circlesCenters[0], inputCircles.circlesCenters[1], inputCircles.circlesRadii[0]]
+    CB = rbk.MRP2C(inputCamera.sigma_CB)
+    BN = rbk.MRP2C(inputAtt.sigma_BN)
+    CN = np.dot(CB,BN)
+    B = np.dot(Q, CN.T)
 
-    r_Cexp = mapState(state, planet, camera)
-    covar_Cexp = mapCovar(inputCircles.uncertainty, state[2], planet, camera)
+    # Transf camera to meters
+    alpha =0
+    up = inputCamera.resolution[0]/2+0.5
+    vp = inputCamera.resolution[1] / 2 + 0.5
+    d_x = inputCamera.sensorSize[0]/inputCamera.resolution[0]
+    d_y = inputCamera.sensorSize[1] / inputCamera.resolution[1]
 
-    dcm_CB = rbk.MRP2C(inputCamera.sigma_CB)
-    dcm_BN = rbk.MRP2C(inputAtt.sigma_BN)
+    transf = np.zeros([3,3])
+    transf[0, 0] = 1 / d_x
+    transf[1, 1] = 1 / d_y
+    transf[2, 2] = 1
+    transf[0, 1] = -alpha/(d_x*d_y)
+    transf[0, 2] = (alpha*vp - d_y*up)/ (d_x * d_y)
+    transf[1, 2] = -vp / (d_y)
 
-    dcm_NC = np.dot(dcm_CB, dcm_BN).T
+    s = np.zeros([numPoints,3])
+    sBar = np.zeros([numPoints,3])
+    sBarPrime = np.zeros([numPoints,3])
+    H = np.zeros([numPoints,3])
+    for i in range(numPoints):
+        s[i,:] = np.dot(transf, np.array([inputPoints[2*i], inputPoints[2*i+1], 1]))
+        sBar[i,:] = np.dot(B, s[i,:])
+        sBarPrime[i,:] = sBar[i,:]/np.linalg.norm(sBar[i,:])
+        H[i,:] = sBarPrime[i,:]
 
-    r_Nexp = np.dot(dcm_NC, r_Cexp)
-    covar_Nexp = np.dot(dcm_NC, np.dot(covar_Cexp, dcm_NC.T)).flatten()
-    timTagExp = inputCircles.timeTag
+    # QR H
+    Rpy = np.zeros([3,3])
+    Qpy = np.zeros([numPoints, 3])
+    for i in range(0,3):
+        Qpy[:,i] = H[:,i]
+        for j in range(i):
+            Rpy[j,i] = np.dot(Qpy[:,j], H[:,i])
+            Qpy[:,i]= Qpy[:,i] - Rpy[j,i]*Qpy[:,j]
+        Rpy[i,i] = np.linalg.norm(Qpy[:,i])
+        Qpy[:,i] = 1 / Rpy[i,i] *  Qpy[:,i]
+
+    errorNorm1 = np.linalg.norm(np.dot(Qpy, Rpy) - H)
+    if (errorNorm1 > 1.0E-10):
+        print(errorNorm1, "QR decomp")
+        testFailCount += 1
+        testMessages.append("QR decomp Failure in update test " + "\n")
+
+    # Back Sub
+    RHS = np.dot(Qpy.T, np.ones(numPoints))
+    n = back_substitution(Rpy, RHS)
+
+    r_BN_C = - (np.dot(n,n) - 1)**(-0.5)*np.dot(np.linalg.inv(B), n)
 
     posErr = 1e-10
     covarErr = 1e-10
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
-    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_BN_N',  list(range(3)))
-    outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar_N',  list(range(9)))
-    outputTime = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.timeTag')
+    outputR = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.r_BN_C',  list(range(3)))
+    outputCovar = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.covar_C',  list(range(9)))
+    outputTime = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.timeTag')
     #
     #
     for i in range(len(outputR[-1, 1:])):
@@ -320,11 +356,11 @@ def horizonOpNav_update():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + pixelLineWrap.ModelTag)
+        print("PASSED: " + opNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + pixelLineWrap.ModelTag)
+        print("Failed: " + opNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
@@ -333,5 +369,5 @@ def horizonOpNav_update():
 
 
 if __name__ == '__main__':
-    horizonOpNav_methods()
-    # horizonOpNav_update()
+    # horizonOpNav_methods()
+    horizonOpNav_update()

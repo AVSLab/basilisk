@@ -112,7 +112,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
         opNavMsgOut.planetID = configData->planetTarget;
     }
     mSetIdentity(Q, 3, 3);
-    mScale(planetRad, Q, 3, 3, Q);
+    mScale(1/planetRad, Q, 3, 3, Q);
     /* Set the number of limb points for ease of use*/
     int32_t numPoints;
     double sigma_pix2;
@@ -153,8 +153,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     for (i=0; i<numPoints;i++){
         v3SetZero(s);
         /*! - Put the pixel data in s (not s currently)*/
-        s[0] = limbIn.limbPoints[0];
-        s[1] = limbIn.limbPoints[1];
+        s[0] = limbIn.limbPoints[2*i];
+        s[1] = limbIn.limbPoints[2*i + 1];
         s[2] = 1;
         /*! - Apply the trasnformation computed previously from pixel to position*/
         m33MultV3(tranf, s, s);
@@ -170,7 +170,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     /*! Need to solve Hn = 1, for n. If we performa  QR decomp on H, the problem becomes:
      Rn = Q^T.1*/
     /*! Perform the QR decompostion of H, this will */
-    double Q_decomp[numPoints*numPoints], R_decomp[3*3], jTemp[3];
+    double Q_decomp[numPoints*3], R_decomp[3*3], jTemp[3];
     double RHS_vec[3], ones[numPoints], n[3], IminusOuter[3][3], outer[3][3], sNorm;
     double scaleFactor, nNorm2; /*! Useful scalars for the rest of the implementation */
     nNorm2 = v3Dot(n, n);
@@ -181,7 +181,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     /*! Backsub to get n */
     v3SetZero(RHS_vec);
     vSetOnes(ones, numPoints);
-    mtMultV(Q_decomp, numPoints, numPoints, ones, RHS_vec);
+    mtMultV(Q_decomp, numPoints, 3, ones, RHS_vec);
     BackSub(R_decomp, RHS_vec, 3, n);
 
     /*! - With all the s_bar terms, and n, we can compute J eq(50) in journal, and get uncertainty */
@@ -252,8 +252,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
  @param inMat The input matrix to decompose
  @param nRow  The number of rows
  @param nRow  The number of columns
- @param Q     The output Q matrix
- @param R     The output R matrix
+ @param Q     The output Q matrix (numbLimb x 3)
+ @param R     The output R matrix (3 x 3)
  */
 void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
 {
