@@ -17,12 +17,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-#
-#   Unit Test Script
-#   Module Name:        simplePowerSink
-#   Author:             Andrew Harris
-#   Creation Date:      July 17th 2019
-#
 
 import pytest
 import os, inspect
@@ -37,11 +31,10 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import simplePowerSink
-from Basilisk.simulation import simplePowerMonitor
 from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import simplePowerMonitor
 from Basilisk.utilities import macros
+
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -51,23 +44,28 @@ from Basilisk.utilities import macros
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useDefault", [ True, False])
-@pytest.mark.parametrize("useMinReach", [ True, False])
-@pytest.mark.parametrize("useMaxReach", [ True, False])
-@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
+#@pytest.mark.parametrize("useDefault", [ True, False])
+#@pytest.mark.parametrize("useMinReach", [ True, False])
+#@pytest.mark.parametrize("useMaxReach", [ True, False])
+#@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
 
 
 # update "module" in this function name to reflect the module name
-def test_module():
+def test_module(show_plots):
     # each test method requires a single assert method to be called
-
-    defaultResults, defaultMessage = test_default()
-
-
-    assert defaultResults < 1, defaultMessage
+    [testResults, testMessage] = test_storage_limits(show_plots)
+    assert testResults < 1, testMessage
 
 
-def test_default():
+def test_storage_limits(show_plots):
+    """
+    Tests:
+    1. Whether the simpleBattery can add multiple nodes (core base class functionality);
+    2. That the battery correctly evaluates how much stored power it should have given a pair of five-watt input messages.
+    :param show_plots: Not used; no plots to be shown.
+    :return:
+    """
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -75,101 +73,69 @@ def test_default():
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
-    # Create a power sink/source
-    testSourceModule = simplePowerSink.SimplePowerSink()
-    testSourceModule.ModelTag = "powerSource"
-    testSourceModule.nodePowerOut = 15. # Watts
-    testSourceModule.nodePowerOutMsgName = "powerSourceMsg"
-    unitTestSim.AddModelToTask(unitTaskName, testSourceModule)
-
-    testSinkModule = simplePowerSink.SimplePowerSink()
-    testSinkModule.ModelTag = "powerSink2"
-    testSinkModule.nodePowerOut = -10. # Watts
-    testSourceModule.nodePowerOutMsgName = "powerSinkMsg"
-    unitTestSim.AddModelToTask(unitTaskName, testSinkModule)
-
-    # Create a simplePowerMonitor and attach the source/sink to it
-    testMonitorModule = simplePowerMonitor.SimplePowerMonitor()
-    testMonitorModule.ModelTag = "powerMonitor"
-    testMonitorModule.batPowerOutMsgName = "powerMonitorMsg"
-    testMonitorModule.addPowerNodeToModel(testSourceModule.nodePowerOutMsgName)
-    testMonitorModule.addPowerNodeToModel(testSinkModule.nodePowerOutMsgName)
-    unitTestSim.AddModelToTask(unitTaskName, testMonitorModule)
+    test_battery = simplePowerMonitor.SimplePowerMonitor()
+    test_battery.storedCharge = 0
 
 
-    # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(testSourceModule.nodePowerOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(testSinkModule.nodePowerOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(testMonitorModule.batPowerOutMsgName, testProcessRate)
+    powerMsg1 = simMessages.PowerNodeUsageSimMsg()
+    powerMsg1.netPower_W = 5.0
+    powerMsg2 = simMessages.PowerNodeUsageSimMsg()
+    powerMsg2.netPower_W = 5.0
 
-    # Need to call the self-init and cross-init methods
-    unitTestSim.InitializeSimulation()
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               "node_1_msg",
+                               powerMsg1)
 
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               "node_2_msg",
+                               powerMsg2)
 
-    # Begin the simulation time run set above
+    #Test the addNodeToStorage method:
+    test_battery.addPowerNodeToModel("node_1_msg")
+    test_battery.addPowerNodeToModel("node_2_msg")
+    test_battery.batPowerOutMsgName = 'test_battery_status'
+
+    unitTestSim.AddModelToTask(unitTaskName, test_battery)
+
+    logFreq = testProcessRate
+    unitTestSim.TotalSim.logThisMessage(test_battery.batPowerOutMsgName,logFreq)
+
+    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))
+
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    supplyData = unitTestSim.pullMessageLogData(testSourceModule.nodePowerOutMsgName + ".netPower_W")
-    sinkData = unitTestSim.pullMessageLogData(testSinkModule.nodePowerOutMsgName + ".netPower_W")
-    storageData = unitTestSim.pullMessageLogData(testMonitorModule.batPowerOutMsgName + ".storageLevel")
-    netData = unitTestSim.pullMessageLogData(testMonitorModule.batPowerOutMsgName + ".currentNetPower")
+    storedChargeLog = unitTestSim.pullMessageLogData(test_battery.batPowerOutMsgName+".storageLevel")
+    capacityLog = unitTestSim.pullMessageLogData(test_battery.batPowerOutMsgName+".storageCapacity")
+    netPowerLog= unitTestSim.pullMessageLogData(test_battery.batPowerOutMsgName+".currentNetPower")
 
+    #   Check 1 - is net power equal to 10.?
+    for ind in range(0,len(netPowerLog)):
+        currentPower = netPowerLog[ind,1]
+        if currentPower < 10.:
+            testFailCount +=1
+            testMessages.append("FAILED: SimplePowerMonitor did not correctly log the net power.")
 
-    # compare the module results to the truth values
-    accuracy = 1e-16
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
+    #   Check 2 - is the stored power equivalent to 10*5 W-s?
 
-    trueNetPower = 5.0 #Module should be off
-    trueStorageData = [0, 2.5, 5]
-
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        [trueNetPower]*3, netData, accuracy, "powerStorageNetCalculation",
-        testFailCount, testMessages)
-
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueStorageData, storageData, accuracy, "powerStorageAccumulatedCalculation",
-        testFailCount, testMessages)
-
-    #   print out success or failure message
-    snippetName = "unitTestPassFailStatus"
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print "PASSED: " + testMonitorModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print "Failed: " + testMonitorModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
-
+    if storedChargeLog[-1,1] != (10.*5.)/3600.:
+        testFailCount+=1
+        print(storedChargeLog[-1,1])
+        print((10.*5.)/3600.)
+        testMessages.append("FAILED: SimplePowerMonitor did not track integrated power. Returned "+str(storedChargeLog[-1,1])+", expected "+str((10.*5./3600.)))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-
-
-#
-# This statement below ensures that the unitTestScript can be run as a
-# stand-alone python script
-#
 if __name__ == "__main__":
-    test_module()
+    print(test_module(False))
