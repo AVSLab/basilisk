@@ -42,20 +42,6 @@ from Basilisk.simulation import simMessages
 from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import macros
 
-
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useDefault", [ True, False])
-@pytest.mark.parametrize("useMinReach", [ True, False])
-@pytest.mark.parametrize("useMaxReach", [ True, False])
-@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
-
-
 # update "module" in this function name to reflect the module name
 def test_module():
     # each test method requires a single assert method to be called
