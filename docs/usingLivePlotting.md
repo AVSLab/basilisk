@@ -9,8 +9,9 @@ Reference implementations / templates for live plotting exist for bskSimScenario
 ## Defining Live and Final Plots
 ### bskSimScenarios
 The data structure that contains all information for what to plot live is contained in dataRequests: 
+
 Example: 
-'''
+```
 dataRequests = [{"plotID" : 0, 
                  "plotFun" : "plot_orbit", 
                  "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]}, 
@@ -19,36 +20,38 @@ dataRequests = [{"plotID" : 0,
                  "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", 
                               self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", 
                               self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN"]}] 
-'''
+```
 plotID = unique plot identifier 
+
 plotFun = name of plotting function in bskSimScenarios/plotting/BSK_Plotting.py to use 
+
 dataReq = data to be pulled from simulation 
 
 ### scenarios
 Example: 
-'''
+
+```
 dataRequests = [{"plotID" : None, 
                  "plotFun" : None, 
                  "dataReq" : [scObject.scStateOutMsgName + '.r_BN_N', 
                               scObject.scStateOutMsgName + '.v_BN_N']}] 
-'''
+```
+
 dataReq will contain all data points wanted for plotting. Plots are defined in the scenario script therefore plotID and plotFun can be left empty. 
 
 ## How To Live Plot / Adapt the Template 
 The only user-defined elements to adopt are: 
-1) Defining Data to Plot
 
-    Fill in dataReq with required information. 
-   
-2) (For Scenarios Only): Define Plotting Function
-
-    Create a plotting function and migrate plotting code.
-    Execute simulation with arguments: 
-    showPlots = boolean 
-    livePlots = boolean
-    simComm = simulation side of communication pipe 
-    plottingFunc = created function containing plotting 
-    plotArgs = list of arguments for plottingFunc     
+1. Defining Data to Plot
+    * Fill in dataReq with required information. 
+2. (For Scenarios Only): Define Plotting Function
+    * Create a plotting function and migrate plotting code.
+    * Execute simulation with arguments: 
+        * showPlots = boolean 
+        * livePlots = boolean
+        * simComm = simulation side of communication pipe 
+        * plottingFunc = created function containing plotting 
+        * plotArgs = list of arguments for plottingFunc     
 
 ## Refresh Rate
 
