@@ -259,8 +259,6 @@ class scenario_BasicOrbit(BSKScenario):
     def __init__(self, masterSim, showPlots, livePlots):
         super(scenario_BasicOrbit, self).__init__(masterSim)
         self.name = 'scenario_BasicOrbit'
-        self.showPlots = showPlots
-        self.livePlots = livePlots
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
@@ -323,11 +321,10 @@ class scenario_BasicOrbit(BSKScenario):
             for request in dataRequests:
                 #send request for data
                 plotComm.send(request)
-                #recieve request and supress warning
                 response = plotComm.recv()
-                with warnings.catch_warnings():
-                    warnings.simplefilter(action='ignore', category=FutureWarning)
+
                 if response == "TERM":
+                    plt.close("all")
                     return
                 pltArgs = []
                 if response["plotFun"] == "plot_orbit":
@@ -351,10 +348,10 @@ class scenario_BasicOrbit(BSKScenario):
 
     def setup_live_outputs(self):
         #define plots of interest here
-        dataRequests = [{"plotID" : 0,
+        dataRequests = [{"plotID" : 1,
                         "plotFun" : "plot_orbit",
                         "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]},
-                        {"plotID" : 1,
+                        {"plotID" : 2,
                         "plotFun" : "plot_orientation",
                         "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N",
                                     self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N",
@@ -386,7 +383,8 @@ def run(showPlots, livePlots):
         #plotting refresh rate in ms
         refreshRate = 1000
         plotComm, simComm = Pipe()
-        simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (simComm, TheScenario,))
+        plotArgs = [showPlots]
+        simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (showPlots, livePlots, simComm, TheScenario.pull_outputs, plotArgs))
         plotProc = Process(target = TheScenario.live_outputs, args = (plotComm, refreshRate))
         # Execute simulation and live plotting
         simProc.start(), plotProc.start()
