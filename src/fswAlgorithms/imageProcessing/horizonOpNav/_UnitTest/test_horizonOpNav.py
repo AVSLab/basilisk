@@ -153,6 +153,7 @@ def horizonOpNav_update():
     opNav.limbInMsgName = "limb_name"
     opNav.cameraConfigMsgName = "camera_config_name"
     opNav.attInMsgName = "nav_att_name"
+    opNav.noiseSF = 2
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
@@ -241,12 +242,13 @@ def horizonOpNav_update():
 
     # Set camera
     inputCamera.focalLength = 1.
-    inputCamera.sensorSize = [10, 10] # In mm
+    inputCamera.sensorSize = [10*1E-3, 10*1E-3] # In m
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.3,0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.cameraConfigMsgName, inputCamera)
 
     # Set circles
+    inputLimbMsg.valid = 1
     inputLimbMsg.limbPoints = inputPoints
     inputLimbMsg.numLimbPoints = int(len(inputPoints)/2)
     inputLimbMsg.timeTag = 12345
@@ -271,7 +273,7 @@ def horizonOpNav_update():
     ############################
     Q = np.eye(3)
     B = np.zeros([3,3])
-    Q *= 1/3396.19*1E3  # km
+    Q *= 1/(3396.19*1E3)  # km
 
     numPoints = int(len(inputPoints)/2)
 
@@ -282,9 +284,9 @@ def horizonOpNav_update():
 
     # Transf camera to meters
     alpha =0
-    up = inputCamera.resolution[0]/2+0.5
+    up = inputCamera.resolution[0] / 2 + 0.5
     vp = inputCamera.resolution[1] / 2 + 0.5
-    d_x = inputCamera.sensorSize[0]/inputCamera.resolution[0]
+    d_x = inputCamera.sensorSize[0] / inputCamera.resolution[0]
     d_y = inputCamera.sensorSize[1] / inputCamera.resolution[1]
 
     transf = np.zeros([3,3])
@@ -300,10 +302,11 @@ def horizonOpNav_update():
     sBarPrime = np.zeros([numPoints,3])
     H = np.zeros([numPoints,3])
     for i in range(numPoints):
-        s[i,:] = np.dot(transf, np.array([inputPoints[2*i], inputPoints[2*i+1], 1]))
+        s[i,:] = np.dot(transf, np.array([inputPoints[2*i]/inputCamera.focalLength, inputPoints[2*i+1]/inputCamera.focalLength, 1]))
         sBar[i,:] = np.dot(B, s[i,:])
         sBarPrime[i,:] = sBar[i,:]/np.linalg.norm(sBar[i,:])
         H[i,:] = sBarPrime[i,:]
+
 
     # QR H
     Rpy = np.zeros([3,3])
@@ -317,7 +320,7 @@ def horizonOpNav_update():
         Qpy[:,i] = 1 / Rpy[i,i] *  Qpy[:,i]
 
     errorNorm1 = np.linalg.norm(np.dot(Qpy, Rpy) - H)
-    if (errorNorm1 > 1.0E-10):
+    if (errorNorm1 > 1.0E-8):
         print(errorNorm1, "QR decomp")
         testFailCount += 1
         testMessages.append("QR decomp Failure in update test " + "\n")
@@ -325,43 +328,58 @@ def horizonOpNav_update():
     # Back Sub
     RHS = np.dot(Qpy.T, np.ones(numPoints))
     n = back_substitution(Rpy, RHS)
+    n_test = np.dot(np.linalg.inv(Rpy), RHS)
 
-    r_BN_C = - (np.dot(n,n) - 1)**(-0.5)*np.dot(np.linalg.inv(B), n)
+    R_s = (inputCamera.resolution[0]/(opNav.noiseSF*numPoints))/d_x**2*np.array([[1,0,0],[0,1,0],[0,0,0]])
+    R_s = np.dot(np.dot(B, R_s), B.T)
+    R_yInv = np.zeros([numPoints, numPoints])
+    for i in range(numPoints):
+        J = 1./np.linalg.norm(sBar[i,:])*np.dot(n, np.eye(3) - np.outer(sBarPrime[i,:], sBarPrime[i,:]))
+        temp = np.dot(R_s, J)
+        R_yInv[i,i] = 1./np.dot(temp, J)
 
-    posErr = 1e-10
-    covarErr = 1e-10
+    Pn = np.linalg.inv(np.dot(np.dot(H.T, R_yInv),H))
+    F = -(np.dot(n,n) - 1)**(-0.5)*np.dot(np.linalg.inv(B), np.eye(3) - np.outer(n,n)/(np.dot(n,n)-1))
+    Covar_C_test = np.dot(np.dot(F, Pn), F.T)
+    errorNorm1 = np.linalg.norm(n_test - n)
+    if (errorNorm1 > 1.0E-8):
+        print(errorNorm1, "Back Sub")
+        testFailCount += 1
+        testMessages.append("Back Sub Failure in update test " + "\n")
+
+    r_BN_C = - (np.dot(n,n) - 1.)**(-0.5)*np.dot(np.linalg.inv(B), n)
+
+    pixLineConv_C = np.array([6000.74938566,6000.74938566, 1202498.50702857])*1E3
+    posErr = 1e-8
+    covarErr = 1e-8
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
     outputR = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.r_BN_C',  list(range(3)))
     outputCovar = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.covar_C',  list(range(9)))
     outputTime = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.timeTag')
-    #
-    #
+
+
     for i in range(len(outputR[-1, 1:])):
-        if np.abs(r_Nexp[i] - outputR[-1, i+1]) > 1E-10 and np.isnan(outputR.any()):
+        if np.abs((r_BN_C[i] - outputR[-1, i+1])) > posErr or np.isnan(outputR.any()):
             testFailCount += 1
-            testMessages.append("FAILED: Position Check in pixelLine")
+            testMessages.append("FAILED: Position Check in Horizon Nav for index "+ str(i) + " with error " + str(np.abs((r_BN_C[i] - outputR[-1, i+1])/r_BN_C[i])))
 
     for i in range(len(outputCovar[-1, 1:])):
-        if np.abs((covar_Nexp[i] - outputCovar[-1, i+1])) > 1E-10 and np.isnan(outputTime.any()):
+        if np.abs((Covar_C_test.flatten()[i] - outputCovar[-1, i+1])) > covarErr or np.isnan(outputTime.any()):
             testFailCount += 1
-            testMessages.append("FAILED: Covar Check in pixelLine")
+            testMessages.append("FAILED: Covar Check in pixelLine for index "+ str(i) + " with error " + str(np.abs((Covar_C_test.flatten()[i] - outputCovar[-1, i+1]))))
 
-    if np.abs((timTagExp - outputTime[-1, 1])/timTagExp) > 1E-10 and np.isnan(outputTime.any()):
-        testFailCount += 1
-        testMessages.append("FAILED: Time Check in pixelLine")
-    #
-    #   print out success message if no error were found
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + opNav.ModelTag)
+        print("PASSED: " + opNavWrap.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + opNav.ModelTag)
+        print("Failed: " + opNavWrap.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print(testMessages)
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

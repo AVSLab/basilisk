@@ -125,18 +125,19 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);
     m33Transpose(dcm_NC, dcm_NC);
-    
+    m33MultM33(Q, dcm_NC, B);
+
     /*! - Find pixel size using camera specs */
     double d_x, d_y, u_p, v_p, tranf[3][3], alpha;
-    double H[numPoints*3]; /*! Matrix of all the limb points*/
-    double R_s[3][3], s_bar[numPoints*2], s[3], R_yInv[numPoints*numPoints], J[3]; /*! variables for covariance */
+    double H[MAX_LIMB_PNTS*3]; /*! Matrix of all the limb points*/
+    double R_s[3][3], s_bar[MAX_LIMB_PNTS*3], s[3], R_yInv[MAX_LIMB_PNTS*MAX_LIMB_PNTS], J[3]; /*! variables for covariance */
     int i;
     /* To do: replace alpha by a skew read from the camera message */
     alpha = 0;
     d_x = cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0];
     d_y = cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1];
-    u_p = cameraSpecs.resolution[0]/2 - 0.5;
-    v_p = cameraSpecs.resolution[1]/2 - 0.5;
+    u_p = cameraSpecs.resolution[0]/2 + 0.5;
+    v_p = cameraSpecs.resolution[1]/2 + 0.5;
     m33SetZero(tranf);
     /*! Set the map from pixel to position eq (8) in Journal*/
     m33Set(1/d_x, -alpha/(d_x*d_y), (alpha*v_p - d_y*u_p)/(d_x*d_y), 0, 1/d_y, -v_p/d_y, 0, 0, 1, tranf);
@@ -159,7 +160,6 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
         /*! - Apply the trasnformation computed previously from pixel to position*/
         m33MultV3(tranf, s, s);
         /*! - Rotate the Vector in the inertial frame*/
-        m33MultM33(Q, dcm_NC, B);
         m33MultV3(B, s, s);
         /*! - We now have s_bar in the Journal Paper, store to later compute J for uncertainty*/
         v3Copy(s, &s_bar[3*i]);
@@ -170,11 +170,9 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     /*! Need to solve Hn = 1, for n. If we performa  QR decomp on H, the problem becomes:
      Rn = Q^T.1*/
     /*! Perform the QR decompostion of H, this will */
-    double Q_decomp[numPoints*3], R_decomp[3*3], jTemp[3];
-    double RHS_vec[3], ones[numPoints], n[3], IminusOuter[3][3], outer[3][3], sNorm;
-    double scaleFactor, nNorm2; /*! Useful scalars for the rest of the implementation */
-    nNorm2 = v3Dot(n, n);
-    scaleFactor = -1./sqrt(nNorm2-1);
+    double Q_decomp[MAX_LIMB_PNTS*3], R_decomp[3*3], jTemp[3];
+    double RHS_vec[3], ones[MAX_LIMB_PNTS], n[3], IminusOuter[3][3], outer[3][3], sNorm;
+    double scaleFactor, nNorm2, sbarPrime[3]; /*! Useful scalars for the rest of the implementation */
     
     /*! - QR decomp */
     QRDecomp(H, numPoints, Q_decomp, R_decomp);
@@ -190,7 +188,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
         sNorm = v3Norm(&s_bar[3*i]);
         m33SetIdentity(IminusOuter);
         /*! - Equation 31 in Journal*/
-        v3OuterProduct(&s_bar[3*i], &s_bar[3*i], outer);
+        v3Normalize(&s_bar[3*i], sbarPrime);
+        v3OuterProduct(sbarPrime, sbarPrime, outer);
         m33Subtract(IminusOuter, outer, IminusOuter);
         /*! - Rotate the Vector in the inertial frame*/
         v3tMultM33(n, IminusOuter, J);
@@ -200,12 +199,16 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     }
     
     /*! - Covar from least squares - probably the most computationally expensive segment*/
-    double Pn[3][3], Rtemp[numPoints][3];
+    double Pn[3][3], Rtemp[MAX_LIMB_PNTS*3];
     double F[3][3];
     m33SetIdentity(Pn);
     mMultM(R_yInv, numPoints, numPoints, H, numPoints, 3, Rtemp);
     mtMultM(H, numPoints, 3, Rtemp, numPoints, 3, Pn);
     m33Inverse(Pn, Pn);
+    
+    /*! - Compute Scale factor now that n is computed */
+    nNorm2 = v3Dot(n, n);
+    scaleFactor = -1./sqrt(nNorm2-1);
     
     /*! - Build F from eq (55) of engineering note */
     v3OuterProduct(n, n, outer);
