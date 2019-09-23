@@ -69,6 +69,7 @@ Eigen::Vector3d PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], do
   return llaVec;
 }
 
+<<<<<<< HEAD
 /*! Converts from a Lat/Long/Altitude coordinates to planet-centered,planet-fixed coordinates given a planet radius.
 @param llaPosition : [m] Position vector in PCPF coordinates
 @param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
@@ -114,4 +115,9 @@ Eigen::Vector3d LLA2PCI(Eigen::Vector3d llaPosition, double J20002Pfix[3][3], do
   Eigen::Vector3d pcpfPosition = LLA2PCPF(llaPosition, planetRad);
   Eigen::Vector3d pciPosition = PCPF2PCI(pcpfPosition, J20002Pfix);
   return pciPosition;
+=======
+Eigen::Vector3d LLA2PCPF(){
+
+  return 
+>>>>>>> 02b00a6c7... Updates to the geodeticConversion utility class, including doxygen comments.
 }
