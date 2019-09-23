@@ -42,7 +42,7 @@ public:
     ~GroundLocation();
     void SelfInit();
     void CrossInit();
-    void UpdateState();
+    void UpdateState(uint64_t CurrentSimNanos);
     void Reset();
     void ReadMessages();
     void addSpacecraftToModel(std::string tmpScMsgName)

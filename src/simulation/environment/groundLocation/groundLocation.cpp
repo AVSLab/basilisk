@@ -85,17 +85,20 @@ GroundLocation::computeRelativePosition()
 
 GroundLocation::computeAccess()
 {
+    this->updateInertialPosition();
+    
+
+
     return
 }
 
-GroundLocation::UpdateState()
+GroundLocation::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadMessages();
-
+    
     this->computeAccess();
 
     this->WriteMessages();
 
     return
-
 }
