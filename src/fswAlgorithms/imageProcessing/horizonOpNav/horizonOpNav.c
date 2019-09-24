@@ -136,8 +136,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     alpha = 0;
     d_x = cameraSpecs.focalLength/(cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0]);
     d_y = cameraSpecs.focalLength/(cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1]);
-    u_p = cameraSpecs.resolution[0]/2 + 0.5;
-    v_p = cameraSpecs.resolution[1]/2 + 0.5;
+    u_p = cameraSpecs.resolution[0]/2;
+    v_p = cameraSpecs.resolution[1]/2;
     m33SetZero(tranf);
     /*! Set the map from pixel to position eq (8) in Journal*/
     m33Set(1/d_x, -alpha/(d_x*d_y), (alpha*v_p - d_y*u_p)/(d_x*d_y), 0, 1/d_y, -v_p/d_y, 0, 0, 1, tranf);
