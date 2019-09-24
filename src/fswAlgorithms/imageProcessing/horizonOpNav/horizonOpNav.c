@@ -134,8 +134,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     int i;
     /* To do: replace alpha by a skew read from the camera message */
     alpha = 0;
-    d_x = cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0];
-    d_y = cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1];
+    d_x = cameraSpecs.focalLength/(cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0]);
+    d_y = cameraSpecs.focalLength/(cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1]);
     u_p = cameraSpecs.resolution[0]/2 + 0.5;
     v_p = cameraSpecs.resolution[1]/2 + 0.5;
     m33SetZero(tranf);

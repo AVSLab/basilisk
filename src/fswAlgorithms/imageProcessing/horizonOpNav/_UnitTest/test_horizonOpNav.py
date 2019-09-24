@@ -241,7 +241,7 @@ def horizonOpNav_update():
     inputAtt = horizonOpNav.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 1.
+    inputCamera.focalLength = 0.5
     inputCamera.sensorSize = [10*1E-3, 10*1E-3] # In m
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.3,0.1]
@@ -286,8 +286,8 @@ def horizonOpNav_update():
     alpha =0
     up = inputCamera.resolution[0] / 2 + 0.5
     vp = inputCamera.resolution[1] / 2 + 0.5
-    d_x = inputCamera.sensorSize[0] / inputCamera.resolution[0]
-    d_y = inputCamera.sensorSize[1] / inputCamera.resolution[1]
+    d_x = inputCamera.focalLength/(inputCamera.sensorSize[0] / inputCamera.resolution[0])
+    d_y = inputCamera.focalLength/(inputCamera.sensorSize[1] / inputCamera.resolution[1])
 
     transf = np.zeros([3,3])
     transf[0, 0] = 1 / d_x
@@ -302,11 +302,10 @@ def horizonOpNav_update():
     sBarPrime = np.zeros([numPoints,3])
     H = np.zeros([numPoints,3])
     for i in range(numPoints):
-        s[i,:] = np.dot(transf, np.array([inputPoints[2*i]/inputCamera.focalLength, inputPoints[2*i+1]/inputCamera.focalLength, 1]))
+        s[i,:] = np.dot(transf, np.array([inputPoints[2*i], inputPoints[2*i+1], 1]))
         sBar[i,:] = np.dot(B, s[i,:])
         sBarPrime[i,:] = sBar[i,:]/np.linalg.norm(sBar[i,:])
         H[i,:] = sBarPrime[i,:]
-
 
     # QR H
     Rpy = np.zeros([3,3])
@@ -349,9 +348,8 @@ def horizonOpNav_update():
 
     r_BN_C = - (np.dot(n,n) - 1.)**(-0.5)*np.dot(np.linalg.inv(B), n)
 
-    pixLineConv_C = np.array([6000.74938566,6000.74938566, 1202498.50702857])*1E3
-    posErr = 1e-8
-    covarErr = 1e-8
+    posErr = 1e-5
+    covarErr = 1e-5
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
@@ -361,14 +359,14 @@ def horizonOpNav_update():
 
 
     for i in range(len(outputR[-1, 1:])):
-        if np.abs((r_BN_C[i] - outputR[-1, i+1])) > posErr or np.isnan(outputR.any()):
+        if np.abs((r_BN_C[i] - outputR[0, i+1])/r_BN_C[i]) > posErr or np.isnan(outputR.any()):
             testFailCount += 1
             testMessages.append("FAILED: Position Check in Horizon Nav for index "+ str(i) + " with error " + str(np.abs((r_BN_C[i] - outputR[-1, i+1])/r_BN_C[i])))
 
     for i in range(len(outputCovar[-1, 1:])):
-        if np.abs((Covar_C_test.flatten()[i] - outputCovar[-1, i+1])) > covarErr or np.isnan(outputTime.any()):
+        if np.abs((Covar_C_test.flatten()[i] - outputCovar[0, i+1])/Covar_C_test.flatten()[i]) > covarErr or np.isnan(outputTime.any()):
             testFailCount += 1
-            testMessages.append("FAILED: Covar Check in pixelLine for index "+ str(i) + " with error " + str(np.abs((Covar_C_test.flatten()[i] - outputCovar[-1, i+1]))))
+            testMessages.append("FAILED: Covar Check in Horizon Nav for index "+ str(i) + " with error " + str(np.abs((Covar_C_test.flatten()[i] - outputCovar[-1, i+1]))))
 
     snippentName = "passFail"
     if testFailCount == 0:
