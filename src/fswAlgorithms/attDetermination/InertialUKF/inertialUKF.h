@@ -73,6 +73,7 @@ typedef struct {
 	double lambdaVal;             //!< [-] Lambda parameter for filter
 	double gamma;                 //!< [-] Gamma parameter for filter
     double switchMag;             //!< [-] Threshold for where we switch MRP set
+    double rateFineThresh;        //!< [r/s] Attitude rate at which we switch to "fine" noise
 
 	double dt;                     //!< [s] seconds since last data epoch
 	double timeTag;                //!< [s]  Time tag for statecovar/etc
@@ -97,8 +98,10 @@ typedef struct {
 
 	double SP[(2*AKF_N_STATES+1)*AKF_N_STATES];          //!< [-]    sigma point matrix
 
-	double qNoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];       //!< [-] process noise matrix
-	double sQnoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];      //!< [-] cholesky of Qnoise
+	double qNoiseCoarse[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];       //!< [-] process noise coarse matrix
+    double qNoiseFine[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];       //!< [-] process noise fine matrix
+	double sQnoiseCoarse[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];      //!< [-] cholesky of coarse Qnoise
+    double sQnoiseFine[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];       //!< [-] Cholesky of fine noise
 
     double IInv[3][3];
 

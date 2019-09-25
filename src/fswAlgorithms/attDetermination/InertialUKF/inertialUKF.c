@@ -110,7 +110,9 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     mSetZero(configData->sBar, configData->numStates, configData->numStates);
     mSetZero(configData->SP, configData->countHalfSPs * 2 + 1,
              configData->numStates);
-    mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
+    mSetZero(configData->sQnoiseCoarse, configData->numStates, configData->numStates);
+    mSetZero(configData->sQnoiseFine, configData->numStates, configData->numStates);
+
     
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
@@ -140,14 +142,19 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
                   configData->numStates, tempMatrix);
-    
-    badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
-                  configData->numStates, configData->sQnoise);
 
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
-    mTranspose(configData->sQnoise, configData->numStates,
-               configData->numStates, configData->sQnoise);
+    
+    badUpdate += ukfCholDecomp(configData->qNoiseCoarse, configData->numStates,
+                               configData->numStates, configData->sQnoiseCoarse);
+    mTranspose(configData->sQnoiseCoarse, configData->numStates,
+               configData->numStates, configData->sQnoiseCoarse);
+    badUpdate += ukfCholDecomp(configData->qNoiseFine, configData->numStates,
+                               configData->numStates, configData->sQnoiseFine);
+    mTranspose(configData->sQnoiseFine, configData->numStates,
+               configData->numStates, configData->sQnoiseFine);
+
     
     v3Copy(configData->state, configData->sigma_BNOut);
     v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
@@ -417,16 +424,27 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	double aRow[AKF_N_STATES], rAT[AKF_N_STATES*AKF_N_STATES], xErr[AKF_N_STATES]; 
 	double sBarUp[AKF_N_STATES*AKF_N_STATES];
 	double *spPtr;
+    double *qNoisePtr;
     double procNoise[AKF_N_STATES*AKF_N_STATES];
     int32_t badUpdate=0;
+    double currRateMag;
     
 	configData->dt = updateTime - configData->timeTag;
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     
+    currRateMag = v3Norm(&(configData->state[3]));
+    if(currRateMag < configData->rateFineThresh)
+    {
+        qNoisePtr = configData->sQnoiseFine;
+    }
+    else
+    {
+        qNoisePtr = configData->sQnoiseCoarse;
+    }
     mSetZero(rAT, AKF_N_STATES, AKF_N_STATES);
-    mCopy(configData->sQnoise, AKF_N_STATES, AKF_N_STATES, procNoise);
+    mCopy(qNoisePtr, AKF_N_STATES, AKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, configData->numStates,
 		&(configData->SP[0 * configData->numStates + 0]));
