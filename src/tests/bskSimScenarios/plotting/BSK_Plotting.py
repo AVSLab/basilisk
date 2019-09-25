@@ -234,7 +234,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW, id=None, livePlot=False):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
 
-def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None):
+def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None, livePlot=False):
     plt.figure(id)
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / mc.RPM,
@@ -250,8 +250,8 @@ def plot_planet(oe, planet, id=None):
     plt.figure(figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
     plt.axis(np.array([-oe.a, oe.a, -b, b]) / 1000 * 1.75)
     # draw the planet
-    fig = plt.gcf(id)
-    ax = fig.gca(id)
+    fig = plt.gcf()
+    ax = fig.gca()
     planetColor = '#008800'
     planetRadius = planet.radEquator / 1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
