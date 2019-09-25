@@ -27,6 +27,7 @@
 #include "../../_GeneralModuleFiles/sys_model.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/accessSimMsg.h"
 #include "../utilities/geodeticConversion.h"
 
 /*! \addtogroup SimModelGroup
@@ -49,18 +50,15 @@ public:
     void setGroundLocation(double lat, double long, double alt)
     
 private:
-    void updateInertialPosition();
-    void computeRelativePosition();
+    void updateInertialPositions();
     void computeAccess();
 
-
-
 public:
-    double minimumViewfactor; //! [-] Minimum viewfactor needed to identify access to a spacecraft
+    double minimumElevation; //! [deg] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
     std::vector<std::string> scPositionInMsgNames;
-    std::string planetInMsgNames;
+    std::string planetInMsgName;
     std::vector<std::string> accessOutMsgNames;
-    Eigen::Vector3d initialPosition_P;
+    Eigen::Vector3d initialPosition_P; //! [m
 
 private:
     std::vector<int64_t> scPositionInMsgIds;
