@@ -58,25 +58,25 @@ def plot3components(vec, id=None):
 
 def plot_sigma(sigma, id=None):
     plot3components(sigma, id)
-    plt.legend([r'$\sigma_1$', '$\sigma_2$', '$\sigma_3$'])
+    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
     plt.ylabel('MRP')
 
 
 def plot_omega(omega, id=None):
     plot3components(omega, id)
     plt.ylabel('Angular Rate, rad/s')
-    plt.legend([r'$\omega_1$', '$\omega_2$', '$\omega_3$'])
+    plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'])
 
 def subplot_sigma(subplot, sigma, id=None):
     plot3components(sigma, id)
-    plt.legend([r'$\sigma_1$', '$\sigma_2$', '$\sigma_3$'])
+    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
     plt.ylabel('MRP')
 
 
 def subplot_omega(subplot, omega, id=None):
     plot3components(omega, id)
     plt.ylabel('Angular Rate, rad/s')
-    plt.legend([r'$\omega_1$', '$\omega_2$', '$\omega_3$'])
+    plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'])
 
 
 # ------------------------------------- MAIN PLOT HANDLING ------------------------------------------------------ #
@@ -190,7 +190,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR, id=None, livePlot=False):
     for idx in range(1, 4):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     if not livePlot:
         plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -228,7 +228,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW, id=None, livePlot=False):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
     if not livePlot:
         plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -239,7 +239,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None):
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / mc.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
+                 label=r'$\Omega_{' + str(idx) + '}$')
     if not livePlot:
         plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
