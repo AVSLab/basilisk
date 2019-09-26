@@ -35,6 +35,7 @@ void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
                                                  sizeof(OpNavFswMsg),
                                                  "OpNavFswMsg",
                                                  moduleID);
+    configData->noiseSF = 4;
 }
 
 /*! This method subscribes to the camera and circle messages
@@ -114,9 +115,9 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     mScale(1/planetRad, Q, 3, 3, Q);
     /* Set the number of limb points for ease of use*/
     int32_t numPoints;
-    double sigma_pix;
+    double sigma_pix2;
     numPoints = limbIn.numLimbPoints;
-    sigma_pix = cameraSpecs.resolution[0]/(configData->noiseSF*numPoints);
+    sigma_pix2 = cameraSpecs.resolution[0]/(configData->noiseSF*numPoints);
     
     /*! Build DCMs */
     configData->planetTarget = limbIn.planetIds;
@@ -142,7 +143,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     m33Set(1/d_x, -alpha/(d_x*d_y), (alpha*v_p - d_y*u_p)/(d_x*d_y), 0, 1/d_y, -v_p/d_y, 0, 0, 1, tranf);
     
     /*! Set the noise matrix in pix eq (53) in Engineering Note*/
-    m33Set(sigma_pix*sigma_pix/(d_x*d_x), 0, 0, 0, sigma_pix*sigma_pix/(d_x*d_x), 0, 0, 0, 0, R_s);
+    m33Set(sigma_pix2/(d_x*d_x), 0, 0, 0, sigma_pix2/(d_x*d_x), 0, 0, 0, 0, R_s);
     /*! Rotate R_s with B eq (52) in Journal*/
     m33MultM33(B, R_s, R_s);
     m33MultM33t(R_s, B, R_s);
