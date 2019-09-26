@@ -22,18 +22,20 @@
 #include <cstring>
 #include <thread>
 #include "utilities/bsk_Print.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! This is the constructor for the clock synch model.  It sets default variable 
     values and initializes the various parts of the model */
 ClockSynch::ClockSynch()
 {
-	timeInitialized = false;
-	startSimTime = 0;
-	accuracyNanos = 1000000;
-	accelFactor = 1.0;
-    clockOutputID = -1;
-    outputBufferCount = 2;
-	displayTime = true;
+	this->timeInitialized = false;
+	this->startSimTimeNano = 0;
+	this->accuracyNanos = 0.01*NANO2SEC;
+	this->accelFactor = 1.0;
+    this->clockOutputID = -1;
+    this->outputBufferCount = 2;
+    this->clockOutputName = "clock_synch_data";
+	this->displayTime = false;
     return;
 }
 
