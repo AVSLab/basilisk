@@ -56,8 +56,6 @@ void ClockSynch::SelfInit()
     clockOutputID = SystemMessaging::GetInstance()->
     CreateNewMessage(clockOutputName, sizeof(SynchClockSimMsg), outputBufferCount,
                      "SynchClockSimMsg", moduleID);
-    //! - Set the overrun counter to zero
-    outputData.overrunCounter = 0;
 
 }
 
@@ -69,6 +67,17 @@ void ClockSynch::CrossInit()
 {
 
 }
+
+/*! Reset the module variables.
+    @return void
+*/
+void ClockSynch::Reset(uint64_t currentSimNanos)
+{
+    this->timeInitialized = false;
+    //! - Set the overrun counter to zero
+    this->outputData.overrunCounter = 0;
+}
+
 
 /*! This method performs all of the runtime behavior for the clock synch model.
     It initializes the timers present in the model on the first pass and then 
