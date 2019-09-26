@@ -127,6 +127,8 @@ def horizonOpNav_methods():
         testFailCount += 1
         testMessages.append("BackSub Failure " + "\n")
 
+    return [testFailCount, ''.join(testMessages)]
+
 ###################################################################################
 ## Testing dynamics matrix computation
 ###################################################################################
@@ -284,8 +286,8 @@ def horizonOpNav_update():
 
     # Transf camera to meters
     alpha =0
-    up = inputCamera.resolution[0] / 2 + 0.5
-    vp = inputCamera.resolution[1] / 2 + 0.5
+    up = inputCamera.resolution[0] / 2
+    vp = inputCamera.resolution[1] / 2
     d_x = inputCamera.focalLength/(inputCamera.sensorSize[0] / inputCamera.resolution[0])
     d_y = inputCamera.focalLength/(inputCamera.sensorSize[1] / inputCamera.resolution[1])
 
