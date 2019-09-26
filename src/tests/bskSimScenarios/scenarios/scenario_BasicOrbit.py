@@ -261,8 +261,8 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(TheBSKSim, TheBSKSim.DynModels.taskName, TheBSKSim.DynamicsProcessName,
-        #                                     gravBodies=TheBSKSim.DynModels.gravFactory,
+        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
+        #                                     gravBodies=self.DynModels.gravFactory,
         #                                     saveFile=filename)
 
     def configure_initial_conditions(self):

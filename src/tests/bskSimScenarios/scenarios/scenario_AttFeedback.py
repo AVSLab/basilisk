@@ -49,10 +49,10 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(TheBSKSim, TheBSKSim.DynModels.taskName, TheBSKSim.DynamicsProcessName,
-        #                                     gravBodies=TheBSKSim.DynModels.gravFactory,
+        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
+        #                                     gravBodies=self.DynModels.gravFactory,
         #                                     saveFile=filename,
-        #                                     numRW=TheBSKSim.DynModels.rwFactory.getNumOfDevices())
+        #                                     numRW=self.DynModels.rwFactory.getNumOfDevices())
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
