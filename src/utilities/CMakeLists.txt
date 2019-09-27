@@ -6,3 +6,4 @@ if (USE_PROTOBUFFERS)
 	message(STATUS "Generating Protobuffers")
 	add_subdirectory("vizProtobuffer")
 endif()
+

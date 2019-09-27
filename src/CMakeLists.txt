@@ -27,6 +27,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 
+
+
 include(conan)
 conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-community/conan)
 conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
@@ -74,6 +76,10 @@ if(USE_OPENCV)
    #find_package(opencv CONFIG REQUIRED)
    message(STATUS "Using OpenCV ${opencv_VERSION}")
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+   if(APPLE)
+   link_libraries("-framework OpenCL")
+   endif()
+ 
 endif()
 
 if(USE_ZMQ)

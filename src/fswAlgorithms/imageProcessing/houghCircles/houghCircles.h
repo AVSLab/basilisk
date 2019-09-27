@@ -28,6 +28,7 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
+#include "opencv2/dnn.hpp"
 #include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
 #include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
