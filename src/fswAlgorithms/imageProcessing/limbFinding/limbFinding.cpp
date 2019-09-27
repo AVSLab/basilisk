@@ -130,13 +130,11 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     if (cv::countNonZero(edgeImage)>0){
         std::vector<cv::Point2i> locations;
         cv::findNonZero(edgeImage, locations);
-        for(size_t i = 0; i<locations.size(); i++ )
+        for(size_t i = 0; i<locations.size() && i<MAX_LIMB_PNTS; i++ )
         {
             /*! - Store the non zero pixels of the canny transform and count them*/
             limbMsg.limbPoints[2*i] = locations[i].x;
             limbMsg.limbPoints[2*i+1] = locations[i].y;
-            limbMsg.pointSigmas[2*i] = 1;
-            limbMsg.pointSigmas[2*i+1] = 1;
         }
         limbMsg.numLimbPoints = locations.size()/2;
         limbMsg.valid = 1;

@@ -30,8 +30,7 @@ typedef struct {
     int32_t numLimbPoints;                      //!< -- [-] Number of limb points found*/
     int64_t cameraID;          //!< -- [-]   ID of the camera that took the snapshot*/
     double planetIds;          //!< -- [-]   ID for identified celestial body*/
-    int32_t limbPoints[2*MAX_LIMB_PNTS];          //!< -- [-] (x, y, 1) in pixels of the limb points*/
-    double pointSigmas[2*MAX_LIMB_PNTS];          //!< -- [-] (sigma_x, _sigma_y, 0) in pixels of the limb points*/
+    double limbPoints[2*MAX_LIMB_PNTS];          //!< -- [-] (x, y, 1) in pixels of the limb points*/
 }LimbOpNavMsg;
 
 /*! @} */

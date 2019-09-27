@@ -151,7 +151,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
 
 
     /*! Create the H matrix. This is the stacked vector of all the limb points eq (33) in Engineering Note attached*/
-    for (i=0; i<numPoints;i++){
+    for (i=0; i<numPoints && i<MAX_LIMB_PNTS;i++){
         v3SetZero(s);
         /*! - Put the pixel data in s (not s currently)*/
         s[0] = limbIn.limbPoints[2*i];
