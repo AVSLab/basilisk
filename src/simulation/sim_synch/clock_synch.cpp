@@ -30,7 +30,7 @@ ClockSynch::ClockSynch()
 {
 	this->timeInitialized = false;
 	this->startSimTimeNano = 0;
-	this->accuracyNanos = 0.01*NANO2SEC;
+	this->accuracyNanos = (int64_t) (0.01*NANO2SEC);
 	this->accelFactor = 1.0;
     this->clockOutputID = -1;
     this->outputBufferCount = 2;
@@ -54,8 +54,8 @@ void ClockSynch::SelfInit()
 {
     //! - Initialize the output message
     clockOutputID = SystemMessaging::GetInstance()->
-    CreateNewMessage(clockOutputName, sizeof(SynchClockSimMsg), outputBufferCount,
-                     "SynchClockSimMsg", moduleID);
+    CreateNewMessage(this->clockOutputName, sizeof(SynchClockSimMsg), this->outputBufferCount,
+                     "SynchClockSimMsg", this->moduleID);
 
 }
 
@@ -87,36 +87,36 @@ void ClockSynch::Reset(uint64_t currentSimNanos)
     @return void
     @param CurrentSimNanos The clock time associated with the model call
 */
-void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
+void ClockSynch::UpdateState(uint64_t currentSimNanos)
 {
-	std::chrono::high_resolution_clock::time_point currentTime;
-	int64_t sleepAmount;
-    
+	std::chrono::high_resolution_clock::time_point currentTime;     // current time variable
+	int64_t sleepAmountNano;                    // [ns] time for module to sleep
+    int64_t simTimeNano;                        // [ns] simTimeNano simulation time since reset
+    int64_t realTimeNano;                       // [ns] real time elapsed since reset
+
     //! - If we haven't initialized the timers yet, initialize the start times and flag it as initialized
 	if (!timeInitialized)
 	{
-		startTime = std::chrono::high_resolution_clock::now(); 
-		startSimTime = CurrentSimNanos;
-		timeInitialized = true;
+		this->startTime = std::chrono::high_resolution_clock::now();
+		this->startSimTimeNano = currentSimNanos;
+		this->timeInitialized = true;
 	}
 	
     //! - Compute the number of nanoseconds that have elapsed in the simulation
-	int64_t nanosDelta = CurrentSimNanos - startSimTime;
+    simTimeNano = (int64_t) ((currentSimNanos - this->startSimTimeNano)/this->accelFactor);
     
     //! - Compute the current time and get the actually elapsed nanoseconds since init time
 	currentTime = std::chrono::high_resolution_clock::now();
-	std::chrono::nanoseconds diffNanos = std::chrono::duration_cast<std::chrono::nanoseconds>
-		(currentTime - startTime);
+	realTimeNano = (int64_t) (std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
     
     //! - Save off the observed time-delta for analysis and flag any unexpected overruns
-    outputData.initTimeDelta = (int64_t) (nanosDelta/accelFactor) -
-        (int64_t) diffNanos.count();
+    this->outputData.initTimeDelta = simTimeNano - realTimeNano;
    
-    if(outputData.initTimeDelta < -accuracyNanos)
+    if(this->outputData.initTimeDelta < -this->accuracyNanos)
     {
-        outputData.overrunCounter++;
+        this->outputData.overrunCounter++;
     }
-	outputData.initTimeDelta *= 1.0E-9;
+	this->outputData.initTimeDelta *= NANO2SEC;
     
     /*! - Loop behavior is fairly straightforward.  While we haven't reached the specified accuracy:
             -# Compute the current time
@@ -124,29 +124,27 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
             -# Sleep for half of those nanoseconds
             -# Lather/rinse/repeat
     */
-    sleepAmount = 0;
-	while (((int64_t) diffNanos.count() - (int64_t) (nanosDelta/accelFactor))
-        < -accuracyNanos)
+    sleepAmountNano = 0;
+	while (realTimeNano - simTimeNano < -this->accuracyNanos)
 	{
 		currentTime = std::chrono::high_resolution_clock::now();
-		diffNanos = std::chrono::duration_cast<std::chrono::nanoseconds>
-			(currentTime - startTime);
-		sleepAmount = (nanosDelta/accelFactor - diffNanos.count()) / (2);
-		std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmount));
+		realTimeNano = (int64_t) (std::chrono::duration_cast<std::chrono::nanoseconds>
+			(currentTime - this->startTime)).count();
+		sleepAmountNano = (simTimeNano - realTimeNano) / (2);
+		std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmountNano));
 	}
     
     //! - Save off the output message information for analysis
-    outputData.finalTimeDelta = (int64_t) (nanosDelta/accelFactor) -
-    (int64_t) diffNanos.count() - sleepAmount;
-    outputData.finalTimeDelta *= 1.0E-9;
+    this->outputData.finalTimeDelta = simTimeNano - realTimeNano - sleepAmountNano;
+    this->outputData.finalTimeDelta *= NANO2SEC;
     
     //! - Write the composite information into the output synch message.
     SystemMessaging::GetInstance()->
-    WriteMessage(clockOutputID, CurrentSimNanos, sizeof(SynchClockSimMsg),
-                 reinterpret_cast<uint8_t*> (&outputData), moduleID);
+    WriteMessage(this->clockOutputID, currentSimNanos, sizeof(SynchClockSimMsg),
+                 reinterpret_cast<uint8_t*> (&this->outputData), this->moduleID);
 
-	if (displayTime)
+	if (this->displayTime)
 	{
-        BSK_PRINT_BRIEF(MSG_INFORMATION, "Seconds Elapsed: %f", CurrentSimNanos*1.0E-9);
+        BSK_PRINT_BRIEF(MSG_INFORMATION, "Seconds Elapsed: %f", currentSimNanos*NANO2SEC);
 	}
 }
