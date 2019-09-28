@@ -1,13 +1,13 @@
 # Live Plotting {#usingLivePlotting}
 
-The framework exists for simulations to be run with an option to plot data continuously. Resulting plots are not plotted with the same precision as the final plots, therefore should be used qualitatively. This document will give an overview of the options, and how to use live plotting in simulations. 
+The framework exists for simulations to be run with an option to plot data continuously. Resulting plots are not plotted with the same precision as the final plots, therefore should be used qualitatively. This document gives an overview of the options, and how to use live plotting in simulations. 
 
 ## Templates
 
-Reference implementations / templates for live plotting exist for bskSimScenarios at scenario_BasicOrbit_LivePlot.py and for scenarios at scenarioBasicOrbitLivePlot.py. The same implementation can be used for any scenario within Basilisk.
+Reference implementations / templates for live plotting exist for `bskSim` scenarios at `scenario_BasicOrbit_LivePlot.py` and for regular scenarios at `scenarioBasicOrbitLivePlot.py`. The same implementation can be used for any scenario within Basilisk.
 
 ## Defining Live and Final Plots
-### bskSimScenarios
+### Using a `bskSim` Scenario
 The data structure that contains all information for what to plot live is contained in dataRequests: 
 
 Example: 
@@ -27,7 +27,7 @@ plotFun = name of plotting function in bskSimScenarios/plotting/BSK_Plotting.py 
 
 dataReq = data to be pulled from simulation 
 
-### scenarios
+### Using a BSK scenario without `bskSim`
 Example: 
 
 ```
