@@ -21,209 +21,101 @@
 
 ## @page scenario_BasicOrbitLiveGroup
 ## @{
-# Demonstrates how to create a 3-DOF spacecraft which is orbiting Earth using the BSK_Sim architecture.
+# Demonstrates live plotting with a 'bskSim' showing a spacecraft which is orbiting Earth.
 #
-# BSK Simulation: Basic Orbit {#scenario_BasicOrbit}
+# BSK Simulation: Basic Orbit with Live Plotting {#scenario_BasicOrbitLive}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 3-DOF spacecraft which is orbiting the Earth. The goal of the scenario is to
-# 1) highlight the structure of the BSK_Sim architecture, 2) demonstrate how to create a custom BSK_scenario, and 3)
-# how to customize the BSK_Dynamics.py and BSK_FSW.py files.
+# This script duplicates the `bskSim` basic orbit simulation in the scenario
+# [scenario_BasicOrbit.py](@ref scenario_BasicOrbit).
+# The difference is that instead of plotting the results after the simulation has stopped in this script a separate
+# thread is created to update the plots live during the simulation run itself.  For more information on doing live
+# plotting see help file [using Live Plotting](@ref usingLivePlotting).
 #
-# To run the default scenario, call the bskSim python simulation script withing `src\tests\bskSimScenarios\scenarios`
+# To run the scenario, call the bskSim python simulation script withing `src\tests\bskSimScenarios\scenarios`
 #  from a Terminal window through:
 #
-#       python scenario_BasicOrbit.py
+#       python3 scenario_BasicOrbit_LivePlot.py
 #
-# The simulation mimics the basic simulation simulation in the earlier tutorial in
-# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).  But rather than explicitly defining all simulation properties
-# within the python simulation file, the bskSim spacecraft simulation class is used to encapsulate a lot of the
-# setup and configuring.
+# To enable live plotting with a `bskSim` Basilisk simulation additional python packages must be imported.
+# ~~~~~~~~~~~~~~{.py}
+# from multiprocessing import Pipe, Process, Lock
+# from time import sleep
+# import matplotlib.pyplot as plt
+# import numpy as np
+# ~~~~~~~~~~~~~~
 #
-# The simulation layout is shown in the following illustration.
-# ![Simulation Flow Diagram](Images/doc/test_scenario_basicOrbit_v1.1.svg "Illustration")
-# Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW)
-# modules. The benefit of the new BSK_Sim architecture is how it allows the user to have a pre-written spacecraft
-# configurations and FSW modes neatly organized within three modular files: a BSK_scenario file, a FSW file, and
-# a Dynamics file.
+# Next, the `bskSim` plotting routines must be called with a unique ID number.  This is done in this example
+# with:
+# ~~~~~~~~~~~~~~{.py}
+#         plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
+#         BSK_plt.plot_orbit(r_BN_N, plotID)
+#         plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
+#         BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN, plotID)
+# ~~~~~~~~~~~~~~
 #
-# More explicitly, the purpose of the scenario file (in this case scenario_BasicOrbit.py) within the BSK_Simulation architecture is to provide the user a
-# simple, front-end interface to configure a scenario without having to individually initialize and integrate each
-# dynamics and FSW module into their simulation. Instead the Dynamics file (for instance BSK_Dynamics.py or BSK_FormationDynamics.py)
-# has preconfigured many dynamics modules, attached them to the spacecraft, and linked their messages to the appropriate FSW modules.
-# Similarly, the FSW file (in this case BSK_FSW.py) creates preconfigured FSW modes such as hill pointing, sun safe
-# pointing, velocity pointing, and more. Each preconfigured mode triggers a specific event which enables various FSW tasks
-# like assigning enabling a specific pointing model or control loop. The proceeding sequence of tasks then initialize the
-# appropriate FSW modules, link their messages, and provide pre-written FSW functionality through a simple
-# modeRequest variable within the BSK_scenario file.
+# The next step is to setup the `live_outputs()` method which details what to plot in a live manner.
+# ~~~~~~~~~~~~~~{.py}
+#     def live_outputs(self, plotComm, rate):
+#         dataRequests = self.setup_live_outputs()
+#         lock = Lock()
+#         while True:
+#             for request in dataRequests:
+#                 #send request for data
+#                 plotComm.send(request)
+#                 response = plotComm.recv()
 #
-# Configuring the scenario file
-# -----
-# To write a custom scenario file, first create a class that will
-# inherent from the masterSim class using:
-# ~~~~~~~~~~~~~{.py}
-#   class scenario_BasicOrbit(BSKScenario):
-#      def __init__(self, masterSim):
-#          super(scenario_BasicOrbit, self).__init__(masterSim)
-#          self.name = 'scenario_BasicOrbit'
-# ~~~~~~~~~~~~~
+#                 if response == "TERM":
+#                     plt.close("all")
+#                     return
+#                 pltArgs = []
+#                 if response["plotFun"] == "plot_orbit":
+#                     lock.acquire()
+#                     for resp in response["dataResp"]:
+#                         pltArgs.append(np.array(resp))
+#                     pltArgs.append(response["plotID"])
+#                     getattr(BSK_plt, response["plotFun"])(*pltArgs)
+#                     lock.release()
+#                     plt.pause(.01)
+#                 elif response["plotFun"] == "plot_orientation":
+#                     lock.acquire()
+#                     pltArgs.append(response["dataResp"][0][:, 0] * macros.NANO2MIN)
+#                     for resp in response["dataResp"]:
+#                         pltArgs.append(np.array(resp))
+#                     pltArgs.extend((response["plotID"], True))
+#                     getattr(BSK_plt, response["plotFun"])(*pltArgs)
+#                     lock.release()
+#                     plt.pause(.01)
+#             sleep(rate/1000.)
+# ~~~~~~~~~~~~~~
+# The `setup_live_outputs()` method returns the required `dataRequests` structure as discussed in the [Live Plotting](@ref usingLivePlotting) documentation page.
+# ~~~~~~~~~~~~~~{.py}
+#  def setup_live_outputs(self):
+#         #define plots of interest here
+#         dataRequests = [{"plotID" : 1,
+#                         "plotFun" : "plot_orbit",
+#                         "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]},
+#                         {"plotID" : 2,
+#                         "plotFun" : "plot_orientation",
+#                         "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N",
+#                                     self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N",
+#                                     self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN"]}]
+#         return dataRequests
+# ~~~~~~~~~~~~~~
 #
-# Following the inheritance, there are three functions within the scenario class that need to be defined by the user:
-# `configure_initial_conditions()`, `log_outputs()`, and `pull_outputs()`.
-#
-# Within `configure_initial_conditions()`, the user needs to define the spacecraft FSW mode for the simulation
-# through:
-# ~~~~~~~~~~~~~{.py}
-#   self.masterSim.modeRequest = "standby"
-# ~~~~~~~~~~~~~
-# this is the parameter that triggers the aforementioned FSW event. Additional FSW modes (to be discussed in later
-# tutorials) include sunSafePoint, inertial3D, velocityPoint, hillPoint, and more.
-#
-# Additionally, the user needs to supply initial conditions
-# for the spacecraft and its orbit. The following code uses the orbitalMotion module to
-# construct the appropriate position and velocity vectors for a stable orbit, and then assigns them to the
-# spacecraft:
-# ~~~~~~~~~~~~~{.py}
-#         # Configure Dynamics initial conditions
-#         oe = orbitalMotion.ClassicElements()
-#         oe.a = 10000000.0  # meters
-#         oe.e = 0.1
-#         oe.i = 33.3 * macros.D2R
-#         oe.Omega = 48.2 * macros.D2R
-#         oe.omega = 347.8 * macros.D2R
-#         oe.f = 85.3 * macros.D2R
-#         mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
-#         rN, vN = orbitalMotion.elem2rv(mu, oe)
-#         orbitalMotion.rv2elem(mu, rN, vN)
-#         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-#         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-# ~~~~~~~~~~~~~
-# The `self.masterSim.get_DynModel()` is referencing a list of available dynamic modules preconfigured in the Dynamics file.
-#
-# Within `log_outputs()`, the user can supply a list of messages they are interested in logging. Position and velocity
-# from the navigation message are relevant to verify proper orbit functionality.
-# ~~~~~~~~~~~~~{.py}
-#       samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
-#       self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
-# ~~~~~~~~~~~~~
-#
-# Finally within the pull_outputs(), the user can pull specific variables from the logged messages:
-# ~~~~~~~~~~~~~{.py}
-#         # Dynamics process outputs
-#         r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-#         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
-# ~~~~~~~~~~~~~
-# and proceed to graph them using predefined plotting routines in BSK_Plotting.py
-# ~~~~~~~~~~~~~{.py}
-#         BSK_plt.plot_orbit(r_BN_N)
-# ~~~~~~~~~~~~~
-#
-#
-#
-# Custom Configurations Instructions
-# -----
-# The benefit of the BSK_Simulation architecture is its user simplicity. Things like spacecraft hub configurations,
-# reaction wheel pyramids, and
-# coarse sun sensor constellations are all preconfigured; however, for users who would like to customize their own
-# dynamics modules and FSW modes, it is recommended to copy the three primary BSK_Sim files
-# (BSK_Scenario.py, BSK_Dynamics.py, and BSK_FSW.py) and modify them directly. Instructions for configuring
-# user-customized Dynamics and FSW files are detailed below.
-#
-# **Custom Dynamics Configurations Instructions**
-#
-# In BSK_Dynamics.py, the script first generates a dynamics task onto which
-# future dynamics modules will be added.
-# ~~~~~~~~~~~~~{.py}
-#         # Create task
-#         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep)
-# ~~~~~~~~~~~~~
-# Following the task generation, all desired dynamics module objects are generated:
-# ~~~~~~~~~~~~~{.py}
-#         # Instantiate Dyn modules as objects
-#         self.scObject = spacecraftPlus.SpacecraftPlus()
-#         self.gravFactory = simIncludeGravBody.gravBodyFactory()
-#         self.simpleNavObject = simple_nav.SimpleNav()
-# ~~~~~~~~~~~~~
-# These objects are then configured through `InitAllDynObjects(SimBase)` which iterates through a number of setter
-# functions that configure all of the dynamics objects properties and messages.
-# ~~~~~~~~~~~~~{.py}
-#     # Global call to initialize every module
-#     def InitAllDynObjects(self):
-#         self.SetSpacecraftHub()
-#         self.SetGravityBodies()
-#         self.SetSimpleNavObject()
-# ~~~~~~~~~~~~~
-#
-# The relevant setting functions for scenario_BasicOrbit.py are:
-#
-# ~~~~~~~~~~~~~{.py}
-#     def SetSpacecraftHub(self):
-#         self.scObject.ModelTag = "spacecraftBody"
-#         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
-#         self.I_sc = [900., 0., 0.,
-#                      0., 800., 0.,
-#                      0., 0., 600.]
-#         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
-#         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-#         self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
-#         self.scObject.scStateOutMsgName = "inertial_state_output"
-#
-#     def SetGravityBodies(self):
-#         timeInitString = "2012 MAY 1 00:28:30.0"
-#         gravBodies = self.gravFactory.createBodies(['earth', 'sun', 'moon'])
-#         gravBodies['earth'].isCentralBody = True
-#
-#         self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravFactory.gravBodies.values())
-#         self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
-#         self.gravFactory.spiceObject.zeroBase = 'Earth'
-#
-#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
-#
-#     def SetSimpleNavObject(self):
-#         self.simpleNavObject.ModelTag = "SimpleNavigation"
-# ~~~~~~~~~~~~~
-# These setter functions are examples of how the BSK_Sim architecture has preconfigured dynamics modules within the BSK_Dynamics.py.
-# Now, for every future scenario file, a spacecraft object, gravity effector, and simple navigation sensor will be available
-# for use.
-#
-# Finally, all now-configured objects are attached to the DynamicsTask through:
-# ~~~~~~~~~~~~~{.py}
-#         # Assign initialized modules to tasks
-#         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
-#         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
-#         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
-# ~~~~~~~~~~~~~
-# The number at the end of `AddModelToTask` corresponds with the priority of the model. The higher the number, the earlier
-# the model gets evaluated during each time step.
-#
-# **Custom FSW Configurations Instructions**
-#
-# BSK_FSW.py's __init__() procedure defines all possible configuration messages to be used by future FSW algorithms.
-# Because this scenario is simulating a 3-DOF spacecraft, there are no FSW algorithms needed to control attitude.
-#
-# As such, a `initializeStandby` event is created within BSK_FSW.py to ensure all FSW tasks are disabled. This event is
-# triggered by the modeRequest called in scenario_BasicOrbit.py and executes the following code in BSK_FSW.py:
-# ~~~~~~~~~~~~~{.py}
-#         # Create events to be called for triggering GN&C maneuvers
-#         SimBase.fswProc.disableAllTasks()
-#         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
-#                                ["self.modeRequest == 'standby'"],
-#                                ["self.fswProc.disableAllTasks()",
-#                                 ])
-# ~~~~~~~~~~~~~
-#
-# Numerical Simulation Results
-# ------------
-# If this simulation is run, then the following plots should be shown.
-# ![Inertial Orbit Illustration](Images/Scenarios/scenario_BasicOrbit_orbit.svg "Position history")
-# ![Attitude History](Images/Scenarios/scenario_BasicOrbit_orientation.svg "Attitude history")
-#
+# To run the Basilisk simulation a similar setup is used as with the regular BSK simulation by running:
+# ~~~~~~~~~~~~~~{.py}
+#         refreshRate = 1000
+#         plotComm, simComm = Pipe()
+#         plotArgs = [showPlots]
+#         simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (showPlots, livePlots, simComm, TheScenario.pull_outputs, plotArgs))
+#         plotProc = Process(target = TheScenario.live_outputs, args = (plotComm, refreshRate))
+#         # Execute simulation and live plotting
+#         simProc.start(), plotProc.start()
+#         simProc.join(), plotProc.join()
+# ~~~~~~~~~~~~~~
 ## @}
 
 
@@ -256,7 +148,7 @@ sys.path.append(path + '/../../scenarios')
 class scenario_BasicOrbit(BSKScenario):
     def __init__(self, masterSim, showPlots, livePlots):
         super(scenario_BasicOrbit, self).__init__(masterSim)
-        self.name = 'scenario_BasicOrbit'
+        self.name = 'scenario_BasicOrbitLive'
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
@@ -305,10 +197,6 @@ class scenario_BasicOrbit(BSKScenario):
         figureList = {}
         if showPlots:
             BSK_plt.show_all_plots()
-        else:
-            fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["orbit", "orientation"]
-            figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
 
@@ -357,7 +245,7 @@ class scenario_BasicOrbit(BSKScenario):
         return dataRequests
 
 
-def run(showPlots, livePlots):
+def run(showPlots, livePlots=False):
     # Instantiate base simulation
     TheBSKSim = BSKSim()
     TheBSKSim.set_DynModel(BSK_Dynamics)
@@ -377,6 +265,7 @@ def run(showPlots, livePlots):
     TheBSKSim.ConfigureStopTime(simulationTime)
 
     # Run simulation
+    figureList = {}
     if livePlots:
         #plotting refresh rate in ms
         refreshRate = 1000
@@ -389,9 +278,10 @@ def run(showPlots, livePlots):
         simProc.join(), plotProc.join()
     else:
         TheBSKSim.ExecuteSimulation()
-        TheScenario.pull_outputs(showPlots)
+        figureList = TheScenario.pull_outputs(showPlots)
 
-    return
+
+    return figureList
 
 if __name__ == "__main__":
     run(True, True)
