@@ -245,7 +245,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None, livePlot=False):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
 
-def plot_planet(oe, planet, id=None):
+def plot_planet(oe, planet):
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
     plt.figure(figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
     plt.axis(np.array([-oe.a, oe.a, -b, b]) / 1000 * 1.75)
