@@ -34,7 +34,7 @@
 # To run the default scenario, call the bskSim python simulation script within `src\tests\bskSimScenarios\scenarios`
 # from a Terminal window through:
 #
-#       python scenario_RelativePointingFormation.py
+#       python3 scenario_RelativePointingFormation.py
 #
 # The simulation mimics the basic simulation in the earlier tutorial in
 # [scenario_BasicOrbitFormation.py](@ref scenario_BasicOrbitFormation).

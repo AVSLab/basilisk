@@ -35,7 +35,7 @@
 # To run the default scenario, call the bskSim python simulation script within `src\tests\bskSimScenarios\scenarios`
 # from a Terminal window through:
 #
-#       python scenario_BasicOrbitFormation.py
+#       python3 scenario_BasicOrbitFormation.py
 #
 # The simulation mimics the basic simulation in the earlier tutorial in
 # [scenario_BasicOrbit.py](@ref scenario_BasicOrbit).

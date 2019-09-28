@@ -34,7 +34,7 @@
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
-#       python scenario_AttitudeEclipse.py
+#       python3 scenario_AttitudeEclipse.py
 #
 # The simulation layout is shown in the following illustration.  Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm

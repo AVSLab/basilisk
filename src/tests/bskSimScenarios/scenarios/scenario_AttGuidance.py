@@ -34,7 +34,7 @@
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
-#       python scenario_AttGuidance.py
+#       python3 scenario_AttGuidance.py
 #
 # The simulation mimics the basic simulation simulation in the earlier tutorial in
 # [scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance).
