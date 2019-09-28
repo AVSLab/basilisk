@@ -132,6 +132,8 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+from Basilisk.simulation import clock_synch
+
 # Import master classes: simulation base class and scenario base class
 sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
@@ -145,9 +147,9 @@ sys.path.append(path + '/../../scenarios')
 
 
 # Create your own scenario child class
-class scenario_BasicOrbit(BSKScenario):
+class scenario_BasicOrbitLive(BSKScenario):
     def __init__(self, masterSim, showPlots, livePlots):
-        super(scenario_BasicOrbit, self).__init__(masterSim)
+        super(scenario_BasicOrbitLive, self).__init__(masterSim)
         self.name = 'scenario_BasicOrbitLive'
 
     def configure_initial_conditions(self):
@@ -253,9 +255,14 @@ def run(showPlots, livePlots=False):
     TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
-    TheScenario = scenario_BasicOrbit(TheBSKSim, showPlots, livePlots)
+    TheScenario = scenario_BasicOrbitLive(TheBSKSim, showPlots, livePlots)
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
+
+    if livePlots:
+        clockSync = clock_synch.ClockSynch()
+        clockSync.accelFactor = 50.0
+        TheBSKSim.AddModelToTask(TheBSKSim.DynModels.taskName, clockSync)
 
     # Initialize simulation
     TheBSKSim.InitializeSimulationAndDiscover()
