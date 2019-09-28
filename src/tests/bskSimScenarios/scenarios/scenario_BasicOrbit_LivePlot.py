@@ -19,7 +19,7 @@
 '''
 
 
-## \defgroup scenario_BasicOrbitGroup
+## @page scenario_BasicOrbitLiveGroup
 ## @{
 # Demonstrates how to create a 3-DOF spacecraft which is orbiting Earth using the BSK_Sim architecture.
 #
@@ -232,10 +232,8 @@ from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
 from multiprocessing import Pipe, Process, Lock
 from time import sleep
-import threading
 import matplotlib.pyplot as plt
 import numpy as np
-import warnings
 
 # Get current file path
 import sys, os, inspect

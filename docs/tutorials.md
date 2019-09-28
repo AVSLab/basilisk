@@ -68,6 +68,9 @@
 -# <b>Formation Flying Control</b><br>
     -# @ref scenario_RelativePointingFormationGroup   "Relative Pointing Control"
 
+@section chLivePlotting Simulations Using Live Plotting
+-# @ref scenarioBasicOrbitLiveGroup                 "Regular Basilisk simulation using Live Plotting"
+-# @ref scenario_BasicOrbitLiveGroup                 "bskSim Basilisk simulation using Live Plotting"
 
 @section chViz Simulations Interfacing with Vizard
 -# @ref scenarioVizPointGroup                      "Pointing a Vizard Camera"

@@ -23,7 +23,7 @@
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraftPlus() and gravity modules illustrating
-#           how impulsive Delta_v maneuver can be simulated with stoping and starting the
+#           how impulsive Delta_v maneuver can be simulated with stopping and starting the
 #           simulation.
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 26, 2016
