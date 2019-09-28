@@ -151,7 +151,6 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 
     valid = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".valid", list(range(1)))
     points = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".limbPoints", list(range(2*1000)))
-    covar = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".pointSigmas", list(range(2*1000)))
     numPoints = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".numLimbPoints", list(range(1)))
 
     # Output image:
