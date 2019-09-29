@@ -50,4 +50,4 @@ Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec);
 double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime);
 
 
-#endif /* _GaussMarkov_HH_ */
+#endif /* _AVSEIGENSUPPORT_ */
