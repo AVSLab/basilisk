@@ -607,7 +607,7 @@ void SystemMessaging::PrintMessageStats(int64_t MessageID)
         BSK_PRINT_BRIEF(MSG_ERROR, "Received a print request for ID: %" PRId64 " That ID is not valid.", MessageID);
         return;
     }
-    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %llu \n MsgSize: %llu \n NumberBuffers: %u\n MsgID: %" PRId64,
+    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %" PRIu64 " \n MsgSize: %" PRIu64 " \n NumberBuffers: %u\n MsgID: %" PRId64,
               MsgHdr->MessageName, MsgHdr->UpdateCounter, MsgHdr->MaxMessageSize, MsgHdr->MaxNumberBuffers, MessageID);
 }
 
