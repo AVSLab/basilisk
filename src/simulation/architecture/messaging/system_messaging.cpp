@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include "utilities/bsk_Print.h"
+#include <inttypes.h>
 
 /*!
  * This constructor for TheInstance just sets it NULL
@@ -221,7 +222,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     if(MessageName == "")
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %lld tried to create a message without a name.  Please try again.", moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %" PRId64 " tried to create a message without a name.  Please try again.", moduleID);
         this->CreateFails++;
         return(-1);
     }
@@ -422,8 +423,8 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
     // Check if the message is valid
     if(MessageID >= this->GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %llu "
-                                   " from ModuleID: %lld ", MessageID, moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %" PRId64
+                                   " from ModuleID: %" PRId64, MessageID, moduleID);
         this->WriteFails++;
         return(false);
     }
@@ -512,7 +513,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
 {
     if(MessageID >= this->GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID.  Value: %lld is larger than number of available messages.", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID.  Value: %" PRId64 " is larger than number of available messages.", MessageID);
         this->ReadFails++;
         return(false);
     }
@@ -537,7 +538,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
     if(accIt->accessList.find(moduleID) == accIt->accessList.end()
         && moduleID != -1)
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "Message %s was read by module ID %lld who is not on access list.", MsgHdr->MessageName, moduleID);
+        BSK_PRINT_BRIEF(MSG_WARNING, "Message %s was read by module ID %" PRId64 " who is not on access list.", MsgHdr->MessageName, moduleID);
     }
     
     exIt->exchangeList.insert(std::pair<long int, long int>
@@ -559,7 +560,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
 void SystemMessaging::PrintAllMessageData()
 {
     int64_t TotalMessageCount = this->GetMessageCount();
-    BSK_PRINT_BRIEF(MSG_INFORMATION, "Number of Messages: %lld ", TotalMessageCount);
+    BSK_PRINT_BRIEF(MSG_INFORMATION, "Number of Messages: %" PRId64, TotalMessageCount);
     for(int64_t i=0; i<TotalMessageCount; i++)
     {
         this->PrintMessageStats(i);
@@ -603,10 +604,10 @@ void SystemMessaging::PrintMessageStats(int64_t MessageID)
     MessageHeaderData* MsgHdr = this->FindMsgHeader(MessageID);
     if(MsgHdr == NULL)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a print request for ID: %llu That ID is not valid.", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a print request for ID: %" PRId64 " That ID is not valid.", MessageID);
         return;
     }
-    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %llu \n MsgSize: %llu \n NumberBuffers: %u\n MsgID: %llu",
+    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %llu \n MsgSize: %llu \n NumberBuffers: %u\n MsgID: %" PRId64,
               MsgHdr->MessageName, MsgHdr->UpdateCounter, MsgHdr->MaxMessageSize, MsgHdr->MaxNumberBuffers, MessageID);
 }
 
@@ -620,7 +621,7 @@ std::string SystemMessaging::FindMessageName(int64_t MessageID, int32_t bufferSe
 {
     if(MessageID >= this->GetMessageCount(bufferSelect))
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "WARING: Asked to find a message for invalid ID: %llu", MessageID);
+        BSK_PRINT_BRIEF(MSG_WARNING, "WARING: Asked to find a message for invalid ID: %" PRId64, MessageID);
     }
     MessageHeaderData* MsgHdr = this->FindMsgHeader(MessageID, bufferSelect);
     return(MsgHdr->MessageName);
