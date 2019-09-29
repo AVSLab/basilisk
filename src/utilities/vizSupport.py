@@ -520,18 +520,18 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         if val > 0:
             vizMessenger.opnavImageOutMsgName = "opnav_circles"
 
-    vizMessenger.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
-                                                                  "mars_planet_data",
-                                                                  "mars barycenter_planet_data",
-                                                                  "sun_planet_data",
-                                                                  "jupiter barycenter_planet_data",
-                                                                  "moon_planet_data",
-                                                                  "venus_planet_data",
-                                                                  "mercury_planet_data",
-                                                                  "uranus barycenter_planet_data",
-                                                                  "neptune barycenter_planet_data",
-                                                                  "pluto barycenter_planet_data",
-                                                                  "saturn barycenter_planet_data"])
+    vizMessenger.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
+                                                              "mars_planet_data",
+                                                              "mars barycenter_planet_data",
+                                                              "sun_planet_data",
+                                                              "jupiter barycenter_planet_data",
+                                                              "moon_planet_data",
+                                                              "venus_planet_data",
+                                                              "mercury_planet_data",
+                                                              "uranus barycenter_planet_data",
+                                                              "neptune barycenter_planet_data",
+                                                              "pluto barycenter_planet_data",
+                                                              "saturn barycenter_planet_data"])
     vizMessenger.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
 
 
