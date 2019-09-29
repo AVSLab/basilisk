@@ -276,7 +276,6 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 	Eigen::Vector3d tempF;
 	double omegas;
 	double omegat;
-	double omegag;
 	double OmegaSquared;
 	Eigen::Matrix3d omegaTilde;
     Eigen::MRPd sigmaBNLocal;
@@ -314,7 +313,6 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 		omega_WB_B = it->gammaDot*it->ggHat_B+it->Omega*it->gsHat_B;
 		omegas = it->gsHat_B.transpose()*omegaLoc_BN_B;
 		omegat = it->gtHat_B.transpose()*omegaLoc_BN_B;
-		omegag = it->ggHat_B.transpose()*omegaLoc_BN_B;
 
 		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
 			backSubContr.matrixD -= it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
@@ -422,7 +420,6 @@ void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rD
 	Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
 	double omegas;
 	double omegat;
-	double omegag;
 	int VSCMGi = 0;
     int thetaCount = 0;
 	std::vector<VSCMGConfigSimMsg>::iterator it;
@@ -441,7 +438,6 @@ void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rD
 	{
 		omegas = it->gsHat_B.transpose()*omegaLoc_BN_B;
 		omegat = it->gtHat_B.transpose()*omegaLoc_BN_B;
-		omegag = it->ggHat_B.transpose()*omegaLoc_BN_B;
 
 		gammasDot(VSCMGi,0) = it->gammaDot;
         if(it->VSCMGModel == vscmgJitterFullyCoupled || it->VSCMGModel == vscmgJitterSimple) {

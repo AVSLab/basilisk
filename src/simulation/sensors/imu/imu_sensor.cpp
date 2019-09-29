@@ -29,6 +29,7 @@
 #include "utilities/avsEigenMRP.h"
 #include "utilities/bsk_Print.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include <inttypes.h>
 
 
 ImuSensor::ImuSensor()
@@ -156,7 +157,7 @@ void ImuSensor::CrossInit()
         sizeof(SCPlusStatesSimMsg), this->moduleID);
     if(this->InputStateID < 0 )
     {
-        BSK_PRINT(MSG_WARNING, "Failed to link an imu input message. State: %lld", this->InputStateID);
+        BSK_PRINT(MSG_WARNING, "Failed to link an imu input message. State: %" PRId64, this->InputStateID);
     }
 
     return;

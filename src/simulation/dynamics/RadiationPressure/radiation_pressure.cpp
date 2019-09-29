@@ -24,6 +24,7 @@
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/bsk_Print.h"
+#include <inttypes.h>
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -80,7 +81,7 @@ void RadiationPressure::CrossInit()
     
     if(this->stateInMsgId < 0)
     {
-        BSK_PRINT(MSG_WARNING, "Did not find a valid state input message with name: %lld", this->stateInMsgId);
+        BSK_PRINT(MSG_WARNING, "Did not find a valid state input message with name: %" PRId64, this->stateInMsgId);
     }
 
     /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
@@ -243,7 +244,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     // @TODO: this lookup search should be optimized, possibly by saving the
     // index for later use and generate lookup table as azimuth and elevation
     // because then we can use a simple gradient decent search to find the nearest next attitude
-    for(int i = 0; i < this->lookupSHat_B.size(); i++) {
+    for(int i = 0; i < (int) this->lookupSHat_B.size(); i++) {
         tmpLookupSHat_B = this->lookupSHat_B[i];
         tmpDotProduct = tmpLookupSHat_B.dot(sHat_B);
         if (tmpDotProduct > currentDotProduct)

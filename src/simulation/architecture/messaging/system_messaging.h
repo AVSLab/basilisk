@@ -90,7 +90,7 @@ typedef struct {
  */
 typedef struct {
     std::string bufferName;  //! (-) String associated with the message buffer
-    uint64_t processBuffer;  //! (-) Buffer ID for where this message originally lives
+    int64_t processBuffer;  //! (-) Buffer ID for where this message originally lives
     int64_t itemID;  //! (-) ID associated with request
     bool itemFound;  //! (-) Indicator of whether the buffer was found
 }MessageIdentData;
@@ -127,7 +127,7 @@ public:
     int64_t subscribeToMessage(std::string messageName, uint64_t messageSize,
         int64_t moduleID);
     uint64_t checkoutModuleID();  //! -- Assigns next integer module ID
-    void selectMessageBuffer(uint64_t bufferUse);  //! -- sets a default buffer for everything to use
+    void selectMessageBuffer(int64_t bufferUse);  //! -- sets a default buffer for everything to use
     uint64_t getProcessCount() {return(this->dataBuffers.size());}
     MessageIdentData messagePublishSearch(std::string messageName);  //! -- returns MessageIdentData if found
     int64_t findMessageBuffer(std::string bufferName);

@@ -30,6 +30,7 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/bsk_Print.h"
+#include <inttypes.h>
 
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor()
@@ -172,7 +173,7 @@ void CoarseSunSensor::CrossInit()
     
     //! - If either messages is not valid, send a warning message
     if(this->sunInMsgID < 0 || this->stateInMsgID < 0) {
-        BSK_PRINT(MSG_WARNING, "Failed to link a sun sensor input message: Sun: %lld", this->sunInMsgID);
+        BSK_PRINT(MSG_WARNING, "Failed to link a sun sensor input message: Sun: %" PRId64, this->sunInMsgID);
     }
     return;
 }

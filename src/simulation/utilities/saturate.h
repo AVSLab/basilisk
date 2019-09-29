@@ -40,7 +40,7 @@ class Saturate
     
 public:
     Saturate();
-    Saturate(uint64_t size);
+    Saturate(int64_t size);
     ~Saturate();
     void setBounds(Eigen::MatrixXd bounds) {this->stateBounds = bounds;}
     /*!@brief sets upper and lower bounds for each state
@@ -52,7 +52,7 @@ public:
        @return saturatedStates*/
     
 private:
-    uint64_t numStates;             //!< -- Number of states to generate noise for
+    int64_t numStates;              //!< -- Number of states to generate noise for
     Eigen::MatrixXd stateBounds;    //!< -- one row for each state. lower bounds in left column, upper in right column
 };
 

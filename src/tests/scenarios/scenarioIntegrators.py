@@ -230,6 +230,9 @@ def run(show_plots, integratorCase):
     b = oe.a*np.sqrt(1-oe.e*oe.e)
     p = oe.a*(1-oe.e*oe.e)
     plt.figure(1,figsize=np.array((1.0, b/oe.a))*4.75,dpi=100)
+    print(b)
+    print(-oe.rApoap)
+    print(oe.rPeriap)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)
     # draw the planet
     fig = plt.gcf()

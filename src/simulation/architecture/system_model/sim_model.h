@@ -61,8 +61,8 @@ public:
         uint64_t MessageSize, uint64_t NumBuffers=2,
         std::string messageStruct = "");  //!< Create a new message for use
     void logThisMessage(std::string messageName, uint64_t messagePeriod=0);
-    uint64_t getNumMessages();  //!< Get number of messages in simulation
-    std::string getMessageName(uint64_t messageID);  //!< Get name for specified message ID
+    int64_t getNumMessages();  //!< Get number of messages in simulation
+    std::string getMessageName(int64_t messageID);  //!< Get name for specified message ID
     MessageIdentData getMessageID(std::string messageName);  //!< Get the ID associated with message name
     void populateMessageHeader(std::string messageName,
         MessageHeaderData* headerOut);  //!< Get header data associated with msg

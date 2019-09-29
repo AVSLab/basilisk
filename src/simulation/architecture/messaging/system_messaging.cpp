@@ -84,7 +84,7 @@ uint64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
  * @return void
  * @param uint64_t bufferUse
  */
-void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
+void SystemMessaging::selectMessageBuffer(int64_t bufferUse)
 {
     std::vector<MessageStorageContainer*>::iterator it;
     it = this->dataBuffers.begin();
@@ -238,7 +238,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     uint64_t InitSize = this->GetCurrentSize();
     uint64_t StorageRequired = InitSize + sizeof(MessageHeaderData) +
-    (MaxSize+sizeof(MessageHeaderData))*NumMessageBuffers;
+                            (MaxSize+sizeof(MessageHeaderData))*NumMessageBuffers;
     this->messageStorage->messageStorage.IncreaseStorage(StorageRequired);
     uint8_t *MessagingStart = &(this->messageStorage->messageStorage.StorageBuffer[this->GetMessageCount()*
                                                               sizeof(MessageHeaderData) + sizeof(uint64_t)]);
