@@ -40,6 +40,7 @@ VizInterface::VizInterface()
 {
     this->opNavMode = 0;
     this->saveFile = false;
+    this->liveStream = false;
     this->FrameNumber= -1;
     this->numOutputBuffers = 2;
     this->scPlusInMsgName = "inertial_state_output";
@@ -97,7 +98,7 @@ VizInterface::~VizInterface()
  */
 void VizInterface::SelfInit()
 {
-    if (this->opNavMode > 0){
+    if (this->opNavMode > 0 || this->liveStream){
         /*! setup zeroMQ */
         this->context = zmq_ctx_new();
         this->requester_socket = zmq_socket(this->context, ZMQ_REQ);
@@ -117,9 +118,10 @@ void VizInterface::SelfInit()
         std::cout << "Basilisk-Vizard connection made" << std::endl;
         
         /*! - Create output message for module in opNav mode */
-        int imageBufferCount = 2;
-        this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavImageOutMsgName,sizeof(CameraImageMsg),imageBufferCount,"CirclesOpNavMsg", moduleID);
-
+        if (this->opNavMode > 0) {
+            int imageBufferCount = 2;
+            this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavImageOutMsgName,sizeof(CameraImageMsg),imageBufferCount,"CameraImageMsg", moduleID);
+        }
     }
 
     return;
@@ -646,7 +648,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*! Enter in lock-step with the vizard to simulate a camera */
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
-        if (this->opNavMode == 1 || (this->opNavMode == 2 && (CurrentSimNanos%this->cameraConfigMessage.renderRate == 0||this->firstPass < 11))){
+        if (this->opNavMode == 1 ||
+            (this->opNavMode == 2 && (CurrentSimNanos%this->cameraConfigMessage.renderRate == 0
+                                      ||this->firstPass < 11)) ||
+            this->liveStream
+            ){
             // Receive pong
             if (this->firstPass < 11){
                 this->firstPass++;
@@ -679,7 +685,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&request_buffer, requester_socket, 0);
             
             /*! - If the camera is requesting periodic images, request them */
-            if (CurrentSimNanos%this->cameraConfigMessage.renderRate == 0){
+            if (this->opNavMode > 0 &&  CurrentSimNanos%this->cameraConfigMessage.renderRate == 0){
                 char buffer[10];
                 zmq_recv(requester_socket, buffer, 10, 0);
                 /*! -- Send request */

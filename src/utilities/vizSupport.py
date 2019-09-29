@@ -471,7 +471,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     del coneInOutList[:]
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices'],
+        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream'],
         kwargs)
 
     # setup the Vizard interface module
@@ -497,10 +497,27 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         vizMessenger.protoFilename = vizFileNamePath
         print("Saving Viz file to " + vizFileNamePath)
 
+    if 'liveStream' in kwargs:
+        val = kwargs['liveStream']
+        if not isinstance(val, bool):
+            print('ERROR: liveStream must True or False')
+            exit(1)
+        vizMessenger.liveStream = True
+        if kwargs['opNavMode'] > 0:
+            print('ERROR: do not use liveStream and opNavMode flags at the same time.')
+            exit(1)
+
     vizMessenger.opNavMode = 0
     if 'opNavMode' in kwargs:
-        if kwargs['opNavMode'] == True:
-            vizMessenger.opNavMode = 1
+        val = kwargs['opNavMode']
+        if not isinstance(val, int):
+            print('ERROR: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
+            exit(1)
+        if val < 0 or val > 2:
+            print('ERROR: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
+            exit(1)
+        vizMessenger.opNavMode = val
+        if val > 0:
             vizMessenger.opnavImageOutMsgName = "opnav_circles"
 
     vizMessenger.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",

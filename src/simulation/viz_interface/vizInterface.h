@@ -134,6 +134,7 @@ public:
     uint64_t numSensors;
     int opNavMode;                              //! [int] Set non-zero positive value  if Unity/Viz couple in direct communication. (1 - regular opNav, 2 - performance opNav)
     bool saveFile;                              //! [Bool] Set True if Vizard should save a file of the data.
+    bool liveStream;                            //! [Bool] Set True if Vizard should receive a live stream of BSK data.
 
     std::string vizOutMsgName;
     std::vector <std::string> planetNames;      //!< -- Names of planets we want to track, read in from python
