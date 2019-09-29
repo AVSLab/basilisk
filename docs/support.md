@@ -32,4 +32,5 @@ The following list contains documents and resources to help understand the Basil
 
 @section chVizard Vizard Support 
 - @ref vizard               "Overview of Vizard"
-- @ref vizardSettings       "Specifying Vizard Settings from Basilisk"
+- @ref vizardSettings       "Specifying Vizard Settings from Basilisk"- 
+- @ref scenarioBasicOrbitLiveStreamGroup       "Live Streaming from Basilisk to Vizard"
