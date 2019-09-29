@@ -503,9 +503,10 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
             print('ERROR: liveStream must True or False')
             exit(1)
         vizMessenger.liveStream = True
-        if kwargs['opNavMode'] > 0:
-            print('ERROR: do not use liveStream and opNavMode flags at the same time.')
-            exit(1)
+        if 'opNavMode' in kwargs:
+            if kwargs['opNavMode'] > 0:
+                print('ERROR: do not use liveStream and opNavMode flags at the same time.')
+                exit(1)
 
     vizMessenger.opNavMode = 0
     if 'opNavMode' in kwargs:
