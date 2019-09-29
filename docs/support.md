@@ -18,6 +18,7 @@
 - [Basilisk Forum](https://hanspeterschaub.info/bskGoogleForum.html)
 - @ref useDoxygen           "How to build the Doxygen HTML documentation"
 - @ref migratingToPython3   "Migrating BSK Python 2 script to support
+- @ref usingLivePlotting    "How do I plot data while a simulation is running rather than plotting after the simulation completes."
 
 @section chCoding Code Development Support
 The documentation on how to program custom Basilisk modules is still sparse.  For now the reader is encouraged to study existing Basilisk modules to learn how to program new modules.

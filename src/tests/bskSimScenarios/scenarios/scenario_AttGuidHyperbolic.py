@@ -31,7 +31,7 @@
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
-#       python scenario_AttGuidHyperbolic.py
+#       python3 scenario_AttGuidHyperbolic.py
 #
 # The simulation mimics the basic simulation simulation in the earlier tutorial in
 # [scenarioAttitudeGuidHyperbolic.py](@ref scenarioAttGuideHyperbolic).

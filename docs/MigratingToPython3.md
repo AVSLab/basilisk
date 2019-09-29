@@ -25,7 +25,7 @@ NotImplementedError: Wrong number or type of arguments for overloaded function '
     SimModel::logThisMessage(std::string)
 ```
 
-##Returning Lists Instead of Iterables 
+## Returning Lists Instead of Iterables 
 ### Iterating Dictionaries
 Python 3 removed iteritems() method. The same functionality can be achieved in both Python 2 and 3 with items().
 
@@ -48,7 +48,7 @@ File "scenarioAttitudeFeedbackRW.py", line 715
 SyntaxError: Missing parentheses in call to 'print'. Did you mean print(dataUsReq)?
 ```
 
-##Strings
+## Strings
 External python packages will give warnings in `pytest` if python strings include '\x' where x is not a pythonic valid escape character. These warnings did not appear using Python 2, when using strings as input for latex or for other text processing, they should be made a raw string by appending an r:
 ```
 r"..."
@@ -62,7 +62,7 @@ A sample warning is:
 ```
 
 
-##Pyswice Imports
+## Pyswice Imports
 Changes to BSK module importing has changed the pyswice importing convention to be completely explicit: 
 
 From:

@@ -41,21 +41,22 @@ public:
     ~ClockSynch();
    
     void SelfInit();
-    void CrossInit(); 
-    void UpdateState(uint64_t CurrentSimNanos);
+    void CrossInit();
+    void Reset(uint64_t currentSimNanos);
+    void UpdateState(uint64_t currentSimNanos);
     
 public:
-    bool timeInitialized;        //!< (-) Number of output state buffers in msg
-	double accelFactor;          //!< (-) Factor used to accelerate sim-time relative to clock
-    SynchClockSimMsg outputData; //!< (-) Output data for the synch module
-    std::string clockOutputName; //!< (-) Name of the output message that we are using
-    uint64_t outputBufferCount;  //!< (-) Count on the number of output buffers that we have
-    int64_t accuracyNanos;       //!< ns Level of accuracy that we want out of the timer
-	bool displayTime;            //!< [-] Flag indicating that we want to display the time elapsed in cmd line
+	double accelFactor;          //!< [-] Factor used to accelerate sim-time relative to clock
+    SynchClockSimMsg outputData; //!< [-] Output data for the synch module
+    std::string clockOutputName; //!< [-] Name of the output message that we are using, default is clock_synch_data
+    uint64_t outputBufferCount;  //!< [-] Count on the number of output buffers that we have, default is 2
+    int64_t accuracyNanos;       //!< ns Level of accuracy that we want out of the timer, default is 10ms
+	bool displayTime;            //!< [-] Flag indicating that we want to display the time elapsed in cmd line, default is off
 private:
-	std::chrono::high_resolution_clock::time_point startTime; //! (-) first time pass through data
-    uint64_t startSimTime;                 //!< ns Previous simulation time observed
-    int64_t clockOutputID;                //!< (-) Output ID for clock module
+    bool timeInitialized;        //!< [-] Flag that the module has been reset
+	std::chrono::high_resolution_clock::time_point startTime; //! [-] first time stamp of pass through data
+    uint64_t startSimTimeNano;   //!< [ns] Previous simulation time observed
+    int64_t clockOutputID;       //!< [-] Output ID for clock module
     
 };
 

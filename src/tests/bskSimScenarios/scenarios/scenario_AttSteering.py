@@ -33,7 +33,7 @@
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
-#       python scenario_AttSteering.py
+#       python3 scenario_AttSteering.py
 #
 # The simulation mimics the basic simulation simulation in the earlier tutorial in
 # [scenarioAttSteering.py](@ref scenarioAttitudeSteering).

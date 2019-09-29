@@ -31,7 +31,7 @@
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
-#       python scenario_FeedbackRW.py
+#       python3 scenario_FeedbackRW.py
 #
 # The simulation mimics the basic simulation simulation in the earlier tutorial in
 # [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW).
