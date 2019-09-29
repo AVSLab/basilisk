@@ -133,7 +133,7 @@ public:
 
     uint64_t numSensors;
     int opNavMode;          //! [Bool] Set True if Unity/Viz couple in direct communication.
-    int saveFile;           //! [Bool] Set True if Viz should save a file of the data.
+    bool saveFile;          //! [Bool] Set True if Vizard should save a file of the data.
 
     std::string vizOutMsgName;
     std::vector <std::string> planetNames;  //!< -- Names of planets we want to track, read in from python

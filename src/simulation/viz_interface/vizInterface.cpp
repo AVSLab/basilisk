@@ -39,7 +39,7 @@ void message_buffer_deallocate(void *data, void *hint);
 VizInterface::VizInterface()
 {
     this->opNavMode = 0;
-    this->saveFile = 0;
+    this->saveFile = false;
     this->FrameNumber= -1;
     this->numOutputBuffers = 2;
     this->scPlusInMsgName = "inertial_state_output";
@@ -263,7 +263,7 @@ void VizInterface::CrossInit()
 void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
     this->FrameNumber=-1;
-    if (this->saveFile == 1) {
+    if (this->saveFile) {
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
     }
 
@@ -639,7 +639,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         uint32_t byteCount = message->ByteSizeLong();
         google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
         unsigned long varIntBytes = end - varIntBuffer;
-        if (this->saveFile == 1) {
+        if (this->saveFile) {
             this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
         }
 

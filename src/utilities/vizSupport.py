@@ -483,7 +483,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
-    vizMessenger.saveFile = 0
+    vizMessenger.saveFile = False
     if 'saveFile' in kwargs:
         fileNamePath = kwargs['saveFile']
         fileName = os.path.splitext(os.path.basename(fileNamePath))[0]
@@ -493,7 +493,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         if not os.path.isdir(filePath + '/_VizFiles'):
             os.mkdir(filePath + '/_VizFiles')
         vizFileNamePath = filePath + '/_VizFiles/' + fileName + '_UnityViz.bin'
-        vizMessenger.saveFile = 1
+        vizMessenger.saveFile = True
         vizMessenger.protoFilename = vizFileNamePath
         print("Saving Viz file to " + vizFileNamePath)
 
