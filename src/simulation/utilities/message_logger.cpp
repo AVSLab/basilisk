@@ -258,7 +258,7 @@ void messageLogger::loadArchiveFromDisk(std::string inFileName)
 	logData.clear();
 	iFile.open(inFileName, std::ios::in | std::ios::binary);
 	iFile.read(reinterpret_cast<char*> (&totalMessageCount), sizeof(totalMessageCount));
-	for (int i = 0; i < totalMessageCount; i++)
+	for (uint i = 0; i < totalMessageCount; i++)
 	{
 		messageLogContainer newContainer;
 		iFile.read(reinterpret_cast<char*> (&messageNameLength), sizeof(messageNameLength));
