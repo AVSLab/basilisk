@@ -220,7 +220,7 @@ def run(show_plots, orbitCase, setEpoch):
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3, and must be adjusted by a factor of 1e-3 to match kg/m^3 
-    if not unitTestSupport.isDoubleEqualRelative(densData[0,1], refAtmoData[5]*0.001, accuracy):
+    if not unitTestSupport.isDoubleEqualRelative(densData[0,1], refAtmoData[5]*1000., accuracy):
             testFailCount += 1
             testMessages.append(
                 "FAILED:  NRLMSISE-00 failed density unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[0,1]-refAtmoData[5]))
