@@ -36,7 +36,7 @@ LimbFinding::LimbFinding()
     this->filename = "";
     this->saveDir ="";
     this->saveImages = 0;
-    this->blurrSize = 5;
+    this->blurrSize = 3;
     this->cannyThreshHigh = 200;
     this->cannyThreshLow = 100;
     this->OutputBufferCount = 2;
