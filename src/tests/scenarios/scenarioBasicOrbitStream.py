@@ -94,7 +94,7 @@ from Basilisk.simulation import clock_synch
 # This way a 10s simulation time step will take 0.2 seconds with the 50x speed up factor.
 #
 ## @}
-def run(show_plots, liveStream, orbitCase, useSphericalHarmonics, planetCase):
+def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
 
@@ -112,7 +112,7 @@ def run(show_plots, liveStream, orbitCase, useSphericalHarmonics, planetCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(timeStep)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -323,8 +323,9 @@ def run(show_plots, liveStream, orbitCase, useSphericalHarmonics, planetCase):
 #
 if __name__ == "__main__":
     run(
-        True,        # show_plots
+        False,        # show_plots
         True,        # liveStream
+        1.0,         # time step (s)
         'LEO',       # orbit Case (LEO, GTO, GEO)
         False,       # useSphericalHarmonics
         'Earth'      # planetCase (Earth, Mars)

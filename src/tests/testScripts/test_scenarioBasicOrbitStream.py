@@ -66,7 +66,7 @@ def test_scenarioBasicOrbitStream(show_plots, orbitCase, useSphericalHarmonics, 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    posData, figureList = scenarioBasicOrbitStream.run(show_plots, False, orbitCase, useSphericalHarmonics, planetCase)
+    posData, figureList = scenarioBasicOrbitStream.run(show_plots, False, 10., orbitCase, useSphericalHarmonics, planetCase)
 
     numTruthPoints = 5
     skipValue = int(len(posData) / (numTruthPoints - 1))
