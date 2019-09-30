@@ -41,7 +41,7 @@
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
-void SelfInit_velocityPoint(velocityPointConfig *configData, uint64_t moduleID)
+void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
@@ -56,7 +56,7 @@ void SelfInit_velocityPoint(velocityPointConfig *configData, uint64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void CrossInit_velocityPoint(velocityPointConfig *configData, uint64_t moduleID)
+void CrossInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID)
 {
     /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
      not exist, this subscribe function will create an empty planet message.  This behavior
@@ -74,7 +74,7 @@ void CrossInit_velocityPoint(velocityPointConfig *configData, uint64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     
 }
@@ -86,7 +86,7 @@ void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, uin
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
     uint64_t            timeOfMsgWritten;

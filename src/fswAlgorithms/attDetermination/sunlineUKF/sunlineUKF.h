@@ -91,12 +91,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunlineUKF(SunlineUKFConfig *configData, uint64_t moduleID);
-    void CrossInit_sunlineUKF(SunlineUKFConfig *configData, uint64_t moduleID);
+    void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID);
+    void CrossInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID);
     void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
+        int64_t moduleID);
 	void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
-		uint64_t moduleID);
+		int64_t moduleID);
 	void sunlineUKFTimeUpdate(SunlineUKFConfig *configData, double updateTime);
     void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime);
 	void sunlineStateProp(double *stateInOut, double dt);

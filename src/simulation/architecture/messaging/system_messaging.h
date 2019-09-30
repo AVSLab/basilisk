@@ -63,7 +63,7 @@ typedef struct {
  * Used to store permissions info for messages.
  */
 typedef struct {
-    std::set<uint64_t> accessList; //! (-) List of modules who are allowed to read/write message
+    std::set<int64_t> accessList;  //! (-) List of modules who are allowed to read/write message
     bool publishedHere;            //! (-) Indicator about whether or not the message is published in this proc. buffer
 }AllowAccessData;
 
@@ -90,7 +90,7 @@ typedef struct {
  */
 typedef struct {
     std::string bufferName;  //! (-) String associated with the message buffer
-    uint64_t processBuffer;  //! (-) Buffer ID for where this message originally lives
+    int64_t processBuffer;  //! (-) Buffer ID for where this message originally lives
     int64_t itemID;  //! (-) ID associated with request
     bool itemFound;  //! (-) Indicator of whether the buffer was found
 }MessageIdentData;
@@ -105,11 +105,11 @@ class SystemMessaging
     
 public:
     static SystemMessaging* GetInstance();  //! -- returns a pointer to the sim instance of SystemMessaging
-    uint64_t AttachStorageBucket(std::string bufferName = "");  //! -- adds a new buffer to the messaging system
+    int64_t AttachStorageBucket(std::string bufferName = "");  //! -- adds a new buffer to the messaging system
     void SetNumMessages(int64_t MessageCount);  //! --updates message count in buffer header
     int64_t GetMessageCount(int32_t bufferSelect = -1);  //! --gets the number of messages in buffer bufferSelect
     void ClearMessageBuffer();  //! -- sets current buffer to zeros
-    int64_t GetCurrentSize();  //! -- returns size of current buffer
+    uint64_t GetCurrentSize();  //! -- returns size of current buffer
     int64_t CreateNewMessage(std::string MessageName, uint64_t MaxSize,
         uint64_t NumMessageBuffers = 2, std::string messageStruct = "", int64_t moduleID = -1);
     bool WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos, uint64_t MsgSize,
@@ -126,8 +126,8 @@ public:
     int64_t FindMessageID(std::string MessageName, int32_t bufferSelect=-1);  //! -- searches only the selected buffer
     int64_t subscribeToMessage(std::string messageName, uint64_t messageSize,
         int64_t moduleID);
-    uint64_t checkoutModuleID();  //! -- Assigns next integer module ID
-    void selectMessageBuffer(uint64_t bufferUse);  //! -- sets a default buffer for everything to use
+    int64_t checkoutModuleID();  //! -- Assigns next integer module ID
+    void selectMessageBuffer(int64_t bufferUse);  //! -- sets a default buffer for everything to use
     uint64_t getProcessCount() {return(this->dataBuffers.size());}
     MessageIdentData messagePublishSearch(std::string messageName);  //! -- returns MessageIdentData if found
     int64_t findMessageBuffer(std::string bufferName);
@@ -153,7 +153,7 @@ private:
     uint64_t WriteFails;  //! the number of times we tried to write invalidly
     uint64_t ReadFails;  //! the number of times we tried to read invalidly
     uint64_t CreateFails;  //! the number of times we tried to create invalidly
-    uint64_t nextModuleID;  //! the next module ID to give out when a module comes online
+    int64_t nextModuleID;  //! the next module ID to give out when a module comes online
 };
 
 /* @} */

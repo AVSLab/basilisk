@@ -31,7 +31,7 @@
  @return void
  @param configData The configuration data associated with the opNav guidance
  */
-void SelfInit_opNavPoint(OpNavPointConfig *configData, uint64_t moduleID)
+void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
@@ -47,7 +47,7 @@ void SelfInit_opNavPoint(OpNavPointConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the opNav attitude guidance
  */
-void CrossInit_opNavPoint(OpNavPointConfig *configData, uint64_t moduleID)
+void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
     configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
@@ -63,7 +63,7 @@ void CrossInit_opNavPoint(OpNavPointConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the guidance module
  */
-void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     double v1[3];
 
@@ -96,7 +96,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, uint64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     OpNavFswMsg opNavMsg;
     uint64_t timeOfMsgWritten;

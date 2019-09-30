@@ -70,7 +70,7 @@ public:
 public:
     std::vector<SysInterface*> intRefs;  //!< -- Interface references to move data to process
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
-    uint64_t messageBuffer;  //!< -- Message buffer for this process
+    int64_t messageBuffer;  //!< -- Message buffer for this process
     uint64_t nextTaskTime;  //!< [ns] time for the next Task
     uint64_t prevRouteTime;  //!< [ns] Time that interfaces were previously routed
     std::string processName;  //!< -- Identifier for process

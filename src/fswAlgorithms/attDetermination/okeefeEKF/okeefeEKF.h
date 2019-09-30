@@ -26,6 +26,7 @@
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
+#include <string.h>
 
 
 /*! \defgroup okeefeEKF
@@ -71,7 +72,7 @@ typedef struct {
     double CBias[MAX_NUM_CSS_SENSORS];       /*!< [-] CSS individual calibration coefficients */
 
     uint32_t numStates;                /*!< [-] Number of states for this filter*/
-    int numObs;                   /*!< [-] Number of measurements this cycle */
+    size_t numObs;                   /*!< [-] Number of measurements this cycle */
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
@@ -88,17 +89,17 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID);
-    void CrossInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID);
+    void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID);
+    void CrossInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID);
 	void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
-		uint64_t moduleID);
+		int64_t moduleID);
     void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
-                           uint64_t moduleID);
+                           int64_t moduleID);
 	void sunlineTimeUpdate(okeefeEKFConfig *configData, double updateTime);
     void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime);
 	void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double omega[SKF_N_STATES_HALF],double *stateInOut, double *prevstates, double *stateTransition);
     
-    void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double CBias[MAX_NUM_CSS_SENSORS], double *obs, double *yMeas, int *numObs, double *measMat);
+    void sunlineHMatrixYMeas(double states[SKF_N_STATES], size_t numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double CBias[MAX_NUM_CSS_SENSORS], double *obs, double *yMeas, int *numObs, double *measMat);
     
     void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double qObsVal, int numObs, double *kalmanGain);
     

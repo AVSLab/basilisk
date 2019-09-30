@@ -194,7 +194,7 @@ void SimModel::resetInitSimulation()
 */
 void SimModel::SingleStepProcesses(int64_t stopPri)
 {
-    uint64_t nextCallTime = ~0;
+    uint64_t nextCallTime = ~((uint64_t) 0);
     std::vector<SysProcess *>::iterator it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
     while(it!= this->processList.end())
@@ -225,7 +225,7 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
     {
         throw std::range_error("Message reads or writes failed.  Please examine output.\n");
     }
-    this->NextTaskTime = nextCallTime != ~0 ? nextCallTime : this->CurrentNanos;
+    this->NextTaskTime = nextCallTime != ~((uint64_t) 0) ? nextCallTime : this->CurrentNanos;
     //! - If a message has been added to logger, link the message IDs
     if(!this->messageLogs.messagesLinked())
     {
@@ -345,7 +345,7 @@ void SimModel::logThisMessage(std::string messageName, uint64_t messagePeriod)
     the simulation.
     @return uint64_t The number of messages that have been created
 */
-uint64_t SimModel::getNumMessages() {
+int64_t SimModel::getNumMessages() {
     return(SystemMessaging::GetInstance()->GetMessageCount());
 }
 /*! This method finds the name associated with the message ID that is passed
@@ -353,7 +353,7 @@ uint64_t SimModel::getNumMessages() {
     @return std::string messageName The message name for the ID
     @param uint64_t messageID The message id that we wish to find the name for
 */
-std::string SimModel::getMessageName(uint64_t messageID)
+std::string SimModel::getMessageName(int64_t messageID)
 {
     return(SystemMessaging::GetInstance()->FindMessageName(messageID));
 }
@@ -423,9 +423,9 @@ std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::st
 {
     std::set<std::pair<long int, long int>> returnPairs;
     bool messageFound = false;
-    for(uint64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
+    for(int64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
     {
-        if(procList.find(i) == procList.end() && procList.size() > 0)
+        if(procList.find((uint64_t)i) == procList.end() && procList.size() > 0)
         {
             continue;
         }

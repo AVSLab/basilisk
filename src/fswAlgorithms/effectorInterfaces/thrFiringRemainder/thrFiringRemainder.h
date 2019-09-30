@@ -47,7 +47,7 @@ typedef struct {
     /* declare module private variables */
 	double              pulseRemainder[MAX_EFF_CNT];            //!< [-] Unimplemented thrust pulses (number of minimum pulses)
 	double              thrMinFireTime;              			//!< [s] Minimum fire time
-	uint32_t 			numThrusters;							//!< [-] The number of thrusters available on vehicle
+	int      			numThrusters;							//!< [-] The number of thrusters available on vehicle
 	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
 	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pusling (1)
 
@@ -68,10 +68,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t moduleID);
-    void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t moduleID);
-    void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, uint64_t moduleID);
-    void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
+    void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
+    void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }

@@ -57,9 +57,9 @@ typedef struct {
     
     int moduleId; 
     
-    int numStates;                //!< [-] Number of states for this filter
-    int countHalfSPs;             //!< [-] Number of sigma points over 2
-    int numObs;                   //!< [-] Number of measurements this cycle
+    size_t numStates;             //!< [-] Number of states for this filter
+    size_t countHalfSPs;          //!< [-] Number of sigma points over 2
+    size_t numObs;                //!< [-] Number of measurements this cycle
     double beta;                  //!< [-] Beta parameter for filter
     double alpha;                 //!< [-] Alpha parameter for filter
     double kappa;                 //!< [-] Kappa parameter for filter
@@ -117,12 +117,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t moduleId);
-    void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t moduleId);
+    void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId);
+    void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId);
     void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
-                            uint64_t moduleId);
+                            int64_t moduleId);
     void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
-                           uint64_t moduleId);
+                           int64_t moduleId);
     void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_N_STATES], double mu, double *stateDeriv);
     int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double updateTime);
     int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData);

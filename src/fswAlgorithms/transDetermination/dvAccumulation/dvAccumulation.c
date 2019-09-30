@@ -29,7 +29,7 @@
  @return void
  @param configData The configuration data associated with the Nav aggregation interface
  */
-void SelfInit_dvAccumulation(DVAccumulationData *configData, uint64_t moduleID)
+void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
     configData->outputNavMsgID = CreateNewMessage(configData->outputNavName,
         sizeof(NavTransIntMsg), "NavTransIntMsg", moduleID);
@@ -41,14 +41,14 @@ void SelfInit_dvAccumulation(DVAccumulationData *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the aggregate nav interface
  */
-void CrossInit_dvAccumulation(DVAccumulationData *configData, uint64_t moduleID)
+void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
         configData->accPktInMsgID= subscribeToMessage(
             configData->accPktInMsgName, sizeof(AccDataFswMsg), moduleID);
 }
 
 void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
-                          uint64_t moduleID)
+                          int64_t moduleID)
 {
     /*! - Configure accumulator to reset itself*/
     AccDataFswMsg inputAccData;
@@ -162,7 +162,7 @@ void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
  @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;

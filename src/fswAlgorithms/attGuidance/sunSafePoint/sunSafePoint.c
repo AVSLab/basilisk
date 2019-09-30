@@ -31,7 +31,7 @@
  @return void
  @param configData The configuration data associated with the sun safe guidance
  */
-void SelfInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID)
+void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
@@ -47,7 +47,7 @@ void SelfInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the sun safe attitude guidance
  */
-void CrossInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID)
+void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
     configData->sunDirectionInMsgID = subscribeToMessage(configData->sunDirectionInMsgName,
@@ -62,7 +62,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the guidance module
  */
-void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     double v1[3];
 
@@ -94,7 +94,7 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, uint6
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     NavAttIntMsg navMsg;
     uint64_t timeOfMsgWritten;

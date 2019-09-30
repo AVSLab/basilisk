@@ -27,7 +27,7 @@
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
+void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 {
     /*! - Create a navigation message to be used for control */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
@@ -42,7 +42,7 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
+void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 {
     /*! Read in the treated position measurement from pixelLineConverter */
     configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
@@ -57,7 +57,7 @@ void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
-                       uint64_t moduleId)
+                       int64_t moduleId)
 {
     
     int32_t i;
@@ -137,14 +137,15 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
-                        uint64_t moduleId)
+                        int64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
     uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double yBar[3], tempYVec[3];
-    int i, computePostFits;
+    uint32_t i;
+    int computePostFits;
     OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
     OpNavFswMsg inputRelOD;
@@ -294,7 +295,7 @@ void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *s
  */
 int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 {
-    int i, Index;
+    uint64_t i, Index;
     double sBarT[ODUKF_N_STATES*ODUKF_N_STATES]; // Sbar transpose (chol decomp of covar)
     double xComp[ODUKF_N_STATES], AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES)*ODUKF_N_STATES]; // Intermediate state, process noise chol decomp
     double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES*ODUKF_N_STATES], xErr[ODUKF_N_STATES]; //Row of A mat, R of QR decomp of A, state error
@@ -362,7 +363,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
             relODuKFCleanUpdate(configData);
             return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
-        memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
+        memcpy((void *)&AT[(size_t)i*configData->numStates], (void *)aRow,
                configData->numStates*sizeof(double));
         
     }
@@ -416,7 +417,7 @@ void relODuKFMeasModel(RelODuKFConfig *configData)
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         for(i=0; i<3; i++)
-            configData->yMeas[i*(configData->countHalfSPs*2+1) + j] =
+            configData->yMeas[i*((int) configData->countHalfSPs*2+1) + j] =
             configData->SP[i + j*ODUKF_N_STATES];
     }
     

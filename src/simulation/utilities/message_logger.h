@@ -30,8 +30,8 @@
 
 typedef struct {
     std::string messageName;    //!< -- The message name associated with the log
-    int32_t messageID;          //!< -- The message ID associated with the log
-    uint64_t processID;         //!< -- Process ID associated with the message
+    int64_t messageID;          //!< -- The message ID associated with the log
+    int64_t processID;         //!< -- Process ID associated with the message
     uint64_t lastLogTime;       //!< ns The last valid log time observed
     uint64_t logInstanceCount;  //!< -- The number of message logs that we have made
     uint64_t lastWriteCheck;    //!< ns The last write count that we examined

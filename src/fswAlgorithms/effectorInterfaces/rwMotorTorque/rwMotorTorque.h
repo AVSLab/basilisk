@@ -41,7 +41,7 @@ typedef struct {
     /* declare module private variables */
     double   controlAxes_B[3*3];        //!< [-] array of the control unit axes
     uint32_t numControlAxes;            //!< [-] counter indicating how many orthogonal axes are controlled
-    uint32_t numAvailRW;                //!< [-] number of reaction wheels available
+    int      numAvailRW;                //!< [-] number of reaction wheels available
     RWArrayConfigFswMsg rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
     double GsMatrix_B[3*MAX_EFF_CNT];   //!< [-] The RW spin axis matrix in body frame components
     double CGs[3][MAX_EFF_CNT];         //!< [-] Projection matrix that defines the controlled body axes
@@ -63,10 +63,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t moduleID);
-    void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t moduleID);
-    void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, uint64_t moduleID);
-    void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
+    void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
+    void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }

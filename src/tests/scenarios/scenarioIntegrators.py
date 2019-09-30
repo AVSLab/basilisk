@@ -289,5 +289,5 @@ def run(show_plots, integratorCase):
 #
 if __name__ == "__main__":
     run(
-        True,        # show_plots
-        'rk4')       # integrator case(0 - RK4, 1 - Euler, 2 - RK2)
+        False,        # show_plots
+        'rk2')       # integrator case(0 - rk4, 1 - euler, 2 - rk2)

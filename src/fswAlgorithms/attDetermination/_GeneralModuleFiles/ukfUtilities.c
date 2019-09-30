@@ -32,8 +32,8 @@ void ukfQRDJustR(
 
 	mSetZero(qMat, UKF_MAX_DIM, UKF_MAX_DIM);
 	mSetZero(sourceMat, UKF_MAX_DIM, UKF_MAX_DIM);
-	mSetZero(destMat, nCol, nCol);
-	mCopy(inMat, nRow, nCol, sourceMat);
+	mSetZero(destMat, (size_t) nCol, (size_t) nCol);
+	mCopy(inMat, (size_t) nRow, (size_t) nCol, sourceMat);
 
 	for (i = 0; i<nCol; i++)
 	{
@@ -73,7 +73,7 @@ int32_t ukfLInv(double *sourceMat, int32_t nRow, int32_t nCol, double *destMat)
 {
 	int i, j, k, mat_dim;
 	
-	mSetZero(destMat, nRow, nCol);
+	mSetZero(destMat, (size_t) nRow, (size_t) nCol);
 	if (nRow != nCol)
 	{
 		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfLInv.");
@@ -108,7 +108,7 @@ int32_t ukfUInv(double *sourceMat, int32_t nRow, int32_t nCol, double *destMat)
 {
 	int i, j, k, mat_dim;
 
-	mSetZero(destMat, nRow, nCol);
+	mSetZero(destMat, (size_t) nRow, (size_t) nCol);
 	if (nRow != nCol)
 	{
 		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfUInv.");
@@ -145,7 +145,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 	double big, dum, sum, temp;
 	double TINY = 1.0E-14;
 
-	mSetZero(destMat, nRow, nCol);
+	mSetZero(destMat, (size_t) nRow, (size_t) nCol);
 	for(i=0; i<nRow; i++)
     {
 	    indx[i] = i;
@@ -155,8 +155,8 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfLUD.");
 		return -1;
 	}
-	mCopy(sourceMat, nRow, nCol, destMat);
-	vSetZero(vv, nRow);
+	mCopy(sourceMat, (size_t) nRow, (size_t) nCol, destMat);
+	vSetZero(vv, (size_t) nRow);
 	rowIndicator = 1;
 	for (i = 0; i < nRow; i++)
 	{
@@ -236,13 +236,13 @@ int32_t ukfLUBckSlv(double *sourceMat, int32_t nRow, int32_t nCol,
 	int ii = -1;
 	double sum;
 
-	vSetZero(destMat, nRow);
+	vSetZero(destMat, (size_t) nRow);
 	if (nRow != nCol)
 	{
 		BSK_PRINT(MSG_WARNING,"Can't get a linear solution of non-square matrix in ukfLUBckSlv.");
 		return -1;
 	}
-	vCopy(bmat, nRow, destMat);
+	vCopy(bmat, (size_t) nRow, destMat);
 
 	for (i = 0; i < nRow; i++)
 	{
@@ -286,7 +286,7 @@ int32_t ukfMatInv(double *sourceMat, int32_t nRow, int32_t nCol,
 	int indx[UKF_MAX_DIM];
 	int32_t i, j, badCall;
 
-	mSetZero(destMat, nRow, nCol);
+	mSetZero(destMat, (size_t) nRow, (size_t) nCol);
 	if (nRow != nCol)
 	{
 		BSK_PRINT(MSG_WARNING,"Can't invert a non-square matrix in ukfMatInv.");
@@ -295,7 +295,7 @@ int32_t ukfMatInv(double *sourceMat, int32_t nRow, int32_t nCol,
 	ukfLUD(sourceMat, nRow, nCol, LUMatrix, indx);
 	for (j = 0; j < nRow; j++)
 	{
-		vSetZero(colSolve, nRow);
+		vSetZero(colSolve, (size_t) nRow);
 		colSolve[j] = 1.0;
         badCall = ukfLUBckSlv(LUMatrix, nRow, nCol, indx, colSolve, invCol);
 		for (i = 0; i < nRow; i++)
@@ -312,7 +312,7 @@ int32_t ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	int32_t i, j, k;
 	double sigma;
 
-	mSetZero(destMat, nRow, nCol);
+	mSetZero(destMat, (size_t) nRow, (size_t) nCol);
 	if (nRow != nCol)
 	{
 		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfCholDecomp.");
@@ -354,8 +354,8 @@ int32_t ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates
 	double wVec[UKF_MAX_DIM];
     double rEl2, bParam, gamma;
 	
-    vCopy(xVec, nStates, wVec);
-    mSetZero(rOut, nStates, nStates);
+    vCopy(xVec, (size_t) nStates, wVec);
+    mSetZero(rOut, (size_t) nStates, (size_t) nStates);
 
     bParam = 1.0;
 	for (i = 0; i < nStates; i++)

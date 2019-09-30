@@ -82,7 +82,7 @@ public:
     //void addPassToCurrent(std::string messagePass);
     void enableInterface() { interfaceActive = true; }
     void disableInterface() { interfaceActive = false; }
-    virtual void routeInputs(uint64_t processBuffer);
+    virtual void routeInputs(int64_t processBuffer);
     void discoverAllMessages();
     void connectInterfaces();
     

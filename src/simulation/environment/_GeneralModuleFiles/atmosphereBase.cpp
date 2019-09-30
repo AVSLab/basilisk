@@ -91,7 +91,7 @@ that were added using AddSpacecraftToModel. Additional model outputs are also in
 */
 void AtmosphereBase::SelfInit()
 {
-    uint64_t tmpMagFieldMsgId;
+    int64_t tmpMagFieldMsgId;
     std::vector<std::string>::iterator it;
 
     //! - create all the environment output messages for each spacecraft

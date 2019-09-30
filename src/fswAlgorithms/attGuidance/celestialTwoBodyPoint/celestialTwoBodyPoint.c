@@ -30,7 +30,7 @@
  @param configData The configuration data associated with the celestial body guidance
  */
 void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
@@ -48,7 +48,7 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
  @param configData The configuration data associated with the attitude maneuver guidance
  */
 void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     /*! - subscribe to other message*/
     /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
@@ -70,7 +70,7 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     return;
     
 }
-void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
 }
@@ -84,7 +84,7 @@ void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
-                                  uint64_t callTime, uint64_t moduleID)
+                                  uint64_t callTime, int64_t moduleID)
 {
     /*! - Parse the input messages */
     parseInputMessages(configData, moduleID);
@@ -100,7 +100,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
  necessary to create the restricted 2-body pointing reference frame.
  @return void
  */
-void parseInputMessages(celestialTwoBodyPointConfig *configData, uint64_t moduleID)
+void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;

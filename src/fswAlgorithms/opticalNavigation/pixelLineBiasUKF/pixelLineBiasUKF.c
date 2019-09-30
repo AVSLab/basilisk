@@ -27,7 +27,7 @@
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t moduleId)
+void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
     /*! - Create a navigation message to be used for control */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
@@ -42,7 +42,7 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t modu
  @return void
  @param configData The configuration data associated with the OD filter
  */
-void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t moduleId)
+void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
     /*! Read in the treated position measurement from pixelLineConverter */
     configData->circlesInMsgId = subscribeToMessage(configData->circlesInMsgName, sizeof(CirclesOpNavMsg), moduleId);
@@ -58,7 +58,7 @@ void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t mod
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
-                       uint64_t moduleId)
+                       int64_t moduleId)
 {
     
     int32_t i;
@@ -138,14 +138,15 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
-                        uint64_t moduleId)
+                        int64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
     uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double yBar[PIXLINE_N_MEAS], tempYVec[PIXLINE_N_MEAS];
-    int i, computePostFits;
+    uint64_t i;
+    int computePostFits;
     PixelLineFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
     CirclesOpNavMsg inputCircles;
@@ -302,7 +303,7 @@ void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlane
  */
 int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double updateTime)
 {
-    int i, Index;
+    uint64_t i, Index;
     double sBarT[PIXLINE_N_STATES*PIXLINE_N_STATES]; // Sbar transpose (chol decomp of covar)
     double xComp[PIXLINE_N_STATES], AT[(2 * PIXLINE_N_STATES + PIXLINE_N_STATES)*PIXLINE_N_STATES]; // Intermediate state, process noise chol decomp
     double aRow[PIXLINE_N_STATES], rAT[PIXLINE_N_STATES*PIXLINE_N_STATES], xErr[PIXLINE_N_STATES]; //Row of A mat, R of QR decomp of A, state error

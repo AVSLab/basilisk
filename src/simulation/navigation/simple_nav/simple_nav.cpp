@@ -73,7 +73,7 @@ SimpleNav::~SimpleNav()
 */
 void SimpleNav::SelfInit()
 {
-    uint64_t numStates = 18;
+    int64_t numStates = 18;
     //! - Create a new message for the output simple nav state data
     this->outputAttID = SystemMessaging::GetInstance()->
         CreateNewMessage(this->outputAttName, sizeof(NavAttIntMsg), this->outputBufferCount,

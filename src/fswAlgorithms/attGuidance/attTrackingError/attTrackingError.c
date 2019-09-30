@@ -30,7 +30,7 @@
  @return void
  @param configData The configuration data associated with the attitude tracking error module
  */
-void SelfInit_attTrackingError(attTrackingErrorConfig *configData, uint64_t moduleID)
+void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
         /*! Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
@@ -44,7 +44,7 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *configData, uint64_t modu
  @return void
  @param configData The configuration data associated with the attitude tracking error module
  */
-void CrossInit_attTrackingError(attTrackingErrorConfig *configData, uint64_t moduleID)
+void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
     /*! - Get the reference and navigation data message ID*/
     configData->inputRefID = subscribeToMessage(configData->inputRefName,
@@ -60,7 +60,7 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *configData, uint64_t mod
  @return void
  @param configData The configuration data associated with the attitude tracking error module
  */
-void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
 }
@@ -71,7 +71,7 @@ void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t    timeOfMsgWritten;
     uint32_t    sizeOfMsgWritten;

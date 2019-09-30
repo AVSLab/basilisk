@@ -244,7 +244,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
 
     // - Define A matrix for the panel equations
     std::vector<HingedPanel>::iterator PanelIt2;
-    this->matrixADHRB.resize(this->PanelVec.size(),this->PanelVec.size());
+    this->matrixADHRB.resize((int) this->PanelVec.size(), (int) this->PanelVec.size());
     this->matrixADHRB.setZero();
     std::vector<HingedPanel>::iterator PanelIt3;
     int j = 1;
@@ -254,8 +254,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
             Eigen::Vector3d sumTerm1;
             sumTerm1.setZero();
             PanelIt3 = PanelIt2;
-            for(int k = i; k<=this->PanelVec.size();k++){
-                sumTerm1 += 2*PanelIt3->sHat3_B+4*PanelIt3->sHat3_B*(this->PanelVec.size() - j)
+            for(int k = i; k<= (int) this->PanelVec.size();k++){
+                sumTerm1 += 2*PanelIt3->sHat3_B+4*PanelIt3->sHat3_B*((int) this->PanelVec.size() - j)
                 -HeaviFunc(k-j)*4*PanelIt3->sHat3_B*(k-j);
                 std::advance(PanelIt3, 1);
             }
@@ -269,15 +269,15 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     this->matrixEDHRB = this->matrixADHRB.inverse();
 
     // - Define F matrix for the panel equations
-    this->matrixFDHRB.resize(this->PanelVec.size(),3);
+    this->matrixFDHRB.resize((int) this->PanelVec.size(),3);
     this->matrixFDHRB.setZero();
     j = 1;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
         Eigen::Vector3d sumTerm1;
         Eigen::Vector3d sumTerm2;
         sumTerm2.setZero();
-        if(j+1<=this->PanelVec.size()){
-            for(int i = j+1; i <= this->PanelVec.size(); i++){
+        if(j+1<= (int) this->PanelVec.size()){
+            for(int i = j+1; i <= (int) this->PanelVec.size(); i++){
                 sumTerm2 += 2*PanelIt->mass*PanelIt->d*PanelIt->sHat3_B;
             }
         }
@@ -289,17 +289,17 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     }
 
     // - Define G matrix for the panel equations
-    this->matrixGDHRB.resize(this->PanelVec.size(),3);
+    this->matrixGDHRB.resize((int) this->PanelVec.size(),3);
     matrixGDHRB.setZero();
     j = 1;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
         Eigen::Vector3d sumTerm1;
         Eigen::Vector3d sumTerm2;
         sumTerm2.setZero();
-        if(j+1<=this->PanelVec.size()){
+        if(j+1<= (int) this->PanelVec.size()){
             PanelIt2 = PanelIt;
             std::advance(PanelIt2, 1);
-            for(int i = j+1; i<=this->PanelVec.size();i++){
+            for(int i = j+1; i<=(int) this->PanelVec.size();i++){
                 sumTerm2 += (2*PanelIt->mass*PanelIt->d*PanelIt->sHat3_B.transpose()*PanelIt2->rTilde_SB_B).transpose();
                 std::advance(PanelIt2, 1);
             }
@@ -313,7 +313,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     }
 
     // - Define v vector for the panel equations
-    this->vectorVDHRB.resize(this->PanelVec.size());
+    this->vectorVDHRB.resize((int) this->PanelVec.size());
     this->vectorVDHRB.setZero();
     double massOfCurrentPanelAndBefore = 0; // Summation of all of prior panels masses and the current panels mass
     j = 1;
@@ -327,17 +327,17 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         sumTerm3.setZero();
         double springTerm;
         PanelIt2 = PanelIt;
-        if(j+1 <= this->PanelVec.size()){
+        if(j+1 <= (int) this->PanelVec.size()){
             std::advance(PanelIt2, 1);
             springTerm = -PanelIt->k*(PanelIt->theta-PanelIt->theta_0)-PanelIt->c*PanelIt->thetaDot
             + PanelIt2->k*(PanelIt2->theta - PanelIt2->theta_0) + PanelIt2->c*PanelIt2->thetaDot;
         } else {
             springTerm = -PanelIt->k*(PanelIt->theta-PanelIt->theta_0)-PanelIt->c*PanelIt->thetaDot;
         }
-        if(j+1<=this->PanelVec.size()){
+        if(j+1<=(int) this->PanelVec.size()){
             PanelIt3 = PanelIt;
             std::advance(PanelIt3, 1);
-            for(int i = j+1; i <= this->PanelVec.size(); i++){
+            for(int i = j+1; i <= (int) this->PanelVec.size(); i++){
                 sumTerm2 += 4*this->omegaTildeLoc_BN_B*PanelIt3->rPrime_SB_B
                 +2*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*PanelIt3->r_SB_B;
                 std::advance(PanelIt3, 1);
@@ -347,8 +347,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         int i = 1;
         for(PanelIt2=this->PanelVec.begin(); PanelIt2!=this->PanelVec.end(); PanelIt2++){
             sumThetaDot += PanelIt2->thetaDot;
-            sumTerm3 += pow(sumThetaDot,2)*PanelIt2->d*(2*PanelIt2->sHat1_B+4*PanelIt2->sHat1_B*(this->PanelVec.size()
-                                                                         - j)-HeaviFunc(i-j)*4*PanelIt2->sHat1_B*(i-j));
+            sumTerm3 += pow(sumThetaDot,2)*PanelIt2->d*(2*PanelIt2->sHat1_B+4*PanelIt2->sHat1_B*((int) this->PanelVec.size() - j)-HeaviFunc(i-j)*4*PanelIt2->sHat1_B*(i-j));
             i += 1;
         }
         sumThetaDot = 0;
@@ -389,12 +388,12 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         sumTerm1.setZero();
         sumThetaDot += PanelIt->thetaDot;
         PanelIt2 = PanelIt;
-        for(int k = j; k <= this->PanelVec.size();k++){
-            sumTerm1 += (2*(this->PanelVec.size() - k)+1)*PanelIt2->mass*PanelIt2->d*PanelIt2->sHat3_B;
+        for(int k = j; k <= (int) this->PanelVec.size();k++){
+            sumTerm1 += (2*((int) this->PanelVec.size() - k)+1)*PanelIt2->mass*PanelIt2->d*PanelIt2->sHat3_B;
             std::advance(PanelIt2, 1);
         }
         
-        sumTerm2 = pow(sumThetaDot,2)*(2*(this->PanelVec.size() - j)+1)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B;
+        sumTerm2 = pow(sumThetaDot,2)*(2*((int) this->PanelVec.size() - j)+1)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B;
         backSubContr.matrixA += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
         backSubContr.matrixB += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
         backSubContr.vecTrans += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
@@ -419,12 +418,12 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         sumTerm1.setZero();
         sumThetaDot += PanelIt->thetaDot;
         PanelIt2 = PanelIt;
-        for(int k = j; k <= this->PanelVec.size();k++){
+        for(int k = j; k <= (int) this->PanelVec.size();k++){
             sumTerm3.setZero();
-            if(k+1<=this->PanelVec.size()){
+            if(k+1<=(int) this->PanelVec.size()){
                 PanelIt3 = PanelIt2;
                 std::advance(PanelIt3, 1);
-                for(int n = k+1; n <= this->PanelVec.size();n++){
+                for(int n = k+1; n <= (int) this->PanelVec.size();n++){
                     sumTerm3 += 2*PanelIt3->rTilde_SB_B;
                     std::advance(PanelIt3, 1);
                 }
@@ -434,10 +433,10 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
             std::advance(PanelIt2, 1);
         }
         sumTerm3.setZero();
-        if(j+1<=this->PanelVec.size()){
+        if(j+1<=(int) this->PanelVec.size()){
             PanelIt3 = PanelIt;
             std::advance(PanelIt3, 1);
-            for(int n = j+1; n <= this->PanelVec.size();n++){
+            for(int n = j+1; n <= (int) this->PanelVec.size();n++){
                 sumTerm3 += 2*PanelIt3->rTilde_SB_B;
                 std::advance(PanelIt3, 1);
             }

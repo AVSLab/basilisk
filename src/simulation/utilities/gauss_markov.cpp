@@ -31,14 +31,14 @@ GaussMarkov::GaussMarkov()
     this->rNum.param(updatePair);
 }
 
-GaussMarkov::GaussMarkov(uint64_t size) : GaussMarkov() {
-    this->propMatrix.resize(size,size);
+GaussMarkov::GaussMarkov(uint32_t size) : GaussMarkov() {
+    this->propMatrix.resize((int64_t) size, (int64_t) size);
     this->propMatrix.fill(0.0);
-    this->currentState.resize(size);
+    this->currentState.resize((int64_t) size);
     this->currentState.fill(0.0);
-    this->noiseMatrix.resize(size, size);
+    this->noiseMatrix.resize((int64_t) size, (int64_t) size);
     this->noiseMatrix.fill(0.0);
-    this->stateBounds.resize(size);
+    this->stateBounds.resize((int64_t) size);
     this->stateBounds.fill(0.0);
     this->numStates = size;
 }
@@ -58,16 +58,16 @@ void GaussMarkov::computeNextState()
 {
     Eigen::VectorXd errorVector;
     Eigen::VectorXd ranNums;
-    int i;
+    uint i;
     
     //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
-       (this->propMatrix.size() != this->numStates*this->numStates))
+       (this->propMatrix.size() != (uint) (this->numStates*this->numStates)))
     {
         BSK_PRINT(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your propagate and noise matrices be same size and that size is your number of states squared.  I quit.");
         return;
     }
-    if(this->stateBounds.size() != this->numStates)
+    if(this->stateBounds.size() != (uint) this->numStates)
     {
         BSK_PRINT(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
         return;
@@ -78,7 +78,7 @@ void GaussMarkov::computeNextState()
     this->currentState = this->propMatrix * errorVector;
     
     //! - Compute the random numbers used for each state.  Note that the same generator is used for all
-    ranNums.resize(this->numStates);
+    ranNums.resize((int64_t) this->numStates);
 
     for(i = 0; i<this->numStates; i++)
     {

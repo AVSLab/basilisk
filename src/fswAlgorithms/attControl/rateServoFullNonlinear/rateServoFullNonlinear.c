@@ -38,7 +38,7 @@
  @return void
  @param configData The configuration data associated with this module
  */
-void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t moduleID)
+void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->cmdTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
@@ -57,7 +57,7 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, u
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t moduleID)
+void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message IDs*/
     configData->guidInMsgId = subscribeToMessage(configData->inputGuidName,
@@ -91,7 +91,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
  @return void
  @param configData The configuration data associated with the servo rate control
  */
-void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read the input messages */
     uint64_t timeOfMsgWritten;
@@ -129,7 +129,7 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     AttGuidFswMsg       guidCmd;            /* Guidance Message */
     RWSpeedIntMsg       wheelSpeeds;        /* Reaction wheel speed estimates */

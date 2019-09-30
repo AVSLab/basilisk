@@ -49,7 +49,7 @@ void AlgContain::SelfInit()
 {
     if(AlgSelfInit != NULL)
     {
-        AlgSelfInit(DataPtr, moduleID);
+        AlgSelfInit(DataPtr, (uint32_t) moduleID);
     }
 }
 
@@ -57,7 +57,7 @@ void AlgContain::CrossInit()
 {
     if(AlgCrossInit != NULL)
     {
-        AlgCrossInit(DataPtr, moduleID);
+        AlgCrossInit(DataPtr, (uint32_t) moduleID);
     }
 }
 
@@ -65,7 +65,7 @@ void AlgContain::UpdateState(uint64_t CurrentSimNanos)
 {
     if(AlgUpdate != NULL)
     {
-        AlgUpdate(DataPtr, CurrentSimNanos, moduleID);
+        AlgUpdate(DataPtr, CurrentSimNanos, (uint32_t) moduleID);
     }
 }
 
@@ -73,6 +73,6 @@ void AlgContain::Reset(uint64_t CurrentSimNanos)
 {
 	if (AlgReset != NULL)
 	{
-		AlgReset(DataPtr, CurrentSimNanos, moduleID);
+		AlgReset(DataPtr, CurrentSimNanos, (uint32_t) moduleID);
 	}
 }

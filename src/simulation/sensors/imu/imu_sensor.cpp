@@ -29,6 +29,7 @@
 #include "utilities/avsEigenMRP.h"
 #include "utilities/bsk_Print.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include <inttypes.h>
 
 
 ImuSensor::ImuSensor()
@@ -156,7 +157,7 @@ void ImuSensor::CrossInit()
         sizeof(SCPlusStatesSimMsg), this->moduleID);
     if(this->InputStateID < 0 )
     {
-        BSK_PRINT(MSG_WARNING, "Failed to link an imu input message. State: %lld", this->InputStateID);
+        BSK_PRINT(MSG_WARNING, "Failed to link an imu input message. State: %" PRId64, this->InputStateID);
     }
 
     return;
@@ -293,7 +294,7 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
     
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
     this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);
-    for (uint64_t i = 0; i < this->numStates; i++){
+    for (int64_t i = 0; i < this->numStates; i++){
         if (this->omega_PN_P_out(i) != omega_PN_P_in(i)){
             this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt;
         }
@@ -301,7 +302,7 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
     
     Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
     this->accel_SN_P_out = this->aSat.saturate(accel_SN_P_in);
-    for (uint64_t i = 0; i < this->numStates; i++){
+    for (int64_t i = 0; i < this->numStates; i++){
         if (this->accel_SN_P_out(i) != accel_SN_P_in(i)){
             this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt;
         }

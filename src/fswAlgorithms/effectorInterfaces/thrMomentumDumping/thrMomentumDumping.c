@@ -34,7 +34,7 @@
  @return void
  @param configData The configuration data associated with this module
  */
-void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t moduleID)
+void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->thrusterOnTimeOutMsgId = CreateNewMessage(configData->thrusterOnTimeOutMsgName,
@@ -48,7 +48,7 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t 
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t moduleID)
+void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
     /*! - Get the message ID for the requested thruster impulse message */
     configData->thrusterImpulseInMsgId = subscribeToMessage(configData->thrusterImpulseInMsgName,
@@ -71,7 +71,7 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t
  @return void
  @param configData The configuration data associated with the module
  */
-void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
     CmdTorqueBodyIntMsg    DeltaHInMsg;
@@ -124,7 +124,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;

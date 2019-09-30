@@ -43,7 +43,7 @@
  @param configData The configuration data associated with the null space control
  @param moduleID The ID associated with the configData
  */
-void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
+void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
 {
     /* - Create output message for module */
     configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
@@ -58,7 +58,7 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the null space control
  @param moduleID The ID associated with the configData
- */void CrossInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
+ */void CrossInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
 {
     /* - Get the control data message ID*/
     configData->attRefInMsgID = subscribeToMessage(configData->attRefInMsgName,
@@ -80,7 +80,7 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     configData->priorTime = 0;
     v3SetZero(configData->priorCmdSet);
@@ -95,7 +95,7 @@ void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uin
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read input messages */
     AttRefFswMsg inputRef;

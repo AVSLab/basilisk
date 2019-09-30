@@ -31,7 +31,7 @@
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_sunlineUKF(SunlineUKFConfig *configData, uint64_t moduleID)
+void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
 {
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
@@ -50,7 +50,7 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS interface
  */
-void CrossInit_sunlineUKF(SunlineUKFConfig *configData, uint64_t moduleID)
+void CrossInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
 {
     /*! - Find the message ID for the coarse sun sensor data message */
     configData->cssDataInMsgId = subscribeToMessage(configData->cssDataInMsgName,
@@ -68,7 +68,7 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *configData, uint64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
-                      uint64_t moduleID)
+                      int64_t moduleID)
 {
     
     int32_t i;
@@ -152,7 +152,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     double newTimeTag;
     double yBar[MAX_N_CSS_MEAS];

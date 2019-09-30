@@ -40,7 +40,7 @@ void InitializeStorage(uint32_t StorageBytes)
  @param MaxSize The maximum size that a given message can be
  */
 int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruct,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     return((int32_t)SystemMessaging::GetInstance()->CreateNewMessage(
         MessageName, MaxSize, 2, MessageStruct, moduleID));
@@ -53,8 +53,8 @@ int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruc
  @param MsgSize The size of the message that we are writing
  @param MsgPayload A pointer to the message buffer that we are writing
  */
-int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSize,
-                     void *MsgPayload, uint64_t moduleID)
+int32_t WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSize,
+                     void *MsgPayload, int64_t moduleID)
 {
     return(SystemMessaging::GetInstance()->WriteMessage(MessageID, ClockTimeNanos,
         MsgSize,  reinterpret_cast<uint8_t*> (MsgPayload), moduleID));
@@ -69,7 +69,7 @@ int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSi
  @param WriteTime The time associated with the write we are reading
  @param WriteSize The number of bytes that get read out
  */
-int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize,
+int32_t ReadMessage(int64_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize,
                     uint32_t MaxBytes, void *MsgPayload, int64_t moduleID)
 {
     SingleMessageHeader LocalHeader;
@@ -102,7 +102,7 @@ int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
  @return Returns a pointer to the message name we find
  @param MessageID MEssage ID that we want to find the message name for
  */
-const char * FindMessageName(uint32_t MessageID)
+const char * FindMessageName(int64_t MessageID)
 {
     return(SystemMessaging::GetInstance()->FindMessageName(MessageID).c_str());
 }

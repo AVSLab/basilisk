@@ -31,7 +31,7 @@
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param moduleID The unique module identifier
  */
-void SelfInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID)
+void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
@@ -47,7 +47,7 @@ void SelfInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID)
  @param configData The configuration data associated with the attitude maneuver guidance
  @param moduleID The unique module identifier
  */
-void CrossInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID)
+void CrossInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 {
     configData->inputBurnCmdID = subscribeToMessage(configData->inputBurnDataName,
                                                     sizeof(DvBurnCmdFswMsg), moduleID);
@@ -62,7 +62,7 @@ void CrossInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID)
  @param moduleID The unique module identifier
  */
 void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-                       uint64_t moduleID)
+                       int64_t moduleID)
 {
     return;
 }
@@ -76,7 +76,7 @@ void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
  @param moduleID The unique module identifier
  */
 void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     double dcm_BubN[3][3];           /* dcm, inertial to base burn frame */
     double dcm_ButN[3][3];           /* dcm, inertial to current burn frame */

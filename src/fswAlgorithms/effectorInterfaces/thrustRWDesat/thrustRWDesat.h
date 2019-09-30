@@ -49,8 +49,8 @@ typedef struct {
 	double thrTorqueMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thruster torques*/
 	double maxFiring;          /*!< (s) Maximum time to fire a jet for*/
 	double thrFiringPeriod;    /*!< (s) The amount of time to rest between thruster firings*/
-	uint32_t numRWAs;          /*!< (-) Number of reaction wheels being desaturated*/
-	uint32_t numThrusters;     /*!< (-) Number of thrusters available in the align map*/
+	int    numRWAs;            /*!< (-) Number of reaction wheels being desaturated*/
+	int    numThrusters;       /*!< (-) Number of thrusters available in the align map*/
 	double accumulatedImp[3];  /*!< (s) The accumulated firing in the body frame*/
 	double currDMDir[3];       /*!< (-) The current direction of momentum reduction*/
 	double totalAccumFiring;   /*!< (s) The total thruster duration we've commanded*/
@@ -67,11 +67,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID);
-    void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID);
+    void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
+    void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
     void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
-	void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, uint64_t moduleID);
+        int64_t moduleID);
+	void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }

@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include "utilities/bsk_Print.h"
+#include <inttypes.h>
 
 /*!
  * This constructor for TheInstance just sets it NULL
@@ -63,16 +64,16 @@ SystemMessaging* SystemMessaging::GetInstance()
 
 /*!
  *
- * @return uint64_t bufferCount
+ * @return int64_t bufferCount
  * @param std::string bufferName
  */
-uint64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
+int64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
 {
-    uint64_t bufferCount;
+    int64_t bufferCount;
     MessageStorageContainer *newContainer = new MessageStorageContainer();
     newContainer->messageStorage.IncreaseStorage(sizeof(uint64_t)+20000);
     this->dataBuffers.push_back(newContainer);
-    bufferCount = this->dataBuffers.size() - 1;
+    bufferCount = (int64_t) this->dataBuffers.size() - 1;
     newContainer->bufferName = bufferName;
     this->messageStorage = *(this->dataBuffers.end()-1);
     this->SetNumMessages(0);
@@ -83,7 +84,7 @@ uint64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
  * @return void
  * @param uint64_t bufferUse
  */
-void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
+void SystemMessaging::selectMessageBuffer(int64_t bufferUse)
 {
     std::vector<MessageStorageContainer*>::iterator it;
     it = this->dataBuffers.begin();
@@ -173,9 +174,9 @@ int64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
  *  - (the size of a message + a single message header) * the number of buffers for that message
  * @return void
  */
-int64_t SystemMessaging::GetCurrentSize()
+uint64_t SystemMessaging::GetCurrentSize()
 {
-    int64_t TotalBufferSize = sizeof(int64_t); // -- The num-messages count;
+    uint64_t TotalBufferSize = sizeof(int64_t); // -- The num-messages count;
     MessageHeaderData *MessHeader = reinterpret_cast<MessageHeaderData *>
     (&this->messageStorage->messageStorage.StorageBuffer[sizeof(int64_t)]);
     int64_t TotalMessageCount = this->GetMessageCount();
@@ -221,7 +222,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     if(MessageName == "")
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %lld tried to create a message without a name.  Please try again.", moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %" PRId64 " tried to create a message without a name.  Please try again.", moduleID);
         this->CreateFails++;
         return(-1);
     }
@@ -237,9 +238,9 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     uint64_t InitSize = this->GetCurrentSize();
     uint64_t StorageRequired = InitSize + sizeof(MessageHeaderData) +
-    (MaxSize+sizeof(MessageHeaderData))*NumMessageBuffers;
+                            (MaxSize+sizeof(MessageHeaderData))*NumMessageBuffers;
     this->messageStorage->messageStorage.IncreaseStorage(StorageRequired);
-    uint8_t *MessagingStart = &(this->messageStorage->messageStorage.StorageBuffer[this->GetMessageCount()*
+    uint8_t *MessagingStart = &(this->messageStorage->messageStorage.StorageBuffer[(uint64_t) this->GetMessageCount()*
                                                               sizeof(MessageHeaderData) + sizeof(uint64_t)]);
     if(this->GetMessageCount() > 0)
     {
@@ -247,7 +248,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
         // message data to make room for a new MessageHeaderData
         uint8_t *NewMessagingStart = MessagingStart + sizeof(MessageHeaderData);
         memmove(NewMessagingStart, MessagingStart, InitSize -
-                this->GetMessageCount()*sizeof(MessageHeaderData));
+                (uint64_t) this->GetMessageCount()* sizeof(MessageHeaderData));
         memset(MessagingStart, 0x0, sizeof(MessageHeaderData));
         for(uint32_t i=0; i<this->GetMessageCount(); i++)
         {
@@ -422,8 +423,8 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
     // Check if the message is valid
     if(MessageID >= this->GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %llu "
-                                   " from ModuleID: %lld ", MessageID, moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %" PRId64
+                                   " from ModuleID: %" PRId64, MessageID, moduleID);
         this->WriteFails++;
         return(false);
     }
@@ -512,7 +513,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
 {
     if(MessageID >= this->GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID.  Value: %lld is larger than number of available messages.", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID.  Value: %" PRId64 " is larger than number of available messages.", MessageID);
         this->ReadFails++;
         return(false);
     }
@@ -537,7 +538,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
     if(accIt->accessList.find(moduleID) == accIt->accessList.end()
         && moduleID != -1)
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "Message %s was read by module ID %lld who is not on access list.", MsgHdr->MessageName, moduleID);
+        BSK_PRINT_BRIEF(MSG_WARNING, "Message %s was read by module ID %" PRId64 " who is not on access list.", MsgHdr->MessageName, moduleID);
     }
     
     exIt->exchangeList.insert(std::pair<long int, long int>
@@ -547,7 +548,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
                             StorageBuffer[MsgHdr->StartingOffset]);
     uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
     MsgHdr->MaxMessageSize;
-    this->AccessMessageData(ReadBuffer, MsgHdr->MaxMessageSize, CurrentIndex,
+    this->AccessMessageData(ReadBuffer, MsgHdr->MaxMessageSize, (uint64_t) CurrentIndex,
                       DataHeader, MaxOutputBytes, reinterpret_cast<uint8_t*>(MsgPayload));
     return(true);
 }
@@ -559,7 +560,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
 void SystemMessaging::PrintAllMessageData()
 {
     int64_t TotalMessageCount = this->GetMessageCount();
-    BSK_PRINT_BRIEF(MSG_INFORMATION, "Number of Messages: %lld ", TotalMessageCount);
+    BSK_PRINT_BRIEF(MSG_INFORMATION, "Number of Messages: %" PRId64, TotalMessageCount);
     for(int64_t i=0; i<TotalMessageCount; i++)
     {
         this->PrintMessageStats(i);
@@ -603,10 +604,10 @@ void SystemMessaging::PrintMessageStats(int64_t MessageID)
     MessageHeaderData* MsgHdr = this->FindMsgHeader(MessageID);
     if(MsgHdr == NULL)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a print request for ID: %llu That ID is not valid.", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a print request for ID: %" PRId64 " That ID is not valid.", MessageID);
         return;
     }
-    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %llu \n MsgSize: %llu \n NumberBuffers: %u\n MsgID: %llu",
+    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %" PRIu64 " \n MsgSize: %" PRIu64 " \n NumberBuffers: %u\n MsgID: %" PRId64,
               MsgHdr->MessageName, MsgHdr->UpdateCounter, MsgHdr->MaxMessageSize, MsgHdr->MaxNumberBuffers, MessageID);
 }
 
@@ -620,7 +621,7 @@ std::string SystemMessaging::FindMessageName(int64_t MessageID, int32_t bufferSe
 {
     if(MessageID >= this->GetMessageCount(bufferSelect))
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "WARING: Asked to find a message for invalid ID: %llu", MessageID);
+        BSK_PRINT_BRIEF(MSG_WARNING, "WARING: Asked to find a message for invalid ID: %" PRId64, MessageID);
     }
     MessageHeaderData* MsgHdr = this->FindMsgHeader(MessageID, bufferSelect);
     return(MsgHdr->MessageName);
@@ -651,7 +652,7 @@ int64_t SystemMessaging::FindMessageID(std::string MessageName, int32_t bufferSe
  * This method assigns a module ID to a new module and increments the NextModuleID counter
  * @return uint64_t nextModuleID the newly minted module ID
  */
-uint64_t SystemMessaging::checkoutModuleID()
+int64_t SystemMessaging::checkoutModuleID()
 {
     return(this->nextModuleID++);
 }

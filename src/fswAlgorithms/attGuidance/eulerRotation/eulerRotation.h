@@ -56,10 +56,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID);
-    void CrossInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID);
-    void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID);
-    void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
+    void CrossInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
+    void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     
     void checkRasterCommands(eulerRotationConfig *configData);
     void computeTimeStep(eulerRotationConfig *configData, uint64_t callTime);

@@ -51,9 +51,9 @@ typedef struct {
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output filter data message
     char opNavInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
     
-    int numStates;                //!< [-] Number of states for this filter
-    int countHalfSPs;             //!< [-] Number of sigma points over 2
-    int numObs;                   //!< [-] Number of measurements this cycle
+    size_t numStates;             //!< [-] Number of states for this filter
+    size_t countHalfSPs;          //!< [-] Number of sigma points over 2
+    size_t numObs;                //!< [-] Number of measurements this cycle
     double beta;                  //!< [-] Beta parameter for filter
     double alpha;                 //!< [-] Alpha parameter for filter
     double kappa;                 //!< [-] Kappa parameter for filter
@@ -107,12 +107,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId);
-    void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId);
+    void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId);
+    void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId);
     void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
-                            uint64_t moduleId);
+                            int64_t moduleId);
     void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
-                           uint64_t moduleId);
+                           int64_t moduleId);
     void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double mu, double *stateDeriv);
     int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime);
     int relODuKFMeasUpdate(RelODuKFConfig *configData);

@@ -73,7 +73,7 @@ void Spacecraft::addDockingPort(DockingData *newDockingPort)
     return;
 }
 
-void Spacecraft::SelfInitSC(uint64_t moduleID)
+void Spacecraft::SelfInitSC(int64_t moduleID)
 {
     this->scStateOutMsgName = this->spacecraftName + "_" + this->scStateOutMsgName;
     this->scMassStateOutMsgName = this->spacecraftName + "_" + this->scMassStateOutMsgName;
@@ -105,7 +105,7 @@ void Spacecraft::CrossInitSC()
     return;
 }
 
-void Spacecraft::writeOutputMessagesSC(uint64_t clockTime, uint64_t moduleID)
+void Spacecraft::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
 {
     // - Write output messages for each spacecraft
     // - Populate state output message

@@ -27,7 +27,7 @@
  @return void
  @param configData The configuration data associated with the vehcle config interface
  */
-void SelfInit_vehicleConfigData(VehConfigInputData *configData, uint64_t moduleID)
+void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
 
     /*! - Create the output message for the mass properties of the spacecraft*/
@@ -42,12 +42,12 @@ void SelfInit_vehicleConfigData(VehConfigInputData *configData, uint64_t moduleI
  @return void
  @param configData The configuration data associated with the veh config interface
  */
-void CrossInit_vehicleConfigData(VehConfigInputData *configData, uint64_t moduleID)
+void CrossInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
     /*! Nothing done in this method.  Make sure this is still true!*/
 }
 
-void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
 {
     VehicleConfigFswMsg localConfigData;
     /*! Begin function steps*/
@@ -72,7 +72,7 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
  @param configData The configuration data associated with the veh config module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! Nothing done in this method.  Make sure this is still true!*/
     return;

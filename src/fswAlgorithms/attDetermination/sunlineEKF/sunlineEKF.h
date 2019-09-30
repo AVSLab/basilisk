@@ -22,6 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
+#include <string.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
@@ -69,10 +70,10 @@ typedef struct {
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
     double CBias[MAX_NUM_CSS_SENSORS];       /*!< [-] CSS individual calibration coefficients */
 
-    uint32_t numStates;                /*!< [-] Number of states for this filter*/
+    size_t numStates;                /*!< [-] Number of states for this filter*/
     int numObs;                   /*!< [-] Number of measurements this cycle */
-    uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
-    uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
+    size_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
+    size_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     double eKFSwitch;       /*!< -- Max covariance element after which the filter switches to an EKF update*/
 	NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
@@ -87,12 +88,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunlineEKF(sunlineEKFConfig *configData, uint64_t moduleID);
-    void CrossInit_sunlineEKF(sunlineEKFConfig *configData, uint64_t moduleID);
+    void SelfInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID);
+    void CrossInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID);
 	void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
-		uint64_t moduleID);
+		int64_t moduleID);
     void Update_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
-                           uint64_t moduleID);
+                           int64_t moduleID);
 	void sunlineTimeUpdate(sunlineEKFConfig *configData, double updateTime);
     void sunlineMeasUpdate(sunlineEKFConfig *configData, double updateTime);
 	void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);

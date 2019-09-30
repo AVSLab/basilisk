@@ -135,13 +135,13 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId);
-    void CrossInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId);
-    void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleId);
+    void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId);
+    void CrossInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId);
+    void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId);
     void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-        uint64_t moduleId);
+        int64_t moduleId);
 	void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-		uint64_t moduleId);
+		int64_t moduleId);
     void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
                           double propTime, AccDataFswMsg *gyrData);
 	int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime);

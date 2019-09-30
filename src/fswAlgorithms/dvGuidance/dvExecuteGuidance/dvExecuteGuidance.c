@@ -30,7 +30,7 @@
  @return void
  @param configData The configuration data associated with the delta-V maneuver guidance
  */
-void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t moduleID)
+void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(
@@ -47,7 +47,7 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t mo
  @return void
  @param configData The configuration data associated with the attitude maneuver guidance
  */
-void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t moduleID)
+void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
 {
     /*configData->inputMPID = subscribeToMessage(configData->inputMassPropName, sizeof() <#int64_t moduleID#>)(configData->inputMassPropName);*/
     configData->inputNavID = subscribeToMessage(configData->inputNavDataName,
@@ -66,7 +66,7 @@ void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t m
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     double burnAccum[3];
     double dvExecuteMag;

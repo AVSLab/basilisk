@@ -30,7 +30,7 @@
  @return void
  @param configData The configuration data associated with the ephemeris model
  */
-void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, uint64_t moduleID)
+void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
     configData->posFitOutMsgID = CreateNewMessage(configData->posFitOutMsgName,
         sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
@@ -40,7 +40,7 @@ void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the ephemeris model
  */
-void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, uint64_t moduleID)
+void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
 
     configData->clockCorrInMsgID = subscribeToMessage(
@@ -56,7 +56,7 @@ void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, uint64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
-                         uint64_t moduleID)
+                         int64_t moduleID)
 {
 
     int i, j, k, n;
@@ -95,7 +95,7 @@ void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int64_t moduleID)
 {
 
     double currentEphTime;

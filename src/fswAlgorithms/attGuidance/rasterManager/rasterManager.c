@@ -39,7 +39,7 @@
 
 
 
-void SelfInit_rasterManager(rasterManagerConfig *configData, uint64_t moduleID)
+void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->AttStateOutMsgID = CreateNewMessage(configData->AttStateOutMsgName,
@@ -51,19 +51,19 @@ void SelfInit_rasterManager(rasterManagerConfig *configData, uint64_t moduleID)
     
 }
 
-void CrossInit_rasterManager(rasterManagerConfig *configData, uint64_t moduleID)
+void CrossInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
 }
 
-void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     configData->mnvrActive = 0;
     configData->scanSelector = 0;
 }
 
 
-void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t currentMnvrTime;
     configData->scanSelector = configData->scanSelector % configData->numRasters;

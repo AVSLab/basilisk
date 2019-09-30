@@ -32,7 +32,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID)
+void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
 {
     configData->stateOutMsgID = CreateNewMessage(configData->stateOutMsgName,
                                                  sizeof(NavTransIntMsg),
@@ -45,7 +45,7 @@ void SelfInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t modu
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void CrossInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID)
+void CrossInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
 {
     configData->ephInMsgID = subscribeToMessage(configData->ephInMsgName,
                                                 sizeof(EphemerisIntMsg),
@@ -58,7 +58,7 @@ void CrossInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t mod
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, int64_t moduleID)
 {
 
 }
@@ -70,7 +70,7 @@ void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;

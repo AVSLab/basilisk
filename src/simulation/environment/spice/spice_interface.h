@@ -69,7 +69,7 @@ public:
     std::string zeroBase;                //!< -- Base zero point to use for states
 	std::string timeOutPicture;          //!< -- Optional parameter used to extract time strings
     bool SPICELoaded;                    //!< -- Boolean indicating to reload spice
-    uint32_t charBufferSize;    //!< -- avert your eyes we're getting SPICE
+    int charBufferSize;    //!< -- avert your eyes we're getting SPICE
     uint8_t *spiceBuffer;       //!< -- General buffer to pass down to spice
     std::string UTCCalInit;     //!< -- UTC time string for init time
     std::string outputTimePort; //!< -- Output time sampling port name to use

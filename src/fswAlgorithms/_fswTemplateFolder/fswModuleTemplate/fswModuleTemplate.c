@@ -41,7 +41,7 @@
  @return void
  @param configData The configuration data associated with this module
  */
-void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID)
+void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
 {
     
     /*! - Create output message for module */
@@ -57,7 +57,7 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t mo
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID)
+void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
 {
     /*! - Get the ID of the subscribed input message */
     configData->dataInMsgID = subscribeToMessage(configData->dataInMsgName,
@@ -72,7 +72,7 @@ void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t m
  @return void
  @param configData The configuration data associated with the module
  */
-void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - reset any required variables */
     configData->dummy = 0.0;
@@ -84,7 +84,7 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;

@@ -33,7 +33,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
+void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->thrusterForceOutMsgId = CreateNewMessage(configData->outputDataName,
@@ -48,7 +48,7 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t module
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
+void CrossInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID)
 {
     /*! - subscribe to the attitude control torque input message */
     configData->controlTorqueInMsgId = subscribeToMessage(configData->inputVehControlName,
@@ -72,7 +72,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t modul
  @param configData The configuration data associated with the module
  @param moduleID The ID associated with the configData
  */
-void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     double             *pAxis;                  /* pointer to the current control axis */
     int                 i;
@@ -128,7 +128,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t    timeOfMsgWritten;
     uint32_t    sizeOfMsgWritten;

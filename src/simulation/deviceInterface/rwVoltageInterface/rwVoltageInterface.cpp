@@ -117,7 +117,7 @@ void RWVoltageInterface::computeRWMotorTorque()
  @return void
  */
 void RWVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
-    for (uint64_t i = 0; i < this->scaleFactor.rows(); i++)
+    for (int i = 0; i < this->scaleFactor.rows(); i++)
     {
         if (i < scaleFactors.rows()){
             this->scaleFactor(i) = scaleFactors(i);
@@ -133,7 +133,7 @@ void RWVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
  */
 void RWVoltageInterface::setGains(Eigen::VectorXd gains)
 {
-    for (uint64_t i = 0; i < this->voltage2TorqueGain.rows(); i++)
+    for (int i = 0; i < this->voltage2TorqueGain.rows(); i++)
     {
         if (i < gains.rows()){
             this->voltage2TorqueGain(i) = gains(i);
@@ -149,7 +149,7 @@ void RWVoltageInterface::setGains(Eigen::VectorXd gains)
  */
 void RWVoltageInterface::setBiases(Eigen::VectorXd biases)
 {
-    for (uint64_t i = 0; i < this->bias.rows(); i++)
+    for (int i = 0; i < this->bias.rows(); i++)
     {
         if (i < biases.rows()){
             this->bias(i) = biases(i);
@@ -166,7 +166,7 @@ void RWVoltageInterface::setBiases(Eigen::VectorXd biases)
  */
 void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    for (uint64_t i=0; i<MAX_EFF_CNT; i++) {
+    for (int i=0; i<MAX_EFF_CNT; i++) {
         this->outputRWTorqueBuffer.motorTorque[i] = this->rwTorque[i];
     }
     SystemMessaging::GetInstance()->WriteMessage(this->rwMotorTorqueOutMsgID, CurrentClock,

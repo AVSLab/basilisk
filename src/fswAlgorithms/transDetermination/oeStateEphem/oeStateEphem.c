@@ -34,7 +34,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
+void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 {
     configData->stateFitOutMsgId = CreateNewMessage(configData->stateFitOutMsgName,
         sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
@@ -45,7 +45,7 @@ void SelfInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void CrossInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
+void CrossInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 {
     configData->clockCorrInMsgId = subscribeToMessage(
         configData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
@@ -58,7 +58,7 @@ void CrossInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
  @param moduleID The module identification integer
  */
 void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
-                         uint64_t moduleID)
+                         int64_t moduleID)
 {
 
 }
@@ -71,7 +71,7 @@ void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
@@ -104,7 +104,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
         timeDifference = fabs(currentEphTime - configData->ephArray[i].ephemTimeMid);
         if(timeDifference < smallestTimeDifference)
         {
-            configData->coeffSelector = i;
+            configData->coeffSelector = (uint32_t) i;
             smallestTimeDifference = timeDifference;
         }
     }

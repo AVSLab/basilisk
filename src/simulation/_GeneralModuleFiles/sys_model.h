@@ -44,7 +44,7 @@ public:
     std::string ModelTag;  //!< -- name for the algorithm to base off of
     uint64_t CallCounts=0;  //!< -- Counts on the model being called
     uint32_t RNGSeed;  //!< -- Giving everyone a random seed for ease of MC
-    uint64_t moduleID;  //!< -- Module ID for this module  (handed out by messaging system)
+    int64_t moduleID;  //!< -- Module ID for this module  (handed out by messaging system)
 };
 
 /* @} */

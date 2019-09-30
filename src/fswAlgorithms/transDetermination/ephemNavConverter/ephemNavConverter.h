@@ -40,12 +40,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID);
-    void CrossInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID);
+    void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID);
+    void CrossInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID);
     void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
-        uint64_t moduleID);
+        int64_t moduleID);
     void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
-                              uint64_t moduleID);
+                              int64_t moduleID);
     
 #ifdef __cplusplus
 }
