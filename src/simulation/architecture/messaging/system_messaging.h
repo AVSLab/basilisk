@@ -105,11 +105,11 @@ class SystemMessaging
     
 public:
     static SystemMessaging* GetInstance();  //! -- returns a pointer to the sim instance of SystemMessaging
-    uint64_t AttachStorageBucket(std::string bufferName = "");  //! -- adds a new buffer to the messaging system
+    int64_t AttachStorageBucket(std::string bufferName = "");  //! -- adds a new buffer to the messaging system
     void SetNumMessages(int64_t MessageCount);  //! --updates message count in buffer header
     int64_t GetMessageCount(int32_t bufferSelect = -1);  //! --gets the number of messages in buffer bufferSelect
     void ClearMessageBuffer();  //! -- sets current buffer to zeros
-    int64_t GetCurrentSize();  //! -- returns size of current buffer
+    uint64_t GetCurrentSize();  //! -- returns size of current buffer
     int64_t CreateNewMessage(std::string MessageName, uint64_t MaxSize,
         uint64_t NumMessageBuffers = 2, std::string messageStruct = "", int64_t moduleID = -1);
     bool WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos, uint64_t MsgSize,

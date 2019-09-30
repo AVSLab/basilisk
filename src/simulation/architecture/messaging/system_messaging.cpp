@@ -64,16 +64,16 @@ SystemMessaging* SystemMessaging::GetInstance()
 
 /*!
  *
- * @return uint64_t bufferCount
+ * @return int64_t bufferCount
  * @param std::string bufferName
  */
-uint64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
+int64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
 {
-    uint64_t bufferCount;
+    int64_t bufferCount;
     MessageStorageContainer *newContainer = new MessageStorageContainer();
     newContainer->messageStorage.IncreaseStorage(sizeof(uint64_t)+20000);
     this->dataBuffers.push_back(newContainer);
-    bufferCount = this->dataBuffers.size() - 1;
+    bufferCount = (int64_t) this->dataBuffers.size() - 1;
     newContainer->bufferName = bufferName;
     this->messageStorage = *(this->dataBuffers.end()-1);
     this->SetNumMessages(0);
@@ -174,9 +174,9 @@ int64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
  *  - (the size of a message + a single message header) * the number of buffers for that message
  * @return void
  */
-int64_t SystemMessaging::GetCurrentSize()
+uint64_t SystemMessaging::GetCurrentSize()
 {
-    int64_t TotalBufferSize = sizeof(int64_t); // -- The num-messages count;
+    uint64_t TotalBufferSize = sizeof(int64_t); // -- The num-messages count;
     MessageHeaderData *MessHeader = reinterpret_cast<MessageHeaderData *>
     (&this->messageStorage->messageStorage.StorageBuffer[sizeof(int64_t)]);
     int64_t TotalMessageCount = this->GetMessageCount();
@@ -240,7 +240,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     uint64_t StorageRequired = InitSize + sizeof(MessageHeaderData) +
                             (MaxSize+sizeof(MessageHeaderData))*NumMessageBuffers;
     this->messageStorage->messageStorage.IncreaseStorage(StorageRequired);
-    uint8_t *MessagingStart = &(this->messageStorage->messageStorage.StorageBuffer[this->GetMessageCount()*
+    uint8_t *MessagingStart = &(this->messageStorage->messageStorage.StorageBuffer[(uint64_t) this->GetMessageCount()*
                                                               sizeof(MessageHeaderData) + sizeof(uint64_t)]);
     if(this->GetMessageCount() > 0)
     {
@@ -248,7 +248,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
         // message data to make room for a new MessageHeaderData
         uint8_t *NewMessagingStart = MessagingStart + sizeof(MessageHeaderData);
         memmove(NewMessagingStart, MessagingStart, InitSize -
-                this->GetMessageCount()*sizeof(MessageHeaderData));
+                (uint64_t) this->GetMessageCount()* sizeof(MessageHeaderData));
         memset(MessagingStart, 0x0, sizeof(MessageHeaderData));
         for(uint32_t i=0; i<this->GetMessageCount(); i++)
         {
@@ -548,7 +548,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
                             StorageBuffer[MsgHdr->StartingOffset]);
     uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
     MsgHdr->MaxMessageSize;
-    this->AccessMessageData(ReadBuffer, MsgHdr->MaxMessageSize, CurrentIndex,
+    this->AccessMessageData(ReadBuffer, MsgHdr->MaxMessageSize, (uint64_t) CurrentIndex,
                       DataHeader, MaxOutputBytes, reinterpret_cast<uint8_t*>(MsgPayload));
     return(true);
 }
