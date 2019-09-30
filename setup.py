@@ -159,7 +159,7 @@ else:
 
 setup(
     name='Basilisk',
-    version='0.9.1',
+    version='1.0.0',
     description="Astrodynamic Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),
@@ -169,7 +169,8 @@ setup(
     package_dir={'': package_dir},
     install_requires=[
         'matplotlib',
-        'numpy'
+        'numpy',
+        'pandas'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'flake8'],
