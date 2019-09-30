@@ -84,12 +84,12 @@ public:
 	RWSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
     std::string nameOfReactionWheelOmegasState;
     std::string nameOfReactionWheelThetasState;
-	int numRW;
-	int numRWJitter;
+	size_t numRW;
+	size_t numRWJitter;
 
 private:
 	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW
-	std::vector<uint64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
+	std::vector<int64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
 	int64_t CmdsInMsgID;                                        //!< -- Message ID for incoming data
 	int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
 	RWArrayTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings

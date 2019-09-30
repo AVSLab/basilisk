@@ -347,7 +347,9 @@ void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
 void sunlineMeasUpdate(sunlineSEKFConfig *configData, double updateTime)
 {
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(configData->state, configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B, configData->obs, configData->yMeas, &(configData->numObs), configData->measMat);
+    int numObsInt = (int) configData->numObs;
+    sunlineHMatrixYMeas(configData->state, configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B, configData->obs, configData->yMeas, &(numObsInt), configData->measMat);
+    configData->numObs = (size_t) numObsInt;
     
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
@@ -377,7 +379,7 @@ void sunlineMeasUpdate(sunlineSEKFConfig *configData, double updateTime)
  @param covar Pointer to the covariance after update
  */
 
-void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH], double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *x, double *covar)
+void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH], double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, size_t numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *x, double *covar)
 {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[EKF_N_STATES_SWITCH];
     double eye[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], kH[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];
@@ -436,7 +438,7 @@ void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH], double kalmanGain[EKF_N_
  @param x Pointer to the state error for modification
  @param covar Pointer to the covariance after update
  */
-void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *states, double *x, double *covar)
+void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, size_t numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *states, double *x, double *covar)
 {
 
     double eye[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], kH[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];
@@ -497,7 +499,7 @@ void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], do
  @param measMat Point to the H measurement matrix
  */
 
-void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat)
+void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], size_t numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat)
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
@@ -519,7 +521,7 @@ void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], int numCSS, double 
             obsCounter++;
         }
     }
-    *numObs = obsCounter;
+    *numObs = (int) obsCounter;
 }
 
 
@@ -534,7 +536,7 @@ void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], int numCSS, double 
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double qObsVal, int numObs, double *kalmanGain)
+void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double qObsVal, size_t numObs, double *kalmanGain)
 {
     double hObsT[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
     double covHT[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];

@@ -366,7 +366,7 @@ void ReactionWheelStateEffector::SelfInit()
 	NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
 
 	// Reserve a message ID for each reaction wheel config output message
-	uint64_t tmpWheeltMsgId;
+	int64_t tmpWheeltMsgId;
 	std::string tmpWheelMsgName;
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
@@ -531,7 +531,7 @@ void ReactionWheelStateEffector::ReadInputs()
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
 	std::vector<RWCmdSimMsg>::iterator CmdIt;
-	int RWIter = 0;
+	uint RWIter = 0;
 
 	// loop through commands
 	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
