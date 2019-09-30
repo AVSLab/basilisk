@@ -230,9 +230,6 @@ def run(show_plots, integratorCase):
     b = oe.a*np.sqrt(1-oe.e*oe.e)
     p = oe.a*(1-oe.e*oe.e)
     plt.figure(1,figsize=np.array((1.0, b/oe.a))*4.75,dpi=100)
-    print(b)
-    print(-oe.rApoap)
-    print(oe.rPeriap)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)
     # draw the planet
     fig = plt.gcf()
@@ -292,5 +289,5 @@ def run(show_plots, integratorCase):
 #
 if __name__ == "__main__":
     run(
-        True,        # show_plots
-        'rk4')       # integrator case(0 - RK4, 1 - Euler, 2 - RK2)
+        False,        # show_plots
+        'rk2')       # integrator case(0 - rk4, 1 - euler, 2 - rk2)
