@@ -42,12 +42,12 @@ uint64_t testGaussMarkov()
     errorModel.setPropMatrix(propIn);
     errorModel.setNoiseMatrix(covar);
     errorModel.setUpperBounds(bounds);
-    uint64_t numPts = 100000;
+    int64_t numPts = 100000;
     
     Eigen::MatrixXd noiseOut;
     noiseOut.resize(2, numPts);
     
-    for(uint64_t i = 0; i < numPts; i++){
+    for(int64_t i = 0; i < numPts; i++){
         errorModel.computeNextState();
         noiseOut.block(0, i, 2, 1) = errorModel.getCurrentState();
     }
@@ -85,7 +85,7 @@ uint64_t testGaussMarkov()
     
     noiseOut.resize(2,numPts);
     
-    for(uint64_t i = 0; i < numPts; i++){
+    for(int64_t i = 0; i < numPts; i++){
         errorModel.computeNextState();
         noiseOut.block(0, i, 2, 1) = errorModel.getCurrentState();
         if (noiseOut(0,i) > maxOut(0)){
@@ -112,7 +112,7 @@ uint64_t testGaussMarkov()
     
 }
 
-Eigen::Vector2d calculateSD(Eigen::MatrixXd dat, uint64_t numPts)
+Eigen::Vector2d calculateSD(Eigen::MatrixXd dat, int64_t numPts)
 {
     
     Eigen::Vector2d sum = dat.rowwise().sum();

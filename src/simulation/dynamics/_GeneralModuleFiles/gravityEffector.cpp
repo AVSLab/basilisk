@@ -286,7 +286,7 @@ GravBodyData::~GravBodyData()
     
 }
 
-void GravBodyData::initBody(uint64_t moduleID)
+void GravBodyData::initBody(int64_t moduleID)
 {
     bool spherFound;
     spherFound = this->spherHarm.initializeParameters();
@@ -329,7 +329,7 @@ double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
     return gravPotentialEnergyOut;
 }
 
-void GravBodyData::loadEphemeris(uint64_t moduleID)
+void GravBodyData::loadEphemeris(int64_t moduleID)
 {
     SystemMessaging::GetInstance()->ReadMessage(this->bodyMsgID, &this->localHeader,
         sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t *>(&this->localPlanet));

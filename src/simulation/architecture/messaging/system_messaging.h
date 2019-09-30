@@ -63,7 +63,7 @@ typedef struct {
  * Used to store permissions info for messages.
  */
 typedef struct {
-    std::set<uint64_t> accessList; //! (-) List of modules who are allowed to read/write message
+    std::set<int64_t> accessList;  //! (-) List of modules who are allowed to read/write message
     bool publishedHere;            //! (-) Indicator about whether or not the message is published in this proc. buffer
 }AllowAccessData;
 
@@ -126,7 +126,7 @@ public:
     int64_t FindMessageID(std::string MessageName, int32_t bufferSelect=-1);  //! -- searches only the selected buffer
     int64_t subscribeToMessage(std::string messageName, uint64_t messageSize,
         int64_t moduleID);
-    uint64_t checkoutModuleID();  //! -- Assigns next integer module ID
+    int64_t checkoutModuleID();  //! -- Assigns next integer module ID
     void selectMessageBuffer(int64_t bufferUse);  //! -- sets a default buffer for everything to use
     uint64_t getProcessCount() {return(this->dataBuffers.size());}
     MessageIdentData messagePublishSearch(std::string messageName);  //! -- returns MessageIdentData if found
@@ -153,7 +153,7 @@ private:
     uint64_t WriteFails;  //! the number of times we tried to write invalidly
     uint64_t ReadFails;  //! the number of times we tried to read invalidly
     uint64_t CreateFails;  //! the number of times we tried to create invalidly
-    uint64_t nextModuleID;  //! the next module ID to give out when a module comes online
+    int64_t nextModuleID;  //! the next module ID to give out when a module comes online
 };
 
 /* @} */

@@ -43,9 +43,9 @@ Eigen::VectorXd Saturate::saturate(Eigen::VectorXd unsaturatedStates)
 {
     Eigen::VectorXd workingStates;
     workingStates.resize(this->numStates);
-    for (uint64_t i = 0; i < this->numStates; i++){
-        workingStates[i] = std::min(unsaturatedStates[i], this->stateBounds(i, 1));
-        workingStates[i] = std::max(workingStates[i], this->stateBounds(i, 0));
+    for (int64_t i = 0; i < this->numStates; i++){
+        workingStates[(int) i] = std::min(unsaturatedStates[i], this->stateBounds(i, 1));
+        workingStates[(int) i] = std::max(workingStates[i], this->stateBounds(i, 0));
     }
     return workingStates;
 

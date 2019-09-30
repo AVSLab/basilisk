@@ -72,10 +72,10 @@ public:
     GravBodyData();
     ~GravBodyData();
     
-    void initBody(uint64_t moduleID); //!<        Method to initialize the gravity body
+    void initBody(int64_t moduleID); //!<        Method to initialize the gravity body
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
     double computePotentialEnergy(Eigen::Vector3d r_I);
-    void loadEphemeris(uint64_t moduleID); //!< Command to load the ephemeris data
+    void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
     
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center

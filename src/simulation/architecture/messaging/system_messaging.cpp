@@ -652,7 +652,7 @@ int64_t SystemMessaging::FindMessageID(std::string MessageName, int32_t bufferSe
  * This method assigns a module ID to a new module and increments the NextModuleID counter
  * @return uint64_t nextModuleID the newly minted module ID
  */
-uint64_t SystemMessaging::checkoutModuleID()
+int64_t SystemMessaging::checkoutModuleID()
 {
     return(this->nextModuleID++);
 }
