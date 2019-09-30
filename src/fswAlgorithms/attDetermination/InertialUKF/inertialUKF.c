@@ -444,17 +444,17 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	{
         /*! - Adding covariance columns from sigma points*/
 		Index = i + 1;
-		spPtr = &(configData->SP[Index*configData->numStates]);
-		vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+		spPtr = &(configData->SP[Index* (int) configData->numStates]);
+		vCopy(&sBarT[i* (int) configData->numStates], configData->numStates, spPtr);
 		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
 		vAdd(spPtr, configData->numStates, configData->state, spPtr);
 		inertialStateProp(configData, spPtr, configData->dt);
 		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
 		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 		/*! - Subtracting covariance columns from sigma points*/
-		Index = i + 1 + configData->countHalfSPs;
-        spPtr = &(configData->SP[Index*configData->numStates]);
-        vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+		Index = i + 1 + (int) configData->countHalfSPs;
+        spPtr = &(configData->SP[Index* (int) configData->numStates]);
+        vCopy(&sBarT[i* (int) configData->numStates], configData->numStates, spPtr);
         vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
         vAdd(spPtr, configData->numStates, configData->state, spPtr);
         inertialStateProp(configData, spPtr, configData->dt);
@@ -471,13 +471,13 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	{
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
-             &(configData->SP[(i+1)*configData->numStates]), aRow);
+             &(configData->SP[(i+1)* (int) configData->numStates]), aRow);
         /*Check sign of wC to know if the sqrt will fail*/
         if (configData->wC[i+1]<=0){
             inertialUKFCleanUpdate(configData);
             return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
-		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
+		memcpy((void *)&AT[i* (int) configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
         
 	}
@@ -599,7 +599,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
         measTime = gyrData->accPkts[i].measTime*NANO2SEC;
         if(measTime > prevTime && (measTime < minFutTime || minFutTime < 0.0))
         {
-            minFutInd = i;
+            minFutInd = (uint32_t) i;
             minFutTime = measTime;
         }
     }
@@ -638,7 +638,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
     }
     /*! - Saved the measurement count and convert the euler parameters to MRP 
           as that is our filter representation*/
-    configData->numUsedGyros = i;
+    configData->numUsedGyros = (uint32_t) i;
     EP2MRP(ep_BpropB0, configData->aggSigma_b2b1);
     
     return;

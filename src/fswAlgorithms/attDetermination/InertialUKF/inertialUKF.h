@@ -30,6 +30,7 @@
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
 #include "simulation/utilities/signalCondition.h"
 #include <stdint.h>
+#include <string.h>
 
 
 /*! \defgroup inertialUKF
@@ -64,9 +65,9 @@ typedef struct {
     char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
     char gyrBuffInMsgName[MAX_STAT_MSG_LENGTH];   //!< [-] Input message buffer from MIRU
 
-	int numStates;                //!< [-] Number of states for this filter
-	int countHalfSPs;             //!< [-] Number of sigma points over 2
-	int numObs;                   //!< [-] Number of measurements this cycle
+	size_t numStates;             //!< [-] Number of states for this filter
+	size_t countHalfSPs;          //!< [-] Number of sigma points over 2
+	size_t numObs;                //!< [-] Number of measurements this cycle
 	double beta;                  //!< [-] Beta parameter for filter
 	double alpha;                 //!< [-] Alpha parameter for filter
 	double kappa;                 //!< [-] Kappa parameter for filter

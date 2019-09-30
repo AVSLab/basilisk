@@ -141,7 +141,7 @@ public:
 
     uint64_t numOutputBuffers;                  //! [-] Number of buffers to request for the output messages
     
-    uint64_t FrameNumber;                       //! Number of frames that have been updated for TimeStamp message
+    int64_t FrameNumber;                        //! Number of frames that have been updated for TimeStamp message
     std::string protoFilename;                  //! Filename for where to save the protobuff message
     int numRW;                                  //! [-] Number of RW set in python
     int numThr;                                 //! [-] Number of Thrusters set in python
