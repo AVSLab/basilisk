@@ -22,6 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
+#include <string.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
@@ -50,9 +51,9 @@ typedef struct {
     char cssDataInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the Input message
     char cssConfigInMsgName[MAX_STAT_MSG_LENGTH];//!< [-] The name of the CSS configuration message
     
-	int numStates;                              //!< [-] Number of states for this filter
-	int countHalfSPs;                           //!< [-] Number of sigma points over 2
-	int numObs;                                 //!< [-] Number of measurements this cycle
+	size_t numStates;                           //!< [-] Number of states for this filter
+	size_t countHalfSPs;                        //!< [-] Number of sigma points over 2
+	size_t numObs;                              //!< [-] Number of measurements this cycle
 	double beta;                                //!< [-] Beta parameter for filter
 	double alpha;                               //!< [-] Alpha parameter for filter
 	double kappa;                               //!< [-] Kappa parameter for filter

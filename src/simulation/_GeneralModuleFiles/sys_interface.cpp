@@ -272,10 +272,10 @@ void SysInterface::connectInterfaces()
 /*!
  * Routes messages. Only if the interface is active. If interfaces are not
  * linked, then they are connected first.
- * @param uint64_t processBuffer not used
+ * @param int64_t processBuffer not used
  * @return void
  */
-void SysInterface::routeInputs(uint64_t processBuffer)
+void SysInterface::routeInputs(int64_t processBuffer)
 {
     std::vector<InterfaceDataExchange*>::iterator it;
     

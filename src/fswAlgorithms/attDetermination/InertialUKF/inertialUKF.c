@@ -30,7 +30,7 @@
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId)
+void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
     /*! - Create output message for module */
 	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
@@ -45,7 +45,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId)
  @return void
  @param configData The configuration data associated with the CSS interface
  */
-void CrossInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId)
+void CrossInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
     /*! - Find the message ID for the coarse sun sensor data message */
     int i;
@@ -74,7 +74,7 @@ void CrossInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-                      uint64_t moduleId)
+                      int64_t moduleId)
 {
     
     int32_t i;
@@ -164,7 +164,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the CSS estimator
  */
-void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleId)
+void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
 {
     uint64_t timeOfMsgWritten; /* [ns] Read time when the message was written*/
     uint32_t sizeOfMsgWritten;  /* [-] Non-zero size indicates we received ST msg*/
@@ -210,7 +210,7 @@ void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleId)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-    uint64_t moduleId)
+    int64_t moduleId)
 {
     double newTimeTag;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/

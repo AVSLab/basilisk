@@ -104,7 +104,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
         timeDifference = fabs(currentEphTime - configData->ephArray[i].ephemTimeMid);
         if(timeDifference < smallestTimeDifference)
         {
-            configData->coeffSelector = i;
+            configData->coeffSelector = (uint32_t) i;
             smallestTimeDifference = timeDifference;
         }
     }

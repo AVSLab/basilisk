@@ -101,18 +101,18 @@ void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
     configData->numObs = MAX_N_CSS_MEAS;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
-    vSetZero(configData->obs, configData->numObs);
-    vSetZero(configData->yMeas, configData->numObs);
+    vSetZero(configData->obs, (size_t) configData->numObs);
+    vSetZero(configData->yMeas, (size_t) configData->numObs);
     vSetZero(configData->xBar, configData->numStates);
     mSetZero(configData->covarBar, configData->numStates, configData->numStates);
     
     mSetIdentity(configData->stateTransition, configData->numStates, configData->numStates);
 
     mSetZero(configData->dynMat, configData->numStates, configData->numStates);
-    mSetZero(configData->measMat, configData->numObs, configData->numStates);
-    mSetZero(configData->kalmanGain, configData->numStates, configData->numObs);
+    mSetZero(configData->measMat, (size_t) configData->numObs, configData->numStates);
+    mSetZero(configData->kalmanGain, configData->numStates, (size_t) configData->numObs);
     
-    mSetZero(configData->measNoise, configData->numObs, configData->numObs);
+    mSetZero(configData->measNoise, (size_t) configData->numObs, (size_t) configData->numObs);
     mSetIdentity(configData->procNoise,  configData->numStates/2, configData->numStates/2);
     mScale(configData->qProcVal, configData->procNoise, configData->numStates/2, configData->numStates/2, configData->procNoise);
     
@@ -162,8 +162,8 @@ void Update_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
     }
     
     /* Compute post fit residuals once that data has been processed */
-    mMultM(configData->measMat, configData->numObs, SKF_N_STATES, configData->x, SKF_N_STATES, 1, Hx);
-    mSubtract(configData->yMeas, configData->numObs, 1, Hx, configData->postFits);
+    mMultM(configData->measMat, (size_t) configData->numObs, SKF_N_STATES, configData->x, SKF_N_STATES, 1, Hx);
+    mSubtract(configData->yMeas, (size_t) configData->numObs, 1, Hx, configData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(configData->state, configData->outputSunline.vehSunPntBdy);
@@ -397,17 +397,17 @@ void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*
     mSetZero(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES);
     
     /* Set noise matrix given number of observations */
-    mSetIdentity(noiseMat, numObs, numObs);
-    mScale(qObsVal, noiseMat, numObs, numObs, noiseMat);
+    mSetIdentity(noiseMat, (size_t) numObs, (size_t) numObs);
+    mScale(qObsVal, noiseMat, (size_t) numObs, (size_t) numObs, noiseMat);
     
     /*! - Compute innovation, multiply it my Kalman Gain, and add it to xBar*/
-    mMultM(hObs, numObs, SKF_N_STATES, xBar, SKF_N_STATES, 1, measMatx);
-    vSubtract(yObs, numObs, measMatx, innov);
-    mMultM(kalmanGain, SKF_N_STATES, numObs, innov, numObs, 1, kInnov);
+    mMultM(hObs, (size_t) numObs, SKF_N_STATES, xBar, SKF_N_STATES, 1, measMatx);
+    vSubtract(yObs, (size_t) numObs, measMatx, innov);
+    mMultM(kalmanGain, SKF_N_STATES, (size_t) numObs, innov, (size_t) numObs, 1, kInnov);
     vAdd(xBar, SKF_N_STATES, kInnov, x);
     
     /*! - Compute new covariance with Joseph's method*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, hObs, numObs, SKF_N_STATES, kH);
+    mMultM(kalmanGain, SKF_N_STATES, (size_t) numObs, hObs, (size_t) numObs, SKF_N_STATES, kH);
     mSetIdentity(eye, SKF_N_STATES, SKF_N_STATES);
     mSubtract(eye, SKF_N_STATES, SKF_N_STATES, kH, eyeKalH);
     mTranspose(eyeKalH, SKF_N_STATES, SKF_N_STATES, eyeKalHT);
@@ -415,9 +415,9 @@ void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*
     mMultM(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHT, SKF_N_STATES, SKF_N_STATES, covar);
     
     /* Add noise to the covariance*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, noiseMat, numObs, numObs, kalR);
-    mTranspose(kalmanGain, SKF_N_STATES, numObs, kalT);
-    mMultM(kalR, SKF_N_STATES, numObs, kalT, numObs, SKF_N_STATES, kalRKalT);
+    mMultM(kalmanGain, SKF_N_STATES, (size_t) numObs, noiseMat, (size_t) numObs, (size_t) numObs, kalR);
+    mTranspose(kalmanGain, SKF_N_STATES, (size_t) numObs, kalT);
+    mMultM(kalR, SKF_N_STATES, (size_t) numObs, kalT, (size_t) numObs, SKF_N_STATES, kalRKalT);
     mAdd(covar, SKF_N_STATES, SKF_N_STATES, kalRKalT, covar);
     
     
@@ -456,17 +456,17 @@ void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double cov
     mSetZero(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES);
     
     /* Set noise matrix given number of observations */
-    mSetIdentity(noiseMat, numObs, numObs);
-    mScale(qObsVal, noiseMat, numObs, numObs, noiseMat);
+    mSetIdentity(noiseMat, (size_t) numObs, (size_t) numObs);
+    mScale(qObsVal, noiseMat, (size_t) numObs, (size_t) numObs, noiseMat);
     
     /*! - Update the state error*/
-    mMultV(kalmanGain, SKF_N_STATES, numObs, yObs, x);
+    mMultV(kalmanGain, SKF_N_STATES, (size_t) numObs, yObs, x);
 
     /*! - Change the reference state*/
     vAdd(states, SKF_N_STATES, x, states);
     
     /*! - Compute new covariance with Joseph's method*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, hObs, numObs, SKF_N_STATES, kH);
+    mMultM(kalmanGain, SKF_N_STATES, (size_t) numObs, hObs, (size_t) numObs, SKF_N_STATES, kH);
     mSetIdentity(eye, SKF_N_STATES, SKF_N_STATES);
     mSubtract(eye, SKF_N_STATES, SKF_N_STATES, kH, eyeKalH);
     mTranspose(eyeKalH, SKF_N_STATES, SKF_N_STATES, eyeKalHT);
@@ -474,9 +474,9 @@ void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double cov
     mMultM(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHT, SKF_N_STATES, SKF_N_STATES, covar);
     
     /* Add noise to the covariance*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, noiseMat, numObs, numObs, kalR);
-    mTranspose(kalmanGain, SKF_N_STATES, numObs, kalT);
-    mMultM(kalR, SKF_N_STATES, numObs, kalT, numObs, SKF_N_STATES, kalRKalT);
+    mMultM(kalmanGain, SKF_N_STATES, (size_t) numObs, noiseMat, (size_t) numObs, (size_t) numObs, kalR);
+    mTranspose(kalmanGain, SKF_N_STATES, (size_t) numObs, kalT);
+    mMultM(kalR, SKF_N_STATES, (size_t) numObs, kalT, (size_t) numObs, SKF_N_STATES, kalRKalT);
     mAdd(covar, SKF_N_STATES, SKF_N_STATES, kalRKalT, covar);
     
 }
@@ -519,7 +519,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
             obsCounter++;
         }
     }
-    *numObs = obsCounter;
+    *numObs = (int) obsCounter;
 }
 
 
@@ -548,23 +548,23 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[M
     mSetZero(hCovarHT, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
     mSetZero(rMat, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
     
-    mTranspose(hObs, numObs, SKF_N_STATES, hObsT);
+    mTranspose(hObs, (size_t) numObs, SKF_N_STATES, hObsT);
     
-    mMultM(covarBar, SKF_N_STATES, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, covHT);
-    mMultM(hObs, numObs, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, hCovar);
-    mMultM(hCovar, numObs, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, hCovarHT);
+    mMultM(covarBar, SKF_N_STATES, SKF_N_STATES, hObsT, SKF_N_STATES, (size_t) numObs, covHT);
+    mMultM(hObs, (size_t) numObs, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, hCovar);
+    mMultM(hCovar, (size_t) numObs, SKF_N_STATES, hObsT, SKF_N_STATES, (size_t) numObs, hCovarHT);
     
-    mSetIdentity(rMat, numObs, numObs);
-    mScale(qObsVal, rMat, numObs, numObs, rMat);
+    mSetIdentity(rMat, (size_t) (size_t) numObs, (size_t) numObs);
+    mScale(qObsVal, rMat, (size_t) numObs, (size_t) numObs, rMat);
     
     /*! - Add measurement noise */
-    mAdd(hCovarHT, numObs, numObs, rMat, hCovarHT);
+    mAdd(hCovarHT, (size_t) numObs, (size_t) numObs, rMat, hCovarHT);
     
     /*! - Invert the previous matrix */
-    mInverse(hCovarHT, numObs, hCovarHT);
+    mInverse(hCovarHT, (size_t) numObs, hCovarHT);
     
     /*! - Compute the Kalman Gain */
-    mMultM(covHT, SKF_N_STATES, numObs, hCovarHT, numObs, numObs, kalmanGain);
+    mMultM(covHT, SKF_N_STATES, (size_t) numObs, hCovarHT, (size_t) numObs, (size_t) numObs, kalmanGain);
     
 }
 

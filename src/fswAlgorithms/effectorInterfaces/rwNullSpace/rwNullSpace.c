@@ -81,12 +81,12 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                 sizeof(RWConstellationFswMsg), (void *) &localRWData, moduleID);
 
     /*! -# create the 3xN [Gs] RW spin axis projection matrix */
-    configData->numWheels = localRWData.numRW;
+    configData->numWheels = (uint32_t) localRWData.numRW;
     for(i=0; i<configData->numWheels; i=i+1)
     {
         for(j=0; j<3; j=j+1)
         {
-            GsMatrix[j*configData->numWheels+i] = localRWData.reactionWheels[i].gsHat_B[j];
+            GsMatrix[j*(int) configData->numWheels+i] = localRWData.reactionWheels[i].gsHat_B[j];
         }
     }
 

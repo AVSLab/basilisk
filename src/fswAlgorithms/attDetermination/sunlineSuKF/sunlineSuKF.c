@@ -169,7 +169,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     double tempYVec[MAX_N_CSS_MEAS];
     double sunheading_hat[3];
     double states_BN[SKF_N_STATES_SWITCH];
-    int i;
+    uint64_t i;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     SunlineFilterFswMsg sunlineDataOutBuffer;
@@ -314,7 +314,8 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 */
 int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
-	int i, Index, badUpdate;
+    int64_t i;
+    int Index, badUpdate;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH)*SKF_N_STATES_SWITCH];
 	double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH]; 
@@ -344,17 +345,17 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 	for (i = 0; i<configData->countHalfSPs; i++)
 	{
 		Index = i + 1;
-		spPtr = &(configData->SP[Index*configData->numStates]);
-		vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+		spPtr = &(configData->SP[Index*(int)configData->numStates]);
+		vCopy(&sBarT[i*(int)configData->numStates], configData->numStates, spPtr);
 		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
 		vAdd(spPtr, configData->numStates, configData->state, spPtr);
 		sunlineStateProp(spPtr, configData->bVec_B, configData->dt);
 		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
 		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 		
-		Index = i + 1 + configData->countHalfSPs;
-        spPtr = &(configData->SP[Index*configData->numStates]);
-        vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+		Index = i + 1 + (int) configData->countHalfSPs;
+        spPtr = &(configData->SP[Index*(int)configData->numStates]);
+        vCopy(&sBarT[i*(int) configData->numStates], configData->numStates, spPtr);
         vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
         vAdd(spPtr, configData->numStates, configData->state, spPtr);
         sunlineStateProp(spPtr, configData->bVec_B, configData->dt);
@@ -372,10 +373,10 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 		
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
-             &(configData->SP[(i+1)*configData->numStates]), aRow);
+             &(configData->SP[(i+1)*(int) configData->numStates]), aRow);
         if (configData->wC[i+1] <0){return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
-		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
+		memcpy((void *)&AT[i*(int) configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
 	}
     /*! - Scale sQNoise matrix depending on the number of measurements*/

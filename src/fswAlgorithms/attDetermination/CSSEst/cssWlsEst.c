@@ -151,13 +151,13 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
         mMultV(m32, 3, 2, y, x);
     } else if(numActiveCss > 2) {/*! - If we have more than 2, do true LSQ fit*/
         /*!    -# Use the weights to compute (HtWH)^-1HW*/
-        mtMultM(H, numActiveCss, 3, W, numActiveCss, numActiveCss, m3N);
-        mMultM(m3N, 3, numActiveCss, H, numActiveCss, 3, m33);
+        mtMultM(H, (size_t) numActiveCss, 3, W, (size_t) numActiveCss, (size_t) numActiveCss, m3N);
+        mMultM(m3N, 3, (size_t) numActiveCss, H, (size_t) numActiveCss, 3, m33);
         status = m33Inverse(RECAST3X3 m33, RECAST3X3 m33_2);
-        mMultMt(m33_2, 3, 3, H, numActiveCss, 3, m3N);
-        mMultM(m3N, 3, numActiveCss, W, numActiveCss, numActiveCss, m3N_2);
+        mMultMt(m33_2, 3, 3, H, (size_t) numActiveCss, 3, m3N);
+        mMultM(m3N, 3, (size_t) numActiveCss, W, (size_t) numActiveCss, (size_t) numActiveCss, m3N_2);
         /*!    -# Multiply the LSQ matrix by the obs vector for best fit*/
-        mMultV(m3N_2, 3, numActiveCss, y, x);
+        mMultV(m3N_2, 3, (size_t) numActiveCss, y, x);
     }
     
     return(status);
@@ -250,7 +250,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
             mSetIdentity(W, configData->numActiveCss, configData->numActiveCss);
         }
         /*! -# Get least squares fit for sun pointing vector*/
-        status = computeWlsmn(configData->numActiveCss, H, W, y,
+        status = computeWlsmn((size_t) configData->numActiveCss, H, W, y,
                               sunlineOutBuffer.vehSunPntBdy);
         computeWlsResiduals(InputBuffer.CosValue, &configData->cssConfigInBuffer,
                             sunlineOutBuffer.vehSunPntBdy, configData->filtStatus.postFitRes);
@@ -278,7 +278,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     /*! Residual Computation */
     /*! - If the residual fit output message is set, then compute the residuals and stor them in the output message */
     if(strlen(configData->cssWLSFiltResOutMsgName) > 0) {
-        configData->filtStatus.numObs = configData->numActiveCss;
+        configData->filtStatus.numObs = (int) configData->numActiveCss;
         configData->filtStatus.timeTag = (double) (callTime*NANO2SEC);
         v3Copy(sunlineOutBuffer.vehSunPntBdy, configData->filtStatus.state);
         WriteMessage(configData->cssWlsFiltResOutMsgId, callTime, sizeof(SunlineFilterFswMsg),

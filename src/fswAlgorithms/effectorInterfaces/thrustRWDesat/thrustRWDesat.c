@@ -106,7 +106,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    uint32_t i;
+    int32_t i;
 	int32_t selectedThruster;     /* Thruster index to fire */
     RWSpeedIntMsg rwSpeeds;      /* Local reaction wheel speeds */
 	double observedSpeedVec[3];   /* The total summed speed of RWAs*/

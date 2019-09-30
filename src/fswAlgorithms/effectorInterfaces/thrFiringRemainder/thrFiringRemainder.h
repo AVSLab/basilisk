@@ -47,7 +47,7 @@ typedef struct {
     /* declare module private variables */
 	double              pulseRemainder[MAX_EFF_CNT];            //!< [-] Unimplemented thrust pulses (number of minimum pulses)
 	double              thrMinFireTime;              			//!< [s] Minimum fire time
-	uint32_t 			numThrusters;							//!< [-] The number of thrusters available on vehicle
+	int      			numThrusters;							//!< [-] The number of thrusters available on vehicle
 	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
 	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pusling (1)
 

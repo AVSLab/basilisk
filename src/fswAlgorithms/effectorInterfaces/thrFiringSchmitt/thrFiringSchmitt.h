@@ -48,7 +48,7 @@ typedef struct {
     int                 baseThrustState;                        //!< [-] Indicates on-pulsing (0) or off-pusling (1)
 
     /* declare module private variables */
-	uint32_t 			numThrusters;							//!< [-] The number of thrusters available on vehicle
+	int                 numThrusters;							//!< [-] The number of thrusters available on vehicle
 	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
 	boolean_t			lastThrustState[MAX_EFF_CNT];			//!< [-] ON/OFF state of thrusters from previous call
 

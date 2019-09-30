@@ -49,8 +49,8 @@ typedef struct {
 	double thrTorqueMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thruster torques*/
 	double maxFiring;          /*!< (s) Maximum time to fire a jet for*/
 	double thrFiringPeriod;    /*!< (s) The amount of time to rest between thruster firings*/
-	uint32_t numRWAs;          /*!< (-) Number of reaction wheels being desaturated*/
-	uint32_t numThrusters;     /*!< (-) Number of thrusters available in the align map*/
+	int    numRWAs;            /*!< (-) Number of reaction wheels being desaturated*/
+	int    numThrusters;       /*!< (-) Number of thrusters available in the align map*/
 	double accumulatedImp[3];  /*!< (s) The accumulated firing in the body frame*/
 	double currDMDir[3];       /*!< (-) The current direction of momentum reduction*/
 	double totalAccumFiring;   /*!< (s) The total thruster duration we've commanded*/
