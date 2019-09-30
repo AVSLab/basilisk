@@ -18,6 +18,7 @@ We are very excited by the great capabilities that this software already has, an
 <ul>
     <li>Added the ability to plot select BSK simulation data live as teh simulation is running.  See the new tutorials examples and the new FAQ response page (under Support tab) on how to do this. </li>
     <li>Lots of code clean up to remove compiler warnings about implicit signedness conversions, print types, etc.</li>
+    <li>Updated `scenarioMagneticFieldWMM.py` scenario to store images into the correct doxygen folder.</li>
 </ul>
 
 ##  Version 0.9.1

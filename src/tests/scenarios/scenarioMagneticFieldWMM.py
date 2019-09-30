@@ -33,10 +33,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-fileName = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(fileName))
+from Basilisk import __path__
+bskPath = __path__[0]
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-bskPath = path.split('src')[0]
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
