@@ -67,11 +67,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID);
-    void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID);
+    void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
+    void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
     void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
-	void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, uint64_t moduleID);
+        int64_t moduleID);
+	void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }

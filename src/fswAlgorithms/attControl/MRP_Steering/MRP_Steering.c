@@ -33,7 +33,7 @@
  @return void
  @param configData The configuration data associated with this module
  */
-void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, uint64_t moduleID)
+void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
@@ -46,7 +46,7 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, uint64_t moduleID)
+void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID from the input guidance message */
     configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
@@ -58,7 +58,7 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the MRP steering control
  */
-void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
 }
@@ -70,7 +70,7 @@ void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, uint6
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     AttGuidFswMsg guidCmd;              /* Guidance Message */
     RateCmdFswMsg outMsg;               /* copy of output message */

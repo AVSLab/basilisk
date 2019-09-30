@@ -38,7 +38,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
 */
-void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
+void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->attControlTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
@@ -56,7 +56,7 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
+void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
     configData->attGuidInMsgId = subscribeToMessage(configData->inputGuidName,
@@ -89,7 +89,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the MRP steering control
  */
-void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
     uint64_t timeOfMsgWritten;
@@ -132,7 +132,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     AttGuidFswMsg      guidCmd;            /* attitude tracking error message */
     RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */

@@ -32,7 +32,7 @@
  @return void
  @param configData The configuration data associated with this module
  */
-void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t moduleID)
+void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->voltageOutMsgID = CreateNewMessage(configData->voltageOutMsgName,
@@ -46,7 +46,7 @@ void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t moduleID
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t moduleID)
+void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
     configData->torqueInMsgID = subscribeToMessage(configData->torqueInMsgName,
@@ -75,7 +75,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t moduleI
  @param configData The configuration data associated with the module
  @param callTime Sim time in nanos
  */
-void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read static RW config data message and store it in module variables*/
     uint64_t timeOfMsgWritten;
@@ -97,7 +97,7 @@ void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, u
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
     uint64_t            timeOfMsgWritten;

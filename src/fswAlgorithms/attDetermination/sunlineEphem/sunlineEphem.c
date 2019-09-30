@@ -27,7 +27,7 @@
  @return void
  @param configData The configuration data associated with this module
  */
-void SelfInit_sunlineEphem(sunlineEphemConfig *configData, uint64_t moduleID)
+void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
@@ -44,7 +44,7 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_sunlineEphem(sunlineEphemConfig *configData, uint64_t moduleID)
+void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
     /*! - Find the message ID for the sun direction */
     configData->sunPositionInMsgId = subscribeToMessage(configData->sunPositionInMsgName,
@@ -64,7 +64,7 @@ void CrossInit_sunlineEphem(sunlineEphemConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the module
  */
-void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     
 }
@@ -74,7 +74,7 @@ void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, uint6
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;      /* [ns] Read time when message was written*/
     uint32_t sizeOfMsgWritten;      /* [-] Non-zero size indicates we received ST msg*/

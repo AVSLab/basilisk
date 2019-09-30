@@ -32,7 +32,7 @@
  @param configData The configuration data associated with the thruster desat
  @param moduleID The module ID associated with configData
  */
-void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID)
+void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
 {
     /*! - Loop over number of thruster blocks and create output messages */
     configData->outputThrID = CreateNewMessage(
@@ -47,7 +47,7 @@ void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID)
  @param configData The configuration data associated with the RW desat logic
  @param moduleID The module ID associated with configData
  */
-void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID)
+void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
 {
     RWConstellationFswMsg localRWData;
     THRArrayConfigFswMsg localThrustData;
@@ -101,7 +101,7 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
 
     uint64_t timeOfMsgWritten;
@@ -222,7 +222,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 @param configData The configuration data associated with the thruster desat
 @param moduleID The module ID associated with configData
 */
-void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID)
 {
 	configData->previousFiring = 0;
 	v3SetZero(configData->accumulatedImp);

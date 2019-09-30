@@ -28,7 +28,7 @@
  @return void
  @param configData The configuration data associated with RW null space model
  */
-void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
+void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
     /* Create output message for module */
     configData->outputMsgID = CreateNewMessage(
@@ -43,7 +43,7 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the sun safe ACS control
  */
-void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
+void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
     /*! -# Get ID for the RW control torque message [RWArrayTorqueIntMsg](\ref RWArrayTorqueIntMsg) */
     configData->inputRWCmdsID = subscribeToMessage(configData->inputRWCommands,
@@ -64,7 +64,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
     @param moduleID The ID associated with the configData
  */
 void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
-                        uint64_t moduleID)
+                        int64_t moduleID)
 {
     double GsMatrix[3*MAX_EFF_CNT];                 /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
     double GsTranspose[3 * MAX_EFF_CNT];            /* [-]  [Gs]^T */
@@ -114,7 +114,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
  @param moduleID The ID associated with the configData
  */
 void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     
     uint64_t timeOfMsgWritten;

@@ -75,12 +75,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID);
-    void CrossInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID);
+    void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID);
+    void CrossInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID);
     void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
-        uint64_t moduleID);
+        int64_t moduleID);
     void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
-                              uint64_t moduleID);
+                              int64_t moduleID);
     
 #ifdef __cplusplus
 }

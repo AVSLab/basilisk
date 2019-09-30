@@ -112,12 +112,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t moduleID);
-    void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t moduleID);
+    void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID);
+    void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID);
     void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
+        int64_t moduleID);
 	void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
-		uint64_t moduleID);
+		int64_t moduleID);
 	int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime);
     int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime);
 	void sunlineStateProp(double *stateInOut,  double *b_vec, double dt);

@@ -28,7 +28,7 @@
  @return void
  @param configData The configuration data associated with the IMU sensor interface
  */
-void SelfInit_imuProcessTelem(IMUConfigData *configData, uint64_t moduleID)
+void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
 {
     
     /*! - Create output message for module */
@@ -43,7 +43,7 @@ void SelfInit_imuProcessTelem(IMUConfigData *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the IMU interface
  */
-void CrossInit_imuProcessTelem(IMUConfigData *configData, uint64_t moduleID)
+void CrossInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
@@ -68,7 +68,7 @@ void CrossInit_imuProcessTelem(IMUConfigData *configData, uint64_t moduleID)
  @param configData The configuration data associated with the IMU interface
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
     
     uint64_t timeOfMsgWritten;

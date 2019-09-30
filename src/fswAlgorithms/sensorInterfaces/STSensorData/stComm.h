@@ -46,10 +46,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_stProcessTelem(STConfigData *configData, uint64_t moduleID);
-    void CrossInit_stProcessTelem(STConfigData *configData, uint64_t moduleID);
+    void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID);
+    void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID);
     void Update_stProcessTelem(STConfigData *configData, uint64_t callTime,
-        uint64_t moduleID);
+        int64_t moduleID);
     
 #ifdef __cplusplus
 }

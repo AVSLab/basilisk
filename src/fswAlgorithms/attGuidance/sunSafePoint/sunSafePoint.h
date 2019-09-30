@@ -53,11 +53,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID);
-    void CrossInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID);
+    void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID);
+    void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID);
     void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
-    void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, uint64_t moduleID);
+        int64_t moduleID);
+    void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

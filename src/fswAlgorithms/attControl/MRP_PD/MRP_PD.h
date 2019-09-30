@@ -59,10 +59,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_MRP_PD(MRP_PDConfig *configData, uint64_t moduleID);
-    void CrossInit_MRP_PD(MRP_PDConfig *configData, uint64_t moduleID);
-    void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, uint64_t moduleID);
-    void Reset_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID);
+    void CrossInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID);
+    void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }

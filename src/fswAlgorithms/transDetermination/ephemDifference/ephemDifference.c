@@ -30,7 +30,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID)
+void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
     uint32_t i;
     configData->ephBdyCount = 0;
@@ -56,7 +56,7 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void CrossInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID)
+void CrossInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
     uint32_t i;
     for(i = 0; i < configData->ephBdyCount; i++)
@@ -78,7 +78,7 @@ void CrossInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleI
  @param moduleID The module identification integer
  */
 void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
-                         uint64_t moduleID)
+                         int64_t moduleID)
 {
     
 }
@@ -91,7 +91,7 @@ void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;

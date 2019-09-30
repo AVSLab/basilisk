@@ -29,7 +29,7 @@
  @return void
  @param configData The configuration data associated with the sun safe control
  */
-void SelfInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID)
+void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 {
     uint32_t i;
 
@@ -50,7 +50,7 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the sun safe ACS control
  */
-void CrossInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID)
+void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
     configData->inputMsgID = subscribeToMessage(configData->inputControlName,
@@ -58,7 +58,7 @@ void CrossInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID)
     
 }
 void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-                        uint64_t moduleID)
+                        int64_t moduleID)
 {
     uint32_t i;
     THRArrayOnTimeCmdIntMsg nullEffect;
@@ -83,7 +83,7 @@ void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
 
     uint64_t timeOfMsgWritten;
@@ -105,7 +105,7 @@ void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
 }
 
 void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-CmdTorqueBodyIntMsg *contrReq, uint64_t moduleID)
+CmdTorqueBodyIntMsg *contrReq, int64_t moduleID)
 {
     double unSortOnTime[MAX_EFF_CNT];
     effPairs unSortPairs[MAX_EFF_CNT];

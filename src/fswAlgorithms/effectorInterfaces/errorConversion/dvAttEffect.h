@@ -55,15 +55,15 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID);
-    void CrossInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID);
+    void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
+    void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
     void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
+        int64_t moduleID);
     void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-                           uint64_t moduleID);
+                           int64_t moduleID);
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-                                  CmdTorqueBodyIntMsg *contrReq, uint64_t moduleID);
+                                  CmdTorqueBodyIntMsg *contrReq, int64_t moduleID);
     
 #ifdef __cplusplus
 }

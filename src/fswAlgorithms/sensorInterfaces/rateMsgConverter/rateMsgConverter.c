@@ -37,7 +37,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
-void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID)
+void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
 {
     configData->navRateOutMsgID = CreateNewMessage(configData->navRateOutMsgName,
                                                    sizeof(NavAttIntMsg),
@@ -51,7 +51,7 @@ void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t modu
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
-void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID)
+void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
     configData->imuRateInMsgID = subscribeToMessage(configData->imuRateInMsgName,
@@ -66,7 +66,7 @@ void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t mod
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
 }
@@ -77,7 +77,7 @@ void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;

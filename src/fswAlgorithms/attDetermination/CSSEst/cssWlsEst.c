@@ -27,7 +27,7 @@
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_cssWlsEst(CSSWLSConfig *configData, uint64_t moduleID)
+void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
@@ -43,7 +43,7 @@ void SelfInit_cssWlsEst(CSSWLSConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS interface
  */
-void CrossInit_cssWlsEst(CSSWLSConfig *configData, uint64_t moduleID)
+void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
     /*! - Subscribe to css measurements */
     configData->cssDataInMsgID = subscribeToMessage(configData->cssDataInMsgName,
@@ -58,7 +58,7 @@ void CrossInit_cssWlsEst(CSSWLSConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the guidance module
  */
-void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
@@ -170,7 +170,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     
     uint64_t timeOfMsgWritten;

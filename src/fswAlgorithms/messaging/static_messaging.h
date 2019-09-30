@@ -33,14 +33,14 @@ extern "C" {
     
     void InitializeStorage(uint32_t StorageBytes);
     int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char * MessageStruct,
-        uint64_t moduleID);
-    int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSize,
-                         void *MsgPayload, uint64_t moduleID);
-    int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize,
+        int64_t moduleID);
+    int32_t WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSize,
+                         void *MsgPayload, int64_t moduleID);
+    int32_t ReadMessage(int64_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize,
                         uint32_t MaxBytes, void *MsgPayload, int64_t moduleID);
     int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
         int64_t moduleID);
-    const char * FindMessageName(uint32_t MessageID);
+    const char * FindMessageName(int64_t MessageID);
     
 #ifdef __cplusplus
 }

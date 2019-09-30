@@ -28,7 +28,7 @@
  @return void
  @param configData The configuration data associated with the Nav aggregation interface
  */
-void SelfInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID)
+void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 {
     /*! - create the attitude navigation output message */
     configData->navAttOutMsgID = CreateNewMessage(configData->outputAttName,
@@ -47,7 +47,7 @@ void SelfInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the aggregate nav interface
  */
-void CrossInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID)
+void CrossInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 {
     uint32_t i;
 
@@ -94,7 +94,7 @@ void CrossInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID)
 {
 
     /*! - ensure the attitude message index locations are less than MAX_AGG_NAV_MSG */
@@ -158,7 +158,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64_
  @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;

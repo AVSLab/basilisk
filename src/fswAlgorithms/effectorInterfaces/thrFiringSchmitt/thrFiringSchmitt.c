@@ -37,7 +37,7 @@
  @return void
  @param configData The configuration data associated with this module
  */
-void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t moduleID)
+void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->onTimeOutMsgId = CreateNewMessage(configData->onTimeOutMsgName,
@@ -52,7 +52,7 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t modu
  @return void
  @param configData The configuration data associated with this module
  */
-void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t moduleID)
+void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
 	/*! - Get the input message ID's */
 	configData->thrForceInMsgId = subscribeToMessage(configData->thrForceInMsgName,
@@ -68,7 +68,7 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t mod
  @return void
  @param configData The configuration data associated with the module
  */
-void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
 	THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
 	uint64_t            timeOfMsgWritten;
@@ -97,7 +97,7 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
 
 	uint64_t            timeOfMsgWritten;

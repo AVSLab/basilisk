@@ -45,12 +45,12 @@ typedef struct {
 extern "C" {
 #endif
 
-    void SelfInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID);
-    void CrossInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID);
+    void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID);
+    void CrossInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID);
     void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
+        int64_t moduleID);
     void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-                           uint64_t moduleID);
+                           int64_t moduleID);
 
 #ifdef __cplusplus
 }

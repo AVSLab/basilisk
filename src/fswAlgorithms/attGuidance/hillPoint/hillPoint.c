@@ -38,7 +38,7 @@
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
-void SelfInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
+void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
@@ -53,7 +53,7 @@ void SelfInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void CrossInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
+void CrossInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
 {
     /*! - subscribe to other message*/
     /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
@@ -72,7 +72,7 @@ void CrossInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     
 }
@@ -85,7 +85,7 @@ void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t mo
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
     uint64_t            timeOfMsgWritten;

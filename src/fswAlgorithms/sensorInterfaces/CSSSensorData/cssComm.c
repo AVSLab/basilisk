@@ -28,7 +28,7 @@
  @return void
  @param configData The configuration data associated with the CSS sensor interface
  */
-void SelfInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID)
+void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
 {
     
     /*! - Create output message for module */
@@ -42,7 +42,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS interface
  */
-void CrossInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID)
+void CrossInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
 {
     configData->SensorMsgID = subscribeToMessage(
         configData->SensorListName, sizeof(CSSArraySensorIntMsg), moduleID);
@@ -53,7 +53,7 @@ void CrossInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the guidance module
  */
-void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Check to make sure that number of sensors is less than the max and warn if none are set*/
     if(configData->NumSensors > MAX_NUM_CSS_SENSORS)
@@ -84,7 +84,7 @@ void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, uint64_
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     uint32_t i, j;
     uint64_t timeOfMsgWritten;

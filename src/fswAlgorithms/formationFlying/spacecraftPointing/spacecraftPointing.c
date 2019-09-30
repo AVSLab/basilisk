@@ -32,7 +32,7 @@
  @return void
  @param configData The configuration data associated with the spacecraft pointing module
  */
-void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t moduleID)
+void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     configData->attReferenceOutMsgID = CreateNewMessage(configData->attReferenceOutMsgName,
@@ -48,7 +48,7 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t 
  @return void
  @param configData The configuration data associated with the spacecraft pointing module
  */
-void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t moduleID)
+void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
     configData->chiefPositionInMsgID = subscribeToMessage(configData->chiefPositionInMsgName,
                                                           sizeof(NavTransIntMsg), moduleID);
@@ -62,7 +62,7 @@ void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t
  @return void
  @param configData The configuration data associated with the pointing module
  */
-void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* Build a coordinate system around the vector within the body frame that points towards the antenna and write the orientation
      of the B-frame with respect to the A-frame. */
@@ -103,7 +103,7 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t cal
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     NavTransIntMsg chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
     NavTransIntMsg deputyTransMsg;                  /*!< ---  Input message that consists of the position and velocity of the deputy */

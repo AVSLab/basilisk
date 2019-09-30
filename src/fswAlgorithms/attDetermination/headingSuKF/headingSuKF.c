@@ -31,7 +31,7 @@
  @return void
  @param configData The configuration data associated with the heading estimator
  */
-void SelfInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
+void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
 	configData->opnavDataOutMsgId = CreateNewMessage(configData->opnavOutMsgName,
@@ -47,7 +47,7 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
  @return void
  @param configData The configuration data associated with the heading filter
  */
-void CrossInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
+void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
     /*! - Find the message ID for the coarse sun sensor data message */
     configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
@@ -62,7 +62,7 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
-                      uint64_t moduleID)
+                      int64_t moduleID)
 {
     
     int32_t i;
@@ -136,7 +136,7 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
-    uint64_t moduleID)
+    int64_t moduleID)
 {
     double newTimeTag;
     double yBar[OPNAV_MEAS];

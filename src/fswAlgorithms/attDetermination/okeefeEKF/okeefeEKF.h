@@ -88,12 +88,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID);
-    void CrossInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID);
+    void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID);
+    void CrossInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID);
 	void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
-		uint64_t moduleID);
+		int64_t moduleID);
     void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
-                           uint64_t moduleID);
+                           int64_t moduleID);
 	void sunlineTimeUpdate(okeefeEKFConfig *configData, double updateTime);
     void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime);
 	void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double omega[SKF_N_STATES_HALF],double *stateInOut, double *prevstates, double *stateTransition);

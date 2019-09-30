@@ -73,10 +73,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID);
-    void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID);
-    void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint64_t moduleID);
-    void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID);
+    void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID);
+    void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
 
     
 #ifdef __cplusplus

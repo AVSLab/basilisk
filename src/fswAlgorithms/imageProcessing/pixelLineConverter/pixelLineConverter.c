@@ -29,7 +29,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_pixelLineConverter(PixelLineConvertData *configData, uint64_t moduleID)
+void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID)
 {
     configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
                                                  sizeof(OpNavFswMsg),
@@ -42,7 +42,7 @@ void SelfInit_pixelLineConverter(PixelLineConvertData *configData, uint64_t modu
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void CrossInit_pixelLineConverter(PixelLineConvertData *configData, uint64_t moduleID)
+void CrossInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID)
 {
     configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleID);
     configData->circlesInMsgID = subscribeToMessage(configData->circlesInMsgName, sizeof(CirclesOpNavMsg),moduleID);
@@ -55,7 +55,7 @@ void CrossInit_pixelLineConverter(PixelLineConvertData *configData, uint64_t mod
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, int64_t moduleID)
 {
 
 }
@@ -66,7 +66,7 @@ void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
