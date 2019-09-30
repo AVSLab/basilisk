@@ -71,7 +71,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3], Q[3][3], B[3][3];
-    double planetRad;
+    double planetRad_Eq, planetRad_Pol;
     double covar_In_C[3][3], covar_In_B[3][3], covar_In_N[3][3];
     CameraConfigMsg cameraSpecs;
     LimbOpNavMsg limbIn;
@@ -99,19 +99,22 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     }
     /*! Create Q matrix, the square root inverse of the A matrix, eq (6) in Engineering Note*/
     if(configData->planetTarget ==1){
-        planetRad = REQ_EARTH*1E3;//in m
+        planetRad_Eq = REQ_EARTH*1E3;//in m
+        planetRad_Pol = RP_EARTH*1E3;
         opNavMsgOut.planetID = configData->planetTarget;
     }
     if(configData->planetTarget ==2){
-        planetRad = REQ_MARS*1E3;//in m
+        planetRad_Eq = REQ_MARS*1E3;//in m
+        planetRad_Pol = RP_MARS*1E3;
         opNavMsgOut.planetID = configData->planetTarget;
     }
     if(configData->planetTarget ==3){
-        planetRad = REQ_JUPITER*1E3;//in m
+        planetRad_Eq = REQ_JUPITER*1E3;//in m
+        planetRad_Pol = planetRad_Eq;
         opNavMsgOut.planetID = configData->planetTarget;
     }
-    mSetIdentity(Q, 3, 3);
-    mScale(1/planetRad, Q, 3, 3, Q);
+    m33Set(1/planetRad_Eq, 0, 0, 0, 1/planetRad_Eq, 0, 0, 0, 1/planetRad_Pol, Q);
+    
     /* Set the number of limb points for ease of use*/
     int32_t numPoints;
     double sigma_pix;
@@ -154,7 +157,9 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
         v3SetZero(s);
         /*! - Put the pixel data in s (not s currently)*/
         s[0] = limbIn.limbPoints[2*i];
+        s[0]+= (s[0]<cameraSpecs.resolution[0]/2) - (s[0]>cameraSpecs.resolution[0]/2);
         s[1] = limbIn.limbPoints[2*i + 1];
+        s[1]+= (s[1]<cameraSpecs.resolution[1]/2) - (s[1]>cameraSpecs.resolution[1]/2);
         s[2] = 1;
         /*! - Apply the trasnformation computed previously from pixel to position*/
         m33MultV3(tranf, s, s);
