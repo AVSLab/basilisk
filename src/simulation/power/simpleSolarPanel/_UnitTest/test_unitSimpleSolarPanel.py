@@ -49,7 +49,7 @@ from Basilisk.utilities import astroFunctions
 @pytest.mark.parametrize("orbitDistance", [1000.*astroFunctions.AU, 1000.*1.52*astroFunctions.AU])
 @pytest.mark.parametrize("eclipseValue", [0,1])
 @pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
-def test_simpleSolarPanel(showPlots, orbitDistance, eclipseValue, scAttitude):
+def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
     """
     Unit test for simpleSolarPanel. The unit test specifically covers:
 
@@ -68,7 +68,7 @@ def test_simpleSolarPanel(showPlots, orbitDistance, eclipseValue, scAttitude):
     that operates at perfect efficiency.
     """
 
-    panelResults, panelMessage = run(showPlots, orbitDistance, eclipseValue, scAttitude)
+    panelResults, panelMessage = run(show_plots, orbitDistance, eclipseValue, scAttitude)
 
     assert panelResults < 1, [panelMessage]
 
