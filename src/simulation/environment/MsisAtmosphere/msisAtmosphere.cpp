@@ -47,7 +47,7 @@ MsisAtmosphere::MsisAtmosphere()
     this->updateInputParams();
 
 
-    this->msisFlags.switches[0] = 0;
+    this->msisFlags.switches[0] = 1; //! NRLMSISE-00 should output in kg/m^3 for consistency with other atmospheric modules.
     //! Set default settings for NRLMSISE-00; we're using all the settings by default
     for(int switchInd = 1; switchInd < 24; ++switchInd){
         this->msisFlags.switches[switchInd] = 1;
