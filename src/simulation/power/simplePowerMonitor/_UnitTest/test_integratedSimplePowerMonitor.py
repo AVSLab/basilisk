@@ -127,7 +127,7 @@ def test_storage_limits(show_plots):
 
     #   Check 2 - is the stored power equivalent to 10*5 W-s?
 
-    if storedChargeLog[-1,1] != (10.*5.)/3600.:
+    if not unitTestSupport.isDoubleEqualRelative((10.*5.)/3600.,storedChargeLog[-1,1], 1e-8):
         testFailCount+=1
         print(storedChargeLog[-1,1])
         print((10.*5.)/3600.)
