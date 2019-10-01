@@ -188,6 +188,14 @@ class SimBaseClass:
         self.simulationInitialized = False
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
+        """
+        Adds a simModel to a task for execution.
+        :param TaskName: The name of the task to add the simModel to
+        :param NewModel: The simModel object.
+        :param ModelData: simModel data object for C modules.
+        :param ModelPriority: Model execution priority
+        :return:
+        """
         i = 0
         for Task in self.TaskList:
             if Task.Name == TaskName:
@@ -440,6 +448,13 @@ class SimBaseClass:
         return searchComplete
 
     def pullMessageLogData(self, varName, indices=[], numRecords=-1):
+        """
+        Retrieves logged message data from TotalSim by querying over message and variable names.
+
+        :param varName: A message name with the variable specified (i.e., 'scMessage.r_BN_N')
+        :param indices: Specific log indexes to pull from.
+        :param numRecords: ???
+        """
         splitName = varName.split('.')
         messageID = self.TotalSim.getMessageID(splitName[0])
         if not (messageID.itemFound):
