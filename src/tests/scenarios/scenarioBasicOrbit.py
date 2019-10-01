@@ -159,7 +159,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # The gravFactor() class stores the Earth gravitational object within the class, but it also returns a
 # handler to this gravitational object as a convenience.  The celestial object position and velocity
 # vectors are all defaulted to zero values.  If non-zero values are required, this can be manually
-# overriden.  If multiple bodies are simulated, then their positions can be
+# overridden.  If multiple bodies are simulated, then their positions can be
 # dynamically updated.  See [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
 # done via a SPICE object.
 #
@@ -173,7 +173,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 #                                         ,2
 #                                         )
 #~~~~~~~~~~~~~~~~~
-# The value 2 indidates that the first two harmonics, excluding the 0th order harmonic,
+# The value 2 indicates that the first two harmonics, excluding the 0th order harmonic,
 # are included.  This harmonics data file only includes a zeroth order and J2 term.
 #
 # Finally, the gravitational body must be connected to the spacecraft object.  This is done with

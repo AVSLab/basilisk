@@ -21,9 +21,12 @@ The application can be downloaded as a complete binary file from the [Overview](
 When starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above.  There is an option on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key.  Note that the Vizard screen size can be dynamically changed after startup as well.
 \image html Images/doc/vizard-img0.png "Vizard Startup Panel" width=300px
 
+@subsection vizFromFile Vizard Playback from a BSK simulation data file
 Next Vizard presents a panel where the user can select which simulation to visualize.  To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file.  After a file has been selected press the `Start Visualization` button.
 \image html Images/doc/vizard-img2.png "Vizard Simulation Selection Panel" width=300px
 
+@subsection vizStream Live Vizard Visualization from a BSK data stream
+To live stream data from Basilisk to Vizard, see the [live streaming example](@ref scenarioBasicOrbitLiveStreamGroup).  Here the user enters the computer address of the Basilisk simulation and selects the direct communication mode.  Note that Vizard must be started and stopped after each Basilisk simulation run in this live streaming mode.
 
 @section vizViewModes View Modes
 To engage with the visualization, the view point can be rotated and the user can zoom in and out.  There are three view modes available:

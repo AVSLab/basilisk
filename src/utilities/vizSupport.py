@@ -471,7 +471,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     del coneInOutList[:]
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices'],
+        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream'],
         kwargs)
 
     # setup the Vizard interface module
@@ -483,7 +483,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
-    vizMessenger.saveFile = 0
+    vizMessenger.saveFile = False
     if 'saveFile' in kwargs:
         fileNamePath = kwargs['saveFile']
         fileName = os.path.splitext(os.path.basename(fileNamePath))[0]
@@ -493,28 +493,46 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         if not os.path.isdir(filePath + '/_VizFiles'):
             os.mkdir(filePath + '/_VizFiles')
         vizFileNamePath = filePath + '/_VizFiles/' + fileName + '_UnityViz.bin'
-        vizMessenger.saveFile = 1
+        vizMessenger.saveFile = True
         vizMessenger.protoFilename = vizFileNamePath
         print("Saving Viz file to " + vizFileNamePath)
 
+    if 'liveStream' in kwargs:
+        val = kwargs['liveStream']
+        if not isinstance(val, bool):
+            print('ERROR: liveStream must True or False')
+            exit(1)
+        vizMessenger.liveStream = True
+        if 'opNavMode' in kwargs:
+            if kwargs['opNavMode'] > 0:
+                print('ERROR: do not use liveStream and opNavMode flags at the same time.')
+                exit(1)
+
     vizMessenger.opNavMode = 0
     if 'opNavMode' in kwargs:
-        if kwargs['opNavMode'] == True:
-            vizMessenger.opNavMode = 1
+        val = kwargs['opNavMode']
+        if not isinstance(val, int):
+            print('ERROR: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
+            exit(1)
+        if val < 0 or val > 2:
+            print('ERROR: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
+            exit(1)
+        vizMessenger.opNavMode = val
+        if val > 0:
             vizMessenger.opnavImageOutMsgName = "opnav_circles"
 
-    vizMessenger.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
-                                                                  "mars_planet_data",
-                                                                  "mars barycenter_planet_data",
-                                                                  "sun_planet_data",
-                                                                  "jupiter barycenter_planet_data",
-                                                                  "moon_planet_data",
-                                                                  "venus_planet_data",
-                                                                  "mercury_planet_data",
-                                                                  "uranus barycenter_planet_data",
-                                                                  "neptune barycenter_planet_data",
-                                                                  "pluto barycenter_planet_data",
-                                                                  "saturn barycenter_planet_data"])
+    vizMessenger.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
+                                                              "mars_planet_data",
+                                                              "mars barycenter_planet_data",
+                                                              "sun_planet_data",
+                                                              "jupiter barycenter_planet_data",
+                                                              "moon_planet_data",
+                                                              "venus_planet_data",
+                                                              "mercury_planet_data",
+                                                              "uranus barycenter_planet_data",
+                                                              "neptune barycenter_planet_data",
+                                                              "pluto barycenter_planet_data",
+                                                              "saturn barycenter_planet_data"])
     vizMessenger.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
 
 
