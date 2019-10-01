@@ -18,7 +18,8 @@ We are very excited by the great capabilities that this software already has, an
     <li>Added the ability to plot select BSK simulation data live as teh simulation is running.  See the new tutorials examples and the new FAQ response page (under Support tab) on how to do this. </li>
     <li>Lots of code clean up to remove compiler warnings about implicit signedness conversions, print types, etc.</li>
     <li>Updated `scenarioMagneticFieldWMM.py` scenario to store images into the correct doxygen folder.</li>
-    <li>[Bugfix] NRLMSISE-00 now defaults to kg/m^3 output, to be consistent with other atmospheric density models.
+    <li>[Bugfix] NRLMSISE-00 now defaults to kg/m^3 output, to be consistent with other atmospheric density models.</li>
+    <li>Added the ability to live stream the Basilisk simulation data to Vizard!  This functions now in addition to saving BSK data to file and playing it back later on.</li>
 </ul>
 
 ##  Version 0.9.1
