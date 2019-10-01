@@ -13,6 +13,11 @@ We are very excited by the great capabilities that this software already has, an
 
 
 
+##  Upcoming Version 1.X.!
+<ul>
+    <li>text here</li>
+</ul>
+
 ##  Version 1.0.0 🍾🍾🍾🍾🍾
 <ul>
     <li>Added the ability to plot select BSK simulation data live as teh simulation is running.  See the new tutorials examples and the new FAQ response page (under Support tab) on how to do this. </li>
