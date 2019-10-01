@@ -81,9 +81,10 @@ from Basilisk.simulation import clock_synch
 #
 #       Waiting for Vizard at tcp://localhost:5556
 #
-# Copy `tcp::localhost:5556` and open the Vizard application.  Enter this address in the connection field and select
-# "Direct Communication" mode.  After this the Basilisk simulation resumes and will live stream the data to Vizard.
+# Copy `tcp://localhost:5556` and open the Vizard application.  Enter this address in the connection field and select
+# "Direct Communication" mode as well as "Live Streaming".  After this the Basilisk simulation resumes and will live stream the data to Vizard.
 # \image html Images/doc/vizard-ImgStream.png "Vizard Direct Communication Panel Illustration" width=500px
+#
 # To avoid the simulation running too quickly, this tutorial example script includes the `clock_sync` module that
 # enables a 50x realtime mode using.
 # ~~~~~~~~~~~~~~~{.py}
