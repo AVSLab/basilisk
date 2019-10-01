@@ -35,6 +35,21 @@ from Basilisk.simulation import simMessages
 from Basilisk.simulation import simplePowerMonitor
 from Basilisk.utilities import macros
 
+
+
+# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
+# @pytest.mark.skipif(conditionstring)
+# Uncomment this line if this test has an expected failure, adjust message as needed.
+# @pytest.mark.xfail(conditionstring)
+# Provide a unique test method name, starting with 'test_'.
+# The following 'parametrize' function decorator provides the parameters and expected results for each
+#   of the multiple test runs for this test.
+#@pytest.mark.parametrize("useDefault", [ True, False])
+#@pytest.mark.parametrize("useMinReach", [ True, False])
+#@pytest.mark.parametrize("useMaxReach", [ True, False])
+#@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
+
+
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
     # each test method requires a single assert method to be called
@@ -91,7 +106,8 @@ def test_storage_limits(show_plots):
 
     unitTestSim.AddModelToTask(unitTaskName, test_battery)
 
-    unitTestSim.TotalSim.logThisMessage(test_battery.batPowerOutMsgName, testProcessRate)
+    logFreq = testProcessRate
+    unitTestSim.TotalSim.logThisMessage(test_battery.batPowerOutMsgName,logFreq)
 
     unitTestSim.InitializeSimulationAndDiscover()
     unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))
