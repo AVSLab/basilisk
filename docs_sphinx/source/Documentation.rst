@@ -11,3 +11,4 @@ Documentation
    tests
    simulation
    utilities
+   examples
