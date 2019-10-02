@@ -625,7 +625,7 @@ def run(saveFigures, case, show_plots, useDatashader):
     #########################################################
     if case ==2:
         # Now run initial conditions
-        icName = bskPath + "/tests/Support/run_MC_IC"
+        icName = bskPath + "/../../src/tests/Support/run_MC_IC"
         monteCarlo.setICDir(icName)
         monteCarlo.setICRunFlag(True)
         numberICs = 3
@@ -1069,7 +1069,7 @@ def configureDatashader():
 if __name__ == "__main__":
     run(  saveFigures=False        # save figures to file
         , case=1            # Case 1 is normal MC, case 2 is initial condition run
-        , show_plots=True         # show_plots.
+        , show_plots=False         # show_plots.
           # THIS MUST BE FALSE BY DEFAULT
         , useDatashader=False         # use datashading library - matplotlib will not be used
        )
