@@ -60,7 +60,8 @@ public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string opnavLimbOutMsgName;  //!< The name of the Limb output message
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
-    
+    std::string saveDir;                //!< Directory to save images to
+
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for Limb finding*/
     int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels

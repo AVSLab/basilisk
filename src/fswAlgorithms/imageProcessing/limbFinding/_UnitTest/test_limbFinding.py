@@ -61,7 +61,7 @@ except ImportError:
 @pytest.mark.parametrize("image,         blur,    cannyLow,  cannyHigh, saveImage", [
                         ("MarsBright.jpg",    1,    100,       200,   False), #Mars image
                         ("MarsDark.jpg",      1,    100,       200,   False),  # Mars image
-                        ("moons.jpg",         4,    200,       300,   False) # Moon images
+                        ("moons.jpg",         3,    200,       300,   False) # Moon images
     ])
 
 # update "module" in this function name to reflect the module name
@@ -122,8 +122,8 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
         reference = [187.0, 128.0]
         refPoints = 192.0
     if image == "moons.jpg":
-        reference = [221.0, 70.0]
-        refPoints = 232.0
+        reference = [213.0, 66.0]
+        refPoints = 263.0
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = limbFinding.CameraImageMsg()
@@ -163,6 +163,9 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     for j in range(int(len(points[-1,1:])/2)):
         if points[-1,2*j+1]>1E-2:
             imageProcLimb.append((points[-1,2*j+1], points[-1,2*j+2]))
+
+        print(numPoints[-1,1])
+        print(imageProcLimb[0][:])
     draw_result.point(imageProcLimb, fill=128)
 
     # Save output image
