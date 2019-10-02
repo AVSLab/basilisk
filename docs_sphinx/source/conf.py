@@ -238,6 +238,7 @@ def grabRelevantFiles(dir_path):
         if "_Documentation" in dirs_in_dir[i] or \
                 "_UnitTest" in dirs_in_dir[i] or \
                 "__pycache__" in dirs_in_dir[i] or \
+                "_VizFiles" in dirs_in_dir[i] or \
                 "cmake" in dirs_in_dir[i] or \
                 "topLevelModules" in dirs_in_dir[i]:
             removeList.extend([i])
