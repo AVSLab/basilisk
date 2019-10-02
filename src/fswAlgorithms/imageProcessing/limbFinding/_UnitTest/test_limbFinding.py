@@ -186,7 +186,7 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     if np.abs(covar[-1,1]-1.)>1E-5:
         testFailCount+=1
         testMessages.append("Covar test failed processing " + image)
-    if np.abs(numPoints[-1,1]-refPoints)>1E-5:
+    if np.abs(numPoints[-1,1]-refPoints)>10:
         testFailCount+=1
         testMessages.append("NumPoints test failed processing " + image)
 
@@ -201,4 +201,4 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    limbFindingTest(True, "MarsBright.jpg",     3,    100,       200,  True) # Moon images
+    limbFindingTest(True, "MarsBright.jpg",     1,    100,       200,  True) # Moon images
