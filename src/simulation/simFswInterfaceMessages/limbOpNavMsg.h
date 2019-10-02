@@ -17,9 +17,13 @@
 
  */
 
-#define MAX_LIMB_PNTS 1000
+#ifndef LIMB_OPNAV_MSG_H
+#define LIMB_OPNAV_MSG_H
 
-/*! @brief Structure used to define the output definition for attitude guidance*/
+/*! @brief Structure used to store limb points for OpNav*/
+
+#include "simFswInterfaceMessages/macroDefinitions.h"
+
 typedef struct {
     double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/
     int valid; //!< --  Valid measurement if 1, not if 0*/
@@ -29,4 +33,8 @@ typedef struct {
     int32_t limbPoints[2*MAX_LIMB_PNTS];          //!< -- [-] (x, y, 1) in pixels of the limb points*/
     double pointSigmas[2*MAX_LIMB_PNTS];          //!< -- [-] (sigma_x, _sigma_y, 0) in pixels of the limb points*/
 }LimbOpNavMsg;
+
+/*! @} */
+
+#endif
 

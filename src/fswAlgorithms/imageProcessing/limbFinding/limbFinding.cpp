@@ -124,7 +124,8 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     /*! - Greyscale the image */
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
     /*! - Lightly blur it */
-    cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
+//    cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
+    cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
     /*! - Apply the Canny Transform to find the limbPoints*/
     cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
     if (cv::countNonZero(edgeImage)>0){

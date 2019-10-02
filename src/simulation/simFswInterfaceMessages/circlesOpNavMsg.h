@@ -17,9 +17,13 @@
 
  */
 
-#define MAX_CIRCLE_NUM 10
+#ifndef CIRCLE_OPNAV_MSG_H
+#define CIRCLE_OPNAV_MSG_H
 
-/*! @brief Structure used to define the output definition for attitude guidance*/
+/*! @brief Structure used to define circles processed from image*/
+
+#include "simFswInterfaceMessages/macroDefinitions.h"
+
 typedef struct {
     double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/
     int valid; //!< --  Valid measurement if 1, not if 0*/
@@ -30,3 +34,6 @@ typedef struct {
     double uncertainty[3*3]; //!< -- [-] Uncertainty about the image processing results for x, y, rho (center and radius) for main circle*/
 }CirclesOpNavMsg;
 
+/*! @} */
+
+#endif

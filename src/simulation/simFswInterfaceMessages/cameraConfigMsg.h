@@ -17,9 +17,14 @@
 
  */
 
-#define MAX_STRING_LENGTH  256
+#ifndef CAMERA_MSG_H
+#define CAMERA_MSG_H
 
-/*! @brief Structure used to define the output definition for attitude guidance*/
+#define MAX_STRING_LENGTH 256
+/*! @brief Structure used to define the camera parameters*/
+
+#include "simFswInterfaceMessages/macroDefinitions.h"
+
 typedef struct {
     int64_t cameraID;          //!< [-]   ID of the camera that took the snapshot*/
     char   parentName[MAX_STRING_LENGTH];  // Name of the parent body to which the camera should be attached
@@ -33,3 +38,6 @@ typedef struct {
     char   skyBox[MAX_STRING_LENGTH]; //!< string containing the star field preference
 }CameraConfigMsg;
 
+/*! @} */
+
+#endif

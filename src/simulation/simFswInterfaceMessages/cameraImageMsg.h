@@ -17,7 +17,14 @@
 
  */
 
+#ifndef IMAGE_MSG_H
+#define IMAGE_MSG_H
+
 #define MAX_FILENAME_LENGTH 10000
+
+/*! @brief Structure used to define the image */
+
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
@@ -29,3 +36,6 @@ typedef struct {
     int8_t imageType;         //!< -- Number of channels in each pixel, RGB = 3, RGBA = 4
 }CameraImageMsg;
 
+/*! @} */
+
+#endif

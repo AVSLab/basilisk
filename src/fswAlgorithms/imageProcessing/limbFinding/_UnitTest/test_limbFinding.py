@@ -200,4 +200,4 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    limbFindingTest(True, "MarsDark.jpg",     1,    100,       200,  True) # Moon images
+    limbFindingTest(True, "MarsBright.jpg",     3,    100,       200,  True) # Moon images
