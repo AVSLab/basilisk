@@ -928,7 +928,11 @@ class SimulationExecutor:
             if simParams.verbose:
                 print("Executing simulation")
             # execute the simulation, with the user-supplied executionFunction
-            simParams.executionFunction(simInstance)
+            try:
+                simParams.executionFunction(simInstance)
+            except TypeError:
+                simParams.executionFunction(simInstance, simParams.filename)
+
 
             if len(simParams.retentionPolicies) > 0:
                 if simParams.icfilename != "":
