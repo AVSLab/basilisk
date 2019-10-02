@@ -423,3 +423,22 @@ class OrbitalElementDispersion:
         if index == 2:
             return self.varName2
 
+class MRPDispersionPerAxis(VectorVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        """
+        A function that disperses MRPs with specfic bounds per axis.
+        Args:
+            varName (str): A string representation of the variable to be dispersed
+                e.g. 'VehDynObject.AttitudeInit'.
+            bounds (list(Array[float, float],Array[float, float],Array[float, float])): defines lower and upper cut offs for generated dispersion values radians.
+        """
+        super(MRPDispersionPerAxis, self).__init__(varName, bounds)
+        if self.bounds is None:
+            self.bounds = [[0, 2 * np.pi], [0, 2 * np.pi], [0, 2 * np.pi]]
+
+    def generate(self, sim=None):
+        rndAngles = np.zeros((3, 1))
+        for i in range(3):
+            rndAngles[i] = (self.bounds[i][1] - self.bounds[i][0]) * np.random.random() + self.bounds[i][0]
+        dispMRP = rndAngles.reshape(3)
+        return dispMRP
