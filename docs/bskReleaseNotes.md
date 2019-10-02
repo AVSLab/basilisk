@@ -15,7 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 
 ##  Upcoming Version 1.X.!
 <ul>
-    <li>text here</li>
+    <li>The circle finding module using openCV has been cleaned up and the noise is now dynamically measured given the image</li>
 </ul>
 
 ##  Version 1.0.0 🍾🍾🍾🍾🍾
