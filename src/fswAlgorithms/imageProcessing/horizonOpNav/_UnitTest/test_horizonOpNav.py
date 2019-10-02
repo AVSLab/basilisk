@@ -243,10 +243,10 @@ def horizonOpNav_update():
     inputAtt = horizonOpNav.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 0.5
+    inputCamera.focalLength = 1.
     inputCamera.sensorSize = [10*1E-3, 10*1E-3] # In m
     inputCamera.resolution = [512, 512]
-    inputCamera.sigma_CB = [1.,0.3,0.1]
+    inputCamera.sigma_CB = [1.,0.2,0.3]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.cameraConfigMsgName, inputCamera)
 
     # Set circles
@@ -276,6 +276,7 @@ def horizonOpNav_update():
     Q = np.eye(3)
     B = np.zeros([3,3])
     Q *= 1/(3396.19*1E3)  # km
+    Q[2,2] = 1/(3376.2*1E3)
 
     numPoints = int(len(inputPoints)/2)
 
@@ -304,6 +305,8 @@ def horizonOpNav_update():
     sBarPrime = np.zeros([numPoints,3])
     H = np.zeros([numPoints,3])
     for i in range(numPoints):
+        inputPoints[2 * i]+= (inputPoints[2 * i]<inputCamera.resolution[0]/2) - (inputPoints[2 * i]>inputCamera.resolution[0]/2)
+        inputPoints[2 * i+1]+= (inputPoints[2 * i+1]<inputCamera.resolution[0]/2) - (inputPoints[2 * i+1]>inputCamera.resolution[0]/2)
         s[i,:] = np.dot(transf, np.array([inputPoints[2*i], inputPoints[2*i+1], 1]))
         sBar[i,:] = np.dot(B, s[i,:])
         sBarPrime[i,:] = sBar[i,:]/np.linalg.norm(sBar[i,:])
@@ -350,7 +353,7 @@ def horizonOpNav_update():
 
     r_BN_C = - (np.dot(n,n) - 1.)**(-0.5)*np.dot(np.linalg.inv(B), n)
 
-    posErr = 1e-5
+    posErr = 1e-3 #(m)
     covarErr = 1e-5
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
