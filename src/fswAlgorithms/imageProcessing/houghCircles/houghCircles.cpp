@@ -35,10 +35,12 @@ HoughCircles::HoughCircles()
 {
     this->filename = "";
     this->saveImages = 0;
+    this->noiseSF = 4;
     this->blurrSize = 5;
     this->dpValue = 1;
     this->OutputBufferCount = 2;
     this->expectedCircles = MAX_CIRCLE_NUM;
+    this->saveDir = "";
     this->cannyThresh = 200;
     this->voteThresh = 20;
     this->houghMinDist = 50;
@@ -89,7 +91,6 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
  */
 void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
-    std::string filenamePre;
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -97,8 +98,9 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     
     cv::Mat imageCV, blurred;
     int circlesFound=0;
-    filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
-
+    if (this->saveDir !=""){
+        this->saveDir = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+    }
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     if(this->imageInMsgName != "")
@@ -116,7 +118,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         if (this->saveImages == 1){
-            cv::imwrite(filenamePre, imageCV);
+            cv::imwrite(this->saveDir, imageCV);
         }
     }
     else{
@@ -138,10 +140,9 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.circlesCenters[2*i] = circles[i][0];
         circleBuffer.circlesCenters[2*i+1] = circles[i][1];
         circleBuffer.circlesRadii[i] = circles[i][2];
-        for(int j=0; j<2; j++){
-            circleBuffer.uncertainty[j+3*j] = 20;
+        for(int j=0; j<3; j++){
+            circleBuffer.uncertainty[j+3*j] = this->noiseSF*100*this->voteThresh/circles[i][3];
         }
-        circleBuffer.uncertainty[2+3*2] = 20;
         circlesFound+=1;
     }
     /*!- If no circles are found do not validate the image as a measurement */

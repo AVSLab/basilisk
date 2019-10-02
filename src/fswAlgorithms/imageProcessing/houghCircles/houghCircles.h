@@ -60,7 +60,7 @@ public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
-    
+    std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels
@@ -70,6 +70,7 @@ public:
     int32_t houghMinRadius;              //!< [-] Min radius of a detected circle
     int32_t houghMaxRadius;              //!< [-] Max radius of a detected circle
     int32_t dpValue;                     //!< [-] Subscaling of image for circle searching, 1 searches full image
+    int32_t noiseSF;                      //!< [-] Scale Factor for noise control
     int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
 private:
