@@ -26,6 +26,7 @@
  */
 
 /* modify the path to reflect the new module names */
+#include <Eigen/Dense>
 #include <string.h>
 #include "camera.h"
 
@@ -33,6 +34,16 @@
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
 Camera::Camera()
 {
+    /*! Default values for the camera.  */
+    this->parentName = "spacecraft";
+    this->fieldOfView = 0.7;
+    this->resolution << 512, 512;
+    this->renderRate = 60*1E9;
+    this->sensorSize << 1E-3, 1E-3;
+    this->cameraPos_B.setZero();
+    this->sigma_CB.setZero();
+    this->focalLength = this->sensorSize(0)/2/tan(this->fieldOfView/2.);
+    this->skyBox = "black";
     return;
 }
 
@@ -86,6 +97,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
     memset(&cameraMsg, 0x0, sizeof(CameraConfigMsg));
     
+    
     cv::Mat imageCV, blurred;
     if (this->saveDir !=""){
         this->saveDir = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
@@ -117,7 +129,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
  
     /*! - Output the saved image */
     SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
-
+    
     /*! - Output the camera config data */
     SystemMessaging::GetInstance()->WriteMessage(this->cameraOutID, CurrentSimNanos, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t *>(&cameraMsg), this->moduleID);
     return;

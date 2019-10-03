@@ -64,6 +64,17 @@ public:
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
+    
+    /*! Camera parameters */
+    std::string parentName;  //!< [-] Name of the parent body to which the camera should be attached
+    double fieldOfView;        //!< [rad]   Camera Field of View */
+    Eigen::Vector2d resolution;         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
+    uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond */
+    double focalLength;        //!< [m] Camera Focal Length in meters*/
+    Eigen::Vector2d sensorSize;      //!< [m] Size of the camera sensor-paired with resolution gives you pixel size in mm*/
+    Eigen::Vector3d cameraPos_B;     //!< [m] Camera position in body frame */
+    Eigen::Vector3d sigma_CB;        //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
+    std::string skyBox; //!< [-] name of skyboz in use */
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t imageInMsgID;                //!< ID for the outgoing message
