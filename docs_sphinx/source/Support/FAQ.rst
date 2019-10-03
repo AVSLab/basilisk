@@ -1,11 +1,3 @@
-.. toctree::
-.. role:: raw-latex(raw)
-   :format: latex
-..
-
-.. contents::
-   :depth: 3
-..
 
 .. _FAQ:
 
@@ -21,7 +13,7 @@ pass**
 -  Answer: The following response assumes you have the Basilisk soure
    code. You need to install the python utility ``pytest`` if this is
    not available on your system. Instructions are found at
-   :raw-latex:`\ref `installOptionalPackages. Next, navigate to the
+   :ref:`installOptionalPackages`. Next, navigate to the
    folder ``Basilisk\src`` and run ``pytest`` from there.
 
 **How can I run ``pytest`` faster?**

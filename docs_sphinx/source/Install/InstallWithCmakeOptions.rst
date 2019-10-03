@@ -1,10 +1,7 @@
 .. toctree::
+   :hidden:
 .. role:: raw-latex(raw)
    :format: latex
-..
-
-.. contents::
-   :depth: 3
 ..
 
 .. _cmakeOptions:
@@ -16,8 +13,8 @@ This documents discusses the various Cmake build options that can be
 used when compiling Basilisk. These build options can be set via the GUI
 Cmake program or specified via the command line.
 
-:raw-latex:`\image `html Images/doc/cmake-no-use.png “Screen Shot
-Showing Optional CMake Basilisk Flags” width=500px
+.. image:: ../_images/doc/cmake-no-use.png
+   :align: center
 
 Optional Cmake Flags
 --------------------

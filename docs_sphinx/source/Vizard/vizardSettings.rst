@@ -3,10 +3,6 @@
    :format: latex
 ..
 
-.. contents::
-   :depth: 3
-..
-
 .. _vizardSettings:
 
 Vizard - BSK Scripting Settings
@@ -15,7 +11,7 @@ Vizard - BSK Scripting Settings
 Overview
 --------
 
-The `Vizard <@ref%20vizard>`__ Unity-based visualization can have its
+The :ref:`vizard` Unity-based visualization can have its
 settings scripted from a Basilisk python simulation script. This allows
 the user to write a BSK simulation script and specify in the same script
 what Vizard options should be used. Within Vizard the user can change
@@ -26,10 +22,13 @@ When calling the ``enableUnityVisualization`` macro method a copy of the
 vizInterface module is returned. All scriptable Vizard settings are
 stored inside the ``settings`` variable. For example, to set the Vizard
 ambient lighting the following code is used:
-~~~~~~~~~~~~~\ [STRIKEOUT:{.py} viz =
-vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-gravBodies=gravFactory, saveFile=fileName) viz.settings.ambient =
-0.5]\ ~~~~~~~~~~~~~ If a setting is not provided, then the Vizard
+
+.. code-block:: python
+
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName) 
+	viz.settings.ambient = [0.5] 
+
+If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
 
@@ -121,13 +120,13 @@ example, it might be handy to create a line from the spacecraft pointing
 towards the sun direction, or from the spacecraft towards Earth to know
 how the antennas should point. These pointing lines can be scripted from
 Basilisk as well using using a helper function ``createPointLine()``:
-~~~~~~~~~~~~~\ [STRIKEOUT:{.py} viz =
-vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-gravBodies=gravFactory, saveFile=fileName)
-vizSupport.createPointLine(viz, toBodyName=“earth”, lineColor=[0, 0,
-255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”,
-lineColor=“yellow”)]\ ~~~~~~~~~~~~~ The ``createPointLine`` support
-macro requires the parameters ``toBodyName`` and ``lineColor`` to be
+
+.. code-block:: python
+
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+	vizSupport.createPointLine(viz, toBodyName=“earth”, lineColor=[0, 0, 255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
+	
+The ``createPointLine`` support macro requires the parameters ``toBodyName`` and ``lineColor`` to be
 defined. The parameter ``fromBodyName`` is optional. If it is not
 specified, then the ``viz.spacecraftName`` is used as a default origin.
 The ``lineColor`` state can be either a string containing the color
@@ -163,15 +162,14 @@ a body axis is within some angle to the sun (i.e. keep in cone), or if a
 sensor axis is outside some angle to the sun (i.e. keep out cone). These
 cones can be setup in Vizard, but can also be scripted from Basilisk
 using the helper function ``createConeInOut``:
-~~~~~~~~~~~~~\ [STRIKEOUT:{.py} viz =
-vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-gravBodies=gravFactory, saveFile=fileName)
-vizSupport.createConeInOut(viz, toBodyName=“earth”, coneColor=“teal”,
-normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True,
-coneHeight=5.0, coneName=‘sensorCone’) vizSupport.createConeInOut(viz,
-toBodyName=“earth”, coneColor=“blue”, normalVector_B=[0, 1, 0],
-incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0,
-coneName=‘comCone’)]\ ~~~~~~~~~~~~~ The following table illustrates the
+
+.. code-block:: python
+	
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+	vizSupport.createConeInOut(viz, toBodyName=“earth”, coneColor=“teal”, normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True, coneHeight=5.0, coneName=‘sensorCone’) 
+	vizSupport.createConeInOut(viz,toBodyName=“earth”, coneColor=“blue”, normalVector_B=[0, 1, 0], incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
+	
+The following table illustrates the
 arguments for the ``createConeInOut`` method:
 
 +-------------------+---------+---------+--------------+-------------+
@@ -237,15 +235,18 @@ Defining the Vizard Camera View Panels
 Vizard can create two spacecraft relative camera panels (camera One and
 Two) and one planet-pointing camera panel. This functionality can be
 controlled by using the ‘createCameraViewPanel’ helper method.
-~~~~~~~~~~~~~\ [STRIKEOUT:{.py} viz =
-vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-gravBodies=gravFactory, saveFile=fileName)
-vizSupport.createCameraViewPanel(viz, “One”, viewPanel=True, setView=0)
-vizSupport.createCameraViewPanel(viz, “Two”, viewPanel=True, setView=3,
-spacecraftVisible=True, fieldOfView=50.\ macros.D2R)
-vizSupport.createCameraViewPanel(viz, “Planet”, viewPanel=True,
-setView=2, spacecraftVisible=True, fieldOfView=50.\ macros.D2R,
-targetBodyName=‘earth’)]\ ~~~~~~~~~~~~~ The following table illustrates
+
+.. code-block::
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+	gravBodies=gravFactory, saveFile=fileName)
+	vizSupport.createCameraViewPanel(viz, “One”, viewPanel=True, setView=0)
+	vizSupport.createCameraViewPanel(viz, “Two”, viewPanel=True, setView=3,
+	spacecraftVisible=True, fieldOfView=50.\ macros.D2R)
+	vizSupport.createCameraViewPanel(viz, “Planet”, viewPanel=True,
+	setView=2, spacecraftVisible=True, fieldOfView=50.\ macros.D2R,
+	targetBodyName=‘earth’) 
+
+The following table illustrates
 the arguments for the ``createCameraViewPanel`` method if invoking the
 spacecraft relative camera headings for cameras ``One`` and ``Two``.
 

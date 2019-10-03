@@ -1,7 +1,3 @@
-.. toctree::
-.. contents::
-   :depth: 3
-..
 
 .. _bskModuleReview:
 

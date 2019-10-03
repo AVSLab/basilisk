@@ -1,7 +1,6 @@
 .. toctree::
-.. contents::
-   :depth: 3
-..
+   :hidden:
+
 
 .. _installLinux:
 
@@ -27,10 +26,7 @@ document outline how to install this support software.
 Dependencies
 ------------
 
-Note: Depending on your system setup, administrative permissions (sudo
-or su) may be required to install these dependencies. Some distributions
-of Linux will use other package management commands such as ‘yum’,
-‘dnf’, of ‘pgk’.
+.. Note:: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies. Some distributions of Linux will use other package management commands such as ‘yum’, ‘dnf’, of ‘pgk’.
 
 1. CMake: Available using CMake-GUI or CMake over the command line
 
@@ -127,7 +123,7 @@ Python 3
 Build Process via GUI
 ---------------------
 
-NOTE: This currently is bugged and doesn’t work correctly
+.. Note:: This currently is bugged and doesn’t work correctly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First run Cmake with the source directory set to the ``{REPO}/src``

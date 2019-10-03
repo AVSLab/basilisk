@@ -1,10 +1,7 @@
 .. toctree::
+   :hidden:
 .. role:: raw-latex(raw)
    :format: latex
-..
-
-.. contents::
-   :depth: 3
 ..
 
 .. _customPython:
@@ -43,11 +40,14 @@ Cmake.
 The following screen shots are taken on macOS using the CMake.app
 application:
 
-:raw-latex:`\image `html Images/doc/customPython1.png “Screenshot 1”
+.. image:: ../_images/doc/customPython1.png 
+   :align: center
 
-:raw-latex:`\image `html Images/doc/customPython2.png “Screenshot 2”
+.. image:: ../_images/doc/customPython2.png
+   :align: center
 
-:raw-latex:`\image `html Images/doc/customPython3.png “Screenshot 3”
+.. image:: ../_images/doc/customPython3.png
+   :align: center
 
 Using the Command Line CMake Command
 ------------------------------------

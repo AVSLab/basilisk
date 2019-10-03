@@ -1,11 +1,4 @@
-.. toctree::
-.. role:: raw-latex(raw)
-   :format: latex
-..
 
-.. contents::
-   :depth: 3
-..
 
 .. _FAQmacOS:
 
@@ -21,7 +14,11 @@ operating system.
    completion for BSK in PyCharm, go to Preferences >> Project >>
    Interpreter, click the ellipsis near the interpreter drop down and
    select more, click the paths icon, the right most icon shown
-   :raw-latex:`\image `html Images/doc/FAQmacOS1.png width=153px Add the
+   
+   :image ../images/doc/FAQmacOS1.png 
+   		:align: center 
+   
+   Add the
    path to the “modules” directory. You should now be able to use
    auto-completion in PyCharm.
 

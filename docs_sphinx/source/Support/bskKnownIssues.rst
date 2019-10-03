@@ -1,10 +1,3 @@
-.. toctree::
-.. contents::
-   :depth: 3
-..
-
-.. _bskKnownIssues:
-
 Basilisk Known Issues
 =====================
 

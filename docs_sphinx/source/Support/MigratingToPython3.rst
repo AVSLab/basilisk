@@ -1,11 +1,3 @@
-.. toctree::
-.. role:: raw-latex(raw)
-   :format: latex
-..
-
-.. contents::
-   :depth: 3
-..
 
 .. _migratingToPython3:
 

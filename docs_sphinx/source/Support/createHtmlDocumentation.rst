@@ -1,11 +1,3 @@
-.. toctree::
-.. role:: raw-latex(raw)
-   :format: latex
-..
-
-.. contents::
-   :depth: 3
-..
 
 .. _useDoxygen:
 
@@ -23,9 +15,11 @@ Doxygen Documentation
   site <http://hanspeterschaub.info/bskMain.html>`__ with the
   `Documentation <http://hanspeterschaub.info/bskHtml/index.html>`__
   page.
-| :raw-latex:`\image `html Images/doc/bskHTML.png “BSK HTML
-  Documentation Landing Page” width=80%
-
+| 
+ 
+ .. image:: ../_images/doc/bskHTML.png
+ 	:align: center
+ 	
 The `Related Pages <http://hanspeterschaub.info/bskHtml/pages.html>`__
 tab provide a listing of a range of support files such as how to install
 Basilisk on Linux, macOS and Microsoft Windows. It also provides FAQ

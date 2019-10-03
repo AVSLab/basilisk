@@ -1,7 +1,3 @@
-.. toctree::
-.. contents::
-   :depth: 3
-..
 
 .. _codingGuidelines:
 
@@ -96,67 +92,67 @@ Indicating Reference Frames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A vector variable expressed with components in a reference frame
-\\f\ :math:`\cal B\f`, is represented with the variable name followed by
+\ :math:`\cal B`, is represented with the variable name followed by
 an underscore and a capital letter denoting the frame
-\\f\ :math:`{}^{\cal B}\bf v\f`: ``vector_B``
+\ :math:`{}^{\cal B}\bf v`: ``vector_B``
 
-An angular rate variable expressed in one frame \\f\ :math:`\cal B\f`
-with respect to a second \\f\ :math:`\cal R\f`, where components are
-expressed in the frame \\f\ :math:`\cal B\f`,
-\\f\ :math:`{}^{\cal B}\pmb\omega_{\mathcal{B}/\mathcal{R}}\f`, is given
+An angular rate variable expressed in one frame \ :math:`\cal B`
+with respect to a second \ :math:`\cal R`, where components are
+expressed in the frame \ :math:`\cal B`,
+\ :math:`{}^{\cal B}\pmb\omega_{\mathcal{B}/\mathcal{R}}`, is given
 as = ``omega_BR_B``.
 
 MRP’s and DCM’s
 ~~~~~~~~~~~~~~~
 
-A direction cosine matrix is expressed as \\f\ :math:`[BN]\f`, a mapping
-of an \\f\ :math:`\cal N\f` frame vector into a \\f\ :math:`\cal B\f`
+A direction cosine matrix is expressed as \ :math:`[BN]`, a mapping
+of an \ :math:`\cal N` frame vector into a \ :math:`\cal B`
 frame vector, is written ``dcm_BN``. Similarly for the Modified
 Rodrigues Parameters (MRP) attitude parameterization the
-\\f\ :math:`\pmb\sigma_{\mathcal{B}/\mathcal{N}}\f` is written sigma_BN.
+\ :math:`\pmb\sigma_{\mathcal{B}/\mathcal{N}}` is written sigma_BN.
 
 Inertia Tensor
 ~~~~~~~~~~~~~~
 
-Inertia of the hub element with respect to point \\f\ :math:`BC\f`
+Inertia of the hub element with respect to point \ :math:`BC`
 defined in the body frame: ``IHubPntBC_B``
 
 Derivatives
 ~~~~~~~~~~~
 
-The first and second time derivatives of scalar (\f:math:`\dot{x}\f`,
-\\f\ :math:`\ddot{x}\f`) or vector (\f:math:`\dot{\bf{x}}\f`,
-\\f\ :math:`\ddot{\bf{x}}\f`) quantities, respectively are written as
+The first and second time derivatives of scalar (:math:`\dot{x}`,
+\ :math:`\ddot{x}`) or vector (:math:`\dot{\bf{x}}`,
+\ :math:`\ddot{\bf{x}}`) quantities, respectively are written as
 ``xDot`` and ``xDDot``.
 
 The first and second time derivatives with respect to a variable other
 than time should use the same pattern as time derivatives but with a
-different modifier. For example, \\f\ :math:`f '(x)\f` and
-\\f\ :math:`f ''(x)\f` are written as ``xPrime`` and ``xDPrime``
+different modifier. For example, \ :math:`f '(x)` and
+\ :math:`f ''(x)` are written as ``xPrime`` and ``xDPrime``
 respectively.
 
 Common Usage Examples
 ~~~~~~~~~~~~~~~~~~~~~
 
--  Position vector from \\f\ :math:`\cal N\f` to \\f\ :math:`\cal B\f`
+-  Position vector from \ :math:`\cal N` to \ :math:`\cal B`
    in inertial frame components
-   \\f\ :math:`{}^{\cal N} \bf r_{\mathcal{B/N}}\f`: ``r_BN_N``
+   \ :math:`{}^{\cal N} \bf r_{\mathcal{B/N}}`: ``r_BN_N``
 -  Inertial time derivative of position vector from
-   \\f\ :math:`\cal N\f` to \\f\ :math:`\cal B\f` in inertial frame
-   components \\f\ :math:`{}^{\cal N} \dot{\bf r}_{\cal B/N}\f`:
+   \ :math:`\cal N` to \ :math:`\cal B` in inertial frame
+   components \ :math:`{}^{\cal N} \dot{\bf r}_{\cal B/N}`:
    ``rDot_BN_N``
--  Time derivative with respect to the body of position vector from \\f$
-   B\f$ to \\f$ H\f$ in body frame components
-   \\f\ :math:`{}^{\cal B} \bf r'_{H/B}\f`: ``rPrime_HB_B``
--  Unit direction vector from \\f\ :math:`B\f` to \\f\ :math:`S\f` in
-   body frame components \\f\ :math:`{}^{\cal B} \hat{\bf s}_{S/B}\f`:
+-  Time derivative with respect to the body of position vector from \$
+   B$ to \$ H$ in body frame components
+   \ :math:`{}^{\cal B} \bf r'_{H/B}`: ``rPrime_HB_B``
+-  Unit direction vector from \ :math:`B` to \ :math:`S` in
+   body frame components \ :math:`{}^{\cal B} \hat{\bf s}_{S/B}`:
    ``sHat_SB_B``
 -  Inertial time derivative of body angular rate with respect to the
    inertial frame in body frame components
-   \\f\ :math:`{}^{\cal B} \dot{\pmb\omega}_{\mathcal{B}/\mathcal{N}}\f`:
+   \ :math:`{}^{\cal B} \dot{\pmb\omega}_{\mathcal{B}/\mathcal{N}}`:
    ``omegaDot_BN_B``
 -  DCM of the body frame with respect to the inertial frame
-   \\f\ :math:`[BN]\f`: ``dcm_BN``
+   \ :math:`[BN]`: ``dcm_BN``
 
 Modules
 -------

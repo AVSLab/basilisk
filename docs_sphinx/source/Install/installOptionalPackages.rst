@@ -1,7 +1,6 @@
 .. toctree::
-.. contents::
-   :depth: 3
-..
+   :hidden:
+
 
 .. _installOptionalPackages:
 

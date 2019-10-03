@@ -1,11 +1,9 @@
 .. toctree::
+   :hidden:
 .. role:: raw-latex(raw)
    :format: latex
 ..
 
-.. contents::
-   :depth: 3
-..
 
 .. _installMacOS:
 
@@ -78,12 +76,7 @@ Install HomeBrew Support Packages
 1. Install `HomeBrew <http://brew.sh>`__ using a Terminal window and
    pasting the install script from the HomeBrew web site.
 
-   -  *Note:* that this must be done within a ``bash`` terminal window.
-      The type of terminal emulation is shown on the top of the terminal
-      window. If you are running another terminal type, type ``bash`` to
-      engage the Bash terminal environment. This is just required to
-      install HomeBrew. Once it is installed, you can run all other
-      commands from any terminal type.
+   .. Note:: This must be done within a ``bash`` terminal window. The type of terminal emulation is shown on the top of the terminal window. If you are running another terminal type, type ``bash`` to engage the Bash terminal environment. This is just required to install HomeBrew. Once it is installed, you can run all other commands from any terminal type.
 
 2. Install the SWIG version 3 package. The newer SWIG version 4 is not
    currently compatible with Basilisk.
@@ -117,21 +110,11 @@ binary folder using
 Setting up the Python Environment
 ---------------------------------
 
-**Note:** The following instructions recommend installing all the
-required python packages in the user ``~/Library/Python`` folder. This
-has the benefit that no ``sudo`` command is required to install and run
-Basilisk, and the user Python folder can readily be replaced if needed.
-If you are familiar with python you can install in other locations as
-well.
+.. Note:: The following instructions recommend installing all the required python packages in the user ``~/Library/Python`` folder. This has the benefit that no ``sudo`` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed. If you are familiar with python you can install in other locations as well.
 
-**Note:** If you wish to use the HomeBrew version of python, or
-generally have multiple copies of python installed on your system,
-configure the CMake Python paths as described in
-:raw-latex:`\ref `customPython after following these instructions.
+.. Note:: If you wish to use the HomeBrew version of python, or generally have multiple copies of python installed on your system, configure the CMake Python paths as described in :raw-latex:`\ref `customPython after following these instructions.
 
-**Note:** We suggest you remove any other python packages (such as
-Anaconda), or change the path in your terminal shell if you really want
-to keep it.
+.. Note:: We suggest you remove any other python packages (such as Anaconda), or change the path in your terminal shell if you really want to keep it.
 
 In the following instructions, be sure to follow the sequence of tasks
 as outlined below.
@@ -187,12 +170,7 @@ to include both folders in your path if you are using both Python 2 and
 Setup Required Python 2 packages, skip if using Python 3
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Note:**\ If you already have Python 3 installed and are trying to use
-Python 2 as well, then depending on the path dependencies the ``pip``
-command might have to be called with ``python -m pip`` to ensure the
-Python 2 version of ``pip`` is called. \* First the python package
-manager ``pip`` must be installed. From the terminal window, enter the
-following commands:
+.. Note:: If you already have Python 3 installed and are trying to use Python 2 as well, then depending on the path dependencies the ``pip`` command might have to be called with ``python -m pip`` to ensure the Python 2 version of ``pip`` is called. \* First the python package manager ``pip`` must be installed. From the terminal window, enter the following commands:
 
 ::
 
@@ -223,14 +201,9 @@ installation. \* Next, install setup tools using
    called\ ```mac_fix_path.pth`` <mac_fix_path.pth>`__\ from
    basilisk/docs to the directory
    ``~/Library/Python/2.7/lib/python/site-packages/`` For more
-   information about this file see this\ `online
-   discussion <https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577>`__\ .
-   Note: If you have installed python packages already using
-   ``sudo pip install``, then these are stored in
-   ``Library/Python/2.7/site-packages``. You need to add the
-   ``mac_fix_path.pth`` file to this folder as well to make macOS ignore
-   the system installed packages. Or, to only use home directory
-   installed python packages, just remove ``Library/Python`` folder.
+   information about this file see this `online
+   discussion <https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577>`__
+   .. Note:: If you have installed python packages already using ``sudo pip install``, then these are stored in ``Library/Python/2.7/site-packages``. You need to add the ``mac_fix_path.pth`` file to this folder as well to make macOS ignore the system installed packages. Or, to only use home directory installed python packages, just remove ``Library/Python`` folder.
 
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -262,7 +235,7 @@ Installing required python support packages
 Vizard Visualization support
 ----------------------------
 
-To play back the Basilisk simulation data in :raw-latex:`\ref `vizard,
+To play back the Basilisk simulation data in :ref:`vizard`
 the installation must have access to the Google Protobuffers as a
 pre-built library. You can download the release from
 `here <https://github.com/google/protobuf/releases>`__.
@@ -283,15 +256,21 @@ built as follows.
    option instead of the ssh option
 
 4. Copy the project url (omit ``git clone``) from the bitbucket clone
-   panel :raw-latex:`\image `html Images/doc/bitbucket-clone-panel.png
-   width=514px
-
+   panel 
+   
+   .. image:: ../_images/doc/bitbucket-clone-panel.png
+      :align: center
+      :scale: 35%
+		
 5. Clone into preferred Git client (Source Tree for instance), or just
    clone the repository in the directory containing Basilisk. In
    SourceTree, use ``clone from url``, add the Basilisk repository url
    (without ``.git`` on the end), and select ``develop`` branch to pull
-   the latest code. :raw-latex:`\image `html
-   Images/doc/sourcetree-clone-panel.png width=568px
+   the latest code. 
+   
+   .. image:: ../_images/doc/sourcetree-clone-panel.png
+   	   :align: center
+   	   :scale: 35%
 
 6. The Cmake.app can’t be used by double clicking on it. The required
    ``conan`` paths are not loaded. Instead, run ``cmake`` directly from
@@ -333,35 +312,36 @@ Vizard visualization. \* Press ``Configure`` in Cmake, select the Xcode
 IDE if running for the first time. If you run into odd errors, try
 clearing the CMake.app cache under the ``File`` menu. \* (Optional) Add
 a variable named ``CMAKE_BUILD_TYPE`` and set the value to Debug or
-Release depending on your desired config. **Note:** If you wish to use
-the another version of python configure the Python paths in
-:raw-latex:`\ref `customPython **Potential Issue:** If you get an error
-message in CMake saying it can’t find the compiler tools, open a
-Terminal window and type
+Release depending on your desired config. 
 
-::
+.. Note:: If you wish to use the another version of python configure the Python paths in :ref:`customPython` 
 
-       $ xcode-select -p
-
-::
-
-   This should return 
-
-::
-
-       /Applications/Xcode.app/Contents/Developer
-
-::
-
-   If instead you get a different director such as `/Library/Developer/CommandLineTools`, then correct this compiler directory path using 
-
-::
-
-       sudo xcode-select --reset
-
-::
-
-   Now clear the Cmake cache and try running `Configure` again.
+.. Warning:: 
+	If you get an error message in CMake saying it can’t find the compiler tools, open a Terminal window and type
+	
+	::
+	
+	       $ xcode-select -p
+	
+	::
+	
+	This should return 
+	
+	::
+	
+	       /Applications/Xcode.app/Contents/Developer
+	
+	::
+	
+	If instead you get a different director such as `/Library/Developer/CommandLineTools`, then correct this compiler directory path using 
+	
+	::
+	
+	       sudo xcode-select --reset
+	
+	::
+	
+	Now clear the Cmake cache and try running `Configure` again.
 
    * Press `Generate` in Cmake to build the Xcode Basilisk project file inside the `dist` directory
 
@@ -369,8 +349,10 @@ Terminal window and type
    ``dist``
 
    -  The source code should appear and be ready for use
-      :raw-latex:`\image `html Images/doc/256564102-xcode.png
-      width=419px
+   -  
+      .. image:: ../_images/doc/256564102-xcode.png
+         :align: center
+         :scale: 35%
 
    -  You can now build the project within the Xcode IDE
 
@@ -389,7 +371,11 @@ Power User Installation Tip
 
 The project can be configured and built from the command line via CMake.
 Command line operations are run using the following setup.py script and
-parameters. ~~~~~~~ python setup.py <command_1 command_2 etc.> ~~~~~~~
+parameters. 
+::
+	python setup.py <command_1 command_2 etc.>
+::
+
 clean: removes ‘dist/build’ and build artifacts.
 
 cmake: configure the project and generate an XCode project file to the

@@ -393,7 +393,7 @@ def fileCrawler(srcDir):
 
 breathe_projects_source = {}
 
-fileCrawler("../../../Basilisk/src/examples/") # When I run this, scenario finds the wrong doc_string
+#fileCrawler("../../../Basilisk/src/examples/") # When I run this, scenario finds the wrong doc_string
 
 # breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/MRP_Feedback", ['MRP_Feedback.c', 'MRP_Feedback.h'])}
 

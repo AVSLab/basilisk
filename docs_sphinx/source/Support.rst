@@ -10,7 +10,15 @@ Support
    :maxdepth: 1
    :caption: Contents:
    
-   Support/index
+   Support/CodingGuidlines
+   Support/FAQ
+   Support/FAQmacOS
+   Support/MigratingToPython3
+   Support/bskKnownIssues
+   Support/bskModuleCheckoutList
+   Support/bskReleaseNotes
+   Support/createHtmlDocumentation
+   Support/UnderstandingBasilisk
 
 
 

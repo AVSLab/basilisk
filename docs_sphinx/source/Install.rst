@@ -10,8 +10,12 @@ Install
    :maxdepth: 1
    :caption: Contents:
    
-   Install/index
-
+   Install/installOnLinux
+   Install/installOnMacOS
+   Install/installOnWindows
+   Install/InstallWithCmakeOptions
+   Install/installOptionalPackages
+   Install/customPython
 
 
 

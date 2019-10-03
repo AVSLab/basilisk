@@ -1,7 +1,5 @@
 .. toctree::
-.. contents::
-   :depth: 3
-..
+   :hidden:
 
 .. _installWindows:
 
@@ -112,10 +110,24 @@ Example command using x86:
 
    cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 
-MSVC Mapping: \| MSVC Product Year \| MSVC Version \| \|——————-|————–\|
-\| 2019 \| 16 \| \| 2017 \| 15.9 \| \| \| 15.8 \| \| \| 15.7 \| \| \|
-15.6 \| \| \| 15.5 \| \| \| 15.4 - 15.3 \| \| \| 15.2 - 15.0 \| \| 2015
-\| 14 \| \| 2013 \| 12 \| \| 2012 \| 11 \|
+MSVC Mapping  
+
+=================  ===============
+MSVC Product Year  MSVC Version   
+=================  ===============
+2019               16
+2017               15.9
+                   15.8
+                   15.7
+                   15.6
+                   15.5
+                   15.4 - 15.3
+                   15.2 - 15.0
+2015               14
+2013               12 
+2012               11
+=================  ===============
+
 
 ::
 
