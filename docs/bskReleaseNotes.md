@@ -18,6 +18,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>The circle finding module using openCV has been cleaned up and the noise is now dynamically measured given the image</li>
     <li>A new dispersion was added for Monte Carlo analysis which allows for per-axis control on an initial MRP value</li>
     <li>Cleaned up opNav messages to be consistent with other messages, and simplified the limbFinding code. Only functionality change is Gaussian Blur.</li>
+     <li>Add new OpNav module using a planet limb. Algorithm developed by J. Christian</li>
 </ul>
 
 ##  Version 1.0.0 🍾🍾🍾🍾🍾
