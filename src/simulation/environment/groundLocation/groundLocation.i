@@ -25,7 +25,7 @@
 
 %include "swig_common_model.i"
 %include "sys_model.h"
-
+%include "groundLocation.h"
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/accessSimMsg.h"
