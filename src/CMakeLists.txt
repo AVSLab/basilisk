@@ -53,6 +53,10 @@ if(USE_PROTOBUFFERS)
 endif()
 if(USE_OPENCV)
   list(APPEND required_conan_libraries opencv/4.1.1@conan/stable)
+ 
+  # temp bug fix for bad pcre dependancies
+  list(APPEND required_conan_libraries zlib/1.2.11@conan/stable)
+  list(APPEND required_conan_libraries bzip2/1.0.8@conan/stable)
 endif()
 
 if(USE_ZMQ)
