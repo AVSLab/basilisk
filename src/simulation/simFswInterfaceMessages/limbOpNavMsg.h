@@ -17,9 +17,16 @@
 
  */
 
-#define MAX_LIMB_PNTS 1430
+#ifndef LIMB_MSG_H
+#define LIMB_MSG_H
 
-/*! @brief Structure used to define the output definition for attitude guidance*/
+#include "macroDefinitions.h"
+
+/*! \defgroup simFswInterfaceMessages
+ *  @{
+ */
+
+/*! @brief Structure used to define the message containing planet limb data for opNav*/
 typedef struct {
     double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/
     int valid; //!< --  Valid measurement if 1, not if 0*/
