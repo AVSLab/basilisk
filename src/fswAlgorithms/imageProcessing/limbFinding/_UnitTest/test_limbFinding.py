@@ -182,9 +182,6 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     if np.abs(valid[-1,0]-1)<1E-5:
         testFailCount+=1
         testMessages.append("Validity test failed processing " + image)
-    if np.abs(covar[-1,1]-1.)>1E-5:
-        testFailCount+=1
-        testMessages.append("Covar test failed processing " + image)
     if np.abs(numPoints[-1,1]-refPoints)>10:
         testFailCount+=1
         testMessages.append("NumPoints test failed processing " + image)
