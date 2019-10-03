@@ -67,12 +67,12 @@ protected:
     bool readMessages();
     void integratePowerStatus(double currentTime); //!< Integrates the net power given the current time using a simple Euler method.
     double sumAllInputs(); //!< Sums over the input power consumption messages.
-    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double time) = 0; //!< Virtual function to represent power storage computation or losses.
-    virtual void customSelfInit();
-    virtual void customCrossInit();
-    virtual void customReset(uint64_t CurrentClock);
-    virtual void customWriteMessages(uint64_t CurrentClock);
-    virtual bool customReadMessages();
+    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg) = 0; //!< Virtual function to represent power storage computation or losses.
+    virtual void customSelfInit(){};//!Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
+    virtual void customCrossInit(){};//! Custom CrossInit() method, similar to customSelfInit.
+    virtual void customReset(uint64_t CurrentClock){}; //! Custom Reset() method, similar to customSelfInit.
+    virtual void customWriteMessages(uint64_t currentSimNanos){}; //! Custom Write() method, similar to customSelfInit.
+    virtual bool customReadMessages(){return true;};//! Custom Read() method, similar to customSelfInit.
 
 public:
     std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of the spacecraft position/velocity message names

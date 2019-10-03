@@ -27,7 +27,6 @@
 import pytest
 import os, inspect
 import numpy as np
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -38,10 +37,8 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import astroFunctions
 
@@ -81,7 +78,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     unitProcessName = "TestProcess"
 
     #   Specify test-against parameter
-    referencePower = 1372.5398 #    W/m^2 at Earth
+    referencePower = astroFunctions.solarFluxEarth #    W/m^2 at Earth
     sunDistanceMult = pow(astroFunctions.AU*1000., 2.)/pow(orbitDistance, 2.)
     scAttMult = np.cos(abs(np.arccos(0.5 * (np.trace(rbk.MRP2C(scAttitude))-1.)))) # extract cos(prv) to determine the attitude angle vs the sun
     referenceMultiplier = 1.0 * eclipseValue * sunDistanceMult * scAttMult  #     Nominally set to 1.0; modified by other vals
@@ -139,11 +136,6 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     return [testFailCount, ''.join(testMessages)]
 
 
-
-#
-# This statement below ensures that the unitTestScript can be run as a
-# stand-alone python script
-#
 if __name__ == "__main__":
     print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 1, rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0]))))
     print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 1, [0,0,0]))
