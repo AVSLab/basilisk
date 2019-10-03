@@ -17,6 +17,7 @@ We are very excited by the great capabilities that this software already has, an
 <ul>
     <li>The circle finding module using openCV has been cleaned up and the noise is now dynamically measured given the image</li>
     <li>A new dispersion was added for Monte Carlo analysis which allows for per-axis control on an initial MRP value</li>
+    <li>Cleaned up opNav messages to be consistent with other messages, and simplified the limbFinding code. Only functionality change is Gaussian Blur.</li>
 </ul>
 
 ##  Version 1.0.0 🍾🍾🍾🍾🍾

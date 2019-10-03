@@ -34,6 +34,7 @@
 LimbFinding::LimbFinding()
 {
     this->filename = "";
+    this->saveDir ="";
     this->saveImages = 0;
     this->blurrSize = 5;
     this->cannyThreshHigh = 200;
@@ -86,17 +87,16 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
  */
 void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
-    std::string filenamePre;
-    int limbFound;
     CameraImageMsg imageBuffer;
     LimbOpNavMsg limbMsg;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
     memset(&limbMsg, 0x0, sizeof(LimbOpNavMsg));
-    limbFound = 0;
 
     cv::Mat imageCV, blurred, edgeImage;
-    filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
-
+    if (this->saveDir != ""){
+        this->saveDir = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+    }
+    
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     if(this->imageInMsgName != "")
@@ -114,7 +114,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         if (this->saveImages == 1){
-            cv::imwrite(filenamePre, imageCV);
+            cv::imwrite(this->saveDir, imageCV);
         }
     }
     else{
@@ -124,11 +124,10 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     /*! - Greyscale the image */
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
     /*! - Lightly blur it */
-    cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
+    cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
     /*! - Apply the Canny Transform to find the limbPoints*/
     cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
     if (cv::countNonZero(edgeImage)>0){
-        limbFound=1;
         std::vector<cv::Point2i> locations;
         cv::findNonZero(edgeImage, locations);
         for(size_t i = 0; i<locations.size(); i++ )
@@ -140,17 +139,13 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
             limbMsg.pointSigmas[2*i+1] = 1;
         }
         limbMsg.numLimbPoints = locations.size()/2;
-    }
-    else{limbFound=0;}
-    
-    limbMsg.timeTag = this->sensorTimeTag;
-    limbMsg.cameraID = imageBuffer.cameraID;
-    /*!- If no limb points are found do not validate the image as a measurement */
-    if (limbFound >0){
         limbMsg.valid = 1;
         limbMsg.planetIds = 2;
     }
     
+    limbMsg.timeTag = this->sensorTimeTag;
+    limbMsg.cameraID = imageBuffer.cameraID;
+
     SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint16_t *>(&limbMsg), this->moduleID);
 
     return;
