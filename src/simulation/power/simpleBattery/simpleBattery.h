@@ -23,6 +23,7 @@
 
 #include "../_GeneralModuleFiles/simPowerStorageBase.h"
 #include "../../simMessages/powerStorageStatusSimMsg.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -44,7 +45,7 @@ public:
     ~SimpleBattery();
 
 private:
-    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double currentTime);
+    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
 
 public:
     double storageCapacity; //!< [W-hr] Battery capacity in Watt-Hours.

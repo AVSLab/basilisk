@@ -44,7 +44,8 @@ PowerNodeBase::PowerNodeBase()
     this->nodeStatusInMsgName = ""; //By default, no node status message name is used.
     this->nodePowerOutMsgId = -1;
     this->nodeStatusInMsgId = -1;
-    this->powerStatus = 1; //Node defaults to on unless overwritten.
+    this->powerStatus = 1; //! Node defaults to on unless overwritten.
+    memset(&(this->nodePowerMsg), 0x0, sizeof(PowerNodeUsageSimMsg)); //! Power node message is zero by default.
     return;
 }
 
@@ -98,30 +99,6 @@ void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void PowerNodeBase::customSelfInit()
-{
-    return;
-}
-
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void PowerNodeBase::customCrossInit()
-{
-    return;
-}
-
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
- @return void
- */
-void PowerNodeBase::customReset(uint64_t CurrentClock)
-{
-    return;
-}
-
 /*! This method writes out a message.
  @return void
  */
@@ -141,13 +118,6 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
     return;
 }
 
-/*! Custom output message writing method.  This allows a child class to add additional functionality.
- @return void
- */
-void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
-{
-    return;
-}
 
 /*! This method is used to read incoming power status messages.
  @return void
@@ -180,15 +150,6 @@ bool PowerNodeBase::readMessages()
     return(powerRead && customRead);
 }
 
-
-/*! Custom output input reading method.  This allows a child class to add additional functionality.
- @return void
- */
-bool PowerNodeBase::customReadMessages()
-{
-    return true;
-}
-
 /*! Core compute operation that implements switching logic and computes module-wise power consumption.
  */
 
@@ -211,15 +172,12 @@ void PowerNodeBase::computePowerStatus(double currentTime)
  */
 void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
-    memset(&(this->nodePowerMsg), 0x0, sizeof(PowerNodeUsageSimMsg));
 
-    //! - update local neutral density information
+    //! - Only update the power status if we were able to read in messages.
     if(this->readMessages())
     {
         this->computePowerStatus(CurrentSimNanos*NANO2SEC);
     }
-
-    //! - write out neutral density message
     this->writeMessages(CurrentSimNanos);
 
     return;

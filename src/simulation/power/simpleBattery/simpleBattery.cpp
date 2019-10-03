@@ -32,12 +32,12 @@ SimpleBattery::~SimpleBattery(){
 }
 
 /*! This method integrates the current net power, and checks to see whether the integrated power falls between 0 and the battery's storageCapacity.
- @param msg magnetic field message structure
+ @param *msg:  pointer to a PowerStorageStatusSimMsg instance
  @return void
  */
-void SimpleBattery::evaluateBatteryModel(PowerStorageStatusSimMsg *msg,double currentTime) {
+void SimpleBattery::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
 
-    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep/3600.0); //integrate over hours
+    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep*SEC2HOUR); //integrate over hours
 
 
     if(this->storedCharge > this->storageCapacity) {
