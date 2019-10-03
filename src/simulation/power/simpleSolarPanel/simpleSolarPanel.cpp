@@ -118,13 +118,10 @@ void SimpleSolarPanel::computeSunData()
     Eigen::Vector3d sunPos;
     Eigen::MRPd sigma_BN_eigen;
 
-    //! - Get the position from spacecraft to Sun
-
     //! - Read Message data to eigen
     r_BN_N_eigen = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
     sunPos = cArray2EigenVector3d(this->sunData.PositionVector);
     sigma_BN_eigen = cArray2EigenVector3d(this->stateCurrent.sigma_BN);
-
 
     //! - Find sun heading unit vector
     Sc2Sun_Inrtl = sunPos -  r_BN_N_eigen;
@@ -153,8 +150,6 @@ void SimpleSolarPanel::computeSunData()
 void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg) {
 
     this->computeSunData();
-    // SunPowerFactor = baseSunPower * distanceFactor * illuminationFactor 
-
     double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->sunVisibilityFactor.shadowFactor;
     powerUsageSimMsg->netPower_W = sunPowerFactor * this->projectedArea * this->panelEfficiency;
 

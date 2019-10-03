@@ -31,7 +31,7 @@
 #define NANO2SEC        1e-9
 #define RECAST3X3       (double (*)[3])
 #define RECAST2x2       (double (*)[2])
-
+#define SEC2HOUR        1./3600.
 
 /* @} */
 

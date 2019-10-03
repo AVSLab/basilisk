@@ -1,4 +1,21 @@
+/*
+ ISC License
 
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+ */
 
 #ifndef BASILISK_SIMPLESOLARPANEL_H
 #define BASILISK_SIMPLESOLARPANEL_H
@@ -10,12 +27,9 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 
-
 /*! \addtogroup SimModelGroup
  * @{
  */
-
-
 
 /*! @brief Simple body-fixed solar panel model that considers shadowing from eclipse, body attitude, and panel parameters.
 
@@ -33,7 +47,6 @@ Power generation is computed according to \cite SMAD :
 where \f$W_{base} \f$ is the base power (in \f$\mbox{W}/\mbox{m}^2\f$) at the spacecraft location from the sun, \f$C_{eclipse}\f$ is the eclipse/penumbra mitigator on the sun's power (1 corresponds to no shadow, 0 corresponds to eclipse), \f$C_{panel}\f$ represents the 
 panel's efficiency at converting solar energy into electrical energy, \f$(\hat{n}\cdot \hat{s})\f$ represents the alignment between the panel's normal vector and the spaceraft-sun unit vector, and \f$A_{panel}\f$ represents the panel area in meters squared.
 
-\bibliography
 */
 
 
