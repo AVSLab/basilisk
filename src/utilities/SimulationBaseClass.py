@@ -487,8 +487,8 @@ class SimBaseClass:
         """
         Retrieves logged message data from TotalSim by querying over message and variable names.
 
-        :param varName: A message name with the variable specified (i.e., 'scMessage.r_BN_N')
-        :param indices: Specific log indexes to pull from.
+        :param varName: string: A message name with the variable specified (i.e., 'scMessage.r_BN_N')
+        :param indices: list: For multidimensional message attributes, this specifies how many columns to pull from (ex. a 3 vector should be called with list(range(3)))
         :param numRecords: ???
         """
         splitName = varName.split('.')

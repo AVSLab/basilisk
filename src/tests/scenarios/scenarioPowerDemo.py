@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup scenarioSpacecraftSystemsGroup
+## \defgroup scenarioSimplePowerDemo
 ## @{
 ## Illustration of how to use simplePower modules to perform orbit power analysis considering attitude and orbital coupling.
 #
@@ -41,11 +41,53 @@
 #   3. Use the addPowerNodeToModel() method from the powerStorageBase on the nodePowerOutMsgNames you configured in step 1 to link the power nodes to the powerStorageBase instance
 #   4. Run the simulation.
 #
+#  In python, this is accomplished by calling
+# ~~~~~~~~~~~~~{.py}
+#    # Create a solar panel
+# solarPanel = simpleSolarPanel.SimpleSolarPanel()
+# solarPanel.ModelTag = "solarPanel"
+# solarPanel.stateInMsgName = scObject.scStateOutMsgName
+# solarPanel.sunEclipseInMsgName = "eclipse_data_0"
+# solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.2*0.3, 0.20)
+# solarPanel.nodePowerOutMsgName = "panelPowerMsg"
+# scenarioSim.AddModelToTask(taskName, solarPanel)
+#
+# #   Create a simple power sink
+# powerSink = simplePowerSink.SimplePowerSink()
+# powerSink.ModelTag = "powerSink2"
+# powerSink.nodePowerOut = -3. # Watts
+# powerSink.nodePowerOutMsgName = "powerSinkMsg"
+# scenarioSim.AddModelToTask(taskName, powerSink)
+#
+# # Create a simpleBattery and attach the sources/sinks to it
+# powerMonitor = simpleBattery.SimpleBattery()
+# powerMonitor.ModelTag = "powerMonitor"
+# powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
+# powerMonitor.storageCapacity = 10.0
+# powerMonitor.storedCharge = 10.0
+# powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
+# powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
+# scenarioSim.AddModelToTask(taskName, powerMonitor)
+# ~~~~~~~~~~~~~
+#
+# The internals and outputs of the simplePowerSystem can be logged by calling:
+# ~~~~~~~~~~~~~{.py}
+# Setup logging on the test module output message so that we get all the writes to it
+# scenarioSim.TotalSim.logThisMessage(solarPanel.nodePowerOutMsgName, testProcessRate)
+# scenarioSim.TotalSim.logThisMessage(powerSink.nodePowerOutMsgName, testProcessRate)
+# scenarioSim.TotalSim.logThisMessage(powerMonitor.batPowerOutMsgName, testProcessRate)
+#
+# ...Sim Execution...
+#
+# supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower_W")
+# sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
+# storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
+# netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
+# ~~~~~~~~~~~~~
 # One version of this process is demonstrated here. A spacecraft representing a tumbling 6U cubesat is placed in a LEO orbit,
 # using methods that are described in other scenarios. Three simplePower modules are created: a simpleBattery, a simpleSolarPanel,
 # and a simplePowerSink (which represents the load demanded by on-board electronics.) The solar panel is assumed to be body-fixed,
 # and given the parameters appropriate for a 6U cubesat.
-
 # To run the scenario , call the python script through
 #
 #       python3 scenarioPowerDemo.py
@@ -53,7 +95,7 @@
 # When the simulation completes, one plot is shown to demonstrate the panel's attitude and orbit dependence, the net power generated,
 # the stored power, and the power consumed. An initial rise in net power from the panel facing towards the sun is cut short as the spacecraft enters eclipse;
 # as it exits, the stored charge of the battery begins to rebuild.
-# ![Power System Response](Images/Scenarios/scenarioPowerDemo.png "Power history")
+# ![Power System Response](Images/Scenarios/powerDemo.png "Power history")
 ## @}
 import pytest
 import os, inspect
@@ -71,16 +113,13 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
 from Basilisk.simulation import simplePowerMonitor, simpleBattery
-from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.simulation import simpleSolarPanel
-from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.simulation import eclipse
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import astroFunctions
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -118,7 +157,7 @@ def run_scenario():
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
-    oe.a = 6371*1000.0 + 1000.*1000
+    oe.a = astroFunctions.E_radius*1e3 + 400e3
     oe.e = 0.0
     oe.i = 0.0*macros.D2R
 
@@ -145,7 +184,18 @@ def run_scenario():
 
     scenarioSim.AddModelToTask(taskName, eclipseObject)
 
-    # Create a power sink/source
+
+    # setup Spice interface for some solar system bodies
+    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
+    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
+                                     , timeInitString
+                                     , spicePlanetNames = ["sun", "earth"]
+                                     )
+
+    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
+
+
+    # Create a solar panel
     solarPanel = simpleSolarPanel.SimpleSolarPanel()
     solarPanel.ModelTag = "solarPanel"
     solarPanel.stateInMsgName = scObject.scStateOutMsgName
@@ -154,25 +204,14 @@ def run_scenario():
     solarPanel.nodePowerOutMsgName = "panelPowerMsg"
     scenarioSim.AddModelToTask(taskName, solarPanel)
 
-
-    # setup Spice interface for some solar system bodies
-    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , timeInitString
-                                     , spicePlanetNames = ["sun", "venus", "earth", "mars barycenter"]
-                                     )
-
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
-
-
-
+    #   Create a simple power sink
     powerSink = simplePowerSink.SimplePowerSink()
     powerSink.ModelTag = "powerSink2"
     powerSink.nodePowerOut = -3. # Watts
     powerSink.nodePowerOutMsgName = "powerSinkMsg"
     scenarioSim.AddModelToTask(taskName, powerSink)
 
-    # Create a simplePowerMonitor and attach the source/sink to it
+    # Create a simpleBattery and attach the sources/sinks to it
     powerMonitor = simpleBattery.SimpleBattery()
     powerMonitor.ModelTag = "powerMonitor"
     powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
@@ -183,11 +222,14 @@ def run_scenario():
     scenarioSim.AddModelToTask(taskName, powerMonitor)
 
 
-    # Setup logging on the test module output message so that we get all the writes to it
+    # Setup logging on the power system
     scenarioSim.TotalSim.logThisMessage(solarPanel.nodePowerOutMsgName, testProcessRate)
     scenarioSim.TotalSim.logThisMessage(powerSink.nodePowerOutMsgName, testProcessRate)
     scenarioSim.TotalSim.logThisMessage(powerMonitor.batPowerOutMsgName, testProcessRate)
 
+    # Also log attitude/orbit parameters
+    scenarioSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    scenarioSim.TotalSim.logThisMessage(planet.bodyInMsgName, testProcessRate)
     # Need to call the self-init and cross-init methods
     scenarioSim.InitializeSimulation()
 
@@ -206,11 +248,17 @@ def run_scenario():
     sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
     storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
     netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
+
+    scOrbit = scenarioSim.pullMessageLogData(scObject.scStateOutMsgName + ".r_BN_N", list(range(3)))
+    scAtt = scenarioSim.pullMessageLogData(scObject.scStateOutMsgName+".sigma_BN", list(range(3)))
+
+    planetOrbit = scenarioSim.pullMessageLogData(planet.bodyInMsgName+".PositionVector", list(range(3)))
+
     tvec = supplyData[:,0]
     tvec = tvec * macros.NANO2HOUR
 
+    #   Plot the power states
     plt.figure()
-    plt.style.use(['aiaa'])
     plt.plot(tvec,storageData[:,1],label='Stored Power (W-Hr)')
     plt.plot(tvec,netData[:,1],label='Net Power (W)')
     plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
@@ -219,7 +267,21 @@ def run_scenario():
     plt.ylabel('Power (W)')
     plt.grid(True)
     plt.legend()
+    plt.figure()
+    plt.plot(tvec, scAtt[:,1],tvec, scAtt[:,2], tvec, scAtt[:,3])
+
+    relativeOrbit = scOrbit - planetOrbit
+
+    plt.figure()
+    plt.plot(relativeOrbit[:,1],relativeOrbit[:,2],label="Spacecraft Orbit")
+    plt.arrow(0,0,planetOrbit[0,1], planetOrbit[0,2],label="Sun Direction")
+    plt.title('Spacecraft Orbit')
+    plt.xlabel('ECI X (m)')
+    plt.ylabel('ECI Y (m)')
+
+
     plt.show()
+
 
     return
 
