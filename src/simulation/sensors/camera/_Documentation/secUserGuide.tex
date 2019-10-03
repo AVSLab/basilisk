@@ -1,0 +1,24 @@
+% !TEX root = ./Basilisk-houghCircles-20190213.tex
+
+\section{User Guide}
+This section contains information directed specifically to users. It contains clear descriptions of what inputs are needed and what effect they have. It should also help the user be able to use the model for the first time.
+
+\begin{itemize}
+\item Construct algorithm and associated C++ container:\\
+\texttt{moduleConfig = houghCircles.HoughCircles()}\\
+\texttt{moduleConfig.ModelTag = "houghCircles"}\\
+\item Add test module to runtime call list: \\
+\texttt{unitTestSim.AddModelToTask(unitTaskName, moduleConfig)}\\
+\texttt{moduleConfig.imageInMsgName = "sample$\_$image"}\\
+\texttt{moduleConfig.opnavCirclesOutMsgName = "circles"}\\
+\item Image processing parameters: \\
+\texttt{moduleConfig.filename = imagePath}\\
+\texttt{moduleConfig.expectedCircles = maxCircles}\\
+\texttt{moduleConfig.cannyThresh1 = cannyHigh}\\
+\texttt{moduleConfig.cannyThresh2 = cannyLow}\\
+\texttt{moduleConfig.houghMinDist = minDist}\\
+\texttt{moduleConfig.houghMinRadius = minRad}\\
+\texttt{moduleConfig.blurrSize = blur}\\
+\texttt{moduleConfig.dpValue = dp}\\
+\texttt{moduleConfig.houghMaxRadius = 0}
+\end{itemize}
