@@ -63,9 +63,6 @@ def test_default():
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
@@ -73,23 +70,14 @@ def test_default():
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
-    # Construct algorithm and associated C++ container
     testModule = simplePowerSink.SimplePowerSink()
     testModule.ModelTag = "powerSink"
     testModule.nodePowerOut = 10. # Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
-    # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(testModule.nodePowerOutMsgName, testProcessRate)
 
-    # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
 
     # Begin the simulation time run set above
@@ -101,7 +89,6 @@ def test_default():
 
     # compare the module results to the truth values
     accuracy = 1e-16
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     truePower = 10.0 #Module should be off
 
@@ -120,11 +107,7 @@ def test_status():
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
-    # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
@@ -132,8 +115,6 @@ def test_status():
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
-    # Construct algorithm and associated C++ container
     testModule = simplePowerSink.SimplePowerSink()
     testModule.ModelTag = "powerSink"
     testModule.nodeStatusInMsgName="PowerStatusMsg"
@@ -170,7 +151,6 @@ def test_status():
 
     # compare the module results to the truth values
     accuracy = 1e-16
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     truePower = 0.0 #Module should be off
 

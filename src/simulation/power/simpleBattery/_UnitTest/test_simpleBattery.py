@@ -28,7 +28,6 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simMessages
@@ -36,21 +35,6 @@ from Basilisk.simulation import simpleBattery
 from Basilisk.utilities import macros
 
 
-
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-#@pytest.mark.parametrize("useDefault", [ True, False])
-#@pytest.mark.parametrize("useMinReach", [ True, False])
-#@pytest.mark.parametrize("useMaxReach", [ True, False])
-#@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
-
-
-# update "module" in this function name to reflect the module name
 def test_module(show_plots):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = test_storage_limits(show_plots)
@@ -81,14 +65,13 @@ def test_storage_limits(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_battery = simpleBattery.SimpleBattery()
-    test_battery.storedCharge = -5.0
+    test_battery.storedCharge = 15.0
     test_battery.storageCapacity = 10./3600. #   10 W-s capacity.
 
-
     powerMsg1 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg1.netPower_W = 5.0
+    powerMsg1.netPower_W = -5.0
     powerMsg2 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg2.netPower_W = 5.0
+    powerMsg2.netPower_W = -5.0
 
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
@@ -122,7 +105,7 @@ def test_storage_limits(show_plots):
     #   Check 1 - is net power equal to 10.?
     for ind in range(0,len(netPowerLog)):
         currentPower = netPowerLog[ind,1]
-        if currentPower < 10.:
+        if currentPower > -10.:
             testFailCount +=1
             testMessages.append("FAILED: SimpleBattery did not correctly log the net power.")
 
@@ -135,10 +118,8 @@ def test_storage_limits(show_plots):
             testFailCount +=1
             testMessages.append("FAILED: SimpleBattery's stored charge was negative.")
 
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
+
 
 if __name__ == "__main__":
     print(test_module(False))
