@@ -18,19 +18,22 @@
  */
 
 #include "groundLocation.h"
+#include "architecture/messaging/system_messaging.h"
+#include "../utilities/avsEigenSupport.h"
 
-/*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
+/*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
  @return void
  */
 GroundLocation::GroundLocation()
 {
     //! - Set the default atmospheric properties to yield a zero response
     this->minimumElevation = 10.; //! [deg] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
+    this->maximumRange = -1; //! [m] Maximum range for the groundLocation to compute access.
     this->planetInMsgName = "";
     this->planetInMsgId = -1;
 
-    this->initialPosition_P.fill(0.0);
-    this->currentPosition_N.fill(0.0);
+    this->r_LP_P.fill(0.0);
+    this->r_LP_P_Init.fill(0.0);
     return;
 }
 
@@ -42,6 +45,12 @@ GroundLocation::~GroundLocation()
     return;
 }
 
+/*! Resets the internal position to the specified initial position.*/
+void GroundLocation::Reset()
+{
+    this->r_LP_P = this->r_LP_P_Init;
+}
+
 /*! Specifies the ground location from planet-centered latitude, longitude, altitude position.
  *
  * @param lat
@@ -49,52 +58,52 @@ GroundLocation::~GroundLocation()
  * @param alt
  * @return
  */
-GroundLocation::setGroundLocation(double lat, double longitude, double alt)
+void GroundLocation::specifyLocation(double lat, double longitude, double alt)
 {
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
-    this->r_LP_P_init = LLA2PCPF(tmpLLAPosition, this->planetRadius)
+    this->r_LP_P_Init = LLA2PCPF(tmpLLAPosition, this->planetRadius);
     return;
 }
 
 
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message output name.
 */
-GroundLocation::addSpacecraftToModel(std::string tmpScMsgName)
+void GroundLocation::addSpacecraftToModel(std::string tmpScMsgName)
 {
     std::string tmpAccessMsgName;
+    AccessSimMsg tmpAccessMsg;
     this->scStateInMsgNames.push_back(tmpScMsgName);
         tmpAccessMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1) + "_access";
     this->accessOutMsgNames.push_back(tmpAccessMsgName);
+    this->accessMsgBuffer.push_back(tmpAccessMsg);
+
     return;
 }
 
-GroundLocation::SelfInit()
+void GroundLocation::SelfInit()
 {
-    uint64_t tmpMagFieldMsgId;
+    uint64_t tmpAccessMsgId;
     std::vector<std::string>::iterator it;
 
     //! - create all the environment output messages for each spacecraft
     for (it = this->accessOutMsgNames.begin(); it!=this->accessOutMsgNames.end(); it++) {
-        tmpMagFieldMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it,
+        tmpAccessMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it,
                                                                             sizeof(AccessSimMsg),
                                                                             this->OutputBufferCount,
                                                                             "AccessSimMsg",
                                                                             moduleID);
-        this->envOutMsgIds.push_back(tmpMagFieldMsgId);
+        this->accessOutMsgIds.push_back(tmpAccessMsgId);
     }
 
-    //! - call the custom SelfInit() method to add addtional self initialization steps
-    customSelfInit();
-
-    return;
+    this->r_LP_P = this->r_LP_P_Init;
     return;
 }
 
-GroundLocation::CrossInit()
+void GroundLocation::CrossInit()
 {
       //! - if a planet message name is specified, subscribe to this message. If not, then a zero planet position and orientation is assumed
-    if (this->planetPosInMsgName.length() > 0) {
-        this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetPosInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
+    if (this->planetInMsgName.length() > 0) {
+        this->planetInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
     }
     //! - subscribe to the spacecraft messages and create associated output message buffer
     std::vector<std::string>::iterator it;
@@ -105,7 +114,7 @@ GroundLocation::CrossInit()
     return;
 }
 
-GroundLocation::ReadMessages()
+void GroundLocation::ReadMessages()
 {
     SCPlusStatesSimMsg scMsg;
     SingleMessageHeader localHeader;
@@ -135,27 +144,25 @@ GroundLocation::ReadMessages()
     }
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed
     bool planetRead = true;
-    if(planetPosInMsgId >= 0)
+    if(planetInMsgId >= 0)
     {
-        planetRead = SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
+        planetRead = SystemMessaging::GetInstance()->ReadMessage(this->planetInMsgId , &localHeader,
                                                                  sizeof(SpicePlanetStateSimMsg),
                                                                  reinterpret_cast<uint8_t*>(&this->planetState),
                                                                  moduleID);
     }
 
-    //! - call the custom method to perform additional input reading
-    bool customRead = customReadMessages();
     return;
 }
 
-GroundLocation::WriteMessages()
+void GroundLocation::WriteMessages(uint64_t CurrentClock)
 {
 
     AccessSimMsg tmpAccessSimMsg;
     std::vector<int64_t>::iterator it;
     std::vector<AccessSimMsg>::iterator accessIt;
-    accessIt = this->accessBuffer.begin();
-    //! - write magnetic field output messages for each spacecaft's locations
+    accessIt = this->accessMsgBuffer.begin();
+    //! - write access message for each spacecraft
     for(it = this->accessOutMsgIds.begin(); it != this->accessOutMsgIds.end(); it++, accessIt++){
         tmpAccessSimMsg = *accessIt;
         SystemMessaging::GetInstance()->WriteMessage(*it,
@@ -165,62 +172,56 @@ GroundLocation::WriteMessages()
                                                   moduleID);
     }
 
-    //! - call the custom method to perform additional output message writing
-    customWriteMessages(CurrentClock);
     return;
 }
 
-GroundLocation::updateInertialPositions()
+void GroundLocation::updateInertialPositions()
 {
     // Update the planet inertial position:
-    this->r_PN_N = this->planetState.positionVector
-    this->
+    this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
+    this->r_LP_N = cArray2EigenMatrix3d(*this->planetState.J20002Pfix) * this->r_LP_P_Init;
+    this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
+    this->r_LN_N = this->r_PN_N + this->r_LP_N;
 
     return;
 }
 
-GroundLocation::computeAccess()
+void GroundLocation::computeAccess()
 {
     // Update the groundLocation's inertial position
-    this->updateInertialPosition();
-    
+    this->updateInertialPositions();
 
     // Iterate over spacecraft position messages and compute the access for each one
     std::vector<AccessSimMsg>::iterator accessMsgIt;
     std::vector<SCPlusStatesSimMsg>::iterator scStatesMsgIt;
-    for(scStatesMsgIt = scStates.begin(); scStatesMsgIt != scStates.end(); scStatesMsgIt++; accessMsgIt)
-    {
-        // View angle calculation
-        Eigen::Vector3d relativePosition_N = (*scStatesMsgIt->r_BN_N - this->r_https://www.facebook.com/PN_N) - this->r_BP_N;
-        relativeHeading_N = relativePosition_N / relativePosition_N.norm();
+    for(scStatesMsgIt = scStates.begin(); scStatesMsgIt != scStates.end(); scStatesMsgIt++, accessMsgIt++){
 
-        viewAngle = acos(this->localNormal_N.dot(relativeHeading_N));
+        //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
+        Eigen::Vector3d r_BL_N = (cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N) - this->r_LP_N;
+        Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_N.norm();
 
-        
+        double viewAngle = acos(this->rhat_LP_N.dot(relativeHeading_N));
+
         if(viewAngle > this->minimumElevation){
-            *accessMsgIt.hasAccess = True;
-            *accessMsgIt.slantRange = relativePosition_N.norm();
-            *accessMsgIt.elevationAngle = 90.-viewAngle;
+            accessMsgIt->hasAccess = true;
+            accessMsgIt->slantRange = r_BL_N.norm();
+            accessMsgIt->elevation= 90.-viewAngle;
         }
         else
         {
-            *accessMsgIt.hasAccess = False;
-            *accessMsgIt.slantRange = 0.0
-            *accessMsgIt.elevationAngle = 0.0
+            accessMsgIt->hasAccess = false;
+            accessMsgIt->slantRange = 0.0;
+            accessMsgIt->elevation = 0.0;
         }
     }
-
-
-    return
+    return;
 }
 
-GroundLocation::UpdateState(uint64_t CurrentSimNanos)
+void GroundLocation::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadMessages();
-    
     this->computeAccess();
+    this->WriteMessages(CurrentSimNanos);
 
-    this->WriteMessages();
-
-    return
+    return;
 }
