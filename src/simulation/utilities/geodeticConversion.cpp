@@ -69,10 +69,6 @@ Eigen::Vector3d PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], do
   return llaVec;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e9755ce39... Lat/Long/Alt to PCI conversion routines and comments
 /*! Converts from a Lat/Long/Altitude coordinates to planet-centered,planet-fixed coordinates given a planet radius.
 @param llaPosition : [m] Position vector in PCPF coordinates
 @param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
@@ -81,12 +77,7 @@ Eigen::Vector3d PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], do
 Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetRad){
   Eigen::Vector3d pcpfPosition;
   pcpfPosition.fill(0.0);
-<<<<<<< HEAD
   double lambda = llaPosition[0];
-=======
-  double lambda = llaPosition[0]
->>>>>>> e9755ce39... Lat/Long/Alt to PCI conversion routines and comments
-  
   pcpfPosition[0] = planetRad*cos(lambda)*cos(llaPosition[1] + llaPosition[2]*cos(llaPosition[0]))*cos(llaPosition[1]);
   pcpfPosition[1] = planetRad*cos(lambda)*sin(llaPosition[1]) + llaPosition[2]*cos(llaPosition[0])*sin(llaPosition[1]);
   pcpfPosition[2] = planetRad*sin(lambda) + llaPosition[2]*sin(llaPosition[0]);
@@ -104,7 +95,6 @@ Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
 
   Eigen::MatrixXd attMat = cArray2EigenMatrixXd(*J20002Pfix,3,3);
   Eigen::Vector3d pciPosition = attMat.transpose() * pcpfPosition;
-<<<<<<< HEAD
 
   return pciPosition;
 }
@@ -123,29 +113,4 @@ Eigen::Vector3d LLA2PCI(Eigen::Vector3d llaPosition, double J20002Pfix[3][3], do
   Eigen::Vector3d pcpfPosition = LLA2PCPF(llaPosition, planetRad);
   Eigen::Vector3d pciPosition = PCPF2PCI(pcpfPosition, J20002Pfix);
   return pciPosition;
-=======
-Eigen::Vector3d LLA2PCPF(){
-
-  return 
->>>>>>> 02b00a6c7... Updates to the geodeticConversion utility class, including doxygen comments.
-=======
-
-  return pciPosition;
-}
-
-/*! Converts from a planet-centered inertial coordinates to latitutde/longitude/altitude (LLA) coordinates given a planet radius and rotation matrix.
-@param llaPosition: Final position in latitude/longitude/altitude coordinates
-  [0] : [rad] latitude above planetary equator
-  [1] : [rad] longitude across planetary meridian
-  [2] : [alt] altitude above planet radius
-@param J20002Pfix : rotation matrix between inertial and PCPF frames
-@param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
-@return pciPosition : [m] Position in inertial coordinates.
-*/
-Eigen::Vector3d LLA2PCI(Eigen::llaPosition, double J20002Pfix[3][3], double planetRad)
-{
-  Eigen::Vector3d pcpfPosition = LLA2PCPF(llaPosition, planetRad);
-  Eigen::Vector3d pciPosition = PCPF2PCI(pcpfPosition, J20002Pfix);
-  return pciPosition;
->>>>>>> e9755ce39... Lat/Long/Alt to PCI conversion routines and comments
 }

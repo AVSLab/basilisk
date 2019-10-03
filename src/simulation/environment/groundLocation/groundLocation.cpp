@@ -31,9 +31,6 @@ GroundLocation::GroundLocation()
 
     this->initialPosition_P.fill(0.0);
     this->currentPosition_N.fill(0.0);
-
-};
-
     return;
 }
 
@@ -45,9 +42,24 @@ GroundLocation::~GroundLocation()
     return;
 }
 
+/*! Specifies the ground location from planet-centered latitude, longitude, altitude position.
+ *
+ * @param lat
+ * @param longitude
+ * @param alt
+ * @return
+ */
+GroundLocation::setGroundLocation(double lat, double longitude, double alt)
+{
+    Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
+    this->r_LP_P_init = LLA2PCPF(tmpLLAPosition, this->planetRadius)
+    return;
+}
+
+
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message output name.
 */
-GroundLocation::addSpacecraftToModel()
+GroundLocation::addSpacecraftToModel(std::string tmpScMsgName)
 {
     std::string tmpAccessMsgName;
     this->scStateInMsgNames.push_back(tmpScMsgName);
@@ -162,7 +174,7 @@ GroundLocation::updateInertialPositions()
 {
     // Update the planet inertial position:
     this->r_PN_N = this->planetState.positionVector
-    this->r_
+    this->
 
     return;
 }
@@ -179,7 +191,7 @@ GroundLocation::computeAccess()
     for(scStatesMsgIt = scStates.begin(); scStatesMsgIt != scStates.end(); scStatesMsgIt++; accessMsgIt)
     {
         // View angle calculation
-        Eigen::Vector3d relativePosition_N = (*scStatesMsgIt->r_BN_N - this->r_PN_N) - this->r_BP_N;
+        Eigen::Vector3d relativePosition_N = (*scStatesMsgIt->r_BN_N - this->r_https://www.facebook.com/PN_N) - this->r_BP_N;
         relativeHeading_N = relativePosition_N / relativePosition_N.norm();
 
         viewAngle = acos(this->localNormal_N.dot(relativeHeading_N));

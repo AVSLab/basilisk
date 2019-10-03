@@ -46,26 +46,28 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset();
     void ReadMessages();
-    void addSpacecraftToModel(std::string tmpScMsgName)
-    void setGroundLocation(double lat, double long, double alt)
+    void addSpacecraftToModel(std::string tmpScMsgName);
+    void setGroundLocation(double lat, double longitude, double alt);
     
 private:
     void updateInertialPositions();
     void computeAccess();
 
 public:
+    double planetRadius; //! [m] Planet radius in meters.
     double minimumElevation; //! [deg] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
-    std::vector<std::string> scPositionInMsgNames;
+    std::vector<std::string> scStateInMsgNames;
     std::string planetInMsgName;
     std::vector<std::string> accessOutMsgNames;
-    Eigen::Vector3d initialPosition_P; //! [m
+    Eigen::Vector3d r_LP_P_init; //! [m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation.
 
 private:
     std::vector<int64_t> scPositionInMsgIds;
     std::vector<int64_t> accessOutMsgIds;
     int64_t planetInMsgId;
-    Eigen::Vector3d currentPosition_N;
-
+    Eigen::Vector3d r_PN_N; //! [m]Planet to inertial frame origin vector.
+    Eigen::Vector3d r_LP_P; //! [m] Location to planet origin vector.
+    Eigen::Vector3d r_LP_N; //! [m] Location to planet origin vector in inertial coordinates.
 };
 
 /*! @} */
