@@ -123,7 +123,7 @@ Python 3
 Build Process via GUI
 ---------------------
 
-.. Note:: This currently is bugged and doesn’t work correctly
+.. Warning:: This currently is bugged and doesn’t work correctly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First run Cmake with the source directory set to the ``{REPO}/src``

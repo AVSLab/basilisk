@@ -305,7 +305,6 @@ def generateAutoDoc(path, files_paths):
     py_file_paths = [s for s in files_paths if ".py" in s]
     c_file_paths = [s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s]
 
-
     # Create the .rst file for C-Modules
 
     # Identify .h file and .c/.cpp that share the same basename
@@ -327,14 +326,14 @@ def generateAutoDoc(path, files_paths):
         # Identify where the module lives relative to source
         src_path = os.path.dirname(c_file_path)
         # Link the path with the modules for Breathe
-        sources = {name : (src_path, c_file_local_paths)}
+        sources = {c_file_basenames[0] : (src_path, c_file_local_paths)}
 
         # Populate the module's .rst
-        lines += """.. autodoxygenindex::\n   :project: """ + name + """\n\n"""
+        lines += """.. autodoxygenindex::\n   :project: """ + c_file_basenames[0] + """\n\n"""
         for cFile in c_file_paths:
             if cFile.endswith('.c') or cFile.endswith('.cpp'):
-                lines += """.. inheritance-diagram:: """ + os.path.basename(os.path.normpath(name)) + """\n\n"""
-        with open(path+"/"+name+".rst", "w") as f:
+                lines += """.. inheritance-diagram:: """ + os.path.basename(os.path.normpath(c_file_basenames[0])) + """\n\n"""
+        with open(path+"/"+c_file_basenames[0]+".rst", "w") as f:
             f.write(lines)
 
 
@@ -393,7 +392,7 @@ def fileCrawler(srcDir):
 
 breathe_projects_source = {}
 
-#fileCrawler("../../../Basilisk/src/examples/") # When I run this, scenario finds the wrong doc_string
+fileCrawler("../../../Basilisk/src/") # When I run this, scenario finds the wrong doc_string
 
 # breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/MRP_Feedback", ['MRP_Feedback.c', 'MRP_Feedback.h'])}
 
