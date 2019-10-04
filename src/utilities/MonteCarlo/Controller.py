@@ -43,8 +43,8 @@ import time
 import numpy as np
 import multiprocessing as mp
 import pickle as pickle
-from DataWriter import DataWriter
-from RetentionPolicy import RetentionPolicy
+from Basilisk.utilities.MonteCarlo.DataWriter import DataWriter
+from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 
 class Controller:
     """
@@ -358,11 +358,11 @@ class Controller:
                 self.dataWriter.setLogDir(self.archiveDir)
                 self.dataWriter.start()
             else:
-                print "ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
-                      "within: " + self.archiveDir + " with the select rerun cases! Exiting.\n"
+                print("ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
+                      "within: " + self.archiveDir + " with the select rerun cases! Exiting.\n")
                 sys.exit("Change the archive directory to a new location when rerunning cases.")
         else:
-            print "No archive data specified; no data will be logged to dataframes"
+            print("No archive data specified; no data will be logged to dataframes")
 
         jobsFinished = 0  # keep track of what simulations have finished
 
@@ -855,5 +855,5 @@ class SimulationExecutor:
         for variable, value in modifications.items():
             if ".RNGSeed" in variable:
                 rngStatement = "simInstance." + variable + "=" + value
-                exec rngStatement
+                exec(rngStatement)
 
