@@ -66,20 +66,3 @@ def main(time=None):
 if __name__ == "__main__":
     main()
 
-#
-# def run():
-#     monteCarlo = Controller()
-#     # Now run initial conditions
-#     icName = bskPath + "/tests/testScripts/Support/run_MC_IC"
-#     monteCarlo.setICDir(icName)
-#     monteCarlo.setICRunFlag(True)
-#     numberICs = 3
-#     monteCarlo.setExecutionCount(numberICs)
-#     runsList = list(range(numberICs))
-#     failed = monteCarlo.runInitialConditions(runsList)
-#
-#     # monteCarlo.executeCallbacks([4,6,7])
-#     runsList = list(range(numberICs))
-#     monteCarlo.executeCallbacks(runsList)
-#
-# run()

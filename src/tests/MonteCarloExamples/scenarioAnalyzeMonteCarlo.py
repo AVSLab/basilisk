@@ -91,3 +91,5 @@ def main():
         plotList.extend([shadowFactorPlot])
 
 
+if __name__ == '__main__':
+    main()
