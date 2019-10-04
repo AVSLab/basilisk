@@ -358,8 +358,8 @@ class Controller:
                 self.dataWriter.setLogDir(self.archiveDir)
                 self.dataWriter.start()
             else:
-                print "ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
-                      "within: " + self.archiveDir + " with the select rerun cases! Exiting.\n"
+                print("ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
+                      "within: " + self.archiveDir + " with the select rerun cases! Exiting.\n")
                 sys.exit("Change the archive directory to a new location when rerunning cases.")
         else:
             print("No archive data specified; no data will be logged to dataframes")
