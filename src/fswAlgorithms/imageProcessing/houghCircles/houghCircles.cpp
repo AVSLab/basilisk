@@ -125,13 +125,13 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         /*! - If no image is present, write zeros in message */
         SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
         return;}
-    cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
+    cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
-    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, this->dpValue, this->houghMinDist, this->cannyThresh,this->voteThresh, this->houghMinRadius, this->houghMaxRadius );
+    cv::HoughCircles( blurred, circles, cv::HOUGH_GRADIENT, this->dpValue, this->houghMinDist, this->cannyThresh,this->voteThresh, this->houghMinRadius, this->houghMaxRadius );
 
     circleBuffer.timeTag = this->sensorTimeTag;
     circleBuffer.cameraID = imageBuffer.cameraID;

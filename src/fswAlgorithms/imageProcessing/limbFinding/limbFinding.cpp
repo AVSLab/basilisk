@@ -122,7 +122,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
     /*! - Greyscale the image */
-    cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
+    cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     /*! - Lightly blur it */
     cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
     /*! - Apply the Canny Transform to find the limbPoints*/
