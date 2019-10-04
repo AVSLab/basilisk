@@ -13,10 +13,6 @@ if(POLICY CMP0086)
   cmake_policy(SET CMP0086 NEW)
 endif()
 
-if(POLICY CMP0046)
-  cmake_policy(SET CMP0046 NEW)
-endif()
-
 project("basilisk")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -41,11 +37,11 @@ option(USE_OPENCV "Include modules which use OpenCV" OFF)
 option(USE_ZMQ "Include modules which use ZMQ" ON)
 option(USE_PYTHON3 "Build For Python 3" OFF)
 
-list(APPEND requires_protobuff_modules "viz_interface/vizInterface.i")
-list(APPEND requires_zmq_modules "viz_interface/vizInterface.i")
+set(requires_protobuff_modules "viz_interface/vizInterface.i")
+set(requires_zmq_modules "viz_interface/vizInterface.i")
 
 
-list(APPEND requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
+set(requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
 list(APPEND requires_opencv_modules "imageProcessing/limbFinding/limbFinding.i")
 
 if(USE_PROTOBUFFERS)
@@ -53,7 +49,6 @@ if(USE_PROTOBUFFERS)
 endif()
 if(USE_OPENCV)
   list(APPEND required_conan_libraries opencv/4.1.1@conan/stable)
- 
   # temp bug fix for bad pcre dependancies
   list(APPEND required_conan_libraries zlib/1.2.11@conan/stable)
   list(APPEND required_conan_libraries bzip2/1.0.8@conan/stable)
@@ -81,9 +76,8 @@ if(USE_OPENCV)
    message(STATUS "Using OpenCV ${opencv_VERSION}")
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
    if(APPLE)
-   link_libraries("-framework OpenCL")
+     link_libraries("-framework OpenCL")
    endif()
- 
 endif()
 
 if(USE_ZMQ)
