@@ -27,3 +27,14 @@ def pytest_addoption(parser):
 @pytest.fixture(scope="module")
 def show_plots(request):
     return request.config.getoption("--show_plots")
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    pytest_html = item.config.pluginmanager.getplugin('html')
+    outcome = yield
+    report = outcome.get_result()
+    extra = getattr(report, 'extra', [])
+    docstring = '<tt>' + str(item.function.__doc__).replace('\n', '</br>', ) + '</tt>'
+    extra.append(pytest_html.extras.html(docstring))
+    report.extra = extra
+

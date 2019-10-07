@@ -50,14 +50,22 @@ path = os.path.dirname(os.path.abspath(__file__))
 ("partial", "mars"), ("full", "mars"), ("none", "mars"), ("annular", "mars")])
 
 def test_unitEclipse(show_plots, eclipseCondition, planet):
+    """ This is a dummy docstring for eclipse to test pytest-html
+        
+        Parameters
+        __________
+        thing: bool
+        yoyoyo
+        
+        Output
+        ______
+        another thing: int
+        """
     [testResults, testMessage] = unitEclipse(show_plots, eclipseCondition, planet)
     assert testResults < 1, testMessage
 
 
 def unitEclipse(show_plots, eclipseCondition, planet):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
     testFailCount = 0
