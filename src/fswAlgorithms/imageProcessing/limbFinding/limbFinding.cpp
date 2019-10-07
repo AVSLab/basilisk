@@ -87,6 +87,7 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
  */
 void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
+    std::string dirName;
     CameraImageMsg imageBuffer;
     LimbOpNavMsg limbMsg;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -94,7 +95,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 
     cv::Mat imageCV, blurred, edgeImage;
     if (this->saveDir != ""){
-        this->saveDir = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
     }
     
     /*! - Read in the bitmap*/
@@ -114,7 +115,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         if (this->saveImages == 1){
-            cv::imwrite(this->saveDir, imageCV);
+            cv::imwrite(dirName, imageCV);
         }
     }
     else{
@@ -138,7 +139,6 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
             limbMsg.limbPoints[2*i+1] = locations[i].y;
             limbMsg.numLimbPoints += 1;
         }
-        limbMsg.numLimbPoints = locations.size()/2;
         limbMsg.valid = 1;
         limbMsg.planetIds = 2;
     }

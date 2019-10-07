@@ -113,7 +113,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
         planetRad_Pol = planetRad_Eq;
         opNavMsgOut.planetID = configData->planetTarget;
     }
-    m33Set(1/planetRad_Eq, 0, 0, 0, 1/planetRad_Eq, 0, 0, 0, 1/planetRad_Pol, Q);
+    m33Set(1/planetRad_Eq, 0, 0, 0, 1/planetRad_Eq, 0, 0, 0, 1/planetRad_Eq, Q);
     
     /* Set the number of limb points for ease of use*/
     int32_t numPoints;
@@ -157,9 +157,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
         v3SetZero(s);
         /*! - Put the pixel data in s (not s currently)*/
         s[0] = limbIn.limbPoints[2*i];
-        s[0]+= (s[0]<cameraSpecs.resolution[0]/2) - (s[0]>cameraSpecs.resolution[0]/2);
         s[1] = limbIn.limbPoints[2*i + 1];
-        s[1]+= (s[1]<cameraSpecs.resolution[1]/2) - (s[1]>cameraSpecs.resolution[1]/2);
         s[2] = 1;
         /*! - Apply the trasnformation computed previously from pixel to position*/
         m33MultV3(tranf, s, s);

@@ -117,13 +117,13 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     refPoints = 0
     if image == "MarsBright.jpg":
         reference = [253.0, 110.0]
-        refPoints = 475.0
+        refPoints = 2*475.0
     if image == "MarsDark.jpg":
         reference = [187.0, 128.0]
-        refPoints = 192.0
+        refPoints = 2*192.0
     if image == "moons.jpg":
         reference = [213.0, 66.0]
-        refPoints = 262.0
+        refPoints = 2*270.0
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = limbFinding.CameraImageMsg()
@@ -185,6 +185,7 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     if np.abs(numPoints[-1,1]-refPoints)>10:
         testFailCount+=1
         testMessages.append("NumPoints test failed processing " + image)
+
 
 
     # each test method requires a single assert method to be called
