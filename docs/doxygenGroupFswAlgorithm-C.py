@@ -123,6 +123,7 @@
 #       \defgroup houghCircles houghCircles
 #       \defgroup pixelLineConverter pixelLineConverter
 #       \defgroup limbFinding limbFinding
+#       \defgroup horizonOpNav horizonOpNav
 #   @}
 #   \defgroup opticalNavigation opticalNavigation
 #   @brief Contains modules that relate to optical navigation.

@@ -36,7 +36,7 @@ LimbFinding::LimbFinding()
     this->filename = "";
     this->saveDir ="";
     this->saveImages = 0;
-    this->blurrSize = 5;
+    this->blurrSize = 3;
     this->cannyThreshHigh = 200;
     this->cannyThreshLow = 100;
     this->OutputBufferCount = 2;
@@ -87,6 +87,7 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
  */
 void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
+    std::string dirName;
     CameraImageMsg imageBuffer;
     LimbOpNavMsg limbMsg;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -94,7 +95,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 
     cv::Mat imageCV, blurred, edgeImage;
     if (this->saveDir != ""){
-        this->saveDir = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
     }
     
     /*! - Read in the bitmap*/
@@ -114,7 +115,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         if (this->saveImages == 1){
-            cv::imwrite(this->saveDir, imageCV);
+            cv::imwrite(dirName, imageCV);
         }
     }
     else{
@@ -130,15 +131,14 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     if (cv::countNonZero(edgeImage)>0){
         std::vector<cv::Point2i> locations;
         cv::findNonZero(edgeImage, locations);
-        for(size_t i = 0; i<locations.size(); i++ )
+        limbMsg.numLimbPoints =0;
+        for(size_t i = 0; i<locations.size() && i<MAX_LIMB_PNTS; i++ )
         {
             /*! - Store the non zero pixels of the canny transform and count them*/
             limbMsg.limbPoints[2*i] = locations[i].x;
             limbMsg.limbPoints[2*i+1] = locations[i].y;
-            limbMsg.pointSigmas[2*i] = 1;
-            limbMsg.pointSigmas[2*i+1] = 1;
+            limbMsg.numLimbPoints += 1;
         }
-        limbMsg.numLimbPoints = locations.size()/2;
         limbMsg.valid = 1;
         limbMsg.planetIds = 2;
     }
