@@ -131,6 +131,10 @@ html_static_path = ['_static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
+
+html_css_files = [
+    '_templates/custom.css',
+]
 #
 # The default sidebars (for documents that don't match any pattern) are
 # defined by theme itself.  Builtin themes are using these templates by
@@ -223,176 +227,205 @@ breathe_projects = {"Basilisk": "~/Basilisk/src/*"}
 from glob import glob
 import shutil
 
+class fileCrawler():
+    def __init__(self, newFiles=False):
+        self.newFiles = newFiles
+        self.breathe_projects_source = {}
 
-def grabRelevantFiles(dir_path):
-    dirs_in_dir = glob(dir_path + '*/')
-    files_in_dir = glob(dir_path + "*.h")
-    files_in_dir.extend(glob(dir_path + "*.c"))
-    files_in_dir.extend(glob(dir_path + "*.cpp"))
-    files_in_dir.extend(glob(dir_path + "*.py"))
-
-
-    # Remove any directories that shouldn't be added directly to the website
-    removeList = []
-    for i in range(len(dirs_in_dir)):
-        if "_Documentation" in dirs_in_dir[i] or \
-                "_UnitTest" in dirs_in_dir[i] or \
-                "__pycache__" in dirs_in_dir[i] or \
-                "_VizFiles" in dirs_in_dir[i] or \
-                "cmake" in dirs_in_dir[i] or \
-                "topLevelModules" in dirs_in_dir[i]:
-            removeList.extend([i])
-    for i in sorted(removeList, reverse=True):
-        del dirs_in_dir[i]
-
-    # Remove unnecessary source files (all files except .py, .c, .cpp, .h)
-    removeList = []
-    for i in range(len(files_in_dir)):
-        if "__init__" in files_in_dir[i]:
-            removeList.extend([i])
-    for i in sorted(removeList, reverse=True):
-        del files_in_dir[i]
-
-    paths_in_dir = []
-    paths_in_dir.extend(dirs_in_dir)
-    paths_in_dir.extend(files_in_dir)
-
-    return paths_in_dir
-
-def seperateFilesAndDirs(paths):
-    files = []
-    dirs = []
-    for path in paths:
-        if os.path.isfile(path):
-            files.append(path)
-        elif os.path.isdir(path):
-            dirs.append(path)
-    return files, dirs
+    def grabRelevantFiles(self,dir_path):
+        dirs_in_dir = glob(dir_path + '*/')
+        files_in_dir = glob(dir_path + "*.h")
+        files_in_dir.extend(glob(dir_path + "*.c"))
+        files_in_dir.extend(glob(dir_path + "*.cpp"))
+        files_in_dir.extend(glob(dir_path + "*.py"))
 
 
-def populateDocIndex(index_path, file_paths, dir_paths):
-    # Title the page
-    name = os.path.basename(os.path.normpath(index_path))
-    lines = name + "\n" + "=" * len(name) + "\n\n"
+        # Remove any directories that shouldn't be added directly to the website
+        removeList = []
+        for i in range(len(dirs_in_dir)):
+            if "_Documentation" in dirs_in_dir[i] or \
+                    "_UnitTest" in dirs_in_dir[i] or \
+                    "__pycache__" in dirs_in_dir[i] or \
+                    "_VizFiles" in dirs_in_dir[i] or \
+                    "cmake" in dirs_in_dir[i] or \
+                    "topLevelModules" in dirs_in_dir[i]:
+                removeList.extend([i])
+        for i in sorted(removeList, reverse=True):
+            del dirs_in_dir[i]
 
-    # Add a linking point to all local directories
-    lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories" + ":\n\n"
-    for dir_path in dir_paths:
-        dirName = os.path.basename(os.path.normpath(dir_path))
-        lines += "   " + dirName + "/index\n"
+        # Remove unnecessary source files (all files except .py, .c, .cpp, .h)
+        removeList = []
+        for i in range(len(files_in_dir)):
+            if "__init__" in files_in_dir[i]:
+                removeList.extend([i])
+        for i in sorted(removeList, reverse=True):
+            del files_in_dir[i]
 
-    # Add a linking point to all local files
-    lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
-    calledNames = []
-    for file_path in file_paths:
-        fileName = os.path.basename(os.path.normpath(file_path))
-        fileName = fileName[:fileName.rfind('.')]
-        if not fileName in calledNames:
-            lines += "   " + fileName + "\n"
-            calledNames.append(fileName)
+        paths_in_dir = []
+        paths_in_dir.extend(dirs_in_dir)
+        paths_in_dir.extend(files_in_dir)
 
-    with open(index_path + "/index.rst", "w") as f:
-        f.write(lines)
+        return paths_in_dir
+
+    def seperateFilesAndDirs(self,paths):
+        files = []
+        dirs = []
+        for path in paths:
+            if os.path.isfile(path):
+                files.append(path)
+            elif os.path.isdir(path):
+                dirs.append(path)
+        return sorted(files), sorted(dirs)
 
 
+    def populateDocIndex(self,index_path, file_paths, dir_paths):
+        # Title the page
+        name = os.path.basename(os.path.normpath(index_path))
+        lines = name + "\n" + "=" * len(name) + "\n\n"
 
-def generateAutoDoc(path, files_paths):
-    if "/" in path:
-        name = os.path.basename(path)
-    sources = {}
+        # Add a linking point to all local directories
+        lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories" + ":\n\n"
+        for dir_path in sorted(dir_paths):
+            dirName = os.path.basename(os.path.normpath(dir_path))
+            lines += "   " + dirName + "/index\n"
 
-    # Sort the files by language
-    py_file_paths = [s for s in files_paths if ".py" in s]
-    c_file_paths = [s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s]
+        # Add a linking point to all local files
+        lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+        calledNames = []
+        for file_path in sorted(file_paths):
+            fileName = os.path.basename(os.path.normpath(file_path))
+            fileName = fileName[:fileName.rfind('.')]
+            if not fileName in calledNames:
+                lines += "   " + fileName + "\n"
+                calledNames.append(fileName)
 
-    # Create the .rst file for C-Modules
-
-    # Identify .h file and .c/.cpp that share the same basename
-    c_file_basenames = []
-    c_file_local_paths = []
-    for c_file_path in c_file_paths:
-        c_file_name = os.path.basename(c_file_path)
-        c_file_local_paths.append(c_file_name)
-        c_file_name = c_file_name[:c_file_name.rfind('.')]
-        c_file_basenames.append(c_file_name)
-
-    c_file_basenames = np.unique(c_file_basenames)
-
-    # Title the C/CPP Module page
-    lines = name + "\n" + "=" * len(name) + "\n\n"
-    lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
-
-    if not c_file_paths == []:
-        # Identify where the module lives relative to source
-        src_path = os.path.dirname(c_file_path)
-        # Link the path with the modules for Breathe
-        sources = {c_file_basenames[0] : (src_path, c_file_local_paths)}
-
-        # Populate the module's .rst
-        lines += """.. autodoxygenindex::\n   :project: """ + c_file_basenames[0] + """\n\n"""
-        for cFile in c_file_paths:
-            if cFile.endswith('.c') or cFile.endswith('.cpp'):
-                lines += """.. inheritance-diagram:: """ + os.path.basename(os.path.normpath(c_file_basenames[0])) + """\n\n"""
-        with open(path+"/"+c_file_basenames[0]+".rst", "w") as f:
-            f.write(lines)
+        if self.newFiles:
+            with open(index_path + "/index.rst", "w") as f:
+                f.write(lines)
 
 
 
-    # Create the .rst file for the python mmodule
-    if not py_file_paths == []:
-        # Add the module path to sys.path so sphinx can produce docs
-        src_dir = path[path.find("/")+1:]
-        src_dir = src_dir[src_dir.find("/")+1:]
-        sys.path.append(os.path.abspath(officialSrc+"/"+src_dir))
+    def generateAutoDoc(self,path, files_paths):
+        if "/" in path:
+            name = os.path.basename(path)
+        sources = {}
 
-    for py_file in py_file_paths:
-        fileName = os.path.basename(py_file)
-        fileName = fileName[:fileName.rfind('.')]
-        lines = fileName + "\n" + "=" * len(fileName) + "\n\n"
+        # Sort the files by language
+        py_file_paths = sorted([s for s in files_paths if ".py" in s])
+        c_file_paths = sorted([s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s])
+
+        # Create the .rst file for C-Modules
+
+        # Identify .h file and .c/.cpp that share the same basename
+        c_file_basenames = []
+        c_file_local_paths = []
+        for c_file_path in c_file_paths:
+            c_file_name = os.path.basename(c_file_path)
+            c_file_local_paths.append(c_file_name)
+            c_file_name = c_file_name[:c_file_name.rfind('.')]
+            c_file_basenames.append(c_file_name)
+
+        c_file_basenames = np.unique(c_file_basenames)
+
+        # Title the C/CPP Module page
+        lines = ".. _" + name + ":\n\n"
+        lines += name + "\n" + "=" * len(name) + "\n\n"
         lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
-        lines += """.. automodule:: """ + fileName + """\n   :members:\n   :show-inheritance:\n\n"""
 
-        with open(path+"/"+fileName+".rst", "w") as f:
-            f.write(lines)
+        if not c_file_paths == []:
+            # Identify where the module lives relative to source
+            src_path = os.path.dirname(c_file_path)
+            # Link the path with the modules for Breathe
+            sources = {c_file_basenames[0] : (src_path, c_file_local_paths)}
 
-    return sources
+            # Populate the module's .rst
+            lines += """.. autodoxygenindex::\n   :project: """ + c_file_basenames[0] + """\n\n"""
+            for cFile in c_file_paths:
+                if cFile.endswith('.c') or cFile.endswith('.cpp'):
+                    lines += """.. inheritance-diagram:: """ + os.path.basename(os.path.normpath(c_file_basenames[0])) + """\n\n"""
+            if self.newFiles:
+                with open(path+"/"+c_file_basenames[0]+".rst", "w") as f:
+                    f.write(lines)
 
 
 
+        # Create the .rst file for the python mmodule
+        if not py_file_paths == []:
+            # Add the module path to sys.path so sphinx can produce docs
+            src_dir = path[path.find("/")+1:]
+            src_dir = src_dir[src_dir.find("/")+1:]
+            sys.path.append(os.path.abspath(officialSrc+"/"+src_dir))
+
+        for py_file in sorted(py_file_paths):
+            fileName = os.path.basename(py_file)
+            fileName = fileName[:fileName.rfind('.')]
+            lines = ".. _"+ fileName + ":\n\n"
+            lines += fileName + "\n" + "=" * len(fileName) + "\n\n"
+            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+            lines += """.. automodule:: """ + fileName + """\n   :members:\n   :show-inheritance:\n\n"""
+            if self.newFiles:
+                with open(path+"/"+fileName+".rst", "w") as f:
+                    f.write(lines)
+
+        return sources
+
+
+
+
+    def run(self, srcDir):
+        # Find all files and directories in the src directory
+        paths_in_dir = self.grabRelevantFiles(srcDir)
+
+        # In the local folder, divvy up files and directories
+        file_paths, dir_paths = self.seperateFilesAndDirs(paths_in_dir)
+
+        index_path = os.path.relpath(srcDir, officialSrc)
+        if index_path == ".":
+            index_path = "/"
+
+        if not os.path.exists(officialDoc+"/"+index_path):
+            os.makedirs(officialDoc + "/" + index_path)
+
+        # Populate the index.rst file of the local directory
+        self.populateDocIndex(officialDoc+"/"+index_path, file_paths, dir_paths)
+
+        # Generate the correct auto-doc function for C, C++, and python modules
+        sources = self.generateAutoDoc(officialDoc+"/"+index_path, file_paths)
+
+        # Need to update the translation layer from doxygen to sphinx (breathe)
+        self.breathe_projects_source.update(sources)
+
+        # Recursively go through all directories in source, documenting what is available.
+        for dir_path in sorted(dir_paths):
+            self.run(dir_path)
+
+        if self.newFiles:
+            return self.breathe_projects_source
+        else:
+            return
+
+rebuild = True
 officialSrc = "../../../Basilisk/src"
 officialDoc = "./Documentation"
-if os.path.exists("./Documentation/"):
-    shutil.rmtree("./Documentation/")
-def fileCrawler(srcDir):
-    # Find all files and directories in the src directory
-    paths_in_dir = grabRelevantFiles(srcDir)
 
-    # In the local folder, divvy up files and directories
-    file_paths, dir_paths = seperateFilesAndDirs(paths_in_dir)
+fileCrawler = fileCrawler(rebuild)
+import pickle
 
-    index_path = os.path.relpath(srcDir, officialSrc)
-    if index_path == ".":
-        index_path = "/"
+if rebuild:
+    if os.path.exists("./Documentation/"):
+        shutil.rmtree("./Documentation/")
+    breathe_projects_source = {}
+    breathe_projects_source = fileCrawler.run("../../../Basilisk/src/examples/") # When I run this, scenario finds the wrong doc_string
+    with open("breathe.data", 'wb') as f:
+        pickle.dump(breathe_projects_source, f)
+else:
+    with open('breathe.data', 'rb') as f:
+        breathe_projects_source = pickle.load(f)
+    #breathe_projects_source = pickle.load('breathe.data')
+    #fileCrawler.run("../../../Basilisk/src/")
 
-    if not os.path.exists(officialDoc+"/"+index_path):
-        os.makedirs(officialDoc + "/" + index_path)
+#TODO: Pickle the breathe_project_source and load that back in
 
-    # Populate the index.rst file of the local directory
-    populateDocIndex(officialDoc+"/"+index_path, file_paths, dir_paths)
-
-    # Generate the correct auto-doc function for C, C++, and python modules
-    sources = generateAutoDoc(officialDoc+"/"+index_path, file_paths)
-
-    # Need to update the translation layer from doxygen to sphinx (breathe)
-    breathe_projects_source.update(sources)
-
-    # Recursively go through all directories in source, documenting what is available.
-    for dir_path in dir_paths:
-        fileCrawler(dir_path)
-
-breathe_projects_source = {}
-
-fileCrawler("../../../Basilisk/src/") # When I run this, scenario finds the wrong doc_string
-
+# Example of how to link C with Breathe
 # breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/MRP_Feedback", ['MRP_Feedback.c', 'MRP_Feedback.h'])}
 

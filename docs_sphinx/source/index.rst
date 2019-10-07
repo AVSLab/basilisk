@@ -12,10 +12,15 @@ Welcome to Basilisk's documentation!
    
    About
    Install
-   Vizard
    Tutorial
    Support
    Documentation/index
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Vizard
+
+   Vizard
 
 
 

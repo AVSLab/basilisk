@@ -124,8 +124,8 @@ Basilisk as well using using a helper function ``createPointLine()``:
 .. code-block:: python
 
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-	vizSupport.createPointLine(viz, toBodyName=“earth”, lineColor=[0, 0, 255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
-	
+	vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
+
 The ``createPointLine`` support macro requires the parameters ``toBodyName`` and ``lineColor`` to be
 defined. The parameter ``fromBodyName`` is optional. If it is not
 specified, then the ``viz.spacecraftName`` is used as a default origin.
@@ -166,8 +166,8 @@ using the helper function ``createConeInOut``:
 .. code-block:: python
 	
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-	vizSupport.createConeInOut(viz, toBodyName=“earth”, coneColor=“teal”, normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True, coneHeight=5.0, coneName=‘sensorCone’) 
-	vizSupport.createConeInOut(viz,toBodyName=“earth”, coneColor=“blue”, normalVector_B=[0, 1, 0], incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
+	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal', normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True, coneHeight=5.0, coneName=‘sensorCone’)
+	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0], incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
 	
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
