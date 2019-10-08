@@ -7,9 +7,9 @@ dist/
 dist3/
 .pytest_cache 
 docs/html
-docs_sphinx/build
-docs_sphinx/source/Documentation/*
-docs/Images/Scenarios/*
+docs/build
+docs/source/Documentation/*
+docs/source/_images/Scenarios/*
 src/tests/scenarios/data
 xml/*
 *.swp
