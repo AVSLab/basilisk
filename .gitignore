@@ -26,3 +26,7 @@ src/cmake-build-debug/*
 
 *.fdb_latexmk
 *.fls
+
+src/assets/
+
+src/report\.html
