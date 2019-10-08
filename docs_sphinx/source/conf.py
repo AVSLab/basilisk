@@ -18,18 +18,7 @@ import numpy as np
 import sphinx_rtd_theme
 
 # sys.path.insert(0, os.path.abspath('.'))
-#sys.path.append("/Users/johnmartin/Documents/Graduate School/BasiliskTutorial/BSK_Sphinx/source/utilities/MonteCarlo")
 sys.path.append("~/Library/Python/3.7/lib/python/site-packages/breathe/")
-#sys.path.append("~/Basilisk/src/fswAlgorithms/*")
-#sys.path.append("~/Basilisk/src/examples/*")
-#sys.path.append("~/Basilisk/src/examples/scenarios/")
-#sys.path.append("../../src/examples/scenarios/")
-sys.path.append("../../src/examples/montecarlo")
-#sys.path.append("../../src/examples/montecarlo/")
-
-#sys.path.append("../../src/examples/")
-
-
 
 
 # -- Project information -----------------------------------------------------
@@ -41,7 +30,7 @@ author = u'AVS Lab'
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'0.0.1'
+release = u'1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -248,7 +237,8 @@ class fileCrawler():
                     "__pycache__" in dirs_in_dir[i] or \
                     "_VizFiles" in dirs_in_dir[i] or \
                     "cmake" in dirs_in_dir[i] or \
-                    "topLevelModules" in dirs_in_dir[i]:
+                    "topLevelModules" in dirs_in_dir[i] or \
+                    "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
             del dirs_in_dir[i]
@@ -327,25 +317,43 @@ class fileCrawler():
 
         c_file_basenames = np.unique(c_file_basenames)
 
-        # Title the C/CPP Module page
-        lines = ".. _" + name + ":\n\n"
+        lines = ""
+        lines += ".. _" + name + ":\n\n"
         lines += name + "\n" + "=" * len(name) + "\n\n"
-        lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+        lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + name + ":\n\n"
 
         if not c_file_paths == []:
             # Identify where the module lives relative to source
             src_path = os.path.dirname(c_file_path)
-            # Link the path with the modules for Breathe
-            sources = {c_file_basenames[0] : (src_path, c_file_local_paths)}
+            module_files = []
+            sources = {}
+            for c_file_basename in c_file_basenames:
 
-            # Populate the module's .rst
-            lines += """.. autodoxygenindex::\n   :project: """ + c_file_basenames[0] + """\n\n"""
-            for cFile in c_file_paths:
-                if cFile.endswith('.c') or cFile.endswith('.cpp'):
-                    lines += """.. inheritance-diagram:: """ + os.path.basename(os.path.normpath(c_file_basenames[0])) + """\n\n"""
-            if self.newFiles:
-                with open(path+"/"+c_file_basenames[0]+".rst", "w") as f:
-                    f.write(lines)
+                module_files_temp = []
+                lines = ""
+                lines += ".. _" + c_file_basename + ":\n\n"
+                lines += c_file_basename + "\n" + "=" * len(c_file_basename) + "\n\n"
+
+                # Link the path with the modules for Breathe
+                module_files.extend([s for s in c_file_local_paths if c_file_basename in s])
+                module_files_temp.extend([s for s in c_file_local_paths if c_file_basename in s])
+
+
+
+                # Populate the module's .rst
+                for module_file in module_files_temp:
+                    if ".h" in module_file:
+                        lines += """.. autodoxygenfile:: """ + module_file + """\n   :project: """ + name + """\n\n"""
+                        lines += """.. inheritance-diagram:: """ + module_file + """\n\n"""
+
+                if self.newFiles:
+                    with open(path + "/" + c_file_basename + ".rst", "w") as f:
+                        f.write(lines)
+
+            sources.update({name: (src_path, module_files)})
+
+
+
 
 
 
@@ -415,7 +423,7 @@ if rebuild:
     if os.path.exists("./Documentation/"):
         shutil.rmtree("./Documentation/")
     breathe_projects_source = {}
-    breathe_projects_source = fileCrawler.run("../../../Basilisk/src/examples/") # When I run this, scenario finds the wrong doc_string
+    breathe_projects_source = fileCrawler.run("../../../Basilisk/src/") # When I run this, scenario finds the wrong doc_string
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)
 else:

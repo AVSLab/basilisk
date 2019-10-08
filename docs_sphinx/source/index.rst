@@ -12,7 +12,7 @@ Welcome to Basilisk's documentation!
    
    About
    Install
-   Tutorial
+   Quick-Start
    Support
    Documentation/index
 

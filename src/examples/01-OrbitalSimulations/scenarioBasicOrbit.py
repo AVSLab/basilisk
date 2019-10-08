@@ -32,11 +32,24 @@ import os
 import numpy as np
 
 import matplotlib.pyplot as plt
-# The path to the location of Basilisk
-# Used to get the location of supporting data.
+
+# To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
+#
+#       python3 scenarioBasicOrbit.py
+#
+# *However*, to play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
+# outside of the Basilisk directory.
+#
+# To copy them, first find the location of the Basilisk installation.
+# After installing, you can find the installed location of Basilisk by opening a python interpreter and
+# running the commands:
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
+# Copy the folder `{basiliskPath}/tests` into a new folder in a different directory.
+# Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
+
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
@@ -45,31 +58,12 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
-# -----
-# ![Simulation Flow Diagram](Images/doc/test_scenarioBasicOrbit.svg "Illustration")
-#
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg "Orbit Illustration")
-#
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg "Orbit Illustration")
-#
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg "Orbit Illustration")
-#
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg "Orbit Illustration")
-
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
-#
-## @}
 def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """
     This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
     approximation or run with high-order spherical harmonic terms.
 
-    .. image:: ../../../../_images/doc/test_scenarioBasicOrbit.svg
+    .. image:: ../../../_images/doc/test_scenarioBasicOrbit.svg
        :align: center
 
     Args:
@@ -93,7 +87,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     .. note:: This script is a good reference for configuring the following modules:
 
-              * :ref:`SpacecraftPlus`
+              * :ref:`spacecraftPlus`
               * :ref:`gravityEffector`
 
     .. seealso::
@@ -107,10 +101,58 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
 
 
-
     Resulting Images
     ================
-    .. image:: ../../../../_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
+
+    ::
+
+        show_plots = True, orbitCase='LEO', useSphericalHarmonics=False, planetCase='Earth'
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
+       :align: center
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
+       :align: center
+
+    ::
+
+        show_plots = True, orbitCase='GTO', useSphericalHarmonics=False, planetCase='Earth'
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg
+       :align: center
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
+       :align: center
+
+    ::
+
+        show_plots = True, orbitCase='GEO', useSphericalHarmonics=False, planetCase='Earth'
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg
+       :align: center
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
+       :align: center
+
+    ::
+
+        show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Earth'
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg
+       :align: center
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg
+       :align: center
+
+    ::
+
+        show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Mars'
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
+       :align: center
+
+    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
+       :align: center
 
     """
 
@@ -131,6 +173,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     # setup the simulation tasks/objects
     # initialize spacecraftPlus object and set properties
+    # The dynamics simulation is setup using a SpacecraftPlus() module.
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
@@ -138,6 +181,51 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
+    # The first step to adding gravity objects is to create the gravity body factor class.  Note that
+    # this call will create an empty gravitational body list each time this script is called.  Thus, there
+    # is not need to clear any prior list of gravitational bodies.
+    # ~~~~~~~~~~~~~~~~~{.py}
+    #   gravFactory = simIncludeGravBody.gravBodyFactory()
+    # ~~~~~~~~~~~~~~~~~
+    # To attach an Earth gravity model to this spacecraft, the following macro is invoked:
+    # ~~~~~~~~~~~~~~~~~{.py}
+    #     planet = gravFactory.createEarth()
+    #     planet.isCentralBody = True          # ensure this is the central gravitational body
+    # ~~~~~~~~~~~~~~~~~
+    # The gravFactor() class stores the Earth gravitational object within the class, but it also returns a
+    # handler to this gravitational object as a convenience.  The celestial object position and velocity
+    # vectors are all defaulted to zero values.  If non-zero values are required, this can be manually
+    # overridden.  If multiple bodies are simulated, then their positions can be
+    # dynamically updated.  See [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
+    # done via a SPICE object.
+    #
+    # If extra customization is required, see the createEarth() macro to change additional values.
+    # For example, the spherical harmonics are turned off by default.  To engage them, the following code
+    # is used
+    # ~~~~~~~~~~~~~~~~~{.py}
+    #     planet.useSphericalHarmParams = True
+    #     simIncludeGravBody.loadGravFromFile(Basilisk.__path__[0]+'/supportData/LocalGravData/GGM03S-J2-only.txt'
+    #                                         , planet.spherHarm
+    #                                         ,2
+    #                                         )
+    # ~~~~~~~~~~~~~~~~~
+    # The value 2 indicates that the first two harmonics, excluding the 0th order harmonic,
+    # are included.  This harmonics data file only includes a zeroth order and J2 term.
+    #
+    # Finally, the gravitational body must be connected to the spacecraft object.  This is done with
+    # ~~~~~~~~~~~~~~~~~{.py}
+    #     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    # ~~~~~~~~~~~~~~~~~
+    # Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if
+    # it is only one body like Earth or Mars, or a list of multiple bodies.
+    #
+    # Note that the default planets position and velocity vectors in the gravitational body are set to zero.  If
+    # alternate position or velocity vectors are requried, this can be done by creating the planet ephemerise message
+    # that is connected to the gravity effector input message `bodyInMsgName`.
+    # If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages
+    # the planet's default ephemeris would be replaced with the desired custom values.  How to use Spice to setup
+    # planet ephemerise is shown in the tutorial
+    # [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody).
     gravFactory = simIncludeGravBody.gravBodyFactory()
     if planetCase is 'Mars':
         planet = gravFactory.createMarsBarycenter()
@@ -185,9 +273,25 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # with circular or equatorial orbit, some angles are arbitrary
 
 
-    # initialize Spacecraft States with the initialization variables
+    # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+
+    # These vectors specify the inertial position and velocity vectors relative to the planet of the
+    # spacecraft center of mass location.  Note that there are 2 points that can be tracked.  The user always
+    # specifies the spacecraft center of mass location with the above code.  If the simulation output should be
+    # about another body fixed point B, this can be done as well.  This is useful in particular with more challenging
+    # dynamics where the center of mass moves relative to the body.  The following vector would specify the location of
+    # the spacecraft hub center of mass (Bc) relative to this body fixed point.
+    # ~~~~~~~~~~~~~~~~{.py}
+    #    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    # ~~~~~~~~~~~~~~~~
+
+    # If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub
+    # is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecrat contains
+    # state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C would
+    # not be the same.  Thus, in this simple simulation the body fixed point B and spacecraft center of mass are
+    # identical.
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
@@ -205,21 +309,64 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
+    # Vizard Visualization Option
+    # -----
+    # If you wish to transmit the simulation data to the United based [Vizard](@ref vizard) Visualization application,
+    # then uncomment the following
+    # line (line 430 in the script) from the python scenario script.  This will cause the BSK simulation data to
+    # be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by
+    # Vizard and played back after running the BSK simulation.
+    # To enable this, uncomment this line:
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
     # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 
-    #
+    # The vizInterface module must be built into BSK.  This is done if the correct CMake options are selected.
+    # The default CMake will include this vizInterface module in the BSK build.  See the BSK HTML documentation on
+    # more information of CMake options.
+
+    # By using the gravFactory support class to create and add planetary bodies the vizInterface module will
+    # automatically be able to find the correct celestial body ephemeris names.  If these names are changed, then the
+    # vizSupport.py support library has to be customized.
+    # Currently Vizard supports playback of stored simulation data files. By default the Viz is running in
+    # realtime mode with a 1x speed up factor.  On the bottom right of the Vizard GUI this can be increased
+    # or decreased.  Further, some display elements such as thruster or reaction wheel panels are only visible if
+    # such devices are being simulated in BSK.
+
+    # While Vizard has many visualization features that can be customized from within the application, many Vizard
+    # settings can also be scripted from the Basilisk python script.  A complete discussion on these options and
+    # features can be found the the [Vizard Settings](@ref vizardSettings) page.
+
+
+
+
+
+    # Before the simulation is ready to run, it must be initialized.  The following code uses a convenient macro routine
+    # which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
+
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
     #   cross_init() and reset() routines on each module.
     #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
     #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
     scSim.InitializeSimulationAndDiscover()
+    # If there are messages that are shared across multiple BSK threads, as shown in
+    # [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
+    # auto-discovers these shared messages.
 
     #   configure a simulation stop time time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
+    # Note that this module simulates both the translational and rotational motion of the spacecraft.
+    # In this scenario only the translational (i.e. orbital) motion is tracked.  This means the rotational motion
+    # remains at a default inertial frame orientation in this scenario.  There is no appreciable speed hit to
+    # simulate both the orbital and rotational motion for a single rigid body.  In the later scenarios
+    # the rotational motion is engaged by specifying rotational initial conditions, as well as rotation
+    # related effectors.  In this simple scenario only translational motion is setup and tracked.
+    # Further, the default spacecraft parameters, such as the unit mass and the principle inertia values are
+    # just fine for this orbit simulation as they don't impact the orbital dynamics in this case.
+    # This is true for all gravity force only orbital simulations. Later
+    # tutorials, such as [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
+    # illustrate how to over-ride default values with desired simulation values.
 
 
     #   retrieve the logged data
@@ -228,10 +375,11 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     np.set_printoptions(precision=16)
 
-    #
-    #   plot the results
-    #
-    figureList = plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase)
+    # When the simulation completes 2 plots are shown for each case.  One plot always shows
+    # the inertial position vector components, while the second plot either shows a planar
+    # orbit view relative to the perfocal frame (no spherical harmonics), or the
+    # semi-major axis time history plot (with spherical harmonics turned on).
+    figureList = plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet)
 
     if show_plots:
         plt.show()
@@ -241,7 +389,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     return posData, figureList
 
-def plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase):
+
+
+def plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet):
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)

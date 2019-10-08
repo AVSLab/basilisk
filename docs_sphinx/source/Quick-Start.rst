@@ -3,23 +3,23 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Tutorial
+Quick-Start
 ====================================
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
    
-   Tutorial/Prologue
-   Tutorial/Chapter1
-   Tutorial/Chapter2
-   Tutorial/Chapter3
-   Tutorial/Chapter4
-   Tutorial/Chapter5
-   Tutorial/Chapter6
-   Tutorial/Chapter7
-   Tutorial/Chapter8
-   Tutorial/Chapter9
+   Quick-Start/Prologue
+   Quick-Start/Chapter1
+   Quick-Start/Chapter2
+   Quick-Start/Chapter3
+   Quick-Start/Chapter4
+   Quick-Start/Chapter5
+   Quick-Start/Chapter6
+   Quick-Start/Chapter7
+   Quick-Start/Chapter8
+   Quick-Start/Chapter9
 
 
 

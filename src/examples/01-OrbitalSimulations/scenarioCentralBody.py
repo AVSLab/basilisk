@@ -61,64 +61,61 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # Central Body Setup {#scenarioCentralBody}
 # ====
-#
-# Scenario Description
-# -----
-# This script sets up a basic spacecraft in orbit about Earth. One option uses earth.isCentralBody = True and the
-# other uses isCentralBody = False. The nuances of spacecraft position and velocity I/O in these cases is demonstrated.
-# graphs are provided which show the outputs to be the same in each case
-# parameters:
-# Setup | showPlots           | useCentral
-# ----- | ------------------- | ------------
-# 1     | True                | False
-# 2     | True                | True
-#
-# To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
-#
-#       python3 scenarioCentralBody.py
-#
-# Simulation Scenario Setup Details
-# -----
-# The basics of the spacecraft and simulation set up are shown in
-# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit) and only the particulars are discussed here.
-#
-# Spacecraft positions can be input (and integrated) only relative to the "central body" by
-# using the isCentralBody flag. This is demonstrated in Setup 2. Generally, this is a good
-# practice because it increases the accurracy of the integration.
-#
-# Alternatively, absolute positions and velocities can be input and integrated.
-# To do so, it is useful to be able to get a planet position and velocity from spice
-# to be able to modify your spacecraft inputs by these values. This can be done using the
-# planetStates utility:
-# ~~~~~~~~~~~~~{.py}
-# from Basilisk.utilities import planetStates
-# ~~~~~~~~~~~~~
-# Then, the planetPositionVelocity() method can be used to get the needed information
-# ~~~~~~~~~~~~~{.py}
-# planetPosition, planetVelocity = planetStates.planetPositionVelocity('EARTH', UTCInit)
-# ~~~~~~~~~~~~~
-# In the above call, the first input is the planet to get the states of and the second is the UTC time
-# to get the states at. Additional inputs are available in the method documentation. These states can then be added
-# to the planet-relative states before setting them to the spacecraft initial statesL
-# ~~~~~~~~~~~~~{.py}
-# scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN + array(planetPosition))
-# scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN + array(planetVelocity))
-# ~~~~~~~~~~~~~
-# This works without frame rotations because all planet states are given in the spice inertial system relative to the
-# zero base. Additionally, it is assumed for this script that the Keplerian orbital elements were given relative
-# to the Earth Centered Inertial Frame which is aligned with the spice inertial frame.
-#
-# Finally, note that the output position and velocity (when reading message logs) will be relative to the spice zero
-# base, even when a central body is being used. So, to plot planet-relative orbits, the outputs are adjusted by the
-# time history of the earth position and velocity.
-#
-# Plots found when running this scenario are the same as the basic orbit scenario and are included for visual inspection that the results are
-# roughly the same regardless of the use of a central body.
+
 
 ## @}
 def run(show_plots, useCentral):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+        This script sets up a basic spacecraft in orbit about Earth. One option uses earth.isCentralBody = True and the
+        other uses isCentralBody = False. The nuances of spacecraft position and velocity I/O in these cases is
+        demonstrated.
 
+        .. image:: ../../../_images/doc/test_scenarioBasicOrbit.svg
+           :align: center
+
+        Args:
+            show_plots (bool): Determines if the script should display plots
+            useCentral (bool):
+
+        Returns:
+            None
+
+        .. note:: This script is a good reference for configuring the following modules:
+
+                  * :ref:`spacecraftPlus`
+                  * :ref:`gravityEffector`
+
+        .. seealso::
+                     * :ref:`scenarioBasicOrbit`
+                     * :ref:`scenarioBasicOrbitLivePlot`
+                     * :ref:`scenarioBasicOrbitStream`
+                     * :ref:`scenarioOrbitMultiBody`
+                     * :ref:`scenarioOrbitManeuver`
+
+
+        Resulting Images
+        ================
+
+        ::
+
+            show_plots = True, useCentral = True
+
+        .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
+           :align: center
+
+        .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
+           :align: center
+
+        """
+
+    # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
+    #
+    #       python3 scenarioCentralBody.py
+    #
+    # Simulation Scenario Setup Details
+    # -----
+    # The basics of the spacecraft and simulation set up are shown in
+    # scenarioBasicOrbit and only the particulars are discussed here.
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -190,6 +187,18 @@ def run(show_plots, useCentral):
     #
     #   initialize Spacecraft States with the initialization variables
     #
+    # Spacecraft positions can be input (and integrated) only relative to the "central body" by
+    # using the isCentralBody flag. This is demonstrated in Setup 2. Generally, this is a good
+    # practice because it increases the accuracy of the integration.
+    #
+    # Alternatively, absolute positions and velocities can be input and integrated.
+    # To do so, it is useful to be able to get a planet position and velocity from spice
+    # to be able to modify your spacecraft inputs by these values. This can be done using the
+    # planetStates utility:
+    # ~~~~~~~~~~~~~{.py}
+    # from Basilisk.utilities import planetStates
+    # ~~~~~~~~~~~~~
+    # Then, the planetPositionVelocity() method can be used to get the needed information
     if useCentral:
         scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
         scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
@@ -200,6 +209,14 @@ def run(show_plots, useCentral):
         planetPosition, planetVelocity = planetStates.planetPositionVelocity('EARTH', UTCInit)
         scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN + array(planetPosition))
         scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN + array(planetVelocity))
+        # In the above call, the first input is the planet to get the states of and the second is the UTC time
+        # to get the states at. Additional inputs are available in the method documentation. These states can then be added
+        # to the planet-relative states before setting them to the spacecraft initial states
+
+        # This works without frame rotations because all planet states are given in the spice inertial system relative to the
+        # zero base. Additionally, it is assumed for this script that the Keplerian orbital elements were given relative
+        # to the Earth Centered Inertial Frame which is aligned with the spice inertial frame.
+
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
@@ -240,6 +257,13 @@ def run(show_plots, useCentral):
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
     earthPositionHistory = scSim.pullMessageLogData("earth_planet_data.PositionVector", list(range(3)))
     earthVelocityHistory = scSim.pullMessageLogData("earth_planet_data.VelocityVector", list(range(3)))
+
+    # Finally, note that the output position and velocity (when reading message logs) will be relative to the spice zero
+    # base, even when a central body is being used. So, to plot planet-relative orbits, the outputs are adjusted by the
+    # time history of the earth position and velocity.
+    #
+    # Plots found when running this scenario are the same as the basic orbit scenario and are included for visual inspection that the results are
+    # roughly the same regardless of the use of a central body.
 
     #bring the s/c pos, vel back to earth relative coordinates to plot
     posData[:, 1:4] -= earthPositionHistory[:, 1:4]

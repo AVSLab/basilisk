@@ -3,7 +3,7 @@ Contents
 
 .. toctree::
    :maxdepth: 1
-   :caption: Tutorial:
+   :caption: Quick-Start Guide:
 
    Chapter1
    Chapter2

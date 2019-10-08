@@ -346,7 +346,7 @@ def writeTeXSnippet(snippetName, texSnippet, path):
 #   save a python scenario result into the Doxygen image folder
 #
 def saveScenarioFigure(figureName, plt, path, extension = ".svg"):
-    imgFileName = path + "/../../../docs/Images/Scenarios/"+figureName+extension
+    imgFileName = path + "/../../../docs/source/_images/Scenarios/"+figureName+extension
     if not os.path.exists(os.path.dirname(imgFileName)):
         try:
             os.makedirs(os.path.dirname(imgFileName))
