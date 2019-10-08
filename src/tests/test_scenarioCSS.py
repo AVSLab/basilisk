@@ -35,7 +35,7 @@ from Basilisk.utilities import macros
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/scenarios')
+sys.path.append(path + '/../examples/05-Sensors')
 import scenarioCSS
 
 

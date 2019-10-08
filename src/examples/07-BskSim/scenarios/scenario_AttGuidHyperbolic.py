@@ -166,7 +166,7 @@ sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 import BSK_Dynamics, BSK_Fsw
 
-sys.path.append(path + '/../../scenarios')
+sys.path.append(path + '/../../02-AttitudeSimulations/')
 import scenarioAttGuideHyperbolic as scene_plt
 
 

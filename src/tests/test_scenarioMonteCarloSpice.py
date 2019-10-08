@@ -30,7 +30,7 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/scenarios')
+sys.path.append(path + '/../examples/06-MonteCarlo')
 import scenarioMonteCarloSpice
 
 

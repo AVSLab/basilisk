@@ -39,7 +39,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/scenarios')
+sys.path.append(path + '/../examples/02-AttitudeSimulations')
 import scenarioAttitudePointing
 
 

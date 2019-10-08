@@ -44,7 +44,7 @@ except ImportError:
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/scenarios')
+sys.path.append(path + '/../examples/06-MonteCarlo')
 import scenarioMonteCarloAttRW
 
 # FOUND_DATESHADER = False
