@@ -39,6 +39,7 @@
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
 
+#define VIZ_MAX_SIZE 3000
 
 typedef struct {
     int64_t msgID;        //!< [-] message ID associated with source
@@ -50,6 +51,11 @@ typedef struct {
     std::string thrTag;   //!< [-] ModelTag associated with the thruster model
     uint32_t    thrCount; //!< [-] Number of thrusters used in this thruster model
 }ThrClusterMap;
+
+typedef struct {
+    uint32_t byte_count;
+    uint8_t buffer[VIZ_MAX_SIZE];
+}VizMsg;
 
 /*! @brief Abstract class that is used to implement an effector impacting a GRAVITY body
            that does not itself maintain a state or represent a changing component of
@@ -81,8 +87,11 @@ public:
     uint64_t numSensors;
     int opNavMode;          //! [Bool] Set True if Unity/Viz couple in direct communication.
     int saveFile;           //! [Bool] Set True if Viz should save a file of the data.
-
+    
+    VizMsg viz_msg;
+    //VizMsg viz_arch_buffer;
     std::string vizOutMsgName;
+
     std::vector <std::string> planetNames;  //!< -- Names of planets we want to track, read in from python
 
     uint64_t numOutputBuffers;                //! [-] Number of buffers to request for the output messages
@@ -119,6 +128,8 @@ private:
     std::ofstream *outputStream;                       //! [-] Output file stream opened in reset
     
     std::map<uint32_t, SpicePlanetStateSimMsg> planetData; //!< -- Internal vector of planets
+    
+    int32_t vizOutMsgID;
     
 };
 

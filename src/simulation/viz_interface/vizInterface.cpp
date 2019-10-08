@@ -47,6 +47,7 @@ VizInterface::VizInterface()
     this->numRW = 0;
     this->numThr = 0;
     this->planetNames = {};
+    this->vizOutMsgName = "viz_message";
     return;
 }
 
@@ -61,6 +62,9 @@ VizInterface::~VizInterface()
  */
 void VizInterface::SelfInit()
 {
+    this->vizOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->vizOutMsgName, sizeof(VizMsg),
+                                                                         this->numOutputBuffers,"VizMsg", moduleID);
+    
     if (this->opNavMode == 1){
         /*! setup zeroMQ */
         context = zmq_ctx_new();
@@ -187,6 +191,7 @@ void VizInterface::CrossInit()
  */
 void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
+    memset(&(this->viz_msg), 0x0, sizeof(VizMsg));
     this->FrameNumber=-1;
     if (this->saveFile == 1) {
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
@@ -448,9 +453,22 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         uint32_t byteCount = message->ByteSizeLong();
         google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
         unsigned long varIntBytes = end - varIntBuffer;
+        //std::cout << "byteCount = " << byteCount << std::endl;
         if (this->saveFile == 1) {
             this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
         }
+        
+        /* Viz Message Buffer */
+        memset(&(this->viz_msg), 0x0, sizeof(VizMsg));
+        void* serialized_viz_msg = malloc(byteCount);
+        message->SerializeToArray(serialized_viz_msg, byteCount);
+        memcpy(&(this->viz_msg.buffer), serialized_viz_msg, byteCount);
+        viz_msg.byte_count = byteCount;
+        
+        SystemMessaging::GetInstance()->WriteMessage(this->vizOutMsgID, CurrentSimNanos, sizeof(VizMsg),
+                                                      reinterpret_cast<uint8_t *>(&(this->viz_msg)), this->moduleID);
+        
+        
 
         /*! Enter in lock-step with the vizard to simulate a camera */
         if (this->opNavMode == 1){
