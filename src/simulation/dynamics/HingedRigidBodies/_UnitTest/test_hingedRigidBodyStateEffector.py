@@ -58,9 +58,6 @@ def hingedRigidBodyAllTest(show_plots):
     assert testResults < 1, testMessage
 
 def test_hingedRigidBodyGravity(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter

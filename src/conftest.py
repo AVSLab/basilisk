@@ -21,8 +21,9 @@ import pytest
 import matplotlib.pyplot as plt
 import os
 import shutil
+# where to put test figures relative to bsk src/ in order to gen pytest-html report with figs
 testFigsDir = './assets/testFigs/'
-if os.path.exists(testFigsDir):
+if os.path.exists(testFigsDir):  # we specifically want to delete pre-existing figures
     shutil.rmtree(testFigsDir)
     os.makedirs(testFigsDir)
 else:
@@ -37,7 +38,8 @@ def pytest_addoption(parser):
 def show_plots(request):
     return request.config.getoption("--show_plots")
 
-def get_test_name(item):
+
+def get_test_name(item):  # just get the name of the test from the item function
     ugly_name = str(item.function)
     less_ugly_name = ugly_name.strip('<function')
     beautiful_name = less_ugly_name.split(' at')[0]
@@ -49,17 +51,24 @@ def pytest_runtest_makereport(item, call):
     """
         We use this function to do two things:
         1) append the docstrings to the test log
-        3) print test plots to the test log
+        2) print test plots to the test log
+
+        This is kept neat by inserting a table into the extras to separate the two things.
     """
     pytest_html = item.config.pluginmanager.getplugin('html')
     outcome = yield
     report = outcome.get_result()
     extra = getattr(report, 'extra', [])
-    
+
+    extra.append(pytest_html.extras.html('</div><table><tr><td><div>'))
     # add the doc string
-    docstring = '<tt>' + str(item.function.__doc__).replace('\n', '</br>', ) + '</tt>'
+    if item.function.__doc__:
+        docstring = '<tt>' + str(item.function.__doc__).replace('\n', '</br>', ) + '</tt>'
+    else:
+        docstring = '<tt> This test does not have a docstring </br></tt>'
     extra.append(pytest_html.extras.html(docstring))
-    
+    extra.append(pytest_html.extras.html('</div></td></tr><tr><td><div>'))
+
     # save the figures
     dir_name = testFigsDir + get_test_name(item)
     i = 0
@@ -72,11 +81,21 @@ def pytest_runtest_makereport(item, call):
             else:
                 i += 1
                 continue
-    for f in plt.get_fignums():
-        filename = dir_name_num + 'figure_' + str(f) + '.png'
-        plt.figure(f).savefig(filename)
-        plt.close(f)
-        extra.append(pytest_html.extras.png(filename))
+
+        for f in plt.get_fignums():
+            filename = dir_name_num + 'figure_' + str(f) + '.png'
+            plt.figure(f).savefig(filename)
+            plt.close(f)  # close figures so test writers don't have to
+            extra.append(pytest_html.extras.image(filename))
+    else:
+        extra.append(pytest_html.extras.html('<tt> This test has no images.</br></tt>'))
+    extra.append(pytest_html.extras.html('</div></td></tr></table><div>'))
     report.extra = extra
+
+def pytest_html_results_table_header(cells):
+    cells.pop()
+
+def pytest_html_results_table_row(report, cells):
+    cells.pop()
 
 

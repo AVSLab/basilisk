@@ -47,6 +47,30 @@ from Basilisk.utilities import macros
 # provide a unique test method name, starting with test_
 
 def test_nHingedRigidBodyAllTest(show_plots,useFlag,testCase):
+    """
+    This tests checks the performance of n hinged Rigid Bodies
+
+    Parameters:
+    -----------
+    show_plots: bool
+        whether or not to show plots
+    useFlag: int
+        what to use
+    testCase: string
+        name of test case
+
+    Returns:
+    --------
+    void:
+
+    Test Descriptions:
+    ------------------
+    The various tests run here check:
+    1) a thing
+    2) some other longer thing
+    3) same as 2) but with different something
+    etc.
+    """
     [testResults, testMessage] = nHingedRigidBody(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 
