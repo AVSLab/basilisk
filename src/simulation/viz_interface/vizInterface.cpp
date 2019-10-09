@@ -179,7 +179,7 @@ void VizInterface::CrossInit()
 
     /*! Define Spice input message */
     {
-        uint i=0;
+        size_t i=0;
         MsgCurrStatus spiceStatus;
         spiceStatus.dataFresh = false;
         spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
@@ -216,7 +216,7 @@ void VizInterface::CrossInit()
         MsgCurrStatus rwStatus;
         rwStatus.dataFresh = false;
         rwStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        for (uint idx = 0; idx < this->numRW; idx++)
+        for (size_t idx = 0; idx < this->numRW; idx++)
         {
             std::string tmpWheelMsgName = "rw_config_" + std::to_string(idx) + "_data";
             this->rwInMsgName.push_back(tmpWheelMsgName);
@@ -226,7 +226,7 @@ void VizInterface::CrossInit()
                 this->rwInMsgID.push_back(rwStatus);
             } else {
                 rwStatus.msgID = -1;
-                BSK_PRINT(MSG_WARNING, "RW(%d) msg requested but not found.", idx);
+                BSK_PRINT(MSG_WARNING, "RW(%zu) msg requested but not found.", idx);
             }
         }
         this->rwInMessage.resize(this->rwInMsgID.size());
@@ -292,7 +292,7 @@ void VizInterface::ReadBSKMessages()
     }
     /*! Read BSK Spice constellation msg */
     {
-    uint i=0;
+    size_t i=0;
     std::vector<std::string>::iterator it;
     for(it = this->planetNames.begin(); it != this->planetNames.end(); it++)
     {
@@ -314,7 +314,7 @@ void VizInterface::ReadBSKMessages()
 
     /*! Read BSK RW constellation msg */
     {
-    for (uint idx=0;idx< this->numRW; idx++)
+    for (size_t idx=0;idx< this->numRW; idx++)
     {
         if (this->rwInMsgID[idx].msgID != -1){
         RWConfigLogSimMsg localRWArray;
@@ -332,7 +332,7 @@ void VizInterface::ReadBSKMessages()
     
      /*! Read incoming Thruster constellation msg */
     {
-    for (uint idx=0;idx< this->numThr; idx++){
+    for (size_t idx=0;idx< this->numThr; idx++){
         if (this->thrMsgID[idx].msgID != -1){
             THROutputSimMsg localThrusterArray;
             SingleMessageHeader localThrusterHeader;
@@ -445,7 +445,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define any pointing lines for Vizard
-        for (uint idx = 0; idx < this->settings.pointLineList.size(); idx++) {
+        for (size_t idx = 0; idx < this->settings.pointLineList.size(); idx++) {
             vizProtobufferMessage::VizMessage::PointLine* pl = vizSettings->add_pointlines();
             pl->set_tobodyname(this->settings.pointLineList[idx].toBodyName);
             pl->set_frombodyname(this->settings.pointLineList[idx].fromBodyName);
@@ -455,7 +455,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define any keep in/out cones for Vizard
-        for (uint idx = 0; idx < this->settings.coneList.size(); idx++) {
+        for (size_t idx = 0; idx < this->settings.coneList.size(); idx++) {
             vizProtobufferMessage::VizMessage::KeepOutInCone* cone = vizSettings->add_keepoutincones();
             cone->set_iskeepin(this->settings.coneList[idx].isKeepIn);
             for (int i=0; i<3; i++) {
@@ -473,7 +473,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define actuator GUI settings
-        for (uint idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
+        for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
             al->set_spacecraftname(this->settings.actuatorGuiSettingsList[idx].spacecraftName);
             al->set_viewthrusterpanel(this->settings.actuatorGuiSettingsList[idx].viewThrusterPanel);
@@ -534,7 +534,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         //scPlusInMsgID.dataFresh = false;
 
         /*! Write RW output msg */
-        for (uint idx =0; idx < this->numRW; idx++)
+        for (size_t idx =0; idx < this->numRW; idx++)
         {
             if (rwInMsgID[idx].msgID != -1 && rwInMsgID[idx].dataFresh){
                 vizProtobufferMessage::VizMessage::ReactionWheel* rwheel = scp->add_reactionwheels();
@@ -549,7 +549,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         /*! Write Thr output msg */
-        for (uint idx =0; idx < this->numThr; idx++)
+        for (size_t idx =0; idx < this->numThr; idx++)
         {
             if (thrMsgID[idx].msgID != -1 && thrMsgID[idx].dataFresh){
                 vizProtobufferMessage::VizMessage::Thruster* thr = scp->add_thrusters();
@@ -616,7 +616,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
 
         /*! Write spice output msgs */
-        uint k=0;
+        size_t k=0;
         std::vector<std::string>::iterator it;
         for(it = this->planetNames.begin(); it != this->planetNames.end(); it++)
         {

@@ -150,7 +150,7 @@ void FacetDragDynamicEffector::plateDrag(){
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
     
-	for(uint i = 0; i < this->numFacets; i++){
+	for(size_t i = 0; i < this->numFacets; i++){
 	    projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
 		projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
 		if(projectedArea > 0.0){

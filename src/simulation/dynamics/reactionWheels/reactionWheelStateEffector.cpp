@@ -449,7 +449,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         eigenVector3d2CArray(it->gsHat_B, tmpRW.gsHat_B);
         eigenVector3d2CArray(it->rWB_B, tmpRW.rWB_B);
 		// Write out config data for eachreaction wheel
-		messageSys->WriteMessage(this->rwOutMsgIds.at(it - ReactionWheelData.begin()),
+		messageSys->WriteMessage(this->rwOutMsgIds.at((size_t)(it - ReactionWheelData.begin())),
 								 CurrentClock,
 								 sizeof(RWConfigLogSimMsg),
 								 reinterpret_cast<uint8_t*> (&tmpRW),
@@ -531,7 +531,7 @@ void ReactionWheelStateEffector::ReadInputs()
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
 	std::vector<RWCmdSimMsg>::iterator CmdIt;
-	uint RWIter = 0;
+	size_t RWIter = 0;
 
 	// loop through commands
 	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)

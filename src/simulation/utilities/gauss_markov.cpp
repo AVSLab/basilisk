@@ -58,7 +58,7 @@ void GaussMarkov::computeNextState()
 {
     Eigen::VectorXd errorVector;
     Eigen::VectorXd ranNums;
-    uint i;
+    size_t i;
     
     //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
