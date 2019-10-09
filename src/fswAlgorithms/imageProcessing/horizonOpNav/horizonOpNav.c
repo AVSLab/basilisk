@@ -264,7 +264,7 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
 {
     int32_t i, j;
     double sourceMatT[MAX_LIMB_PNTS*3], QT[MAX_LIMB_PNTS*3];
-    double proj[nRow];
+    double proj[MAX_LIMB_PNTS];
     
     mSetZero(Q, nRow, 3);
     mSetZero(sourceMatT, 3, MAX_LIMB_PNTS);
