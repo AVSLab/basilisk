@@ -40,6 +40,7 @@ LimbFinding::LimbFinding()
     this->cannyThreshHigh = 200;
     this->cannyThreshLow = 100;
     this->OutputBufferCount = 2;
+    this->limbNumThresh = 50;
 
 }
 
@@ -123,12 +124,15 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
     /*! - Greyscale the image */
+    std::cout<< imageBuffer.imagePointer <<std::endl;
+    std::cout<< imageBuffer.imageBufferLength <<std::endl;
+    std::cout<< imageCV.size() <<std::endl;
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     /*! - Lightly blur it */
     cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
     /*! - Apply the Canny Transform to find the limbPoints*/
     cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
-    if (cv::countNonZero(edgeImage)>0){
+    if (cv::countNonZero(edgeImage)>this->limbNumThresh){
         std::vector<cv::Point2i> locations;
         cv::findNonZero(edgeImage, locations);
         limbMsg.numLimbPoints =0;
