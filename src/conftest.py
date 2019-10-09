@@ -17,21 +17,26 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+
 import pytest
 import matplotlib.pyplot as plt
 import os
 import shutil
+
 # where to put test figures relative to bsk src/ in order to gen pytest-html report with figs
-testFigsDir = './assets/testFigs/'
+testFigsDir = './tests/report/assets/testFigs/'
 if os.path.exists(testFigsDir):  # we specifically want to delete pre-existing figures
     shutil.rmtree(testFigsDir)
     os.makedirs(testFigsDir)
 else:
     os.makedirs(testFigsDir)
 
+
 def pytest_addoption(parser):
     parser.addoption("--show_plots", action="store_true",
                      help="test(s) shall display plots")
+    parser.addoption("--report", action="store_false",
+                     help="whether or not to gen a pytest-html report")
 
 
 @pytest.fixture(scope="module")
@@ -40,10 +45,7 @@ def show_plots(request):
 
 
 def get_test_name(item):  # just get the name of the test from the item function
-    ugly_name = str(item.function)
-    less_ugly_name = ugly_name.strip('<function')
-    beautiful_name = less_ugly_name.split(' at')[0]
-    return beautiful_name
+    return str(item.function).split(' ')[1]
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -60,6 +62,7 @@ def pytest_runtest_makereport(item, call):
     report = outcome.get_result()
     extra = getattr(report, 'extra', [])
 
+    # make the table *within* the extras cell with a diff row per docstring/figures
     extra.append(pytest_html.extras.html('</div><table><tr><td><div>'))
     # add the doc string
     if item.function.__doc__:
@@ -83,7 +86,7 @@ def pytest_runtest_makereport(item, call):
                 continue
 
         for f in plt.get_fignums():
-            filename = dir_name_num + 'figure_' + str(f) + '.png'
+            filename = os.getcwd() + '/' + dir_name_num + 'figure_' + str(f) + '.png'  # expect cwd to be src/
             plt.figure(f).savefig(filename)
             plt.close(f)  # close figures so test writers don't have to
             extra.append(pytest_html.extras.image(filename))
