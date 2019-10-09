@@ -50,6 +50,10 @@ $ brew link cmake
 ```
 $ brew install python3
 ```
+5. (If using Xcode 11 or higher) Install the ninja utility
+```
+$ brew install ninja
+```
 
 ## Setting up the Python Environment
 **Note:** The following instructions recommend installing all the required python packages in the user `~/Library/Python` folder.  This has the benefit that no `sudo` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed.  If you are familiar with python you can install in other locations as well.
@@ -121,6 +125,10 @@ For more information about this file see this [online discussion](https://apple.
 $ pip3 install --user numpy==1.15.4
 $ pip3 install --user matplotlib
 $ pip3 install --user pandas
+```
+* If using Xcode 11 or higher, then install the `meson` package using
+```
+$ pip3 install --user meson
 ```
 * Basilisk uses conan for package managing. In order to do so, users must install conan and set the remote repositories for libraries:
 ```
