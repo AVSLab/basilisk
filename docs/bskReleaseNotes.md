@@ -20,6 +20,8 @@ We are very excited by the great capabilities that this software already has, an
     <li>Cleaned up opNav messages to be consistent with other messages, and simplified the limbFinding code. Only functionality change is Gaussian Blur.</li>
      <li>Add new OpNav module using a planet limb. Algorithm developed by J. Christian</li>
     <li>Added support for OpenCV v 4.1.1 and Eigen library 3.3.7</li>
+    <li>fixed issue with Windows having trouble compiling due to use of `uint`</li>
+    <li>added instructions on how to use the new Xcode 11 on macOS.  This requires installing 2 more tools.  Updated the install and macOS FAW pages.</li>
 </ul>
 
 ##  Version 1.0.0 🍾🍾🍾🍾🍾
