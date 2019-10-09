@@ -1,4 +1,3 @@
-
 .. _bskReleaseNotes:
 
 Basilisk Release Notes
@@ -22,11 +21,13 @@ In Progress Features
    torques
 -  atmospheric drag evaluation using multi-faceted spacecraft model
 -  Updates to the Vizard Unity-based Basilisk visualization tool
--  Ability to playback BSK simulation file within Vizard
--  live plotting capability during a BSK run
+-  create power tracking capabilites within BSK where devices can
+   provide or draw power
+-  create modules to determine if a satellite can see a ground point
+   such as a communication station
 
-Upcoming Version X.X
---------------------
+Upcoming Version 1.X.!
+----------------------
 
 .. raw:: html
 
@@ -36,11 +37,142 @@ Upcoming Version X.X
 
    <li>
 
-text here
+The circle finding module using openCV has been cleaned up and the noise
+is now dynamically measured given the image
 
 .. raw:: html
 
    </li>
+
+.. raw:: html
+
+   <li>
+
+A new dispersion was added for Monte Carlo analysis which allows for
+per-axis control on an initial MRP value
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Cleaned up opNav messages to be consistent with other messages, and
+simplified the limbFinding code. Only functionality change is Gaussian
+Blur.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Add new OpNav module using a planet limb. Algorithm developed by J.
+Christian
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+Version 1.0.0 🍾🍾🍾🍾🍾
+------------------------
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added the ability to plot select BSK simulation data live as teh
+simulation is running. See the new tutorials examples and the new FAQ
+response page (under Support tab) on how to do this.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Lots of code clean up to remove compiler warnings about implicit
+signedness conversions, print types, etc.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated ``scenarioMagneticFieldWMM.py`` scenario to store images into
+the correct doxygen folder.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+[Bugfix] NRLMSISE-00 now defaults to kg/m^3 output, to be consistent
+with other atmospheric density models.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added the ability to live stream the Basilisk simulation data to Vizard!
+This functions now in addition to saving BSK data to file and playing it
+back later on.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+Version 0.9.1
+-------------
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Created a new attitude guidance module for OpNav: opNavPoint. Similar to
+sunSafePoint, it matches a target heading with the OpNav heading for a
+simple and robust solution.
+
+.. raw:: html
+
+   </li>
+
+-  added new tutorial on calling Python Spice functions within a Monte Carlo BSK simulation
+-  Added Keplerian Orbit utility class which is swig'd. This first implementation takes in elliptical orbit elements and can produce a range of related outputs like position, velocity, orbital period, etc.  This makes it easier to create Keplerian orbits within python.
+-  Added a LimbFinding module for OpNav: limbFinding. This module performs a Canny transform to find the end of the planet and saves away the non-zero pixels for pose-estimation. 
+- made BSK compatible with both swig version 3 and 4
 
 .. raw:: html
 

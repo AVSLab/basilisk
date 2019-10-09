@@ -22,6 +22,6 @@ Quick-Start
    Quick-Start/Chapter9
 
 
-
+Coming soon! For now, please refer to the src/examples directory or :ref::examples.
 
 

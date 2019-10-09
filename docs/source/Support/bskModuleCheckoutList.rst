@@ -1,7 +1,5 @@
 
-.. _bskModuleReview:
-
-Basilisk Module Checkout List
+Basilisk Module Checkout List 
 =============================
 
 This documents contains a series of action items that should be checked
