@@ -134,6 +134,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     double H[MAX_LIMB_PNTS*3]; /*! Matrix of all the limb points*/
     double R_s[3][3], s_bar[MAX_LIMB_PNTS*3], s[3], R_yInv[MAX_LIMB_PNTS*MAX_LIMB_PNTS], J[3]; /*! variables for covariance */
     int i;
+    vSetZero(H, MAX_LIMB_PNTS*3);
     /* To do: replace alpha by a skew read from the camera message */
     alpha = 0;
     d_x = cameraSpecs.focalLength/(cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0]);
@@ -273,7 +274,7 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
     mTranspose(inMat, nRow, 3, sourceMatT);
     
     for (i = 0; i<3; i++){
-        vSetZero(proj, nRow);
+        vSetZero(proj, MAX_LIMB_PNTS);
         vCopy(&sourceMatT[i*nRow], nRow, &QT[i*nRow]);
         for (j = 0; j<i; j++)
         {
