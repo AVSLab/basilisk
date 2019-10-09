@@ -62,12 +62,12 @@ void GaussMarkov::computeNextState()
     
     //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
-       (this->propMatrix.size() != (uint) (this->numStates*this->numStates)))
+       (this->propMatrix.size() != (size_t) (this->numStates*this->numStates)))
     {
         BSK_PRINT(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your propagate and noise matrices be same size and that size is your number of states squared.  I quit.");
         return;
     }
-    if(this->stateBounds.size() != (uint) this->numStates)
+    if(this->stateBounds.size() != (size_t) this->numStates)
     {
         BSK_PRINT(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
         return;
