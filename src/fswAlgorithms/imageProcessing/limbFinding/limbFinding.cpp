@@ -124,9 +124,9 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
     /*! - Greyscale the image */
-    std::cout<< imageBuffer.imagePointer <<std::endl;
-    std::cout<< imageBuffer.imageBufferLength <<std::endl;
-    std::cout<< imageCV.size() <<std::endl;
+//    std::cout<< imageBuffer.imagePointer <<std::endl;
+//    std::cout<< imageBuffer.imageBufferLength <<std::endl;
+//    std::cout<< imageCV.size() <<std::endl;
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     /*! - Lightly blur it */
     cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
