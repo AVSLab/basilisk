@@ -8,17 +8,18 @@ We are very excited by the great capabilities that this software already has, an
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 * Updates to the Vizard Unity-based Basilisk visualization tool
-* create power tracking capabilites within BSK where devices can provide or draw power
+* create power tracking capabilities within BSK where devices can provide or draw power
 * create modules to determine if a satellite can see a ground point such as a communication station
 
 
 
-##  Upcoming Version 1.X.!
+##  Upcoming Version 1.X.X
 <ul>
     <li>The circle finding module using openCV has been cleaned up and the noise is now dynamically measured given the image</li>
     <li>A new dispersion was added for Monte Carlo analysis which allows for per-axis control on an initial MRP value</li>
     <li>Cleaned up opNav messages to be consistent with other messages, and simplified the limbFinding code. Only functionality change is Gaussian Blur.</li>
      <li>Add new OpNav module using a planet limb. Algorithm developed by J. Christian</li>
+    <li>Added support for OpenCV v 4.1.1 and Eigen library 3.3.7</li>
 </ul>
 
 ##  Version 1.0.0 🍾🍾🍾🍾🍾
