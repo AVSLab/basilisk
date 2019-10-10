@@ -52,7 +52,7 @@ PowerStorageBase::~PowerStorageBase()
 
 /*! Adds a simPowerNodeMsg name to be iterated over.
  @return void
- @param tmpScMsgName A spacecraft state message name.
+ @param tmpNodeMsgName Message name corresponding to a PowerNodeUsageSimMsg.
  */
 void PowerStorageBase::addPowerNodeToModel(std::string tmpNodeMsgName){
     this->nodePowerUseMsgNames.push_back(tmpNodeMsgName);

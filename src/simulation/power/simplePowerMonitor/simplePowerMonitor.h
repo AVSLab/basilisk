@@ -29,7 +29,7 @@ the integrated net power of a set of attached devices. The functionality include
 
 1. Compute the integrated and instantaneous net power of all attached devices
 
-Integration is performed with a simple Euler method.
+Integration is performed with a simple Euler method. 
  */
 
 class SimplePowerMonitor: public PowerStorageBase {

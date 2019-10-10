@@ -27,16 +27,16 @@
  * @{
  */
 
-
-
 //! @brief General power source/sink class.
 /*! This module is intended to serve as a basic power node with a constant power load or draw. Specifically, it:
 
 1. Writes out a PowerNodeUsageSimMsg describing its power consumption at each sim update based on its power consumption attribute;
-2. Can be switched on or off using a PowerNodeStatusIngMsg.
+2. Can be switched on or off using a PowerNodeStatusIntMsg.
 
-Core functionality is wrapped in the evaluatePowerModel protected virtual void method, which is assumed to compute power usage based on a module specific mathematical model. 
-Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
+The power draw or generation computed by the module is set using the nodePowerOut attribute, which remains constant over a sim (unless
+the module receives a 0 from a PowerNodeStatusIntMsg).
+
+For more information on how to set up and use this module, see the simple power system example: @ref scenarioSimplePowerDemo */
 
 
 class SimplePowerSink: public PowerNodeBase {

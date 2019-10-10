@@ -44,7 +44,9 @@ Specifically, each PowerNodeBase:
 2. Can be switched on or off using a PowerNodeStatusIntMsg.
 
 Core functionality is wrapped in the evaluatePowerModel protected virtual void method, which is assumed to compute power usage based on a module specific mathematical model. 
-Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
+Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. 
+
+For more information on how to set up and use classes derived from this module, see the simple power system example: @ref scenarioSimplePowerDemo*/
 
 
 class PowerNodeBase: public SysModel  {
