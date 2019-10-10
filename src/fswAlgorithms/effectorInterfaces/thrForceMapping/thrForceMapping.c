@@ -241,6 +241,9 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         }
     }
     
+    for (i=0;i<configData->numThrusters;i++) {
+        Fbar[i] = F[i] + configData->thrForcMag[i];
+    }
     configData->outTorqAngErr = computeTorqueAngErr(D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F,
         configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
@@ -269,6 +272,10 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     mCopy(F, configData->numThrusters, 1, thrusterForceOut.thrForce);
     WriteMessage(configData->thrusterForceOutMsgId, callTime, sizeof(THRArrayCmdForceFswMsg),   /* update module name */
                  (void*) &(thrusterForceOut), moduleID);
+    v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
+    m33MultV3(RECAST3X3 C, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
+    double localAngErr = computeTorqueAngErr(D, Lr_B_Bar, configData->numThrusters, configData->epsilon, Fbar,
+        configData->thrForcMag); /* Eq. 16*/
 
     return;
 }
