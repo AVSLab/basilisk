@@ -37,7 +37,7 @@ This module provides first-order modeling of power generation from an attitude a
 
 1. Evaluates the impact of shadowing using an assigned EclipseSimMsg;
 2. Computes power generation using a cosine law based on the panel area, efficiency, and attitude
-3. Allows for the panel body-fixed attitude nHat_B, the panel area, and the panel efficiency to be set via setPanelParameters.
+3. Allows for the panel body-fixed orientation nHat_B, the panel area, and the panel efficiency to be set via setPanelParameters.
 4. Writes out a PowerNodeUsageSimMsg describing its power generation.
 
 Power generation is computed according to \cite SMAD :
@@ -47,6 +47,7 @@ Power generation is computed according to \cite SMAD :
 where \f$W_{base} \f$ is the base power (in \f$\mbox{W}/\mbox{m}^2\f$) at the spacecraft location from the sun, \f$C_{eclipse}\f$ is the eclipse/penumbra mitigator on the sun's power (1 corresponds to no shadow, 0 corresponds to eclipse), \f$C_{panel}\f$ represents the 
 panel's efficiency at converting solar energy into electrical energy, \f$(\hat{n}\cdot \hat{s})\f$ represents the alignment between the panel's normal vector and the spaceraft-sun unit vector, and \f$A_{panel}\f$ represents the panel area in meters squared.
 
+For more information on how to set up and use this module, see the simple power system example: @ref scenarioSimplePowerDemo
 */
 
 

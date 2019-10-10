@@ -50,7 +50,10 @@ Integration of the net energy is performed using a simple one-step Euler method:
 \f[
      W_{stored} = \dot{W}_{net} (t_{current} - t_{previous})
 \f]
-Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
+Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. 
+
+For more information on how to set up and use classes derived from this module, see the simple power system example: @ref scenarioSimplePowerDemo
+*/
 
 class PowerStorageBase: public SysModel  {
 public:

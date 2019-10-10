@@ -35,20 +35,26 @@
 #
 # The simplePower subsystem consists of two kinds of Basilisk simModules: powerStorageBase (which is used to represent
 # power storage units, and serves as the heart of the subsystem) and powerNodeBase (which is used to represent system
-# components that consume or generate power). In general, this system can be configured using the following process:
+# components that consume or generate power). A conceptual diagram of these classes and their interfaces to eachother and the rest of Basilisk is shown in the figure below.
+#  ![Simple Power System block diagram](Images/doc/simplePowerConcept.svg "Simple Power System interfaces")
+#  In general, this system can be configured using the following process:
 #   1. Create and configure a set of powerNodeBase modules to represent power system sources and sinks, including their nodePowerOutMsgName attributes;
 #   2. Create and configure a powerStorageBase instance;
 #   3. Use the addPowerNodeToModel() method from the powerStorageBase on the nodePowerOutMsgNames you configured in step 1 to link the power nodes to the powerStorageBase instance
 #   4. Run the simulation.
 #
-#  In python, this is accomplished by calling
+#
+# One version of this process is demonstrated here. A spacecraft representing a tumbling 6U cubesat is placed in a LEO orbit,
+# using methods that are described in other scenarios. Three simplePower modules are created: a simpleBattery, a simpleSolarPanel,
+# and a simplePowerSink (which represents the load demanded by on-board electronics.) The solar panel is assumed to be body-fixed,
+# and given the parameters appropriate for a 6U cubesat. The initialization process as described above is implemented as:
 # ~~~~~~~~~~~~~{.py}
 #    # Create a solar panel
 # solarPanel = simpleSolarPanel.SimpleSolarPanel()
 # solarPanel.ModelTag = "solarPanel"
 # solarPanel.stateInMsgName = scObject.scStateOutMsgName
 # solarPanel.sunEclipseInMsgName = "eclipse_data_0"
-# solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.2*0.3, 0.20)
+# solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.06, 0.20)
 # solarPanel.nodePowerOutMsgName = "panelPowerMsg"
 # scenarioSim.AddModelToTask(taskName, solarPanel)
 #
@@ -70,24 +76,22 @@
 # scenarioSim.AddModelToTask(taskName, powerMonitor)
 # ~~~~~~~~~~~~~
 #
-# The internals and outputs of the simplePowerSystem can be logged by calling:
+# The outputs of the simplePowerSystem can be logged by calling:
 # ~~~~~~~~~~~~~{.py}
-# Setup logging on the test module output message so that we get all the writes to it
+# # Log the subsystem output messages at each sim timestep
 # scenarioSim.TotalSim.logThisMessage(solarPanel.nodePowerOutMsgName, testProcessRate)
 # scenarioSim.TotalSim.logThisMessage(powerSink.nodePowerOutMsgName, testProcessRate)
 # scenarioSim.TotalSim.logThisMessage(powerMonitor.batPowerOutMsgName, testProcessRate)
 #
 # ...Sim Execution...
 #
+# # Pull the logged message attributes that we want
 # supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower_W")
 # sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
 # storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
 # netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
 # ~~~~~~~~~~~~~
-# One version of this process is demonstrated here. A spacecraft representing a tumbling 6U cubesat is placed in a LEO orbit,
-# using methods that are described in other scenarios. Three simplePower modules are created: a simpleBattery, a simpleSolarPanel,
-# and a simplePowerSink (which represents the load demanded by on-board electronics.) The solar panel is assumed to be body-fixed,
-# and given the parameters appropriate for a 6U cubesat.
+
 # To run the scenario , call the python script through
 #
 #       python3 scenarioPowerDemo.py
