@@ -37,7 +37,7 @@
 Integration of the net input power is performed with a simple Euler method. 
 
 To set up this module, users must create a simpleBattery instance, set its storageCapacity 
-attribute, and attatch one or more PowerNodeUsageSimMsg instances to it using the 
+attribute, and attach one or more PowerNodeUsageSimMsg instances to it using the
 addNodeToStorage() method. 
 
 For more information on how to set up and use this module, see the simple power system example: @ref scenarioSimplePowerDemo
