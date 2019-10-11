@@ -28,3 +28,5 @@ src/cmake-build-debug/*
 *.fls
 
 src/tests/report/
+
+src/basilisk/src/tests/report/

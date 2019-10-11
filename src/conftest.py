@@ -47,13 +47,14 @@ def pytest_cmdline_preparse(config, args):
     # we want to convert --report into --html=<pathToReport>
     # we don't want the user to be able to call --html=<pathToReport> directly,
     # because we have hardcoded some paths to save figures etc and --report is cleaner
-    if '--html' in args:
-        print('Please use --report with no arguments instead of --html and try again')
-        quit()
+    for arg in args:
+        if '--html' in arg:
+            print('Please use --report with no arguments instead of --html and try again')
+            quit()
     if '--report' in args:
         args.remove('--report')
         html_file = report_dir + 'BasiliskTestReport.html'
-        print('HTML report file:', html_file)
+        print('HTML report file:', 'basilisk/src/' + html_file)
         args.extend(['--html', html_file])
 
 
