@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import os
 import shutil
 import sys
+import time
 
 
 report_dir = 'tests/report/'  # relative to src/
@@ -111,6 +112,8 @@ def pytest_runtest_makereport(item, call):
                     continue
 
             for f in plt.get_fignums():
+                if not os.path.exists(dir_name_num):
+                    time.sleep(.02)
                 filename = dir_name_num + 'figure_' + str(f) + '.png'  # expect cwd to be src/
                 plt.figure(f).savefig(filename)
                 plt.close(f)  # close figures so test writers don't have to
