@@ -77,6 +77,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     LimbOpNavMsg limbIn;
     OpNavFswMsg opNavMsgOut;
     NavAttIntMsg attInfo;
+
+    /*! - zero copies of input/output messages */
     memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
     memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
     memset(&limbIn, 0x0, sizeof(LimbOpNavMsg));
