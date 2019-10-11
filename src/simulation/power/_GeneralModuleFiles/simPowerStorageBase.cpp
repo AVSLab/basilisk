@@ -1,7 +1,3 @@
-//
-// Created by andrew on 7/9/19.
-//
-
 /*
  ISC License
 
