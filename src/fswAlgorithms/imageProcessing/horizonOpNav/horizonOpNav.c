@@ -267,7 +267,8 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
 {
     int32_t i, j;
     double sourceMatT[MAX_LIMB_PNTS*3], QT[MAX_LIMB_PNTS*3];
-    double proj[MAX_LIMB_PNTS];
+    double* proj;
+    proj = malloc(nRow*sizeof(double));
     
     mSetZero(Q, nRow, 3);
     mSetZero(sourceMatT, 3, MAX_LIMB_PNTS);
@@ -276,7 +277,7 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
     mTranspose(inMat, nRow, 3, sourceMatT);
     
     for (i = 0; i<3; i++){
-        vSetZero(proj, MAX_LIMB_PNTS);
+        vSetZero(proj, nRow);
         vCopy(&sourceMatT[i*nRow], nRow, &QT[i*nRow]);
         for (j = 0; j<i; j++)
         {
@@ -288,6 +289,7 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
         vScale(1/R[i*3+i], &QT[i*nRow], nRow,  &QT[i*nRow]);
     }
     mTranspose(QT, 3, nRow, Q);
+    free(proj);
     return;
 }
 
