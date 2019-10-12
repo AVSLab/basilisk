@@ -53,14 +53,6 @@ def pytest_cmdline_preparse(config, args):
         args.extend(['--html', html_file])
 
 
-def pytest_addoption(parser):
-    # it is unclear if this method is called in addition to or totally overwrites that in conftest.py
-    parser.addoption("--show_plots", action="store_true",
-                     help="test(s) shall display plots")
-    parser.addoption("--report", action="store_true",  # --report is easier, more controlled than --html=<pathToReport>
-                     help="whether or not to gen a pytest-html report. "
-                          "The report is saved in src/tests/report")
-
 
 def get_test_name(item):  # just get the name of the test from the item function
     return str(item.function).split(' ')[1]

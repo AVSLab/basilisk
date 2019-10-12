@@ -33,6 +33,8 @@ if os.path.exists('tests/report/'):
 def pytest_addoption(parser):
     parser.addoption("--show_plots", action="store_true",
                      help="test(s) shall display plots")
+    parser.addoption("--report", action="store_true",  # --report is easier, more controlled than --html=<pathToReport>
+                         help="whether or not to gen a pytest-html report. The report is saved in src/tests/report")
 
 
 @pytest.fixture(scope="module")
