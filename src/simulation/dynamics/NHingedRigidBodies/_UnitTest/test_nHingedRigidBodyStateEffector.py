@@ -35,9 +35,9 @@ from Basilisk.simulation import nHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
 
-@pytest.mark.parametrize("useFlag, testCase", [
-    (False,'NoGravity'),
-    (False,'Gravity')
+@pytest.mark.parametrize("testCase", [
+    ('NoGravity'),
+    ('Gravity')
 ])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -46,35 +46,37 @@ from Basilisk.utilities import macros
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-def test_nHingedRigidBodyAllTest(show_plots,useFlag,testCase):
+def test_nHingedRigidBodyAllTest(show_plots, testCase):
     """
-    This tests checks the performance of n hinged Rigid Bodies
+    In this integrated test there are two hinged rigid bodies connected to the spacecraft hub, one with 4 interconnected panels and one with 3 interconnected panels.  Depending on the scenario, there are different success criteria.  Each scenario checks the conservation of orbital angular momentum, the conservation of orbital energy, the conservation of rotational angular momentum and the conservation of rotational energy.
+
 
     Parameters:
     -----------
-    show_plots: bool
-        whether or not to show plots
-    useFlag: int
-        what to use
-    testCase: string
-        name of test case
+    - testCase: [string]
+        defines whether or not the gravity is included in this test.
 
-    Returns:
-    --------
-    void:
 
     Test Descriptions:
     ------------------
-    The various tests run here check:
-    1) a thing
-    2) some other longer thing
-    3) same as 2) but with different something
-    etc.
+    testCase == 'Gravity'
+    In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the hinged rigid bodies.
+
+    testCase == 'NoGravity'
+    In this test, the spacecraft is placed in free space (no gravity) and has no damping in the hinged rigid bodies.
+
+    Error Tolerance:
+    ----------------
+    Energy                      1e-10
+    Momentum                    1e-10
+
+    The following figures show the conservation of the quantities described in the success criteria for each scenario. The conservation plots are all relative difference plots. All conservation plots show integration error which is the desired result. In the python test these values are automatically checked therefore when the tests pass, these values have all been confirmed to be conserved.
+
     """
-    [testResults, testMessage] = nHingedRigidBody(show_plots,useFlag,testCase)
+    [testResults, testMessage] = nHingedRigidBody(show_plots, testCase)
     assert testResults < 1, testMessage
 
-def nHingedRigidBody(show_plots,useFlag,testCase):
+def nHingedRigidBody(show_plots, testCase):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -211,25 +213,25 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+    plt.suptitle("Change in Orbital Angular Momentum ")
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
+    plt.suptitle("Change in Orbital Energy ")
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+    plt.suptitle("Change in Rotational Angular Momentum")
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
+    plt.suptitle("Change in Rotational Energy")
 
     plt.figure()
     plt.clf()
@@ -313,4 +315,4 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    nHingedRigidBody(True, False, "Gravity")
+    nHingedRigidBody(True,  "Gravity")
