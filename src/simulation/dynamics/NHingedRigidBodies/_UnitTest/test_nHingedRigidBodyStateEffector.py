@@ -48,24 +48,35 @@ from Basilisk.utilities import macros
 
 def test_nHingedRigidBodyAllTest(show_plots, testCase):
     """
-    In this integrated test there are two hinged rigid bodies connected to the spacecraft hub, one with 4 interconnected panels and one with 3 interconnected panels.  Depending on the scenario, there are different success criteria.  Each scenario checks the conservation of orbital angular momentum, the conservation of orbital energy, the conservation of rotational angular momentum and the conservation of rotational energy.
+In this integrated test there are two hinged rigid bodies connected to the spacecraft hub, one with 4 \
+interconnected panels and one with 3 interconnected panels.  Depending on the scenario, there are different \
+success criteria.  Each scenario checks the conservation of orbital angular momentum, the conservation of orbital \
+energy, the conservation of rotational angular momentum and the conservation of rotational energy.
 
 
-    Parameters:
-    -----------
-    - testCase: [string]
-        defines whether or not the gravity is included in this test.
+Test Parameters:
+-----------
+- testCase: [string]
+    defines whether or not the gravity is included in this test.
 
+Description of Variables Being Tested
+-------------------------------------
+This test checks the conservation of the spacecraft orbital angular momentum, the rotational angular momentum, \
+the orbital energy and the rotational energy.
 
-    Test Descriptions:
-    ------------------
-    testCase == 'Gravity'
-    In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the hinged rigid bodies.
+Test Descriptions:
+------------------
+testCase == 'Gravity'
+In this test the simulation is placed into orbit around Earth with point gravity and has no damping in \
+the hinged rigid bodies.
 
-    testCase == 'NoGravity'
-    In this test, the spacecraft is placed in free space (no gravity) and has no damping in the hinged rigid bodies.
+testCase == 'NoGravity'
+In this test, the spacecraft is placed in free space (no gravity) and has no damping in the hinged rigid bodies.
 
-    The following figures show the conservation of the quantities described in the success criteria for each scenario. The conservation plots are all relative difference plots. All conservation plots show integration error which is the desired result. In the python test these values are automatically checked therefore when the tests pass, these values have all been confirmed to be conserved.
+The following figures show the conservation of the quantities described in the success criteria for each scenario. \
+The conservation plots are all relative difference plots. All conservation plots show integration error which is the \
+desired result. In the python test these values are automatically checked therefore when the tests pass, these \
+values have all been confirmed to be conserved.
 
     """
     [testResults, testMessage] = nHingedRigidBody(show_plots, testCase)
