@@ -104,8 +104,8 @@ def pytest_runtest_makereport(item, call):
             for f in plt.get_fignums():
                 if not os.path.exists(dir_name_num):
                     time.sleep(.02)
-                filename = dir_name_num + 'figure_' + str(f) + '.png'
-                plt.figure(f).savefig(filename)
+                filename = dir_name_num + 'figure_' + str(f) + '.svg'
+                plt.figure(f).savefig(filename, transparent=True)
                 plt.close(f)  # prevents saving same image multiple times
                 img_src = 'assets' + filename.split('assets')[1]  # just want a relative (to report) path here
                 extra.append(pytest_html.extras.html('</div><td><div class="image"><a href="' + img_src +
