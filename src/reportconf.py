@@ -60,9 +60,11 @@ def get_test_name(item):  # just get the name of the test from the item function
 
 def get_docstring(item):
     if item.function.__doc__:
-        return '<tt>' + str(item.function.__doc__).replace('\n', '</br>', ) + '</tt>'
+        return '<span style="font-family:monospace;white-space:pre-wrap;word-wrap: break-word;">' \
+               + str(item.function.__doc__).replace('\n', '</br>', ) + '</span>'
     else:
-        return '<tt> This test does not have a docstring </br></tt>'
+        return '<span style="font-family:monospace;white-space:pre-wrap;word-wrap: break-word;"> ' \
+               'This test does not have a docstring </br></span>'
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -81,12 +83,8 @@ def pytest_runtest_makereport(item, call):
         report = outcome.get_result()
         extra = getattr(report, 'extra', [])
 
-        # make the table *within* the extras cell with a diff row per docstring/figures
-        # the extra <div> throughout this function are to stop pytest_html from making everything its own div
-        extra.append(pytest_html.extras.html('</div><table><tr><td><div>'))
         # add the doc string
         extra.append(pytest_html.extras.html(get_docstring(item)))
-        extra.append(pytest_html.extras.html('</div></td></tr><tr><div>'))
 
         # save the figures
         dir_name = testFigsDir + get_test_name(item)
@@ -108,11 +106,11 @@ def pytest_runtest_makereport(item, call):
                 plt.figure(f).savefig(filename, transparent=True)
                 plt.close(f)  # prevents saving same image multiple times
                 img_src = 'assets' + filename.split('assets')[1]  # just want a relative (to report) path here
-                extra.append(pytest_html.extras.html('</div><td><div class="image"><a href="' + img_src +
-                                                     '"><img src="' + img_src + '"/></a></div></td><div>'))
+                extra.append(pytest_html.extras.html('<a href="' + img_src +'"><img src="' + img_src +
+                                                     '" style="width:30em;float:left;"></a>'))
         else:
-            extra.append(pytest_html.extras.html('<tt> This test has no images.</br></tt>'))
-        extra.append(pytest_html.extras.html('</div></tr></table><div>'))  # this finishes off our fancy html table
+            extra.append(pytest_html.extras.html('<tt> This test has no images.<br></tt>'))
+        extra.append(pytest_html.extras.html('<br style="clear:left;">'))
         report.extra = extra
 
 
