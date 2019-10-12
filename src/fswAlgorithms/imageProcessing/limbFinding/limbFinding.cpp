@@ -124,25 +124,24 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
         return;}
     /*! - Greyscale the image */
-//    std::cout<< imageBuffer.imagePointer <<std::endl;
-//    std::cout<< imageBuffer.imageBufferLength <<std::endl;
-//    std::cout<< imageCV.size() <<std::endl;
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     /*! - Lightly blur it */
     cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
     /*! - Apply the Canny Transform to find the limbPoints*/
     cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
-    if (cv::countNonZero(edgeImage)>this->limbNumThresh){
-        std::vector<cv::Point2i> locations;
-        cv::findNonZero(edgeImage, locations);
-        limbMsg.numLimbPoints =0;
-        for(size_t i = 0; i<locations.size() && i<MAX_LIMB_PNTS; i++ )
-        {
-            /*! - Store the non zero pixels of the canny transform and count them*/
-            limbMsg.limbPoints[2*i] = locations[i].x;
-            limbMsg.limbPoints[2*i+1] = locations[i].y;
-            limbMsg.numLimbPoints += 1;
+    limbMsg.numLimbPoints =0;
+    /*! - Store the non zero pixels of the canny transform and count them*/
+    for(size_t i = 0; i<edgeImage.rows; i++ )
+    {
+        for(size_t j = 0; j<edgeImage.cols; j++ ){
+            if(edgeImage.data[i*edgeImage.rows + j] >0 && edgeImage.data[i*edgeImage.rows + j+1] >0 && limbMsg.numLimbPoints<MAX_LIMB_PNTS){
+                limbMsg.limbPoints[2*limbMsg.numLimbPoints] = i;
+                limbMsg.limbPoints[2*limbMsg.numLimbPoints+1] = j;
+                limbMsg.numLimbPoints += 1;
+            }
         }
+    }
+    if (limbMsg.numLimbPoints < this->limbNumThresh){
         limbMsg.valid = 1;
         limbMsg.planetIds = 2;
     }
