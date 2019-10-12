@@ -50,7 +50,6 @@ def pytest_cmdline_preparse(config, args):
     if '--report' in args:
         args.remove('--report')
         html_file = report_dir + 'BasiliskTestReport.html'
-        print('pytest-html report file:', 'basilisk/src/' + html_file)
         args.extend(['--html', html_file])
 
 
