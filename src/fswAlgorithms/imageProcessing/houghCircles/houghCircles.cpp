@@ -125,9 +125,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         /*! - If no image is present, write zeros in message */
         SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
         return;}
-//    std::cout<< imageBuffer.imagePointer <<std::endl;
-//    std::cout<< imageBuffer.imageBufferLength <<std::endl;
-//    std::cout<< imageCV.size() <<std::endl;
+
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
