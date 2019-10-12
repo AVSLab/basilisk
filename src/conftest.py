@@ -19,10 +19,14 @@
 '''
 
 import pytest
-import os
+import os, inspect
 import shutil
 import sys
 import subprocess
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+print(path)
 
 # remove the old report because we don't want stale data around, even without pytest-html
 # for more see reportconf.py
@@ -51,5 +55,5 @@ if ('--report' in sys.argv) and ('pytest-html' not in installed_packages):
     quit()
 
 if 'pytest-html' in installed_packages:
-    exec(open("reportconf.py").read(), globals())
+    exec(open(path + "/reportconf.py").read(), globals())
 
