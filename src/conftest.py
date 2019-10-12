@@ -45,6 +45,11 @@ def show_plots(request):
 # for more on this, see the reportconf.py file.
 reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
 installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
+
+if ('--report' in sys.argv) and ('pytest-html' not in installed_packages):
+    print('ERROR: you need to pip install pytest-html package to use the --report flag')
+    quit()
+
 if 'pytest-html' in installed_packages:
     exec(open("reportconf.py").read(), globals())
 
