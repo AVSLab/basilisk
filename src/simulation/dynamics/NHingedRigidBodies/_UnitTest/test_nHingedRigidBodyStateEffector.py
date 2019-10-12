@@ -65,11 +65,6 @@ def test_nHingedRigidBodyAllTest(show_plots, testCase):
     testCase == 'NoGravity'
     In this test, the spacecraft is placed in free space (no gravity) and has no damping in the hinged rigid bodies.
 
-    Error Tolerance:
-    ----------------
-    Energy                      1e-10
-    Momentum                    1e-10
-
     The following figures show the conservation of the quantities described in the success criteria for each scenario. The conservation plots are all relative difference plots. All conservation plots show integration error which is the desired result. In the python test these values are automatically checked therefore when the tests pass, these values have all been confirmed to be conserved.
 
     """
@@ -308,6 +303,8 @@ def nHingedRigidBody(show_plots, testCase):
 
     if testFailCount == 0:
         print("PASSED: " + " N Hinged Rigid Body integrated test")
+        print("Error tolerance for all tests was" + str(accuracy))
+
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
