@@ -17,13 +17,43 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+
 import pytest
+import os, inspect
+import shutil
+import sys
+import subprocess
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+print(path)
+
+# remove the old report because we don't want stale data around, even without pytest-html
+# for more see reportconf.py
+if os.path.exists('tests/report/'):
+    shutil.rmtree('tests/report/')
+
 
 def pytest_addoption(parser):
     parser.addoption("--show_plots", action="store_true",
                      help="test(s) shall display plots")
+    parser.addoption("--report", action="store_true",  # --report is easier, more controlled than --html=<pathToReport>
+                         help="whether or not to gen a pytest-html report. The report is saved in src/tests/report")
 
 
 @pytest.fixture(scope="module")
 def show_plots(request):
     return request.config.getoption("--show_plots")
+
+# we don't want to reconfigure pytest per pytest-html unless we have it
+# for more on this, see the reportconf.py file.
+reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
+installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
+
+if ('--report' in sys.argv) and ('pytest-html' not in installed_packages):
+    print('ERROR: you need to pip install pytest-html package to use the --report flag')
+    quit()
+
+if 'pytest-html' in installed_packages:
+    exec(open(path + "/reportconf.py").read(), globals())
+

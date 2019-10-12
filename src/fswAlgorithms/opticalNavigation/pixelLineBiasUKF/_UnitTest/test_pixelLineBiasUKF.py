@@ -102,7 +102,7 @@ def test_methods_kf(show_plots):
     [testResults, testMessage] = relOD_method_test(show_plots)
     assert testResults < 1, testMessage
 def test_propagation_kf(show_plots):
-    [testResults, testMessage] = StatePropRelOD(show_plots)
+    [testResults, testMessage] = StatePropRelOD(show_plots, 10.0)
     assert testResults < 1, testMessage
 
 
@@ -232,7 +232,7 @@ def relOD_method_test(show_plots):
 
 
 
-def StatePropRelOD(show_plots):
+def StatePropRelOD(show_plots, dt):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -250,7 +250,6 @@ def StatePropRelOD(show_plots):
 
     # Create test thread
     state = [250, 32000, 1000, 5, 3, 2, 1, 1, 1]
-    dt = 1
     testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
@@ -325,5 +324,5 @@ def StatePropRelOD(show_plots):
 
 
 if __name__ == "__main__":
-    relOD_method_test(True)
-    # StatePropRelOD(True)
+    # relOD_method_test(True)
+    StatePropRelOD(True, 1.0)

@@ -26,3 +26,5 @@ src/cmake-build-debug/*
 
 *.fdb_latexmk
 *.fls
+
+**/tests/report/

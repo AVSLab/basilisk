@@ -95,7 +95,7 @@ def test_methods_kf(show_plots):
     [testResults, testMessage] = relOD_method_test(show_plots)
     assert testResults < 1, testMessage
 def test_propagation_kf(show_plots):
-    [testResults, testMessage] = StatePropRelOD(show_plots)
+    [testResults, testMessage] = StatePropRelOD(show_plots, 10.0)
     assert testResults < 1, testMessage
 def test_measurements_kf(show_plots):
     [testResults, testMessage] = StateUpdateRelOD(show_plots)
@@ -176,7 +176,7 @@ def StateUpdateRelOD(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    dt = 1
+    dt = 1.0
     t1 = 250
     multT1 = 8
 
@@ -195,7 +195,7 @@ def StateUpdateRelOD(show_plots):
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
-    time = np.linspace(0,multT1*t1,multT1*t1//dt+1)
+    time = np.linspace(0, int(multT1*t1), int(multT1*t1//dt)+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
@@ -203,10 +203,10 @@ def StateUpdateRelOD(show_plots):
     mu = 42828.314*1E9
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
 
-    kick = np.array([0.,0.,0.,-0.01, 0.01, 0.02]) * 10 *1E3
+    kick = np.array([0., 0., 0., -0.01, 0.01, 0.02]) * 10 *1E3
 
     expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], moduleConfig.stateInit)
-    expected[t1:multT1*t1+1,:] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1,1:] + kick)
+    expected[t1:multT1*t1+1, :] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1, 1:] + kick)
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
@@ -218,7 +218,7 @@ def StateUpdateRelOD(show_plots):
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
 
     inputData.planetID = 2
-    inputData.r_BN_B = expected[0,1:4]
+    inputData.r_BN_B = expected[0, 1:4]
 
     unitTestSim.InitializeSimulation()
     for i in range(t1):
@@ -226,7 +226,7 @@ def StateUpdateRelOD(show_plots):
             inputData.timeTag = macros.sec2nano(i * dt)
             inputData.r_BN_N = expected[i,1:4] + np.random.normal(0, 5*1E-2, 3)
             inputData.valid = 1
-            inputData.covar_N = [5.*1E-2, 0.,0.,
+            inputData.covar_N = [5.*1E-2, 0., 0.,
                                  0., 5.*1E-2, 0.,
                                  0., 0., 5.*1E-2]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
@@ -289,7 +289,7 @@ def StateUpdateRelOD(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def StatePropRelOD(show_plots):
+def StatePropRelOD(show_plots, dt):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -306,7 +306,6 @@ def StatePropRelOD(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    dt = 1
     testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
@@ -327,7 +326,7 @@ def StatePropRelOD(show_plots):
     unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
     unitTestSim.ExecuteSimulation()
 
-    time = np.linspace(0,timeSim*60,timeSim*60//dt+1)
+    time = np.linspace(0, int(timeSim*60), int(timeSim*60//dt)+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
@@ -367,5 +366,5 @@ def StatePropRelOD(show_plots):
 
 if __name__ == "__main__":
     # relOD_method_test(True)
-    # StatePropRelOD(True)
+    # StatePropRelOD(True, 1.0)
     StateUpdateRelOD(True)
