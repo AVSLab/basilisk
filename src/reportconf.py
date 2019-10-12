@@ -19,7 +19,7 @@
 '''
 
 """
-This reportconf.py file is executed by basilisk/src/conftest.py if and only if
+This reportconf.py file is executed by src/conftest.py if and only if
 the user has pytest-html installed. It is used to customize the contents of 
 the pytest-html report and control where it is written.
 """
@@ -103,7 +103,7 @@ def pytest_runtest_makereport(item, call):
 
             for f in plt.get_fignums():
                 if not os.path.exists(dir_name_num):
-                    time.sleep(.02)
+                    time.sleep(0.02)
                 filename = dir_name_num + 'figure_' + str(f) + '.svg'
                 plt.figure(f).savefig(filename, transparent=True)
                 plt.close(f)  # prevents saving same image multiple times
