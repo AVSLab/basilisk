@@ -39,7 +39,7 @@ set(required_conan_libraries eigen/3.3.7@conan/stable)
 option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
 option(USE_ZMQ "Include modules which use ZMQ" ON)
-option(USE_PYTHON3 "Build For Python 3" OFF)
+option(USE_PYTHON3 "Build For Python 3" ON)
 
 set(requires_protobuff_modules "viz_interface/vizInterface.i")
 set(requires_zmq_modules "viz_interface/vizInterface.i")
