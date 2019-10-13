@@ -14,7 +14,7 @@ We are very excited by the great capabilities that this software already has, an
 
 ##  Version 1.X.X
 <ul>
-    <li>text here</li>
+    <li>Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the `cmake` flag `-DUSE_PYTHON3` can still be set to `OFF`</li>
 </ul>
 
 ##  Version 1.1.0
