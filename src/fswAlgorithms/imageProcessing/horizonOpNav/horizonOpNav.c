@@ -266,10 +266,13 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
 void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
 {
     int32_t i, j;
-    double sourceMatT[MAX_LIMB_PNTS*3], QT[MAX_LIMB_PNTS*3];
+//    double sourceMatT[MAX_LIMB_PNTS*3], QT[MAX_LIMB_PNTS*3];
+    double *sourceMatT, *QT;
     double* proj;
     proj = malloc(nRow*sizeof(double));
-    
+    sourceMatT = malloc(MAX_LIMB_PNTS*3*sizeof(double));
+    QT = malloc(MAX_LIMB_PNTS*3*sizeof(double));
+
     mSetZero(Q, nRow, 3);
     mSetZero(sourceMatT, 3, MAX_LIMB_PNTS);
     mSetZero(QT, 3, MAX_LIMB_PNTS);
@@ -290,6 +293,9 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
     }
     mTranspose(QT, 3, nRow, Q);
     free(proj);
+    free(sourceMatT);
+    free(QT);
+    
     return;
 }
 
