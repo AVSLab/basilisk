@@ -24,7 +24,7 @@
  *  @{
  */
 #define MAX_CIRCLE_NUM 10
-#define MAX_LIMB_PNTS 1430
+#define MAX_LIMB_PNTS 2000
 #define MAX_EFF_CNT 36
 #define MAX_NUM_CSS_SENSORS 32
 #define MAX_ST_VEH_COUNT 4
