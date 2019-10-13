@@ -100,6 +100,7 @@ void VizInterface::SelfInit()
 {
     if (this->opNavMode > 0 || this->liveStream){
         /*! setup zeroMQ */
+        this->bskImagePtr = NULL;
         this->context = zmq_ctx_new();
         this->requester_socket = zmq_socket(this->context, ZMQ_REQ);
         zmq_connect(this->requester_socket, "tcp://localhost:5556");
@@ -699,6 +700,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_t image;
                 zmq_msg_init(&length);
                 zmq_msg_init(&image);
+                if (this->bskImagePtr != NULL) {
+                    /*! If the permanent image buffer is not populated, it will be equal to null*/
+                    free(this->bskImagePtr);
+                    this->bskImagePtr = NULL;
+                }
                 zmq_msg_recv(&length, requester_socket, 0);
                 zmq_msg_recv(&image, requester_socket, 0);
                 
@@ -711,11 +717,15 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
                 ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
                 
+                /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
+                this->bskImagePtr = malloc(imageBufferLength*sizeof(char));
+                memcpy(this->bskImagePtr, imagePoint, imageBufferLength*sizeof(char));
+                
                 /*! -- Write out the image information to the Image message */
                 CameraImageMsg imageData;
                 imageData.timeTag = CurrentSimNanos;
                 imageData.valid = 0;
-                imageData.imagePointer = imagePoint;
+                imageData.imagePointer = this->bskImagePtr;
                 imageData.imageBufferLength = imageBufferLength;
                 imageData.cameraID = this->cameraConfigMessage.cameraID;
                 imageData.imageType = 4;
