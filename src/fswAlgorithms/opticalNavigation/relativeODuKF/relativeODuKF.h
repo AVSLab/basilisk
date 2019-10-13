@@ -43,6 +43,19 @@
  * @{
  */
 
+/*! @breif Structure to gather the OpNav messages and content */
+typedef struct {
+    char opNavInMsgName[MAX_STAT_MSG_LENGTH];    //!< [-] Input message buffer from opNav measurement method
+    int32_t opNavInMsgId;                        //!< [-] Input message Id from opNav measurement method
+    double noise[3*3];                        //!< [-] Per axis noise on the measurement
+}OpNavMeas;
+
+/*! @breif Structure to gather the OpNav messages and content */
+typedef struct {
+    int numMethods;                                  //!< Number of opNav measurement methods
+    OpNavMeas OpNav[MAX_ST_VEH_COUNT];     //!< [-] Decoded data for both measurement methods
+}OpNavParsing;
+
 /*! @brief Top level structure for the relative OD unscented kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
  */

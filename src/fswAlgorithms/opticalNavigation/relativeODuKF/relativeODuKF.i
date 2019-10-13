@@ -31,6 +31,7 @@
 %ignore CrossInit_relODuKF;
 %constant void Reset_relODuKF(void*, uint64_t, uint64_t);
 %ignore Reset_relODuKF;
+STRUCTASLIST(OpNavMeas);
 GEN_SIZEOF(NavTransIntMsg);
 GEN_SIZEOF(OpNavFilterFswMsg);
 GEN_SIZEOF(OpNavFswMsg);
