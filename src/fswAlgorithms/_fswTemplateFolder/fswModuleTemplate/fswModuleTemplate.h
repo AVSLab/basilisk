@@ -58,7 +58,11 @@
 
     \f$ a = b^{2} \f$
 
-    If the module description requires extensive math discussion, this can be TeX'd up inside a module `_Documentation` folder and a link to the PDF can be provided.  Don't forget to update `docs/DoxyData` to include the path to this PDF file.
+    If the module description requires extensive math discussion, this can be TeX'd up using the technical note template inside the `_Documentation` folder. To include the PDF file in the `doxygen` HTML documentation the file path must be included in the `docs/DoxyData` file.  The path to the BSK technical note must be included in the `HTML_EXTRA_FILES` tag.  Then, link to this [PDF](Basilisk-MODULENAME.pdf) using the code
+    ~~~~~~~~~
+    [PDF](Basilisk-MODULENAME.pdf)
+    ~~~~~~~~~
+    The PDF technical should only be used as a last resort effort if the math is simply too complex and long to include in the `doxygen` documentation.  Another option is to link to a web site, conference paper, journal paper, book or thesis document that discussed the mathematical developments used.
 
  ## Citations
     If you want to cite other papers or text, provide a web link to a paper.  For example,
