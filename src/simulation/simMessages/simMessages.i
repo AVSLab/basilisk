@@ -38,6 +38,7 @@
 #include "scEnergyMomentumSimMsg.h"
 #include "spiceTimeSimMsg.h"
 #include "syncClockSimMsg.h"
+#include "tamDataSimMsg.h"
 #include "thrConfigSimMsg.h"
 #include "thrOutputSimMsg.h"
 #include "hingedRigidBodySimMsg.h"
@@ -88,6 +89,8 @@ GEN_SIZEOF(SpicePlanetStateSimMsg)
 GEN_SIZEOF(SpiceTimeSimMsg)
 %include "syncClockSimMsg.h"
 GEN_SIZEOF(SynchClockSimMsg)
+%include "tamDataSimMsg.h"
+GEN_SIZEOF(TAMDataSimMsg)
 %include "thrConfigSimMsg.h"
 GEN_SIZEOF(THRConfigSimMsg)
 %include "thrOperationSimMsg.h"

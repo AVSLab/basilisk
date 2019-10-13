@@ -41,6 +41,7 @@
     #include "../fswMessages/rwConstellationFswMsg.h"
     #include "../fswMessages/stAttFswMsg.h"
     #include "../fswMessages/sunlineFilterFswMsg.h"
+	#include "../fswMessages/tamSensorBodyFswMsg.h"
     #include "../fswMessages/thrArrayCmdForceFswMsg.h"
     #include "../fswMessages/thrArrayConfigFswMsg.h"
     #include "../fswMessages/thrConfigFswMsg.h"
@@ -101,6 +102,8 @@ GEN_SIZEOF(RWConstellationFswMsg);
 GEN_SIZEOF(STAttFswMsg);
 %include "../fswMessages/sunlineFilterFswMsg.h"
 GEN_SIZEOF(SunlineFilterFswMsg);
+%include "../fswMessages/tamSensorBodyFswMsg.h"
+GEN_SIZEOF(TAMSensorBodyFswMsg)
 %include "../fswMessages/thrArrayCmdForceFswMsg.h"
 GEN_SIZEOF(THRArrayCmdForceFswMsg);
 %include "../fswMessages/thrArrayConfigFswMsg.h"
