@@ -261,6 +261,14 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                  &opNavMsgOut, moduleID);
 
+    /* free allocated memory */
+    free(H);
+    free(s_bar);
+    free(R_yInv);
+    free(Rtemp);
+    free(ones);
+    free(Q_decomp);
+
     return;
 }
 
@@ -276,7 +284,6 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
 void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
 {
     int32_t i, j;
-//    double sourceMatT[MAX_LIMB_PNTS*3], QT[MAX_LIMB_PNTS*3];
     double *sourceMatT, *QT;
     double* proj;
     proj = malloc(nRow*sizeof(double));
@@ -302,6 +309,8 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
         vScale(1/R[i*3+i], &QT[i*nRow], nRow,  &QT[i*nRow]);
     }
     mTranspose(QT, 3, nRow, Q);
+
+    /* free allocated memory */
     free(proj);
     free(sourceMatT);
     free(QT);
