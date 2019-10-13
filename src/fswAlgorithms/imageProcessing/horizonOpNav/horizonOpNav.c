@@ -133,9 +133,13 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
 
     /*! - Find pixel size using camera specs */
     double d_x, d_y, u_p, v_p, tranf[3][3], alpha;
-    double H[MAX_LIMB_PNTS*3]; /*! Matrix of all the limb points*/
-    double R_s[3][3], s_bar[MAX_LIMB_PNTS*3], s[3], R_yInv[MAX_LIMB_PNTS*MAX_LIMB_PNTS], J[3]; /*! variables for covariance */
+    double R_s[3][3], s[3], J[3];
     int i;
+    double *H, *s_bar, *R_yInv;
+    H = malloc(MAX_LIMB_PNTS*3*sizeof(double)); /*! Matrix of all the limb points*/
+    s_bar = malloc(MAX_LIMB_PNTS*3*sizeof(double)); /*! variables for covariance */
+    R_yInv = malloc(MAX_LIMB_PNTS*MAX_LIMB_PNTS*sizeof(double));
+    
     vSetZero(H, MAX_LIMB_PNTS*3);
     /* To do: replace alpha by a skew read from the camera message */
     alpha = 0;
@@ -175,9 +179,12 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     /*! Need to solve Hn = 1, for n. If we performa  QR decomp on H, the problem becomes:
      Rn = Q^T.1*/
     /*! Perform the QR decompostion of H, this will */
-    double Q_decomp[MAX_LIMB_PNTS*3], R_decomp[3*3], jTemp[3];
-    double RHS_vec[3], ones[MAX_LIMB_PNTS], n[3], IminusOuter[3][3], outer[3][3], sNorm;
+    double R_decomp[3*3], jTemp[3];
+    double RHS_vec[3], n[3], IminusOuter[3][3], outer[3][3], sNorm;
     double scaleFactor, nNorm2, sbarPrime[3]; /*! Useful scalars for the rest of the implementation */
+    double *Q_decomp, *ones;
+    Q_decomp = malloc(MAX_LIMB_PNTS*3*sizeof(double));
+    ones = malloc(MAX_LIMB_PNTS*sizeof(double));
     
     /*! - QR decomp */
     QRDecomp(H, numPoints, Q_decomp, R_decomp);
@@ -204,8 +211,11 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     }
     
     /*! - Covar from least squares - probably the most computationally expensive segment*/
-    double Pn[3][3], Rtemp[MAX_LIMB_PNTS*3];
+    double Pn[3][3];
     double F[3][3];
+    double* Rtemp;
+    Rtemp = malloc(MAX_LIMB_PNTS*3*sizeof(double));
+    
     m33SetIdentity(Pn);
     mMultM(R_yInv, numPoints, numPoints, H, numPoints, 3, Rtemp);
     mtMultM(H, numPoints, 3, Rtemp, numPoints, 3, Pn);
