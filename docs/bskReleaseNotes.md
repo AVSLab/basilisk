@@ -13,7 +13,7 @@ We are very excited by the great capabilities that this software already has, an
 
 
 
-##  Upcoming Version 1.X.X
+##  Version 1.1.0
 <ul>
     <li>The circle finding module using openCV has been cleaned up and the noise is now dynamically measured given the image</li>
     <li>A new dispersion was added for Monte Carlo analysis which allows for per-axis control on an initial MRP value</li>
