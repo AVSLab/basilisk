@@ -15,6 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 ##  Version 1.X.X
 <ul>
     <li>Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the `cmake` flag `-DUSE_PYTHON3` can still be set to `OFF`</li>
+    <li>Revised the FSW template module to use the updated in-line module documentation style which adds the description to the module *.h doxygen description, and adds the validation discussion as a doc-string to the `test_xxx.py` test file.</li>
 </ul>
 
 ##  Version 1.1.0
