@@ -1303,7 +1303,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf \
                          ../src/simulation/dynamics/sphericalPendulum/_Documentation/Basilisk-SPHERICALPENDULUM-20180518.pdf \
                          ../src/fswAlgorithms/transDetermination/ephemDifference/_Documentation/Basilisk-ephemDifference-2019-03-27.pdf \
-                         ../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME-yyyymmdd.pdf \
+                         ../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf \
                          ../src/fswAlgorithms/transDetermination/navAggregate/_Documentation/Basilisk-navAggregate-2019-02-21.pdf \
                          ../src/fswAlgorithms/transDetermination/dvAccumulation/_Documentation/Basilisk-dvAccumulation-2019-03-28.pdf \
                          ../src/fswAlgorithms/imageProcessing/houghCircles/_Documentation/Basilisk-houghCircles-20190213.pdf \

@@ -1,0 +1,77 @@
+% README file for making a technical note for a module
+%
+
+
+
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{graphicx}
+\bibliographystyle{plain}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{Module Name}
+\newcommand{\status}{Status}
+
+\begin{document}
+
+\makeCover
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{2}
+\noindent
+\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.07in}|p{0.9in}|}
+\hline
+{\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
+\hline
+1.0 & Revision Description & F. Last1 & YYYYMMDD\\
+\hline
+1.1 & Revision Description& F. Last2 & YYYYMMDD\\
+\hline
+
+\end{longtable}
+}
+
+
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents %Autogenerate the table of contents
+~\\ \hrule ~\\ %Makes the line under table of contents
+
+
+
+\section{Introduction}
+It is preferred to include the associated math with the module {\tt doxygen} documentation in the module {\tt .h} file.  However, if the associated math is too extensive it is possible to include a brief technical note using this TeX template.
+
+
+
+\section{Alternate Citation Options}
+Instead of writing a technical note, if the module math is presented in a conference paper, journal paper, or MS thesis or PhD dissertation, it is simple to link to such a document from within the module {\tt .h} file.  The {\tt doxygen} command to cite an external web link is
+\begin{verbatim}
+	[link name](http://example.link)
+\end{verbatim}
+ We are trying to keep the Basilisk repository as small as possible, thus using a PDF technical note should be used sparingly.  
+
+
+
+
+
+
+
+
+\bibliography{bibliography} %This includes references used and mentioned.
+
+\end{document}

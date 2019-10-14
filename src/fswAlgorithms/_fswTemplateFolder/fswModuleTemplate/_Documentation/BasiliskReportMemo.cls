@@ -67,36 +67,13 @@
 \LARGE\bfseries \noindent \submiterInstitute\\
 \vskip 0.1in
 \noindent Basilisk Technical Memorandum\\
-\large\noindent Document ID: Basilisk-\ModuleName\\
 \vskip 0.1in
-\noindent \MakeUppercase{\subject}
+\noindent \MakeUppercase{\ModuleName}
 \end{textblock*}
 
 ~\\
 \vskip 4.25in
-{\renewcommand{\arraystretch}{2}
-\noindent
-\begin{tabular}{|p{1.6in}|p{4.7in}|}
-\hline
-~Prepared by & \preparer\\
-\hline
-\end{tabular}
-}
-\vskip 0.2in
 
-{\renewcommand{\arraystretch}{2}
-\noindent
-\begin{tabular}{|p{6.46in}|}
-\hline
-~{\bfseries Status:}~~ \status \\
-\hline
-~{\bfseries Scope/Contents} \\
-\hline
-\summary \\
-\hline
-\end{tabular}
-}
-\vskip 0.2in
 }
 
 %

@@ -25,12 +25,10 @@
 #
 
 import pytest
-import sys, os, inspect
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate                 # import the module that is to be tested
@@ -74,6 +72,34 @@ def plotFixture(show_plots):
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_module(plotFixture, show_plots):     # update "module" in this function name to reflect the module name
+    """
+Validation Test Description
+---------------------------
+Compose a general description of what is being tested in this unit test script.  Add enough information so\
+the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only \
+one version of this script will run.
+
+Description of Variables Being Tested
+-------------------------------------
+Here discuss what parameters are being checked.  For example, in this file we are checking the values of the \
+variables
+
+    dummy
+    outputVector[3]
+
+General Documentation Comments
+------------------------------
+If the script generates figures, these figures will be automatically pulled from matplotlib and included below. \
+Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content \
+should be understood by just looking at the figure.
+
+At the end of the script where a print statement says that the script passes, also add a print statement \
+saying what accuracy tolerance(s) were used.
+
+Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting \
+contained within this HTML pytest report.
+
+    """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
     [testResults, testMessage] = fswModuleTestFunction(plotFixture, show_plots)
@@ -194,6 +220,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag)
+        print("This test uses an accuracy value of " + str(accuracy))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

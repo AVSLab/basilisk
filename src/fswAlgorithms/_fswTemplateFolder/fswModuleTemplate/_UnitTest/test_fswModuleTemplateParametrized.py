@@ -42,7 +42,6 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate                # import the module that is to be tested
@@ -63,6 +62,53 @@ from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, param1, param2):
+    """
+Validation Test Description
+---------------------------
+Compose a general description of what is being tested in this unit test script.  Add enough information so\
+the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only \
+one version of this script will run.  Note that the pytest HTML report will list each parameterized test case \
+individually.  This way it is clear what set of parameters passed.  But, this also means that this doc-string \
+content will be copied into each report so each test description is individually complete.  If there is a discusssion \
+you want to include that is specific to the a parameterized test case, then include this at the end of the file \
+with a conditional print() statement that only executes for that particular parameterized test.
+
+Test Parameters
+---------------
+As this is a parameterized unit test, note that the test case parameters values are shown automatically in the \
+pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what \
+each parameter controls.
+- param1: [int]
+    Dummy test parameter for this parameterized unit test
+- param2: [int]
+    Dummy test parameter for this parameterized unit test
+
+Description of Variables Being Tested
+-------------------------------------
+Here discuss what parameters are being checked.  For example, in this file we are checking the values of the \
+variables
+
+    dummy
+    outputVector[3]
+
+Figure Discussion
+-----------------
+If the test script produces figures you might include a brief discussion on what the simulation results show. \
+Discuss why these results validate the operation of the BSK module.
+
+General Documentation Comments
+------------------------------
+If the script generates figures, these figures will be automatically pulled from matplotlib and included below. \
+Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content \
+should be understood by just looking at the figure.
+
+At the end of the script where a print statement says that the script passes, also add a print statement \
+saying what accuracy tolerance(s) were used.
+
+Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting \
+contained within this HTML pytest report.
+
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = fswModuleTestFunction(show_plots, param1, param2)
     assert testResults < 1, testMessage
@@ -207,49 +253,14 @@ def fswModuleTestFunction(show_plots, param1, param2):
     plt.legend(loc='upper left')
     plt.xlabel('Time [s]')
     plt.ylabel('Variable Description [unit]')
+    plt.suptitle('Title of Sample Plot')
     if show_plots:
         plt.show()
 
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag)
-
-    # export a plot to be included in the documentation
-    unitTestSupport.writeFigureLaTeX(
-        "testPlot"+str(param1)+str(param2),
-        "Illustration of Sample Plot",
-        plt,
-        "width=0.5\\textwidth",
-        path)
-
-    # write TeX Tables for documentation
-    resultTable = moduleOutput
-    resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
-    diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
-
-    tableName = "test" + str(param1) + str(param2)      # make this a unique name
-    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm r$", "Error"]
-    caption = 'Sample output table for param1 = ' + str(param1) + ' and param2 = ' + str(param2) + '.'
-    unitTestSupport.writeTableLaTeX(
-        tableName,
-        tableHeaders,
-        caption,
-        resultTable,
-        path)
-
-    #   print out success message if no error were found
-    snippentName = "passFail" + str(param1) + str(param2)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
+        print("This test uses an accuracy value of " + str(accuracy))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
