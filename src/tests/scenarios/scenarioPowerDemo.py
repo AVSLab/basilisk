@@ -35,12 +35,15 @@
 #
 # The simplePower subsystem consists of two kinds of Basilisk simModules: powerStorageBase (which is used to represent
 # power storage units, and serves as the heart of the subsystem) and powerNodeBase (which is used to represent system
-# components that consume or generate power). A conceptual diagram of these classes and their interfaces to eachother and the rest of Basilisk is shown in the figure below.
+# components that consume or generate power). A conceptual diagram of these classes and their interfaces to eachother
+# and the rest of Basilisk is shown in the figure below.
 #  ![Simple Power System block diagram](Images/doc/simplePowerConcept.svg "Simple Power System interfaces")
 #  In general, this system can be configured using the following process:
-#   1. Create and configure a set of powerNodeBase modules to represent power system sources and sinks, including their nodePowerOutMsgName attributes;
+#   1. Create and configure a set of powerNodeBase modules to represent power system sources and sinks, including
+#   their nodePowerOutMsgName attributes;
 #   2. Create and configure a powerStorageBase instance;
-#   3. Use the addPowerNodeToModel() method from the powerStorageBase on the nodePowerOutMsgNames you configured in step 1 to link the power nodes to the powerStorageBase instance
+#   3. Use the addPowerNodeToModel() method from the powerStorageBase on the nodePowerOutMsgNames you configured
+#   in step 1 to link the power nodes to the powerStorageBase instance
 #   4. Run the simulation.
 #
 #
@@ -202,7 +205,7 @@ def run_scenario():
     solarPanel.ModelTag = "solarPanel"
     solarPanel.stateInMsgName = scObject.scStateOutMsgName
     solarPanel.sunEclipseInMsgName = "eclipse_data_0"
-    solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.2*0.3, 0.20)
+    solarPanel.setPanelParameters([1,0,0], 0.2*0.3, 0.20)
     solarPanel.nodePowerOutMsgName = "panelPowerMsg"
     scenarioSim.AddModelToTask(taskName, solarPanel)
 
