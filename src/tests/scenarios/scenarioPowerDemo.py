@@ -101,10 +101,8 @@
 # as it exits, the stored charge of the battery begins to rebuild.
 # ![Power System Response](Images/Scenarios/powerDemo.png "Power history")
 ## @}
-import pytest
 import os, inspect
 import numpy as np
-import math
 from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
