@@ -71,11 +71,6 @@ def centeredDipole(pos_N, X, refPlanetRadius, refPlanetDCM):
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 
-# @pytest.mark.parametrize("noiseStd, errTol", [(0, 1e-10), (300e-9, 1e-6)])
-# @pytest.mark.parametrize("bias", [(0.0, 0.0, 0.0), (1e-6, 1e-6, 1e-5)])
-# @pytest.mark.parametrize("minOut, maxOut", [(-1e3, 1e3), (-1e-4, 1e-4)])
-# @pytest.mark.parametrize("magModel", ['WMM', 'CenteredDipole'])
-
 @pytest.mark.parametrize(
     "show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name",
     [
@@ -99,6 +94,42 @@ def centeredDipole(pos_N, X, refPlanetRadius, refPlanetDCM):
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
+    """
+    Validation Test Description
+    ---------------------------
+    This section describes the specific unit tests conducted on this module. \
+    The test contains 16 tests and is located at 'test_magnetometer.py'. \
+    The simulation of the magnetic field truth vector is set up based on two magnetic field model test scripts: \
+    'test_magneticFieldCenteredDipole.py' and \'test_magneticFieldWMM.py'. \
+    The success criteria is to match the outputs with the generated truth.
+
+    Test Parameters:
+    -----------
+    - noiseStd: [double]
+        Defines the standard deviation of the magnetometer measurements for this parameterized unit test
+    - bias: [double]
+        Defines the bias on the magnetometer measurements for this parameterized unit test
+    - minOut: [double]
+        Defines the minimum bound for the measurement saturation
+    - maxOut: [double]
+        Defines the maximum bound for the measurement saturation
+    - magModel: [string]
+        Defines the magnetic field model name for this parameterized unit test
+    - errTol: [double]
+        Defines the error tolerance for this parameterized unit test
+    - name: [string]
+        Defines the name of each test case
+
+    Description of Variables Being Tested
+    -------------------------------------
+    In this file we are checking the values of the variable:
+
+    tamData[3]
+
+    which is pulled from the log data to see if they match with the expected truth values.
+
+        """
+
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name)
     assert testResults < 1, testMessage
@@ -204,23 +235,10 @@ def run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
 
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
-
-    # Begin the simulation time run set above
-    # unitTestSim.ExecuteSimulation()
-
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     magData = unitTestSim.pullMessageLogData(magModule.envOutMsgNames[0] + ".magField_N", list(range(3)))
     tamData = unitTestSim.pullMessageLogData(testModule.tamDataOutMsgName + ".OutputData", list(range(3)))
-
-    # compare the module results to the truth values
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue" + str(errTol), str(errTol), path)
-
 
     if magModel == 'WMM':
         trueMagField = wmmInertial(BxTrue, ByTrue, BzTrue, phi, long, refPlanetDCM)
@@ -250,51 +268,12 @@ def run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
 
     #   print out success or failure message
     if testFailCount == 0:
-        colorText = 'ForestGreen'
         print("PASSED: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("This test uses an accuracy value of " + str(errTol))
     else:
-        colorText = 'Red'
         print("Failed: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    # Write some snippets for AutoTex
-    snippentName = "PassedText" + name
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+        print("This test uses an accuracy value of " + str(errTol))
 
-    # write pytest parameters to AutoTex folder
-    # "noiseStd, bias, minOut, maxOut, magModel, errTol"
-    biasSnippetName = name + "Bias1"
-    biasSnippetContent = '{:1.1e}'.format(bias[0])
-    unitTestSupport.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
-    biasSnippetName = name + "Bias2"
-    biasSnippetContent = '{:1.1e}'.format(bias[1])
-    unitTestSupport.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
-    biasSnippetName = name + "Bias3"
-    biasSnippetContent = '{:1.1e}'.format(bias[2])
-    unitTestSupport.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
-    #
-    noiseStdSnippetName = name + "NoiseStd"
-    noiseStdSnippetContent = '{:1.1e}'.format(noiseStd)
-    unitTestSupport.writeTeXSnippet(noiseStdSnippetName, noiseStdSnippetContent, path)
-    #
-    saturationMaxSnippetName = name + "MaxSaturation"
-    saturationMaxSnippetContent = '{:1.1e}'.format(maxOut)
-    unitTestSupport.writeTeXSnippet(saturationMaxSnippetName, saturationMaxSnippetContent, path)
-    #
-    saturationMinSnippetName = name + "MinSaturation"
-    saturationMinSnippetContent = '{:1.1e}'.format(minOut)
-    unitTestSupport.writeTeXSnippet(saturationMinSnippetName, saturationMinSnippetContent, path)
-
-    magModelSnippetName = name + "magModel"
-    magModelSnippetContent = '{:.14s}'.format(magModel)
-    unitTestSupport.writeTeXSnippet(magModelSnippetName, magModelSnippetContent, path)
-    #
-    errTolSnippetName = name + "ErrTol"
-    errTolSnippetContent = '{:1.1e}'.format(errTol)
-    unitTestSupport.writeTeXSnippet(errTolSnippetName, errTolSnippetContent, path)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
 #

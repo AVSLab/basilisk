@@ -17,6 +17,11 @@
 
  */
 
+ /*
+	 Magnetometer Module
+
+  */
+
 #include "sensors/magnetometer/magnetometer.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
@@ -31,7 +36,7 @@
 #include "utilities/avsEigenMRP.h"
 #include "utilities/bsk_Print.h"
 
- // Constuctor
+ /*! This is the constructor, setting variables to default values. */
 Magnetometer::Magnetometer()
 {
 	this->magIntMsgID = -1;
@@ -42,7 +47,6 @@ Magnetometer::Magnetometer()
 	this->numStates = 3;
 	this->senBias = {0.0, 0.0, 0.0};
 	this->senNoiseStd = 0.0;
-	this->AMatrix.fill(0.0);
 	this->walkBounds.fill(0.0);
 	this->noiseModel = GaussMarkov(this->numStates);
 	this->tam_B.fill(0.0);
@@ -58,13 +62,13 @@ Magnetometer::Magnetometer()
 	return;
 }
 
-// Destructor
+/*! This is the destructor, nothing to report here. */
 Magnetometer::~Magnetometer()
 {
 	return;
 }
 
-//! - Transformation from Body to Sensor Frame
+//! - This method composes the transformation matrix from Body to Sensor frame.
 void Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll)
 {
 	this->dcm_SB = eigenM1(roll) * eigenM2(pitch) * eigenM3(yaw);
@@ -74,7 +78,7 @@ void Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll)
 
 /*! This method performs all of the internal initialization for the model itself.
  Primarily that involves initializing the random number generator and creates
- the output message*/
+ the output message. */
 void Magnetometer::SelfInit()
 {
 	//! - Create the output message sized to the output message size
@@ -82,7 +86,6 @@ void Magnetometer::SelfInit()
 		CreateNewMessage(this->tamDataOutMsgName, sizeof(TAMDataSimMsg),
 			this->outputBufferCount, "TAMDataSimMsg", this->moduleID);
 
-	// this->noiseModel.setPropMatrix(this->AMatrix);
 	this->noiseModel.setRNGSeed(this->RNGSeed);
 	this->noiseModel.setUpperBounds(this->walkBounds);
 	Eigen::Matrix3d nMatrix;
@@ -118,6 +121,7 @@ void Magnetometer::CrossInit()
 	return;
 }
 
+/*! This method reads necessary input messages. */
 void Magnetometer::readInputMessages()
 {
 	SingleMessageHeader localHeader;
@@ -142,20 +146,20 @@ void Magnetometer::computeMagData()
 	//! - Magnetic field vector in inertial frame using a magnetic field model (WMM, Dipole, etc.) 
 	tam_N = cArray2EigenVector3d(this->magData.magField_N);
 	sigma_BN_eigen = cArray2EigenVector3d(this->stateCurrent.sigma_BN);
-	//! - Get the inertial to body frame transformation information and convert tam_N to body frame
+	//! - Get the inertial to body frame transformation information and convert tam_N to tam_B
 	dcm_BN = sigma_BN_eigen.toRotationMatrix().transpose();
 	this->tam_B = dcm_BN * tam_N;
-	//! - Get the body to sensor frame transformation information and convert tam_B to sensor frame
+	//! - Get the body to sensor frame transformation information and convert tam_B to tam_S
 	this->tam_S = this->dcm_SB * this->tam_B;
 }
 
-/*! This method computes the true sensed values for the sensor */
+/*! This method computes the true sensed values for the sensor. */
 void Magnetometer::computeTrueOutput()
 {
 	this->trueValue = this->tam_S;
 }
 
-/*! This method takes the true observed cosine value (directValue) and converts
+/*! This method takes the true values (trueValue) and converts
  it over to an errored value.  It applies noise to the truth. */
 void Magnetometer::applySensorErrors()
 {
@@ -174,12 +178,14 @@ void Magnetometer::applySensorErrors()
 	this->sensedValue = this->sensedValue + this->senBias;
 }
 
+/*! This method multiplies the sensedValue with a scale factor. */
 void Magnetometer::scaleSensorValues()
 {
 	this->sensedValue *= this->scaleFactor; 
 	this->trueValue *= this->scaleFactor;
 }
 
+/*! This method applies saturation using the given bounds. */
 void Magnetometer::applySaturation()
 {
 
@@ -192,8 +198,6 @@ void Magnetometer::writeOutputMessages(uint64_t Clock)
 	TAMDataSimMsg localMessage;
 	//! - Zero the output message
 	memset(&localMessage, 0x0, sizeof(TAMDataSimMsg));
-
-	//Eigen::Vector3d &sensedTAM = cArray2EigenVector3d(&this->sensedValue);
 	eigenVector3d2CArray(this->sensedValue, localMessage.OutputData);
 	//! - Write the outgoing message to the architecture
 	SystemMessaging::GetInstance()->WriteMessage(tamDataOutMsgID, Clock,
@@ -203,7 +207,7 @@ void Magnetometer::writeOutputMessages(uint64_t Clock)
 }
 
 /*! This method is called at a specified rate by the architecture.  It makes the
- calls to compute the current sun information and write the output message for
+ calls to compute the current magnetic field information and write the output message for
  the rest of the model.
  @param CurrentSimNanos The current simulation time from the architecture*/
 void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
@@ -212,13 +216,13 @@ void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
 	this->readInputMessages();
 	//! - Get magnetic field vector
 	this->computeMagData();
-	//! - compute true output
+	//! - Compute true output
 	this->computeTrueOutput();
 	//! - Apply any set errors
 	this->applySensorErrors();
 	//! - Scale the data
 	this->scaleSensorValues();
-	//! - Apply Saturation (floor and ceiling values)
+	//! - Apply saturation
 	this->applySaturation();
 	//! - Write output data
 	this->writeOutputMessages(CurrentSimNanos);

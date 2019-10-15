@@ -26,10 +26,15 @@
 #include "fswMessages/tamSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/tamSensorIntMsg.h"
 
+/*! \addtogroup sensorInterfaces
+* @{
+*/
 
 /*! \defgroup tamComm
- @brief Top level structure for the TAM sensor interface system.  Contains all parameters for the
- TAM interface*/
+ @brief Top level structure for the TAM sensor interface system.  Contains all parameters for the TAM interface
+ * @{
+ */
+
 typedef struct {
 	double dcm_BS[9];    /*!< Row major sensor 2 bdy DCM*/
     char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
