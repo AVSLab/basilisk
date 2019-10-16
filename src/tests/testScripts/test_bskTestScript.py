@@ -58,7 +58,6 @@ sys.path.append(path + '/../bskSimScenarios/scenarios')
     , ('scenario_FeedbackRW')
     , ('scenario_BasicOrbitFormation')
     , ('scenario_RelativePointingFormation')
-    , ('scenario_poweDemo')
                                         ])
 @pytest.mark.scenarioTest
 
@@ -81,7 +80,6 @@ def test_scenarioBskScenarios(show_plots, bskSimCase):
     except OSError as err:
         testFailCount = testFailCount + 1
         testMessages.append("OS error: {0}".format(err))
-
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

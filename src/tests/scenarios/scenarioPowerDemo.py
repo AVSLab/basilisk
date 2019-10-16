@@ -196,9 +196,7 @@ def run():
                                      , timeInitString
                                      , spicePlanetNames = ["sun", "earth"]
                                      )
-
     scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
-
 
     # Create a solar panel
     solarPanel = simpleSolarPanel.SimpleSolarPanel()
@@ -225,7 +223,6 @@ def run():
     powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
     powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
     scenarioSim.AddModelToTask(taskName, powerMonitor)
-
 
     # Setup logging on the power system
     scenarioSim.TotalSim.logThisMessage(solarPanel.nodePowerOutMsgName, testProcessRate)
@@ -279,8 +276,6 @@ def run():
 
 
     return ['powerDemo',fig]
-
-
 
 #
 # This statement below ensures that the unitTestScript can be run as a

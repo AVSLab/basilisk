@@ -39,23 +39,6 @@ void SimpleBattery::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
 
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep*SEC2HOUR); //integrate over hours
 
-
- */
-
-/*! @brief Power storage module that considers net power up to some capacity.
-
- The SimpleBattery class is a minimal model of battery functionality that considers:
-1. Integrated net input power of the attached modules
-2. The battery's maximum storage capacity as defined by the storageCapacity attribute.
-Integration of the net input power is performed with a simple Euler method.
-
-To set up this module, users must create a simpleBattery instance, set its storageCapacity
-attribute, and attach one or more PowerNodeUsageSimMsg instances to it using the
-addNodeToStorage() method.
-
-For more information on how to set up and use this module, see the simple power system example: @ref scenarioSimplePowerDemo
-
- */
     if(this->storedCharge > this->storageCapacity) {
         this->storedCharge = this->storageCapacity;
     }
