@@ -45,7 +45,7 @@
 
 %include "swig_common_model.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/simPowerStorageBase.h"
+%include "../_GeneralModuleFiles/powerStorageBase.h"
 %include "simpleBattery.h"
 
 %include "../../simMessages/powerNodeUsageSimMsg.h"

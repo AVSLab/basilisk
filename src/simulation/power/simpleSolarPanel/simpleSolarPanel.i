@@ -25,7 +25,7 @@
 
 %include "swig_common_model.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/simPowerNodeBase.h"
+%include "../_GeneralModuleFiles/powerNodeBase.h"
 %include "simpleSolarPanel.h"
 
 %include "../../simMessages/powerNodeUsageSimMsg.h"
