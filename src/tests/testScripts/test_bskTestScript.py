@@ -58,6 +58,7 @@ sys.path.append(path + '/../bskSimScenarios/scenarios')
     , ('scenario_FeedbackRW')
     , ('scenario_BasicOrbitFormation')
     , ('scenario_RelativePointingFormation')
+    , ('scenario_poweDemo')
                                         ])
 @pytest.mark.scenarioTest
 

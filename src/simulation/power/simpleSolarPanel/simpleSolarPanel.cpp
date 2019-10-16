@@ -27,6 +27,8 @@ SimpleSolarPanel::SimpleSolarPanel(){
     this->stateInMsgName = "";
     this->sunEclipseInMsgName = "";
 
+    this->sunVisibilityFactor.shadowFactor = 1;
+
     return;
 
 }
