@@ -23,6 +23,10 @@ SimpleSolarPanel::SimpleSolarPanel(){
     this->stateInMsgID = -1;
     this->sunEclipseInMsgID = -1;
 
+    this->panelArea = 0;
+    this->panelEfficiency = 0;
+    this->nHat_B.set(0.0);
+
     this->sunInMsgName = "";
     this->stateInMsgName = "";
     this->sunEclipseInMsgName = "";
@@ -46,6 +50,9 @@ void SimpleSolarPanel::customCrossInit(){
                                                            sizeof(SpicePlanetStateSimMsg),
                                                            moduleID);
     }
+    else{
+        BSK_PRINT(MSG_ERROR,"Error; SimpleSolarPanel did not have sunInMsgName specified.")
+    }
     //! - If we have a state in msg name, subscribe to it
     if(this->stateInMsgName.length() > 0)
     {
@@ -53,10 +60,16 @@ void SimpleSolarPanel::customCrossInit(){
                                                                               sizeof(SCPlusStatesSimMsg),
                                                                               moduleID);
     }
+    else{
+        BSK_PRINT(MSG_ERROR,"Error; SimpleSolarPanel did not have stateInMsgName specified.")
+    }
     if(this->sunEclipseInMsgName.length() > 0) {
         this->sunEclipseInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
                                                                               sizeof(EclipseSimMsg),
                                                                               moduleID);
+    }
+    else{
+        BSK_PRINT(MSG_ERROR,"Error; SimpleSolarPanel did not have sunEclipseInMsgName specified.")
     }
 
 }

@@ -37,7 +37,7 @@ SimpleBattery::~SimpleBattery(){
  */
 void SimpleBattery::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
 
-    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep*SEC2HOUR); //integrate over hours
+    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
 
     if(this->storedCharge > this->storageCapacity) {
         this->storedCharge = this->storageCapacity;

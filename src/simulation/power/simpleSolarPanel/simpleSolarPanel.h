@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 #include <vector>
-#include "../_GeneralModuleFiles/simPowerNodeBase.h"
+#include "power/_GeneralModuleFiles/powerNodeBase.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
@@ -33,6 +33,7 @@
 
 /*! @brief Simple body-fixed solar panel model that considers shadowing from eclipse, body attitude, and panel parameters.
 
+ ## Detailed Description
 This module provides first-order modeling of power generation from an attitude and orbitally coupled solar panel. Specifically, it:
 
 1. Evaluates the impact of shadowing using an assigned EclipseSimMsg;
@@ -48,7 +49,18 @@ where \f$W_{base} \f$ is the base power (in \f$\mbox{W}/\mbox{m}^2\f$) at the sp
 panel's efficiency at converting solar energy into electrical energy, \f$(\hat{n}\cdot \hat{s})\f$ represents the alignment between the panel's normal vector and the spaceraft-sun unit vector, and \f$A_{panel}\f$ represents the panel area in meters squared.
 
 For more information on how to set up and use this module, see the simple power system example: @ref scenarioSimplePowerDemo
-*/
+
+ ## Message Connection Descriptions
+
+ The following table lists additional module input messages beyond those specified in PowerNodeBase.
+
+ Msg Variable Name | Msg Type | Description
+ ------------------|----------|-------------
+sunInMsgName | SpicePlanetStateSimMsg | Required input message. Describes sun position.
+stateInMsgName |  SCPlusStatesSimMsg |  Required input message. Describes spacecraft position, attitude.
+ sunEclipseInMsgName | EclipseSimMsg | Required input message. Describes shadow factor due to planetary bodies.
+
+ */
 
 
 class SimpleSolarPanel: public PowerNodeBase {

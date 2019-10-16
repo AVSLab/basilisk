@@ -22,7 +22,7 @@
 #include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simPowerStorageBase.h"
+#include "powerStorageBase.h"
 
 
 /*! This method initializes some basic parameters for the module.

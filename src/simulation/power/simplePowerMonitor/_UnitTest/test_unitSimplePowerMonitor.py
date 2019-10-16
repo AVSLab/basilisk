@@ -111,10 +111,10 @@ def test_storage_limits(show_plots):
 
     #   Check 2 - is the stored power equivalent to 10*5 W-s?
 
-    if not unitTestSupport.isDoubleEqualRelative((10.*5.)/3600.,storedChargeLog[-1,1], 1e-8):
+    if not unitTestSupport.isDoubleEqualRelative((10.*5.),storedChargeLog[-1,1], 1e-8):
         testFailCount+=1
         print(storedChargeLog[-1,1])
-        print((10.*5.)/3600.)
+        print((10.*5.))
         testMessages.append("FAILED: SimplePowerMonitor did not track integrated power. Returned "+str(storedChargeLog[-1,1])+", expected "+str((10.*5./3600.)))
 
     # each test method requires a single assert method to be called

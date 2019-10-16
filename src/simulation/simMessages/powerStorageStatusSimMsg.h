@@ -28,8 +28,8 @@
 /*! @brief Message to store current battery stored charge, maximum charge, and received power.*/
 
 typedef struct{
-    double storageLevel; //!< [W-hr] Battery stored charge in Watt-hours.
-    double storageCapacity; //!< [W-hr] Maximum battery storage capacity.
+    double storageLevel; //!< [W-s] Battery stored charge in Watt-hours.
+    double storageCapacity; //!< [W-s] Maximum battery storage capacity.
     double currentNetPower; //!< [W] Current net power received/drained from the battery.
 }PowerStorageStatusSimMsg;
 

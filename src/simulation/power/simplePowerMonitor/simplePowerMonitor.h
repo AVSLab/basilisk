@@ -21,7 +21,7 @@
 #ifndef BASILISK_SIMPLEPOWERMONITOR_H
 #define BASILISK_SIMPLEPOWERMONITOR_H
 
-#include "../_GeneralModuleFiles/simPowerStorageBase.h"
+#include "power/_GeneralModuleFiles/powerStorageBase.h"
 #include "../../simMessages/powerStorageStatusSimMsg.h"
 
 /*! The SimplePowerMonitor class is a minimal representation of the PowerStorageBase base class that tracks

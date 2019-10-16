@@ -33,26 +33,33 @@
  * @{
  */
 
-
-
 /*! @brief General power storage base class used to calculate net power in/out and stored power.
 
- The simPowerStorageBase class is used generate a standard interface and list of features for modules that consume or provide power. 
+##  Executive Summary
+ The simPowerStorageBase class is used generate a standard interface and list of features for modules that consume or provide power.
 Specifically, each simPowerStorageBase:
 
-1. Writes out a storageStatusSimMsg containing the current stored power (in Watt-Hours), the current net power (in Watts), and the battery storage cappacity (in Watt-Hours). 
+1. Writes out a storageStatusSimMsg containing the current stored power (in Watt-Hours), the current net power (in Watts), and the battery storage capacity (in Watt-Hours).
 2. Allows for multiple PowerNodeUsageSimMsg corresponding to individual simPowerNodeBase instances to be subscribed to using the addPowerNodeToModel method.
 3. Iterates through attached PowerNodeUsageSimMsg instances and computes the net power over all messages using sumAllInputs()
 4. Computes the conversion between net power in and storage using the evaluateBatteryModel method, which must be overriden in child classes and is therefore module-specific.
 
-Core functionality is wrapped in the evaluateBatteryModel protected virtual void method, which is assumed to compute power storage on a module specific mathematical model. 
+Core functionality is wrapped in the evaluateBatteryModel protected virtual void method, which is assumed to compute power storage on a module specific mathematical model.
 Integration of the net energy is performed using a simple one-step Euler method:
 \f[
      W_{stored} = \dot{W}_{net} (t_{current} - t_{previous})
 \f]
-Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. 
+Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality.
 
 For more information on how to set up and use classes derived from this module, see the simple power system example: @ref scenarioSimplePowerDemo
+
+## Message Connection Descriptions
+    The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+
+    Msg Variable Name | Msg Type | Description
+    ------------------|----------|-------------
+    nodePowerUseMsgNames | PowerNodeUsageSimMsg | Input messages. Vector of power node usage messages. Set using addPowerNodeToModel.
+    batPowerOutMsgName |  PowerStorageStatusSimMsg |  Output message. Describes battery capacity, charge level, net power.
 */
 
 class PowerStorageBase: public SysModel  {
@@ -78,9 +85,9 @@ protected:
     virtual bool customReadMessages(){return true;};//! Custom Read() method, similar to customSelfInit.
 
 public:
-    std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of the spacecraft position/velocity message names
+    std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of power node input message names
     std::string batPowerOutMsgName; //!< Vector of message names to be written out by the battery
-    double storedCharge; //!< [W-hr] Stored charge in Watt-hours.
+    double storedCharge; //!< [W-s] Stored charge in Watt-hours.
 
 protected:
     std::vector<std::int64_t> nodePowerUseMsgIds;
@@ -93,6 +100,5 @@ protected:
     uint64_t outputBufferCount;
 
 };
-
 
 #endif //BASILISK_SIMPOWERSTORAGEBASE_H

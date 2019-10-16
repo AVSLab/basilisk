@@ -22,7 +22,7 @@
 #include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simPowerNodeBase.h"
+#include "powerNodeBase.h"
 
 
 /*! This method initializes the messaging parameters to either empty strings for message names or -1 for message IDs.
@@ -54,9 +54,7 @@ PowerNodeBase::~PowerNodeBase()
 */
 void PowerNodeBase::SelfInit()
 {
-
     this->nodePowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->nodePowerOutMsgName, sizeof(PowerNodeUsageSimMsg),this->outputBufferCount, "PowerNodeUsageSimMsg",this->moduleID);
-
     //! - call the custom SelfInit() method to add addtional self initialization steps
     customSelfInit();
 

@@ -21,7 +21,7 @@
 #define BASILISK_SIMPLEBATTERY_H
 
 
-#include "../_GeneralModuleFiles/simPowerStorageBase.h"
+#include "power/_GeneralModuleFiles/powerStorageBase.h"
 #include "../../simMessages/powerStorageStatusSimMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
@@ -54,7 +54,7 @@ private:
     void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
 
 public:
-    double storageCapacity; //!< [W-hr] Battery capacity in Watt-Hours.
+    double storageCapacity; //!< [W-s] Battery capacity in Watt-Hours.
 
 };
 

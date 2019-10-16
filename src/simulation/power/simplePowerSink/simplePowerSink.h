@@ -21,7 +21,7 @@
 #ifndef BASILISK_SIMPLEPOWERSINK_H
 #define BASILISK_SIMPLEPOWERSINK_H
 
-#include "../_GeneralModuleFiles/simPowerNodeBase.h"
+#include "power/_GeneralModuleFiles/powerNodeBase.h"
 
 /*! \addtogroup SimModelGroup
  * @{
