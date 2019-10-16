@@ -130,7 +130,7 @@ bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))
 
-def run_scenario():
+def run():
     taskName = "unitTask"               # arbitrary name (don't change)
     processname = "TestProcess"         # arbitrary name (don't change)
 
@@ -205,7 +205,7 @@ def run_scenario():
     solarPanel.ModelTag = "solarPanel"
     solarPanel.stateInMsgName = scObject.scStateOutMsgName
     solarPanel.sunEclipseInMsgName = "eclipse_data_0"
-    solarPanel.setPanelParameters([1,0,0], 0.2*0.3, 0.20)
+    solarPanel.setPanelParameters([1,0,0], 0.2*0.3, 0.20) # Set the panel normal vector in the body frame, the area,
     solarPanel.nodePowerOutMsgName = "panelPowerMsg"
     scenarioSim.AddModelToTask(taskName, solarPanel)
 
@@ -220,8 +220,8 @@ def run_scenario():
     powerMonitor = simpleBattery.SimpleBattery()
     powerMonitor.ModelTag = "powerMonitor"
     powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
-    powerMonitor.storageCapacity = 10.0
-    powerMonitor.storedCharge = 10.0
+    powerMonitor.storageCapacity = 10.0 * 3600.0# Convert from W-hr to Joules
+    powerMonitor.storedCharge = 10.0 * 3600.0 # Convert from W-Hr to Joules
     powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
     powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
     scenarioSim.AddModelToTask(taskName, powerMonitor)
@@ -263,7 +263,7 @@ def run_scenario():
     tvec = tvec * macros.NANO2HOUR
 
     #   Plot the power states
-    plt.figure()
+    fig = plt.figure()
     plt.plot(tvec,storageData[:,1],label='Stored Power (W-Hr)')
     plt.plot(tvec,netData[:,1],label='Net Power (W)')
     plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
@@ -275,20 +275,10 @@ def run_scenario():
     plt.figure()
     plt.plot(tvec, scAtt[:,1],tvec, scAtt[:,2], tvec, scAtt[:,3])
 
-    relativeOrbit = scOrbit - planetOrbit
-
-    plt.figure()
-    plt.plot(relativeOrbit[:,1],relativeOrbit[:,2],label="Spacecraft Orbit")
-    plt.arrow(0,0,planetOrbit[0,1], planetOrbit[0,2],label="Sun Direction")
-    plt.title('Spacecraft Orbit')
-    plt.xlabel('ECI X (m)')
-    plt.ylabel('ECI Y (m)')
-
-
     plt.show()
 
 
-    return
+    return ['powerDemo',fig]
 
 
 
@@ -297,4 +287,4 @@ def run_scenario():
 # stand-alone python script
 #
 if __name__ == "__main__":
-    run_scenario()
+    run()

@@ -35,7 +35,6 @@
  */
 
 
-
 //! @brief General power source/sink base class.
 /*! The powerNodeBase class is used generate a standard interface and list of features for modules that consume or provide power. 
 Specifically, each PowerNodeBase:
