@@ -26,7 +26,9 @@
 %include "sys_model.h"
 %include "camera.h"
 %include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+%include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
 GEN_SIZEOF(CameraImageMsg)
+GEN_SIZEOF(CameraConfigMsg)
 
 
 %pythoncode %{

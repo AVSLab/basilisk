@@ -160,11 +160,11 @@ def cameraTest(show_plots, image, saveImage):
 
     #   print out success message if no error were found
     for i in range(3):
-        if np.abs(pos[-1,i+1] - inputMessageData.sigma_BC[i])>1E-10:
+        if np.abs(pos[-1,i+1] - moduleConfig.sigma_CB[i])>1E-10:
             testFailCount+=1
             testMessages.append("Test failed position " + image)
 
-    if np.abs(isOnValues[-1,1] - inputMessageData.isOn)>1E-10:
+    if np.abs(isOnValues[-1,1] - moduleConfig.cameraIsOn)>1E-10:
         testFailCount+=1
         testMessages.append("Test failed isOn " + image)
 

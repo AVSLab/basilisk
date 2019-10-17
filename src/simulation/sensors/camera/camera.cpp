@@ -116,6 +116,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     cameraMsg.resolution[1] = this->resolution[1];
     cameraMsg.renderRate = this->renderRate;
     cameraMsg.focalLength = this->focalLength;
+    cameraMsg.isOn = this->cameraIsOn;
     v2Copy(this->sensorSize, cameraMsg.sensorSize);
     v3Copy(this->cameraPos_B, cameraMsg.cameraPos_B);
     v3Copy(this->sigma_CB, cameraMsg.sigma_CB);
