@@ -272,8 +272,6 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /*! - Output the saved image */
     SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
     
-    /*! - Output the camera config data */
-    SystemMessaging::GetInstance()->WriteMessage(this->cameraOutID, CurrentSimNanos, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t *>(&cameraMsg), this->moduleID);
     return;
 }
 
