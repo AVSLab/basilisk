@@ -41,5 +41,6 @@ void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
     msg->storageCapacity = this->storageCapacity;
     msg->currentNetPower = this->currentPowerSum;
+    msg->storageLevel = this->storedCharge;
     return;
 }

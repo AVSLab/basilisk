@@ -203,6 +203,7 @@ def run():
     solarPanel.ModelTag = "solarPanel"
     solarPanel.stateInMsgName = scObject.scStateOutMsgName
     solarPanel.sunEclipseInMsgName = "eclipse_data_0"
+    solarPanel.sunInMsgName = 'sun'
     solarPanel.setPanelParameters([1,0,0], 0.2*0.3, 0.20) # Set the panel normal vector in the body frame, the area,
     solarPanel.nodePowerOutMsgName = "panelPowerMsg"
     scenarioSim.AddModelToTask(taskName, solarPanel)
@@ -261,7 +262,7 @@ def run():
 
     #   Plot the power states
     fig = plt.figure()
-    plt.plot(tvec,storageData[:,1],label='Stored Power (W-Hr)')
+    plt.plot(tvec,storageData[:,1]/3600.,label='Stored Power (W-Hr)')
     plt.plot(tvec,netData[:,1],label='Net Power (W)')
     plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
     plt.plot(tvec,sinkData[:,1],label='Power Draw (W)')
@@ -269,17 +270,13 @@ def run():
     plt.ylabel('Power (W)')
     plt.grid(True)
     plt.legend()
-    plt.figure()
-    plt.plot(tvec, scAtt[:,1],tvec, scAtt[:,2], tvec, scAtt[:,3])
 
-    plt.show()
-
-
-    return ['powerDemo',fig]
+    return
 
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-alone python script
 #
 if __name__ == "__main__":
-    run()
+    fig = run()
+    plt.show()

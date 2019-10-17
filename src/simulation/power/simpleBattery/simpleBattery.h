@@ -54,7 +54,7 @@ private:
     void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
 
 public:
-    double storageCapacity; //!< [W-s] Battery capacity in Watt-Hours.
+    double storageCapacity; //!< [W-s] Battery capacity in Watt-seconds (Joules).
 
 };
 

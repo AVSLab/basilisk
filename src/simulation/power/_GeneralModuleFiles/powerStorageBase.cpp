@@ -175,13 +175,9 @@ double PowerStorageBase::sumAllInputs(){
  */
 void PowerStorageBase::integratePowerStatus(double currentTime)
 {
-
     this->currentTimestep = currentTime - this->previousTime;
-
     //! - loop over all the power nodes and sum their contributions
     this->currentPowerSum = this->sumAllInputs();
-
-
     this->evaluateBatteryModel(&(storageStatusMsg)); // Computes the battery charge status, if applicable.
     this->previousTime = currentTime;
     return;

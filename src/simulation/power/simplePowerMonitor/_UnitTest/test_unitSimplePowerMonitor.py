@@ -88,13 +88,12 @@ def test_storage_limits(show_plots):
     test_battery.addPowerNodeToModel("node_1_msg")
     test_battery.addPowerNodeToModel("node_2_msg")
     test_battery.batPowerOutMsgName = 'test_battery_status'
-
     unitTestSim.AddModelToTask(unitTaskName, test_battery)
 
     unitTestSim.TotalSim.logThisMessage(test_battery.batPowerOutMsgName, testProcessRate)
 
     unitTestSim.InitializeSimulationAndDiscover()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
 
     unitTestSim.ExecuteSimulation()
 
@@ -111,11 +110,9 @@ def test_storage_limits(show_plots):
 
     #   Check 2 - is the stored power equivalent to 10*5 W-s?
 
-    if not unitTestSupport.isDoubleEqualRelative((10.*5.),storedChargeLog[-1,1], 1e-8):
+    if not unitTestSupport.isDoubleEqualRelative((10.),storedChargeLog[-1,1], 1e-8):
         testFailCount+=1
-        print(storedChargeLog[-1,1])
-        print((10.*5.))
-        testMessages.append("FAILED: SimplePowerMonitor did not track integrated power. Returned "+str(storedChargeLog[-1,1])+", expected "+str((10.*5./3600.)))
+        testMessages.append("FAILED: SimplePowerMonitor did not track integrated power. Returned "+str(storedChargeLog[-1,1])+", expected "+str((10.)))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

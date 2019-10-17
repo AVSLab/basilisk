@@ -25,7 +25,7 @@ SimpleSolarPanel::SimpleSolarPanel(){
 
     this->panelArea = 0;
     this->panelEfficiency = 0;
-    this->nHat_B.set(0.0);
+    this->nHat_B.setZero();
 
     this->sunInMsgName = "";
     this->stateInMsgName = "";

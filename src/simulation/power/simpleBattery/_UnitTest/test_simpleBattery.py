@@ -65,13 +65,13 @@ def test_storage_limits(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_battery = simpleBattery.SimpleBattery()
-    test_battery.storedCharge = 15.0
-    test_battery.storageCapacity = 10./3600. #   10 W-s capacity.
+    test_battery.storedCharge = -5.
+    test_battery.storageCapacity = 10. #   10 W-s capacity.
 
     powerMsg1 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg1.netPower_W = -5.0
+    powerMsg1.netPower_W = 5.0
     powerMsg2 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg2.netPower_W = -5.0
+    powerMsg2.netPower_W = 5.0
 
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
@@ -105,9 +105,14 @@ def test_storage_limits(show_plots):
     #   Check 1 - is net power equal to 10.?
     for ind in range(0,len(netPowerLog)):
         currentPower = netPowerLog[ind,1]
-        if currentPower > -10.:
+        if currentPower !=10.:
             testFailCount +=1
             testMessages.append("FAILED: SimpleBattery did not correctly log the net power.")
+
+    if not unitTestSupport.isDoubleEqualRelative((10.),storedChargeLog[-1,1], 1e-8):
+        testFailCount+=1
+        testMessages.append("FAILED: SimpleBattery did not track integrated power. Returned "+str(storedChargeLog[-1,1])+", expected "+str((10.)))
+
 
     for ind in range(0,len(storedChargeLog)):
         if storedChargeLog[ind,1] > capacityLog[ind,1]:

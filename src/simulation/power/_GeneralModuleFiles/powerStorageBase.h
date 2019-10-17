@@ -95,7 +95,7 @@ protected:
     PowerStorageStatusSimMsg storageStatusMsg;
     std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
     double previousTime; //! Previous time used for integration
-    double currentTimestep;
+    double currentTimestep;//! [s] Timestep duration in seconds.
     double currentPowerSum;//!< [W] Current net power.
     uint64_t outputBufferCount;
 
