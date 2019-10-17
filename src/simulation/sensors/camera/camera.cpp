@@ -44,6 +44,9 @@ Camera::Camera()
     this->sigma_CB.setZero();
     this->focalLength = this->sensorSize(0)/2/tan(this->fieldOfView/2.);
     this->skyBox = "black";
+    
+    /*! Default values for the perturbations.  */
+    
     return;
 }
 
@@ -97,6 +100,8 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
     memset(&cameraMsg, 0x0, sizeof(CameraConfigMsg));
     
+    /*! - Update the camera config data no matter if an image is present*/
+    SystemMessaging::GetInstance()->WriteMessage(this->cameraOutID, CurrentSimNanos, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t *>(&cameraMsg), this->moduleID);
     
     cv::Mat imageCV, blurred;
     if (this->saveDir !=""){
@@ -130,8 +135,6 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /*! - Output the saved image */
     SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
     
-    /*! - Output the camera config data */
-    SystemMessaging::GetInstance()->WriteMessage(this->cameraOutID, CurrentSimNanos, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t *>(&cameraMsg), this->moduleID);
     return;
 }
 

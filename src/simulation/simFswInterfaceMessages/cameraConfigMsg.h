@@ -27,6 +27,7 @@
 
 typedef struct {
     int64_t cameraID;          //!< [-]   ID of the camera that took the snapshot*/
+    int isOn; //!<  The camera is taking images at rendering rate if 1, 0 if not*/
     char   parentName[MAX_STRING_LENGTH];  // Name of the parent body to which the camera should be attached
     double fieldOfView;        //!< [rad]   Camera Field of View */
     int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/

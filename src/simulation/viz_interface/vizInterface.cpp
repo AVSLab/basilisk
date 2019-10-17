@@ -679,7 +679,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&request_buffer, requester_socket, 0);
             
             /*! - If the camera is requesting periodic images, request them */
-            if (this->opNavMode > 0 &&  CurrentSimNanos%this->cameraConfigMessage.renderRate == 0){
+            if (this->opNavMode > 0 &&  CurrentSimNanos%this->cameraConfigMessage.renderRate == 0 && this->cameraConfigMessage.isOn == 1){
                 char buffer[10];
                 zmq_recv(requester_socket, buffer, 10, 0);
                 /*! -- Send request */
