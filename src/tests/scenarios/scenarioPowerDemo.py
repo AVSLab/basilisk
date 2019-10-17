@@ -73,7 +73,7 @@
 # powerMonitor.ModelTag = "powerMonitor"
 # powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
 # powerMonitor.storageCapacity = 10.0
-# powerMonitor.storedCharge = 10.0
+# powerMonitor..storedCharge_Init = 10.0
 # powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
 # powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
 # scenarioSim.AddModelToTask(taskName, powerMonitor)
@@ -220,7 +220,7 @@ def run():
     powerMonitor.ModelTag = "powerMonitor"
     powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
     powerMonitor.storageCapacity = 10.0 * 3600.0# Convert from W-hr to Joules
-    powerMonitor.storedCharge = 10.0 * 3600.0 # Convert from W-Hr to Joules
+    powerMonitor.storedCharge_Init = 10.0 * 3600.0 # Convert from W-Hr to Joules
     powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
     powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
     scenarioSim.AddModelToTask(taskName, powerMonitor)

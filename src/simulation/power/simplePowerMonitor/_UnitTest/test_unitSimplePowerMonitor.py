@@ -66,7 +66,7 @@ def test_storage_limits(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_battery = simplePowerMonitor.SimplePowerMonitor()
-    test_battery.storedCharge = 0
+    test_battery.storedCharge_Init = 0
 
 
     powerMsg1 = simMessages.PowerNodeUsageSimMsg()

@@ -34,6 +34,8 @@ PowerStorageBase::PowerStorageBase()
     this->previousTime = 0;
     this->nodePowerUseMsgNames.clear();
 
+    this->storedCharge_Init = 0;
+
     return;
 }
 
@@ -92,6 +94,7 @@ void PowerStorageBase::CrossInit()
 void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousTime = 0;
+    this->storedCharge = this->storedCharge_Init;
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 

@@ -87,7 +87,7 @@ protected:
 public:
     std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of power node input message names
     std::string batPowerOutMsgName; //!< Vector of message names to be written out by the battery
-    double storedCharge; //!< [W-s] Stored charge in Watt-hours.
+    double storedCharge_Init;//!< [W-s] Initial stored charge set by the user. Defaults to 0.
 
 protected:
     std::vector<std::int64_t> nodePowerUseMsgIds;
@@ -96,6 +96,7 @@ protected:
     std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
     double previousTime; //! Previous time used for integration
     double currentTimestep;//! [s] Timestep duration in seconds.
+    double storedCharge; //!< [W-s] Stored charge in Watt-hours.
     double currentPowerSum;//!< [W] Current net power.
     uint64_t outputBufferCount;
 
