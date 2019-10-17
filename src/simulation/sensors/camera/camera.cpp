@@ -29,22 +29,30 @@
 #include <Eigen/Dense>
 #include <string.h>
 #include "camera.h"
-
+#include "architecture/messaging/system_messaging.h"
+#include "utilities/rigidBodyKinematics.h"
+#include "utilities/linearAlgebra.h"
+#include "utilities/astroConstants.h"
 
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
 Camera::Camera()
 {
+    this->OutputBufferCount = 2;
+
     /*! Default values for the camera.  */
-    this->parentName = "spacecraft";
+    strcpy(this->parentName, "spacecraft");
+    this->cameraID = 1;
     this->fieldOfView = 0.7;
-    this->resolution << 512, 512;
+    this->resolution[0]=512;
+    this->resolution[1]=512;
     this->renderRate = 60*1E9;
-    this->sensorSize << 1E-3, 1E-3;
-    this->cameraPos_B.setZero();
-    this->sigma_CB.setZero();
-    this->focalLength = this->sensorSize(0)/2/tan(this->fieldOfView/2.);
-    this->skyBox = "black";
-    
+    v2Set(1E-3, 1E-3, this->sensorSize);
+    v3SetZero(this->cameraPos_B);
+    v3SetZero(this->sigma_CB);
+    this->cameraIsOn = 0;
+    this->focalLength = this->sensorSize[0]/2/tan(this->fieldOfView/2.);
+    strcpy(this->skyBox, "black");
+
     /*! Default values for the perturbations.  */
     
     return;
@@ -57,9 +65,9 @@ Camera::Camera()
 void Camera::SelfInit()
 {
     /*! - Create output message of image */
-    this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->imageOutMsgName,sizeof(CameraImageMsg),this->OutputBufferCount,"CameraImageMsg",moduleID);
+    this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->imageOutMsgName,sizeof(CameraImageMsg),this->OutputBufferCount,"CameraImageMsg",this->moduleID);
     /*! - Create output message for camera */
-    this->cameraOutID = SystemMessaging::GetInstance()->CreateNewMessage(this->cameraOutMsgName,sizeof(CameraConfigMsg),this->OutputBufferCount,"CameraConfigMsg",moduleID);
+    this->cameraOutID = SystemMessaging::GetInstance()->CreateNewMessage(this->cameraOutMsgName,sizeof(CameraConfigMsg),this->OutputBufferCount,"CameraConfigMsg",this->moduleID);
 }
 
 
@@ -70,7 +78,7 @@ void Camera::SelfInit()
 void Camera::CrossInit()
 {
     /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
+    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), this->moduleID);
 }
 
 /*! This is the destructor */
@@ -99,6 +107,19 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     CameraConfigMsg cameraMsg;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
     memset(&cameraMsg, 0x0, sizeof(CameraConfigMsg));
+    
+    /*! - Populate the camera message */
+    cameraMsg.cameraID = this->cameraID;
+    strcpy(cameraMsg.parentName, this->parentName);
+    cameraMsg.fieldOfView = this->fieldOfView;
+    cameraMsg.resolution[0] = this->resolution[0];
+    cameraMsg.resolution[1] = this->resolution[1];
+    cameraMsg.renderRate = this->renderRate;
+    cameraMsg.focalLength = this->focalLength;
+    v2Copy(this->sensorSize, cameraMsg.sensorSize);
+    v3Copy(this->cameraPos_B, cameraMsg.cameraPos_B);
+    v3Copy(this->sigma_CB, cameraMsg.sigma_CB);
+    strcpy(cameraMsg.skyBox, this->skyBox);
     
     /*! - Update the camera config data no matter if an image is present*/
     SystemMessaging::GetInstance()->WriteMessage(this->cameraOutID, CurrentSimNanos, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t *>(&cameraMsg), this->moduleID);

@@ -17,12 +17,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-#
-#   Unit Test Script
-#   Module Name:        HoughCirlces
-#   Author:             Thibaud Teil
-#   Creation Date:      March 13, 2019
-#
+'''
+  Unit Test Script
+  Module Name:        Camera
+  Author:             Thibaud Teil
+  Creation Date:      March 13, 2019
+'''
 
 import pytest
 import sys, os, inspect
@@ -40,17 +40,17 @@ try:
     from PIL import Image, ImageDraw
 except ImportError:
     importErr = True
-    reasonErr = "python Pillow package not installed---can't test HoughCircle module"
+    reasonErr = "python Pillow package not installed---can't test Cameras module"
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
 
 try:
-    from Basilisk.fswAlgorithms import houghCircles
+    from Basilisk.simulation import camera
 except ImportError:
     importErr = True
-    reasonErr = "Hough Circles not built---check OpenCV option"
+    reasonErr = "Camera not built---check OpenCV option"
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -65,13 +65,13 @@ except ImportError:
     ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
+def test_module(show_plots, image, saveImage):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage)
+    [testResults, testMessage] = cameraTest(show_plots, image, saveImage)
     assert testResults < 1, testMessage
 
 
-def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
+def cameraTest(show_plots, image, saveImage):
 
     # Truth values from python
     imagePath = path + '/' + image
@@ -100,23 +100,15 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = houghCircles.HoughCircles()
-    moduleConfig.ModelTag = "houghCircles"
+    moduleConfig = camera.Camera()
+    moduleConfig.ModelTag = "cameras"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
     moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.opnavCirclesOutMsgName = "circles"
-
+    moduleConfig.cameraOutMsgName = "cameraOut"
+    moduleConfig.imageOutMsgName = "out_image"
     moduleConfig.filename = imagePath
-    moduleConfig.expectedCircles = maxCircles
-    moduleConfig.cannyThresh = cannyHigh
-    moduleConfig.voteThresh = cannyLow
-    moduleConfig.houghMinDist = minDist
-    moduleConfig.houghMinRadius = minRad
-    moduleConfig.blurrSize = blur
-    moduleConfig.dpValue = dp
-    moduleConfig.houghMaxRadius = int(input_image.size[0]/1.25)
 
     circles = []
     if image == "mars.png":
@@ -125,7 +117,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
         circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = houghCircles.CameraImageMsg()
+    inputMessageData = camera.CameraImageMsg()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
     unitTestSupport.setMessage(unitTestSim.TotalSim,
@@ -133,8 +125,11 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
                                moduleConfig.imageInMsgName,
                                inputMessageData)
 
+    moduleConfig.cameraIsOn = 1
+    moduleConfig.sigma_CB = [0,0,1]
+
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.imageInMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.cameraOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -148,37 +143,30 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    # pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
-    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", list(range(10*2)))
-    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", list(range(10)))
+    isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
+    pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)
     output_image.paste(input_image)
     draw_result = ImageDraw.Draw(output_image)
 
-    imageProcCircles = []
-    for j in range(len(radii[-1,1:])):
-        if radii[-1,j] > 0:
-            imageProcCircles.append((centers[-1, 2*j+1], centers[-1, 2*j+2], radii[-1, j+1]))
-    for x, y, r in imageProcCircles:
-        draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
-
     # Save output image
     if saveImage:
         output_image.save("result_"+ image)
 
     if show_plots:
-        print(imageProcCircles[0])
         output_image.show()
 
-
     #   print out success message if no error were found
-    for testCircle, refCircle in zip(imageProcCircles, circles):
-        for i in range(3):
-            if np.abs((testCircle[i] - refCircle[i])/refCircle[i])>1:
-                testFailCount+=1
-                testMessages.append("Test failed processing " + image)
+    for i in range(3):
+        if np.abs(pos[-1,i+1] - inputMessageData.sigma_BC[i])>1E-10:
+            testFailCount+=1
+            testMessages.append("Test failed position " + image)
+
+    if np.abs(isOnValues[-1,1] - inputMessageData.isOn)>1E-10:
+        testFailCount+=1
+        testMessages.append("Test failed isOn " + image)
 
 
     # each test method requires a single assert method to be called
@@ -191,4 +179,4 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 # stand-along python script
 #
 if __name__ == "__main__":
-    houghCirclesTest(True, "moons.png",     5,         10,      25,     10,       20,       200,   1, True) # Moon images
+    cameraTest(True, "moons.png",  False) # Moon images

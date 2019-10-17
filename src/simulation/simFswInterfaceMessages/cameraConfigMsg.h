@@ -28,7 +28,7 @@
 typedef struct {
     int64_t cameraID;          //!< [-]   ID of the camera that took the snapshot*/
     int isOn; //!<  The camera is taking images at rendering rate if 1, 0 if not*/
-    char   parentName[MAX_STRING_LENGTH];  // Name of the parent body to which the camera should be attached
+    char parentName[MAX_STRING_LENGTH];  // Name of the parent body to which the camera should be attached
     double fieldOfView;        //!< [rad]   Camera Field of View */
     int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
     uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond */
@@ -36,7 +36,7 @@ typedef struct {
     double sensorSize[2];      //!< [m] Size of the camera sensor-paired with resolution gives you pixel size in mm*/
     double cameraPos_B[3];     //!< [m] Camera position in body frame */
     double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
-    char   skyBox[MAX_STRING_LENGTH]; //!< string containing the star field preference
+    char skyBox[MAX_STRING_LENGTH]; //!< string containing the star field preference
 }CameraConfigMsg;
 
 /*! @} */
