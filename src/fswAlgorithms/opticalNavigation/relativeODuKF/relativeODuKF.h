@@ -100,7 +100,8 @@ typedef struct {
     double qNoise[ODUKF_N_STATES*ODUKF_N_STATES];       //!< [-] process noise matrix
     double sQnoise[ODUKF_N_STATES*ODUKF_N_STATES];      //!< [-] cholesky of Qnoise
     double measNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];      //!< [-] Measurement Noise
-    
+    double noiseSF;       //!< [-] Scale factor for Measurement Noise
+
     int planetIdInit;                    //!< [-] Planet being navigated inital value
     int planetId;                   //!< [-] Planet being navigated as per measurement
     uint32_t firstPassComplete;         //!< [-] Flag to know if first filter update
