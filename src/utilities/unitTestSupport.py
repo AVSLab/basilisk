@@ -335,14 +335,14 @@ def writeTeXSnippet(snippetName, texSnippet, path):
 #   save a python scenario result into the Doxygen image folder
 #
 def saveScenarioFigure(figureName, plt, path, extension = ".svg"):
-    texFileName = path + "/../../../docs/Images/Scenarios/"+figureName+extension
-    if not os.path.exists(os.path.dirname(texFileName)):
+    imgFileName = path + "/../../../docs/Images/Scenarios/"+figureName+extension
+    if not os.path.exists(os.path.dirname(imgFileName)):
         try:
-            os.makedirs(os.path.dirname(texFileName))
+            os.makedirs(os.path.dirname(imgFileName))
         except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
-    plt.savefig(texFileName, transparent=True)
+    plt.savefig(imgFileName, transparent=True)
 
 def saveFigurePDF(figureName, plt, path):
     figFileName = path+figureName+".pdf"
@@ -374,7 +374,7 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
         texFigure.close()
 
         texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
-        plt.savefig(texFileName, transparent=True, loc='')
+        plt.savefig(texFileName, transparent=True)
 
     return
 
