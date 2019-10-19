@@ -17,12 +17,13 @@
 
  */
 #include "simpleBattery.h"
+#include "utilities/bsk_Print.h"
 
-/*! The constructor creates a SimpleBattery instance with zero stored charge and a capacity of -1.*/
+/*! The constructor creates a SimpleBattery instance with zero stored charge */
 SimpleBattery::SimpleBattery(){
 
-    this->storageCapacity = -1;
-    this->storedCharge = 0;
+    this->storageCapacity = -1.0;
+    this->storedCharge = 0.0;
     return;
 }
 
@@ -30,6 +31,17 @@ SimpleBattery::~SimpleBattery(){
 
     return;
 }
+
+/*! custom reset function.
+ */
+void SimpleBattery::customReset(uint64_t CurrentClock) {
+
+    if (this->storageCapacity <= 0.0) {
+        BSK_PRINT(MSG_ERROR, "The storageCapacity variable must be set to a positive value.");
+    }
+    return;
+}
+
 
 /*! This method integrates the current net power, and checks to see whether the integrated power falls between 0 and the battery's storageCapacity.
  @param *msg:  pointer to a PowerStorageStatusSimMsg instance

@@ -31,16 +31,43 @@
 
 /*! @brief Power storage module that considers net power up to some capacity.
 
- The SimpleBattery class is a minimal model of battery functionality that considers:
-1. Integrated net input power of the attached modules
-2. The battery's maximum storage capacity as defined by the storageCapacity attribute.
-Integration of the net input power is performed with a simple Euler method. 
+ ## Module Purpose
+ ### Executive Summary
+    The SimpleBattery class is a minimal model of battery functionality that considers:
+    1. Integrated net input power of the attached modules
+    2. The battery's maximum storage capacity as defined by the `storageCapacity` attribute.
+    Integration of the net input power is performed with a simple Euler method.
+    \f[
+         W_{stored} = \dot{W}_{net} (t_{current} - t_{previous})
+    \f]
 
-To set up this module, users must create a simpleBattery instance, set its storageCapacity 
-attribute, and attach one or more PowerNodeUsageSimMsg instances to it using the
-addNodeToStorage() method. 
+ ### Module Assumptions and Limitations
+    See PowerStorageBase class for inherited assumption and limitations.  The SimpleBattery class assumes that the net energy storage amount is a fixed value.
 
-For more information on how to set up and use this module, see the simple power system example: @ref scenarioSimplePowerDemo
+ ### Message Connection Descriptions
+    This module only uses the input and output messages of the PowerStorageBase base class.
+
+ ## User Guide
+    To set up this module users must create a simpleBattery instance.
+    ~~~~~~~~~~{.py}
+    battery = simpleBattery.SimpleBattery()
+    battery.ModelTag = "batteryModel"
+    ~~~~~~~~~~
+
+    In addition to the variables that must be set for the PowerNodeBase base class, this module requires the `storageCapacity` attribute to be specified.  The total power stored in the battery will be limited to not exceed this capacity value.
+    ~~~~~~~~~~{.py}
+    battery.storageCapacity = 10.0 # Given in Joules or Watt-seconds
+    ~~~~~~~~~~
+    The next step is to attach one or more PowerNodeUsageSimMsg instances to it using the `addNodeToStorage()` method.
+    ~~~~~~~~~~{.py}
+    battery.addPowerNodeToModel("msg name")
+    ~~~~~~~~~~
+    The final step is to specify the output message name.
+    ~~~~~~~~~~{.py}
+    battery.batPowerOutMsgName= "outMsgName"
+    ~~~~~~~~~~
+
+    For more information on how to set up and use this module, see the simple power system example: @ref scenarioSimplePowerDemo
 
  */
 
@@ -51,6 +78,7 @@ public:
     ~SimpleBattery();
 
 private:
+    void customReset(uint64_t CurrentClock);
     void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
 
 public:
@@ -58,5 +86,6 @@ public:
 
 };
 
+/*! @} */
 
 #endif //BASILISK_SIMPLEBATTERY_H
