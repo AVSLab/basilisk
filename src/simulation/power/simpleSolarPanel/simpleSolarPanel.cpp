@@ -82,6 +82,7 @@ void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
 
     return;
 }
+
 bool SimpleSolarPanel::customReadMessages()
 {
     SingleMessageHeader localHeader;
@@ -107,7 +108,7 @@ bool SimpleSolarPanel::customReadMessages()
     }
     //! - Read in optional sun eclipse input message 
     if(this->sunEclipseInMsgID >= 0) {
-        EclipseSimMsg sunVisibilityFactor;          //!< sun visiblity input message
+        EclipseSimMsg sunVisibilityFactor;          // sun visiblity input message
         SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgID, &localHeader,
                                                     sizeof(EclipseSimMsg),
                                                     reinterpret_cast<uint8_t*> (&sunVisibilityFactor),
