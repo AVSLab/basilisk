@@ -23,8 +23,8 @@ SimpleSolarPanel::SimpleSolarPanel(){
     this->stateInMsgID = -1;
     this->sunEclipseInMsgID = -1;
 
-    this->panelArea = 0;
-    this->panelEfficiency = 0;
+    this->panelArea = -1;
+    this->panelEfficiency = -1;
     this->nHat_B.setZero();
 
     this->sunInMsgName = "";
@@ -79,6 +79,18 @@ void SimpleSolarPanel::customCrossInit(){
 void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
 
     this->shadowFactor = 1.0;
+
+    if (this->panelArea < 0.0) {
+        BSK_PRINT(MSG_ERROR, "The panelArea must be a positive value");
+    }
+    if (this->panelEfficiency < 0.0) {
+        BSK_PRINT(MSG_ERROR, "The panelEfficiency variable must be a positive value");
+    }
+    if (this->nHat_B.norm() > 0.1) {
+        this->nHat_B.normalize();
+    } else {
+        BSK_PRINT(MSG_ERROR, "The nHat_B must be set to a non-zero vector");
+    }
 
     return;
 }
