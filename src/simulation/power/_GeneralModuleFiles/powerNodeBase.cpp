@@ -23,7 +23,7 @@
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "powerNodeBase.h"
-
+#include <string.h>
 
 /*! This method initializes the messaging parameters to either empty strings for message names or -1 for message IDs.
  @return void
@@ -99,7 +99,7 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
     SystemMessaging::GetInstance()->WriteMessage(this->nodePowerOutMsgId,
                                                  CurrentClock,
                                                  sizeof(PowerNodeUsageSimMsg),
-                                                 reinterpret_cast<uint8_t*>(&nodePowerMsg),
+                                                 reinterpret_cast<uint8_t*>(&(this->nodePowerMsg)),
                                                          moduleID);
 
     //! - call the custom method to perform additional output message writing
@@ -167,7 +167,11 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
     if(this->readMessages())
     {
         this->computePowerStatus(CurrentSimNanos*NANO2SEC);
+    } else {
+        /* if the read was not successful then zero the output message */
+        memset(&(this->nodePowerMsg), 0x0, sizeof(PowerNodeUsageSimMsg));
     }
+
     this->writeMessages(CurrentSimNanos);
 
     return;

@@ -116,7 +116,7 @@ void PowerStorageBase::writeMessages(uint64_t CurrentClock)
     SystemMessaging::GetInstance()->WriteMessage(this->batPowerOutMsgId,
                                                      CurrentClock,
                                                      sizeof(PowerStorageStatusSimMsg),
-                                                     reinterpret_cast<uint8_t*> (&storageStatusMsg),
+                                                     reinterpret_cast<uint8_t*> (&(this->storageStatusMsg)),
                                                      moduleID);
 
     //! - call the custom method to perform additional output message writing
@@ -199,10 +199,13 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
  */
 void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
 {
-    //! - update local neutral density information
+    //! - update net power information
     if(this->readMessages())
     {
         this->integratePowerStatus(currentSimNanos*NANO2SEC);
+    } else {
+        /* zero the output message if no input messages were received. */
+        memset(&(this->storageStatusMsg), 0x0, sizeof(PowerStorageStatusSimMsg));
     }
 
     //! - write out neutral density message
