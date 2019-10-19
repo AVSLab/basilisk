@@ -70,6 +70,7 @@ public:
     ~SimpleSolarPanel();
     void customCrossInit();
     bool customReadMessages();
+    void customReset(uint64_t CurrentClock);
     void setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, double panelEfficiency);
 
 private:
@@ -93,7 +94,7 @@ private:
     int64_t sunEclipseInMsgID;                  //!< [-] Connect to input sun eclipse message
     SpicePlanetStateSimMsg sunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg stateCurrent;           //!< [-] Current SSBI-relative state
-    EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
+    double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
 
 
 };

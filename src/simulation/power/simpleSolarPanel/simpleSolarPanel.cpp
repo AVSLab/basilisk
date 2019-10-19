@@ -31,7 +31,7 @@ SimpleSolarPanel::SimpleSolarPanel(){
     this->stateInMsgName = "";
     this->sunEclipseInMsgName = "";
 
-    this->sunVisibilityFactor.shadowFactor = 1;
+    this->shadowFactor = 1;
 
     return;
 
@@ -43,7 +43,7 @@ SimpleSolarPanel::~SimpleSolarPanel(){
 }
 
 void SimpleSolarPanel::customCrossInit(){
-//! - If we have a valid sun msg ID, subscribe to it
+    //! - If we have a valid sun msg ID, subscribe to it
     if(this->sunInMsgName.length() > 0)
     {
         this->sunInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->sunInMsgName,
@@ -51,8 +51,9 @@ void SimpleSolarPanel::customCrossInit(){
                                                            moduleID);
     }
     else{
-        BSK_PRINT(MSG_ERROR,"Error; SimpleSolarPanel did not have sunInMsgName specified.")
+        BSK_PRINT(MSG_ERROR,"SimpleSolarPanel did not have sunInMsgName specified.")
     }
+
     //! - If we have a state in msg name, subscribe to it
     if(this->stateInMsgName.length() > 0)
     {
@@ -61,19 +62,26 @@ void SimpleSolarPanel::customCrossInit(){
                                                                               moduleID);
     }
     else{
-        BSK_PRINT(MSG_ERROR,"Error; SimpleSolarPanel did not have stateInMsgName specified.")
+        BSK_PRINT(MSG_ERROR,"SimpleSolarPanel did not have stateInMsgName specified.")
     }
+
+    //! - subscribe to optional sun eclipse message
     if(this->sunEclipseInMsgName.length() > 0) {
         this->sunEclipseInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
                                                                               sizeof(EclipseSimMsg),
                                                                               moduleID);
     }
-    else{
-        BSK_PRINT(MSG_ERROR,"Error; SimpleSolarPanel did not have sunEclipseInMsgName specified.")
-    }
-
 }
 
+
+/*! custom solar panel reset function
+ */
+void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
+
+    this->shadowFactor = 1.0;
+
+    return;
+}
 bool SimpleSolarPanel::customReadMessages()
 {
     SingleMessageHeader localHeader;
@@ -97,14 +105,19 @@ bool SimpleSolarPanel::customReadMessages()
                                                     reinterpret_cast<uint8_t*> (&this->stateCurrent),
                                                     this->moduleID);
     }
+    //! - Read in optional sun eclipse input message 
     if(this->sunEclipseInMsgID >= 0) {
+        EclipseSimMsg sunVisibilityFactor;          //!< sun visiblity input message
         SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgID, &localHeader,
                                                     sizeof(EclipseSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor),
+                                                    reinterpret_cast<uint8_t*> (&sunVisibilityFactor),
                                                     this->moduleID);
+        this->shadowFactor = sunVisibilityFactor.shadowFactor;
     }
     return(true);
 }
+
+
 
 /*! This method allows for solar panel parameters to be set.
  @param nHat_B: The normal vector of the solar panel expressed in the spacecraft body frame.
@@ -165,7 +178,7 @@ void SimpleSolarPanel::computeSunData()
 void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg) {
 
     this->computeSunData();
-    double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->sunVisibilityFactor.shadowFactor;
+    double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->shadowFactor;
     powerUsageSimMsg->netPower = sunPowerFactor * this->projectedArea * this->panelEfficiency;
 
     return;
