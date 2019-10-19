@@ -90,14 +90,13 @@ private:
 public:
     std::string sunInMsgName;                    //!< [-] Message name for sun data
     std::string stateInMsgName;                  //!< [-] Message name for spacecraft state 
-    std::string cssDataOutMsgName;                  //!< [-] Message name for CSS output data 
     std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
     double panelArea;                           //!< [m^2] Panel area in meters squared.
     double panelEfficiency;                     //!< [W/W] Panel efficiency in converting solar energy to electrical energy.
     Eigen::Vector3d nHat_B;                     //!< [-] Panel normal unit vector relative to the spacecraft body frame.
-    Eigen::Vector3d sHat_B;                     //!< [-] Sun direction unit vector relative to the spacecraft body frame.
 
 private:
+    Eigen::Vector3d sHat_B;                     //!< [-] Sun direction unit vector relative to the spacecraft body frame.
     double projectedArea;                        //!< [m^2] Area of the panel projected along the sun vector.
     double sunDistanceFactor;                   //!< [-] Scale factor on the base solar power computed using the true s/c-sun distance.
     int64_t sunInMsgID;                         //!< [-] Connect to input time message
