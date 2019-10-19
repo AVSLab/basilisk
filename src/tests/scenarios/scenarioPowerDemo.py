@@ -57,7 +57,7 @@
 # solarPanel.ModelTag = "solarPanel"
 # solarPanel.stateInMsgName = scObject.scStateOutMsgName
 # solarPanel.sunEclipseInMsgName = "eclipse_data_0"
-# solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.06, 0.20)
+# solarPanel.setPanelParameters([1,0,0], 0.06, 0.20)
 # solarPanel.nodePowerOutMsgName = "panelPowerMsg"
 # scenarioSim.AddModelToTask(taskName, solarPanel)
 #
@@ -72,8 +72,8 @@
 # powerMonitor = simpleBattery.SimpleBattery()
 # powerMonitor.ModelTag = "powerMonitor"
 # powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
-# powerMonitor.storageCapacity = 10.0
-# powerMonitor..storedCharge_Init = 10.0
+# powerMonitor.storageCapacity = 10.0 * 3600.0# Convert from W-hr to Joules
+# powerMonitor..storedCharge_Init = 10.0 * 3600.0# Convert from W-hr to Joules
 # powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
 # powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
 # scenarioSim.AddModelToTask(taskName, powerMonitor)
@@ -94,15 +94,15 @@
 # storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
 # netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
 # ~~~~~~~~~~~~~
-
 # To run the scenario , call the python script through
 #
 #       python3 scenarioPowerDemo.py
 #
-# When the simulation completes, one plot is shown to demonstrate the panel's attitude and orbit dependence, the net power generated,
-# the stored power, and the power consumed. An initial rise in net power from the panel facing towards the sun is cut short as the spacecraft enters eclipse;
-# as it exits, the stored charge of the battery begins to rebuild.
-# ![Power System Response](Images/Scenarios/powerDemo.png "Power history")
+# When the simulation completes, one plot is shown to demonstrate the panel's attitude and orbit dependence, \
+# the net power generated, the stored power, and the power consumed. An initial rise in net power from the panel \
+# facing towards the sun is cut short as the spacecraft enters eclipse; as it exits, the stored charge of the \
+# battery begins to rebuild.
+# ![Power System Response](Images/Scenarios/scenario_powerDemo.svg "Power history")
 ## @}
 import os, inspect
 import numpy as np
@@ -261,7 +261,9 @@ def run():
     tvec = tvec * macros.NANO2HOUR
 
     #   Plot the power states
-    fig = plt.figure()
+    figureList = {}
+    plt.close("all")  # clears out plots from earlier test runs
+    plt.figure(1)
     plt.plot(tvec,storageData[:,1]/3600.,label='Stored Power (W-Hr)')
     plt.plot(tvec,netData[:,1],label='Net Power (W)')
     plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
@@ -271,7 +273,10 @@ def run():
     plt.grid(True)
     plt.legend()
 
-    return
+    pltName = "scenario_powerDemo"
+    figureList[pltName] = plt.figure(1)
+
+    return figureList
 
 #
 # This statement below ensures that the unitTestScript can be run as a

@@ -19,6 +19,7 @@
 '''
 
 import sys, os, inspect
+from Basilisk.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -36,10 +37,16 @@ def test_simplePowerDemo(show_plots):
 
     # each test method requires a single assert method to be called
     try:
-        scenarioPowerDemo.run()
+        figureList = scenarioPowerDemo.run()
+
+        # save the figures to the Doxygen scenario images folder
+        for pltName, plt in list(figureList.items()):
+            unitTestSupport.saveScenarioFigure(pltName, plt, path)
+
     except  OSError as err:
         testFailCount += 1
         testMessages.append("Power tutorial failed.")
+
 
 
     assert testFailCount < 1, testMessages
