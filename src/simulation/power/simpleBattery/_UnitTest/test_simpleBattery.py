@@ -69,9 +69,9 @@ def test_storage_limits(show_plots):
     test_battery.storageCapacity = 10. #   10 W-s capacity.
 
     powerMsg1 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg1.netPower_W = 5.0
+    powerMsg1.netPower = 5.0
     powerMsg2 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg2.netPower_W = 5.0
+    powerMsg2.netPower = 5.0
 
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,

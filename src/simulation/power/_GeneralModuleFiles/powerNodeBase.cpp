@@ -151,7 +151,7 @@ void PowerNodeBase::computePowerStatus(double currentTime)
     }
     else
     {
-        this->nodePowerMsg.netPower_W = 0.0;
+        memset(&(this->nodePowerMsg), 0x0, sizeof(PowerNodeUsageSimMsg));
     }
 
     return;

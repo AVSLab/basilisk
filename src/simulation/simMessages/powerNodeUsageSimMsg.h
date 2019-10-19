@@ -29,6 +29,6 @@
 
 
 typedef struct{
-    double netPower_W; //!< [W] Power usage by the message writer; positive for sources, negative for sinks
+    double netPower; //!< [W] Power usage by the message writer; positive for sources, negative for sinks
 }PowerNodeUsageSimMsg;
 #endif //BASILISK_POWERNODEUSAGESIMMSG_H

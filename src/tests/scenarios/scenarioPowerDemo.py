@@ -89,8 +89,8 @@
 # ...Sim Execution...
 #
 # # Pull the logged message attributes that we want
-# supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower_W")
-# sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
+# supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower")
+# sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower")
 # storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
 # netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
 # ~~~~~~~~~~~~~
@@ -247,8 +247,8 @@ def run():
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower_W")
-    sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
+    supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower")
+    sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower")
     storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
     netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
 

@@ -39,7 +39,7 @@ SimplePowerSink::~SimplePowerSink(){
 void SimplePowerSink::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
 
 
-    powerUsageSimMsg->netPower_W = this->nodePowerOut;
+    powerUsageSimMsg->netPower = this->nodePowerOut;
 
     return;
 }

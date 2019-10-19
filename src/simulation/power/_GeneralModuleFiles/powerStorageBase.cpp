@@ -173,7 +173,7 @@ double PowerStorageBase::sumAllInputs(){
     std::vector<PowerNodeUsageSimMsg>::iterator it;
     for(it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
 
-        currentSum += (*it).netPower_W;
+        currentSum += (*it).netPower;
     }
 
     return currentSum;

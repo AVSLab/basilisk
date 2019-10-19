@@ -125,7 +125,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     unitTestSim.ExecuteSimulation()
 
 
-    powerData = unitTestSim.pullMessageLogData("panelMsg.netPower_W")
+    powerData = unitTestSim.pullMessageLogData("panelMsg.netPower")
 
     tol=1e-7
 

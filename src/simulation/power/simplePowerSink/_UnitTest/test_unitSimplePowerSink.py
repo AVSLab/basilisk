@@ -85,7 +85,7 @@ def test_default():
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    drawData = unitTestSim.pullMessageLogData(testModule.nodePowerOutMsgName + ".netPower_W")
+    drawData = unitTestSim.pullMessageLogData(testModule.nodePowerOutMsgName + ".netPower")
 
     # compare the module results to the truth values
     accuracy = 1e-16
@@ -147,7 +147,7 @@ def test_status():
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    drawData = unitTestSim.pullMessageLogData(testModule.nodePowerOutMsgName + ".netPower_W")
+    drawData = unitTestSim.pullMessageLogData(testModule.nodePowerOutMsgName + ".netPower")
 
     # compare the module results to the truth values
     accuracy = 1e-16

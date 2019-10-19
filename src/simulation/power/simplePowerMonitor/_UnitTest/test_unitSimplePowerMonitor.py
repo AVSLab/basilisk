@@ -70,9 +70,9 @@ def test_storage_limits(show_plots):
 
 
     powerMsg1 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg1.netPower_W = 5.0
+    powerMsg1.netPower = 5.0
     powerMsg2 = simMessages.PowerNodeUsageSimMsg()
-    powerMsg2.netPower_W = 5.0
+    powerMsg2.netPower = 5.0
 
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
