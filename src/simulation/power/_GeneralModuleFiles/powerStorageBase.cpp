@@ -34,7 +34,8 @@ PowerStorageBase::PowerStorageBase()
     this->previousTime = 0;
     this->nodePowerUseMsgNames.clear();
 
-    this->storedCharge_Init = 0;
+    this->storedCharge = 0.0;
+    this->storedCharge_Init = 0.0;
 
     return;
 }
@@ -94,7 +95,12 @@ void PowerStorageBase::CrossInit()
 void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousTime = 0;
+    if (this->storedCharge_Init >= 0.0) {
     this->storedCharge = this->storedCharge_Init;
+    } else {
+        BSK_PRINT(MSG_ERROR, "The storedCharge_Init variable must be set to a non-negative value.");
+    }
+
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
@@ -181,7 +187,7 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
     this->currentTimestep = currentTime - this->previousTime;
     //! - loop over all the power nodes and sum their contributions
     this->currentPowerSum = this->sumAllInputs();
-    this->evaluateBatteryModel(&(storageStatusMsg)); // Computes the battery charge status, if applicable.
+    this->evaluateBatteryModel(&(this->storageStatusMsg)); // Computes the battery charge status, if applicable.
     this->previousTime = currentTime;
     return;
 }
