@@ -23,7 +23,6 @@
 /*! The constructor creates a SimplePowerMonitor instance with zero stored charge and a capacity of -1.*/
 SimplePowerMonitor::SimplePowerMonitor(){
 
-    this->storageCapacity = -1;
     this->storedCharge = 0;
     return;
 }
@@ -39,7 +38,7 @@ SimplePowerMonitor::~SimplePowerMonitor(){
 void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
 
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
-    msg->storageCapacity = this->storageCapacity;
+    msg->storageCapacity = -1.0;
     msg->currentNetPower = this->currentPowerSum;
     msg->storageLevel = this->storedCharge;
     return;
