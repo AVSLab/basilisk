@@ -13,7 +13,7 @@ This documents discusses the various Cmake build options that can be
 used when compiling Basilisk. These build options can be set via the GUI
 Cmake program or specified via the command line.
 
-.. image:: ../_images/doc/cmake-no-use.png
+.. image:: ../_images/static/cmake-no-use.png
    :align: center
 
 Optional Cmake Flags
@@ -66,7 +66,7 @@ To include the ``vizInterface`` module that enables saving off and
 communicating with the Vizard Unity based visualization, the two flags
 ``USE_PROTOBUFFERS`` and ``USE_ZMQ`` must be turned on as shown in the
 following CMake GUI screen show. :raw-latex:`\image `html
-Images/doc/cmake-Vizard.png “Screen Shot Showing CMake with Vizard
+Images/static/cmake-Vizard.png “Screen Shot Showing CMake with Vizard
 Settings” width=500px To use the command line ``cmake`` command use the
 regular Basilisk compile tool with the additional arguments:
 

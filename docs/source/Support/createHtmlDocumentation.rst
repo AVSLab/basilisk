@@ -17,7 +17,7 @@ Doxygen Documentation
   page.
 | 
  
- .. image:: ../_images/doc/bskHTML.png
+ .. image:: ../_images/static/bskHTML.png
  	:align: center
  	
 The `Related Pages <http://hanspeterschaub.info/bskHtml/pages.html>`__
@@ -94,4 +94,4 @@ To use the Doxygen GUI tools, open the Doxygen application and select
 ``Run`` tab and press the button ``Run doxygen``. When it completes the
 button ``Show HTML output`` is selectable and will launch the BSK
 documentation landing page in your web browser. :raw-latex:`\image `html
-Images/doc/bskDoxygen.png “macOS Doxgyen GUI” width=80%
+Images/static/bskDoxygen.png “macOS Doxgyen GUI” width=80%

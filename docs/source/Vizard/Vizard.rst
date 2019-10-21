@@ -51,7 +51,7 @@ panel to turn off this plane on start-up and only show it if the program
 is started while pressing the option key. Note that the Vizard screen
 size can be dynamically changed after startup as well.
 
-.. image:: ../_images/doc/vizard-img0.png 
+.. image:: ../_images/static/vizard-img0.png
 	:align: center
 	
 Next Vizard presents a panel where the user can select which simulation
@@ -59,7 +59,7 @@ to visualize. To play back a previously recorded BSK simulation press
 the ``Select`` button and navigate to the binary BSK recording file.
 After a file has been selected press the ``Start Visualization`` button.
 
-.. image:: ../_images/doc/vizard-img2.png 
+.. image:: ../_images/static/vizard-img2.png
 	:align: center
 	
 View Modes 
@@ -109,7 +109,7 @@ If Reaction Wheels or RWs are modeled, then a RW panel can be opened
 from within the ``Actuator`` menu bar item. Here the RW wheel speeds and
 motor torques are shown. 
 
-.. image:: ../_images/doc/vizard-ImgRW.png 
+.. image:: ../_images/static/vizard-ImgRW.png
 	:align: center
 	
 Thruster States
@@ -126,7 +126,7 @@ Thruster States
   axes being modeled.
 | 
 
-.. image:: ../_images/doc/vizard-ImgTHR.png 
+.. image:: ../_images/static/vizard-ImgTHR.png
 	:align: center
 
 Vizard Configuration Options
@@ -139,7 +139,7 @@ Vizard Configuration Options
   
 | 
 
-.. image:: ../_images/doc/vizard-imgAxes.png
+.. image:: ../_images/static/vizard-imgAxes.png
 	:align: center
 
 
@@ -153,7 +153,7 @@ lines can be hidden or removed as needed. Some celestial bodies come
 with default colors such as yellow for sun heading, or red for Mars
 heading, etc. However, each line color can be customized as needed.
 
-.. image:: ../_images/doc/vizard-ImgPointing.png 
+.. image:: ../_images/static/vizard-ImgPointing.png
 	:align: center
 
 Add Keep Out/In Cone
@@ -167,7 +167,7 @@ sun (keep in cone). If the cone in/out condition is not triggered, then
 the cone is opaque. If the in/out condition is triggered, then the cone
 becomes solid. 
 
-.. image:: ../_images/doc/vizard-ImgCones.png
+.. image:: ../_images/static/vizard-ImgCones.png
 	:align: center
 	
 ``Camera`` Menu Item
@@ -184,7 +184,7 @@ grab a screen shot if needed. The user can select relative to which
 planet the camera should point, and if the camera should point along
 orbit axis, along track or orbit normal. 
 
-.. image:: ../_images/doc/vizard-imgCamera1.png 
+.. image:: ../_images/static/vizard-imgCamera1.png
 	:align: center
 	
 Inertial Camera
@@ -194,7 +194,7 @@ Up to two custom views can be generated that look out of the spacecraft
 +/- x-, y- and z-axis. Again the field of view can be configured, and a
 screen grab button is present. 
 
-.. image:: ../_images/doc/vizard-imgCamera2.png 
+.. image:: ../_images/static/vizard-imgCamera2.png
 	:align: center
 	
 ``Skybox`` Menu Item
@@ -204,6 +204,6 @@ screen grab button is present.
   but less realistic.
 | 
 
-.. image:: ../_images/doc/vizard-img3.png
+.. image:: ../_images/static/vizard-img3.png
 	:align: center
     

@@ -258,7 +258,7 @@ built as follows.
 4. Copy the project url (omit ``git clone``) from the bitbucket clone
    panel 
    
-   .. image:: ../_images/doc/bitbucket-clone-panel.png
+   .. image:: ../_images/static/bitbucket-clone-panel.png
       :align: center
       :scale: 35%
 		
@@ -268,7 +268,7 @@ built as follows.
    (without ``.git`` on the end), and select ``develop`` branch to pull
    the latest code. 
    
-   .. image:: ../_images/doc/sourcetree-clone-panel.png
+   .. image:: ../_images/static/sourcetree-clone-panel.png
    	   :align: center
    	   :scale: 35%
 
@@ -301,7 +301,7 @@ build instructions on :raw-latex:`\ref `FAQ.
 
 This launches the application with knowledge of the ``conan`` paths. To
 use the Cmake.app GUI to create the build files :raw-latex:`\image `html
-Images/doc/CMake-Options.png width=489px \* Click on browse Source, and
+Images/static/CMake-Options.png width=489px \* Click on browse Source, and
 select the source directory, the Basilisk repository that you just
 cloned \* Browse and select the build directory (``dist3/`` or
 ``dist``). If this directory does not exist, create it first. \* Make
@@ -350,7 +350,7 @@ Release depending on your desired config.
 
    -  The source code should appear and be ready for use
    -  
-      .. image:: ../_images/doc/256564102-xcode.png
+      .. image:: ../_images/static/256564102-xcode.png
          :align: center
          :scale: 35%
 

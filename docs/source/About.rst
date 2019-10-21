@@ -10,7 +10,7 @@ About
 ..
 
 
-.. image:: _images/basiliskLogo.png
+.. image:: _images/static/Basilisk-Logo.png
    :align: center
    :scale: 50 %
 
@@ -42,7 +42,7 @@ research modeling the orbit and attitue of complex spacecraft systems,
 as well as sophisticated mission-specific vehicle simulations that
 include hardware-in-the-loop scenarios.
 
-.. image:: _images/bskImg1.png
+.. image:: _images/static/bskImg1.png
    :align: center
    :scale: 50 %
    

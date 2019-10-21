@@ -73,11 +73,11 @@
  ### Figures
     To include figures, you must copy the web compatible image (jpg, png, svg) to the `docs/Images/doc` folder, preferably into a module specific sub-folder.  This keeps the modules images grouped within this sub-folder. For example, you can use code such as
 
-    `\image html Images/doc/fswTemplateModule/Fig1.jpg "Sample Figure Illustration" width=500px`
+    `\image html Images/static/fswTemplateModule/Fig1.jpg "Sample Figure Illustration" width=500px`
 
     to generate the image such as
 
-    \image html Images/doc/fswTemplateModule/Fig1.jpg "Sample Figure Illustration" width=500px
+    \image html Images/static/fswTemplateModule/Fig1.jpg "Sample Figure Illustration" width=500px
 
     Note that with pixelated figures providing a width value that is at least half that of the actual images the figure will look good even on a high resolution display.
 

@@ -357,7 +357,7 @@ The following tale illustrates the arguments for the
 |                   |         |         |              | point at    |
 +-------------------+---------+---------+--------------+-------------+
 
-:raw-latex:`\image `html Images/doc/vizard-ImgCustomCam.png
+:raw-latex:`\image `html Images/static/vizard-ImgCustomCam.png
 “Illustration of custom camera panel Panel” width=400px
 
 It is also possible to create a custom camera view which points in an

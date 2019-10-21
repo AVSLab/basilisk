@@ -15,7 +15,7 @@ operating system.
    Interpreter, click the ellipsis near the interpreter drop down and
    select more, click the paths icon, the right most icon shown
    
-   :image ../images/doc/FAQmacOS1.png 
+   :image ../images/static/FAQmacOS1.png
    		:align: center 
    
    Add the

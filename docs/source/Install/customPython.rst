@@ -40,13 +40,13 @@ Cmake.
 The following screen shots are taken on macOS using the CMake.app
 application:
 
-.. image:: ../_images/doc/customPython1.png 
+.. image:: ../_images/static/customPython1.png
    :align: center
 
-.. image:: ../_images/doc/customPython2.png
+.. image:: ../_images/static/customPython2.png
    :align: center
 
-.. image:: ../_images/doc/customPython3.png
+.. image:: ../_images/static/customPython3.png
    :align: center
 
 Using the Command Line CMake Command
