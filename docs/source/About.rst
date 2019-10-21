@@ -19,7 +19,7 @@ Python scripting
 **License:** `ISC Open Source
 License <https://en.wikipedia.org/wiki/ISC_license>`__
 
-**Status:** Limited public alpha release
+**Status:** Public open-source release
 
 --------------
 
