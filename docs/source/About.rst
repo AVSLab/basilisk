@@ -10,8 +10,9 @@ About
 ..
 
 
-.. image:: _images/Basilisk-Logo.jpg
+.. image:: _images/basiliskLogo.png
    :align: center
+   :scale: 50 %
 
 **Description:** Modular C/C++ astrodynamics simulation framework with
 Python scripting
@@ -43,6 +44,7 @@ include hardware-in-the-loop scenarios.
 
 .. image:: _images/bskImg1.png
    :align: center
+   :scale: 50 %
    
 A companion Visualization program is called Vizard.
 This stand-alone program is based on the Unity rendering engine and can
