@@ -73,30 +73,17 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
  the output message. */
 void Magnetometer::SelfInit()
 {
-	//! - Create the output message sized to the output message size
-	if (this->tamDataOutMsgName != "") {
-		this->tamDataOutMsgID = SystemMessaging::GetInstance()->
-			CreateNewMessage(this->tamDataOutMsgName, sizeof(TAMDataSimMsg),
-				this->outputBufferCount, "TAMDataSimMsg", this->moduleID);
-	}
-	else {
-		BSK_PRINT(MSG_ERROR, "Magnetometer message name (tamDataOutMsgName) is empty.");
-	}
-	// Set noise model and saturation bounds using default or user defined variables
-	Eigen::Matrix3d idm3d, nMatrix;
-	Eigen::MatrixXd satBounds;
-	this->noiseModel.setUpperBounds(this->walkBounds);	
-	idm3d.setIdentity(3, 3);
-	nMatrix = this->senNoiseStd * 1.5 * idm3d;
-	this->noiseModel.setNoiseMatrix(nMatrix);	
-	satBounds.resize(this->numStates, 2);
-	satBounds(0, 0) = this->minOutput;
-	satBounds(0, 1) = this->maxOutput;
-	satBounds(1, 0) = this->minOutput;
-	satBounds(1, 1) = this->maxOutput;
-	satBounds(2, 0) = this->minOutput;
-	satBounds(2, 1) = this->maxOutput;
-	this->saturateUtility.setBounds(satBounds);
+    //! - Create the output message sized to the output message size
+    if (this->tamDataOutMsgName != "") {
+        this->tamDataOutMsgID = SystemMessaging::GetInstance()->
+            CreateNewMessage(this->tamDataOutMsgName, sizeof(TAMDataSimMsg),
+                this->outputBufferCount, "TAMDataSimMsg", this->moduleID);
+    }
+    else {
+        BSK_PRINT(MSG_ERROR, "Magnetometer message name (tamDataOutMsgName) is empty.");
+    }
+
+    return;
 }
 
 /*! This method simply calls the LinkMessages method to ensure that input messages
@@ -232,17 +219,17 @@ void Magnetometer::writeOutputMessages(uint64_t Clock)
  @param CurrentSimNanos The current simulation time from the architecture */
 void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
 {
-	//! - Read the inputs
-	this->readInputMessages();
-	//! - Get magnetic field vector
-	this->computeMagData();
-	//! - Compute true output
-	this->computeTrueOutput();
-	//! - Apply any set errors
-	this->applySensorErrors();
-	//! - Apply saturation
-	this->applySaturation();
-	//! - Write output data
-	this->writeOutputMessages(CurrentSimNanos);
+    //! - Read the inputs
+    this->readInputMessages();
+    //! - Get magnetic field vector
+    this->computeMagData();
+    //! - Compute true output
+    this->computeTrueOutput();
+    //! - Apply any set errors
+    this->applySensorErrors();
+    //! - Apply saturation
+    this->applySaturation();
+    //! - Write output data
+    this->writeOutputMessages(CurrentSimNanos);
 }
 
