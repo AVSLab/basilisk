@@ -65,7 +65,7 @@ def test_storage_limits(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_battery = simpleBattery.SimpleBattery()
-    test_battery.storedCharge_Init = 5.
+    test_battery.storedCharge_Init = -5. #  Charge, in W-s, is initialized negative; should be caught in updateState.
     test_battery.storageCapacity = 10. #   10 W-s capacity.
 
     powerMsg1 = simMessages.PowerNodeUsageSimMsg()
