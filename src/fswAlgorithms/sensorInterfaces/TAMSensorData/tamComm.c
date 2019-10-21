@@ -61,7 +61,18 @@ void CrossInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
     }
 }
 
-/*! This method takes the raw sensor data from the magnetometers and
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param configData The configuration data associated with the guidance module
+ */
+void Reset_tamProcessTelem(TAMConfigData* configData, uint64_t callTime, int64_t moduleID)
+{
+
+	return;
+}
+
+/*! This method takes the sensor data from the magnetometers and
  converts that information to the format used by the TAM nav.
  @return void
  @param configData The configuration data associated with the TAM interface
@@ -74,12 +85,12 @@ void Update_tamProcessTelem(TAMConfigData *configData, uint64_t callTime, int64_
     TAMSensorIntMsg LocalInput;
     ReadMessage(configData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TAMSensorIntMsg), (void*) &LocalInput, moduleID);
-				
-	m33MultV3(RECAST3X3 configData->dcm_BS, LocalInput.TamPlatform,
+	
+	m33MultV3(RECAST3X3 configData->dcm_BS, LocalInput.tam_S,
               configData->LocalOutput.tam_B);	  		 
     				 
 	/*! - Write aggregate output into output message */
-	WriteMessage(configData->OutputMsgID, callTime,	sizeof(TAMSensorIntMsg),
+	WriteMessage(configData->OutputMsgID, callTime,	sizeof(TAMSensorBodyFswMsg),
 		        (void*) & (configData->LocalOutput), moduleID);
     
     return;

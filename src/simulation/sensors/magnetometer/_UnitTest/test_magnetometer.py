@@ -36,93 +36,43 @@ bskPath = path.split('src')[0]
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import magneticFieldWMM
-from Basilisk.simulation import magneticFieldCenteredDipole
 from Basilisk.simulation import magnetometer
 from Basilisk.simulation import simMessages
 from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import simSetPlanetEnvironment
 
-# methods
-def wmmInertial(Bx, By, Bz, phi, long, refPlanetDCM):
-    B_M = np.array([Bx, By, Bz])
-    M2 = rbk.euler2(phi + np.pi / 2.0)
-    M3 = rbk.euler3(-long)
-    PM = np.dot(M3, M2)
-    NM = np.dot(refPlanetDCM.transpose(), PM)
-    magField_N = [np.dot(NM, B_M).tolist()]
-    return magField_N  # nT
-
-def centeredDipole(pos_N, X, refPlanetRadius, refPlanetDCM):
-    radius = np.linalg.norm(pos_N)
-    planetPos_E = refPlanetDCM.dot(pos_N)
-    rHat_E = planetPos_E/radius
-    magField_E = (refPlanetRadius/radius)**3 * (3*rHat_E*np.dot(rHat_E, X)-X)
-    magField_N = [((refPlanetDCM.transpose()).dot(magField_E)).tolist()]
-    return magField_N  # nT
-
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-
-@pytest.mark.parametrize(
-    "show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name",
-    [
-        (False, 0, (0, 0, 0), -1e3, 1e3, "WMM", 1e-10, "cleanwmm"),
-        (False, 0, (1e-6, 1e-6, 1e-5), -1e3, 1e3, "WMM", 1e-10, "biaswmm"),
-        (False, 0, (0, 0, 0), -1e-4, 1e-4, "WMM", 1e-10, "boundwmm"),
-        (False, 300e-9, (0, 0, 0), -1e3, 1e3, "WMM", 1e-6, "noisewmm"),
-        (False, 0, (1e-6, 1e-6, 1e-5), -1e-4, 1e-4, "WMM", 1e-10, "boundbiaswmm"),
-        (False, 300e-9, (0, 0, 0), -1e-4, 1e-4, "WMM", 1e-6, "boundnoisewmm"),
-        (False, 300e-9, (1e-6, 1e-6, 1e-5), -1e3, 1e3, "WMM", 1e-6, "noisebiaswmm"),
-        (False, 300e-9, (1e-6, 1e-6, 1e-5), -1e-4, 1e-4, "WMM", 1e-6, "combinedwmm"),
-        (False, 0, (0, 0, 0), -1e3, 1e3, "CenteredDipole", 1e-10, "cleandipole"),
-        (False, 0, (1e-6, 1e-6, 1e-5), -1e3, 1e3, "CenteredDipole", 1e-10, "biasdipole"),
-        (False, 0, (0, 0, 0), -1e-4, 1e-4, "CenteredDipole", 1e-10, "bounddipole"),
-        (False, 300e-9, (0, 0, 0), -1e3, 1e3, "CenteredDipole", 1e-6, "noisedipole"),
-        (False, 0, (1e-6, 1e-6, 1e-5), -1e-4, 1e-4, "CenteredDipole", 1e-10, "boundbiasdipole"),
-        (False, 300e-9, (0, 0, 0), -1e-4, 1e-4, "CenteredDipole", 1e-6, "boundnoisedipole"),
-        (False, 300e-9, (1e-6, 1e-6, 1e-5), -1e3, 1e3, "CenteredDipole", 1e-6, "noisebiasdipole"),
-        (False, 300e-9, (1e-6, 1e-6, 1e-5), -1e-4, 1e-4, "CenteredDipole", 1e-6, "combineddipole"),
-    ])
+@pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 1e-3)])
+@pytest.mark.parametrize("useBias", [True, False])
+@pytest.mark.parametrize("useMinOut, useMaxOut", [(True, True), (False, False)])
+@pytest.mark.parametrize("useScaleFactor", [True, False])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
+def test_module(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol):
     """
     Validation Test Description
     ---------------------------
     This section describes the specific unit tests conducted on this module. \
     The test contains 16 tests and is located at 'test_magnetometer.py'. \
-    The simulation of the magnetic field truth vector is set up based on two magnetic field model test scripts: \
-    'test_magneticFieldCenteredDipole.py' and \'test_magneticFieldWMM.py'. \
     The success criteria is to match the outputs with the generated truth.
 
     Test Parameters:
     -----------
-    - noiseStd: [double]
-        Defines the standard deviation of the magnetometer measurements for this parameterized unit test
-    - bias: [double]
-        Defines the bias on the magnetometer measurements for this parameterized unit test
-    - minOut: [double]
-        Defines the minimum bound for the measurement saturation
-    - maxOut: [double]
-        Defines the maximum bound for the measurement saturation
-    - magModel: [string]
-        Defines the magnetic field model name for this parameterized unit test
+    - useNoiseStd: [string]
+        Defines if the standard deviation of the magnetometer measurements is used for this parameterized unit test
+    - useBias: [string]
+        Defines if the bias on the magnetometer measurements is used for this parameterized unit test
+    - useMinOut: [string]
+        Defines if the minimum bound for the measurement saturation is used for this parameterized unit test
+    - useMaxOut: [string]
+        Defines if the maximum bound for the measurement saturation is used for this parameterized unit test
+    - useScaleFactor: [string]
+        Defines if the scaling on the measurement is used for this parameterized unit test
     - errTol: [double]
         Defines the error tolerance for this parameterized unit test
-    - name: [string]
-        Defines the name of each test case
 
     Description of Variables Being Tested
     -------------------------------------
-    In this file we are checking the values of the variable:
+    In this file, we are checking the values of the variable:
 
     tamData[3]
 
@@ -131,10 +81,10 @@ def test_module(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, na
         """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name)
+    [testResults, testMessage] = run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol)
     assert testResults < 1, testMessage
 
-def run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
+def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -148,87 +98,78 @@ def run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate_s = 0.01
+    testProcessRate = macros.sec2nano(testProcessRate_s)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    if magModel == 'WMM':
-        # Construct algorithm and associated C++ container
-        magModule = magneticFieldWMM.MagneticFieldWMM()
-        magModule.ModelTag = "WMM"
-        magModule.dataPath = bskPath + '/supportData/MagneticField/'
-        decimalYear = 2015
-        Height = 0
-        Lat = 80
-        Lon = 0
-        BxTrue = 6636.6 / 1e9
-        ByTrue = -451.9 / 1e9
-        BzTrue = 54408.9 / 1e9
-        magModule.epochDateFractionalYear = decimalYear
-        # define the spacecraft locations
-        r0 = (orbitalMotion.REQ_EARTH + Height) * 1000.0  # meters
-        phi = Lat * macros.D2R
-        long = Lon * macros.D2R
-        r0P = np.array([np.cos(phi) * np.cos(long), np.cos(phi) * np.sin(long), np.sin(phi)]) * r0
-        refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))
-        r0N = np.dot(refPlanetDCM.transpose(), r0P)
-    else: # Centered Dipole
-        magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
-        magModule.ModelTag = "CenteredDipole"
-        simSetPlanetEnvironment.centeredDipoleMagField(magModule, "earth")
-        refg10 = magModule.g10
-        refg11 = magModule.g11
-        refh11 = magModule.h11
-        refPlanetRadius = magModule.planetRadius
-        refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))
-        # define the spacecraft locations
-        r0 = 6571 * 1000.0  # meters
-        #
-        #   setup orbit and simulation time
-        oe = orbitalMotion.ClassicElements()
-        mu = 0.3986004415E+15  # meters^3/s^2
-        oe.a = r0
-        oe.e = 0.0
-        oe.i = 45.0 * macros.D2R
-        oe.Omega = 30.0 * macros.D2R
-        oe.omega = 120.0 * macros.D2R
-        oe.f = 0.0 * macros.D2R
-        r0N, v0N = orbitalMotion.elem2rv(mu, oe)
-
-    planetPosition = np.array([0.0, 0.0, 0.0])
-    # add spacecraft to environment model
-    scStateMsgName = "sc_state"
-    magModule.addSpacecraftToModel(scStateMsgName)
-    unitTestSim.AddModelToTask(unitTaskName, magModule)
-
     # Construct algorithm and associated C++ container
-    yaw = 0.7854  # should be given as parameter [rad]
-    pitch = 1.0  # [rad]
-    roll = 0.1  # [rad]
     testModule = magnetometer.Magnetometer()
     testModule.ModelTag = "TAM_sensor"
-    testModule.scaleFactor = 1.0
     testModule.tamDataOutMsgName = "TAM_output"
-    testModule.senNoiseStd = noiseStd
-    testModule.senBias = bias  # Tesla
-    testModule.minOutput = minOut
-    testModule.maxOutput = maxOut
-    testModule.setBodyToSensorDCM(yaw, pitch, roll)
+    NoiseStd = 3e-9  # Tesla
+    bias = [1e-6, 1e-6, 1e-5]  # Tesla
+    minOut = -1e-4  # Tesla
+    maxOut = 1e-4  # Tesla
+
+    if useNoiseStd:
+        testModule.senNoiseStd = NoiseStd
+    if useBias:
+        testModule.senBias = bias
+    if useScaleFactor:
+        testModule.scaleFactor = 2
+    if useMinOut & useMaxOut:
+        testModule.minOutput = minOut
+        testModule.maxOutput = maxOut
+
+    # Add module to the task
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
-    # create the input messages
-    scStateMsg = simMessages.SCPlusStatesSimMsg()  # Create a structure for the input message
-    scStateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
+    # Set-up fake magnetic field
+    testModule.magIntMsgName = "True magnetic field"
+    magFieldMsg = simMessages.MagneticFieldSimMsg()
+    trueMagField = [1e-5, 2e-5, 1.5e-5]  # [T] true magnetic field outputs in inertial frame
+    magFieldMsg.magField_N = trueMagField
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
-                               scStateMsgName,
-                               scStateMsg)
-    testModule.stateIntMsgName = scStateMsgName
+                               testModule.magIntMsgName,
+                               magFieldMsg)
+    # Set-up fake attitude
+    satelliteStateMsg = simMessages.SCPlusStatesSimMsg()
+    angles = np.linspace(0., 2 * np.pi, 59000)
+    sigmas = np.zeros(len(angles))
+    for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
+        sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
+        satelliteStateMsg.sigma_BN = [0.3, 0.2, sigmas[i]]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               testModule.stateIntMsgName,
+                               satelliteStateMsg)
+    dcm_BN = rbk.MRP2C(satelliteStateMsg.sigma_BN)
+
+    # Sensor set-up
+    yaw = 0.7854  # [rad]
+    pitch = 1.0  # [rad]
+    roll = 0.1  # [rad]
+    dcm_SB_py = rbk.euler3212C([yaw, pitch, roll])  # for checking the dcm_SB
+    dcm_SB = testModule.setBodyToSensorDCM(yaw, pitch, roll)
+    dcm_SN = np.dot(dcm_SB, dcm_BN)
+    trueTam_S =  np.dot(dcm_SN, trueMagField)
+
+    if useBias:
+        trueTam_S += bias  # Tesla
+    if useScaleFactor:
+        trueTam_S *= 2
+
+    for i in range(len(trueTam_S)):
+        if useMinOut & useMaxOut:
+            if trueTam_S[i] < minOut:
+                trueTam_S[i] = minOut
+            if trueTam_S[i] > maxOut:
+                trueTam_S[i] = maxOut
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(magModule.envOutMsgNames[0], testProcessRate)
     unitTestSim.TotalSim.logThisMessage(testModule.tamDataOutMsgName, testProcessRate)
-    testModule.magIntMsgName = magModule.envOutMsgNames[0]
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -236,35 +177,11 @@ def run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
     unitTestSim.TotalSim.SingleStepProcesses()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    magData = unitTestSim.pullMessageLogData(magModule.envOutMsgNames[0] + ".magField_N", list(range(3)))
     tamData = unitTestSim.pullMessageLogData(testModule.tamDataOutMsgName + ".OutputData", list(range(3)))
+    print(tamData)
 
-    if magModel == 'WMM':
-        trueMagField = wmmInertial(BxTrue, ByTrue, BzTrue, phi, long, refPlanetDCM)
-    else: # CenteredDipole
-        trueMagField = centeredDipole(r0N, np.array([refg11, refh11, refg10]), refPlanetRadius, refPlanetDCM)
-
-    # check the exponential atmosphere results
-    #
-    # check spacecraft magnetic field measurements
-    if len(tamData) > 0:
-        dcm_BN = rbk.MRP2C(scStateMsg.sigma_BN)
-        dcm_SB = rbk.euler3212C([yaw, pitch, roll])
-        dcm_SN = np.dot(dcm_SB, dcm_BN)
-        magField_S = np.transpose(np.dot(dcm_SN, np.transpose(trueMagField)))
-        magField_S = magField_S + bias
-        for k in range(len(magField_S[0])):
-            if magField_S[0][k] > maxOut:
-                magField_S[0][k] = maxOut
-            if magField_S[0][k] < minOut:
-                magField_S[0][k] = minOut
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            magField_S, tamData, errTol, "SC magnetometer",
-            testFailCount, testMessages)
-    else:
-        print("Length of the magnetic field measurement vector is zero!")
+    if not unitTestSupport.isArrayEqualRelative(tamData[0], trueTam_S, 3, errTol):
+        testFailCount += 1
 
     #   print out success or failure message
     if testFailCount == 0:
@@ -282,12 +199,11 @@ def run(show_plots, noiseStd, bias, minOut, maxOut, magModel, errTol, name):
 #
 if __name__ == "__main__":
     test_module(              # update "module" in function name
-                 False,         # showplots
-                 0,          # noiseStd
-                 [0, 0, 0],   # bias
-                 -1e-5,           # minOut
-                 1e200,           # maxOut
-                 'WMM',            # magModel (WMM, CenteredDipole)
-                 1e-5,            # errTol
-                 'clean'         # name
+                 False,  # show_plots
+                 True,   # useNoiseStd
+                 True,   # useBias
+                 True,   # useMinOut
+                 True,   # useMaxOut
+                 True,   # useScaleFactor
+                 1e-3    # errTol
                )

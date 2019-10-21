@@ -25,8 +25,7 @@
 # Creation Date:  September 20, 2019
 #
 
-import sys
-import os, inspect
+import os
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -36,9 +35,152 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 bskPath = __path__[0]
 
-# fileName = inspect.getframeinfo(inspect.currentframe()).filename
-# path = os.path.dirname(os.path.abspath(fileName))
-# bskPath = path.split('src')[0]
+## \page scenarioTAMGroup
+## @{
+## Demonstrates how to add a Three-Axis Magnetometer (TAM) sensor to a spacecraft.
+#
+# Three-Axis Magnetometer (TAM) Simulation {#scenarioTAM}
+# ====
+#
+# Scenario Description
+# -----
+# This script sets up a 3-DOF spacecraft which is orbiting a planet with a magnetic field.
+# The orbit setup is similar to that used in [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
+# The scenarios can be run with the followings setups parameters:
+# Setup | orbitCase           | planetCase            | useBias               | useBounds
+# ----- | ------------------- | --------------------- | --------------------- | ---------------------
+# 1     | circular            | Earth                 | False                 | False
+# 2     | elliptical          | Earth                 | True                  | False
+# 3     | circular            | Jupiter               | False                 | True
+# 4     | elliptical          | Jupiter               | False                 | False
+#
+# To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
+#
+#       python3 scenarioTAM.py
+#
+# Simulation Scenario Setup Details
+# -----
+# The simulation layout is shown in the following illustration. A single simulation process is created
+# which contains the spacecraft object. The spacecraft state and the magnetic field model
+# (World Magnetic Model (WMM), Centered Dipole Magnetic Field etc.) messages  are connected to
+# the magnetometer module which outputs the local magnetic field measurements in sensor frame components.
+# ![Simulation Flow Diagram](Images/doc/test_scenario_magnetometer.svg "Illustration")
+#
+# When the simulation completes 2 plots are shown for each case. One plot shows the radius in km,
+# while the second plot shows the magnetic field measurement vector components with respect to the sensor frame.
+#
+# The dynamics simulation is setup using a SpacecraftPlus() module.
+# The magnetic field module is created using one of the magnetic field models, e.g.
+# [MagneticFieldCenteredDipole](@ref scenarioMagneticFieldCenteredDipoleGroup)
+# which requires setting appropriate parameters for the specific planet,
+# [MagneticFieldWMM](@ref scenarioMagneticFieldWMMGroup) which is a model specific to only Earth.
+# The TAM sensor unit is created using:
+#~~~~~~~~~~~~~~~~~{.py}
+#     TAM = magnetometer.Magnetometer()
+#~~~~~~~~~~~~~~~~~
+# The minimum variables that must be set for TAM includes:
+# ~~~~~~~~~~~~~~~~{.py}
+#     TAM.ModelTag = "TAM_sensor"
+#     TAM.tamDataOutMsgName = "TAM_output"
+# ~~~~~~~~~~~~~~~~
+# Next, this module is attached to the simulation process with
+#~~~~~~~~~~~~~~~~~{.py}
+#   scSim.AddModelToTask(simTaskName, TAM)
+#~~~~~~~~~~~~~~~~~
+# The input message from the magnetic field model is specified in the data logging phase as:
+# ~~~~~~~~~~~~~~~~~{.py}
+#   TAM.magIntMsgName = magModule.envOutMsgNames[0]
+# ~~~~~~~~~~~~~~~~~
+# The Gaussian noise is setup as,
+# ~~~~~~~~~~~~~~~~{.py}
+#   TAM.SenNoiseStd = 100e-9  # Tesla
+# ~~~~~~~~~~~~~~~~
+# The continuous constant bias, and the bounds of the saturation are set for the useBias and useBounds conditions:
+# ~~~~~~~~~~~~~~~~{.py}
+#   TAM.SenBias = [0, 0, -1e-6]  # Tesla
+#   TAM.minOutput = -3.5e-4  # Tesla
+#   TAM.maxOutput = 3.5e-4  # Tesla
+# ~~~~~~~~~~~~~~~~
+#
+# Setup 1
+# -----
+#
+# Which scenario is run is controlled at the bottom of the file in the code
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#  run(
+#         True,        # show_plots
+#         'circular',  # orbit Case (circular, elliptical)
+#         'Earth',     # planetCase (Earth, Jupiter)
+#          False,      # useBias
+#          False       # useBounds
+#     )
+# ~~~~~~~~~~~~~
+#
+# This scenario places the spacecraft about the Earth in a circular LEO orbit.  The
+# resulting position coordinates and magnetic field components are shown below.
+# ![Orbit Radius History](Images/Scenarios/scenarioTAM1circularEarth.svg "Position history")
+# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2circularEarth.svg "Magnetic Field Measurements Illustration")
+#
+# Setup 2
+# -----
+#
+# The next scenario is run by changing the bottom of the file in the scenario code to read
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#  run(
+#         True,          # show_plots
+#         'elliptical',  # orbit Case (circular, elliptical)
+#         'Earth'        # planetCase (Earth, Jupiter)
+#          True,         # useBias
+#          False         # useBounds
+#     )
+# ~~~~~~~~~~~~~
+# TThis case illustrates an elliptical Earth orbit.
+# The resulting radius and magnetic field measurements illustrations are shown below.
+# ![Orbit Radius History](Images/Scenarios/scenarioTAM1ellipticalEarth.svg "Position history")
+# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2ellipticalEarth.svg "Magnetic Field Measurements Illustration")
+#
+#
+# Setup 3
+# -----
+#
+# The next scenario is run by changing the bottom of the file in the scenario code to read
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#  run(
+#         True,        # show_plots
+#         'circular',  # orbit Case (circular, elliptical)
+#         'Jupiter'    # planetCase (Earth, Jupiter)
+#          False,      # useBias
+#          True        # useBounds
+#     )
+# ~~~~~~~~~~~~~
+# This case illustrates a circular orbit about Jupiter.
+# The resulting radius and magnetic field measurements illustrations are shown below.
+# ![Orbit Radius History](Images/Scenarios/scenarioTAM1circularJupiter.svg "Position history")
+# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2circularJupiter.svg "Magnetic Field Measurements Illustration")
+#
+# Setup 4
+# -----
+#
+# The next scenario is run by changing the bottom of the file in the scenario code to read
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#  run(
+#         True,          # show_plots
+#         'elliptical',  # orbit Case (circular, elliptical)
+#         'Jupiter'      # planetCase (Earth, Jupiter)
+#          False,        # useBias
+#          False         # useBounds
+#     )
+# ~~~~~~~~~~~~~
+# This case illustrates an elliptical orbit about Jupiter.
+# The resulting radius and magnetic field measurements illustrations are shown below.
+# ![Orbit Radius History](Images/Scenarios/scenarioTAM1ellipticalJupiter.svg "Position history")
+# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2ellipticalJupiter.svg "Magnetic Field Measurements Illustration")
+#
+## @}
 
 # import simulation related support
 from Basilisk.simulation import magneticFieldCenteredDipole
@@ -138,8 +280,6 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     TAM.senNoiseStd = 0
     if useBias:
         TAM.senBias = [0, 0, -1e-6]  # Tesla
-    else:
-        TAM.senBias = [0, 0, 0]  # Tesla
     if useBounds:
         TAM.maxOutput = 3.5e-4  # Tesla
         TAM.minOutput = -3.5e-4  # Tesla
@@ -255,13 +395,9 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
         plt.plot(tamData[:, 0] * macros.NANO2SEC / P, tamData[:, idx] * 1e9,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$TAM_{' + str(idx) + '}$')
-        plt.plot(magData[:, 0] * macros.NANO2SEC / P, magData[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 dashes=[2, 5],
-                 label=r'$Mag_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
-    plt.ylabel('Magnetic Field Components [nT] ')
+    plt.ylabel('Magnetic Field [nT] ')
     pltName = fileName + "2" + orbitCase + planetCase
     figureList[pltName] = plt.figure(2)
 

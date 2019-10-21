@@ -36,7 +36,7 @@
  */
 
 typedef struct {
-	double dcm_BS[9];    /*!< Row major sensor 2 bdy DCM*/
+	double dcm_BS[9];    /*!< Row - Sensor to Body DCM*/
     char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< The name of the ADCS config data message*/
     char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
@@ -53,6 +53,7 @@ extern "C" {
     void SelfInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID);
     void CrossInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID);
     void Update_tamProcessTelem(TAMConfigData *configData, uint64_t callTime, int64_t moduleID);
+	void Reset_tamProcessTelem(TAMConfigData* configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }

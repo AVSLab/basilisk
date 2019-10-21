@@ -28,7 +28,7 @@
 
 //! @brief Simulated TAM Sensor output message definition.
 typedef struct {
-	double TamPlatform[3];    //!< [Tesla] Magnetic field measurements in platform(sensor) frame
+	double tam_S[3];    //!< [T] Magnetic field measurements in sensor frame
 }TAMSensorIntMsg;
 
 /*! @} */

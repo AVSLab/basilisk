@@ -30,12 +30,11 @@
 #include "utilities/saturate.h"
 #include <Eigen/Dense>
 
- /*! \addtogroup SimModelGroup Simulation C++ Modules
-  * @{
-  */
+ /*! \addtogroup SimModelGroup
+ * @{
+ */
 
-  /*! \defgroup Magnetometer
-	@brief This is the three-axis magnetometer (TAM) module.
+ /*! @brief This is the three-axis magnetometer (TAM) module.
 
    # Module Purpose
    ## Executive Summary
@@ -62,8 +61,6 @@
       There are a multitude of magnetic field models. As all the magnetic field models are children of MagneticFieldBase base class, magnetometer can be created based on any of the magnetic field model.
 
    ## Planet Centric Spacecraft Position Vector
-      A `cool' word in a `nice' sentence.
-
       For the following developments, the spacecraft location relative to the planet frame is required.
 	  Let \f$r_{B/P}\f$ be the spacecraft position vector relative to the planet center.
 	  In the simulation the spacecraft location is given relative to an inertial frame origin \f$ \cal{O}\f$.
@@ -85,25 +82,30 @@
    ## Magnetic Field Models
 	  The truth of the magnetometer measurements in sensor frame coordinates with no errors are output as:
 
-	  \f$ {\cal{S}}_{B} = [SN]\ {\cal{N}}_{B} \f$
+	  \f{eqnarray*}{
+	  {\cal{S}}_{B} = [SN]\ {\cal{N}}_{B}
+	  \f}
 
 	  where \f$[SN]\f$ is the direction cosine matrix from \f$\cal{N}\f$ to \f$\cal{S}\f$, and \f${\cal{N}}_{B}\f$ is the magnetic field vector of the magnetic field model.
 
    ## Error Modeling
       The magnetic field vector of the magnetic field models is considered to be "truth" (\f$ B_{truth} = {\cal{S}}_{B} \f$).
-	  So, to simulate the errors found in real instrumentation, errors are added to the "truth" values:
+	  So, the errors are applied on the "truth" values to simulate a real instrumentation:
 
-	  \f$ B_{measured} = B_{truth} + e_{noise} + e_{bias} \f$
+	  \f{eqnarray*}{
+	  B_{measured} = (B_{truth} + e_{noise} + e_{bias}) f_{scale}
+	  \f}
 
-	  where \f$ e_{noise} \f$ is the Gaussian noise, and \f$ e_{bias} \f$ is the bias applied on the magnetic field measurements.
-
-
+	  where \f$ e_{noise} \f$ is the Gaussian noise, \f$ e_{bias} \f$ is the bias applied on the magnetic field measurements,
+	  and \f$ f_{scale} \f$ is the scale factor applied on the measurements for linear scaling.
+	  
    ## Saturation
       Sensors might have specific saturation bounds for their measurements. It also prevents the sensor for giving a value less or higher than the possible hardware output. The saturated values are:
 
-	  \f$ B_{{sat}_{max}} = \mbox{min}(B_{measured},  \mbox{maxOutput}) \f$
-
-	  \f$ B_{{sat}_{min}} = \mbox{max}(B_{measured},  \mbox{minOutput}) \f$
+	  \f{eqnarray*}{
+	  B_{{sat}_{max}} &=& \mbox{min}(B_{measured},  \mbox{maxOutput}) \\
+	  B_{{sat}_{min}} &=& \mbox{max}(B_{measured},  \mbox{minOutput})
+	  \f}
 
 	  This is the final output of the sensor module.
 
@@ -149,29 +151,45 @@
       magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
 	  ~~~~~~~
 
-	  The transformation from \f$\cal B\f$ to \f$\cal S\f$ can be set via \f$\mbox{dcm_SB}\f$ using the helper function:
+	  Magnetic field data is transformed from inertial to body, then to the sensor frame. The transformation from \f$\cal B\f$ to \f$\cal S\f$ can be set via \f$\mbox{dcm_SB}\f$ using the helper function:
 
-	  \f$\mbox{setBodyToSensorDCM}(\psi, \theta, \phi)\f$
+	  \f{eqnarray*}{
+	  \mbox{setBodyToSensorDCM}(\psi, \theta, \phi)
+	  \f}
 
 	  where \f$(\psi, \theta, \phi)\f$ are classical \f$3-2-1\f$ Euler angles that map from the body frame to the sensor frame \f$\cal S\f$.
 
    ## Specifying TAM Sensor Corruptions
       Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the variable
 
-	  \f$\mbox{SenNoiseStd}\f$
+	  \f{eqnarray*}{
+	  \mbox{senNoiseStd}
+	  \f}
 
-	  is set to a non-zero value.  This is the standard deviation of Gaussian noise in Tesla. Next, to simulate a signal bias, the variable
+	  is set to a non-zero value.  This is the standard deviation of Gaussian noise in Tesla. Next, to simulate a constant bias, the variable
 
-	  \f$\mbox{SenBias}\f$
+	  \f{eqnarray*}{
+	  \mbox{senBias}
+	  \f}
 
-	  is set to a non-zero value.   This constant bias of the Gaussian noise. Finally, to set saturation values, the variables
+	  is set to a non-zero value. To simulate a linear scaling of the outputs, the variable
+	 
+	 \f{eqnarray*}{
+	 \mbox{scaleFactor}
+	 \f}
 
-	  \f$\mbox{maxOutput}\f$
+	  is used. Finally, to set saturation values, the variables
 
-	  \f$\mbox{minOutput}\f$
+	  \f{eqnarray*}{
+	  \mbox{maxOutput}
+	  \f}
 
-	  are used. 
+	  \f{eqnarray*}{
+	  \mbox{minOutput}
+	  \f}
 
+	  are used. Minimum and maximum bounds for saturation are set to large values as \f$(-10^{200} \mbox{nT})\f$ and \f$(10^{200} \mbox{nT})\f$
+	  respectively in order not to saturate the outputs by default.
 
 	@{
    */
@@ -180,48 +198,43 @@ class Magnetometer : public SysModel {
 public:
 	Magnetometer();
 	~Magnetometer();
-	void CrossInit(); //!< @brief Method for initializing cross dependencies
-	void SelfInit();  //!< @brief Method for initializing own messages
-	void UpdateState(uint64_t CurrentSimNanos); //!< @brief Method to update state for runtime
-	void setBodyToSensorDCM(double yaw, double pitch, double roll); //!< @brief Utility method to configure the sensor DCM
-	void readInputMessages(); //!< @brief Method to read the input messages
-	void computeTrueOutput(); //!< @brief Method to compute the true magnetic field vector
-	void computeMagData(); //!< @brief Method to get the magnetic field vector information
-	void applySensorErrors(); //!< @brief Method to set the actual output of the sensor with errors
-	void scaleSensorValues(); //!< @brief Method to set the actual output of the sensor with scaling
-	void applySaturation();     //!< @brief Apply saturation effects to sensed output (floor and ceiling)
-	void writeOutputMessages(uint64_t Clock); //!< @brief Method to write the output message to the system
+	void SelfInit();                            //!< Method for initializing own messages
+	void CrossInit();                           //!< Method for initializing cross dependencies
+	void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
+	void UpdateState(uint64_t CurrentSimNanos); //!< Method to update state for runtime
+	void readInputMessages();                   //!< Method to read the input messages
+	void computeTrueOutput();                   //!< Method to compute the true magnetic field vector
+	void computeMagData();                      //!< Method to get the magnetic field vector information
+	void applySensorErrors();                   //!< Method to set the actual output of the sensor with errors
+	void applySaturation();                     //!< Apply saturation effects to sensed output (floor and ceiling)
+	void writeOutputMessages(uint64_t Clock);   //!< Method to write the output message to the system
+	Eigen::Matrix3d setBodyToSensorDCM(double yaw, double pitch, double roll); //!< Utility method to configure the sensor DCM
 
 public:
-	std::string stateIntMsgName;                  //!< [-] Message name for spacecraft state */
-	std::string magIntMsgName;                    //!< [-] Message name for magnetic field data
-	std::string tamDataOutMsgName;                  //!< [-] Message name for TAM output data */
-	double              B2S321Angles[3];        //!< [-] 321 Euler angles for body to sensor
-	Eigen::Matrix3d     dcm_SB;           //!< [-] DCM from sensor frame S to body frame B
-	Eigen::Vector3d     tam_B;              //!< [-] Magnetic field vector in body frame components
-	Eigen::Vector3d     tam_S;              //!< [-] Magnetic field vector in sensor frame components
-	Eigen::Vector3d              sensedValue;            //!< [-] Total measurement including perturbations
-	Eigen::Vector3d              trueValue;              //!< [-] Total measurement without perturbations
-	double              scaleFactor;            //!< [-] Scale factor applied to sensor (common + individual multipliers)
-	Eigen::Vector3d              senBias;                //!< [-] Sensor bias value
-	double              senNoiseStd;            //!< [-] Sensor noise value
+	std::string         stateIntMsgName;        //!< [-] Message name for spacecraft state
+	std::string         magIntMsgName;          //!< [-] Message name for magnetic field data
+	std::string         tamDataOutMsgName;      //!< [-] Message name for TAM output data
+	Eigen::Matrix3d     dcm_SB;                 //!< [-] DCM from body frame to sensor frame
+	Eigen::Vector3d     tam_S;                  //!< [T] Magnetic field vector in sensor frame
+	Eigen::Vector3d     sensedValue;            //!< [T] Measurement including perturbations
+	Eigen::Vector3d     trueValue;              //!< [T] Measurement without perturbations
+	double              scaleFactor;            //!< [-] Scale factor applied to sensor
+	Eigen::Vector3d     senBias;                //!< [T] Sensor bias value
+	double              senNoiseStd;            //!< [T] Sensor noise standard deviation value
 	uint64_t            outputBufferCount;      //!< [-] Number of output msgs stored
-	Eigen::Matrix3d idm3d; //!< [-] Set 3D identity matrix
-	Eigen::Vector3d walkBounds;   //!< [-] "3-sigma" errors to permit for states
-	double              maxOutput;              //!< [-] Maximum output for saturation application
-	double              minOutput;              //!< [-] Minimum output for saturation application
+	Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states
+	double              maxOutput;              //!< [T] Maximum output for saturation application
+	double              minOutput;              //!< [T] Minimum output for saturation application
 
 private:
 	int64_t magIntMsgID;                         //!< [-] Connect to input magnetic field message
 	int64_t stateIntMsgID;                       //!< [-] Connect to input state message
-	int64_t tamDataOutMsgID;                       //!< [-] Connect to output magnetometer data
-	MagneticFieldSimMsg magData;            //!< [-] Unused for now
-	SCPlusStatesSimMsg stateCurrent;           //!< [-] Current SSBI-relative state
-	uint64_t numStates;                 //!< [-] Number of States for Gauss Markov Models
-	GaussMarkov noiseModel;                    //! [-] Gauss Markov noise generation model
-	Saturate saturateUtility;                  //! [-] Saturation utility
-	TAMSensorIntMsg outputBuffer;             //!< [-] Buffer used to write output message
-
+	int64_t tamDataOutMsgID;                     //!< [-] Connect to output magnetometer data
+	MagneticFieldSimMsg magData;                 //!< [-] Magnetic field model data
+	SCPlusStatesSimMsg stateCurrent;             //!< [-] Current spacecraft state
+	uint64_t numStates;                          //!< [-] Number of States for Gauss Markov Models
+	GaussMarkov noiseModel;                      //!< [-] Gauss Markov noise generation model
+	Saturate saturateUtility;                    //!< [-] Saturation utility
 };
 
 /*! @} */
