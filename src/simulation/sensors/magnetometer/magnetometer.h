@@ -36,149 +36,148 @@
 
  /*! @brief This is the three-axis magnetometer (TAM) module.
 
-   # Module Purpose
-   ## Executive Summary
-	  This document describes how Three-Axis Magnetometer (TAM) devices are modeled in the Basilisk software. The purpose of this module is to implement magnetic field measurements on the sensor frame \f$ S \f$.
+## Module Purpose
 
-   ## Module Assumptions and Limitations
-	  Assumptions made in TAM module and the corresponding limitations are shown below:
+### Executive Summary
 
-	  - <b>Magnetic Field Model Inputs</b>: The magnetometer sensor is limited with the used magnetic field model which are individual magnetic field models complex and having their own assumptions. The reader is referred to the cited literature to learn more about the model limitations and challenges.
+This document describes how Three-Axis Magnetometer (TAM) devices are modeled in the Basilisk software. The purpose of this module is to implement magnetic field measurements on the sensor frame \f$ S \f$.
+
+### Module Assumptions and Limitations
+Assumptions made in TAM module and the corresponding limitations are shown below:
+
+- <b>Magnetic Field Model Inputs</b>: The magnetometer sensor is limited with the used magnetic field model which are individual magnetic field models complex and having their own assumptions. The reader is referred to the cited literature to learn more about the model limitations and challenges.
+
+- <b>Error Inputs</b>: Since the error models rely on user inputs, these inputs are the most likely source of error in TAM output. Instrument bias would have to be measured experimentally or an educated guess would have to be made. The Gauss-Markov noise model has well-known assumptions and is generally accepted to be a good model for this application.
 	  
-	  - <b>Error Inputs</b>: Since the error models rely on user inputs, these inputs are the most likely source of error in TAM output. Instrument bias would have to be measured experimentally or an educated guess would have to be made. The Gauss-Markov noise model has well-known assumptions and is generally accepted to be a good model for this application.
-	  
-	  - <b>External Disturbances</b>: Currently, the module does not consider the external magnetic field, so it is limited to the cases where this effect is not significant. This can be overcome by using magnetic field models taking into these effects account or adding it as an additional term.
+- <b>External Disturbances</b>: Currently, the module does not consider the external magnetic field, so it is limited to the cases where this effect is not significant. This can be overcome by using magnetic field models taking into these effects account or adding it as an additional term.
 
-   ## Message Connection Descriptions
-	  The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
-	  Msg Variable Name | Msg Type | Description
-	  ------------------|----------|-------------
-	  magIntMsgName| MagneticFieldSimMsg | Magnetic field input messager from one of the magnetic field models
-	  stateIntMsgName| SCPlusStatesSimMsg | Spacecraft state input message
-	  tamDataOutMsgName |  TAMDataSimMsg | TAM sensor output message
+### Message Connection Descriptions
+The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+Msg Variable Name | Msg Type | Description
+------------------|----------|-------------
+magIntMsgName| MagneticFieldSimMsg | Magnetic field input messager from one of the magnetic field models
+stateIntMsgName| SCPlusStatesSimMsg | Spacecraft state input message
+tamDataOutMsgName |  TAMDataSimMsg | TAM sensor output message
 
-   # Detailed Module Description
-      There are a multitude of magnetic field models. As all the magnetic field models are children of MagneticFieldBase base class, magnetometer can be created based on any of the magnetic field model.
+## Detailed Module Description
+There are a multitude of magnetic field models. As all the magnetic field models are children of MagneticFieldBase base class, magnetometer can be created based on any of the magnetic field model.
 
-   ## Planet Centric Spacecraft Position Vector
-      For the following developments, the spacecraft location relative to the planet frame is required.
-	  Let \f$r_{B/P}\f$ be the spacecraft position vector relative to the planet center.
-	  In the simulation the spacecraft location is given relative to an inertial frame origin \f$ \cal{O}\f$.
-	  The planet centric position vector is computed using
-      
-	  \f{eqnarray*}{
-	      r_{B/P} = r_{B/O} - r_{P/O}
-	  \f}
+### Planet Centric Spacecraft Position Vector
+For the following developments, the spacecraft location relative to the planet frame is required.
+Let \f$\boldsymbol r_{B/P}\f$ be the spacecraft position vector relative to the planet center.
+In the simulation the spacecraft location is given relative to an inertial frame origin \f$ \cal{O}\f$.
+The planet centric position vector is computed using
 
-	  If no planet ephemeris message is specified, then the planet position vector \f$r_{P/O}\f$ is set to zero.
-	  Let \f$[PN]\f$ be the direction cosine matrix that relates the rotating planet-fixed frame relative to an inertial frame \f$ \cal{N} \f$. 
-	  The simulation provides the spacecraft position vector in inertial frame components.
-	  The planet centric position vector is then written in Earth-fixed frame components using
-	  
-	  \f{eqnarray*}{
-		{\cal{P}}_{{r}_{B/P}} = [PN] \ {\cal{N}}_{{r}_{B/P}}
-	  \f}
+\f{eqnarray*}{
+  \boldsymbol r_{B/P} = \boldsymbol r_{B/O} - \boldsymbol r_{P/O}
+\f}
 
-   ## Magnetic Field Models
-	  The truth of the magnetometer measurements in sensor frame coordinates with no errors are output as:
+If no planet ephemeris message is specified, then the planet position vector \f$r_{P/O}\f$ is set to zero.
+Let \f$[PN]\f$ be the direction cosine matrix that relates the rotating planet-fixed frame relative to an inertial frame \f$ \cal{N} \f$.
+The simulation provides the spacecraft position vector in inertial frame components.
+The planet centric position vector is then written in Earth-fixed frame components using
 
-	  \f{eqnarray*}{
-	  {\cal{S}}_{B} = [SN]\ {\cal{N}}_{B}
-	  \f}
+\f{eqnarray*}{
+{}^{\cal{P}}{{\boldsymbol r}_{B/P}} = [PN] \ {}^{\cal{N}}{{\boldsymbol r}_{B/P}}
+\f}
 
-	  where \f$[SN]\f$ is the direction cosine matrix from \f$\cal{N}\f$ to \f$\cal{S}\f$, and \f${\cal{N}}_{B}\f$ is the magnetic field vector of the magnetic field model.
+### Magnetic Field Models
+The truth of the magnetometer measurements in sensor frame coordinates with no errors are output as:
 
-   ## Error Modeling
-      The magnetic field vector of the magnetic field models is considered to be "truth" (\f$ B_{truth} = {\cal{S}}_{B} \f$).
-	  So, the errors are applied on the "truth" values to simulate a real instrumentation:
+\f{eqnarray*}{
+{}^{\cal{S}}{\boldsymbol B} = [SN]\ {}^{\cal{N}}{\boldsymbol B}
+\f}
 
-	  \f{eqnarray*}{
-	  B_{measured} = (B_{truth} + e_{noise} + e_{bias}) f_{scale}
-	  \f}
+where \f$[SN]\f$ is the direction cosine matrix from \f$\cal{N}\f$ to \f$\cal{S}\f$, and \f${{}^\cal{N}}{ \boldsymbol B}\f$ is the magnetic field vector of the magnetic field model in inertial frame components.
 
-	  where \f$ e_{noise} \f$ is the Gaussian noise, \f$ e_{bias} \f$ is the bias applied on the magnetic field measurements,
-	  and \f$ f_{scale} \f$ is the scale factor applied on the measurements for linear scaling.
-	  
-   ## Saturation
-      Sensors might have specific saturation bounds for their measurements. It also prevents the sensor for giving a value less or higher than the possible hardware output. The saturated values are:
+### Sensor Error Modeling
+The magnetic field vector of the magnetic field models is considered to be "truth". So, the errors are applied on the "truth" values to simulate a real instrumentation:
 
-	  \f{eqnarray*}{
-	  B_{{sat}_{max}} &=& \mbox{min}(B_{measured},  \mbox{maxOutput}) \\
-	  B_{{sat}_{min}} &=& \mbox{max}(B_{measured},  \mbox{minOutput})
-	  \f}
+\f{eqnarray*}{
+\boldsymbol B_{measured} = (\boldsymbol B_{truth} + \boldsymbol e_{noise} + \boldsymbol e_{bias}) f_{scale}
+\f}
 
-	  This is the final output of the sensor module.
+where \f$ \boldsymbol e_{noise} \f$ is the Gaussian noise, \f$ \boldsymbol e_{bias} \f$ is the bias applied on the magnetic field measurements, and \f$ f_{scale} \f$ is the scale factor applied on the measurements for linear scaling.
 
-   # User Guide
+### Saturation
+Sensors might have specific saturation bounds for their measurements. It also prevents the sensor for giving a value less or higher than the possible hardware output. The saturated values are:
 
-   ## General Module Setup
-	  This section outlines the steps needed to add a Magnetometer module to a sim. First, one of the magnetic field models must be imported:
+\f{eqnarray*}{
+\boldsymbol B_{{sat}_{max}} &=& \mbox{min}(\boldsymbol B_{measured},  \mbox{maxOutput}) \\
+\boldsymbol B_{{sat}_{min}} &=& \mbox{max}(\boldsymbol B_{measured},  \mbox{minOutput})
+\f}
 
-	  ~~~~~~~{.py}
-	  from Basilisk.simulation import magneticFieldCenteredDipole
+This is the final output of the sensor module.
+
+## User Guide
+
+### General Module Setup
+This section outlines the steps needed to add a Magnetometer module to a sim. First, one of the magnetic field models must be imported:
+
+~~~~~~~{.py}
+      from Basilisk.simulation import magneticFieldCenteredDipole
       magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
       magModule.ModelTag = "CenteredDipole"
-	  ~~~~~~~
+~~~~~~~
 
-	  and/or
+and/or
 
-	  ~~~~~~~{.py}
+~~~~~~~{.py}
 	  from Basilisk.simulation import magneticFieldWMM
       magModule = magneticFieldWMM.MagneticFieldWMM()
       magModule.ModelTag = "WMM"
-	  ~~~~~~~
+~~~~~~~
 
-	  Then, the magnetic field measurements must be imported and initialized:
+Then, the magnetic field measurements must be imported and initialized:
 
-	  ~~~~~~~{.py}
+~~~~~~~{.py}
 	  from Basilisk.simulation import magnetometer
       testModule = magnetometer.Magnetometer()
       testModule.ModelTag = "TAM_sensor"
-	  ~~~~~~~
+~~~~~~~
 
-	  The model can  be added to a task like other simModels.
+The model can  be added to a task like other simModels.
 
-	  ~~~~~~~{.py}
+~~~~~~~{.py}
 	  unitTestSim.AddModelToTask(unitTaskName, testModule)
-	  ~~~~~~~
+~~~~~~~
 
-	  Each Magnetometer module calculates the magnetic field based on the magnetic field and output state messages of a spacecraft.
-      To add spacecraft to the magnetic field model the spacecraft state output message name is sent to the \f$\mbox{addSpacecraftToModel}\f$ method:
+Each Magnetometer module calculates the magnetic field based on the magnetic field and output state messages of a spacecraft.  To add spacecraft to the magnetic field model the spacecraft state output message name is sent to the \f$\mbox{addSpacecraftToModel}\f$ method:
 
-	  ~~~~~~~{.py}
+~~~~~~~{.py}
 	  scObject = spacecraftPlus.SpacecraftPlus()
       scObject.ModelTag = "spacecraftBody"
       magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
-	  ~~~~~~~
+~~~~~~~
 
-	  Magnetic field data is transformed from inertial to body, then to the sensor frame. The transformation from \f$\cal B\f$ to \f$\cal S\f$ can be set via \f$\mbox{dcm_SB}\f$ using the helper function:
+Magnetic field data is transformed from inertial to body, then to the sensor frame. The transformation from \f$\cal B\f$ to \f$\cal S\f$ can be set via \f$\mbox{dcm_SB}\f$ using the helper function:
 
 	  \f{eqnarray*}{
 	  \mbox{setBodyToSensorDCM}(\psi, \theta, \phi)
 	  \f}
 
-	  where \f$(\psi, \theta, \phi)\f$ are classical \f$3-2-1\f$ Euler angles that map from the body frame to the sensor frame \f$\cal S\f$.
+where \f$(\psi, \theta, \phi)\f$ are classical \f$3-2-1\f$ Euler angles that map from the body frame to the sensor frame \f$\cal S\f$.
 
-   ## Specifying TAM Sensor Corruptions
-      Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the variable
+### Specifying TAM Sensor Corruptions
+Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the variable
 
 	  \f{eqnarray*}{
 	  \mbox{senNoiseStd}
 	  \f}
 
-	  is set to a non-zero value.  This is the standard deviation of Gaussian noise in Tesla. Next, to simulate a constant bias, the variable
+is set to a non-zero value.  This is the standard deviation of Gaussian noise in Tesla. Next, to simulate a constant bias, the variable
 
 	  \f{eqnarray*}{
 	  \mbox{senBias}
 	  \f}
 
-	  is set to a non-zero value. To simulate a linear scaling of the outputs, the variable
+is set to a non-zero value. To simulate a linear scaling of the outputs, the variable
 	 
 	 \f{eqnarray*}{
 	 \mbox{scaleFactor}
 	 \f}
 
-	  is used. Finally, to set saturation values, the variables
+is used. Finally, to set saturation values, the variables
 
 	  \f{eqnarray*}{
 	  \mbox{maxOutput}
@@ -188,10 +187,8 @@
 	  \mbox{minOutput}
 	  \f}
 
-	  are used. Minimum and maximum bounds for saturation are set to large values as \f$(-10^{200} \mbox{nT})\f$ and \f$(10^{200} \mbox{nT})\f$
-	  respectively in order not to saturate the outputs by default.
+are used. Minimum and maximum bounds for saturation are set to large values as \f$(-10^{200} \mbox{nT})\f$ and \f$(10^{200} \mbox{nT})\f$ respectively in order not to saturate the outputs by default.
 
-	@{
    */
 
 class Magnetometer : public SysModel {
