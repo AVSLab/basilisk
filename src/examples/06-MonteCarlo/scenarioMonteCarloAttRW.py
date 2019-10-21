@@ -43,6 +43,7 @@ except ImportError:
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
+path = os.path.split(path)[0]
 # @endcond
 
 from Basilisk import __path__

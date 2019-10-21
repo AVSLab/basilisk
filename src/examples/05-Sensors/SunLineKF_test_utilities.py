@@ -22,7 +22,8 @@ import numpy as np
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(__file__))
+path = os.path.dirname(os.path.abspath(filename))
+path = os.path.split(path)[0]
 
 import matplotlib.pyplot as plt
 
@@ -174,7 +175,8 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots, saveFigures):
         plt.title('Third rate component')
         plt.grid()
 
-    unitTestSupport.saveScenarioFigure('scenario_Filters_StatesPlot'+FilterType,  plt,  path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesPlot'+FilterType,  plt,  path)
     if show_plots:
         plt.show()
     plt.close('all')
@@ -375,7 +377,8 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots, saveFigures)
         plt.title('Third rate component')
         plt.grid()
 
-    unitTestSupport.saveScenarioFigure('scenario_Filters_StatesCompare'+FilterType, plt, path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesCompare'+FilterType, plt, path)
 
     if show_plots:
         plt.show()
