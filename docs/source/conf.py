@@ -17,8 +17,6 @@ import sys
 import numpy as np
 import sphinx_rtd_theme
 
-# sys.path.insert(0, os.path.abspath('.'))
-sys.path.append("~/Library/Python/3.7/lib/python/site-packages/breathe/")
 
 
 # -- Project information -----------------------------------------------------
