@@ -69,7 +69,7 @@ void CrossInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
 void Reset_tamProcessTelem(TAMConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
 
-	return;
+    return;
 }
 
 /*! This method takes the sensor data from the magnetometers and
@@ -85,13 +85,13 @@ void Update_tamProcessTelem(TAMConfigData *configData, uint64_t callTime, int64_
     TAMSensorIntMsg LocalInput;
     ReadMessage(configData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TAMSensorIntMsg), (void*) &LocalInput, moduleID);
-	
-	m33MultV3(RECAST3X3 configData->dcm_BS, LocalInput.tam_S,
-              configData->LocalOutput.tam_B);	  		 
-    				 
-	/*! - Write aggregate output into output message */
-	WriteMessage(configData->OutputMsgID, callTime,	sizeof(TAMSensorBodyFswMsg),
-		        (void*) & (configData->LocalOutput), moduleID);
+
+    m33MultV3(RECAST3X3 configData->dcm_BS, LocalInput.tam_S,
+              configData->LocalOutput.tam_B);
+
+    /*! - Write aggregate output into output message */
+    WriteMessage(configData->OutputMsgID, callTime,    sizeof(TAMSensorBodyFswMsg),
+                (void*) & (configData->LocalOutput), moduleID);
     
     return;
 }
