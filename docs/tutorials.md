@@ -47,6 +47,8 @@
 -# <b>Coarse Sun Sensors</b><br>
     -# @ref scenarioCSSGroup                  "Adding CSS to simulation"
     -# @ref scenarioCSSFiltersGroup           "Estimating Sun Heading with CSS"
+-# <b>Three-Axis Magnetometers</b><br>
+    -# @ref scenarioTAMGroup                  "Adding TAM to simulation"
 
 @section chMcSim Monte Carlo Simulations
 -# @ref scenarioMonteCarloAttRWGroup                   "MC run with RW control"

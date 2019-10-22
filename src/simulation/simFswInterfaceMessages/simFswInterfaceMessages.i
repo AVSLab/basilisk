@@ -35,6 +35,7 @@
 #include "rwArrayVoltageIntMsg.h"
 #include "rwSpeedIntMsg.h"
 #include "stSensorIntMsg.h"
+#include "tamSensorIntMsg.h"
 #include "thrArrayOnTimeCmdIntMsg.h"
 #include "macroDefinitions.h"
 %}
@@ -74,6 +75,8 @@ GEN_SIZEOF(RWArrayVoltageIntMsg)
 GEN_SIZEOF(RWSpeedIntMsg)
 %include "stSensorIntMsg.h"
 GEN_SIZEOF(STSensorIntMsg)
+%include "tamSensorIntMsg.h"
+GEN_SIZEOF(TAMSensorIntMsg)
 %include "thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
 

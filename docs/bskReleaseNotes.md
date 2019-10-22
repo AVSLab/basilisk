@@ -17,6 +17,8 @@ We are very excited by the great capabilities that this software already has, an
     <li>Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the `cmake` flag `-DUSE_PYTHON3` can still be set to `OFF`</li>
     <li>Revised the FSW template module to use the updated in-line module documentation style which adds the description to the module *.h doxygen description, and adds the validation discussion as a doc-string to the `test_xxx.py` test file.</li>
     <li>make sure `mrpRotation` is non-singular for any general referene rotation.</li>
+    <li>Created a Three-Axis-Magnetometer (TAM) sensor simulation model</li>
+    <li>Created a TAM FSW communication model</li>
 </ul>
 
 ##  Version 1.1.0

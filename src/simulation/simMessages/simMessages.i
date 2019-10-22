@@ -22,6 +22,7 @@
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
 #include "eclipseSimMsg.h"
+#include "magneticFieldSimMsg.h"
 #include "spicePlanetStateSimMsg.h"
 #include "thrOperationSimMsg.h"
 #include "thrTimePairSimMsg.h"
@@ -38,6 +39,7 @@
 #include "scEnergyMomentumSimMsg.h"
 #include "spiceTimeSimMsg.h"
 #include "syncClockSimMsg.h"
+#include "tamDataSimMsg.h"
 #include "thrConfigSimMsg.h"
 #include "thrOutputSimMsg.h"
 #include "hingedRigidBodySimMsg.h"
@@ -62,6 +64,8 @@ GEN_SIZEOF(CSSRawDataSimMsg)
 GEN_SIZEOF(EclipseSimMsg)
 %include "idEphemerisSimMsg.h"
 GEN_SIZEOF(IDEphemerisSimMsg)
+%include "magneticFieldSimMsg.h"
+GEN_SIZEOF(MagneticFieldSimMsg)
 %include "vscmgConfigSimMsg.h"
 GEN_SIZEOF(VSCMGConfigSimMsg);
 %include "vscmgCmdSimMsg.h"
@@ -88,6 +92,8 @@ GEN_SIZEOF(SpicePlanetStateSimMsg)
 GEN_SIZEOF(SpiceTimeSimMsg)
 %include "syncClockSimMsg.h"
 GEN_SIZEOF(SynchClockSimMsg)
+%include "tamDataSimMsg.h"
+GEN_SIZEOF(TAMDataSimMsg)
 %include "thrConfigSimMsg.h"
 GEN_SIZEOF(THRConfigSimMsg)
 %include "thrOperationSimMsg.h"

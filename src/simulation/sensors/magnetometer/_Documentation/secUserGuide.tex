@@ -1,0 +1,84 @@
+% !TEX root = ./Basilisk-magnetometer-20190926.tex
+
+\section{User Guide}
+
+\subsection{General Module Setup}
+This section outlines the steps needed to add a {\tt Magnetometer} module to a sim. First, one of the magnetic field models must be imported:
+
+\begin{verbatim}
+from Basilisk.simulation import magneticFieldCenteredDipole
+magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+magModule.ModelTag = "CenteredDipole"
+\end{verbatim}
+and/or
+\begin{verbatim}
+from Basilisk.simulation import magneticFieldWMM
+magModule = magneticFieldWMM.MagneticFieldWMM()
+magModule.ModelTag = "WMM"
+\end{verbatim}
+
+Then, the magnetic field measurements must be imported and initialized:
+
+\begin{verbatim}
+from Basilisk.simulation import magnetometer
+testModule = magnetometer.Magnetometer()
+testModule.ModelTag = "TAM_sensor"
+\end{verbatim}
+
+The model can  be added to a task like other simModels. 
+
+\begin{verbatim}
+unitTestSim.AddModelToTask(unitTaskName, testModule)
+\end{verbatim}
+
+Each {\tt Magnetometer} module calculates the magnetic field based on the magnetic field and output state messages of a spacecraft.
+To add spacecraft to the magnetic field model the spacecraft state output message name is sent to the \verb|addScToModel| method:
+
+\begin{verbatim}
+scObject = spacecraftPlus.SpacecraftPlus()
+scObject.ModelTag = "spacecraftBody"
+magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
+\end{verbatim}
+
+The transformation from $\cal B$ to $\cal S$ can be set via {\tt dcm\_SB} using the helper function:
+$$
+	{\tt setBodyToPlatformDCM}(\psi, \theta, \phi)
+$$
+where $(\psi, \theta, \phi)$ are classical $3-2-1$ Euler angles that map from the body frame to the sensor frame $\cal P$. 
+
+\subsection{Specifying TAM Sensor Noise}
+Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed.  
+
+To add a Gaussian noise component to the output, the variable
+$$
+	{\tt SenNoiseStd}
+$$
+is set to a non-zero value.  This is the standard deviation of Gaussian noise in Tesla. 
+
+Next, to simulate a signal bias, the variable
+$$
+	{\tt SenBias}
+$$
+is set to a non-zero value.   This constant bias of the Gaussian noise.  
+
+Finally, to set saturation values, the variables
+$$
+	\mathrm{maxOutput}
+	$$
+	$$
+	\mathrm{minOutput}
+$$
+are used. 
+
+\subsection{Connecting Messages}
+Two possible input messages to the TAM module, the following message inputs are required for the module to properly operate:
+$$
+	{\tt MagneticFieldSimMsg}
+	$$
+	$$
+	{\tt SCPlusStatesSimMsg}
+$$
+The first message is used to get the magnetic field vector from one of the models, while the second message provides the spacecraft inertial orientation. The output message of the TAM module is then:
+$$
+	{\tt TAMDataSimMsg}
+$$
