@@ -1,0 +1,15 @@
+div.textblock a, div.textblock a:visited, p a, p a:visited, 
+a, a:hover, a:visited,
+a.reference, a.internal, a.current {
+	color: #cfb87c;
+	font-weight: bold;
+}
+
+span.caption-text {
+	color: white;
+	font-weight: bold;
+}
+a.el, a.el:visited {
+	color: #565A5C;
+}
+
