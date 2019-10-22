@@ -63,7 +63,7 @@ def test_module(show_plots):
 
         which is pulled from the log data from TAMSensorBodyFswMsg to see if they match with the expected truth values.
 
-            """
+    """
 
     # each test method requires a single assert method to be called
     [testResults, testMessage] = tamCommTestFunction(show_plots)
