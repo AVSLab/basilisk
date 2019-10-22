@@ -29,10 +29,9 @@
 %constant void CrossInit_tamProcessTelem(void*, uint64_t);
 %ignore CrossInit_tamProcessTelem;
 GEN_SIZEOF(TAMSensorIntMsg);
-GEN_SIZEOF(TAMConfigData);
-GEN_SIZEOF(VehicleConfigFswMsg);
+GEN_SIZEOF(tamConfigData);
+GEN_SIZEOF(TAMSensorBodyFswMsg);
 %include "tamComm.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/tamSensorBodyFswMsg.h"
 %include "simFswInterfaceMessages/tamSensorIntMsg.h"
 %pythoncode %{
