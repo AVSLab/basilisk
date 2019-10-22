@@ -152,40 +152,40 @@ Each Magnetometer module calculates the magnetic field based on the magnetic fie
 
 Magnetic field data is transformed from inertial to body, then to the sensor frame. The transformation from \f$\cal B\f$ to \f$\cal S\f$ can be set via \f$\mbox{dcm_SB}\f$ using the helper function:
 
-	  \f{eqnarray*}{
-	  \mbox{setBodyToSensorDCM}(\psi, \theta, \phi)
-	  \f}
+\f{eqnarray*}{
+\mbox{setBodyToSensorDCM}(\psi, \theta, \phi)
+\f}
 
 where \f$(\psi, \theta, \phi)\f$ are classical \f$3-2-1\f$ Euler angles that map from the body frame to the sensor frame \f$\cal S\f$.
 
 ### Specifying TAM Sensor Corruptions
 Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the variable
 
-	  \f{eqnarray*}{
-	  \mbox{senNoiseStd}
-	  \f}
+\f{eqnarray*}{
+\mbox{senNoiseStd}
+\f}
 
 is set to a non-zero value.  This is the standard deviation of Gaussian noise in Tesla. Next, to simulate a constant bias, the variable
 
-	  \f{eqnarray*}{
-	  \mbox{senBias}
-	  \f}
+\f{eqnarray*}{
+\mbox{senBias}
+\f}
 
 is set to a non-zero value. To simulate a linear scaling of the outputs, the variable
 	 
-	 \f{eqnarray*}{
-	 \mbox{scaleFactor}
-	 \f}
+\f{eqnarray*}{
+\mbox{scaleFactor}
+\f}
 
 is used. Finally, to set saturation values, the variables
 
-      \f{eqnarray*}{
-      \mbox{maxOutput}
-      \f}
+\f{eqnarray*}{
+\mbox{maxOutput}
+\f}
 
-      \f{eqnarray*}{
-      \mbox{minOutput}
-      \f}
+\f{eqnarray*}{
+\mbox{minOutput}
+\f}
 
 are used. Minimum and maximum bounds for saturation are set to large values as \f$(-10^{200} \mbox{nT})\f$ and \f$(10^{200} \mbox{nT})\f$ respectively in order not to saturate the outputs by default.
 
