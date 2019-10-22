@@ -31,19 +31,29 @@
 */
 
 /*! \defgroup tamComm
- @brief Top level structure for the TAM sensor interface system.  Contains all parameters for the TAM interface
- * @{
+@brief This is the TAM sensor interface module.
+
+## Module Purpose
+
+### Executive Summary
+
+This module reads in a message of type TAMSensorBodyFswMsg, outputs the magnetometer measurement vector in vehicle's body coordinates \f$\mbox{(tam_B)}\f$
+with the name of tamOutMsgName.
+In order to transform the \f$\mbox{tam_S}\f$ vector of TAMSensorIntMsg from sensor to body frame, \f$\mbox{dcm_BS}\f$ should be defined.
+
+### Module Assumptions and Limitations
+
+No assumptions are made for this module.
+
  */
 
 typedef struct {
-    double dcm_BS[9];    /*!< Row - Sensor to Body DCM*/
-    char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
-    char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< The name of the ADCS config data message*/
-    char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    int32_t SensorMsgID; /*!< Sensor IDs tied to the input name*/
-    int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
-    int32_t OutputMsgID; /*!< Message ID for the output port*/
-    TAMSensorBodyFswMsg LocalOutput; /*!< Output data structure*/
+    double dcm_BS[9];                         /*!< Row - Sensor to Body DCM*/
+    char tamInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the TAM input message*/
+    char tamOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the TAM output message*/
+    int32_t tamSensorMsgID;                   /*!< TAM sensor IDs tied to the input name*/
+    int32_t tamOutMsgID;                      /*!< TAM message ID for the output port*/
+    TAMSensorBodyFswMsg tamLocalOutput;       /*!< TAM output data structure*/
 }TAMConfigData;
 
 #ifdef __cplusplus

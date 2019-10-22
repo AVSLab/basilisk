@@ -33,7 +33,7 @@ void SelfInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
 {
     
     /*! - Create output message for module */
-    configData->OutputMsgID = CreateNewMessage(configData->OutputDataName,
+    configData->tamOutMsgID = CreateNewMessage(configData->tamOutMsgName,
         sizeof(TAMSensorBodyFswMsg), "TAMSensorBodyFswMsg", moduleID);
 }
 
@@ -45,20 +45,9 @@ void SelfInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
  */
 void CrossInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    VehicleConfigFswMsg LocalConfigData;
-
     /*! - Link the message ID for the incoming sensor data message to here */
-    configData->SensorMsgID = subscribeToMessage(configData->InputDataName,
+    configData->tamSensorMsgID = subscribeToMessage(configData->tamInMsgName,
         sizeof(TAMSensorIntMsg), moduleID);
-    configData->PropsMsgID = subscribeToMessage(configData->InputPropsName,
-        sizeof(VehicleConfigFswMsg), moduleID);
-    if(configData->PropsMsgID >= 0)
-    {
-        ReadMessage(configData->PropsMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(VehicleConfigFswMsg), (void*) &LocalConfigData, moduleID);
-    }
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -68,10 +57,22 @@ void CrossInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
  */
 void Reset_tamProcessTelem(TAMConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
+    uint32_t i, zeroCount;
+    zeroCount = 0.0;
+    /*! - Check to make sure that dcm_BS is set to non-zero values*/
+    for (i = 0; i < sizeof(configData->dcm_BS); i++)
+    {
+        if (configData->dcm_BS[i] != 0.0) { return; }
+        else { zeroCount += 1.0; }
+    }
+    if (zeroCount == sizeof(configData->dcm_BS))
+    {
+        BSK_PRINT(MSG_WARNING, "dcm_BS is set to zero values.");
+    }
 
     return;
 }
-
+    
 /*! This method takes the sensor data from the magnetometers and
  converts that information to the format used by the TAM nav.
  @return void
@@ -83,15 +84,18 @@ void Update_tamProcessTelem(TAMConfigData *configData, uint64_t callTime, int64_
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     TAMSensorIntMsg LocalInput;
-    ReadMessage(configData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+
+    memset(&LocalInput, 0x0, sizeof(TAMSensorIntMsg));
+
+    ReadMessage(configData->tamSensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TAMSensorIntMsg), (void*) &LocalInput, moduleID);
 
     m33MultV3(RECAST3X3 configData->dcm_BS, LocalInput.tam_S,
-              configData->LocalOutput.tam_B);
+              configData->tamLocalOutput.tam_B);
 
     /*! - Write aggregate output into output message */
-    WriteMessage(configData->OutputMsgID, callTime,    sizeof(TAMSensorBodyFswMsg),
-                (void*) & (configData->LocalOutput), moduleID);
+    WriteMessage(configData->tamOutMsgID, callTime,    sizeof(TAMSensorBodyFswMsg),
+                (void*) & (configData->tamLocalOutput), moduleID);
     
     return;
 }
