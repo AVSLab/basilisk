@@ -332,7 +332,7 @@ def horizonOpNav_update():
     n = back_substitution(Rpy, RHS)
     n_test = np.dot(np.linalg.inv(Rpy), RHS)
 
-    R_s = (inputCamera.resolution[0]/(opNav.noiseSF*numPoints))**2/d_x**2*np.array([[1,0,0],[0,1,0],[0,0,0]])
+    R_s = (opNav.noiseSF*inputCamera.resolution[0]/(numPoints))**2/d_x**2*np.array([[1,0,0],[0,1,0],[0,0,0]])
     R_s = np.dot(np.dot(B, R_s), B.T)
     R_yInv = np.zeros([numPoints, numPoints])
     for i in range(numPoints):
