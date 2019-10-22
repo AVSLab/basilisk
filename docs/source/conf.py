@@ -212,7 +212,7 @@ epub_exclude_files = ['search.html']
 # -- Extension configuration -------------------------------------------------
 
 
-breathe_projects = {"Basilisk": "~/Basilisk/src/*"}
+# breathe_projects = {"Basilisk": "~/Basilisk/src/*"}
 
 from glob import glob
 import shutil
