@@ -22,7 +22,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = u'Basilisk'
-copyright = u'2019, AVS Lab'
+copyright = u'2019, Autonomous Vehicle Systems (AVS)'
 author = u'AVS Lab'
 
 # The short X.Y version
