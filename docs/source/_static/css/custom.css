@@ -13,3 +13,10 @@ a.el, a.el:visited {
 	color: #565A5C;
 }
 
+.wy-side-nav-search>div.version {
+	color: #565A5C; # CU dark gray
+}
+
+.wy-nav-content {
+    max-width: none;
+}
