@@ -21,6 +21,7 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simulation/utilities/bsk_Print.h"
+#include "utilities/linearAlgebra.h"
 #include <string.h>
 
 /*! This method initializes the configData for the TAM sensor interface.
@@ -29,7 +30,7 @@
  @return void
  @param configData The configuration data associated with the TAM sensor interface
  */
-void SelfInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
+void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
     
     /*! - Create output message for module */
@@ -43,7 +44,7 @@ void SelfInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the TAM interface
  */
-void CrossInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
+void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
     /*! - Link the message ID for the incoming sensor data message to here */
     configData->tamSensorMsgID = subscribeToMessage(configData->tamInMsgName,
@@ -55,20 +56,10 @@ void CrossInit_tamProcessTelem(TAMConfigData *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the guidance module
  */
-void Reset_tamProcessTelem(TAMConfigData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
-    uint32_t i, zeroCount;
-    zeroCount = 0.0;
-    /*! - Check to make sure that dcm_BS is set to non-zero values*/
-    for (i = 0; i < sizeof(configData->dcm_BS); i++)
-    {
-        if (configData->dcm_BS[i] != 0.0) { return; }
-        else { zeroCount += 1.0; }
-    }
-    if (zeroCount == sizeof(configData->dcm_BS))
-    {
-        BSK_PRINT(MSG_WARNING, "dcm_BS is set to zero values.");
-    }
+    if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) < 1e-10) { return; }
+    else { BSK_PRINT(MSG_WARNING, "dcm_BS is set to zero values."); }
 
     return;
 }
@@ -79,7 +70,7 @@ void Reset_tamProcessTelem(TAMConfigData* configData, uint64_t callTime, int64_t
  @param configData The configuration data associated with the TAM interface
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_tamProcessTelem(TAMConfigData *configData, uint64_t callTime, int64_t moduleID)
+void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
