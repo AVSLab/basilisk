@@ -38,6 +38,7 @@
 #include "tamSensorIntMsg.h"
 #include "thrArrayOnTimeCmdIntMsg.h"
 #include "macroDefinitions.h"
+#include "powerNodeStatusIntMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -79,6 +80,8 @@ GEN_SIZEOF(STSensorIntMsg)
 GEN_SIZEOF(TAMSensorIntMsg)
 %include "thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
+%include "powerNodeStatusIntMsg.h"
+GEN_SIZEOF(PowerNodeStatusIntMsg)
 
 %include "macroDefinitions.h"
 

@@ -17,25 +17,29 @@
 
  */
 
-#ifndef SIM_FSW_MACROS_H
-#define SIM_FSW_MACROS_H
+#include "simplePowerMonitor.h"
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
+
+/*! The constructor creates a SimplePowerMonitor instance with zero stored charge and a capacity of -1.*/
+SimplePowerMonitor::SimplePowerMonitor(){
+
+    this->storedCharge = 0;
+    return;
+}
+
+SimplePowerMonitor::~SimplePowerMonitor(){
+
+    return;
+}
+
+/*! This method integrates the net power across all the attached devices and stores it.
+ @return void
  */
-#define MAX_CIRCLE_NUM 10
-#define MAX_LIMB_PNTS 2000
-#define MAX_EFF_CNT 36
-#define MAX_NUM_CSS_SENSORS 32
-#define MAX_ST_VEH_COUNT 4
+void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
 
-#define NANO2SEC        1e-9
-#define SEC2NANO        1e9
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
-#define SEC2HOUR        1./3600.
-
-/* @} */
-
-
-#endif
+    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
+    msg->storageCapacity = -1.0;
+    msg->currentNetPower = this->currentPowerSum;
+    msg->storageLevel = this->storedCharge;
+    return;
+}

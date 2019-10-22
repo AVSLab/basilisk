@@ -17,25 +17,24 @@
 
  */
 
-#ifndef SIM_FSW_MACROS_H
-#define SIM_FSW_MACROS_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
-#define MAX_CIRCLE_NUM 10
-#define MAX_LIMB_PNTS 2000
-#define MAX_EFF_CNT 36
-#define MAX_NUM_CSS_SENSORS 32
-#define MAX_ST_VEH_COUNT 4
+%module simplePowerSink
+%{
+    #include "simplePowerSink.h"
+%}
 
-#define NANO2SEC        1e-9
-#define SEC2NANO        1e9
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
-#define SEC2HOUR        1./3600.
+%include "swig_common_model.i"
+%include "sys_model.h"
+%include "../_GeneralModuleFiles/powerNodeBase.h"
+%include "simplePowerSink.h"
 
-/* @} */
+%include "../../simMessages/powerNodeUsageSimMsg.h"
+%include "../../simFswInterfaceMessages/powerNodeStatusIntMsg.h"
 
+GEN_SIZEOF(PowerNodeUsageSimMsg)
+GEN_SIZEOF(PowerNodeStatusIntMsg)
 
-#endif
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

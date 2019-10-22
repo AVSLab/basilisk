@@ -50,6 +50,10 @@
 -# <b>Three-Axis Magnetometers</b><br>
     -# @ref scenarioTAMGroup                  "Adding TAM to simulation"
 
+@section chSpacecraft Systems
+-# <b> Power Systems </b>
+    -# @ref scenarioSimplePowerDemo           "Simple on-board power generation, consumption and tracking with attitude/orbit coupling"
+
 @section chMcSim Monte Carlo Simulations
 -# @ref scenarioMonteCarloAttRWGroup                   "MC run with RW control"
 -# @ref scenarioMonteCarloSpiceGroup                   "MC run using Spice within the Python simulation setup"

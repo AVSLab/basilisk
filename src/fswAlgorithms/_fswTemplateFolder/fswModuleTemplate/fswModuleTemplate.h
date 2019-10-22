@@ -36,8 +36,8 @@
  ### Module Assumptions and Limitations
     This section should describe the assumptions used in formulating the mathematical model and how those assumptions limit the usefulness of the module.
 
- ### Message Connection Descriptions
-    The following table lists all the module input and output messages.  The modulel msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+ ## Message Connection Descriptions
+    The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
     Msg Variable Name | Msg Type | Description
     ------------------|----------|-------------
     dataInMsgName| FswModuleTemplateFswMsg | Input message description.  Note here if this message is optional, and what the default behavior is if this message is not provided.

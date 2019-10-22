@@ -81,7 +81,6 @@ def test_scenarioBskScenarios(show_plots, bskSimCase):
         testFailCount = testFailCount + 1
         testMessages.append("OS error: {0}".format(err))
 
-
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
 

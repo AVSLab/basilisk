@@ -208,6 +208,17 @@ def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, t
 #   Compare two arrays size and values and check relative accuracy
 #
 def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    """
+    Checks whether the relative distance between elements of a pullMessageLogData-derived array and a truth array is below a provided
+    accuracy, and return an error if not.
+    :param trueStates: iterable of size (m,n);
+    :param dataStates: iterable of size (m+1,n), where the first column can be ignored
+    :param accuracy: Relative accuracy boundary
+    :param msg:
+    :param testFailCount:
+    :param testMessages:
+    :return:
+    """
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
         testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
@@ -388,6 +399,15 @@ def foundNAN(array):
 #   macro to create and write a general message
 #
 def setMessage(simObject, processName, msgName, inputMessageData, msgStrName = ""):
+    """
+    Creates a message defined by msgName that appears in the process defined by processName.
+    :param simObject: the TotalSim attribute of a simulationBaseClass instance.
+    :param processName: str : the name of a process in which to write the message.
+    :param msgName: str : the name of the message, used for publish/subscribe
+    :param inputMessageData: the structure containing the message information
+    :param msgStrName: ???
+    :return:
+    """
     inputMessageSize = inputMessageData.getStructSize()
     simObject.CreateNewMessage(processName,
                                msgName,
