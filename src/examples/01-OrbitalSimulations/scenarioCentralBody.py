@@ -70,7 +70,7 @@ def run(show_plots, useCentral):
         other uses isCentralBody = False. The nuances of spacecraft position and velocity I/O in these cases is
         demonstrated.
 
-        .. image:: ../../../_images/doc/test_scenarioBasicOrbit.svg
+        .. image:: ../../../_images/static/test_scenarioBasicOrbit.svg
            :align: center
 
         Args:

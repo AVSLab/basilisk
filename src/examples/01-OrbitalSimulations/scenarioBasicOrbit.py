@@ -63,7 +63,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
     approximation or run with high-order spherical harmonic terms.
 
-    .. image:: ../../../_images/doc/test_scenarioBasicOrbit.svg
+    .. image:: ../../../_images/static/test_scenarioBasicOrbit.svg
        :align: center
 
     Args:
