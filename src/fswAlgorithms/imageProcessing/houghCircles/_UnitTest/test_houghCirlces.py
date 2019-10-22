@@ -135,6 +135,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.imageInMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.opnavCirclesOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
