@@ -23,6 +23,7 @@
 #include "simulation/utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
+#include <math.h>
 
 /*! This method initializes the configData for the TAM sensor interface.
  It checks to ensure that the inputs are sane and then creates the
@@ -58,8 +59,9 @@ void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
  */
 void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
-    if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) < 1e-10) { return; }
-    else { BSK_PRINT(MSG_WARNING, "dcm_BS is set to zero values."); }
+    if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) > 1e-10) {
+        BSK_PRINT(MSG_WARNING, "dcm_BS is set to zero values.");
+    }
 
     return;
 }
