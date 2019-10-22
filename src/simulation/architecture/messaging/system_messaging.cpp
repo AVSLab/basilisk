@@ -517,12 +517,18 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
         this->ReadFails++;
         return(false);
     }
+
+    //  Zero out the message header and payload in case of a bad read
+    memset(DataHeader, 0x0, sizeof(SingleMessageHeader));
+    memset(MsgPayload, 0x0, MaxBytes);
+
     MessageHeaderData* MsgHdr = this->FindMsgHeader(MessageID);
     /// - If there is no data just alert caller that nothing came back
     if(MsgHdr->UpdateCounter == 0)
     {
         return(false);
     }
+
     int64_t CurrentIndex = MsgHdr->UpdateCounter % MsgHdr->MaxNumberBuffers;
     CurrentIndex -= (1 + CurrentOffset);
     while(CurrentIndex < 0)
