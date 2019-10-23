@@ -60,12 +60,11 @@ void SolarFlux::readMessages() {
     SpicePlanetStateSimMsg sunPositionMsgData;
     messagingSystem->ReadMessage(this->sunPositionInMsgId, &tmpHeader, sizeof(SpicePlanetStateSimMsg),
                                  reinterpret_cast<uint8_t*>(&sunPositionMsgData), this->moduleID);
+    this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
 
     SCPlusStatesSimMsg scStatesMsgData;
     messagingSystem->ReadMessage(this->spacecraftStateInMsgId, &tmpHeader, sizeof(SCPlusStatesSimMsg),
                                  reinterpret_cast<uint8_t*>(&scStatesMsgData), this->moduleID);
-
-    this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
 
 }
