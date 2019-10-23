@@ -66,6 +66,15 @@ except ImportError:
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
+    """
+    Unit test for Hough Circles. The unit test specifically runs on 2 images:
+
+        1. A crescent Mars: This image only contains a slim Mars crescent
+
+        2. Moons: This image contains several Moon crescents
+
+    This modules compares directly to the expected circles from the images.
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage)
     assert testResults < 1, testMessage

@@ -31,6 +31,19 @@ def back_substitution(A, b):
 
 
 def test_horizonOpNav():
+    """
+    Unit test for Horizon Navigation. The unit test specifically covers:
+
+        1. Individual methods: This module contains a back substitution method as well as a QR decomposition.
+            This test ensures that they are working properly with a direct test of the method input/outputs with
+            expected results
+
+        2. State and Covariances: This unit test also computes the state estimate and covariance in python. This is
+            compared directly to the output from the module for exact matching.
+
+    The Horizon Nav module gives the spacecraft position given a limb input. This test ensures that the results are as
+    expected both for the state estimate and the covariance associated with the measurement.
+    """
     [testResults, testMessage] = horizonOpNav_methods()
     assert testResults < 1, testMessage
     [testResults, testMessage] = horizonOpNav_update()
@@ -332,7 +345,7 @@ def horizonOpNav_update():
     n = back_substitution(Rpy, RHS)
     n_test = np.dot(np.linalg.inv(Rpy), RHS)
 
-    R_s = (inputCamera.resolution[0]/(opNav.noiseSF*numPoints))**2/d_x**2*np.array([[1,0,0],[0,1,0],[0,0,0]])
+    R_s = (opNav.noiseSF*inputCamera.resolution[0]/(numPoints))**2/d_x**2*np.array([[1,0,0],[0,1,0],[0,0,0]])
     R_s = np.dot(np.dot(B, R_s), B.T)
     R_yInv = np.zeros([numPoints, numPoints])
     for i in range(numPoints):

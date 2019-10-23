@@ -40,6 +40,7 @@ LimbFinding::LimbFinding()
     this->cannyThreshHigh = 200;
     this->cannyThreshLow = 100;
     this->OutputBufferCount = 2;
+    this->limbNumThresh = 50;
 
 }
 
@@ -128,7 +129,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
     /*! - Apply the Canny Transform to find the limbPoints*/
     cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
-    if (cv::countNonZero(edgeImage)>0){
+    if (cv::countNonZero(edgeImage)>this->limbNumThresh){
         std::vector<cv::Point2i> locations;
         cv::findNonZero(edgeImage, locations);
         limbMsg.numLimbPoints =0;
