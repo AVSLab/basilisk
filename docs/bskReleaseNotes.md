@@ -11,6 +11,10 @@ We are very excited by the great capabilities that this software already has, an
 * create data tracking capabilities within BSK where devices can store or communicate data
 * create modules to determine if a satellite can see a ground point such as a communication station
 
+##  Upcoming Version 1.X.X
+<ul>
+    <li>text goes here</li>
+</ul>
 
 ##  Version 1.2.0
 <ul>
