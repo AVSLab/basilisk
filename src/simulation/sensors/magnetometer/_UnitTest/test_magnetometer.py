@@ -41,7 +41,7 @@ from Basilisk.simulation import simMessages
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-@pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 1e-3)])
+@pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 2e-3)])
 @pytest.mark.parametrize("useBias", [True, False])
 @pytest.mark.parametrize("useMinOut, useMaxOut", [(True, True), (False, False)])
 @pytest.mark.parametrize("useScaleFactor", [True, False])
@@ -179,6 +179,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     # This pulls the actual data log from the simulation run.
     tamData = unitTestSim.pullMessageLogData(testModule.tamDataOutMsgName + ".OutputData", list(range(3)))
     print(tamData)
+    print(trueTam_S)
 
     if not unitTestSupport.isArrayEqualRelative(tamData[0], trueTam_S, 3, errTol):
         testFailCount += 1
@@ -186,10 +187,9 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     #   print out success or failure message
     if testFailCount == 0:
         print("PASSED: " + testModule.ModelTag)
-        print("This test uses an accuracy value of " + str(errTol))
     else:
         print("Failed: " + testModule.ModelTag)
-        print("This test uses an accuracy value of " + str(errTol))
+    print("This test uses a relative accuracy value of " + str(errTol) + " percent")
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -205,5 +205,5 @@ if __name__ == "__main__":
                  True,   # useMinOut
                  True,   # useMaxOut
                  True,   # useScaleFactor
-                 1e-3    # errTol
+                 2e-3    # errTol
                )
