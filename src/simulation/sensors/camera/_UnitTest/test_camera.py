@@ -142,6 +142,7 @@ def cameraTest(show_plots, image, saveImage):
     isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
     pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
 
+
     #   print out success message if no error were found
     for i in range(3):
         if np.abs(pos[-1,i+1] - moduleConfig.sigma_CB[i])>1E-10:
