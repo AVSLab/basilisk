@@ -46,6 +46,7 @@
 #include "pyBatteryOutMsg.h"
 #include "atmoPropsSimMsg.h"
 #include "epochSimMsg.h"
+#include "solarFluxSimMsg.h"
 #include "powerNodeUsageSimMsg.h"
 #include "powerStorageStatusSimMsg.h"
 %}
@@ -112,6 +113,8 @@ GEN_SIZEOF(PyBatteryOutMsg)
 GEN_SIZEOF(AtmoPropsSimMsg)
 %include "epochSimMsg.h"
 GEN_SIZEOF(EpochSimMsg)
+%include "solarfluxSimMsg.h"
+GEN_SIZEOF(SolarFluxSimMsg)
 %include "powerNodeUsageSimMsg.h"
 GEN_SIZEOF(PowerNodeUsageSimMsg)
 %include "powerStorageStatusSimMsg.h"
