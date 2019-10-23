@@ -280,16 +280,15 @@ void VizInterface::ReadBSKMessages()
 {
     /* Read BSK SCPlus msg */
     if (scPlusInMsgID.msgID >= 0){
-    SCPlusStatesSimMsg localSCPlusArray;
-    SingleMessageHeader localSCPlusHeader;
-    SystemMessaging::GetInstance()->ReadMessage(scPlusInMsgID.msgID, &localSCPlusHeader,
-                                                sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&localSCPlusArray));
-    if(localSCPlusHeader.WriteSize > 0 && localSCPlusHeader.WriteClockNanos != scPlusInMsgID.lastTimeTag)
-    {
-        scPlusInMsgID.lastTimeTag = localSCPlusHeader.WriteClockNanos;
-        scPlusInMsgID.dataFresh = true;
-    }
-    this->scPlusMessage = localSCPlusArray;
+        SCPlusStatesSimMsg localSCPlusArray;
+        SingleMessageHeader localSCPlusHeader;
+        SystemMessaging::GetInstance()->ReadMessage(scPlusInMsgID.msgID, &localSCPlusHeader,
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&localSCPlusArray));
+        if(localSCPlusHeader.WriteSize > 0 && localSCPlusHeader.WriteClockNanos != scPlusInMsgID.lastTimeTag){
+            scPlusInMsgID.lastTimeTag = localSCPlusHeader.WriteClockNanos;
+            scPlusInMsgID.dataFresh = true;
+        }
+        this->scPlusMessage = localSCPlusArray;
     }
     /*! Read BSK Spice constellation msg */
     {
@@ -298,16 +297,15 @@ void VizInterface::ReadBSKMessages()
     for(it = this->planetNames.begin(); it != this->planetNames.end(); it++)
     {
         if (this->spiceInMsgID[i].msgID != -1){
-        SpicePlanetStateSimMsg localSpiceArray;
-        SingleMessageHeader localSpiceHeader;
-        memset(&localSpiceHeader, 0x0, sizeof(SingleMessageHeader));
-        SystemMessaging::GetInstance()->ReadMessage(this->spiceInMsgID[i].msgID, &localSpiceHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&localSpiceArray));
-        if(localSpiceHeader.WriteSize > 0 && localSpiceHeader.WriteClockNanos != this->spiceInMsgID[i].lastTimeTag)
-        {
-            this->spiceInMsgID[i].lastTimeTag = localSpiceHeader.WriteClockNanos;
-            this->spiceInMsgID[i].dataFresh = true;
-            this->spiceMessage[i] = localSpiceArray;
-        }
+            SpicePlanetStateSimMsg localSpiceArray;
+            SingleMessageHeader localSpiceHeader;
+            memset(&localSpiceHeader, 0x0, sizeof(SingleMessageHeader));
+            SystemMessaging::GetInstance()->ReadMessage(this->spiceInMsgID[i].msgID, &localSpiceHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&localSpiceArray));
+            if(localSpiceHeader.WriteSize > 0 && localSpiceHeader.WriteClockNanos != this->spiceInMsgID[i].lastTimeTag){
+                this->spiceInMsgID[i].lastTimeTag = localSpiceHeader.WriteClockNanos;
+                this->spiceInMsgID[i].dataFresh = true;
+                this->spiceMessage[i] = localSpiceArray;
+            }
         }
         i+=1;
     }
@@ -321,8 +319,7 @@ void VizInterface::ReadBSKMessages()
         RWConfigLogSimMsg localRWArray;
         SingleMessageHeader localRWHeader;
         SystemMessaging::GetInstance()->ReadMessage(this->rwInMsgID[idx].msgID, &localRWHeader, sizeof(RWConfigLogSimMsg), reinterpret_cast<uint8_t*>(&localRWArray));
-            if(localRWHeader.WriteSize > 0 && localRWHeader.WriteClockNanos != this->rwInMsgID[idx].lastTimeTag)
-            {
+            if(localRWHeader.WriteSize > 0 && localRWHeader.WriteClockNanos != this->rwInMsgID[idx].lastTimeTag){
                 this->rwInMsgID[idx].lastTimeTag = localRWHeader.WriteClockNanos;
                 this->rwInMsgID[idx].dataFresh = true;
                 this->rwInMessage[idx] = localRWArray;
@@ -338,8 +335,7 @@ void VizInterface::ReadBSKMessages()
             THROutputSimMsg localThrusterArray;
             SingleMessageHeader localThrusterHeader;
             SystemMessaging::GetInstance()->ReadMessage(this->thrMsgID[idx].msgID, &localThrusterHeader, sizeof(THROutputSimMsg), reinterpret_cast<uint8_t*>(&localThrusterArray));
-            if(localThrusterHeader.WriteSize > 0 && localThrusterHeader.WriteClockNanos != this->thrMsgID[idx].lastTimeTag)
-            {
+            if(localThrusterHeader.WriteSize > 0 && localThrusterHeader.WriteClockNanos != this->thrMsgID[idx].lastTimeTag){
                 this->thrMsgID[idx].lastTimeTag = localThrusterHeader.WriteClockNanos;
                 this->thrMsgID[idx].dataFresh = true;
                 this->thrOutputMessage[idx] = localThrusterArray;
@@ -354,8 +350,7 @@ void VizInterface::ReadBSKMessages()
         CSSArraySensorIntMsg localCSSDataArray;
         SingleMessageHeader localCSSDataHeader;
         SystemMessaging::GetInstance()->ReadMessage(cssDataInMsgId.msgID, &localCSSDataHeader, sizeof(CSSArraySensorIntMsg), reinterpret_cast<uint8_t*>(&localCSSDataArray));
-        if(localCSSDataHeader.WriteSize > 0 && localCSSDataHeader.WriteClockNanos != cssDataInMsgId.lastTimeTag)
-        {
+        if(localCSSDataHeader.WriteSize > 0 && localCSSDataHeader.WriteClockNanos != cssDataInMsgId.lastTimeTag){
             cssDataInMsgId.lastTimeTag = localCSSDataHeader.WriteClockNanos;
             cssDataInMsgId.dataFresh = true;
         }
@@ -366,8 +361,7 @@ void VizInterface::ReadBSKMessages()
         CSSConfigFswMsg localCSSConfigArray;
         SingleMessageHeader localCSSConfigHeader;
         SystemMessaging::GetInstance()->ReadMessage(cssConfInMsgId.msgID, &localCSSConfigHeader, sizeof(CSSConfigFswMsg), reinterpret_cast<uint8_t*>(&localCSSConfigArray));
-        if(localCSSConfigHeader.WriteSize > 0 && localCSSConfigHeader.WriteClockNanos != cssConfInMsgId.lastTimeTag)
-        {
+        if(localCSSConfigHeader.WriteSize > 0 && localCSSConfigHeader.WriteClockNanos != cssConfInMsgId.lastTimeTag){
             cssConfInMsgId.lastTimeTag = localCSSConfigHeader.WriteClockNanos;
             cssConfInMsgId.dataFresh = true;
         }
@@ -379,8 +373,7 @@ void VizInterface::ReadBSKMessages()
         CameraConfigMsg localCameraConfigArray;
         SingleMessageHeader localCameraConfigHeader;
         SystemMessaging::GetInstance()->ReadMessage(this->cameraConfMsgId.msgID, &localCameraConfigHeader, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t*>(&localCameraConfigArray));
-        if(localCameraConfigHeader.WriteSize > 0 && localCameraConfigHeader.WriteClockNanos != this->cameraConfMsgId.lastTimeTag)
-        {
+        if(localCameraConfigHeader.WriteSize > 0 && localCameraConfigHeader.WriteClockNanos != this->cameraConfMsgId.lastTimeTag){
             this->cameraConfMsgId.lastTimeTag = localCameraConfigHeader.WriteClockNanos;
             this->cameraConfMsgId.dataFresh = true;
         }
@@ -393,8 +386,7 @@ void VizInterface::ReadBSKMessages()
         STSensorIntMsg localSTArray;
         SingleMessageHeader localSTHeader;
         SystemMessaging::GetInstance()->ReadMessage(this->starTrackerInMsgID.msgID, &localSTHeader, sizeof(STSensorIntMsg), reinterpret_cast<uint8_t*>(&localSTArray));
-        if(localSTHeader.WriteSize > 0 && localSTHeader.WriteClockNanos != this->starTrackerInMsgID.lastTimeTag)
-        {
+        if(localSTHeader.WriteSize > 0 && localSTHeader.WriteClockNanos != this->starTrackerInMsgID.lastTimeTag){
             this->starTrackerInMsgID.lastTimeTag = localSTHeader.WriteClockNanos;
             this->starTrackerInMsgID.dataFresh = true;
         }
@@ -655,6 +647,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             this->liveStream
             ){
             // Receive pong
+            /*! - The viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before attempting to go into opNavMode 2 */
             if (this->firstPass < 11){
                 this->firstPass++;
             }
