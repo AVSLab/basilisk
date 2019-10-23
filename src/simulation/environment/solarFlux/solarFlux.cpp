@@ -23,8 +23,6 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/solarFluxSimMsg.h"
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/avsEigenSupport.h"
 
 void SolarFlux::SelfInit()
 {
