@@ -1,6 +1,6 @@
 <# Basilisk Known Issues {#bskKnownIssues}
 
-## Upcoming Version 1.X.X
+## Version 1.2.1
 <ul>
     <li>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk `src/` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</li>
 </ul>
@@ -8,6 +8,7 @@
 ## Version 1.2.0
 <ul>
     <li>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk `src/` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</li>
+    <li>The magnetometer unit tests don't pass on all platforms.  This is corrected in the next release.</li>
 </ul>
 
 ## Version 1.1.0

@@ -11,9 +11,10 @@ We are very excited by the great capabilities that this software already has, an
 * create data tracking capabilities within BSK where devices can store or communicate data
 * create modules to determine if a satellite can see a ground point such as a communication station
 
-##  Upcoming Version 1.X.X
+##  Version 1.2.1
 <ul>
-    <li>text goes here</li>
+    <li>fixed an issued with the magnetometer module tests not passing on all platforms. The tolerances are now adjusted to pass everywhere.</li>
+    <li>various improvements to the `OpNav' modules and `vizInterface`</li>
 </ul>
 
 ##  Version 1.2.0

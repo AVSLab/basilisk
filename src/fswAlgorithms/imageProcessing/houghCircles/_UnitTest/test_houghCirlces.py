@@ -71,7 +71,7 @@ def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow
 
         1. A crescent Mars: This image only contains a slim Mars crescent
 
-        3. Moons: This image contains several Moon crescents
+        2. Moons: This image contains several Moon crescents
 
     This modules compares directly to the expected circles from the images.
     """
