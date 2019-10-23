@@ -121,7 +121,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     int32_t numPoints;
     double sigma_pix;
     numPoints = limbIn.numLimbPoints;
-    sigma_pix = cameraSpecs.resolution[0]/(configData->noiseSF*numPoints);
+    sigma_pix = configData->noiseSF*cameraSpecs.resolution[0]/(numPoints);
     
     /*! Build DCMs */
     configData->planetTarget = limbIn.planetIds;

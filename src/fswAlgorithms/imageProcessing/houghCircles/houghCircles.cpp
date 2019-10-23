@@ -125,6 +125,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         /*! - If no image is present, write zeros in message */
         SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
         return;}
+
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
@@ -141,7 +142,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.circlesCenters[2*i+1] = circles[i][1];
         circleBuffer.circlesRadii[i] = circles[i][2];
         for(int j=0; j<3; j++){
-            circleBuffer.uncertainty[j+3*j] = this->noiseSF*100*this->voteThresh/circles[i][3];
+            circleBuffer.uncertainty[j+3*j] = this->noiseSF*circles[i][3]/this->voteThresh;
         }
         circlesFound+=1;
     }

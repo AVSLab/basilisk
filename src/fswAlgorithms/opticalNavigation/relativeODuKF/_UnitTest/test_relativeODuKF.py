@@ -84,6 +84,7 @@ def setupFilterData(filterObject):
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.00001*0.00001*1E-6
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0001*0.0001*1E-6
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
+    filterObject.noiseSF = 1
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -121,6 +122,7 @@ def relOD_method_test(show_plots):
     data.planetId = 2
     data.opNavInMsg = msg
     data.countHalfSPs = 6
+    data.noiseSF = 1
 
     Covar = np.eye(6)
     SPexp = np.zeros([6, 2*6+1])
@@ -193,6 +195,7 @@ def StateUpdateRelOD(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
+    moduleConfig.noiseSF = 1
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
     time = np.linspace(0, int(multT1*t1), int(multT1*t1//dt)+1)
@@ -319,6 +322,7 @@ def StatePropRelOD(show_plots, dt):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
+    moduleConfig.noiseSF = 1
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
     timeSim = 60

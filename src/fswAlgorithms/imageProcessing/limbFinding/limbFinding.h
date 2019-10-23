@@ -68,6 +68,7 @@ public:
     int32_t cannyThreshHigh;                 //!< [px] Canny edge detection Threshold
     int32_t cannyThreshLow;                  //!< [-] Second Threshold for Canny detection
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
+    int32_t limbNumThresh;                  //!< [-] Threshold for when a limb is detected
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavLimbOutMsgID;        //!< ID for the outgoing message
