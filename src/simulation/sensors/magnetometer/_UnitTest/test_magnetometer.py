@@ -41,7 +41,7 @@ from Basilisk.simulation import simMessages
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-@pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 2e-3)])
+@pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 1e-2)])
 @pytest.mark.parametrize("useBias", [True, False])
 @pytest.mark.parametrize("useMinOut, useMaxOut", [(True, True), (False, False)])
 @pytest.mark.parametrize("useScaleFactor", [True, False])
@@ -189,7 +189,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
         print("PASSED: " + testModule.ModelTag)
     else:
         print("Failed: " + testModule.ModelTag)
-    print("This test uses a relative accuracy value of " + str(errTol) + " percent")
+    print("This test uses a relative accuracy value of " + str(errTol*100) + " percent")
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -205,5 +205,5 @@ if __name__ == "__main__":
                  True,   # useMinOut
                  True,   # useMaxOut
                  True,   # useScaleFactor
-                 2e-3    # errTol
+                 1e-2    # errTol
                )
