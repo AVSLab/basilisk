@@ -66,6 +66,18 @@ except ImportError:
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
+    """
+    Unit test for Limb Finding. The unit test specifically runs on 3 images:
+
+        1. A full Mars: This image has an easy to detect, full mars disk
+
+        2. A crescent Mars: This image only contains a slim Mars crescent
+
+        3. Moons: This image contains several Moon crescents
+
+    The Limb Finding module uses the Canny transform in order to find the planet limb. It then outputs all the points
+    on the limb.
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage)
     assert testResults < 1, testMessage
