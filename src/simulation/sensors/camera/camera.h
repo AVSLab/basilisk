@@ -55,7 +55,10 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    
+    void AddGaussianNoise(const cv::Mat, cv::Mat &mDst, double, double);
+    void AddSaltPepper(const cv::Mat, cv::Mat &mDst, float, float);
+    void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float);
+    void ApplyFilters(cv::Mat, cv::Mat &mDst, int, int, int, int, float, float, float, float);
 public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message

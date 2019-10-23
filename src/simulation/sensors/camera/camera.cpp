@@ -97,12 +97,122 @@ void Camera::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
+/*!
+ * Adds gaussian noise to an image.
+ * Can be used to add color noise and dark current.
+ * @param cv::Mat source image
+ * @param cv::Mat destination of modified image
+ * @param double mean pixel value
+ * @param double standard deviation of pixel value
+ * @return void
+ */
+void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, double StdDev)
+{
+    cv::Mat mSrc_16SC;
+    //CV_16SC3 means signed 16 bit shorts three channels
+    cv::Mat mGaussian_noise = cv::Mat(mSrc.size(), CV_16SC3);
+    randn(mGaussian_noise, cv::Scalar::all(Mean), cv::Scalar::all(StdDev));
+    
+    mSrc.convertTo(mSrc_16SC, CV_16SC3);
+    addWeighted(mSrc_16SC, 1.0, mGaussian_noise, 1.0, 0.0, mSrc_16SC);
+    mSrc_16SC.convertTo(mDst,mSrc.type());
+}
+
+/*!
+ * Adds dead and hot pixels to an image.
+ * @param cv::Mat source image
+ * @param cv::Mat destination of modified image
+ * @param float probability of dead pixels
+ * @param float probability of hot pixels
+ * @return void
+ */
+void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb){
+    // use this to have different stuck pixels every time
+    // uint64 initValue = time(0);
+    // RNG rng(initValue);
+    
+    // use this to always have the same stuck pixels
+    cv::RNG rng;
+    
+    int amount1 = mSrc.rows * mSrc.cols * pa;
+    int amount2 = mSrc.rows * mSrc.cols * pb;
+    
+    cv::Mat mSaltPepper = cv::Mat(mSrc.size(), mSrc.type());
+    mSrc.convertTo(mSaltPepper, mSrc.type());
+    
+    cv::Vec3b black;
+    black.val[0] = 0;
+    black.val[1] = 0;
+    black.val[2] = 0;
+    
+    cv::Vec3b white;
+    white.val[0] = 255;
+    white.val[1] = 255;
+    white.val[2] = 255;
+    
+    for(int counter = 0; counter < amount1; counter++){
+        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows), rng.uniform(0, mSaltPepper.cols)) = black;
+    }
+    
+    for(int counter = 0; counter < amount2; counter++){
+        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows), rng.uniform(0, mSaltPepper.cols)) = white;
+    }
+    
+    mSaltPepper.convertTo(mDst, mSrc.type());
+}
+
+/*!
+ * Adds a cosmic ray to an image.
+ * @param cv::Mat source image
+ * @param cv::Mat destination of modified image
+ * @param float probability of getting a ray each frame
+ * @return void
+ */
+void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold){
+    uint64 initValue = time(0);
+    cv::RNG rng(initValue);
+    std::cout<<time(0)<<std::endl;
+    
+    float prob = rng.uniform(0.0, 1.0);
+    if (prob > probThreshhold) {
+    cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
+    mSrc.convertTo(mCosmic, mSrc.type());
+    
+    cv::Point p1 = cv::Point(rng.uniform(0, mCosmic.rows), rng.uniform(0, mCosmic.cols));
+    cv::Point p2 = cv::Point(rng.uniform(0, mCosmic.rows), rng.uniform(0, mCosmic.cols));
+    
+    line(mCosmic, p1, p2, cv::Scalar(255, 255, 255), 1, cv::LINE_8);
+    
+    mCosmic.convertTo(mDst, mSrc.type());
+    }
+}
+
+void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, int gaussian, int darkCurrent, int saltPepper, int cosmicRay, float gaussianP, float darkCurrentP, float saltPepperP, float cosmicRayP){
+    
+    cv::Mat mFilters(mSource.size(), mSource.type());
+    
+    if (gaussian == 1){
+        AddGaussianNoise(mSource, mFilters, 0, 50.0);
+    }
+    if(darkCurrent == 1){
+        AddGaussianNoise(mFilters, mFilters, 20, 0.0);
+    }
+    if (saltPepper == 1){
+        AddSaltPepper(mFilters, mFilters, 0.01, 0.01);
+    }
+    if(cosmicRay == 1){
+        AddCosmicRay(mFilters, mFilters, 0);
+    }
+    mFilters.convertTo(mDst, mSource.type());
+}
+
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
+    std::string localPath;
     CameraImageMsg imageBuffer;
     CameraConfigMsg cameraMsg;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -127,7 +237,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     
     cv::Mat imageCV, blurred;
     if (this->saveDir !=""){
-        this->saveDir = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+        localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
     }
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
@@ -140,13 +250,18 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
+        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 0, 0, 0, 0);
+        if (this->saveImages == 1){
+            cv::imwrite(localPath, blurred);
+        }
     }
     else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 0, 0, 0, 0);
         if (this->saveImages == 1){
-            cv::imwrite(this->saveDir, imageCV);
+            cv::imwrite(localPath, blurred);
         }
     }
     else{

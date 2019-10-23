@@ -60,8 +60,7 @@ except ImportError:
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp, saveImage", [
-                    ("mars.png",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
-                   ("moons.png",    5,         10,      25,     10,       20,       200,   1, False) # Moon images
+                    ("mars.jpg",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
     ])
 
 # update "module" in this function name to reflect the module name
@@ -109,12 +108,9 @@ def cameraTest(show_plots, image, saveImage):
     moduleConfig.cameraOutMsgName = "cameraOut"
     moduleConfig.imageOutMsgName = "out_image"
     moduleConfig.filename = imagePath
+    moduleConfig.saveImages = 1 if saveImage else 0
+    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/'
 
-    circles = []
-    if image == "mars.png":
-        circles = [(250, 260, 110)]
-    if image == "moons.png":
-        circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = camera.CameraImageMsg()
@@ -138,7 +134,7 @@ def cameraTest(show_plots, image, saveImage):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -146,17 +142,6 @@ def cameraTest(show_plots, image, saveImage):
     isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
     pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
 
-    # Output image:
-    output_image = Image.new("RGB", input_image.size)
-    output_image.paste(input_image)
-    draw_result = ImageDraw.Draw(output_image)
-
-    # Save output image
-    if saveImage:
-        output_image.save("result_"+ image)
-
-    if show_plots:
-        output_image.show()
 
     #   print out success message if no error were found
     for i in range(3):
@@ -179,4 +164,4 @@ def cameraTest(show_plots, image, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    cameraTest(True, "moons.png",  False) # Moon images
+    cameraTest(True, "mars.jpg",  True) # Mars image
