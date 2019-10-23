@@ -49,6 +49,7 @@
 #include "solarFluxSimMsg.h"
 #include "powerNodeUsageSimMsg.h"
 #include "powerStorageStatusSimMsg.h"
+#include "planetHeadingSimMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -119,6 +120,8 @@ GEN_SIZEOF(SolarFluxSimMsg)
 GEN_SIZEOF(PowerNodeUsageSimMsg)
 %include "powerStorageStatusSimMsg.h"
 GEN_SIZEOF(PowerStorageStatusSimMsg)
+%include "planetHeadingSimMsg.h"
+GEN_SIZEOF(PlanetHeadingSimMsg)
 
 #ifndef CSHARP_ROX
 %pythoncode %{
