@@ -8,17 +8,22 @@ We are very excited by the great capabilities that this software already has, an
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 * Updates to the Vizard Unity-based Basilisk visualization tool
-* create power tracking capabilities within BSK where devices can provide or draw power
+* create data tracking capabilities within BSK where devices can store or communicate data
 * create modules to determine if a satellite can see a ground point such as a communication station
 
 
-##  Version 1.X.X
+##  Version 1.2.0
 <ul>
     <li>Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the `cmake` flag `-DUSE_PYTHON3` can still be set to `OFF`</li>
     <li>Revised the FSW template module to use the updated in-line module documentation style which adds the description to the module *.h doxygen description, and adds the validation discussion as a doc-string to the `test_xxx.py` test file.</li>
     <li>make sure `mrpRotation` is non-singular for any general referene rotation.</li>
     <li>Created a Three-Axis-Magnetometer (TAM) sensor simulation model</li>
     <li>Created a TAM FSW communication model</li>
+    <li>Changed the BSK `ReadMessage()` method to automatically zero the message memory space before reading in the data</li>
+    <li>Added a base classes for battery energy storage and power consumption/provider nodes</li>
+    <li>Added a simple power node module</li>
+    <li>Added a simpler battery module</li>
+    <li>Added a simple solar panel power module</li>
 </ul>
 
 ##  Version 1.1.0
