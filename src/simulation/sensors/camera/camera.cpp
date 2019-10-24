@@ -168,10 +168,10 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
  * @param float probability of getting a ray each frame
  * @return void
  */
-void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold){
-    uint64 initValue = time(0);
-    cv::RNG rng(initValue);
-    std::cout<<time(0)<<std::endl;
+void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset){
+    uint64 initValue = CurrentSimNanos;
+    cv::RNG rng(initValue + time(0) + randOffset);
+    //std::cout<<time(0)<<std::endl;
     
     float prob = rng.uniform(0.0, 1.0);
     if (prob > probThreshhold) {
@@ -187,21 +187,33 @@ void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhol
     }
 }
 
-void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, int gaussian, int darkCurrent, int saltPepper, int cosmicRay, float gaussianP, float darkCurrentP, float saltPepperP, float cosmicRayP){
+void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
+    cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
+    mSrc.convertTo(mCosmic, mSrc.type());
+    for(int i = 0; i < num; i++){
+        AddCosmicRay(mCosmic, mCosmic, 0, i+1);
+    }
+    mCosmic.convertTo(mDst, mSrc.type());
+}
+
+void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, int gaussian, int darkCurrent, int saltPepper, int cosmicRay, int cosmicRayBurst, float gaussianP, float darkCurrentP, float saltPepperP, float cosmicRayP, double cosmicRayBurstCount){
     
     cv::Mat mFilters(mSource.size(), mSource.type());
     
     if (gaussian == 1){
-        AddGaussianNoise(mSource, mFilters, 0, 50.0);
+        AddGaussianNoise(mSource, mFilters, 0, 10.0);
     }
     if(darkCurrent == 1){
-        AddGaussianNoise(mFilters, mFilters, 20, 0.0);
+        AddGaussianNoise(mFilters, mFilters, 75, 0.0);
     }
     if (saltPepper == 1){
-        AddSaltPepper(mFilters, mFilters, 0.01, 0.01);
+        AddSaltPepper(mFilters, mFilters, 0.0001, 0.0001);
     }
     if(cosmicRay == 1){
-        AddCosmicRay(mFilters, mFilters, 0);
+        AddCosmicRay(mFilters, mFilters, 0, 0);
+    }
+    if(cosmicRayBurst == 1){
+        AddCosmicRayBurst(mFilters, mFilters, 0);
     }
     mFilters.convertTo(mDst, mSource.type());
 }
@@ -212,6 +224,7 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, int gaussian, int dark
  */
 void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
+    this->CurrentSimNanos = CurrentSimNanos;
     std::string localPath;
     CameraImageMsg imageBuffer;
     CameraConfigMsg cameraMsg;
@@ -250,7 +263,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
-        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 0, 0, 0, 0);
+        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5);
         if (this->saveImages == 1){
             cv::imwrite(localPath, blurred);
         }
@@ -259,7 +272,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 0, 0, 0, 0);
+        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5);
         if (this->saveImages == 1){
             cv::imwrite(localPath, blurred);
         }

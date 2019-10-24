@@ -57,8 +57,9 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void AddGaussianNoise(const cv::Mat, cv::Mat &mDst, double, double);
     void AddSaltPepper(const cv::Mat, cv::Mat &mDst, float, float);
-    void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float);
-    void ApplyFilters(cv::Mat, cv::Mat &mDst, int, int, int, int, float, float, float, float);
+    void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float, double);
+    void AddCosmicRayBurst(const cv::Mat, cv::Mat &mDst, double);
+    void ApplyFilters(cv::Mat, cv::Mat &mDst, int, int, int, int, int, float, float, float, float, double);
 public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
@@ -85,6 +86,7 @@ private:
     int32_t imageInMsgID;                //!< ID for the outgoing message
     int32_t imageOutMsgID;                //!< ID for the outgoing message
     int32_t cameraOutID;                //!< ID for the outgoing message
+    uint64_t CurrentSimNanos;
 };
 
 /* @} */
