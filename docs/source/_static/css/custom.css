@@ -20,3 +20,7 @@ a.el, a.el:visited {
 .wy-nav-content {
     max-width: none;
 }
+
+code span.pre {
+	color: #3376B8;
+}
