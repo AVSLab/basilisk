@@ -59,9 +59,10 @@ from Basilisk.utilities import macros
     ,(1, 3)
     ,(2, 2)
 ])
+@pytest.mark.parametrize("accuracy", [1e-12])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, param1, param2):
+def test_module(show_plots, param1, param2, accuracy):
     """
 Validation Test Description
 ---------------------------
@@ -77,7 +78,9 @@ Test Parameters
 ---------------
 As this is a parameterized unit test, note that the test case parameters values are shown automatically in the \
 pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what \
-each parameter controls.
+each parameter controls.  This is a conveninet location to include the accuracy variable used in the validation test.
+- accuracy: [float]
+    absolute accuracy value used in the validation tests
 - param1: [int]
     Dummy test parameter for this parameterized unit test
 - param2: [int]
@@ -102,19 +105,18 @@ If the script generates figures, these figures will be automatically pulled from
 Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content \
 should be understood by just looking at the figure.
 
-At the end of the script where a print statement says that the script passes, also add a print statement \
-saying what accuracy tolerance(s) were used.
+At the end of the script where a print statement says that the script passes.
 
 Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting \
 contained within this HTML pytest report.
 
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = fswModuleTestFunction(show_plots, param1, param2)
+    [testResults, testMessage] = fswModuleTestFunction(show_plots, param1, param2, accuracy)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots, param1, param2):
+def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -275,5 +277,6 @@ if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
                  1,           # param1 value
-                 1            # param2 value
+                 1,           # param2 value
+                 1e-12        # accuracy
                )

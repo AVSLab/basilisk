@@ -13,7 +13,7 @@ We are very excited by the great capabilities that this software already has, an
 
 ##  Version 1.X.X
 <ul>
-    <li>text here</li>
+    <li>Update template illustrating how the validation accuracy can be recording in the `pytest` parameters.</li>
 </ul>
 
 ##  Version 1.2.1
