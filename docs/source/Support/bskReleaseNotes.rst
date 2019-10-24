@@ -3,7 +3,7 @@
 Basilisk Release Notes
 ======================
 
-**Note:** We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the `src/tests/scenarios` folder.  More documentation and tutorial scripts are in development.
+**Note:** We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/tests/scenarios`` folder.  More documentation and tutorial scripts are in development.
 
 In Progress Features
 --------------------
@@ -17,16 +17,21 @@ In Progress Features
 
 Upcoming Version 1.X.X
 ----------------------
-- text goes here
+- text here
+
+Version 1.2.1
+----------------------
+- fixed an issued with the magnetometer module tests not passing on all platforms. The tolerances are now adjusted to pass everywhere.
+- various improvements to the ``OpNav`` modules and ``vizInterface``
 
 Version 1.2.0
 ----------------------
-- Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the `cmake` flag `-DUSE_PYTHON3` can still be set to `OFF`
-- Revised the FSW template module to use the updated in-line module documentation style which adds the description to the module *.h doxygen description, and adds the validation discussion as a doc-string to the `test_xxx.py` test file.
-- make sure `mrpRotation` is non-singular for any general referene rotation.
+- Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the ``cmake`` flag ``-DUSE_PYTHON3`` can still be set to ``OFF``
+- Revised the FSW template module to use the updated in-line module documentation style which adds the description to the module ``*.h`` doxygen description, and adds the validation discussion as a doc-string to the ``test_xxx.py`` test file.
+- make sure ``mrpRotation`` is non-singular for any general referene rotation.
 - Created a Three-Axis-Magnetometer (TAM) sensor simulation model
 - Created a TAM FSW communication model
-- Changed the BSK `ReadMessage()` method to automatically zero the message memory space before reading in the data
+- Changed the BSK ``ReadMessage()`` method to automatically zero the message memory space before reading in the data
 - Added a base classes for battery energy storage and power consumption/provider nodes
 - Added a simple power node module
 - Added a simpler battery module
@@ -40,9 +45,9 @@ Version 1.1.0
 - Cleaned up opNav messages to be consistent with other messages, and simplified the limbFinding code. Only functionality change is Gaussian Blur.
 - Add new OpNav module using a planet limb. Algorithm developed by J. Christian
 - Added support for OpenCV v 4.1.1 and Eigen library 3.3.7
-- fixed issue with Windows having trouble compiling due to use of `uint`
+- fixed issue with Windows having trouble compiling due to use of ``uint``
 - added instructions on how to use the new Xcode 11 on macOS.  This requires installing 2 more tools.  Updated the install and macOS FAW pages.
-- added the ability to `pytest` to use the `--report` flag to generate a comprehensive html test and validation document.  All future modules should use this method to discuss the module validation.  Legacy modules will be converted over time.
+- added the ability to ``pytest`` to use the ``--report`` flag to generate a comprehensive html test and validation document.  All future modules should use this method to discuss the module validation.  Legacy modules will be converted over time.
 - Corrected an issue with some some BSK modules in a low memory computer environment
 
 
