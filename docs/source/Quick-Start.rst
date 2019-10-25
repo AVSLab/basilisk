@@ -9,19 +9,9 @@ Quick-Start
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
-   
-   Quick-Start/Prologue
-   Quick-Start/Chapter1
-   Quick-Start/Chapter2
-   Quick-Start/Chapter3
-   Quick-Start/Chapter4
-   Quick-Start/Chapter5
-   Quick-Start/Chapter6
-   Quick-Start/Chapter7
-   Quick-Start/Chapter8
-   Quick-Start/Chapter9
 
 
-Coming soon! For now, please refer to the src/examples directory or :ref::examples.
+
+Coming soon! For now, please refer to the ``src/examples`` directory.
 
 

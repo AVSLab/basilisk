@@ -8,7 +8,7 @@ Welcome to Basilisk's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Basilisk:
    
    About
    Install
@@ -18,9 +18,10 @@ Welcome to Basilisk's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Vizard
+   :caption: Vizard:
 
-   Vizard
+   Vizard/Vizard
+   Vizard/vizardSettings
 
 
 

@@ -4,10 +4,6 @@ About
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
-   
- .. role:: raw-latex(raw)
-   :format: latex
-..
 
 
 .. image:: _images/static/Basilisk-Logo.png

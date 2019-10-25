@@ -5,7 +5,7 @@ a.reference, a.internal, a.current {
 	font-weight: bold;
 }
 
-span.caption-text {
+div.wy-menu > p.caption > span.caption-text {
 	color: white;
 	font-weight: bold;
 }
@@ -22,5 +22,14 @@ a.el, a.el:visited {
 }
 
 code span.pre {
-	color: #3376B8;
+	color: #cb7ccf;
+}
+
+th.head  {
+	color: white;
+	background-color: #565A5C;
+}
+
+th.head p {
+	margin: 0px;
 }
