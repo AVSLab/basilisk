@@ -7,140 +7,85 @@
 Installing On Linux
 ===================
 
-The preferred method is to use Python 3. For now support is also
-provided to use the built-in Python 2, but Python 2 support is now a
-depreciated functionality.
+The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
 
 Software setup
 --------------
 
-In order to run Basilisk, the following software will be necessary. This
-document outline how to install this support software.
+In order to run Basilisk, the following software will be necessary. This document outline how to install this support software.
 
 -  `Cmake <https://cmake.org/>`__
 -  `Python <https://www.python.org/>`__ 3.x OR Python 2.7
-   (numpy==1.15.4, matplotlib, pytest, conan, pandas)
--  `SWIG <http://www.swig.org/>`__ (version 3.x.x)
+   (``numpy==1.15.4``, ``matplotlib``, ``pytest``, ``conan``, ``pandas``)
+-  `SWIG <http://www.swig.org/>`__ (version 3 or 4)
 -  `GCC <https://gcc.gnu.org/>`__
 
 Dependencies
 ------------
 
-.. Note:: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies. Some distributions of Linux will use other package management commands such as ‘yum’, ‘dnf’, of ‘pgk’.
+.. Note:: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies. Some distributions of Linux will use other package management commands such as ``yum``, ``dnf``, of ``pgk``.
 
-1. CMake: Available using CMake-GUI or CMake over the command line
+#. CMake: Available using CMake-GUI or CMake over the command line::
 
-::
+        # GUI installation
+        $ apt-get install cmake-gui
 
-       # GUI installation
-       $ apt-get install cmake-gui
-       
-       # Command line installation
-       $ apt-get install cmake
+        # Command line installation
+        $ apt-get install cmake
 
-2. Python 2.7 / Python 3.x with Pip:
+#. Python 2.7 / Python 3.x with Pip::
 
-::
+    $ apt-get install python2.7
+    $ apt-get install python3.x
 
-       $ apt-get install python2.7
-       $ apt-get install python3.x
+#. SWIG: Available using::
 
-3. SWIG: Available using:
+    $ apt-get install swig3.0
 
-::
+#. A C/C++ Compiler: This is included by default with most Linux systems (``gcc``), but is necessary to build Basilisk.
 
-       $ apt-get install swig3.0
+#. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
-4. A C/C++ Compiler: This is included by default with most Linux systems
-   (gcc), but is necessary to build Basilisk.
+#. A install of Conan. Install with pip, an example is below::
 
-5. A install of Conan. Install with pip, an example is below
-
-::
-
-       $ pip install conan
+       $ pip3 install conan
 
 Build Process via Terminal
 --------------------------
 
-For Basilisk Python 2 and Python 3 inter-compatability, build using both
-following instructions then run using preffered python version.
+For Basilisk Python 2 and Python 3 inter-compatability, build using both following instructions then run using preferred python version.
 
-Python 2
-~~~~~~~~
+#. First step is to create the destination directory.  This is ``dist3`` for Python 3 and ``dist`` for Python 2::
 
-::
-
-       # Create directory for build and change directory to that
        $ mkdir dist
-       $ cd dist
+       $ cd
 
-       # Setup Conan Repositories (These can be consolidated into a private conan server [conan getting started docs](https://docs.conan.io/en/latest/introduction.html))
-
-       $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-       $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
-
-       # CMake here in the build directory with Unix Makefiles, where the source code is located at: '../src'
-       $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src  -DUSE_PROTOBUFFERS=OFF
-
-       # Can do a multi core make by running 'make -j<number of cores +1>' such as 'make -j5'
-       # May take 3-10 minutes depending on the device
-       $ make
-
-       # Redirect to src directory where the tests are located
-       $ cd ../src/
-
-       # Execute pytest
-       $ pytest
-
-Python 3
-~~~~~~~~
-
-::
-
-       # Create directory for build and change directory to that
-       $ mkdir dist3
-       $ cd dist3
-
-       # Setup Conan Repositories (These can be consolidated into a private conan server [conan getting started docs](https://docs.conan.io/en/latest/introduction.html))
+#. Setup Conan Repositories. These can be consolidated into a private conan server `conan getting started docs <https://docs.conan.io/en/latest/introduction.html>`__::
 
        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-       $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+       $ conan remote add conan-community https://api
 
-       # CMake here in the build directory with Unix Makefiles, where the source code is located at: '../src'
-       $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src  -DUSE_PROTOBUFFERS=OFF -DUSE_PYTHON3=ON
+#. CMake here in the build directory with Unix Makefiles, where the source code is located at: ``../src``::
 
-       # Can do a multi core make by running 'make -j<number of cores +1>' such as 'make -j5'
-       # May take 3-10 minutes depending on the device
-       $ make
+    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src
 
-       # Redirect to src directory where the tests are located
-       $ cd ../src/
+   The ``CMAKE_BUILD_TYPE`` argument can be changed to ``Release`` as well.
 
-       # Execute pytest
-       $ pytest
+#. Can do a multi core make by running ``make -j<number of cores +1>`` such as ``make -j5``.
 
-Build Process via GUI
----------------------
+#. More information is available on Basilisk ``cmake`` :ref:`flag options <cmakeOptions>`.
 
-.. Warning:: This currently is bugged and doesn’t work correctly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#. To test your setup you can run one of the example scenario scripts.
 
-First run Cmake with the source directory set to the ``{REPO}/src``
-directory and the build directory set to ``{REPO}/dist``. For
-generators, select the one that matches your preferred C++ compiler;
-this tutorial will assume you have used the built-in GNU compiler (gcc).
-This tutorial will also assume that you have selected “Unix Makefile.”
+   -  For example, in the terminal window, make ``basilisk/src/examples/01-OrbitalSimulations`` the
+      current directory.
+   -  Run one of the tutorial scenarios, such as::
 
-With the makefile generated, navigate to the ``{REPO}/dist`` directory.
-Open a terminal, and run ``make`` to begin the build process. Compiling
-should take 3-10 minutes depending on the machine.
+       $ python3 scenarioBasicOrbit.py
 
-To test that Basilisk has installed correctly, navigate back to the
-``{REPO}`` directory and run ``pytest src/`` from the command line. It
-should show that all tests pass. Also, make sure that in a python
-interpreter, you can run ``import Basilisk`` to assure that Basilisk is
-correctly linked into python’s search path for modules.
+
+
+
 
 Other packages some distributions of Linux may need
 ---------------------------------------------------

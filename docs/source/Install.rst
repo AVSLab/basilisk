@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Install
-====================================
+=======
 
 .. toctree::
    :maxdepth: 1
@@ -13,8 +13,10 @@ Install
    Install/installOnLinux
    Install/installOnMacOS
    Install/installOnWindows
+   Install/pullCloneBSK
    Install/InstallWithCmakeOptions
    Install/installOptionalPackages
+   Install/installPowerUserTips
    Install/customPython
 
 
