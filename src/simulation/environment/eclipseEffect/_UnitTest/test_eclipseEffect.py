@@ -36,7 +36,7 @@ def test_eclipseEffect():
     Test Variables
     ---------------
     A SolarFluxSimMsg is provided along with an EclipseSimMessage. The product of the
-    solar flux flux value and eclipse shadowFactor value is checked to be
+    solar flux value and eclipse shadowFactor value is checked to be
     accurate. The values were chosen arbitrarily and are hard-coded.
 
     """
