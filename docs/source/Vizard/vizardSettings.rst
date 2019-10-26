@@ -5,8 +5,8 @@
 
 .. _vizardSettings:
 
-Vizard - BSK Scripting Settings
-===============================
+BSK Scripting Settings
+======================
 
 Overview
 --------
@@ -237,6 +237,7 @@ Two) and one planet-pointing camera panel. This functionality can be
 controlled by using the ‘createCameraViewPanel’ helper method.
 
 .. code-block::
+
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
 	gravBodies=gravFactory, saveFile=fileName)
 	vizSupport.createCameraViewPanel(viz, “One”, viewPanel=True, setView=0)

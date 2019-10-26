@@ -42,16 +42,10 @@ include hardware-in-the-loop scenarios.
    :align: center
    :scale: 50 %
    
-A companion Visualization program is called Vizard.
-This stand-alone program is based on the Unity rendering engine and can
-display the Basilisk simulation states in an interactive manner. The
-following image links to a video showing the basic features.
+A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner. The following image links to a video showing the basic features.
 
-.. raw:: html
 
-	 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
-	     <iframe src="https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-	 </div>
+
 	 
 	 
 Name/Logo Description

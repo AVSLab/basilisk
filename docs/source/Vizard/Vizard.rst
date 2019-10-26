@@ -4,14 +4,12 @@
 
 .. _vizard:
 
-Vizard - Unity Based Basilisk Visualization
-===============================================
+About
+=====
 
 .. raw:: html
 
-	 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
-	     <iframe src="https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-	 </div>
+    <video src="https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4" controls autoplay style="width:100%;"></video>
 	 
 	
 Overview 
