@@ -28,7 +28,20 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 
 
-def test_eclipseEffect():
+def test_solarFlux():
+    """
+    Test Description:
+    ------------------
+    Test that solar flux is appropriately modified depending on spacecraft distance from the sun.
+    To test this, the module is asked to write the solar flux at 1 AU. Then it is asked to write
+    the flux at sqrt(2)*AU and the flux is checked to be exactly 1/2 of that at 1 AU
+
+    Variables Tested:
+    -----------------
+    The solarFluxSimMsg flux member attribute is used to communicate SolarFlux module output and
+    therefore is what is checked in this test.
+    """
+
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
@@ -56,8 +69,6 @@ def test_eclipseEffect():
 
     assert fluxOutFurther[0][1] == fluxOutEarth[0][1] / 2.0
 
-    return
-
 
 if __name__ == "__main__":
-    test_eclipseEffect()
+    test_solarFlux()
