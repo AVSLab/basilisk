@@ -22,9 +22,12 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
 
-/*! \defgroup SimModelGroup
-  @brief Calculate the Solar Flux at a spacecraft position
+/*! \addtogroup SimModelGroup
+ * @{
+ */
 
+//!  @brief Calculate the Solar Flux at a spacecraft position
+/*!
  # Module Purpose
  ## Executive Summary
     Take in a spacecraft position message and calculate the solar flux [W/m2] at the spacecraft's location.
@@ -72,7 +75,6 @@
     sf.solarFluxOutMsgName = "solar_flux"
     sim.AddModelToTask(task.Name, sf)
     ~~~~~~~
-  @{
  */
 class SolarFlux: public SysModel {
 public:
@@ -97,3 +99,4 @@ private:
     Eigen::Vector3d r_SN_N;  //!< [m] sun position
     Eigen::Vector3d r_ScN_N;  //!< [m] s/c position
 };
+/*! @} */

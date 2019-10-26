@@ -90,3 +90,4 @@ private:
     int64_t solarFluxInOutMsgId = -1;
     int64_t eclipseInMsgId = -1;
 };
+/*! @} */
