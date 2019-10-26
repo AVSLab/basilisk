@@ -21,6 +21,7 @@ Welcome to Basilisk's documentation!
    :caption: Vizard:
 
    Vizard/Vizard
+   Vizard/VizardGUI
    Vizard/vizardSettings
 
 
