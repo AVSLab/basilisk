@@ -20,26 +20,27 @@
 #pragma once
 
 #include "_GeneralModuleFiles/sys_model.h"
+#include "simMessages/solarFluxSimMsg.h"
 
-class SimpleNav: public SysModel {
+class EclipseEffect: public SysModel {
 public:
-    SimpleNav();
-    ~SimpleNav();
+    EclipseEffect();
+    ~EclipseEffect();
    
     void SelfInit();
     void CrossInit(); 
     void UpdateState(uint64_t CurrentSimNanos);
-    void computeTrueOutput(uint64_t Clock);
-    void computeErrors(uint64_t CurrentSimNanos);
-    void applyErrors();
     void readInputMessages();
-    void writeOutputMessages(uint64_t Clock);
+    void writeOutputMessages(uint64_t CurrentSimNanos);
     
 public:
-    std::string solarFluxInOutMsgName;
-    std::string eclipseInMsgName;
+    std::string solarFluxInOutMsgName = "solar_flux";
+    std::string eclipseInMsgName = "eclipse_data_0";
+
+private:
+    double fluxIn;
+    double fluxOut;
+    double eclipseFactor;
+    int64_t solarFluxInOutMsgId = -1;
+    int64_t eclipseInMsgId = -1;
 };
-
-/*! @} */
-
-#endif
