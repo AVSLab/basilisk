@@ -19,12 +19,18 @@
 %module eclipseEffect
 %{
    #include "eclipseEffect.h"
+   #include "simMessages/eclipseSimMsg.h"
+   #include "simMessages/solarFluxSimMsg.h"
 %}
 
 %include "swig_common_model.i"
 
 %include "sys_model.h"
 %include "eclipseEffect.h"
+%include "simMessages/eclipseSimMsg.h"
+GEN_SIZEOF(EclipseSimMsg)
+%include "simMessages/solarFluxSimMsg.h"
+GEN_SIZEOF(SolarFluxSimMsg)
 
 %pythoncode %{
 import sys
