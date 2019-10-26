@@ -93,6 +93,5 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
 
     assert fluxOutFurther[1][1] == pytest.approx(fluxOutEarth[0][1] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
 
-
 if __name__ == "__main__":
     test_solarFlux(False, np.sqrt(2.0), 0.5, "eclipse_data_0", 1e-8)
