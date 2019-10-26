@@ -27,6 +27,19 @@ from Basilisk.utilities import SimulationBaseClass
 
 
 def test_eclipseEffect():
+    """
+    Test Description
+    -----------------
+    This test checks whether the eclipse effect appropriately modifies solar flux based on
+    eclipse conditions.
+
+    Test Variables
+    ---------------
+    A SolarFluxSimMsg is provided along with an EclipseSimMessage. The product of the
+    solar flux flux value and eclipse shadowFactor value is checked to be
+    accurate. The values were chosen arbitrarily and are hard-coded.
+
+    """
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
