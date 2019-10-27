@@ -43,74 +43,76 @@ the Vizard default values are used.
 General Settings
 ~~~~~~~~~~~~~~~~
 
-+-----------------------+---------------+------------------------------+
-| Variable              | Type          | Description                  |
-+=======================+===============+==============================+
-| ambient               | [0,8]         | value to specify the ambient |
-|                       |               | Vizard lighting.             |
-+-----------------------+---------------+------------------------------+
-| orbitLinesOn          | (0,1)         | flag to show (1) or hide (0) |
-|                       |               | the orbit trajectory lines   |
-+-----------------------+---------------+------------------------------+
-| spacecraftCSon        | (0,1)         | flag to show (1) or hide (0) |
-|                       |               | the spacecraft coordinate    |
-|                       |               | axes                         |
-+-----------------------+---------------+------------------------------+
-| planetCSon            | (0,1)         | flag to show (1) or hide (0) |
-|                       |               | the planet coordinate axes   |
-+-----------------------+---------------+------------------------------+
-| skyBox                | String        | Used determine what star     |
-|                       |               | background should be shown.  |
-|                       |               | The empty string "" provides |
-|                       |               | default NASA SVS Starmap,    |
-|                       |               | “ESO” shows the ESO Milky    |
-|                       |               | Way skybox, “black” provides |
-|                       |               | a black background, or the   |
-|                       |               | user can provide a filepath  |
-|                       |               | to custom background image   |
-|                       |               | file.                        |
-+-----------------------+---------------+------------------------------+
+.. table:: Vizard Simulation Parameters
+    :widths: 10 10 100
+
+    +-----------------------+---------------+------------------------------+
+    | Variable              | Type          | Description                  |
+    +=======================+===============+==============================+
+    | ambient               | [0,8]         | value to specify the ambient |
+    |                       |               | Vizard lighting.             |
+    +-----------------------+---------------+------------------------------+
+    | orbitLinesOn          | (0,1)         | flag to show (1) or hide (0) |
+    |                       |               | the orbit trajectory lines   |
+    +-----------------------+---------------+------------------------------+
+    | spacecraftCSon        | (0,1)         | flag to show (1) or hide (0) |
+    |                       |               | the spacecraft coordinate    |
+    |                       |               | axes                         |
+    +-----------------------+---------------+------------------------------+
+    | planetCSon            | (0,1)         | flag to show (1) or hide (0) |
+    |                       |               | the planet coordinate axes   |
+    +-----------------------+---------------+------------------------------+
+    | skyBox                | String        | Used determine what star     |
+    |                       |               | background should be shown.  |
+    |                       |               | The empty string "" provides |
+    |                       |               | default NASA SVS Starmap,    |
+    |                       |               | “ESO” shows the ESO Milky    |
+    |                       |               | Way skybox, “black” provides |
+    |                       |               | a black background, or the   |
+    |                       |               | user can provide a filepath  |
+    |                       |               | to custom background image   |
+    |                       |               | file.                        |
+    +-----------------------+---------------+------------------------------+
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To specify the actuator GUI settings use the ``setActuatorGuiSetting``
-helper method in Python. An example is
-
-::
+helper method in Python. An example is::
 
    vizSupport.setActuatorGuiSetting(viz, viewRWPanel=True, viewRWHUD=True)
 
-The following table includes the keword options for this method.
+The following table includes the keyword options for this method.
 
-+-----------------+-------------+---------------+---------------------+
-| Variable        | Type        | Required      | Description         |
-+=================+=============+===============+=====================+
-| ``viewThrusterP | Boolean     | No            | Show the thruster   |
-| anel``          |             |               | panel               |
-+-----------------+-------------+---------------+---------------------+
-| ``viewThrusterH | Boolean     | No            | Show the thruster   |
-| UD``            |             |               | particle streams    |
-+-----------------+-------------+---------------+---------------------+
-| ``viewRWPanel`` | Boolean     | No            | Show the reaction   |
-|                 |             |               | wheel panel         |
-+-----------------+-------------+---------------+---------------------+
-| ``viewRWHUD``   | Boolean     | No            | Show the reaction   |
-|                 |             |               | wheel disks         |
-|                 |             |               | configuration       |
-|                 |             |               | outside the         |
-|                 |             |               | spacecraft          |
-+-----------------+-------------+---------------+---------------------+
-| ``spacecraftNam | String      | No, sc name   | Specify which       |
-| e``             |             | default       | spacecraft should   |
-|                 |             |               | show actuator       |
-|                 |             |               | information. If not |
-|                 |             |               | provided then the   |
-|                 |             |               | name specified in   |
-|                 |             |               | ``viz.spacecraftNam |
-|                 |             |               | e``                 |
-|                 |             |               | is used.            |
-+-----------------+-------------+---------------+---------------------+
+.. table:: GUI Parameter Options
+    :widths: 10 10 20 100
+
+    +----------------------+-------------+---------------+-----------------------+
+    | Variable             | Type        | Required      | Description           |
+    +======================+=============+===============+=======================+
+    | ``viewThrusterPanel``| Boolean     | No            | Show the thruster     |
+    |                      |             |               | panel                 |
+    +----------------------+-------------+---------------+-----------------------+
+    | ``viewThrusterHUD``  | Boolean     | No            | Show the thruster     |
+    |                      |             |               | particle streams      |
+    +----------------------+-------------+---------------+-----------------------+
+    | ``viewRWPanel``      | Boolean     | No            | Show the reaction     |
+    |                      |             |               | wheel panel           |
+    +----------------------+-------------+---------------+-----------------------+
+    | ``viewRWHUD``        | Boolean     | No            | Show the reaction     |
+    |                      |             |               | wheel disks           |
+    |                      |             |               | configuration         |
+    |                      |             |               | outside the           |
+    |                      |             |               | spacecraft            |
+    +----------------------+-------------+---------------+-----------------------+
+    | ``spacecraftName``   | String      | No, sc name   | Specify which         |
+    |                      |             | default       | spacecraft should     |
+    |                      |             |               | show actuator         |
+    |                      |             |               | information. If not   |
+    |                      |             |               | provided then the     |
+    |                      |             |               | ``viz.spacecraftName``|
+    |                      |             |               | is used.              |
+    +----------------------+-------------+---------------+-----------------------+
 
 Defining a Pointing Line
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,23 +138,26 @@ into the required set of numerical values.
 Each pointing line message contains the three variables listed in the
 next table.
 
-+-----------------------+---------------+----------+-------------------+
-| Variable              | Type          | Required | Description       |
-+=======================+===============+==========+===================+
-| fromBodyName          | string        | No, sc   | contains the name |
-|                       |               | name     | of the            |
-|                       |               | default  | originating body  |
-+-----------------------+---------------+----------+-------------------+
-| toBodyName            | string        | Yes      | contains the name |
-|                       |               |          | of the body to    |
-|                       |               |          | point towards     |
-+-----------------------+---------------+----------+-------------------+
-| lineColor             | int(4)        | Yes      | color name or     |
-|                       |               |          | array on integer  |
-|                       |               |          | values specifying |
-|                       |               |          | the RGBA values   |
-|                       |               |          | between 0 to 255  |
-+-----------------------+---------------+----------+-------------------+
+.. table:: Pointing Line Parameter Options
+    :widths: 10 10 10 100
+
+    +-----------------------+---------------+----------+-------------------+
+    | Variable              | Type          | Required | Description       |
+    +=======================+===============+==========+===================+
+    | fromBodyName          | string        | No, sc   | contains the name |
+    |                       |               | name     | of the            |
+    |                       |               | default  | originating body  |
+    +-----------------------+---------------+----------+-------------------+
+    | toBodyName            | string        | Yes      | contains the name |
+    |                       |               |          | of the body to    |
+    |                       |               |          | point towards     |
+    +-----------------------+---------------+----------+-------------------+
+    | lineColor             | int(4)        | Yes      | color name or     |
+    |                       |               |          | array on integer  |
+    |                       |               |          | values specifying |
+    |                       |               |          | the RGBA values   |
+    |                       |               |          | between 0 to 255  |
+    +-----------------------+---------------+----------+-------------------+
 
 Defining Keep In/Out Cones
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,62 +177,64 @@ using the helper function ``createConeInOut``:
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
 
-+-------------------+---------+---------+--------------+-------------+
-| Variable          | Type    | Units   | Required     | Description |
-+===================+=========+=========+==============+=============+
-| isKeepIn          | bool    |         | Yes          | make cone   |
-|                   |         |         |              | keep in     |
-|                   |         |         |              | (True) or   |
-|                   |         |         |              | keep out    |
-|                   |         |         |              | (False)     |
-+-------------------+---------+---------+--------------+-------------+
-| fromBodyName      | string  |         | No, sc name  | contains    |
-|                   |         |         | default      | the name of |
-|                   |         |         |              | the         |
-|                   |         |         |              | originating |
-|                   |         |         |              | body        |
-+-------------------+---------+---------+--------------+-------------+
-| toBodyName        | string  |         | Yes          | contains    |
-|                   |         |         |              | the name of |
-|                   |         |         |              | the body to |
-|                   |         |         |              | point       |
-|                   |         |         |              | towards     |
-+-------------------+---------+---------+--------------+-------------+
-| lineColor         | int(4)  |         | Yes          | color name  |
-|                   |         |         |              | or array on |
-|                   |         |         |              | integer     |
-|                   |         |         |              | values      |
-|                   |         |         |              | specifying  |
-|                   |         |         |              | the RGBA    |
-|                   |         |         |              | values      |
-|                   |         |         |              | between 0   |
-|                   |         |         |              | to 255      |
-+-------------------+---------+---------+--------------+-------------+
-| position_B        | float(3 | m       | No, (0,0,0)  | position of |
-|                   | )       |         | default      | the cone    |
-|                   |         |         |              | vertex      |
-+-------------------+---------+---------+--------------+-------------+
-| normalVector_B    | float(3 |         | Yes          | normal axis |
-|                   | )       |         |              | of the cone |
-|                   |         |         |              | in body     |
-|                   |         |         |              | frame       |
-|                   |         |         |              | components  |
-+-------------------+---------+---------+--------------+-------------+
-| incidenceAngle    | float   | rad     | Yes          | angle of    |
-|                   |         |         |              | the cone    |
-+-------------------+---------+---------+--------------+-------------+
-| coneHeight        | float   | m       | Yes          | height of   |
-|                   |         |         |              | the cone    |
-+-------------------+---------+---------+--------------+-------------+
-| coneName          | string  |         | No           | cone label  |
-|                   |         |         |              | name, if    |
-|                   |         |         |              | unspecified |
-|                   |         |         |              | ,           |
-|                   |         |         |              | viz will    |
-|                   |         |         |              | autogenerat |
-|                   |         |         |              | e           |
-|                   |         |         |              | name        |
-+-------------------+---------+---------+--------------+-------------+
+.. table:: Keep In/Out Cones Parameter Options
+    :widths: 20 10 10 10 100
+
+    +-------------------+----------+---------+--------------+-------------+
+    | Variable          | Type     | Units   | Required     | Description |
+    +===================+==========+=========+==============+=============+
+    | isKeepIn          | bool     |         | Yes          | make cone   |
+    |                   |          |         |              | keep in     |
+    |                   |          |         |              | (True) or   |
+    |                   |          |         |              | keep out    |
+    |                   |          |         |              | (False)     |
+    +-------------------+----------+---------+--------------+-------------+
+    | fromBodyName      | string   |         | No, sc name  | contains    |
+    |                   |          |         | default      | the name of |
+    |                   |          |         |              | the         |
+    |                   |          |         |              | originating |
+    |                   |          |         |              | body        |
+    +-------------------+----------+---------+--------------+-------------+
+    | toBodyName        | string   |         | Yes          | contains    |
+    |                   |          |         |              | the name of |
+    |                   |          |         |              | the body to |
+    |                   |          |         |              | point       |
+    |                   |          |         |              | towards     |
+    +-------------------+----------+---------+--------------+-------------+
+    | lineColor         | int(4)   |         | Yes          | color name  |
+    |                   |          |         |              | or array on |
+    |                   |          |         |              | integer     |
+    |                   |          |         |              | values      |
+    |                   |          |         |              | specifying  |
+    |                   |          |         |              | the RGBA    |
+    |                   |          |         |              | values      |
+    |                   |          |         |              | between 0   |
+    |                   |          |         |              | to 255      |
+    +-------------------+----------+---------+--------------+-------------+
+    | position_B        | float(3) | m       | No, (0,0,0)  | position of |
+    |                   |          |         | default      | the cone    |
+    |                   |          |         |              | vertex      |
+    +-------------------+----------+---------+--------------+-------------+
+    | normalVector_B    | float(3) |         | Yes          | normal axis |
+    |                   |          |         |              | of the cone |
+    |                   |          |         |              | in body     |
+    |                   |          |         |              | frame       |
+    |                   |          |         |              | components  |
+    +-------------------+----------+---------+--------------+-------------+
+    | incidenceAngle    | float    | rad     | Yes          | angle of    |
+    |                   |          |         |              | the cone    |
+    +-------------------+----------+---------+--------------+-------------+
+    | coneHeight        | float    | m       | Yes          | height of   |
+    |                   |          |         |              | the cone    |
+    +-------------------+----------+---------+--------------+-------------+
+    | coneName          | string   |         | No           | cone label  |
+    |                   |          |         |              | name, if    |
+    |                   |          |         |              | unspecified |
+    |                   |          |         |              | ,           |
+    |                   |          |         |              | viz will    |
+    |                   |          |         |              | autogenerate|
+    |                   |          |         |              | name        |
+    +-------------------+----------+---------+--------------+-------------+
 
 Defining the Vizard Camera View Panels
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,122 +258,128 @@ The following table illustrates
 the arguments for the ``createCameraViewPanel`` method if invoking the
 spacecraft relative camera headings for cameras ``One`` and ``Two``.
 
-+-------------------+---------+---------+--------------+-------------+
-| Variable          | Type    | Units   | Required     | Description |
-+===================+=========+=========+==============+=============+
-| spacecraftName    | string  |         | No, sc name  | name of the |
-|                   |         |         | default      | spacecraft  |
-|                   |         |         |              | with        |
-|                   |         |         |              | respect to  |
-|                   |         |         |              | which the   |
-|                   |         |         |              | camera is   |
-|                   |         |         |              | shown       |
-+-------------------+---------+---------+--------------+-------------+
-| viewPanel         | bool    |         | No, default  | flag        |
-|                   |         |         | is false     | indicating  |
-|                   |         |         |              | if a panel  |
-|                   |         |         |              | should be   |
-|                   |         |         |              | shown       |
-|                   |         |         |              | (true) or   |
-|                   |         |         |              | not (false) |
-+-------------------+---------+---------+--------------+-------------+
-| setView           | int     |         | Yes          | index       |
-|                   |         |         |              | specifying  |
-|                   |         |         |              | along which |
-|                   |         |         |              | axis the    |
-|                   |         |         |              | camera is   |
-|                   |         |         |              | pointing (0 |
-|                   |         |         |              | -> +X, 1 -> |
-|                   |         |         |              | -X, 2 ->    |
-|                   |         |         |              | +Y, 3 ->    |
-|                   |         |         |              | -Y, 4 ->    |
-|                   |         |         |              | +Z, 5 ->    |
-|                   |         |         |              | -Z)         |
-+-------------------+---------+---------+--------------+-------------+
-| spacecraftVisible | bool    |         | No, default  | flag        |
-|                   |         |         | is false     | indicating  |
-|                   |         |         |              | if the      |
-|                   |         |         |              | spacecraft  |
-|                   |         |         |              | should be   |
-|                   |         |         |              | shown in    |
-|                   |         |         |              | the camera  |
-|                   |         |         |              | view        |
-+-------------------+---------+---------+--------------+-------------+
-| fieldOfView       | float   | rad     | No, default  | camera      |
-|                   |         |         | -1           | field of    |
-|                   |         |         |              | view, to    |
-|                   |         |         |              | use the     |
-|                   |         |         |              | Vizard      |
-|                   |         |         |              | default set |
-|                   |         |         |              | it to -1    |
-+-------------------+---------+---------+--------------+-------------+
+.. table:: Camera View Panel Parameter Options
+    :widths: 15 10 10 15 50
 
-The following tale illustrates the arguments for the
+    +-------------------+---------+---------+--------------+-------------+
+    | Variable          | Type    | Units   | Required     | Description |
+    +===================+=========+=========+==============+=============+
+    | spacecraftName    | string  |         | No, sc name  | name of the |
+    |                   |         |         | default      | spacecraft  |
+    |                   |         |         |              | with        |
+    |                   |         |         |              | respect to  |
+    |                   |         |         |              | which the   |
+    |                   |         |         |              | camera is   |
+    |                   |         |         |              | shown       |
+    +-------------------+---------+---------+--------------+-------------+
+    | viewPanel         | bool    |         | No, default  | flag        |
+    |                   |         |         | is false     | indicating  |
+    |                   |         |         |              | if a panel  |
+    |                   |         |         |              | should be   |
+    |                   |         |         |              | shown       |
+    |                   |         |         |              | (true) or   |
+    |                   |         |         |              | not (false) |
+    +-------------------+---------+---------+--------------+-------------+
+    | setView           | int     |         | Yes          | index       |
+    |                   |         |         |              | specifying  |
+    |                   |         |         |              | along which |
+    |                   |         |         |              | axis the    |
+    |                   |         |         |              | camera is   |
+    |                   |         |         |              | pointing (0 |
+    |                   |         |         |              | -> +X, 1 -> |
+    |                   |         |         |              | -X, 2 ->    |
+    |                   |         |         |              | +Y, 3 ->    |
+    |                   |         |         |              | -Y, 4 ->    |
+    |                   |         |         |              | +Z, 5 ->    |
+    |                   |         |         |              | -Z)         |
+    +-------------------+---------+---------+--------------+-------------+
+    | spacecraftVisible | bool    |         | No, default  | flag        |
+    |                   |         |         | is false     | indicating  |
+    |                   |         |         |              | if the      |
+    |                   |         |         |              | spacecraft  |
+    |                   |         |         |              | should be   |
+    |                   |         |         |              | shown in    |
+    |                   |         |         |              | the camera  |
+    |                   |         |         |              | view        |
+    +-------------------+---------+---------+--------------+-------------+
+    | fieldOfView       | float   | rad     | No, default  | camera      |
+    |                   |         |         | -1           | field of    |
+    |                   |         |         |              | view, to    |
+    |                   |         |         |              | use the     |
+    |                   |         |         |              | Vizard      |
+    |                   |         |         |              | default set |
+    |                   |         |         |              | it to -1    |
+    +-------------------+---------+---------+--------------+-------------+
+
+The following table illustrates the arguments for the
 ``createCameraViewPanel`` method if a planet pointing camera is setup.
 
-+-------------------+---------+---------+--------------+-------------+
-| Variable          | Type    | Units   | Required     | Description |
-+===================+=========+=========+==============+=============+
-| spacecraftName    | string  |         | No, sc name  | name of the |
-|                   |         |         | default      | spacecraft  |
-|                   |         |         |              | with        |
-|                   |         |         |              | respect to  |
-|                   |         |         |              | which the   |
-|                   |         |         |              | camera is   |
-|                   |         |         |              | shown       |
-+-------------------+---------+---------+--------------+-------------+
-| viewPanel         | bool    |         | No, default  | flag        |
-|                   |         |         | is false     | indicating  |
-|                   |         |         |              | if a panel  |
-|                   |         |         |              | should be   |
-|                   |         |         |              | shown       |
-|                   |         |         |              | (true) or   |
-|                   |         |         |              | not (false) |
-+-------------------+---------+---------+--------------+-------------+
-| setView           | int     |         | Yes          | index       |
-|                   |         |         |              | specifying  |
-|                   |         |         |              | along which |
-|                   |         |         |              | orbit axis  |
-|                   |         |         |              | the camera  |
-|                   |         |         |              | is pointing |
-|                   |         |         |              | (0 ->       |
-|                   |         |         |              | Nadir, 1 -> |
-|                   |         |         |              | Orbit       |
-|                   |         |         |              | Normal, 2   |
-|                   |         |         |              | -> Along    |
-|                   |         |         |              | Track)      |
-+-------------------+---------+---------+--------------+-------------+
-| spacecraftVisible | bool    |         | No, default  | flag        |
-|                   |         |         | is false     | indicating  |
-|                   |         |         |              | if the      |
-|                   |         |         |              | spacecraft  |
-|                   |         |         |              | should be   |
-|                   |         |         |              | shown in    |
-|                   |         |         |              | the camera  |
-|                   |         |         |              | view        |
-+-------------------+---------+---------+--------------+-------------+
-| fieldOfView       | float   | rad     | No, default  | camera      |
-|                   |         |         | -1           | field of    |
-|                   |         |         |              | view, to    |
-|                   |         |         |              | use the     |
-|                   |         |         |              | Vizard      |
-|                   |         |         |              | default set |
-|                   |         |         |              | it to -1    |
-+-------------------+---------+---------+--------------+-------------+
-| targetBodyName    | string  |         | Yes          | name of the |
-|                   |         |         |              | planet to   |
-|                   |         |         |              | point at    |
-+-------------------+---------+---------+--------------+-------------+
+.. table:: ``createCameraViewPanel`` Parameter Options
+    :widths: 15 10 10 15 50
 
-:raw-latex:`\image `html Images/static/vizard-ImgCustomCam.png
-“Illustration of custom camera panel Panel” width=400px
+    +-------------------+---------+---------+--------------+-------------+
+    | Variable          | Type    | Units   | Required     | Description |
+    +===================+=========+=========+==============+=============+
+    | spacecraftName    | string  |         | No, sc name  | name of the |
+    |                   |         |         | default      | spacecraft  |
+    |                   |         |         |              | with        |
+    |                   |         |         |              | respect to  |
+    |                   |         |         |              | which the   |
+    |                   |         |         |              | camera is   |
+    |                   |         |         |              | shown       |
+    +-------------------+---------+---------+--------------+-------------+
+    | viewPanel         | bool    |         | No, default  | flag        |
+    |                   |         |         | is false     | indicating  |
+    |                   |         |         |              | if a panel  |
+    |                   |         |         |              | should be   |
+    |                   |         |         |              | shown       |
+    |                   |         |         |              | (true) or   |
+    |                   |         |         |              | not (false) |
+    +-------------------+---------+---------+--------------+-------------+
+    | setView           | int     |         | Yes          | index       |
+    |                   |         |         |              | specifying  |
+    |                   |         |         |              | along which |
+    |                   |         |         |              | orbit axis  |
+    |                   |         |         |              | the camera  |
+    |                   |         |         |              | is pointing |
+    |                   |         |         |              | (0 ->       |
+    |                   |         |         |              | Nadir, 1 -> |
+    |                   |         |         |              | Orbit       |
+    |                   |         |         |              | Normal, 2   |
+    |                   |         |         |              | -> Along    |
+    |                   |         |         |              | Track)      |
+    +-------------------+---------+---------+--------------+-------------+
+    | spacecraftVisible | bool    |         | No, default  | flag        |
+    |                   |         |         | is false     | indicating  |
+    |                   |         |         |              | if the      |
+    |                   |         |         |              | spacecraft  |
+    |                   |         |         |              | should be   |
+    |                   |         |         |              | shown in    |
+    |                   |         |         |              | the camera  |
+    |                   |         |         |              | view        |
+    +-------------------+---------+---------+--------------+-------------+
+    | fieldOfView       | float   | rad     | No, default  | camera      |
+    |                   |         |         | -1           | field of    |
+    |                   |         |         |              | view, to    |
+    |                   |         |         |              | use the     |
+    |                   |         |         |              | Vizard      |
+    |                   |         |         |              | default set |
+    |                   |         |         |              | it to -1    |
+    +-------------------+---------+---------+--------------+-------------+
+    | targetBodyName    | string  |         | Yes          | name of the |
+    |                   |         |         |              | planet to   |
+    |                   |         |         |              | point at    |
+    +-------------------+---------+---------+--------------+-------------+
+
+
+.. image:: /_images/static/vizard-ImgCustomCam.png
+   :align: center
+   :scale: 80 %
 
 It is also possible to create a custom camera view which points in an
 arbitrary direction as illustrate in the image above. The following
 helper method is an example of how such a custom camera view can be
-created:
-
-::
+created::
 
    vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
                                         resolution=[1024, 1024], renderRate=int(1e9 / 10), sensorSize=[0.2, 0.2],
@@ -375,73 +388,76 @@ created:
 The following tale illustrates the arguments for the
 ``createCameraConfigMsg`` method.
 
-+-------------------+---------+---------+--------------+-------------+
-| Variable          | Type    | Units   | Required     | Description |
-+===================+=========+=========+==============+=============+
-| cameraID          | Int     |         | Yes          | ID of the   |
-|                   |         |         |              | Vizard      |
-|                   |         |         |              | camera      |
-+-------------------+---------+---------+--------------+-------------+
-| parentName        | string  |         | No, sc name  | name of the |
-|                   |         |         | default      | spacecraft  |
-|                   |         |         |              | with        |
-|                   |         |         |              | respect to  |
-|                   |         |         |              | which the   |
-|                   |         |         |              | camera is   |
-|                   |         |         |              | shown       |
-+-------------------+---------+---------+--------------+-------------+
-| fieldOfView       | Float   | rad     | Yes          | field of    |
-|                   |         |         |              | view        |
-+-------------------+---------+---------+--------------+-------------+
-| resolution        | Int(2)  |         | Yes          | image       |
-|                   |         |         |              | sensor      |
-|                   |         |         |              | pixels      |
-+-------------------+---------+---------+--------------+-------------+
-| renderRate        | Int     | ns      | Yes          | time        |
-|                   |         |         |              | between     |
-|                   |         |         |              | image grabs |
-+-------------------+---------+---------+--------------+-------------+
-| sensorSize        | Float(2 | m       | Yes          | sensor      |
-|                   | )       |         |              | dimensions  |
-+-------------------+---------+---------+--------------+-------------+
-| cameraPos_B       | Float(3 | m       | Yes          | camera      |
-|                   | )       |         |              | location    |
-|                   |         |         |              | relative to |
-|                   |         |         |              | body frame  |
-|                   |         |         |              | in B frame  |
-|                   |         |         |              | components  |
-+-------------------+---------+---------+--------------+-------------+
-| sigma_CB          | Float(3 |         | Yes          | camera      |
-|                   | )       |         |              | orientation |
-|                   |         |         |              | relative to |
-|                   |         |         |              | teh body    |
-|                   |         |         |              | frame in    |
-|                   |         |         |              | MRPs        |
-+-------------------+---------+---------+--------------+-------------+
-| skyBox            | String  |         | No           | Used        |
-|                   |         |         |              | determine   |
-|                   |         |         |              | what star   |
-|                   |         |         |              | background  |
-|                   |         |         |              | should be   |
-|                   |         |         |              | shown. The  |
-|                   |         |         |              | empty       |
-|                   |         |         |              | string ""   |
-|                   |         |         |              | provides    |
-|                   |         |         |              | default     |
-|                   |         |         |              | NASA SVS    |
-|                   |         |         |              | Starmap,    |
-|                   |         |         |              | “ESO” shows |
-|                   |         |         |              | the ESO     |
-|                   |         |         |              | Milky Way   |
-|                   |         |         |              | skybox,     |
-|                   |         |         |              | “black”     |
-|                   |         |         |              | provides a  |
-|                   |         |         |              | black       |
-|                   |         |         |              | background, |
-|                   |         |         |              | or the user |
-|                   |         |         |              | can provide |
-|                   |         |         |              | a filepath  |
-|                   |         |         |              | to custom   |
-|                   |         |         |              | background  |
-|                   |         |         |              | image file. |
-+-------------------+---------+---------+--------------+-------------+
+.. table:: ``createCameraConfigMsg`` Parameter Options
+    :widths: 15 10 10 15 100
+
+    +-------------------+---------+---------+--------------+-------------+
+    | Variable          | Type    | Units   | Required     | Description |
+    +===================+=========+=========+==============+=============+
+    | cameraID          | Int     |         | Yes          | ID of the   |
+    |                   |         |         |              | Vizard      |
+    |                   |         |         |              | camera      |
+    +-------------------+---------+---------+--------------+-------------+
+    | parentName        | string  |         | No, sc name  | name of the |
+    |                   |         |         | default      | spacecraft  |
+    |                   |         |         |              | with        |
+    |                   |         |         |              | respect to  |
+    |                   |         |         |              | which the   |
+    |                   |         |         |              | camera is   |
+    |                   |         |         |              | shown       |
+    +-------------------+---------+---------+--------------+-------------+
+    | fieldOfView       | Float   | rad     | Yes          | field of    |
+    |                   |         |         |              | view        |
+    +-------------------+---------+---------+--------------+-------------+
+    | resolution        | Int(2)  |         | Yes          | image       |
+    |                   |         |         |              | sensor      |
+    |                   |         |         |              | pixels      |
+    +-------------------+---------+---------+--------------+-------------+
+    | renderRate        | Int     | ns      | Yes          | time        |
+    |                   |         |         |              | between     |
+    |                   |         |         |              | image grabs |
+    +-------------------+---------+---------+--------------+-------------+
+    | sensorSize        | Float(2)| m       | Yes          | sensor      |
+    |                   |         |         |              | dimensions  |
+    +-------------------+---------+---------+--------------+-------------+
+    | cameraPos_B       | Float(3)| m       | Yes          | camera      |
+    |                   |         |         |              | location    |
+    |                   |         |         |              | relative to |
+    |                   |         |         |              | body frame  |
+    |                   |         |         |              | in B frame  |
+    |                   |         |         |              | components  |
+    +-------------------+---------+---------+--------------+-------------+
+    | sigma_CB          | Float(3)|         | Yes          | camera      |
+    |                   |         |         |              | orientation |
+    |                   |         |         |              | relative to |
+    |                   |         |         |              | teh body    |
+    |                   |         |         |              | frame in    |
+    |                   |         |         |              | MRPs        |
+    +-------------------+---------+---------+--------------+-------------+
+    | skyBox            | String  |         | No           | Used        |
+    |                   |         |         |              | determine   |
+    |                   |         |         |              | what star   |
+    |                   |         |         |              | background  |
+    |                   |         |         |              | should be   |
+    |                   |         |         |              | shown. The  |
+    |                   |         |         |              | empty       |
+    |                   |         |         |              | string ""   |
+    |                   |         |         |              | provides    |
+    |                   |         |         |              | default     |
+    |                   |         |         |              | NASA SVS    |
+    |                   |         |         |              | Starmap,    |
+    |                   |         |         |              | “ESO” shows |
+    |                   |         |         |              | the ESO     |
+    |                   |         |         |              | Milky Way   |
+    |                   |         |         |              | skybox,     |
+    |                   |         |         |              | “black”     |
+    |                   |         |         |              | provides a  |
+    |                   |         |         |              | black       |
+    |                   |         |         |              | background, |
+    |                   |         |         |              | or the user |
+    |                   |         |         |              | can provide |
+    |                   |         |         |              | a filepath  |
+    |                   |         |         |              | to custom   |
+    |                   |         |         |              | background  |
+    |                   |         |         |              | image file. |
+    +-------------------+---------+---------+--------------+-------------+

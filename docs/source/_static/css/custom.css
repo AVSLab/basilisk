@@ -33,3 +33,8 @@ th.head, .wy-nav-top  {
 th.head p {
 	margin: 0px;
 }
+
+/* override table no-wrap */
+.wy-table-responsive table td, .wy-table-responsive table th {
+    white-space: normal;
+}
