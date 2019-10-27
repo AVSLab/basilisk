@@ -18,7 +18,9 @@
 
 '''
 
+
 import numpy as np
+import pytest
 
 from Basilisk.simulation import solarFlux
 from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
@@ -27,22 +29,25 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 
-
-def test_solarFlux():
+@pytest.mark.parametrize("positionFactor, relTol", [(np.sqrt(2), 1e-8)])
+def test_solarFlux(show_plots, positionFactor, relTol):
     """
     Test Description:
     ------------------
     Test that solar flux is appropriately modified depending on spacecraft distance from the sun.
     To test this, the module is asked to write the solar flux at 1 AU. Then it is asked to write
-    the flux at sqrt(2)*AU and the flux is checked to be exactly 1/2 of that at 1 AU
+    the flux at positionFactor*AU and the flux is checked to be positionFactor**2 of that at 1 AU to within a relative tolerance of relTol
 
     Variables Tested:
     -----------------
-    The solarFluxSimMsg flux member attribute is used to communicate SolarFlux module output and
-    therefore is what is checked in this test.
+    - positionFactor : [float] positive
+        a factor by which to multiply the original s/c position to check flux at a new position
+    - relTol : [float] positive
+        the relative tolerance to which the result is checked.
     """
 
     sim = SimulationBaseClass.SimBaseClass()
+    sim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
@@ -61,14 +66,14 @@ def test_solarFlux():
     sim.InitializeSimulationAndDiscover()
     sim.TotalSim.SingleStepProcesses()
     fluxOutEarth = sim.pullMessageLogData("solar_flux.flux")
-    scPositionMessage.r_BN_N = [0., 0., np.sqrt(2.) * om.AU*1000]
+    scPositionMessage.r_BN_N = [0., 0., positionFactor * om.AU*1000]
     unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
     sim.InitializeSimulationAndDiscover()
     sim.TotalSim.SingleStepProcesses()
     fluxOutFurther = sim.pullMessageLogData("solar_flux.flux")
 
-    assert fluxOutFurther[0][1] == fluxOutEarth[0][1] / 2.0
+    assert fluxOutFurther[0][1] == pytest.approx(fluxOutEarth[0][1] / (positionFactor**2), rel=relTol)
 
 
 if __name__ == "__main__":
-    test_solarFlux()
+    test_solarFlux(False, np.sqrt(2.0), 1e-8)

@@ -19,50 +19,55 @@
 '''
 
 
+import pytest
+
 from Basilisk.simulation import eclipseEffect
 from Basilisk.simulation.simMessages import EclipseSimMsg
 from Basilisk.simulation.simMessages import SolarFluxSimMsg
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 
-
-def test_eclipseEffect():
+@pytest.mark.parametrize("rawFlux, shadowFactor, relTol", [(2.0, 0.5, 1e-8)])
+def test_eclipseEffect(show_plots, rawFlux, shadowFactor, relTol):
     """
     Test Description
     -----------------
-    This test checks whether the eclipse effect appropriately modifies solar flux based on
-    eclipse conditions.
+    This test checks whether the EclipseEffect appropriately modifies solar flux based on eclipse conditions.
 
     Test Variables
     ---------------
-    A SolarFluxSimMsg is provided along with an EclipseSimMessage. The product of the
-    solar flux value and eclipse shadowFactor value is checked to be
-    accurate. The values were chosen arbitrarily and are hard-coded.
+    - rawFlux : [float] greater than or equal to zero
+        The rawFlux value is used as the SolarFluxSimMsg input flux value
+    - shadowFactor : [float] between 0 and 1
+        The shadow factor is used as the EclipseSimMsg shadowFactor and is used to modify the rawFlux
+    - relTol : [float] positive
+        relative tolerance to which the result is checked
 
     """
     sim = SimulationBaseClass.SimBaseClass()
+    sim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
 
     fluxMsgIn = SolarFluxSimMsg()
-    fluxMsgIn.flux = 2.0
+    fluxMsgIn.flux = rawFlux
     unitTestSupport.setMessage(sim.TotalSim, proc.Name, "solar_flux", fluxMsgIn, "SolarFluxSimMsg")
 
     eclipseMsgIn = EclipseSimMsg()
-    eclipseMsgIn.shadowFactor = 0.5
+    eclipseMsgIn.shadowFactor = shadowFactor
     unitTestSupport.setMessage(sim.TotalSim, proc.Name, "eclipse_data_0", eclipseMsgIn, "EclipseSimMsg")
 
     eff = eclipseEffect.EclipseEffect()
     sim.AddModelToTask(task.Name, eff)
-    sim.TotalSim.logThisMessage("solar_flux")
+    sim.TotalSim.logThisMessage("solar_flux_with_eclipse")
     sim.InitializeSimulationAndDiscover()
     sim.TotalSim.SingleStepProcesses()
 
-    fluxOut = sim.pullMessageLogData("solar_flux.flux")
-    assert fluxOut[0][1] == (fluxMsgIn.flux * eclipseMsgIn.shadowFactor)
+    fluxOut = sim.pullMessageLogData("solar_flux_with_eclipse.flux")
+    assert fluxOut[0][1] == pytest.approx(fluxMsgIn.flux * eclipseMsgIn.shadowFactor, rel=relTol)
     return
 
 
 if __name__ == "__main__":
-    test_eclipseEffect()
+    test_eclipseEffect(False, 2.0, 0.5)

@@ -26,38 +26,50 @@
  * @{
  */
 
-//!  @brief Calculate the Solar Flux at a spacecraft position
-/*!
- # Module Purpose
- ## Executive Summary
-    Take in a spacecraft position message and calculate the solar flux [W/m2] at the spacecraft's location.
+/*!  @brief Calculate the Solar Flux at a spacecraft position
 
- ## Module Assumptions and Limitations
-    This model uses the solar flux value from astroConstants.h
+ ## Module Purpose
+ ### Executive Summary
+    Take in a spacecraft position message and sun position message and calculates the solar flux [W/m2] at the spacecraft location.
+
+ ### Module Assumptions and Limitations
+    This model uses the solar flux value, SOLAR_FLUX_EARTH, and astronomical unit, AU, values from astroConstants.h
 
     This model assumes constant solar flux and a perfect inverse square fall-off of flux as one moves further from the sun.
 
     This model can take in one spacecraft position message and one sun position message.
 
- ## Message Connection Descriptions
+ ### Message Connection Descriptions
     The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
     Msg Variable Name | Msg Type | Description
     ------------------|----------|-------------
-    sunPositionInMsgName| SpicePlanetStateSimMsg | This message is used to get the sun's position
-    spacecraftStateInMsgName |  SCPlusStatesSimMSg | This message is used to get the spacecraft's position
+    sunPositionInMsgName | SpicePlanetStateSimMsg | This message is used to get the sun's position
+    spacecraftStateInMsgName | SCPlusStatesSimMsg | This message is used to get the spacecraft's position
     solarFluxOutMsgName | SolarFluxSimMsg | This message is used to output the solar flux at the spacecraft's position
 
- # Detailed Module Description
-   Use of this module should be preferred over other modules individually calculating the solar flux at a given position
+ ## Detailed Module Description
+   Many physical effects from sun sensor outputs to spacecraft heating depend on the solar flux incident on a spacecraft.
+   This module provides that flux given the sun and spacecraft positions.
 
- ## Equations
+   From the user perspective, this module should be instantiated when there is a desire to provide the solar flux at a
+   spacecraft location.
+
+   From the developer perspective, the use of this module in conjunction with the developer's other modules should be preferred
+   over individual modules calculating the solar flux internally and applying it. Especially if eclipsing effects on
+   the solar flux are desired, this module should be used in conjunction with EclipseEffect rather than other modules
+   incorporating these calculations. This does a few things. First,
+   it prevents code repetition. Second, it ensures consistency how solar flux values are calculated, avoiding multiple
+   sources and hard-coding numbers. Third, it actually enables the use of an EclipseEffect module, without which
+   each other module must apply the effect of eclipsing individually.
+
+ ### Equations
     The flux is calculated by scaling the flux at 1 AU:
 
-    f$ F_{out} = F_{Earth} * \frac{AU^2}{r_{Sun}^2}} \f$
+    \f$ F_{\mathrm{out}} = F_{\mathrm{Earth}} * \frac{\mathrm{AU}^2}{r_{\mathrm{Sun}}^2} \f$
 
-    where f$ r_{Sun} f$ is the distance between the spacecraft and the sun
+    where \f$ r_{\mathrm{Sun}} \f$ is the distance between the spacecraft and the sun
 
- # User Guide
+ ## User Guide
     The user can only instantiate this module, change the i/o names, and add it to a task.
     The names below are only special in that they are useful defaults.
     ~~~~~~~{.py}
@@ -70,8 +82,8 @@
     proc.addTask(task)
 
     sf = solarFlux.SolarFlux()
-    sf.sunPositionInMsgName = "sun_planet_data";
-    sf.spacecraftStateInMsgName = "inertial_state_output";
+    sf.sunPositionInMsgName = "sun_planet_data"
+    sf.spacecraftStateInMsgName = "inertial_state_output"
     sf.solarFluxOutMsgName = "solar_flux"
     sim.AddModelToTask(task.Name, sf)
     ~~~~~~~
