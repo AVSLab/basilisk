@@ -16,6 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
 #include "eclipseEffect.h"
 #include "architecture/messaging/system_messaging.h"
 #include "simMessages/eclipseSimMsg.h"
@@ -25,17 +26,19 @@ EclipseEffect::EclipseEffect(){}
 
 EclipseEffect::~EclipseEffect(){}
 
-void EclipseEffect::SelfInit(){}
+void EclipseEffect::SelfInit(){
+    auto messagingSystem = SystemMessaging::GetInstance();
+    this->solarFluxOutMsgId = messagingSystem->CreateNewMessage(this->solarFluxOutMsgName, sizeof(SolarFluxSimMsg), 2,
+            "SolarFluxSimMsg", this->moduleID);
+}
 
 void EclipseEffect::CrossInit()
 {
     auto messagingSystem = SystemMessaging::GetInstance();
     this->eclipseInMsgId = messagingSystem->subscribeToMessage(this->eclipseInMsgName,
                                                                sizeof(EclipseSimMsg), this->moduleID);
-    this->solarFluxInOutMsgId = messagingSystem->subscribeToMessage(this->solarFluxInOutMsgName, sizeof(SolarFluxSimMsg),
+    this->solarFluxInMsgId = messagingSystem->subscribeToMessage(this->solarFluxInMsgName, sizeof(SolarFluxSimMsg),
                                                                     this->moduleID);
-    messagingSystem->obtainWriteRights(this->solarFluxInOutMsgId, this->moduleID);
-
 }
 
 void EclipseEffect::readInputMessages()
@@ -49,17 +52,17 @@ void EclipseEffect::readInputMessages()
                                  reinterpret_cast<uint8_t*>(&eclipseInMsgData), this->moduleID);
     this->eclipseFactor = eclipseInMsgData.shadowFactor;
 
-    SolarFluxSimMsg solarFluxInOutMsgData;
-    messagingSystem->ReadMessage(this->solarFluxInOutMsgId, &tmpHeader, sizeof(SolarFluxSimMsg),
-            reinterpret_cast<uint8_t*>(&solarFluxInOutMsgData), this->moduleID);
-    this->fluxIn = solarFluxInOutMsgData.flux;
+    SolarFluxSimMsg solarFluxInMsgData;
+    messagingSystem->ReadMessage(this->solarFluxInMsgId, &tmpHeader, sizeof(SolarFluxSimMsg),
+            reinterpret_cast<uint8_t*>(&solarFluxInMsgData), this->moduleID);
+    this->fluxIn = solarFluxInMsgData.flux;
 }
 
 void EclipseEffect::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     auto messagingSystem = SystemMessaging::GetInstance();
     SolarFluxSimMsg fluxMsgOutData = {this->fluxOut};
-    messagingSystem->WriteMessage(this->solarFluxInOutMsgId, CurrentSimNanos, sizeof(SolarFluxSimMsg),
+    messagingSystem->WriteMessage(this->solarFluxOutMsgId, CurrentSimNanos, sizeof(SolarFluxSimMsg),
                                                  reinterpret_cast<uint8_t*>(&fluxMsgOutData));
 }
 
