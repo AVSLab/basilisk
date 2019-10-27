@@ -5,11 +5,11 @@ Basilisk Module Checkout List
 This documents contains a series of action items that should be checked
 before a Basilisk (BSK) module is approved.
 
-Style and Formating
--------------------
+Style and Formatting
+--------------------
 
--  Do the code variables satisfy the `Basilisk code style
-   guidelines <@ref%20codingGuidelines>`__?
+-  Do the code variables satisfy the :ref:`Basilisk code style
+   guidelines <codingGuidelines>`?
 -  Are 4 spaces used instead of tabs?
 
 Module Programming
@@ -56,18 +56,10 @@ Is a \_UnitTest folder included that:
 Module Documentation
 --------------------
 
-Is a \_Documentation folder included that
+Does the module ``*.h`` file contain doxygen code that provides the module documentation?  A sample can be found in the ``fswTemplateModule`` folder.
 
--  uses the BSK module template provided in
-   ``/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation``
--  populates the various module description sections including
+Module Integrated Test
+----------------------
+If an integrated test is provided as a ``test_XXX.py`` file, does the text function include the expected validation setup, assumption and results documentation within the method doc-string?  A sample can be found in the ``fswTemplateModule`` folder.
 
-   -  overview of module functionality
-   -  testing and validation
-   -  user guide on how to use the module
 
--  Does the module \*.h file include a dOxygen statement near top that
-   links in the module ``_Documentation`` file.
--  Is the ``docs/DoxyData`` file updated in the ``HTML_EXTRA_FILES`` tag
-   to include the modules PDF documentation file? This step copies this
-   PDF into the ``docs/html`` folder when running dOxygen.
