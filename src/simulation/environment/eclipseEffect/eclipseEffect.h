@@ -17,18 +17,20 @@
 
  */
 
-#pragma once
+//#pragma once
 
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/solarFluxSimMsg.h"
 
-/*! \defgroup SimModelGroup
-  @brief Apply the input eclipse shadow factor
+/*! \addtogroup SimModelGroup
+* @{
+*/
 
+/*! @brief Apply the input eclipse shadow factor
 
  # Module Purpose
  ## Executive Summary
-    This module takes in a solar flux message and an eclipse message. It modfies the flux message data and outputs the
+    This module takes in a solar flux message and an eclipse message. It modifies the flux message data and outputs the
     modified values to the same flux message.
 
  ## Module Assumptions and Limitations
@@ -49,7 +51,7 @@
  ## Equations
     The distance is the norm of the vector from the spacecraft to the sun
 
-    f$ F_{out} = F_{in} * f_{eclipse} \f$
+    \f$ F_{out} = F_{in} * f_{eclipse} \f$
 
  # User Guide
     The user can only instantiate this module, change the i/o names, and add it to a task.
@@ -66,7 +68,7 @@
     eff.eclipseInMsgName = "eclipse_data_0";
     sim.AddModelToTask(task.Name, eff)
     ~~~~~~~
-  @{
+
  */
 class EclipseEffect: public SysModel {
 public:
