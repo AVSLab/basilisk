@@ -85,51 +85,39 @@ The following section specifies general guidelines for the naming of
 variable to be used in code which implements mathematical operations.
 The naming convention is heavily influenced by the textbook `Analytical
 Mechanics of Space
-Systems <http://arc.aiaa.org/doi/book/10.2514/4.102400>`__ by Schaub and
+Systems <https://arc.aiaa.org/doi/book/10.2514/4.105210>`__ by Schaub and
 Junkins.
 
 Indicating Reference Frames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A vector variable expressed with components in a reference frame
-\ :math:`\cal B`, is represented with the variable name followed by
-an underscore and a capital letter denoting the frame
-\ :math:`{}^{\cal B}\bf v`: ``vector_B``
+A vector variable expressed with components in a reference frame :math:`\cal B`, is represented with the variable name followed by
+an underscore and a capital letter denoting the frame :math:`{}^{\cal B}\bf v` as ``vector_B``.
 
-An angular rate variable expressed in one frame \ :math:`\cal B`
-with respect to a second \ :math:`\cal R`, where components are
-expressed in the frame \ :math:`\cal B`,
-\ :math:`{}^{\cal B}\pmb\omega_{\mathcal{B}/\mathcal{R}}`, is given
-as = ``omega_BR_B``.
+An angular rate variable expressed in one frame :math:`\cal B`
+with respect to a second  :math:`\cal R`, where components are
+expressed in the frame  :math:`\cal B`, :math:`{}^{\cal B}\pmb\omega_{\mathcal{B}/\mathcal{R}}`, is given
+as  ``omega_BR_B``.
 
 MRP’s and DCM’s
 ~~~~~~~~~~~~~~~
 
-A direction cosine matrix is expressed as \ :math:`[BN]`, a mapping
-of an \ :math:`\cal N` frame vector into a \ :math:`\cal B`
+A direction cosine matrix is expressed as  :math:`[BN]`, a mapping
+of an  :math:`\cal N` frame vector into a  :math:`\cal B`
 frame vector, is written ``dcm_BN``. Similarly for the Modified
-Rodrigues Parameters (MRP) attitude parameterization the
-\ :math:`\pmb\sigma_{\mathcal{B}/\mathcal{N}}` is written sigma_BN.
+Rodrigues Parameters (MRP) attitude parameterization the :math:`\pmb\sigma_{\mathcal{B}/\mathcal{N}}` is written ``sigma_BN``.
 
 Inertia Tensor
 ~~~~~~~~~~~~~~
 
-Inertia of the hub element with respect to point \ :math:`BC`
-defined in the body frame: ``IHubPntBC_B``
+The Inertia tensor :math:`[I_C]` of the hub about the point  :math:`C` is defined in the body frame :math:`\cal B` components using the variable ``IHubPntC_B``.
 
 Derivatives
 ~~~~~~~~~~~
 
-The first and second time derivatives of scalar (:math:`\dot{x}`,
-\ :math:`\ddot{x}`) or vector (:math:`\dot{\bf{x}}`,
-\ :math:`\ddot{\bf{x}}`) quantities, respectively are written as
-``xDot`` and ``xDDot``.
+The first and second time derivatives of scalar (:math:`\dot{x}`, :math:`\ddot{x}`) or vector (:math:`\dot{\bf{x}}`, :math:`\ddot{\bf{x}}`) quantities, respectively are written as ``xDot`` and ``xDDot``.
 
-The first and second time derivatives with respect to a variable other
-than time should use the same pattern as time derivatives but with a
-different modifier. For example, \ :math:`f '(x)` and
-\ :math:`f ''(x)` are written as ``xPrime`` and ``xDPrime``
-respectively.
+The first and second time derivatives with respect to a variable other than time should use the same pattern as time derivatives but with a different modifier. For example,  :math:`f '(x)` and :math:`f ''(x)` are written as ``xPrime`` and ``xDPrime`` respectively.
 
 Common Usage Examples
 ~~~~~~~~~~~~~~~~~~~~~
@@ -141,9 +129,7 @@ Common Usage Examples
    \ :math:`\cal N` to \ :math:`\cal B` in inertial frame
    components \ :math:`{}^{\cal N} \dot{\bf r}_{\cal B/N}`:
    ``rDot_BN_N``
--  Time derivative with respect to the body of position vector from \$
-   B$ to \$ H$ in body frame components
-   \ :math:`{}^{\cal B} \bf r'_{H/B}`: ``rPrime_HB_B``
+-  Time derivative with respect to the body of position vector from :math:`B` to :math:`H` in body frame components :math:`{}^{\cal B} \bf r'_{H/B}`: ``rPrime_HB_B``
 -  Unit direction vector from \ :math:`B` to \ :math:`S` in
    body frame components \ :math:`{}^{\cal B} \hat{\bf s}_{S/B}`:
    ``sHat_SB_B``
@@ -168,30 +154,24 @@ manner.
    std::string sunEphmInMsgName;
 
 -  ``sunEphm``: description of the message content.
--  ``In`` (``Out``): indicates the direction of the message with respect
-   to the module.
--  ``MsgName``: explicitly identifies the variable as a message name and
-   is required for all message name variables.
+-  ``In`` (``Out``): indicates the direction of the message with respect to the module.
+-  ``MsgName``: explicitly identifies the variable as a message name and is required for all message name variables.
 
-Variables holding a message identification number are to be composed in
-the following manner.
+Variables holding a message identification number are to be composed in the following manner.
 
 .. code:: cpp
 
    int64_t stateInMsgId;
 
 -  ``state``: description of the message content.
--  ``In`` (``Out``): indicates the direction of the message with respect
-   to the module.
--  ``MsgId``: explicitly identifies the variable as a message identifier
-   and is required for all message identifier variables.
+-  ``In`` (``Out``): indicates the direction of the message with respect to the module.
+-  ``MsgId``: explicitly identifies the variable as a message identifier and is required for all message identifier variables.
 
-Variables holding data from a read message are to be composed in the
-following manner.
+Variables holding data from a read message are to be composed in the following manner.
 
 .. code:: cpp
 
-   RWCmdStruct* rwCommandInBuffer;
+   RWCmdStruct rwCommandInBuffer;
 
 -  ``rwCommand``: description of the data.
 -  ``In`` (``Out``): indicates the direction of the data being written
@@ -207,12 +187,9 @@ C/C++ Exceptions
 Python Exceptions
 -----------------
 
--  Variables are to be camelCase. This is done to maintain consistency
-   across the C/C++ and Python code bases which are interfaced via SWIG.
+-  Variables are to be lower camelCase. This is done to maintain consistency across the C/C++ and Python code bases which are interfaced via SWIG.
 -  Inline comments are accepted so long as they are kept brief.
--  Binary operator spaces will be adhered to as specified in PEP 8,
-   however, not for math symbols operations. E.g. no spaces are included
-   around \*, /, +, -, etc
+-  Binary operator spaces will be adhered to as specified in PEP 8, however, not for math symbols operations. E.g. no spaces are included around \*, /, +, -, etc
 
 .. code:: py
 
@@ -221,6 +198,3 @@ Python Exceptions
    # No
    x = (4 * 9 / 2) - 1
 
-The following LaTeX markup is saved so that the above math variable
-section can be reproduced and updated as needed. Currently there is no
-LaTeX rendering in Bitbucket readme or wiki files.
