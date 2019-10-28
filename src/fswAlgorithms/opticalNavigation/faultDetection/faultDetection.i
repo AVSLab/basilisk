@@ -31,9 +31,7 @@
 %constant void Update_faultDetection(void*, uint64_t, uint64_t);
 %ignore Update_faultDetection;
 STRUCTASLIST(FaultDetectionData)
-GEN_SIZEOF(CirclesOpNavMsg)
 GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(NavAttIntMsg)
 GEN_SIZEOF(OpNavFswMsg)
 %include "simFswInterfaceMessages/circlesOpNavMsg.h"
 %include "simFswInterfaceMessages/cameraConfigMsg.h"

@@ -44,9 +44,14 @@ void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
  */
 void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 {
-    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleID);
-    configData->circlesInMsgID = subscribeToMessage(configData->circlesInMsgName, sizeof(CirclesOpNavMsg),moduleID);
-    configData->attInMsgID = subscribeToMessage(configData->attInMsgName, sizeof(NavAttIntMsg),moduleID);
+    /*! Read two messages that need to be compared */
+    configData->navMeas1MsgID = subscribeToMessage(configData->navMeasPrimarlyMsgName,sizeof(OpNavFswMsg),moduleID);
+    configData->navMeas2MsgID = subscribeToMessage(configData->navMeasSecondaryMsgName, sizeof(OpNavFswMsg),moduleID);
+
+    /*! Read camera specs and attitude for frame modifications */
+    configData->cameraMsgID = subscribeToMessage(configData->cameraConfigMsgName, sizeof(OpNavFswMsg),moduleID);
+    configData->attInMsgID = subscribeToMessage(configData->attInMsgName, sizeof(OpNavFswMsg),moduleID);
+
 }
 
 /*! This resets the module to original states.
@@ -70,60 +75,90 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3];
-    double reCentered[2];
-    CameraConfigMsg cameraSpecs;
-    CirclesOpNavMsg circlesIn;
+    double planetRad;
+    OpNavFswMsg opNavIn1;
+    OpNavFswMsg opNavIn2;
     OpNavFswMsg opNavMsgOut;
+    CameraConfigMsg cameraSpecs;
     NavAttIntMsg attInfo;
+    double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3];
+
     memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
     memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
-    memset(&circlesIn, 0x0, sizeof(CirclesOpNavMsg));
+    memset(&opNavIn1, 0x0, sizeof(OpNavFswMsg));
+    memset(&opNavIn2, 0x0, sizeof(OpNavFswMsg));
     memset(&opNavMsgOut, 0x0, sizeof(OpNavFswMsg));
 
-    /*! - read input messages */
-    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    /*! - read input opnav messages */
+    ReadMessage(configData->navMeas1MsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(OpNavFswMsg), &opNavIn1, moduleID);
+    ReadMessage(configData->navMeas2MsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(OpNavFswMsg), &opNavIn2, moduleID);
+    /*! - read dcm messages */
+    ReadMessage(configData->cameraMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CameraConfigMsg), &cameraSpecs, moduleID);
-    ReadMessage(configData->circlesInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CirclesOpNavMsg), &circlesIn, moduleID);
     ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), &attInfo, moduleID);
-    
-    if (circlesIn.valid == 0){
-        opNavMsgOut.valid = 0;
-        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                     &opNavMsgOut, moduleID);
-        return;
-    }
-    reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0]/2 + 0.5;
-    reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1]/2 + 0.5;
-    configData->planetTarget = circlesIn.planetIds[0];
+    /*! - compute dcms */
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);
     m33Transpose(dcm_NC, dcm_NC);
-
-    /*! - Find pixel size using camera specs */
-    double X, Y;
-    X = cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0];
-    Y = cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1];
-
-    /*! - Get the heading */
-    double rtilde_C[2];
-    double rHat_BN_C[3], rHat_BN_N[3], rHat_BN_B[3];
-    double rNorm = 1;
-    double planetRad, denom;
-    double covar_map_C[3*3], covar_In_C[3*3], covar_In_B[3*3];
-    double covar_In_N[3*3];
-    double x_map, y_map, rho_map;
-    rtilde_C[0] = (X*reCentered[0])/cameraSpecs.focalLength;
-    rtilde_C[1] = (Y*reCentered[1])/cameraSpecs.focalLength;
-    v3Set(rtilde_C[0], rtilde_C[1], 1.0, rHat_BN_C);
-    v3Scale(-1, rHat_BN_C, rHat_BN_C);
-    v3Normalize(rHat_BN_C, rHat_BN_C);
     
-    m33MultV3(dcm_NC, rHat_BN_C, rHat_BN_N);
-    m33tMultV3(dcm_CB, rHat_BN_C, rHat_BN_B);
+    /*! Begin fault detection logic */
+    /*! - If none of the message contain valid nav data, unvalidate the nav and populate a zero message */
+    if (opNavIn1.valid == 0 && opNavIn2.valid == 0){
+        opNavMsgOut.valid = 0;
+        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                     &opNavMsgOut, moduleID);
+    }
+    /*! - If only one of two are valid use that one */
+    else if (opNavIn1.valid == 1 && opNavIn2.valid == 0){
+        memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
+        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                     &opNavMsgOut, moduleID);
+    }
+    else if (opNavIn2.valid == 1 && opNavIn1.valid == 0){
+        memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
+        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                     &opNavMsgOut, moduleID);
+    }
+    /*! - If they are both valid proceed to the fault detection */
+    else if (opNavIn1.valid == 1 && opNavIn2.valid == 1){
+        opNavMsgOut.valid = 1;
+        double error = 0;
+        /*! -- Dissimilar mode compares the two measurements: if the mean +/- 3-sigma covariances overlap use the nominal nav solution */
+        if (configData->faultMode==0){
+            
+        }
+        /*! -- Merge mode combines the two measurements and uncertainties if they are similar */
+        else if (configData->faultMode==1 && error == 0){
+            double P1invX1[3], P2invX2[3], X_N[3], P_N[3][3], P_B[3][3], P_C[3][3];
+            double P1inv[3][3], P2inv[3][3];
+            
+            /*! The covariance merge is given by P = (P1^{-1} + P2^{-2})^{-1} */
+            m33Inverse(RECAST3X3 opNavIn1.covar_N, P1inv);
+            m33Inverse(RECAST3X3 opNavIn2.covar_N, P2inv);
+            m33Add(P1inv, P2inv, P_N);
+            
+            /*! The estimage merge is given by x = P (P1^{-1}x1 + P2^{-1}x2) */
+            m33MultV3(P1inv, opNavIn1.r_BN_N, P1invX1);
+            m33MultV3(P2inv, opNavIn2.r_BN_N, P2invX2);
+            v3Add(P1invX1, P2invX2, X_N);
+            m33MultV3(P_N, X_N, X_N);
+            
+            mCopy(P_N, 3, 3, opNavMsgOut.covar_N);
+            m33tMultM33(dcm_BN, P_N, P_B);
+            m33tMultM33(dcm_NC, P_N, P_C);
+            mCopy(P_C, 3, 3, opNavMsgOut.covar_C);
+            mCopy(P_B, 3, 3, opNavMsgOut.covar_B);
+            m33MultV3(dcm_BN, X_N, opNavMsgOut.r_BN_B);
+            m33tMultV3(dcm_NC, X_N, opNavMsgOut.r_BN_C);
+            opNavMsgOut.timeTag = opNavIn1.timeTag;
+        }
+        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                     &opNavMsgOut, moduleID);
+    }
 
     if(configData->planetTarget > 0){
         if(configData->planetTarget ==1){
@@ -139,42 +174,20 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
             opNavMsgOut.planetID = configData->planetTarget;
         }
         
-        denom = sin(atan(X*circlesIn.circlesRadii[0]/cameraSpecs.focalLength));
-        rNorm = planetRad/denom; //in km
         
-        /*! - Compute the uncertainty */
-        x_map = planetRad/denom*(X/cameraSpecs.focalLength);
-        y_map = planetRad/denom*(Y/cameraSpecs.focalLength);
-        rho_map = planetRad*(X/(cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2)))-cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2))/(pow(circlesIn.circlesRadii[0], 2)*X));
-        mSetIdentity(covar_map_C, 3, 3);
-        covar_map_C[0] = x_map;
-        covar_map_C[4] = y_map;
-        covar_map_C[8] = rho_map;
-        mCopy(circlesIn.uncertainty, 3, 3, covar_In_C);
-        mMultM(covar_map_C, 3, 3, covar_In_C, 3, 3, covar_In_C);
-        mMultMt(covar_In_C, 3, 3, covar_map_C, 3, 3, covar_In_C);
-        /*! - Changer the mapped covariance to inertial frame */
-        mMultM(dcm_NC, 3, 3, covar_In_C, 3, 3, covar_In_N);
-        mMultMt(covar_In_N, 3, 3, dcm_NC, 3, 3, covar_In_N);
-        /*! - Changer the mapped covariance to body frame */
-        mtMultM(dcm_CB, 3, 3, covar_In_C, 3, 3, covar_In_B);
-        mMultM(covar_In_B, 3, 3, dcm_CB, 3, 3, covar_In_B);
     }
     
     /*! - write output message */
-    v3Scale(rNorm*1E3, rHat_BN_N, opNavMsgOut.r_BN_N); //in m
-    v3Scale(rNorm*1E3, rHat_BN_C, opNavMsgOut.r_BN_C); //in m
-    v3Scale(rNorm*1E3, rHat_BN_B, opNavMsgOut.r_BN_B); //in m
-    mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
-    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
-    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_C);
-    vScale(1E6, opNavMsgOut.covar_C, 3*3, opNavMsgOut.covar_C);//in m
-    mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
-    vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
-    opNavMsgOut.timeTag = circlesIn.timeTag;
-    opNavMsgOut.valid =1;
-    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                 &opNavMsgOut, moduleID);
-
+//    mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
+//    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
+//    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_C);
+//    vScale(1E6, opNavMsgOut.covar_C, 3*3, opNavMsgOut.covar_C);//in m
+//    mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
+//    vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
+//    opNavMsgOut.timeTag = circlesIn.timeTag;
+//    opNavMsgOut.valid =1;
+//    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+//                 &opNavMsgOut, moduleID);
     return;
+
 }

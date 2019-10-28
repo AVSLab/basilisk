@@ -21,7 +21,6 @@
 #define _PIXEL_LINE_CONVERTER_H_
 
 #include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
@@ -38,15 +37,18 @@
 /*! @brief The configuration structure for the pixelLine Converter module.*/
 typedef struct {
     char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
     char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
-    char circlesInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the circles message
+    char navMeasPrimarlyMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the first meas message
+    char navMeasSecondaryMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the second meas message
+    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-
+    double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar. 
+    
     int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t circlesInMsgID;    //!< [-] The ID associated with the incoming circle message
-    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
+    int32_t navMeas1MsgID;    //!< [-] The ID associated with the first incoming measurements
+    int32_t navMeas2MsgID;    //!< [-] The ID associated with the second incoming measurements
+    int32_t attInMsgID;    //!< [-] The ID associated with the incoming attitude message
+    int32_t cameraMsgID;    //!< [-] The ID associated with the second incoming measurements
 }FaultDetectionData;
 
 #ifdef __cplusplus
