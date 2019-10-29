@@ -79,15 +79,18 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     sim.TotalSim.SingleStepProcesses()
     fluxOutEarth = sim.pullMessageLogData("solar_flux.flux")
     scPositionMessage.r_BN_N = [0., 0., positionFactor * om.AU*1000]
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
-    sim.InitializeSimulationAndDiscover()
+    sim.TotalSim.WriteMessageData("inertial_state_output",
+                               scPositionMessage.getStructSize(),
+                               0,
+                               scPositionMessage)
+    sf.Reset(1)
     sim.TotalSim.SingleStepProcesses()
     fluxOutFurther = sim.pullMessageLogData("solar_flux.flux")
 
     if len(eclipseMsgName) == 0:
         shadowFactor = 1.0
 
-    assert fluxOutFurther[0][1] == pytest.approx(fluxOutEarth[0][1] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
+    assert fluxOutFurther[1][1] == pytest.approx(fluxOutEarth[0][1] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
 
 
 if __name__ == "__main__":
