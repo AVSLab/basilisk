@@ -192,8 +192,7 @@ class SimBaseClass:
         self.simulationInitialized = False
         self.simulationFinished = False
 
-        #   Set up storage for caching messaging
-        self.headerDict = {}
+        self.allModules = set()
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
         """
@@ -514,7 +513,6 @@ class SimBaseClass:
             # Create a new set into which we add the SWIG'd simMessages definitions
             # and union it with the simulation's modules set. We do this so that
             # python modules can have message structs resolved
-            self.allModules = set()
             self.allModules.add(simMessages)
             self.allModules = self.allModules | self.simModules
 
@@ -607,7 +605,6 @@ class SimBaseClass:
             # Create a new set into which we add the SWIG'd simMessages definitions
             # and union it with the simulation's modules set. We do this so that
             # python modules can have message structs resolved
-            self.allModules = set()
             self.allModules.add(simMessages)
             self.allModules = self.allModules | self.simModules
 
