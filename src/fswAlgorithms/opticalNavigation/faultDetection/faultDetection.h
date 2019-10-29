@@ -28,6 +28,8 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
+#include "utilities/bsk_Print.h"
+
 
 /*! \defgroup faultDetection
  *  @brief Converter that takes a image processing message and camera information and outputs a relative position to the object.
@@ -43,6 +45,7 @@ typedef struct {
     char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
     double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar. 
+    double sigmaFault; //!< What is the sigma multiplication factor when comparing measurements
     
     int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t navMeas1MsgID;    //!< [-] The ID associated with the first incoming measurements

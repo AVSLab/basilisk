@@ -129,7 +129,37 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         double error = 0;
         /*! -- Dissimilar mode compares the two measurements: if the mean +/- 3-sigma covariances overlap use the nominal nav solution */
         if (configData->faultMode==0){
+            double faultDirection[3];
+            double Z1Cov[3], Z2Cov[3], covar1T[3][3], covar2T[3][3];
+            double faultNorm;
             
+            /*! Get the direction and norm between the the two measurements in camera frame*/
+            v3Subtract(opNavIn2.r_BN_C, opNavIn1.r_BN_C, faultDirection);
+            faultNorm = v3Norm(faultDirection);
+            v3Normalize(faultDirection, faultDirection);
+            
+            /*! Get the largest covariance directions (radial in camera frame) */
+            m33Transpose(RECAST3X3 opNavIn1.covar_C, covar1T);
+            m33Transpose(RECAST3X3 opNavIn2.covar_C, covar2T);
+            v3Copy(&covar1T[3][2], Z1Cov);
+            v3Copy(&covar2T[3][2], Z2Cov);
+            
+            /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
+            if (faultNorm > v3Norm(Z1Cov) + v3Norm(Z2Cov)){
+                error = 1;
+                BSK_PRINT(MSG_INFORMATION, "Fault detected at: %llu", callTime);
+                memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
+                WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                             &opNavMsgOut, moduleID);
+            }
+            /*! If the difference between vectors is low, use primary */
+            else{
+                /*! Bring all the measurements and covariances into their respective frames */
+                memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
+                WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                             &opNavMsgOut, moduleID);
+            }
+
         }
         /*! -- Merge mode combines the two measurements and uncertainties if they are similar */
         else if (configData->faultMode==1 && error == 0){
@@ -147,9 +177,12 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
             v3Add(P1invX1, P2invX2, X_N);
             m33MultV3(P_N, X_N, X_N);
             
+            /*! Bring all the measurements and covariances into their respective frames */
             mCopy(P_N, 3, 3, opNavMsgOut.covar_N);
-            m33tMultM33(dcm_BN, P_N, P_B);
+            m33MultM33(dcm_BN, P_N, P_B);
             m33tMultM33(dcm_NC, P_N, P_C);
+            m33MultM33t(P_B, dcm_BN, P_B);
+            m33MultM33(P_C, dcm_NC , P_C);
             mCopy(P_C, 3, 3, opNavMsgOut.covar_C);
             mCopy(P_B, 3, 3, opNavMsgOut.covar_B);
             m33MultV3(dcm_BN, X_N, opNavMsgOut.r_BN_B);
@@ -160,34 +193,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
                      &opNavMsgOut, moduleID);
     }
 
-    if(configData->planetTarget > 0){
-        if(configData->planetTarget ==1){
-            planetRad = REQ_EARTH;//in km
-            opNavMsgOut.planetID = configData->planetTarget;
-        }
-        if(configData->planetTarget ==2){
-            planetRad = REQ_MARS;//in km
-            opNavMsgOut.planetID = configData->planetTarget;
-        }
-        if(configData->planetTarget ==3){
-            planetRad = REQ_JUPITER;//in km
-            opNavMsgOut.planetID = configData->planetTarget;
-        }
-        
-        
-    }
     
-    /*! - write output message */
-//    mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
-//    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
-//    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_C);
-//    vScale(1E6, opNavMsgOut.covar_C, 3*3, opNavMsgOut.covar_C);//in m
-//    mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
-//    vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
-//    opNavMsgOut.timeTag = circlesIn.timeTag;
-//    opNavMsgOut.valid =1;
-//    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-//                 &opNavMsgOut, moduleID);
     return;
 
 }
