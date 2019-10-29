@@ -75,7 +75,6 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double planetRad;
     OpNavFswMsg opNavIn1;
     OpNavFswMsg opNavIn2;
     OpNavFswMsg opNavMsgOut;
