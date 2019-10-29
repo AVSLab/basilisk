@@ -108,6 +108,7 @@ public:
     std::string spacecraftStateInMsgName = "inertial_state_output";
     std::string solarFluxOutMsgName = "solar_flux";
     std::string eclipseInMsgName = "";
+
 private:
     double fluxAtSpacecraft;  //!< [W/m2]
     double eclipseFactor = 1.0;  //!< [] 1.0 is full sun, 0.0 is full eclipse

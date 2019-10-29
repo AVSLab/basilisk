@@ -18,45 +18,53 @@
 
 '''
 
-import numpy as np
+import pytest
 
-from Basilisk.simulation import planetHeading
 from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
 from Basilisk.simulation.simMessages import SCPlusStatesSimMsg
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
+from Basilisk.simulation import planetHeading
 
 
-def test_planetHeading():
+def test_planetHeading(show_plots=False, relTol=1e-8):
+    """
+Test Description:
+------------------
+Test that a planet heading is properly calculated from a spacecrft and planet position and spacecraft attitude.
+To test this, the earth is placed at the inertial origin. A spacecraft with inertial attitude is placed at 1AU in the z-direction.  The heading is checked to be [0, 0, -1].
+These values were chosen arbitrarily. They are checked to be accurate to within a relative tolerance of the input relTol, 1e-8 by default.
+
+Variables Tested:
+-----------------
+- headingOut : [list[float]]
+    headingOut stores the pulled log of the module bodyHeadingOutMsg. Not an input variable.
+- relTol : [float] positive
+    the relative tolerance to which the result is checked.
+"""
     sim = SimulationBaseClass.SimBaseClass()
+    sim.TotalSim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
 
-    sunPositionMessage = SpicePlanetStateSimMsg()
-    sunPositionMessage.PositionVector = [0., 0., 0.]
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "sun_planet_data", sunPositionMessage, "SpicePlanetStateSimMsg")
+    earthPositionMessage = SpicePlanetStateSimMsg()
+    earthPositionMessage.PositionVector = [0., 0., 0.]
+    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "earth_planet_data", earthPositionMessage, "SpicePlanetStateSimMsg")
 
     scPositionMessage = SCPlusStatesSimMsg()
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
     unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
 
-    sf = solarFlux.SolarFlux()
-    sim.AddModelToTask(task.Name, sf)
-    sim.TotalSim.logThisMessage("solar_flux")
+    ph = planetHeading.PlanetHeading()
+    sim.AddModelToTask(task.Name, ph)
+    sim.TotalSim.logThisMessage("planet_heading")
     sim.InitializeSimulationAndDiscover()
     sim.TotalSim.SingleStepProcesses()
-    fluxOutEarth = sim.pullMessageLogData("solar_flux.flux")
-    scPositionMessage.r_BN_N = [0., 0., np.sqrt(2.) * om.AU*1000]
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
-    sim.InitializeSimulationAndDiscover()
-    sim.TotalSim.SingleStepProcesses()
-    fluxOutFurther = sim.pullMessageLogData("solar_flux.flux")
+    headingOut = sim.pullMessageLogData("planet_heading.rHat_XS_B", list(range(3)))[0][1:]
 
-    assert fluxOutFurther[0][1] == fluxOutEarth[0][1] / 2.0
-
-    return
+    assert headingOut == pytest.approx([0., 0., -1.], rel=relTol)
 
 
 if __name__ == "__main__":

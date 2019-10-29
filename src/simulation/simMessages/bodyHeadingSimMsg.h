@@ -17,8 +17,8 @@
 
  */
 
-#ifndef planetHeadingSimMsg_h
-#define planetHeadingSimMsg_h
+#ifndef bodyHeadingSimMsg_h
+#define bodyHeadingSimMsg_h
 
 /*! \defgroup simMessages
  *  @{
@@ -26,9 +26,9 @@
 
 //!@brief Planet heading message definition.
 typedef struct {
-    double rHat_SSc_B;  //!< [] sun heading in s/c body frame (unit vector)
-}PlanetHeadingSimMsg;
+    double rHat_XS_B[3];  //!< [] unit heading vector to any thing "X" in the spacecraft, "S", body frame
+}BodyHeadingSimMsg;
 
 /* @} */
 
-#endif /* planetHeadingSimMsg_h */
+#endif /* bodyHeadingSimMsg_h */

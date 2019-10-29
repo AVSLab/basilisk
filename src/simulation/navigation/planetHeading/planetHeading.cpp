@@ -22,15 +22,22 @@
 #include "utilities/astroConstants.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/PlanetHeadingSimMsg.h"
+#include "simMessages/bodyHeadingSimMsg.h"
+#include <iostream>
 
+/*! This method is used to create the body heading message for the heading to the planet
+ @return void
+ */
 void PlanetHeading::SelfInit()
 {
     auto messagingSystem = SystemMessaging::GetInstance();
-    this->planetHeadingOutMsgId = messagingSystem->CreateNewMessage(this->PlanetHeadingOutMsgName, sizeof(PlanetHeadingSimMsg), 2,
-            "PlanetHeadingSimMsg", this->moduleID);
+    this->planetHeadingOutMsgId = messagingSystem->CreateNewMessage(this->planetHeadingOutMsgName, sizeof(BodyHeadingSimMsg), 2,
+            "BodyHeadingSimMsg", this->moduleID);
 }
 
+/*! This method is used to subscribe to planet and spacecraft messages
+ @return void
+ */
 void PlanetHeading::CrossInit() {
     auto messagingSystem = SystemMessaging::GetInstance();
     this->planetPositionInMsgId = messagingSystem->subscribeToMessage(this->planetPositionInMsgName,
@@ -39,16 +46,21 @@ void PlanetHeading::CrossInit() {
                                                                        sizeof(SCPlusStatesSimMsg), this->moduleID);
 }
 
+/*! This method reads messages, calculates the planet heading, and writes out the heading message
+ @return void
+ */
 void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
 
-    auto r_PSc_N = this->r_PN_N - this->r_ScN_N;
-    this->rHat_PSc_B = (this->sigma_BN.toRotationMatrix().transpose() * r_PSc_N).normalized();
-
+    auto r_PS_N = this->r_PN_N - this->r_SN_N;
+    this->rHat_PS_B = (this->sigma_BN.toRotationMatrix().transpose() * r_PS_N).normalized();
     this->writeMessages(CurrentSimNanos);
 }
 
+/*! Read input messages and save data to member variables
+ @return void
+ */
 void PlanetHeading::readMessages() {
     SingleMessageHeader tmpHeader;
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
@@ -62,12 +74,24 @@ void PlanetHeading::readMessages() {
     SCPlusStatesSimMsg scStatesMsgData;
     messagingSystem->ReadMessage(this->spacecraftStateInMsgId, &tmpHeader, sizeof(SCPlusStatesSimMsg),
                                  reinterpret_cast<uint8_t*>(&scStatesMsgData), this->moduleID);
-    this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
+    this->r_SN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
     this->sigma_BN = Eigen::MRPd(scStatesMsgData.sigma_BN);
 }
 
+/*! This method is used to write out the planet heading message
+ @return void
+ */
 void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
-    PlanetHeadingSimMsg fluxMsgOutData = {this->fluxAtSpacecraft};
-    SystemMessaging::GetInstance()->WriteMessage(this->PlanetHeadingOutMsgId, CurrentSimNanos, sizeof(PlanetHeadingSimMsg),
-                                  reinterpret_cast<uint8_t*>(&fluxMsgOutData));
+    BodyHeadingSimMsg planetHeadingOutMsgData;
+    Eigen::VectorXd::Map(planetHeadingOutMsgData.rHat_XS_B, this->rHat_PS_B.rows()) = this->rHat_PS_B;
+    SystemMessaging::GetInstance()->WriteMessage(this->planetHeadingOutMsgId, CurrentSimNanos, sizeof(BodyHeadingSimMsg),
+                                  reinterpret_cast<uint8_t*>(&planetHeadingOutMsgData));
+}
+
+/*! This method is used to reset the module. Currently no tasks are required.
+ @return void
+ */
+void SolarFlux::Reset(uint64_t CurrentSimNanos)
+{
+    return;
 }

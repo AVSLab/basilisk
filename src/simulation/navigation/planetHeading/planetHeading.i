@@ -19,16 +19,16 @@
 %module planetHeading
 %{
    #include "planetHeading.h"
-   #include "simMessages/planetHeadingSimMsg.h"
+   #include "simMessages/bodyHeadingSimMsg.h"
 %}
 
 %include "swig_common_model.i"
 
 %include "sys_model.h"
 %include "planetHeading.h"
-%include "simMessages/planetHeadingSimMsg.h"
+%include "simMessages/bodyHeadingSimMsg.h"
 
-GEN_SIZEOF(PlanetHeadingSimMsg)
+GEN_SIZEOF(BodyHeadingSimMsg)
 
 %pythoncode %{
 import sys
