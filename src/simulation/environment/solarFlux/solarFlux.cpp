@@ -51,10 +51,6 @@ void SolarFlux::CrossInit() {
     if (this->eclipseInMsgName.length() > 0) {
         this->eclipseInMsgId = messagingSystem->subscribeToMessage(this->eclipseInMsgName, sizeof(EclipseSimMsg),
                                                                    this->moduleID);
-    } else {
-        /* set to default values if msg is not present */
-        this->eclipseInMsgId = -1;
-        this->eclipseFactor = 1.0;
     }
 }
 
