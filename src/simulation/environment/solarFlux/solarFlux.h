@@ -108,15 +108,15 @@ public:
     std::string spacecraftStateInMsgName = "inertial_state_output";
     std::string solarFluxOutMsgName = "solar_flux";
     std::string eclipseInMsgName = "";
-    int64_t sunPositionInMsgId = -1;
-    int64_t spacecraftStateInMsgId = -1;
-    int64_t solarFluxOutMsgId = -1;
-    int64_t eclipseInMsgId = -1;
 private:
     double fluxAtSpacecraft;  //!< [W/m2]
     double eclipseFactor = 1.0;  //!< [] 1.0 is full sun, 0.0 is full eclipse
     Eigen::Vector3d r_SN_N;  //!< [m] sun position
     Eigen::Vector3d r_ScN_N;  //!< [m] s/c position
+    int64_t sunPositionInMsgId = -1;
+    int64_t spacecraftStateInMsgId = -1;
+    int64_t solarFluxOutMsgId = -1;
+    int64_t eclipseInMsgId = -1;
 
 };
 /*! @} */
