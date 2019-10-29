@@ -15,6 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 <ul>
     <li>Update template illustrating how the validation accuracy can be recording in the `pytest` parameters.</li>
     <li> A new module in the environments directory provides the solar flux value at a spacecraft location including (optionally) eclipse effects</li>
+    <li> New module in the navigation directory provides the heading to a planet in the spacecraft body frame. There is a corresponding new message type BodyHeadingSimMsg.</li>
 </ul>
 
 ##  Version 1.2.1
