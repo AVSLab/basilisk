@@ -25,23 +25,30 @@ import pytest
 from Basilisk.simulation import solarFlux
 from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
 from Basilisk.simulation.simMessages import SCPlusStatesSimMsg
+from Basilisk.simulation.simMessages import EclipseSimMsg
+
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 
-@pytest.mark.parametrize("positionFactor, relTol", [(np.sqrt(2), 1e-8)])
-def test_solarFlux(show_plots, positionFactor, relTol):
+@pytest.mark.parametrize("positionFactor, shadowFactor, eclipseMsgName, relTol", [(np.sqrt(2), 0.5, "eclipse_data_0", 1e-8), (np.sqrt(2), 0.5, "", 1e-8)])
+def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, relTol):
     """
     Test Description:
     ------------------
     Test that solar flux is appropriately modified depending on spacecraft distance from the sun.
     To test this, the module is asked to write the solar flux at 1 AU. Then it is asked to write
-    the flux at positionFactor*AU and the flux is checked to be positionFactor**2 of that at 1 AU to within a relative tolerance of relTol
+    the flux at positionFactor*AU and the flux is checked to be positionFactor**2 of that at 1 AU to within a relative tolerance of relTol.
+    The application of the shadowFactor is also checked as a multiple of the un-shadowed flux.
 
     Variables Tested:
     -----------------
     - positionFactor : [float] positive
         a factor by which to multiply the original s/c position to check flux at a new position
+    - shadowFactor : [float] between 0 and 1
+        the eclipse factor by which to multiple the solar flux at a position
+    - eclipseMsgName : [string]
+        name of the eclipse message to read. "" if not to read a message
     - relTol : [float] positive
         the relative tolerance to which the result is checked.
     """
@@ -60,8 +67,13 @@ def test_solarFlux(show_plots, positionFactor, relTol):
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
     unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
 
+    eclipseMessage = EclipseSimMsg()
+    eclipseMessage.shadowFactor = shadowFactor
+    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "eclipse_data_0", eclipseMessage, "EclipseSimMsg")
+
     sf = solarFlux.SolarFlux()
     sim.AddModelToTask(task.Name, sf)
+    sf.eclipseInMsgName = eclipseMsgName
     sim.TotalSim.logThisMessage("solar_flux")
     sim.InitializeSimulationAndDiscover()
     sim.TotalSim.SingleStepProcesses()
@@ -72,8 +84,11 @@ def test_solarFlux(show_plots, positionFactor, relTol):
     sim.TotalSim.SingleStepProcesses()
     fluxOutFurther = sim.pullMessageLogData("solar_flux.flux")
 
-    assert fluxOutFurther[0][1] == pytest.approx(fluxOutEarth[0][1] / (positionFactor**2), rel=relTol)
+    if len(eclipseMsgName) == 0:
+        shadowFactor = 1.0
+
+    assert fluxOutFurther[0][1] == pytest.approx(fluxOutEarth[0][1] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
 
 
 if __name__ == "__main__":
-    test_solarFlux(False, np.sqrt(2.0), 1e-8)
+    test_solarFlux(False, np.sqrt(2.0), 0.5, "eclipse_data_0", 1e-8)

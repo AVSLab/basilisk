@@ -23,6 +23,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/solarFluxSimMsg.h"
+#include "simMessages/eclipseSimMsg.h"
 
 void SolarFlux::SelfInit()
 {
@@ -37,6 +38,10 @@ void SolarFlux::CrossInit() {
                                                                    sizeof(SpicePlanetStateSimMsg), this->moduleID);
     this->spacecraftStateInMsgId = messagingSystem->subscribeToMessage(this->spacecraftStateInMsgName,
                                                                        sizeof(SCPlusStatesSimMsg), this->moduleID);
+    if (this->eclipseInMsgName.length() > 0) {
+        this->eclipseInMsgId = messagingSystem->subscribeToMessage(this->eclipseInMsgName, sizeof(EclipseSimMsg),
+                                                                   this->moduleID);
+    }
 }
 
 void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
@@ -45,7 +50,7 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 
     auto r_SSc_N = this->r_SN_N - this->r_ScN_N;
     double dist_SSc_N = r_SSc_N.norm() / 1000;  // to km
-    this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2);
+    this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;
 
     this->writeMessages(CurrentSimNanos);
 }
@@ -64,6 +69,13 @@ void SolarFlux::readMessages() {
     messagingSystem->ReadMessage(this->spacecraftStateInMsgId, &tmpHeader, sizeof(SCPlusStatesSimMsg),
                                  reinterpret_cast<uint8_t*>(&scStatesMsgData), this->moduleID);
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
+
+    if (this->eclipseInMsgId >= 0) {
+        EclipseSimMsg eclipseInMsgData;
+        messagingSystem->ReadMessage(this->eclipseInMsgId, &tmpHeader, sizeof(EclipseSimMsg),
+                                     reinterpret_cast<uint8_t *>(&eclipseInMsgData), this->moduleID);
+        this->eclipseFactor = eclipseInMsgData.shadowFactor;
+    }
 
 }
 
