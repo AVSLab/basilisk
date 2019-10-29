@@ -52,6 +52,14 @@ void SolarFlux::CrossInit() {
     }
 }
 
+/*! This method is used to reset the module. Currently no tasks are required.
+ @return void
+ */
+void SolarFlux::Reset(uint64_t CurrentSimNanos)
+{
+    return;
+}
+
 void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();

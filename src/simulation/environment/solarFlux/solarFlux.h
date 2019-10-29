@@ -30,7 +30,7 @@
 
  ## Module Purpose
  ### Executive Summary
-    Takes in a spacecraft position message and sun position message and calculates the solar flux [W/m2] at the spacecraft location.
+    Takes in a spacecraft position message and sun position message and calculates the solar flux [W/m2] at the spacecraft location.  It also allows for an optional eclipse message to be considered in the solar flux calculation.
 
  ### Module Assumptions and Limitations
     This model uses the solar flux value, SOLAR_FLUX_EARTH, and astronomical unit, AU, values from astroConstants.h
@@ -98,6 +98,7 @@ public:
     
     void SelfInit() override;
     void CrossInit() override;
+    void Reset(uint64_t CurrentSimNanos) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);
     void readMessages();
