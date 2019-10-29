@@ -91,7 +91,7 @@ void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void
  */
-void SolarFlux::Reset(uint64_t CurrentSimNanos)
+void PlanetHeading::Reset(uint64_t CurrentSimNanos)
 {
     return;
 }
