@@ -510,6 +510,13 @@ class SimBaseClass:
         self.TotalSim.populateMessageHeader(splitName[0], headerData)
         moduleFound = ''
 
+        if len(self.allModules) == 0:
+            # Create a new set into which we add the SWIG'd simMessages definitions
+            # and union it with the simulation's modules set. We do this so that
+            # python modules can have message structs resolved
+            self.allModules = set()
+            self.allModules.add(simMessages)
+            self.allModules = self.allModules | self.simModules
 
         #   Search for the specific module
         for moduleData in self.allModules:
@@ -554,7 +561,7 @@ class SimBaseClass:
         Inputs:
         @param varNames: list : list of message names and parameters.
         @param indices: list : list of message indices to be pulled.
-        @param numRecords : list : number of logged messages to pull. Defaults to -1, which returns all logged messages.
+        @param numRecords : int : number of logged messages to pull. Defaults to -1, which returns all logged messages.
 
         Outputs:
         @param pullDict : dict : dict using names from varNames as keys and the corresponding pulled message data as the values.
@@ -595,6 +602,14 @@ class SimBaseClass:
 
 
         headerList = list(headerDict.keys())
+
+        if len(self.allModules) == 0:
+            # Create a new set into which we add the SWIG'd simMessages definitions
+            # and union it with the simulation's modules set. We do this so that
+            # python modules can have message structs resolved
+            self.allModules = set()
+            self.allModules.add(simMessages)
+            self.allModules = self.allModules | self.simModules
 
         #   Search for any of the modules in the list:
         for module in self.allModules:
@@ -637,7 +652,7 @@ class SimBaseClass:
                                                                           attr,
                                                                           'double',
                                                                           indices_use[0], indices_use[-1], bufferUse)
-                            pullDict.update({varName:dataUse})
+                            pullDict.update({msgName+'.'+attr:dataUse})
 
                         foundDict.update({headerData.messageStruct:True})
 
