@@ -177,6 +177,7 @@ class DataPairClass:
 class SimBaseClass:
     def __init__(self):
         self.TotalSim = sim_model.SimModel()
+        self.TotalSim.terminateSimulation()
         self.TaskList = []
         self.procList = []
         self.pyProcList = []
