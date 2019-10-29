@@ -69,8 +69,13 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
 
+    /*! - evaluate spacecraft position relative to the sun in N frame components */
     auto r_SSc_N = this->r_SN_N - this->r_ScN_N;
+
+    /*! - compute the scalar distance to the sun.  The following math requires this to be in km. */
     double dist_SSc_N = r_SSc_N.norm() / 1000;  // to km
+
+    /*! - compute the local solar flux value */
     this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;
 
     this->writeMessages(CurrentSimNanos);
@@ -84,16 +89,19 @@ void SolarFlux::readMessages() {
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
     auto messagingSystem = SystemMessaging::GetInstance();
 
+    /*! - read in planet state message (required) */
     SpicePlanetStateSimMsg sunPositionMsgData;
     messagingSystem->ReadMessage(this->sunPositionInMsgId, &tmpHeader, sizeof(SpicePlanetStateSimMsg),
                                  reinterpret_cast<uint8_t*>(&sunPositionMsgData), this->moduleID);
     this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
 
+    /*! - read in spacecraft state message (required) */
     SCPlusStatesSimMsg scStatesMsgData;
     messagingSystem->ReadMessage(this->spacecraftStateInMsgId, &tmpHeader, sizeof(SCPlusStatesSimMsg),
                                  reinterpret_cast<uint8_t*>(&scStatesMsgData), this->moduleID);
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
 
+    /*! - read in eclipse message (optional) */
     if (this->eclipseInMsgId >= 0) {
         EclipseSimMsg eclipseInMsgData;
         messagingSystem->ReadMessage(this->eclipseInMsgId, &tmpHeader, sizeof(EclipseSimMsg),
