@@ -14,6 +14,7 @@ We are very excited by the great capabilities that this software already has, an
 ##  Version 1.X.X
 <ul>
     <li>Update template illustrating how the validation accuracy can be recording in the `pytest` parameters.</li>
+    <li> A new module in the environments directory provides the solar flux value at a spacecraft location including (optionally) eclipse effects</li>
 </ul>
 
 ##  Version 1.2.1
