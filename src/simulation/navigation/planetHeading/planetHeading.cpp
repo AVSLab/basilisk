@@ -39,6 +39,7 @@ void PlanetHeading::SelfInit()
  @return void
  */
 void PlanetHeading::CrossInit() {
+    /*! - subscribe to required messages */
     auto messagingSystem = SystemMessaging::GetInstance();
     this->planetPositionInMsgId = messagingSystem->subscribeToMessage(this->planetPositionInMsgName,
                                                                    sizeof(SpicePlanetStateSimMsg), this->moduleID);
@@ -53,8 +54,11 @@ void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
 
+    /*! - evaluate spacecraft position relative to the sun in N frame components */
     auto r_PS_N = this->r_PN_N - this->r_SN_N;
+    /*! - normalize and convert to body frame */
     this->rHat_PS_B = (this->sigma_BN.toRotationMatrix().transpose() * r_PS_N).normalized();
+
     this->writeMessages(CurrentSimNanos);
 }
 
@@ -67,11 +71,13 @@ void PlanetHeading::readMessages() {
     auto messagingSystem = SystemMessaging::GetInstance();
 
     SpicePlanetStateSimMsg planetPositionMsgData;
+    /*! - read in planet state message (required) */
     messagingSystem->ReadMessage(this->planetPositionInMsgId, &tmpHeader, sizeof(SpicePlanetStateSimMsg),
                                  reinterpret_cast<uint8_t*>(&planetPositionMsgData), this->moduleID);
     this->r_PN_N = Eigen::Vector3d(planetPositionMsgData.PositionVector);
 
     SCPlusStatesSimMsg scStatesMsgData;
+    /*! - read in spacecraft state message (required) */
     messagingSystem->ReadMessage(this->spacecraftStateInMsgId, &tmpHeader, sizeof(SCPlusStatesSimMsg),
                                  reinterpret_cast<uint8_t*>(&scStatesMsgData), this->moduleID);
     this->r_SN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
@@ -83,7 +89,9 @@ void PlanetHeading::readMessages() {
  */
 void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
     BodyHeadingSimMsg planetHeadingOutMsgData;
-    Eigen::VectorXd::Map(planetHeadingOutMsgData.rHat_XS_B, this->rHat_PS_B.rows()) = this->rHat_PS_B;
+    Eigen::VectorXd::Map(planetHeadingOutMsgData.rHat_XS_B, this->rHat_PS_B.rows()) = this->rHat_PS_B;  // eigen to c array for messaging
+
+    /*! - write the output message */
     SystemMessaging::GetInstance()->WriteMessage(this->planetHeadingOutMsgId, CurrentSimNanos, sizeof(BodyHeadingSimMsg),
                                   reinterpret_cast<uint8_t*>(&planetHeadingOutMsgData));
 }

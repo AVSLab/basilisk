@@ -41,7 +41,7 @@ void SolarFlux::SelfInit()
 void SolarFlux::CrossInit() {
     auto messagingSystem = SystemMessaging::GetInstance();
 
-    /*! - read in required messages */
+    /*! - subscribe to required messages */
     this->sunPositionInMsgId = messagingSystem->subscribeToMessage(this->sunPositionInMsgName,
                                                                    sizeof(SpicePlanetStateSimMsg), this->moduleID);
     this->spacecraftStateInMsgId = messagingSystem->subscribeToMessage(this->spacecraftStateInMsgName,
