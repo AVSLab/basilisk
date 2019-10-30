@@ -15,6 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 <ul>
     <li>Update template illustrating how the validation accuracy can be recording in the `pytest` parameters.</li>
     <li> A new module in the environments directory provides the solar flux value at a spacecraft location including (optionally) eclipse effects</li>
+    <li> It is no longer necessary to call sim.TotalSim.terminateSimulation() at the beginning of Basilisk scripts. This call has been moved to the SimBaseClass constructor and removed from scripts in the repository.</li>
 </ul>
 
 ##  Version 1.2.1
