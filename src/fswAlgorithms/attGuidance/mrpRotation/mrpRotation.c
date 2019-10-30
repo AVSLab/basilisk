@@ -215,6 +215,7 @@ void computeMRPRotationReference(mrpRotationConfig *configData,
     v3Scale(0.25, sigmaDot_RR0, sigmaDot_RR0);
     v3Scale(configData->dt, sigmaDot_RR0, attIncrement);
     v3Add(configData->mrpSet, attIncrement, configData->mrpSet);
+    MRPswitch(configData->mrpSet, 1.0, configData->mrpSet);
     MRP2C(configData->mrpSet, RR0);
     m33MultM33(RR0, R0N, RN);
     C2MRP(RN, attRefOut->sigma_RN);
