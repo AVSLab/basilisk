@@ -39,7 +39,7 @@ VizInterface::VizInterface()
     this->opNavMode = 0;
     this->saveFile = 0;
     this->FrameNumber= -1;
-    this->numOutputBuffers = 2; 
+    this->numOutputBuffers = 2;
     scData.scPlusInMsgName = "inertial_state_output";
     scData.cssDataInMsgName = "css_sensors_data";
     scData.cssConfInMsgName = "css_config_data";
@@ -161,7 +161,7 @@ void VizInterface::CrossInit()
         it->numThr = 0;
         for (it2= it->thrMsgData.begin(); it2 != it->thrMsgData.end(); it2++)
         {
-            for(int idx=0; idx < it2->thrCount; idx++) {
+            for(unsigned int idx=0; idx < it2->thrCount; idx++) {
                 std::string tmpThrustMsgName = "thruster_" + it2->thrTag + "_" + std::to_string(idx) + "_data";
                 thrStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), moduleID);
                 it->thrMsgID.push_back(thrStatus);
@@ -200,6 +200,10 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     memset(&(this->viz_msg), 0x0, sizeof(VizMsg));
     this->FrameNumber=-1;
     if (this->saveFile == 1) {
+        if(this->outputStream && this->outputStream->is_open())
+        {
+            this->outputStream->close();
+        }
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
     }
     return;
