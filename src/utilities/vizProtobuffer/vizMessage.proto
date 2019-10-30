@@ -131,6 +131,16 @@ message VizMessage{
         int32 viewRWPanel = 4; // Value of -1 to use viz default, 0 for false, 1 for true
         int32 viewRWHUD = 5; //Value of -1 to use viz default, 0 for false, 1 for true
     }
+    
+    message CustomModel{
+        string modelToUse = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+        repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" to apply custom model to all spacecraft in simulation
+        repeated double offset = 3; //meters
+        repeated double rotation = 4; // degrees, euler rotation about x, y, z axes in spacecraft CS
+        repeated double scale = 5; //desired model scale in x, y, z in spacecraft CS
+        string customTexture = 6; //(Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
+        string normalMap = 7; //(Optional) Path to the normal map for the customTexture
+    }
 
 
     message VizSettingsPb{
@@ -145,6 +155,7 @@ message VizMessage{
         PlanetCameraSettings planetCamera = 9;
         repeated ActuatorSettings actuatorSettings = 10;
         string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
+        repeated CustomModel customModels = 12;
 
     }
 
@@ -152,7 +163,7 @@ message VizMessage{
     repeated CelestialBody celestialBodies = 2;
     repeated Spacecraft spacecraft = 3;
     repeated CameraConfig cameras = 4;
-    //repeated cameraImage cameraImages = 5;  // unused field, not re-using the number
-    //repeated ImageRequest imageRequests = 6;  // unused field, not re-using the number
+    //repeated cameraImage cameraImages = 5;
+    //repeated ImageRequest imageRequests = 6;
     VizSettingsPb settings = 7;
 }

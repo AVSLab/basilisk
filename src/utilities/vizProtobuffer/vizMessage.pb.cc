@@ -90,6 +90,11 @@ class VizMessage_ActuatorSettingsDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_ActuatorSettings>
       _instance;
 } _VizMessage_ActuatorSettings_default_instance_;
+class VizMessage_CustomModelDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_CustomModel>
+      _instance;
+} _VizMessage_CustomModel_default_instance_;
 class VizMessage_VizSettingsPbDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_VizSettingsPb>
@@ -400,6 +405,27 @@ void InitDefaultsVizMessage_ActuatorSettings() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_ActuatorSettingsImpl);
 }
 
+void InitDefaultsVizMessage_CustomModelImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_CustomModel_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_CustomModel();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_CustomModel::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_CustomModel() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_CustomModelImpl);
+}
+
 void InitDefaultsVizMessage_VizSettingsPbImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -414,6 +440,7 @@ void InitDefaultsVizMessage_VizSettingsPbImpl() {
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettings();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettings();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_ActuatorSettings();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CustomModel();
   {
     void* ptr = &::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_;
     new (ptr) ::vizProtobufferMessage::VizMessage_VizSettingsPb();
@@ -453,7 +480,7 @@ void InitDefaultsVizMessage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessageImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[16];
+::google::protobuf::Metadata file_level_metadata[17];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -602,6 +629,18 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ActuatorSettings, viewrwpanel_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ActuatorSettings, viewrwhud_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, modeltouse_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, simbodiestomodify_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, offset_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, rotation_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, scale_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, customtexture_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, normalmap_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -617,6 +656,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, planetcamera_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, actuatorsettings_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, skybox_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, custommodels_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -643,8 +683,9 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 114, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraTwoSettings)},
   { 124, -1, sizeof(::vizProtobufferMessage::VizMessage_PlanetCameraSettings)},
   { 135, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 145, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 161, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 145, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 157, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 174, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -662,6 +703,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraTwoSettings_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_PlanetCameraSettings_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_ActuatorSettings_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CustomModel_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_default_instance_),
 };
@@ -682,14 +724,14 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 16);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 17);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\332\026\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\271\030\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -747,24 +789,30 @@ void AddDescriptorsImpl() {
       "rgetBodyName\030\006 \001(\t\032\206\001\n\020ActuatorSettings\022"
       "\026\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrusterP"
       "anel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013v"
-      "iewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\032\250\004\n\r"
-      "VizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitL"
-      "inesOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\n"
-      "planetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.v"
-      "izProtobufferMessage.VizMessage.PointLin"
-      "e\022G\n\016keepOutInCones\030\006 \003(\0132/.vizProtobuff"
-      "erMessage.VizMessage.KeepOutInCone\022F\n\tca"
-      "meraOne\030\007 \001(\01323.vizProtobufferMessage.Vi"
-      "zMessage.CameraOneSettings\022F\n\tcameraTwo\030"
-      "\010 \001(\01323.vizProtobufferMessage.VizMessage"
-      ".CameraTwoSettings\022L\n\014planetCamera\030\t \001(\013"
-      "26.vizProtobufferMessage.VizMessage.Plan"
-      "etCameraSettings\022L\n\020actuatorSettings\030\n \003"
-      "(\01322.vizProtobufferMessage.VizMessage.Ac"
-      "tuatorSettings\022\016\n\006skybox\030\013 \001(\tb\006proto3"
+      "iewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\032\227\001\n\013"
+      "CustomModel\022\022\n\nmodelToUse\030\001 \001(\t\022\031\n\021simBo"
+      "diesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010ro"
+      "tation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\025\n\rcustomTex"
+      "ture\030\006 \001(\t\022\021\n\tnormalMap\030\007 \001(\t\032\355\004\n\rVizSet"
+      "tingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn"
+      "\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanet"
+      "CSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProt"
+      "obufferMessage.VizMessage.PointLine\022G\n\016k"
+      "eepOutInCones\030\006 \003(\0132/.vizProtobufferMess"
+      "age.VizMessage.KeepOutInCone\022F\n\tcameraOn"
+      "e\030\007 \001(\01323.vizProtobufferMessage.VizMessa"
+      "ge.CameraOneSettings\022F\n\tcameraTwo\030\010 \001(\0132"
+      "3.vizProtobufferMessage.VizMessage.Camer"
+      "aTwoSettings\022L\n\014planetCamera\030\t \001(\01326.viz"
+      "ProtobufferMessage.VizMessage.PlanetCame"
+      "raSettings\022L\n\020actuatorSettings\030\n \003(\01322.v"
+      "izProtobufferMessage.VizMessage.Actuator"
+      "Settings\022\016\n\006skybox\030\013 \001(\t\022C\n\014customModels"
+      "\030\014 \003(\0132-.vizProtobufferMessage.VizMessag"
+      "e.CustomModelb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 2958);
+      descriptor, 3181);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -7221,6 +7269,612 @@ void VizMessage_ActuatorSettings::InternalSwap(VizMessage_ActuatorSettings* othe
 
 // ===================================================================
 
+void VizMessage_CustomModel::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_CustomModel::kModelToUseFieldNumber;
+const int VizMessage_CustomModel::kSimBodiesToModifyFieldNumber;
+const int VizMessage_CustomModel::kOffsetFieldNumber;
+const int VizMessage_CustomModel::kRotationFieldNumber;
+const int VizMessage_CustomModel::kScaleFieldNumber;
+const int VizMessage_CustomModel::kCustomTextureFieldNumber;
+const int VizMessage_CustomModel::kNormalMapFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_CustomModel::VizMessage_CustomModel()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CustomModel();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.CustomModel)
+}
+VizMessage_CustomModel::VizMessage_CustomModel(const VizMessage_CustomModel& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      simbodiestomodify_(from.simbodiestomodify_),
+      offset_(from.offset_),
+      rotation_(from.rotation_),
+      scale_(from.scale_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  modeltouse_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.modeltouse().size() > 0) {
+    modeltouse_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.modeltouse_);
+  }
+  customtexture_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.customtexture().size() > 0) {
+    customtexture_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.customtexture_);
+  }
+  normalmap_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.normalmap().size() > 0) {
+    normalmap_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmap_);
+  }
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CustomModel)
+}
+
+void VizMessage_CustomModel::SharedCtor() {
+  modeltouse_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  customtexture_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  normalmap_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _cached_size_ = 0;
+}
+
+VizMessage_CustomModel::~VizMessage_CustomModel() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.CustomModel)
+  SharedDtor();
+}
+
+void VizMessage_CustomModel::SharedDtor() {
+  modeltouse_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  customtexture_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  normalmap_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void VizMessage_CustomModel::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_CustomModel::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_CustomModel& VizMessage_CustomModel::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CustomModel();
+  return *internal_default_instance();
+}
+
+VizMessage_CustomModel* VizMessage_CustomModel::New(::google::protobuf::Arena* arena) const {
+  VizMessage_CustomModel* n = new VizMessage_CustomModel;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_CustomModel::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.CustomModel)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  simbodiestomodify_.Clear();
+  offset_.Clear();
+  rotation_.Clear();
+  scale_.Clear();
+  modeltouse_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  customtexture_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  normalmap_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_CustomModel::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.CustomModel)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string modelToUse = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_modeltouse()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->modeltouse().data(), static_cast<int>(this->modeltouse().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.CustomModel.modelToUse"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated string simBodiesToModify = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_simbodiestomodify()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->simbodiestomodify(this->simbodiestomodify_size() - 1).data(),
+            static_cast<int>(this->simbodiestomodify(this->simbodiestomodify_size() - 1).length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated double offset = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, this->mutable_offset())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 26u, input, this->mutable_offset())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated double rotation = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, this->mutable_rotation())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 34u, input, this->mutable_rotation())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated double scale = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, this->mutable_scale())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 42u, input, this->mutable_scale())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string customTexture = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_customtexture()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->customtexture().data(), static_cast<int>(this->customtexture().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.CustomModel.customTexture"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string normalMap = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_normalmap()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->normalmap().data(), static_cast<int>(this->normalmap().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.CustomModel.normalMap"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.CustomModel)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.CustomModel)
+  return false;
+#undef DO_
+}
+
+void VizMessage_CustomModel::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.CustomModel)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string modelToUse = 1;
+  if (this->modeltouse().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->modeltouse().data(), static_cast<int>(this->modeltouse().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.modelToUse");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->modeltouse(), output);
+  }
+
+  // repeated string simBodiesToModify = 2;
+  for (int i = 0, n = this->simbodiestomodify_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->simbodiestomodify(i).data(), static_cast<int>(this->simbodiestomodify(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->simbodiestomodify(i), output);
+  }
+
+  // repeated double offset = 3;
+  if (this->offset_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _offset_cached_byte_size_));
+    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
+      this->offset().data(), this->offset_size(), output);
+  }
+
+  // repeated double rotation = 4;
+  if (this->rotation_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(4, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _rotation_cached_byte_size_));
+    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
+      this->rotation().data(), this->rotation_size(), output);
+  }
+
+  // repeated double scale = 5;
+  if (this->scale_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(5, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _scale_cached_byte_size_));
+    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
+      this->scale().data(), this->scale_size(), output);
+  }
+
+  // string customTexture = 6;
+  if (this->customtexture().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->customtexture().data(), static_cast<int>(this->customtexture().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.customTexture");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->customtexture(), output);
+  }
+
+  // string normalMap = 7;
+  if (this->normalmap().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->normalmap().data(), static_cast<int>(this->normalmap().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.normalMap");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      7, this->normalmap(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.CustomModel)
+}
+
+::google::protobuf::uint8* VizMessage_CustomModel::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.CustomModel)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string modelToUse = 1;
+  if (this->modeltouse().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->modeltouse().data(), static_cast<int>(this->modeltouse().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.modelToUse");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->modeltouse(), target);
+  }
+
+  // repeated string simBodiesToModify = 2;
+  for (int i = 0, n = this->simbodiestomodify_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->simbodiestomodify(i).data(), static_cast<int>(this->simbodiestomodify(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(2, this->simbodiestomodify(i), target);
+  }
+
+  // repeated double offset = 3;
+  if (this->offset_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      3,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _offset_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteDoubleNoTagToArray(this->offset_, target);
+  }
+
+  // repeated double rotation = 4;
+  if (this->rotation_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      4,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _rotation_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteDoubleNoTagToArray(this->rotation_, target);
+  }
+
+  // repeated double scale = 5;
+  if (this->scale_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      5,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _scale_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteDoubleNoTagToArray(this->scale_, target);
+  }
+
+  // string customTexture = 6;
+  if (this->customtexture().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->customtexture().data(), static_cast<int>(this->customtexture().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.customTexture");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->customtexture(), target);
+  }
+
+  // string normalMap = 7;
+  if (this->normalmap().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->normalmap().data(), static_cast<int>(this->normalmap().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CustomModel.normalMap");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        7, this->normalmap(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.CustomModel)
+  return target;
+}
+
+size_t VizMessage_CustomModel::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.CustomModel)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated string simBodiesToModify = 2;
+  total_size += 1 *
+      ::google::protobuf::internal::FromIntSize(this->simbodiestomodify_size());
+  for (int i = 0, n = this->simbodiestomodify_size(); i < n; i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->simbodiestomodify(i));
+  }
+
+  // repeated double offset = 3;
+  {
+    unsigned int count = static_cast<unsigned int>(this->offset_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _offset_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated double rotation = 4;
+  {
+    unsigned int count = static_cast<unsigned int>(this->rotation_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _rotation_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated double scale = 5;
+  {
+    unsigned int count = static_cast<unsigned int>(this->scale_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _scale_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // string modelToUse = 1;
+  if (this->modeltouse().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->modeltouse());
+  }
+
+  // string customTexture = 6;
+  if (this->customtexture().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->customtexture());
+  }
+
+  // string normalMap = 7;
+  if (this->normalmap().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->normalmap());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_CustomModel::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.CustomModel)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_CustomModel* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_CustomModel>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.CustomModel)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.CustomModel)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_CustomModel::MergeFrom(const VizMessage_CustomModel& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.CustomModel)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  simbodiestomodify_.MergeFrom(from.simbodiestomodify_);
+  offset_.MergeFrom(from.offset_);
+  rotation_.MergeFrom(from.rotation_);
+  scale_.MergeFrom(from.scale_);
+  if (from.modeltouse().size() > 0) {
+
+    modeltouse_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.modeltouse_);
+  }
+  if (from.customtexture().size() > 0) {
+
+    customtexture_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.customtexture_);
+  }
+  if (from.normalmap().size() > 0) {
+
+    normalmap_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmap_);
+  }
+}
+
+void VizMessage_CustomModel::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.CustomModel)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_CustomModel::CopyFrom(const VizMessage_CustomModel& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.CustomModel)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_CustomModel::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_CustomModel::Swap(VizMessage_CustomModel* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_CustomModel::InternalSwap(VizMessage_CustomModel* other) {
+  using std::swap;
+  simbodiestomodify_.InternalSwap(&other->simbodiestomodify_);
+  offset_.InternalSwap(&other->offset_);
+  rotation_.InternalSwap(&other->rotation_);
+  scale_.InternalSwap(&other->scale_);
+  modeltouse_.Swap(&other->modeltouse_);
+  customtexture_.Swap(&other->customtexture_);
+  normalmap_.Swap(&other->normalmap_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_CustomModel::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void VizMessage_VizSettingsPb::InitAsDefaultInstance() {
   ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->cameraone_ = const_cast< ::vizProtobufferMessage::VizMessage_CameraOneSettings*>(
       ::vizProtobufferMessage::VizMessage_CameraOneSettings::internal_default_instance());
@@ -7241,6 +7895,7 @@ const int VizMessage_VizSettingsPb::kCameraTwoFieldNumber;
 const int VizMessage_VizSettingsPb::kPlanetCameraFieldNumber;
 const int VizMessage_VizSettingsPb::kActuatorSettingsFieldNumber;
 const int VizMessage_VizSettingsPb::kSkyboxFieldNumber;
+const int VizMessage_VizSettingsPb::kCustomModelsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
@@ -7257,6 +7912,7 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
       pointlines_(from.pointlines_),
       keepoutincones_(from.keepoutincones_),
       actuatorsettings_(from.actuatorsettings_),
+      custommodels_(from.custommodels_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -7336,6 +7992,7 @@ void VizMessage_VizSettingsPb::Clear() {
   pointlines_.Clear();
   keepoutincones_.Clear();
   actuatorsettings_.Clear();
+  custommodels_.Clear();
   skybox_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && cameraone_ != NULL) {
     delete cameraone_;
@@ -7506,6 +8163,17 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
+      // repeated .vizProtobufferMessage.VizMessage.CustomModel customModels = 12;
+      case 12: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(98u /* 98 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_custommodels()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -7601,6 +8269,13 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
       11, this->skybox(), output);
   }
 
+  // repeated .vizProtobufferMessage.VizMessage.CustomModel customModels = 12;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->custommodels_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      12, this->custommodels(static_cast<int>(i)), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -7691,6 +8366,14 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
         11, this->skybox(), target);
   }
 
+  // repeated .vizProtobufferMessage.VizMessage.CustomModel customModels = 12;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->custommodels_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        12, this->custommodels(static_cast<int>(i)), deterministic, target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -7738,6 +8421,17 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
       total_size +=
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           this->actuatorsettings(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.CustomModel customModels = 12;
+  {
+    unsigned int count = static_cast<unsigned int>(this->custommodels_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->custommodels(static_cast<int>(i)));
     }
   }
 
@@ -7827,6 +8521,7 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   pointlines_.MergeFrom(from.pointlines_);
   keepoutincones_.MergeFrom(from.keepoutincones_);
   actuatorsettings_.MergeFrom(from.actuatorsettings_);
+  custommodels_.MergeFrom(from.custommodels_);
   if (from.skybox().size() > 0) {
 
     skybox_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.skybox_);
@@ -7881,6 +8576,7 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   pointlines_.InternalSwap(&other->pointlines_);
   keepoutincones_.InternalSwap(&other->keepoutincones_);
   actuatorsettings_.InternalSwap(&other->actuatorsettings_);
+  custommodels_.InternalSwap(&other->custommodels_);
   skybox_.Swap(&other->skybox_);
   swap(cameraone_, other->cameraone_);
   swap(cameratwo_, other->cameratwo_);

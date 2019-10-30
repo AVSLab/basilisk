@@ -36,7 +36,7 @@ namespace protobuf_vizMessage_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[16];
+  static const ::google::protobuf::internal::ParseTable schema[17];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -70,6 +70,8 @@ void InitDefaultsVizMessage_PlanetCameraSettingsImpl();
 void InitDefaultsVizMessage_PlanetCameraSettings();
 void InitDefaultsVizMessage_ActuatorSettingsImpl();
 void InitDefaultsVizMessage_ActuatorSettings();
+void InitDefaultsVizMessage_CustomModelImpl();
+void InitDefaultsVizMessage_CustomModel();
 void InitDefaultsVizMessage_VizSettingsPbImpl();
 void InitDefaultsVizMessage_VizSettingsPb();
 void InitDefaultsVizMessageImpl();
@@ -89,6 +91,7 @@ inline void InitDefaults() {
   InitDefaultsVizMessage_CameraTwoSettings();
   InitDefaultsVizMessage_PlanetCameraSettings();
   InitDefaultsVizMessage_ActuatorSettings();
+  InitDefaultsVizMessage_CustomModel();
   InitDefaultsVizMessage_VizSettingsPb();
   InitDefaultsVizMessage();
 }
@@ -115,6 +118,9 @@ extern VizMessage_CelestialBodyDefaultTypeInternal _VizMessage_CelestialBody_def
 class VizMessage_CoarseSunSensor;
 class VizMessage_CoarseSunSensorDefaultTypeInternal;
 extern VizMessage_CoarseSunSensorDefaultTypeInternal _VizMessage_CoarseSunSensor_default_instance_;
+class VizMessage_CustomModel;
+class VizMessage_CustomModelDefaultTypeInternal;
+extern VizMessage_CustomModelDefaultTypeInternal _VizMessage_CustomModel_default_instance_;
 class VizMessage_KeepOutInCone;
 class VizMessage_KeepOutInConeDefaultTypeInternal;
 extern VizMessage_KeepOutInConeDefaultTypeInternal _VizMessage_KeepOutInCone_default_instance_;
@@ -2250,6 +2256,208 @@ class VizMessage_ActuatorSettings : public ::google::protobuf::Message /* @@prot
 };
 // -------------------------------------------------------------------
 
+class VizMessage_CustomModel : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.CustomModel) */ {
+ public:
+  VizMessage_CustomModel();
+  virtual ~VizMessage_CustomModel();
+
+  VizMessage_CustomModel(const VizMessage_CustomModel& from);
+
+  inline VizMessage_CustomModel& operator=(const VizMessage_CustomModel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  VizMessage_CustomModel(VizMessage_CustomModel&& from) noexcept
+    : VizMessage_CustomModel() {
+    *this = ::std::move(from);
+  }
+
+  inline VizMessage_CustomModel& operator=(VizMessage_CustomModel&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const VizMessage_CustomModel& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const VizMessage_CustomModel* internal_default_instance() {
+    return reinterpret_cast<const VizMessage_CustomModel*>(
+               &_VizMessage_CustomModel_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    14;
+
+  void Swap(VizMessage_CustomModel* other);
+  friend void swap(VizMessage_CustomModel& a, VizMessage_CustomModel& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline VizMessage_CustomModel* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  VizMessage_CustomModel* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const VizMessage_CustomModel& from);
+  void MergeFrom(const VizMessage_CustomModel& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(VizMessage_CustomModel* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated string simBodiesToModify = 2;
+  int simbodiestomodify_size() const;
+  void clear_simbodiestomodify();
+  static const int kSimBodiesToModifyFieldNumber = 2;
+  const ::std::string& simbodiestomodify(int index) const;
+  ::std::string* mutable_simbodiestomodify(int index);
+  void set_simbodiestomodify(int index, const ::std::string& value);
+  #if LANG_CXX11
+  void set_simbodiestomodify(int index, ::std::string&& value);
+  #endif
+  void set_simbodiestomodify(int index, const char* value);
+  void set_simbodiestomodify(int index, const char* value, size_t size);
+  ::std::string* add_simbodiestomodify();
+  void add_simbodiestomodify(const ::std::string& value);
+  #if LANG_CXX11
+  void add_simbodiestomodify(::std::string&& value);
+  #endif
+  void add_simbodiestomodify(const char* value);
+  void add_simbodiestomodify(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& simbodiestomodify() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_simbodiestomodify();
+
+  // repeated double offset = 3;
+  int offset_size() const;
+  void clear_offset();
+  static const int kOffsetFieldNumber = 3;
+  double offset(int index) const;
+  void set_offset(int index, double value);
+  void add_offset(double value);
+  const ::google::protobuf::RepeatedField< double >&
+      offset() const;
+  ::google::protobuf::RepeatedField< double >*
+      mutable_offset();
+
+  // repeated double rotation = 4;
+  int rotation_size() const;
+  void clear_rotation();
+  static const int kRotationFieldNumber = 4;
+  double rotation(int index) const;
+  void set_rotation(int index, double value);
+  void add_rotation(double value);
+  const ::google::protobuf::RepeatedField< double >&
+      rotation() const;
+  ::google::protobuf::RepeatedField< double >*
+      mutable_rotation();
+
+  // repeated double scale = 5;
+  int scale_size() const;
+  void clear_scale();
+  static const int kScaleFieldNumber = 5;
+  double scale(int index) const;
+  void set_scale(int index, double value);
+  void add_scale(double value);
+  const ::google::protobuf::RepeatedField< double >&
+      scale() const;
+  ::google::protobuf::RepeatedField< double >*
+      mutable_scale();
+
+  // string modelToUse = 1;
+  void clear_modeltouse();
+  static const int kModelToUseFieldNumber = 1;
+  const ::std::string& modeltouse() const;
+  void set_modeltouse(const ::std::string& value);
+  #if LANG_CXX11
+  void set_modeltouse(::std::string&& value);
+  #endif
+  void set_modeltouse(const char* value);
+  void set_modeltouse(const char* value, size_t size);
+  ::std::string* mutable_modeltouse();
+  ::std::string* release_modeltouse();
+  void set_allocated_modeltouse(::std::string* modeltouse);
+
+  // string customTexture = 6;
+  void clear_customtexture();
+  static const int kCustomTextureFieldNumber = 6;
+  const ::std::string& customtexture() const;
+  void set_customtexture(const ::std::string& value);
+  #if LANG_CXX11
+  void set_customtexture(::std::string&& value);
+  #endif
+  void set_customtexture(const char* value);
+  void set_customtexture(const char* value, size_t size);
+  ::std::string* mutable_customtexture();
+  ::std::string* release_customtexture();
+  void set_allocated_customtexture(::std::string* customtexture);
+
+  // string normalMap = 7;
+  void clear_normalmap();
+  static const int kNormalMapFieldNumber = 7;
+  const ::std::string& normalmap() const;
+  void set_normalmap(const ::std::string& value);
+  #if LANG_CXX11
+  void set_normalmap(::std::string&& value);
+  #endif
+  void set_normalmap(const char* value);
+  void set_normalmap(const char* value, size_t size);
+  ::std::string* mutable_normalmap();
+  ::std::string* release_normalmap();
+  void set_allocated_normalmap(::std::string* normalmap);
+
+  // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.CustomModel)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> simbodiestomodify_;
+  ::google::protobuf::RepeatedField< double > offset_;
+  mutable int _offset_cached_byte_size_;
+  ::google::protobuf::RepeatedField< double > rotation_;
+  mutable int _rotation_cached_byte_size_;
+  ::google::protobuf::RepeatedField< double > scale_;
+  mutable int _scale_cached_byte_size_;
+  ::google::protobuf::internal::ArenaStringPtr modeltouse_;
+  ::google::protobuf::internal::ArenaStringPtr customtexture_;
+  ::google::protobuf::internal::ArenaStringPtr normalmap_;
+  mutable int _cached_size_;
+  friend struct ::protobuf_vizMessage_2eproto::TableStruct;
+  friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CustomModelImpl();
+};
+// -------------------------------------------------------------------
+
 class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.VizSettingsPb) */ {
  public:
   VizMessage_VizSettingsPb();
@@ -2285,7 +2493,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
                &_VizMessage_VizSettingsPb_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    14;
+    15;
 
   void Swap(VizMessage_VizSettingsPb* other);
   friend void swap(VizMessage_VizSettingsPb& a, VizMessage_VizSettingsPb& b) {
@@ -2368,6 +2576,18 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings >&
       actuatorsettings() const;
 
+  // repeated .vizProtobufferMessage.VizMessage.CustomModel customModels = 12;
+  int custommodels_size() const;
+  void clear_custommodels();
+  static const int kCustomModelsFieldNumber = 12;
+  const ::vizProtobufferMessage::VizMessage_CustomModel& custommodels(int index) const;
+  ::vizProtobufferMessage::VizMessage_CustomModel* mutable_custommodels(int index);
+  ::vizProtobufferMessage::VizMessage_CustomModel* add_custommodels();
+  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel >*
+      mutable_custommodels();
+  const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel >&
+      custommodels() const;
+
   // string skybox = 11;
   void clear_skybox();
   static const int kSkyboxFieldNumber = 11;
@@ -2440,6 +2660,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PointLine > pointlines_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_KeepOutInCone > keepoutincones_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings > actuatorsettings_;
+  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel > custommodels_;
   ::google::protobuf::internal::ArenaStringPtr skybox_;
   ::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone_;
   ::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo_;
@@ -2489,7 +2710,7 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
                &_VizMessage_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    15;
+    16;
 
   void Swap(VizMessage* other);
   friend void swap(VizMessage& a, VizMessage& b) {
@@ -2548,6 +2769,7 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
   typedef VizMessage_CameraTwoSettings CameraTwoSettings;
   typedef VizMessage_PlanetCameraSettings PlanetCameraSettings;
   typedef VizMessage_ActuatorSettings ActuatorSettings;
+  typedef VizMessage_CustomModel CustomModel;
   typedef VizMessage_VizSettingsPb VizSettingsPb;
 
   // accessors -------------------------------------------------------
@@ -4696,6 +4918,328 @@ inline void VizMessage_ActuatorSettings::set_viewrwhud(::google::protobuf::int32
 
 // -------------------------------------------------------------------
 
+// VizMessage_CustomModel
+
+// string modelToUse = 1;
+inline void VizMessage_CustomModel::clear_modeltouse() {
+  modeltouse_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& VizMessage_CustomModel::modeltouse() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  return modeltouse_.GetNoArena();
+}
+inline void VizMessage_CustomModel::set_modeltouse(const ::std::string& value) {
+  
+  modeltouse_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+}
+#if LANG_CXX11
+inline void VizMessage_CustomModel::set_modeltouse(::std::string&& value) {
+  
+  modeltouse_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+}
+#endif
+inline void VizMessage_CustomModel::set_modeltouse(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  modeltouse_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+}
+inline void VizMessage_CustomModel::set_modeltouse(const char* value, size_t size) {
+  
+  modeltouse_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+}
+inline ::std::string* VizMessage_CustomModel::mutable_modeltouse() {
+  
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  return modeltouse_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* VizMessage_CustomModel::release_modeltouse() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  
+  return modeltouse_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void VizMessage_CustomModel::set_allocated_modeltouse(::std::string* modeltouse) {
+  if (modeltouse != NULL) {
+    
+  } else {
+    
+  }
+  modeltouse_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), modeltouse);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+}
+
+// repeated string simBodiesToModify = 2;
+inline int VizMessage_CustomModel::simbodiestomodify_size() const {
+  return simbodiestomodify_.size();
+}
+inline void VizMessage_CustomModel::clear_simbodiestomodify() {
+  simbodiestomodify_.Clear();
+}
+inline const ::std::string& VizMessage_CustomModel::simbodiestomodify(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+  return simbodiestomodify_.Get(index);
+}
+inline ::std::string* VizMessage_CustomModel::mutable_simbodiestomodify(int index) {
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+  return simbodiestomodify_.Mutable(index);
+}
+inline void VizMessage_CustomModel::set_simbodiestomodify(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+  simbodiestomodify_.Mutable(index)->assign(value);
+}
+#if LANG_CXX11
+inline void VizMessage_CustomModel::set_simbodiestomodify(int index, ::std::string&& value) {
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+  simbodiestomodify_.Mutable(index)->assign(std::move(value));
+}
+#endif
+inline void VizMessage_CustomModel::set_simbodiestomodify(int index, const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  simbodiestomodify_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+}
+inline void VizMessage_CustomModel::set_simbodiestomodify(int index, const char* value, size_t size) {
+  simbodiestomodify_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+}
+inline ::std::string* VizMessage_CustomModel::add_simbodiestomodify() {
+  // @@protoc_insertion_point(field_add_mutable:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+  return simbodiestomodify_.Add();
+}
+inline void VizMessage_CustomModel::add_simbodiestomodify(const ::std::string& value) {
+  simbodiestomodify_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+}
+#if LANG_CXX11
+inline void VizMessage_CustomModel::add_simbodiestomodify(::std::string&& value) {
+  simbodiestomodify_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+}
+#endif
+inline void VizMessage_CustomModel::add_simbodiestomodify(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  simbodiestomodify_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+}
+inline void VizMessage_CustomModel::add_simbodiestomodify(const char* value, size_t size) {
+  simbodiestomodify_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+VizMessage_CustomModel::simbodiestomodify() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+  return simbodiestomodify_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+VizMessage_CustomModel::mutable_simbodiestomodify() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.CustomModel.simBodiesToModify)
+  return &simbodiestomodify_;
+}
+
+// repeated double offset = 3;
+inline int VizMessage_CustomModel::offset_size() const {
+  return offset_.size();
+}
+inline void VizMessage_CustomModel::clear_offset() {
+  offset_.Clear();
+}
+inline double VizMessage_CustomModel::offset(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.offset)
+  return offset_.Get(index);
+}
+inline void VizMessage_CustomModel::set_offset(int index, double value) {
+  offset_.Set(index, value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.offset)
+}
+inline void VizMessage_CustomModel::add_offset(double value) {
+  offset_.Add(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.CustomModel.offset)
+}
+inline const ::google::protobuf::RepeatedField< double >&
+VizMessage_CustomModel::offset() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.CustomModel.offset)
+  return offset_;
+}
+inline ::google::protobuf::RepeatedField< double >*
+VizMessage_CustomModel::mutable_offset() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.CustomModel.offset)
+  return &offset_;
+}
+
+// repeated double rotation = 4;
+inline int VizMessage_CustomModel::rotation_size() const {
+  return rotation_.size();
+}
+inline void VizMessage_CustomModel::clear_rotation() {
+  rotation_.Clear();
+}
+inline double VizMessage_CustomModel::rotation(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.rotation)
+  return rotation_.Get(index);
+}
+inline void VizMessage_CustomModel::set_rotation(int index, double value) {
+  rotation_.Set(index, value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.rotation)
+}
+inline void VizMessage_CustomModel::add_rotation(double value) {
+  rotation_.Add(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.CustomModel.rotation)
+}
+inline const ::google::protobuf::RepeatedField< double >&
+VizMessage_CustomModel::rotation() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.CustomModel.rotation)
+  return rotation_;
+}
+inline ::google::protobuf::RepeatedField< double >*
+VizMessage_CustomModel::mutable_rotation() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.CustomModel.rotation)
+  return &rotation_;
+}
+
+// repeated double scale = 5;
+inline int VizMessage_CustomModel::scale_size() const {
+  return scale_.size();
+}
+inline void VizMessage_CustomModel::clear_scale() {
+  scale_.Clear();
+}
+inline double VizMessage_CustomModel::scale(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.scale)
+  return scale_.Get(index);
+}
+inline void VizMessage_CustomModel::set_scale(int index, double value) {
+  scale_.Set(index, value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.scale)
+}
+inline void VizMessage_CustomModel::add_scale(double value) {
+  scale_.Add(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.CustomModel.scale)
+}
+inline const ::google::protobuf::RepeatedField< double >&
+VizMessage_CustomModel::scale() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.CustomModel.scale)
+  return scale_;
+}
+inline ::google::protobuf::RepeatedField< double >*
+VizMessage_CustomModel::mutable_scale() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.CustomModel.scale)
+  return &scale_;
+}
+
+// string customTexture = 6;
+inline void VizMessage_CustomModel::clear_customtexture() {
+  customtexture_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& VizMessage_CustomModel::customtexture() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  return customtexture_.GetNoArena();
+}
+inline void VizMessage_CustomModel::set_customtexture(const ::std::string& value) {
+  
+  customtexture_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+}
+#if LANG_CXX11
+inline void VizMessage_CustomModel::set_customtexture(::std::string&& value) {
+  
+  customtexture_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+}
+#endif
+inline void VizMessage_CustomModel::set_customtexture(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  customtexture_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+}
+inline void VizMessage_CustomModel::set_customtexture(const char* value, size_t size) {
+  
+  customtexture_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+}
+inline ::std::string* VizMessage_CustomModel::mutable_customtexture() {
+  
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  return customtexture_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* VizMessage_CustomModel::release_customtexture() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  
+  return customtexture_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void VizMessage_CustomModel::set_allocated_customtexture(::std::string* customtexture) {
+  if (customtexture != NULL) {
+    
+  } else {
+    
+  }
+  customtexture_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), customtexture);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+}
+
+// string normalMap = 7;
+inline void VizMessage_CustomModel::clear_normalmap() {
+  normalmap_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& VizMessage_CustomModel::normalmap() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  return normalmap_.GetNoArena();
+}
+inline void VizMessage_CustomModel::set_normalmap(const ::std::string& value) {
+  
+  normalmap_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+}
+#if LANG_CXX11
+inline void VizMessage_CustomModel::set_normalmap(::std::string&& value) {
+  
+  normalmap_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+}
+#endif
+inline void VizMessage_CustomModel::set_normalmap(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  normalmap_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+}
+inline void VizMessage_CustomModel::set_normalmap(const char* value, size_t size) {
+  
+  normalmap_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+}
+inline ::std::string* VizMessage_CustomModel::mutable_normalmap() {
+  
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  return normalmap_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* VizMessage_CustomModel::release_normalmap() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  
+  return normalmap_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void VizMessage_CustomModel::set_allocated_normalmap(::std::string* normalmap) {
+  if (normalmap != NULL) {
+    
+  } else {
+    
+  }
+  normalmap_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), normalmap);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+}
+
+// -------------------------------------------------------------------
+
 // VizMessage_VizSettingsPb
 
 // double ambient = 1;
@@ -5047,6 +5591,36 @@ inline void VizMessage_VizSettingsPb::set_allocated_skybox(::std::string* skybox
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.skybox)
 }
 
+// repeated .vizProtobufferMessage.VizMessage.CustomModel customModels = 12;
+inline int VizMessage_VizSettingsPb::custommodels_size() const {
+  return custommodels_.size();
+}
+inline void VizMessage_VizSettingsPb::clear_custommodels() {
+  custommodels_.Clear();
+}
+inline const ::vizProtobufferMessage::VizMessage_CustomModel& VizMessage_VizSettingsPb::custommodels(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.customModels)
+  return custommodels_.Get(index);
+}
+inline ::vizProtobufferMessage::VizMessage_CustomModel* VizMessage_VizSettingsPb::mutable_custommodels(int index) {
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.customModels)
+  return custommodels_.Mutable(index);
+}
+inline ::vizProtobufferMessage::VizMessage_CustomModel* VizMessage_VizSettingsPb::add_custommodels() {
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.VizSettingsPb.customModels)
+  return custommodels_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel >*
+VizMessage_VizSettingsPb::mutable_custommodels() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.customModels)
+  return &custommodels_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel >&
+VizMessage_VizSettingsPb::custommodels() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.customModels)
+  return custommodels_;
+}
+
 // -------------------------------------------------------------------
 
 // VizMessage
@@ -5244,6 +5818,8 @@ inline void VizMessage::set_allocated_settings(::vizProtobufferMessage::VizMessa
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
