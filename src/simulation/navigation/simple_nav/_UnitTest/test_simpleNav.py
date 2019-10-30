@@ -62,7 +62,6 @@ def unitSimpleNav(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the task and specify the integration update time

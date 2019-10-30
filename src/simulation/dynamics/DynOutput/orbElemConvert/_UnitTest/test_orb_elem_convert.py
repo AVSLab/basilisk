@@ -167,7 +167,6 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
 
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # # create the dynamics task and specify the integration update time
@@ -349,7 +348,6 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
 
     for g in range(2):
         TotalSim = SimulationBaseClass.SimBaseClass()
-        TotalSim.TotalSim.terminateSimulation()
         DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
 
         # # create the dynamics task and specify the integration update time

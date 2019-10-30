@@ -127,7 +127,6 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         simTaskName = "simTask"
         simProcessName = "simProcess"
 
-        self.TotalSim.terminateSimulation()
 
         self.dynProcess = self.CreateNewProcess(simProcessName)
 

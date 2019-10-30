@@ -141,7 +141,6 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
     # Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
-    sim.TotalSim.terminateSimulation()
 
     FSWUnitTestProc = sim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time

@@ -71,7 +71,6 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()          # this is needed if multiple unit test scripts are run
                                                         # this creates a fresh and consistent simulation environment for each test run
 
     #   Create test thread

@@ -55,7 +55,6 @@ def radiationPressureIntegratedTest(show_plots):
 
     #  Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
-    sim.TotalSim.terminateSimulation()
 
     dynProcess = sim.CreateNewProcess(simProcessName)
 

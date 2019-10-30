@@ -267,7 +267,6 @@ def run(show_plots, scCase):
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
     #
     #  create the simulation process

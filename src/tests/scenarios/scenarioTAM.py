@@ -209,7 +209,6 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
     #
     #  create the simulation process

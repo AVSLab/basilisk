@@ -95,7 +95,6 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     # Create a simulation container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # Ensure simulation is empty
-    unitTestSim.TotalSim.terminateSimulation()
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 

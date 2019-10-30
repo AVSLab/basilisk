@@ -442,7 +442,6 @@ def StatePropStatic():
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -508,7 +507,6 @@ def StatePropVariable(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -658,7 +656,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time

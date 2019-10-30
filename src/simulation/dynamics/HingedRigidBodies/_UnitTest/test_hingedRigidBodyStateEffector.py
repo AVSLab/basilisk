@@ -71,7 +71,6 @@ def test_hingedRigidBodyGravity(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -298,7 +297,6 @@ def test_hingedRigidBodyNoGravity(show_plots):
     
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
     
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -522,7 +520,6 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -703,7 +700,6 @@ def test_hingedRigidBodyThetaSS(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     stepSize = 0.1
@@ -896,7 +892,6 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     stepSize = 0.1
@@ -1178,7 +1173,6 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     stepSize = 0.1

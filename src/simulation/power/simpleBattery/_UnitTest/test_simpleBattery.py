@@ -57,7 +57,6 @@ def test_storage_limits(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)     # update process rate update time

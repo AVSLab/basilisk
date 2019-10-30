@@ -98,7 +98,6 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     # terminateSimulation() is needed if multiple unit test scripts are run
     # that run a simulation for the test. This creates a fresh and
     # consistent simulation environment for each test run.
-    unitTestSim.TotalSim.terminateSimulation()
 
     bitmapArray = []
 

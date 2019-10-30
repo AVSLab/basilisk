@@ -62,7 +62,6 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time

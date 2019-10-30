@@ -37,7 +37,6 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fswRate = fswRate
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
-        self.TotalSim.terminateSimulation()
 
         self.DynModels = []
         self.FSWModels = []

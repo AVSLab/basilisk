@@ -188,7 +188,6 @@ def run(show_plots):
     simProcessName = "simProcess"
 
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
 

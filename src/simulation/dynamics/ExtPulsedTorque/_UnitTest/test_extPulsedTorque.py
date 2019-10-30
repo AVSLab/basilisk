@@ -77,7 +77,6 @@ def run(show_plots, offCount):
     unitProcessName = "testProcess"
 
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
 
     #

@@ -160,7 +160,6 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time

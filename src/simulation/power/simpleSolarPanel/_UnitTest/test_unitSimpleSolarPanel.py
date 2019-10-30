@@ -85,7 +85,6 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     #   Simulation set-up
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
     testProcessRate = macros.sec2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))

@@ -73,7 +73,6 @@ def run(show_plots, cmdStateFlag, testReset):
     # terminateSimulation() is needed if multiple unit test scripts are run
     # that run a simulation for the test. This creates a fresh and
     # consistent simulation environment for each test run.
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Test times
     updateTime = 0.5     # update process rate update time

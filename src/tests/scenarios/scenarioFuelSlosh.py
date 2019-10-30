@@ -297,7 +297,6 @@ def run(show_plots, damping_parameter, timeStep):
     # create simulation
     scSim = SimulationBaseClass.SimBaseClass()
     # close possible other simulation
-    scSim.TotalSim.terminateSimulation()
     # crete a dynamical process
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(timeStep)

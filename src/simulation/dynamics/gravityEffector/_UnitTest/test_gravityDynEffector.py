@@ -294,7 +294,6 @@ def singleGravityBody(show_plots):
 
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
@@ -426,7 +425,6 @@ def multiBodyGravity(show_plots):
     #
     # # Create a sim module as an empty container
     multiSim = SimulationBaseClass.SimBaseClass()
-    multiSim.TotalSim.terminateSimulation()
     #
     DynUnitTestProc = multiSim.CreateNewProcess(unitProcessName)
     # # create the dynamics task and specify the integration update time

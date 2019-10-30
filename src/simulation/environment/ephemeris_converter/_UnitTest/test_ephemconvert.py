@@ -50,7 +50,6 @@ def unitephemeris_converter(show_plots):
 
     # Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
-    sim.TotalSim.terminateSimulation()
 
     simulationTime = macros.sec2nano(30.)
     numDataPoints = 600

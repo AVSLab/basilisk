@@ -215,7 +215,6 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     # Create a simulation container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # Ensure simulation is empty
-    unitTestSim.TotalSim.terminateSimulation()
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 

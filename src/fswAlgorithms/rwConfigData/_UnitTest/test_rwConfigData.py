@@ -29,7 +29,6 @@ def rwConfigDataTestFunction():
 
     # This is needed if multiple unit test scripts are run
     # This create a fresh and consistent simulation environment for each test run
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time

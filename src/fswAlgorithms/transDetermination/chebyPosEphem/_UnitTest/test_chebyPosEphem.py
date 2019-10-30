@@ -87,7 +87,6 @@ def test_sineCosine(show_plots):
 
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
 
     FSWUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
@@ -198,7 +197,6 @@ def test_earthOrbitFit(show_plots):
 
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
 
     FSWUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time

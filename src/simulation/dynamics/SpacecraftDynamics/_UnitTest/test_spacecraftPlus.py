@@ -68,7 +68,6 @@ def test_SCTranslation(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)  # update process rate update time
@@ -190,7 +189,6 @@ def test_SCTransAndRotation(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -373,7 +371,6 @@ def test_SCRotation(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     timeStep = 0.001
@@ -598,7 +595,6 @@ def test_SCTransBOE(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     timeStep = 0.1
@@ -746,7 +742,6 @@ def test_SCPointBVsPointC(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)  # update process rate update time
@@ -801,7 +796,6 @@ def test_SCPointBVsPointC(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)  # update process rate update time

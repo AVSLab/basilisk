@@ -241,7 +241,6 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -421,7 +420,6 @@ def StatePropSunLine(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -481,7 +479,6 @@ def FaultScenarios():
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -489,7 +486,6 @@ def FaultScenarios():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Clean methods for Measurement and Time Updates
-    unitTestSim.TotalSim.terminateSimulation()
     moduleConfigClean1 = sunlineSuKF.SunlineSuKFConfig()
     moduleConfigClean1.numStates = 6
     moduleConfigClean1.countHalfSPs = moduleConfigClean1.numStates

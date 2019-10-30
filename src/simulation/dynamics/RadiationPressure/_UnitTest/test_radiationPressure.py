@@ -83,7 +83,6 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     # Create a simulation container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # Ensure simulation is empty
-    unitTestSim.TotalSim.terminateSimulation()
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 

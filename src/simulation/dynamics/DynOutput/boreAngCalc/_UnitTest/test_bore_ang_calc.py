@@ -103,7 +103,6 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time

@@ -233,7 +233,6 @@ def run(show_plots, useAltBodyFrame):
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
     # set the simulation time variable used later on
     simulationTime = macros.sec2nano(750.)

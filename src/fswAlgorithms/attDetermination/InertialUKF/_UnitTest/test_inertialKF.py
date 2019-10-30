@@ -112,7 +112,6 @@ def test_FilterMethods():
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(1.5)  # update process rate update time
@@ -230,7 +229,6 @@ def test_StateUpdateInertialAttitude(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -396,7 +394,6 @@ def test_StatePropInertialAttitude(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -477,7 +474,6 @@ def test_StateUpdateRWInertialAttitude(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -670,7 +666,6 @@ def test_StatePropRateInertialAttitude(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -817,7 +812,6 @@ def test_FaultScenarios(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -825,7 +819,6 @@ def test_FaultScenarios(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Clean methods for Measurement and Time Updates
-    unitTestSim.TotalSim.terminateSimulation()
     moduleConfigClean1 = inertialUKF.InertialUKFConfig()
     moduleConfigClean1.numStates = 6
     moduleConfigClean1.state = [0., 0., 0., 0., 0., 0.]

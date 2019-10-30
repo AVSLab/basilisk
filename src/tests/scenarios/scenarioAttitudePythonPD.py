@@ -148,7 +148,6 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
     # Create simulation variable names
     scSim.simTaskPreControlName = "simTaskPreControl"
@@ -182,7 +181,6 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
         executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO)
 
     scSimPy = SimulationBaseClass.SimBaseClass()
-    scSimPy.TotalSim.terminateSimulation()
 
     # Create simulation variable names
     ## For the python process, the name used includes Py at the end for this tutorial.

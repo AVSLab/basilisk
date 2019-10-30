@@ -55,7 +55,6 @@ def myCreationFunction():
     ''' function that returns a simulation '''
     #  Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
-    sim.TotalSim.terminateSimulation()
 
     # Create simulation variable names
     simTaskName = "simTask"

@@ -131,7 +131,6 @@ def TestDragCalculation():
     simTaskName = "simTask"
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(5.)
@@ -279,7 +278,6 @@ def TestShadowCalculation():
     simTaskName = "simTask"
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(10.)

@@ -175,7 +175,6 @@ def StateUpdateRelOD(show_plots):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     dt = 1.0
@@ -306,7 +305,6 @@ def StatePropRelOD(show_plots, dt):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(dt)  # update process rate update time

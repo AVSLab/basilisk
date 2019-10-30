@@ -82,7 +82,6 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
 
     # initialize SimulationBaseClass
     unitSim = SimulationBaseClass.SimBaseClass()
-    unitSim.TotalSim.terminateSimulation()
 
     # create the task and specify the integration update time
     unitProcRate = macros.sec2nano(0.1)

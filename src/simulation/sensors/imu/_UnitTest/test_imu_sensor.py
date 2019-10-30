@@ -107,7 +107,6 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     # initialize SimulationBaseClass
     unitSim = SimulationBaseClass.SimBaseClass()
-    unitSim.TotalSim.terminateSimulation()
 
     # create the task and specify the integration update time
     unitProcRate_s = procRate

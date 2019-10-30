@@ -246,7 +246,6 @@ def StatePropRelOD(show_plots, dt):
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     state = [250, 32000, 1000, 5, 3, 2, 1, 1, 1]

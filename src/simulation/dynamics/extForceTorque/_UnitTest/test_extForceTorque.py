@@ -87,7 +87,6 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     unitProcessName = "testProcess"
 
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
 
 
     #
