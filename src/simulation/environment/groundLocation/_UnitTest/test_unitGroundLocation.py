@@ -103,16 +103,20 @@ def run(show_plots, satelliteLocation):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
     #Get the logged data
-    accessData = scSim.pullMessageLogData(groundLocation.envOutMsgNames[-1]+'.hasAccess')
-    slantData = scSim.pullMessageLogData(groundLocation.envOutMsgNames[-1]+'.slantRange')
-    elevationData = scSim.pullMessageLogData(groundLocation.envOutMsgNames[-1]+'.elvation')
+    simResults = scSim.pullMultiMessageLogData([groundTarget.accessOutMsgNames[-1]+'.hasAccess',
+                                                groundTarget.accessOutMsgNames[-1]+'.slantRange',
+                                                groundTarget.accessOutMsgNames[-1]+'.elevation'
+                                               ], [range(1),range(1),range(1)],1)
+    accessData = simResults[groundTarget.accessOutMsgNames[-1]+'.hasAccess']
+    slantData = simResults[groundTarget.accessOutMsgNames[-1]+'.slantRange']
+    elevationData = simResults[groundTarget.accessOutMsgNames[-1]+'.elevation']
 
     #   Compare to expected values
     accuracy = 1e-8
 
     if show_plots:
-        plot_geomertry(groundLocation.r_LP_Init, np.vstack(sc1_message.r_BN_N, sc2_message.r_BN_N), 10.)
-
+        #plot_geomertry(groundLocation.r_LP_Init, np.vstack(sc1_message.r_BN_N, sc2_message.r_BN_N), 10.)
+        print('WIP - plotting.')
     return [testFailCount, ''.join(testMessages)]
 
 def plot_geomertry(groundLocation, scLocations, minimumElevation):

@@ -75,8 +75,8 @@ public:
 
 private:
     uint64_t OutputBufferCount = 2;
-    std::vector<AccessSimMsg> accessMsgBuffer;
     std::vector<std::string> scStateInMsgNames;
+    std::vector<AccessSimMsg> accessMsgBuffer;
     std::vector<SCPlusStatesSimMsg> scStates;
     std::vector<int64_t> scStateInMsgIds;
     std::vector<int64_t> accessOutMsgIds;
