@@ -87,6 +87,9 @@ def run(show_plots, satelliteLocation):
     sc2_message.r_BN_N = [7100e3,0,0]
     sc2_message_name = "sc2_msg"
 
+    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc1_message_name, sc1_message)
+    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc2_message_name, sc2_message)
+
     groundTarget.addSpacecraftToModel(sc1_message_name)
     groundTarget.addSpacecraftToModel(sc2_message_name)
 
