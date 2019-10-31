@@ -39,16 +39,23 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-@pytest.mark.parametrize("satelliteLocation", ["vis","marginal","non-vis"])#  Satellite locations correspond to visible, marginal, and non-visible cases
-
+@pytest.mark.parameterize("multiSc",[1,2])
+@pytest.mark.parametrize("elevation", [])
+@pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
 # provide a unique test method name, starting with test_
-def test_groundLocation(show_plots, satelliteLocation):
-    '''Tests the groundLocation() class. Specifically examines:
-        1. Support for multiple spacecraft. Tested by making the groundLocation subscribe to multiple messages, and evaluating its output.
-        2. Support for lat/long/altitude and ECEF position specification. Tested using pytest.mark.parameterize to use different input methods.
-        3. Access computation: One spacecraft is placed on the other side of the earth. Depending on the flag, another spacecraft will be placed marginally inside or outside the
-           cone specified by the groundLocation base class to verify that access is correctly computed.'''
-    # each test method requires a single assert method to be called
+def test_groundLocation(show_plots, multiSc, elevation, range, ground_prop):
+    """
+    Tests the groundLocation() class. In the reference case, a spacecraft is placed directly above the groundLocation. Multiple
+    variants are used to test branches in the code:
+        1. Support for multiple spacecraft. Adds another spacecraft on the opposite side of the Earth.
+        2. Support for lat/long/altitude and ECEF position specification. 1st case is Boulder; the second is nega-Boulder.
+        3. Elevation limitations:
+        4. Range limitations: In case 1, the range is unlimited. In case 2, the range is set to 1km less than the s/c altitude.
+        5. Ground propagation: This tests whether groundLocations are correctly propagated through inertial space using SPICEPlanetSimMsgs.
+
+    These tests are handled parametrically to ensure full coverage.
+    """
+
     showVal = False
 
     [testResults, testMessage] = run(showVal, satelliteLocation)
@@ -73,6 +80,7 @@ def run(show_plots, satelliteLocation):
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
     groundTarget.ModelTag = "groundTarget"
+    groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
     groundTarget.specifyLocation(np.radians(40.),np.radians(105.16),1624.0) #   Put the ground location in Boulder, CO
 
     scSim.AddModelToTask(simTaskName, groundTarget)
@@ -117,9 +125,10 @@ def run(show_plots, satelliteLocation):
     if show_plots:
         #plot_geomertry(groundLocation.r_LP_Init, np.vstack(sc1_message.r_BN_N, sc2_message.r_BN_N), 10.)
         print('WIP - plotting.')
+        plot_geometry(groundTarget.r_LP_P_Init, np.vstack([sc1_message.r_BN_N, sc2_message.r_BN_N]), 0.0)
     return [testFailCount, ''.join(testMessages)]
 
-def plot_geomertry(groundLocation, scLocations, minimumElevation):
+def plot_geometry(groundLocation, scLocations, minimumElevation):
     """
     Plots the location of a ground station, its field of view,  and the positions of two spacecraft to verify whether
     the spacecraft have access to the ground station.
@@ -132,34 +141,27 @@ def plot_geomertry(groundLocation, scLocations, minimumElevation):
     ax = fig.gca(projection='3d')
 
     # draw sphere
-    u, v = np.mgrid[0:2 * np.pi:20j, 0:np.pi:10j]
-    x = np.cos(u) * np.sin(v)
-    y = np.sin(u) * np.sin(v)
-    z = np.cos(v)
+    u, v = np.mgrid[0:2 * np.pi:20j, 0:np.pi:20j]
+    x = orbitalMotion.REQ_EARTH*1000 * np.cos(u) * np.sin(v)
+    y = orbitalMotion.REQ_EARTH*1000 *np.sin(u) * np.sin(v)
+    z = orbitalMotion.REQ_EARTH*1000 *np.cos(v)
     ax.plot_wireframe(x, y, z, color="g")
 
-    # draw a point
+    # draw a point0
     ax.scatter(groundLocation[0],groundLocation[1],groundLocation[2], color="r", s=100)
+
 
     # draw a vector
     from matplotlib.patches import FancyArrowPatch
     from mpl_toolkits.mplot3d import proj3d
 
-    class Arrow3D(FancyArrowPatch):
+    for location in scLocations:
+        ax.scatter(location[0],location[1],location[2],color='k',s=100)
 
-        def __init__(self, xs, ys, zs, *args, **kwargs):
-            FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
-            self._verts3d = xs, ys, zs
+        ax.quiver(groundLocation[0],groundLocation[1],groundLocation[2],
+              location[0],location[1],location[2], length=1.0, normalize=True)
+    #ax.add_artist(a)
 
-        def draw(self, renderer):
-            xs3d, ys3d, zs3d = self._verts3d
-            xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
-            self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
-            FancyArrowPatch.draw(self, renderer)
-
-    a = Arrow3D([0, 1], [0, 1], [0, 1], mutation_scale=20,
-                lw=1, arrowstyle="-|>", color="k")
-    ax.add_artist(a)
     plt.show()
 
 if __name__ == '__main__':

@@ -78,7 +78,8 @@ Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetRad){
   Eigen::Vector3d pcpfPosition;
   pcpfPosition.fill(0.0);
   double lambda = llaPosition[0];
-  pcpfPosition[0] = planetRad*cos(lambda)*cos(llaPosition[1] + llaPosition[2]*cos(llaPosition[0]))*cos(llaPosition[1]);
+  
+  pcpfPosition[0] = planetRad*cos(lambda)*cos(llaPosition[1]) + llaPosition[2]*cos(llaPosition[0])*cos(llaPosition[1]);
   pcpfPosition[1] = planetRad*cos(lambda)*sin(llaPosition[1]) + llaPosition[2]*cos(llaPosition[0])*sin(llaPosition[1]);
   pcpfPosition[2] = planetRad*sin(lambda) + llaPosition[2]*sin(llaPosition[0]);
 

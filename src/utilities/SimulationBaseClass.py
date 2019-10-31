@@ -594,7 +594,7 @@ class SimBaseClass:
             indicesLocal.append(indexUse + 1)
         return (dataUse[:, indicesLocal])
 
-    def pullMultiMessageLogData(self, varNames, indices, numRecords = -1):
+    def pullMultiMessageLogData(self, varNames, indices, types, numRecords = -1):
         """
         Pulls the log data from multiple messages at the same time. When pulling multiple messages, or start/stopping the sim often,
         produces faster performance than pullMessageLogData.
@@ -602,6 +602,7 @@ class SimBaseClass:
         Inputs:
         @param varNames: list : list of message names and parameters.
         @param indices: list : list of message indices to be pulled.
+        @param types: list: list of strings describing types of data to be pulled (i.e. "bool" or "double").
         @param numRecords : int : number of logged messages to pull. Defaults to -1, which returns all logged messages.
 
         Outputs:
@@ -611,6 +612,7 @@ class SimBaseClass:
         attributeDict = {}
         structToName = {}
         indexDict = {}
+        typeDict = {}
         headerDict = {}
         foundDict = {}
         pullDict = {}
@@ -636,10 +638,16 @@ class SimBaseClass:
             headerData = sim_model.MessageHeaderData()
             self.TotalSim.populateMessageHeader(splitName[0], headerData)
 
-            headerDict[headerData.messageStruct] = headerData
-            structToName[headerData.messageStruct] = varName
-            foundDict[headerData.messageStruct] = False
+            if headerData.messageStruct in headerDict.keys():
+                headerDict[headerData.messageStruct].append(headerData)
+                structToName[headerData.messageStruct].append(msgName)
+            else:
+                headerDict[headerData.messageStruct] = [headerData]
+                structToName[headerData.messageStruct] = [msgName]
+
+            foundDict[varName] = False
             indexDict[varName] = indices[idx]
+            typeDict[varName] = types[idx]
 
 
         headerList = list(headerDict.keys())
@@ -665,37 +673,45 @@ class SimBaseClass:
                         #   we'll find this header name:
                         structName = obj.__name__
                         moduleFound = module.__name__
-                        varName = structToName[structName]
-                        msgName = varName.split('.')[0]
-                        msgAttributes = attributeDict[msgName]
-                        messageID = self.TotalSim.getMessageID(msgName)
-                        headerData = headerDict[obj.__name__]
+                        msgNames = structToName[structName]
+                        headerDatas = headerDict[obj.__name__]
 
+                        print("Msg names:{}".format(msgNames))
+                        for idx,msgName in enumerate(msgNames):
+                            print(idx)
+                            print(msgName)
+                            headerData = headerDatas[idx]
+                            msgAttributes = attributeDict[msgName]
+                            messageID = self.TotalSim.getMessageID(msgName)
+                            messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
+                            bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
 
-                        messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
-                        bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
+                            maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
+                            messageCount = messageCount if messageCount > 0 else maxCountMessager
+                            messageCount = messageCount if numRecords < 0 else numRecords
 
-                        maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
-                        messageCount = messageCount if messageCount > 0 else maxCountMessager
-                        messageCount = messageCount if numRecords < 0 else numRecords
+                            #   Opportunistically grab all the attributes we can before we clear this message struct:
+                            for attr in msgAttributes:
+                                indices = indexDict[msgName+'.'+attr]
+                                type = typeDict[msgName+'.'+attr]
+                                if (len(indices) <= 0):
+                                    indices_use = [0]
+                                else:
+                                    indices_use = indices
 
-                        #   Opportunistically grab all the attributes we can before we clear this message struct:
-                        for attr in msgAttributes:
-                            indices = indexDict[msgName+'.'+attr]
-                            if (len(indices) <= 0):
-                                indices_use = [0]
-                            else:
-                                indices_use = indices
+                                print(type)
+                                print(attr)
+                                dataUse = MessagingAccess.obtainMessageVector(msgName, moduleFound,
+                                                                              structName, messageCount,
+                                                                              self.TotalSim,
+                                                                              attr,
+                                                                              type,
+                                                                              indices_use[0], indices_use[-1], bufferUse)
+                                pullDict.update({msgName+'.'+attr:dataUse})
 
-                            dataUse = MessagingAccess.obtainMessageVector(msgName, moduleFound,
-                                                                          structName, messageCount,
-                                                                          self.TotalSim,
-                                                                          attr,
-                                                                          'double',
-                                                                          indices_use[0], indices_use[-1], bufferUse)
-                            pullDict.update({msgName+'.'+attr:dataUse})
-
-                        foundDict.update({headerData.messageStruct:True})
+                                foundDict.update({msgName+'.'+attr:True})
+                                print(foundDict.keys())
+                                print(foundDict.values())
 
         return pullDict
 
