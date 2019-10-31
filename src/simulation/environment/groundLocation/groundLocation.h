@@ -56,7 +56,7 @@ public:
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset();
-    void ReadMessages();
+    bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(std::string tmpScMsgName);
     void specifyLocation(double lat, double longitude, double alt);

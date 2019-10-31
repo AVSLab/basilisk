@@ -20,20 +20,25 @@
 #include "groundLocation.h"
 #include "architecture/messaging/system_messaging.h"
 #include "../utilities/avsEigenSupport.h"
+#include "../../../../../../../../../usr/include/c++/7/string"
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
  @return void
  */
 GroundLocation::GroundLocation()
 {
-    //! - Set the default atmospheric properties to yield a zero response
-    this->minimumElevation = 10.; //! [deg] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
+    //! - Set some default initial conditions:
+    this->minimumElevation = 0.; //! [deg] minimum elevation above the local horizon needed to see a spacecraft; defaults to 0 degrees
     this->maximumRange = -1; //! [m] Maximum range for the groundLocation to compute access.
     this->planetInMsgName = "";
     this->planetInMsgId = -1;
 
     this->r_LP_P.fill(0.0);
     this->r_LP_P_Init.fill(0.0);
+
+    this->planetState.J20002Pfix[0][0] = 1;
+    this->planetState.J20002Pfix[1][1] = 1;
+    this->planetState.J20002Pfix[2][2] = 1;
     return;
 }
 
@@ -114,7 +119,7 @@ void GroundLocation::CrossInit()
     return;
 }
 
-void GroundLocation::ReadMessages()
+bool GroundLocation::ReadMessages()
 {
     SCPlusStatesSimMsg scMsg;
     SingleMessageHeader localHeader;
@@ -129,7 +134,6 @@ void GroundLocation::ReadMessages()
         std::vector<int64_t>::iterator it;
             for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
                 bool tmpScRead;
-                memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
                 tmpScRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
                                                       sizeof(SCPlusStatesSimMsg),
                                                       reinterpret_cast<uint8_t*>(&scMsg),
@@ -152,7 +156,7 @@ void GroundLocation::ReadMessages()
                                                                  moduleID);
     }
 
-    return;
+    return(planetRead && scRead);
 }
 
 void GroundLocation::WriteMessages(uint64_t CurrentClock)
@@ -179,7 +183,7 @@ void GroundLocation::updateInertialPositions()
 {
     // Update the planet inertial position:
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
-    this->r_LP_N = cArray2EigenMatrix3d(*this->planetState.J20002Pfix) * this->r_LP_P_Init;
+    this->r_LP_N = cArray2EigenMatrix3d(*this->planetState.J20002Pfix) * this->r_LP_P_Init; // Need to make sure J20002 is I_3x3
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
 
@@ -191,15 +195,14 @@ void GroundLocation::computeAccess()
     // Update the groundLocation's inertial position
     this->updateInertialPositions();
 
+
     // Iterate over spacecraft position messages and compute the access for each one
     std::vector<AccessSimMsg>::iterator accessMsgIt;
     std::vector<SCPlusStatesSimMsg>::iterator scStatesMsgIt;
-    for(scStatesMsgIt = scStates.begin(); scStatesMsgIt != scStates.end(); scStatesMsgIt++, accessMsgIt++){
-
+    for(scStatesMsgIt = scStates.begin(), accessMsgIt = accessMsgBuffer.begin(); scStatesMsgIt != scStates.end(); scStatesMsgIt++, accessMsgIt++){
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
         Eigen::Vector3d r_BL_N = (cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N) - this->r_LP_N;
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_N.norm();
-
         double viewAngle = acos(this->rhat_LP_N.dot(relativeHeading_N));
 
         if(viewAngle > this->minimumElevation){
