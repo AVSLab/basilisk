@@ -50,6 +50,7 @@ VizInterface::VizInterface()
     this->scData.push_back(scData);
     this->planetNames = {};
     this->vizOutMsgName = "viz_message";
+    this->outputStream = NULL;
     return;
 }
 
@@ -203,6 +204,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         if(this->outputStream && this->outputStream->is_open())
         {
             this->outputStream->close();
+            delete this->outputStream;
         }
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
     }
