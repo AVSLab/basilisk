@@ -32,6 +32,7 @@ typedef struct {
     double r_BN_B[3];                 /*!< [m] Current estimated state of the filter */
     double r_BN_C[3];                 /*!< [m] Current estimated state of the filter */
     int planetID;       /*!< [-] Planet being navigated, Earth=1, Mars=2, Jupiter=3 */
+    int faultDetected; /*!< [-] Bool if a fault is detected */
 }OpNavFswMsg;
 
 

@@ -45,7 +45,7 @@ void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 {
     /*! Read two messages that need to be compared */
-    configData->navMeas1MsgID = subscribeToMessage(configData->navMeasPrimarlyMsgName,sizeof(OpNavFswMsg),moduleID);
+    configData->navMeas1MsgID = subscribeToMessage(configData->navMeasPrimaryMsgName,sizeof(OpNavFswMsg),moduleID);
     configData->navMeas2MsgID = subscribeToMessage(configData->navMeasSecondaryMsgName, sizeof(OpNavFswMsg),moduleID);
 
     /*! Read camera specs and attitude for frame modifications */
@@ -146,8 +146,8 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
             /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
             if (faultNorm > v3Norm(Z1Cov) + v3Norm(Z2Cov)){
                 error = 1;
-                BSK_PRINT(MSG_INFORMATION, "Fault detected at: %llu", callTime);
                 memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
+                opNavMsgOut.faultDetected = 1;
                 WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                              &opNavMsgOut, moduleID);
             }

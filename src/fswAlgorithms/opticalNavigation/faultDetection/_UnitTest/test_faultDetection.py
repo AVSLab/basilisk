@@ -5,7 +5,7 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms.pixelLineConverter import pixelLineConverter
+from Basilisk.fswAlgorithms.faultDetection import faultDetection
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 import os, inspect
@@ -13,40 +13,18 @@ import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-def mapState(state, planet, camera):
-    D = planet["diameter"]
-    f = camera["focal"]
-    d_x = camera["pixelSizeX"]
-    d_y = camera["pixelSizeY"]
-    A = 2 * np.arctan(state[2]*d_x/f)
+@pytest.mark.parametrize("r_c, valid", [
+                      ([10,10,1],  1), #Mars image
+                      ([1, 1, 1],  1), # Moon images
+    ])
 
-    norm = 0.5 * D/np.sin(0.5*A)
-    vec = np.array([state[0]*d_x/f, state[1]*d_y/f, 1.])
-    return norm*vec/np.linalg.norm(vec)
-
-
-def mapCovar(CovarXYR, rho, planet, camera):
-    D = planet["diameter"]
-    f = camera["focal"]
-    d_x = camera["pixelSizeX"]
-    d_y = camera["pixelSizeY"]
-    A = 2 * np.arctan(rho*d_x/f)
-
-    # rho_map = (0.33 * D * np.cos(A)/np.sin(A/2.)**2. * 2./f * 1./(1. + (rho/f)**2.) * (d_x/f) )
-    rho_map = 0.5*D*(-f*np.sqrt(1 + rho**2*d_x**2/f**2)/(rho**2*d_x) + d_x/(f*np.sqrt(1 + rho**2*d_x**2/f**2)))
-    x_map =   0.5 * D/np.sin(0.5*A)*(d_x/f)
-    y_map =  0.5 * D/np.sin(0.5*A)*(d_y/f)
-    CovarMap = np.array([[x_map,0.,0.],[0., y_map, 0.],[0.,0., rho_map]])
-    CoarIn = np.array(CovarXYR).reshape([3,3])
-    return np.dot(CovarMap, np.dot(CoarIn, CovarMap.T))
-
-def test_pixelLine_converter():
-    """ Test ephemNavConverter. """
-    [testResults, testMessage] = pixelLineConverterTestFunction()
+def test_faultdetection(show_plots, r_c, valid):
+    """ Test opNav fault detection. """
+    [testResults, testMessage] = faultdetection(show_plots, r_c, valid)
     assert testResults < 1, testMessage
 
-def pixelLineConverterTestFunction():
-    """ Test the ephemNavConverter module. Setup a simulation """
+def faultdetection(show_plots, r_c, valid):
+    """ Test the faultdetection module. Setup a simulation """
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -67,22 +45,24 @@ def pixelLineConverterTestFunction():
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    pixelLine = pixelLineConverter.PixelLineConvertData()  # Create a config struct
-    pixelLine.circlesInMsgName = "circles_name"
-    pixelLine.cameraConfigMsgName = "camera_config_name"
-    pixelLine.attInMsgName = "nav_att_name"
+    faults = opNavFaultDetection.FaultDetection()  # Create a config struct
+    faults.navMeasPrimaryMsgName = "primary_opnav"
+    faults.navMeasSecondaryMsgName = "secondary_opnav"
+    faults.cameraConfigMsgName = "camera_config_name"
+    faults.attInMsgName = "nav_att_name"
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
-    pixelLineWrap = unitTestSim.setModelDataWrap(pixelLine)
-    pixelLineWrap.ModelTag = "pixelLineConverter"
+    faultsWrap = unitTestSim.setModelDataWrap(faults)
+    faultsWrap.ModelTag = "faultDet"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, pixelLineWrap, pixelLine)
 
     # Create the input messages.
+    inputPrimary = pixelLineConverter.OpNavFswMsg()
+    inputSecondary = pixelLineConverter.OpNavFswMsg()
     inputCamera = pixelLineConverter.CameraConfigMsg()
-    inputCircles = pixelLineConverter.CirclesOpNavMsg()
     inputAtt = pixelLineConverter.NavAttIntMsg()
 
     # Set camera
@@ -92,19 +72,18 @@ def pixelLineConverterTestFunction():
     inputCamera.sigma_CB = [1.,0.3,0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
 
-    # Set circles
-    inputCircles.circlesCenters = [152, 251]
-    inputCircles.circlesRadii = [75]
-    inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
-    inputCircles.timeTag = 12345
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
-
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.attInMsgName, inputAtt)
 
+    BN = rbk.MRP2C(inputAtt.sigma_BN)
+    CB = rbk.MRP2C(inputCamera.sigma_CB)
+    # Set circles
+    inputPrimary.r_BN_C = r_c
+    inputPrimary.covar_C = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+    inputPrimary.timeTag = 12345
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
     # Set module for Mars
-    pixelLine.planetTarget = 2
     pixelLine.opNavOutMsgName = "output_nav_msg"
     unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)
 
@@ -115,27 +94,7 @@ def pixelLineConverterTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # Truth Vlaues
-    planet = {}
-    camera = {}
-    planet["name"] = "Mars"
-    planet["diameter"] = 3396.19 * 2  # km
 
-    camera["focal"] = inputCamera.focalLength  # m
-    camera["pixelSizeX"] = inputCamera.sensorSize[0]/inputCamera.resolution[0] * 1E-3  # m
-    camera["pixelSizeY"] = inputCamera.sensorSize[1]/inputCamera.resolution[1] * 1E-3  # m
-
-    state = [inputCircles.circlesCenters[0], inputCircles.circlesCenters[1], inputCircles.circlesRadii[0]]
-
-    r_Cexp = mapState(state, planet, camera)
-    covar_Cexp = mapCovar(inputCircles.uncertainty, state[2], planet, camera)
-
-    dcm_CB = rbk.MRP2C(inputCamera.sigma_CB)
-    dcm_BN = rbk.MRP2C(inputAtt.sigma_BN)
-
-    dcm_NC = np.dot(dcm_CB, dcm_BN).T
-
-    r_Nexp = np.dot(dcm_NC, r_Cexp)
-    covar_Nexp = np.dot(dcm_NC, np.dot(covar_Cexp, dcm_NC.T)).flatten()
     timTagExp = inputCircles.timeTag
 
     posErr = 1e-10

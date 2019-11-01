@@ -40,7 +40,7 @@
 typedef struct {
     char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
     char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
-    char navMeasPrimarlyMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the first meas message
+    char navMeasPrimaryMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the first meas message
     char navMeasSecondaryMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the second meas message
     char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
