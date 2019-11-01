@@ -58,11 +58,13 @@ Variables Tested:
     unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
 
     ph = planetHeading.PlanetHeading()
+    ph.planetPositionInMsgName = "earth_planet_data"
+    ph.planetHeadingOutMsgName = "planet_heading"
     sim.AddModelToTask(task.Name, ph)
     sim.TotalSim.logThisMessage("planet_heading")
     sim.InitializeSimulationAndDiscover()
     sim.TotalSim.SingleStepProcesses()
-    headingOut = sim.pullMessageLogData("planet_heading.rHat_XS_B", list(range(3)))[0][1:]
+    headingOut = sim.pullMessageLogData("planet_heading.rHat_XB_B", list(range(3)))[0][1:]
 
     assert headingOut == pytest.approx([0., 0., -1.], rel=relTol)
 

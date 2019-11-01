@@ -25,6 +25,9 @@
 #include "simMessages/bodyHeadingSimMsg.h"
 #include <iostream>
 
+/*! Customer constructor just sets the spacecraftSTateInMsgName by default*/
+PlanetHeading::PlanetHeading() : spacecraftStateInMsgName("inertial_state_output") {}
+
 /*! This method is used to create the body heading message for the heading to the planet
  @return void
  */
@@ -54,10 +57,10 @@ void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
 
-    /*! - evaluate spacecraft position relative to the sun in N frame components */
-    auto r_PS_N = this->r_PN_N - this->r_SN_N;
+    /*! - evaluate planet position relative to the s/c body in body frame components */
+    auto r_PB_N = this->r_PN_N - this->r_BN_N;
     /*! - normalize and convert to body frame */
-    this->rHat_PS_B = (this->sigma_BN.toRotationMatrix().transpose() * r_PS_N).normalized();
+    this->rHat_PB_B = (this->sigma_BN.toRotationMatrix().transpose() * r_PB_N).normalized();
 
     this->writeMessages(CurrentSimNanos);
 }
@@ -80,7 +83,7 @@ void PlanetHeading::readMessages() {
     /*! - read in spacecraft state message (required) */
     messagingSystem->ReadMessage(this->spacecraftStateInMsgId, &tmpHeader, sizeof(SCPlusStatesSimMsg),
                                  reinterpret_cast<uint8_t*>(&scStatesMsgData), this->moduleID);
-    this->r_SN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
+    this->r_BN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
     this->sigma_BN = Eigen::MRPd(scStatesMsgData.sigma_BN);
 }
 
@@ -89,7 +92,7 @@ void PlanetHeading::readMessages() {
  */
 void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
     BodyHeadingSimMsg planetHeadingOutMsgData;
-    Eigen::VectorXd::Map(planetHeadingOutMsgData.rHat_XS_B, this->rHat_PS_B.rows()) = this->rHat_PS_B;  // eigen to c array for messaging
+    Eigen::VectorXd::Map(planetHeadingOutMsgData.rHat_XB_B, this->rHat_PB_B.rows()) = this->rHat_PB_B;  // eigen to c array for messaging
 
     /*! - write the output message */
     SystemMessaging::GetInstance()->WriteMessage(this->planetHeadingOutMsgId, CurrentSimNanos, sizeof(BodyHeadingSimMsg),

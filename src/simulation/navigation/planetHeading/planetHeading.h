@@ -70,7 +70,7 @@
 
  ## User Guide
     The user can only instantiate this module, change the i/o names, and add it to a task.
-    The names below are only special in that they are useful defaults and are actually the defaults.
+    The names below are only special in that they are useful defaults.  Only the spacecraftStateInMsgName is actually a default.
     ~~~~~~~{.py}
     from Basilisk.simulation import planetHeading
     from Basilisk.utilities import SimulationBaseClass()
@@ -90,7 +90,7 @@
 
 class PlanetHeading: public SysModel {
 public:
-    PlanetHeading(){};
+    PlanetHeading();
     ~PlanetHeading(){};
     
     void SelfInit() override;
@@ -101,14 +101,14 @@ public:
     void readMessages();
 
 public:
-    std::string planetPositionInMsgName = "earth_planet_data";
-    std::string spacecraftStateInMsgName = "inertial_state_output";
-    std::string planetHeadingOutMsgName = "planet_heading";
+    std::string planetPositionInMsgName;
+    std::string spacecraftStateInMsgName;
+    std::string planetHeadingOutMsgName;
 
 private:
     Eigen::Vector3d r_PN_N;  //!< [m] planet position
-    Eigen::Vector3d r_SN_N;  //!< [m] s/c position
-    Eigen::Vector3d rHat_PS_B;  //!< [] planet heading in s/c body frame (unit mag)
+    Eigen::Vector3d r_BN_N;  //!< [m] s/c position
+    Eigen::Vector3d rHat_PB_B;  //!< [] planet heading in s/c body frame (unit mag)
     Eigen::MRPd sigma_BN;  //!< [] s/c body att wrt inertial
     int64_t planetPositionInMsgId = -1;
     int64_t spacecraftStateInMsgId = -1;
