@@ -15,9 +15,14 @@ In Progress Features
 - create data tracking capabilities within BSK where devices can store or communicate data
 - create modules to determine if a satellite can see a ground point such as a communication station
 
+
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- Update template illustrating how the validation accuracy can be recording in the `pytest` parameters.
+- Created a new method in `SimulationBaseClass` called `pullMultiMessageLogData`  This is much faster in pulling the data log from multiple messages at once.
+- It is no longer necessary to call sim.TotalSim.terminateSimulation() at the beginning of Basilisk scripts. This call has been moved to the SimBaseClass constructor and removed from scripts in the repository.
+- A new module in the environments directory, SolarFlux, provides the solar flux value at a spacecraft location including (optionally) eclipse effects
+- New module in the navigation directory, PlanetHeading, provides the heading to a planet in the spacecraft body frame. There is a corresponding new message type BodyHeadingSimMsg.
 
 Version 1.2.1
 ----------------------
