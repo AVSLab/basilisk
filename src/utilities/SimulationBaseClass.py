@@ -196,14 +196,15 @@ class SimBaseClass:
         self.allModules = set()
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
-        """
-        Adds a simModel to a task for execution.
-        :param TaskName: The name of the task to add the simModel to
-        :param NewModel: The simModel object.
-        :param ModelData: simModel data object for C modules.
-        :param ModelPriority: Model execution priority
+        '''
+        This function is responsible for adding a module instance (model) to a particular task and defining
+        the order/priority that the model gets updated within the task.
+        :param TaskName (str): Name of the task
+        :param NewModel (obj): Model to add to the task
+        :param ModelData: None or struct containing
+        :param ModelPriority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return:
-        """
+        '''
         i = 0
         for Task in self.TaskList:
             if Task.Name == TaskName:
@@ -223,12 +224,24 @@ class SimBaseClass:
               {"TaskName": TaskName})
 
     def CreateNewProcess(self, procName, priority = -1):
+        '''
+        Creates a process and adds it to the sim
+        :param procName (str): Name of process
+        :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
+        :return: simulationArchTypes.ProcessBaseClass object
+        '''
         proc = simulationArchTypes.ProcessBaseClass(procName, priority)
         self.procList.append(proc)
         self.TotalSim.addNewProcess(proc.processData)
         return proc
 
     def CreateNewPythonProcess(self, procName, priority = -1):
+        '''
+        Creates the python analog of a sim-level process, that exists only on the python level in self.pyProcList
+        :param procName (str): Name of process
+        :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
+        :return: simulationArchTypes.PythonProcessClass object
+        '''
         proc = simulationArchTypes.PythonProcessClass(procName, priority)
         i=0;
         for procLoc in self.pyProcList:
@@ -240,11 +253,29 @@ class SimBaseClass:
         return proc
 
     def CreateNewTask(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
+        '''
+        Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and
+        an optional start time.
+        :param TaskName (str): Name of Task
+        :param TaskRate (int): Number of nanoseconds to elapse before update() is called
+        :param InputDelay (int): Number of nanoseconds simulating a lag of the particular task# TODO: Check that this is [ns]
+        :param FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
+        :return: simulationArchTypes.TaskBaseClass object
+        '''
         Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
         self.TaskList.append(Task)
         return Task
 
     def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
+        '''
+        Informs the sim to log a particular variable within a message
+        :param VarName:
+        :param LogPeriod:
+        :param StartIndex:
+        :param StopIndex:
+        :param VarType:
+        :return:
+        '''
         SplitName = VarName.split('.')
         Subname = '.'
         Subname = Subname.join(SplitName[1:])
@@ -689,6 +720,10 @@ class SimBaseClass:
         self.eventMap[eventName].eventActive = activityCommand
     def terminateSimulation(self):
         self.TotalSim.terminateSimulation()
+
+
+    # Only instances of following three functions is within SimBaseClass
+    # TODO: Investigate origin and need for these functions
     def findMessagePairs(self, messageName, processList):
         dataPairs = self.TotalSim.getMessageExchangeData(messageName, processList)
         outputDataPairs = []
@@ -776,6 +811,17 @@ class SimBaseClass:
         fDesc.close()
 
     def setModelDataWrap(self, modelData):
+        '''
+        Takes a module and returns an object that provides access to said module's SelfInit, CrossInit, Update, and Reset
+        methods.
+
+        Takes the module instance, collects all SwigPyObjects generated from the .i file (SelfInit, CrossInit,
+        Update and Reset), and attaches it to a alg_contain model instance so the modules standard functions can be
+        run at the python level.
+
+        :param modelData: model to gather functions for
+        :return: An alg_contain model that provides access to the original model's core functions
+        '''
         algDict = {}
         STR_SELFINIT = 'SelfInit'
         STR_CROSSINIT = 'CrossInit'
