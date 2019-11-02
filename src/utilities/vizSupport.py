@@ -97,6 +97,101 @@ def createPointLine(viz, **kwargs):
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
 
+customModelList = []
+def createCustomModel(viz, **kwargs):
+    vizElement = vizInterface.CustomModel()
+
+    unitTestSupport.checkMethodKeyword(
+        ['modelPath', 'simBodiesToModify', 'offset', 'rotation', 'scale', 'customTexturePath', 'normalMapPath'],
+        kwargs)
+
+    if 'modelPath' in kwargs:
+        modelPathName = kwargs['modelPath']
+        if not isinstance(modelPathName, basestring):
+            print('ERROR: modelPath must be a string')
+            exit(1)
+        if len(modelPathName) == 0:
+            print('ERROR: modelPath is required and must be specified.')
+            exit(1)
+        vizElement.modelPath = modelPathName
+    else:
+        print('ERROR: modelPath is required and must be specified.')
+        exit(1)
+
+    if 'simBodiesToModify' in kwargs:
+        simBodiesList = kwargs['simBodiesToModify']
+        if not isinstance(simBodiesList, list):
+            print('ERROR: simBodiesToModify must be a list of strings')
+            exit(1)
+        if len(simBodiesList) == 0:
+            print('ERROR: simBodiesToModify must be a non-empty list of strings')
+            exit(1)
+        for item in simBodiesList:
+            if not isinstance(item, basestring):
+                print('ERROR: the simBody name must be a string, not ' + str(item))
+                exit(1)
+        vizElement.simBodiesToModify = vizInterface.StringVector(simBodiesList)
+    else:
+        vizElement.simBodiesToModify = vizInterface.StringVector([viz.spacecraftName])
+
+    if 'offset' in kwargs:
+        offsetVariable = kwargs['offset']
+        if not isinstance(offsetVariable, list):
+            print('ERROR: offset must be a list of three floats')
+            exit(1)
+        if len(offsetVariable) is not 3:
+            print('ERROR: offset must be list of three floats')
+            exit(1)
+        vizElement.offset = offsetVariable
+    else:
+        vizElement.offset = [0.0, 0.0, 0.0]
+
+    if 'rotation' in kwargs:
+        rotationVariable = kwargs['rotation']
+        if not isinstance(rotationVariable, list):
+            print('ERROR: rotation must be a list of three floats')
+            exit(1)
+        if len(rotationVariable) is not 3:
+            print('ERROR: rotation must be list of three floats')
+            exit(1)
+        vizElement.rotation = rotationVariable
+    else:
+        vizElement.rotation = [0.0, 0.0, 0.0]
+
+    if 'scale' in kwargs:
+        scaleVariable = kwargs['scale']
+        if not isinstance(scaleVariable, list):
+            print('ERROR: scale must be a list of three floats')
+            exit(1)
+        if len(scaleVariable) is not 3:
+            print('ERROR: scale must be list of three floats')
+            exit(1)
+        vizElement.scale = scaleVariable
+    else:
+        vizElement.scale = [1.0, 1.0, 1.0]
+
+    if 'customTexturePath' in kwargs:
+        customTexturePathName = kwargs['customTexturePath']
+        if not isinstance(customTexturePathName, basestring):
+            print('ERROR: customTexturePath must be a string')
+            exit(1)
+        vizElement.customTexturePath = customTexturePathName
+    else:
+        vizElement.customTexturePath = ""
+
+    if 'normalMapPath' in kwargs:
+        normalMapPathName = kwargs['normalMapPath']
+        if not isinstance(normalMapPathName, basestring):
+            print('ERROR: normalMapPath must be a string')
+            exit(1)
+        vizElement.normalMapPath = normalMapPathName
+    else:
+        vizElement.normalMapPath = ""
+
+    customModelList.append(vizElement)
+    del viz.settings.customModelList[:] # clear settings list to replace it with updated list
+    viz.settings.customModelList = vizInterface.CustomModelConfig(customModelList)
+    return
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
