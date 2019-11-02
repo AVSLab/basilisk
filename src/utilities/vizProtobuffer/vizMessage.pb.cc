@@ -633,13 +633,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, modeltouse_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, modelpath_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, simbodiestomodify_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, offset_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, rotation_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, scale_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, customtexture_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, normalmap_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, customtexturepath_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, normalmappath_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -731,7 +731,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\271\030\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\300\030\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -789,30 +789,30 @@ void AddDescriptorsImpl() {
       "rgetBodyName\030\006 \001(\t\032\206\001\n\020ActuatorSettings\022"
       "\026\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrusterP"
       "anel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013v"
-      "iewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\032\227\001\n\013"
-      "CustomModel\022\022\n\nmodelToUse\030\001 \001(\t\022\031\n\021simBo"
-      "diesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010ro"
-      "tation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\025\n\rcustomTex"
-      "ture\030\006 \001(\t\022\021\n\tnormalMap\030\007 \001(\t\032\355\004\n\rVizSet"
-      "tingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn"
-      "\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanet"
-      "CSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProt"
-      "obufferMessage.VizMessage.PointLine\022G\n\016k"
-      "eepOutInCones\030\006 \003(\0132/.vizProtobufferMess"
-      "age.VizMessage.KeepOutInCone\022F\n\tcameraOn"
-      "e\030\007 \001(\01323.vizProtobufferMessage.VizMessa"
-      "ge.CameraOneSettings\022F\n\tcameraTwo\030\010 \001(\0132"
-      "3.vizProtobufferMessage.VizMessage.Camer"
-      "aTwoSettings\022L\n\014planetCamera\030\t \001(\01326.viz"
-      "ProtobufferMessage.VizMessage.PlanetCame"
-      "raSettings\022L\n\020actuatorSettings\030\n \003(\01322.v"
-      "izProtobufferMessage.VizMessage.Actuator"
-      "Settings\022\016\n\006skybox\030\013 \001(\t\022C\n\014customModels"
-      "\030\014 \003(\0132-.vizProtobufferMessage.VizMessag"
-      "e.CustomModelb\006proto3"
+      "iewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\032\236\001\n\013"
+      "CustomModel\022\021\n\tmodelPath\030\001 \001(\t\022\031\n\021simBod"
+      "iesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rot"
+      "ation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customText"
+      "urePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\032\355\004\n"
+      "\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbit"
+      "LinesOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n"
+      "\nplanetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+."
+      "vizProtobufferMessage.VizMessage.PointLi"
+      "ne\022G\n\016keepOutInCones\030\006 \003(\0132/.vizProtobuf"
+      "ferMessage.VizMessage.KeepOutInCone\022F\n\tc"
+      "ameraOne\030\007 \001(\01323.vizProtobufferMessage.V"
+      "izMessage.CameraOneSettings\022F\n\tcameraTwo"
+      "\030\010 \001(\01323.vizProtobufferMessage.VizMessag"
+      "e.CameraTwoSettings\022L\n\014planetCamera\030\t \001("
+      "\01326.vizProtobufferMessage.VizMessage.Pla"
+      "netCameraSettings\022L\n\020actuatorSettings\030\n "
+      "\003(\01322.vizProtobufferMessage.VizMessage.A"
+      "ctuatorSettings\022\016\n\006skybox\030\013 \001(\t\022C\n\014custo"
+      "mModels\030\014 \003(\0132-.vizProtobufferMessage.Vi"
+      "zMessage.CustomModelb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3181);
+      descriptor, 3188);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -7272,13 +7272,13 @@ void VizMessage_ActuatorSettings::InternalSwap(VizMessage_ActuatorSettings* othe
 void VizMessage_CustomModel::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int VizMessage_CustomModel::kModelToUseFieldNumber;
+const int VizMessage_CustomModel::kModelPathFieldNumber;
 const int VizMessage_CustomModel::kSimBodiesToModifyFieldNumber;
 const int VizMessage_CustomModel::kOffsetFieldNumber;
 const int VizMessage_CustomModel::kRotationFieldNumber;
 const int VizMessage_CustomModel::kScaleFieldNumber;
-const int VizMessage_CustomModel::kCustomTextureFieldNumber;
-const int VizMessage_CustomModel::kNormalMapFieldNumber;
+const int VizMessage_CustomModel::kCustomTexturePathFieldNumber;
+const int VizMessage_CustomModel::kNormalMapPathFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_CustomModel::VizMessage_CustomModel()
@@ -7298,25 +7298,25 @@ VizMessage_CustomModel::VizMessage_CustomModel(const VizMessage_CustomModel& fro
       scale_(from.scale_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  modeltouse_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.modeltouse().size() > 0) {
-    modeltouse_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.modeltouse_);
+  modelpath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.modelpath().size() > 0) {
+    modelpath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.modelpath_);
   }
-  customtexture_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.customtexture().size() > 0) {
-    customtexture_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.customtexture_);
+  customtexturepath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.customtexturepath().size() > 0) {
+    customtexturepath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.customtexturepath_);
   }
-  normalmap_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.normalmap().size() > 0) {
-    normalmap_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmap_);
+  normalmappath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.normalmappath().size() > 0) {
+    normalmappath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmappath_);
   }
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CustomModel)
 }
 
 void VizMessage_CustomModel::SharedCtor() {
-  modeltouse_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  customtexture_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  normalmap_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  modelpath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  customtexturepath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  normalmappath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   _cached_size_ = 0;
 }
 
@@ -7326,9 +7326,9 @@ VizMessage_CustomModel::~VizMessage_CustomModel() {
 }
 
 void VizMessage_CustomModel::SharedDtor() {
-  modeltouse_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  customtexture_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  normalmap_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  modelpath_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  customtexturepath_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  normalmappath_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void VizMessage_CustomModel::SetCachedSize(int size) const {
@@ -7364,9 +7364,9 @@ void VizMessage_CustomModel::Clear() {
   offset_.Clear();
   rotation_.Clear();
   scale_.Clear();
-  modeltouse_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  customtexture_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  normalmap_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  modelpath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  customtexturepath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  normalmappath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -7380,16 +7380,16 @@ bool VizMessage_CustomModel::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string modelToUse = 1;
+      // string modelPath = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_modeltouse()));
+                input, this->mutable_modelpath()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->modeltouse().data(), static_cast<int>(this->modeltouse().length()),
+            this->modelpath().data(), static_cast<int>(this->modelpath().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "vizProtobufferMessage.VizMessage.CustomModel.modelToUse"));
+            "vizProtobufferMessage.VizMessage.CustomModel.modelPath"));
         } else {
           goto handle_unusual;
         }
@@ -7470,32 +7470,32 @@ bool VizMessage_CustomModel::MergePartialFromCodedStream(
         break;
       }
 
-      // string customTexture = 6;
+      // string customTexturePath = 6;
       case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_customtexture()));
+                input, this->mutable_customtexturepath()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->customtexture().data(), static_cast<int>(this->customtexture().length()),
+            this->customtexturepath().data(), static_cast<int>(this->customtexturepath().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "vizProtobufferMessage.VizMessage.CustomModel.customTexture"));
+            "vizProtobufferMessage.VizMessage.CustomModel.customTexturePath"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // string normalMap = 7;
+      // string normalMapPath = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_normalmap()));
+                input, this->mutable_normalmappath()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->normalmap().data(), static_cast<int>(this->normalmap().length()),
+            this->normalmappath().data(), static_cast<int>(this->normalmappath().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "vizProtobufferMessage.VizMessage.CustomModel.normalMap"));
+            "vizProtobufferMessage.VizMessage.CustomModel.normalMapPath"));
         } else {
           goto handle_unusual;
         }
@@ -7528,14 +7528,14 @@ void VizMessage_CustomModel::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string modelToUse = 1;
-  if (this->modeltouse().size() > 0) {
+  // string modelPath = 1;
+  if (this->modelpath().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->modeltouse().data(), static_cast<int>(this->modeltouse().length()),
+      this->modelpath().data(), static_cast<int>(this->modelpath().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CustomModel.modelToUse");
+      "vizProtobufferMessage.VizMessage.CustomModel.modelPath");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->modeltouse(), output);
+      1, this->modelpath(), output);
   }
 
   // repeated string simBodiesToModify = 2;
@@ -7575,24 +7575,24 @@ void VizMessage_CustomModel::SerializeWithCachedSizes(
       this->scale().data(), this->scale_size(), output);
   }
 
-  // string customTexture = 6;
-  if (this->customtexture().size() > 0) {
+  // string customTexturePath = 6;
+  if (this->customtexturepath().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->customtexture().data(), static_cast<int>(this->customtexture().length()),
+      this->customtexturepath().data(), static_cast<int>(this->customtexturepath().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CustomModel.customTexture");
+      "vizProtobufferMessage.VizMessage.CustomModel.customTexturePath");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->customtexture(), output);
+      6, this->customtexturepath(), output);
   }
 
-  // string normalMap = 7;
-  if (this->normalmap().size() > 0) {
+  // string normalMapPath = 7;
+  if (this->normalmappath().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->normalmap().data(), static_cast<int>(this->normalmap().length()),
+      this->normalmappath().data(), static_cast<int>(this->normalmappath().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CustomModel.normalMap");
+      "vizProtobufferMessage.VizMessage.CustomModel.normalMapPath");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      7, this->normalmap(), output);
+      7, this->normalmappath(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7609,15 +7609,15 @@ void VizMessage_CustomModel::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string modelToUse = 1;
-  if (this->modeltouse().size() > 0) {
+  // string modelPath = 1;
+  if (this->modelpath().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->modeltouse().data(), static_cast<int>(this->modeltouse().length()),
+      this->modelpath().data(), static_cast<int>(this->modelpath().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CustomModel.modelToUse");
+      "vizProtobufferMessage.VizMessage.CustomModel.modelPath");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->modeltouse(), target);
+        1, this->modelpath(), target);
   }
 
   // repeated string simBodiesToModify = 2;
@@ -7669,26 +7669,26 @@ void VizMessage_CustomModel::SerializeWithCachedSizes(
       WriteDoubleNoTagToArray(this->scale_, target);
   }
 
-  // string customTexture = 6;
-  if (this->customtexture().size() > 0) {
+  // string customTexturePath = 6;
+  if (this->customtexturepath().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->customtexture().data(), static_cast<int>(this->customtexture().length()),
+      this->customtexturepath().data(), static_cast<int>(this->customtexturepath().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CustomModel.customTexture");
+      "vizProtobufferMessage.VizMessage.CustomModel.customTexturePath");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->customtexture(), target);
+        6, this->customtexturepath(), target);
   }
 
-  // string normalMap = 7;
-  if (this->normalmap().size() > 0) {
+  // string normalMapPath = 7;
+  if (this->normalmappath().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->normalmap().data(), static_cast<int>(this->normalmap().length()),
+      this->normalmappath().data(), static_cast<int>(this->normalmappath().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CustomModel.normalMap");
+      "vizProtobufferMessage.VizMessage.CustomModel.normalMapPath");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        7, this->normalmap(), target);
+        7, this->normalmappath(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7764,25 +7764,25 @@ size_t VizMessage_CustomModel::ByteSizeLong() const {
     total_size += data_size;
   }
 
-  // string modelToUse = 1;
-  if (this->modeltouse().size() > 0) {
+  // string modelPath = 1;
+  if (this->modelpath().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->modeltouse());
+        this->modelpath());
   }
 
-  // string customTexture = 6;
-  if (this->customtexture().size() > 0) {
+  // string customTexturePath = 6;
+  if (this->customtexturepath().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->customtexture());
+        this->customtexturepath());
   }
 
-  // string normalMap = 7;
-  if (this->normalmap().size() > 0) {
+  // string normalMapPath = 7;
+  if (this->normalmappath().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->normalmap());
+        this->normalmappath());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -7818,17 +7818,17 @@ void VizMessage_CustomModel::MergeFrom(const VizMessage_CustomModel& from) {
   offset_.MergeFrom(from.offset_);
   rotation_.MergeFrom(from.rotation_);
   scale_.MergeFrom(from.scale_);
-  if (from.modeltouse().size() > 0) {
+  if (from.modelpath().size() > 0) {
 
-    modeltouse_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.modeltouse_);
+    modelpath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.modelpath_);
   }
-  if (from.customtexture().size() > 0) {
+  if (from.customtexturepath().size() > 0) {
 
-    customtexture_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.customtexture_);
+    customtexturepath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.customtexturepath_);
   }
-  if (from.normalmap().size() > 0) {
+  if (from.normalmappath().size() > 0) {
 
-    normalmap_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmap_);
+    normalmappath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmappath_);
   }
 }
 
@@ -7860,9 +7860,9 @@ void VizMessage_CustomModel::InternalSwap(VizMessage_CustomModel* other) {
   offset_.InternalSwap(&other->offset_);
   rotation_.InternalSwap(&other->rotation_);
   scale_.InternalSwap(&other->scale_);
-  modeltouse_.Swap(&other->modeltouse_);
-  customtexture_.Swap(&other->customtexture_);
-  normalmap_.Swap(&other->normalmap_);
+  modelpath_.Swap(&other->modelpath_);
+  customtexturepath_.Swap(&other->customtexturepath_);
+  normalmappath_.Swap(&other->normalmappath_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

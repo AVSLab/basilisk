@@ -133,13 +133,13 @@ message VizMessage{
     }
     
     message CustomModel{
-        string modelToUse = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
-        repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" to apply custom model to all spacecraft in simulation
+        string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+        repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" in the first string to apply custom model to all spacecraft in simulation
         repeated double offset = 3; //meters
         repeated double rotation = 4; // degrees, euler rotation about x, y, z axes in spacecraft CS
         repeated double scale = 5; //desired model scale in x, y, z in spacecraft CS
-        string customTexture = 6; //(Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
-        string normalMap = 7; //(Optional) Path to the normal map for the customTexture
+        string customTexturePath = 6; //(Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
+        string normalMapPath = 7; //(Optional) Path to the normal map for the customTexture
     }
 
 

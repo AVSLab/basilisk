@@ -2396,47 +2396,47 @@ class VizMessage_CustomModel : public ::google::protobuf::Message /* @@protoc_in
   ::google::protobuf::RepeatedField< double >*
       mutable_scale();
 
-  // string modelToUse = 1;
-  void clear_modeltouse();
-  static const int kModelToUseFieldNumber = 1;
-  const ::std::string& modeltouse() const;
-  void set_modeltouse(const ::std::string& value);
+  // string modelPath = 1;
+  void clear_modelpath();
+  static const int kModelPathFieldNumber = 1;
+  const ::std::string& modelpath() const;
+  void set_modelpath(const ::std::string& value);
   #if LANG_CXX11
-  void set_modeltouse(::std::string&& value);
+  void set_modelpath(::std::string&& value);
   #endif
-  void set_modeltouse(const char* value);
-  void set_modeltouse(const char* value, size_t size);
-  ::std::string* mutable_modeltouse();
-  ::std::string* release_modeltouse();
-  void set_allocated_modeltouse(::std::string* modeltouse);
+  void set_modelpath(const char* value);
+  void set_modelpath(const char* value, size_t size);
+  ::std::string* mutable_modelpath();
+  ::std::string* release_modelpath();
+  void set_allocated_modelpath(::std::string* modelpath);
 
-  // string customTexture = 6;
-  void clear_customtexture();
-  static const int kCustomTextureFieldNumber = 6;
-  const ::std::string& customtexture() const;
-  void set_customtexture(const ::std::string& value);
+  // string customTexturePath = 6;
+  void clear_customtexturepath();
+  static const int kCustomTexturePathFieldNumber = 6;
+  const ::std::string& customtexturepath() const;
+  void set_customtexturepath(const ::std::string& value);
   #if LANG_CXX11
-  void set_customtexture(::std::string&& value);
+  void set_customtexturepath(::std::string&& value);
   #endif
-  void set_customtexture(const char* value);
-  void set_customtexture(const char* value, size_t size);
-  ::std::string* mutable_customtexture();
-  ::std::string* release_customtexture();
-  void set_allocated_customtexture(::std::string* customtexture);
+  void set_customtexturepath(const char* value);
+  void set_customtexturepath(const char* value, size_t size);
+  ::std::string* mutable_customtexturepath();
+  ::std::string* release_customtexturepath();
+  void set_allocated_customtexturepath(::std::string* customtexturepath);
 
-  // string normalMap = 7;
-  void clear_normalmap();
-  static const int kNormalMapFieldNumber = 7;
-  const ::std::string& normalmap() const;
-  void set_normalmap(const ::std::string& value);
+  // string normalMapPath = 7;
+  void clear_normalmappath();
+  static const int kNormalMapPathFieldNumber = 7;
+  const ::std::string& normalmappath() const;
+  void set_normalmappath(const ::std::string& value);
   #if LANG_CXX11
-  void set_normalmap(::std::string&& value);
+  void set_normalmappath(::std::string&& value);
   #endif
-  void set_normalmap(const char* value);
-  void set_normalmap(const char* value, size_t size);
-  ::std::string* mutable_normalmap();
-  ::std::string* release_normalmap();
-  void set_allocated_normalmap(::std::string* normalmap);
+  void set_normalmappath(const char* value);
+  void set_normalmappath(const char* value, size_t size);
+  ::std::string* mutable_normalmappath();
+  ::std::string* release_normalmappath();
+  void set_allocated_normalmappath(::std::string* normalmappath);
 
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.CustomModel)
  private:
@@ -2449,9 +2449,9 @@ class VizMessage_CustomModel : public ::google::protobuf::Message /* @@protoc_in
   mutable int _rotation_cached_byte_size_;
   ::google::protobuf::RepeatedField< double > scale_;
   mutable int _scale_cached_byte_size_;
-  ::google::protobuf::internal::ArenaStringPtr modeltouse_;
-  ::google::protobuf::internal::ArenaStringPtr customtexture_;
-  ::google::protobuf::internal::ArenaStringPtr normalmap_;
+  ::google::protobuf::internal::ArenaStringPtr modelpath_;
+  ::google::protobuf::internal::ArenaStringPtr customtexturepath_;
+  ::google::protobuf::internal::ArenaStringPtr normalmappath_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CustomModelImpl();
@@ -4920,57 +4920,57 @@ inline void VizMessage_ActuatorSettings::set_viewrwhud(::google::protobuf::int32
 
 // VizMessage_CustomModel
 
-// string modelToUse = 1;
-inline void VizMessage_CustomModel::clear_modeltouse() {
-  modeltouse_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string modelPath = 1;
+inline void VizMessage_CustomModel::clear_modelpath() {
+  modelpath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& VizMessage_CustomModel::modeltouse() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
-  return modeltouse_.GetNoArena();
+inline const ::std::string& VizMessage_CustomModel::modelpath() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
+  return modelpath_.GetNoArena();
 }
-inline void VizMessage_CustomModel::set_modeltouse(const ::std::string& value) {
+inline void VizMessage_CustomModel::set_modelpath(const ::std::string& value) {
   
-  modeltouse_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  modelpath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
 }
 #if LANG_CXX11
-inline void VizMessage_CustomModel::set_modeltouse(::std::string&& value) {
+inline void VizMessage_CustomModel::set_modelpath(::std::string&& value) {
   
-  modeltouse_.SetNoArena(
+  modelpath_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
 }
 #endif
-inline void VizMessage_CustomModel::set_modeltouse(const char* value) {
+inline void VizMessage_CustomModel::set_modelpath(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
-  modeltouse_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  modelpath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
 }
-inline void VizMessage_CustomModel::set_modeltouse(const char* value, size_t size) {
+inline void VizMessage_CustomModel::set_modelpath(const char* value, size_t size) {
   
-  modeltouse_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  modelpath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
 }
-inline ::std::string* VizMessage_CustomModel::mutable_modeltouse() {
+inline ::std::string* VizMessage_CustomModel::mutable_modelpath() {
   
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
-  return modeltouse_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
+  return modelpath_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* VizMessage_CustomModel::release_modeltouse() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+inline ::std::string* VizMessage_CustomModel::release_modelpath() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
   
-  return modeltouse_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return modelpath_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void VizMessage_CustomModel::set_allocated_modeltouse(::std::string* modeltouse) {
-  if (modeltouse != NULL) {
+inline void VizMessage_CustomModel::set_allocated_modelpath(::std::string* modelpath) {
+  if (modelpath != NULL) {
     
   } else {
     
   }
-  modeltouse_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), modeltouse);
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.modelToUse)
+  modelpath_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), modelpath);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.modelPath)
 }
 
 // repeated string simBodiesToModify = 2;
@@ -5132,110 +5132,110 @@ VizMessage_CustomModel::mutable_scale() {
   return &scale_;
 }
 
-// string customTexture = 6;
-inline void VizMessage_CustomModel::clear_customtexture() {
-  customtexture_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string customTexturePath = 6;
+inline void VizMessage_CustomModel::clear_customtexturepath() {
+  customtexturepath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& VizMessage_CustomModel::customtexture() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
-  return customtexture_.GetNoArena();
+inline const ::std::string& VizMessage_CustomModel::customtexturepath() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
+  return customtexturepath_.GetNoArena();
 }
-inline void VizMessage_CustomModel::set_customtexture(const ::std::string& value) {
+inline void VizMessage_CustomModel::set_customtexturepath(const ::std::string& value) {
   
-  customtexture_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  customtexturepath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
 }
 #if LANG_CXX11
-inline void VizMessage_CustomModel::set_customtexture(::std::string&& value) {
+inline void VizMessage_CustomModel::set_customtexturepath(::std::string&& value) {
   
-  customtexture_.SetNoArena(
+  customtexturepath_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
 }
 #endif
-inline void VizMessage_CustomModel::set_customtexture(const char* value) {
+inline void VizMessage_CustomModel::set_customtexturepath(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
-  customtexture_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  customtexturepath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
 }
-inline void VizMessage_CustomModel::set_customtexture(const char* value, size_t size) {
+inline void VizMessage_CustomModel::set_customtexturepath(const char* value, size_t size) {
   
-  customtexture_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  customtexturepath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
 }
-inline ::std::string* VizMessage_CustomModel::mutable_customtexture() {
+inline ::std::string* VizMessage_CustomModel::mutable_customtexturepath() {
   
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
-  return customtexture_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
+  return customtexturepath_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* VizMessage_CustomModel::release_customtexture() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+inline ::std::string* VizMessage_CustomModel::release_customtexturepath() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
   
-  return customtexture_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return customtexturepath_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void VizMessage_CustomModel::set_allocated_customtexture(::std::string* customtexture) {
-  if (customtexture != NULL) {
+inline void VizMessage_CustomModel::set_allocated_customtexturepath(::std::string* customtexturepath) {
+  if (customtexturepath != NULL) {
     
   } else {
     
   }
-  customtexture_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), customtexture);
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.customTexture)
+  customtexturepath_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), customtexturepath);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.customTexturePath)
 }
 
-// string normalMap = 7;
-inline void VizMessage_CustomModel::clear_normalmap() {
-  normalmap_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string normalMapPath = 7;
+inline void VizMessage_CustomModel::clear_normalmappath() {
+  normalmappath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& VizMessage_CustomModel::normalmap() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
-  return normalmap_.GetNoArena();
+inline const ::std::string& VizMessage_CustomModel::normalmappath() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
+  return normalmappath_.GetNoArena();
 }
-inline void VizMessage_CustomModel::set_normalmap(const ::std::string& value) {
+inline void VizMessage_CustomModel::set_normalmappath(const ::std::string& value) {
   
-  normalmap_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  normalmappath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
 }
 #if LANG_CXX11
-inline void VizMessage_CustomModel::set_normalmap(::std::string&& value) {
+inline void VizMessage_CustomModel::set_normalmappath(::std::string&& value) {
   
-  normalmap_.SetNoArena(
+  normalmappath_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
 }
 #endif
-inline void VizMessage_CustomModel::set_normalmap(const char* value) {
+inline void VizMessage_CustomModel::set_normalmappath(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
-  normalmap_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  normalmappath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
 }
-inline void VizMessage_CustomModel::set_normalmap(const char* value, size_t size) {
+inline void VizMessage_CustomModel::set_normalmappath(const char* value, size_t size) {
   
-  normalmap_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  normalmappath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
 }
-inline ::std::string* VizMessage_CustomModel::mutable_normalmap() {
+inline ::std::string* VizMessage_CustomModel::mutable_normalmappath() {
   
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
-  return normalmap_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
+  return normalmappath_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* VizMessage_CustomModel::release_normalmap() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+inline ::std::string* VizMessage_CustomModel::release_normalmappath() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
   
-  return normalmap_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return normalmappath_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void VizMessage_CustomModel::set_allocated_normalmap(::std::string* normalmap) {
-  if (normalmap != NULL) {
+inline void VizMessage_CustomModel::set_allocated_normalmappath(::std::string* normalmappath) {
+  if (normalmappath != NULL) {
     
   } else {
     
   }
-  normalmap_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), normalmap);
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.normalMap)
+  normalmappath_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), normalmappath);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
 }
 
 // -------------------------------------------------------------------
