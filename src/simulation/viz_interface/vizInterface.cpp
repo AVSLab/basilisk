@@ -475,6 +475,23 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             al->set_viewrwhud(this->settings.actuatorGuiSettingsList[idx].viewRWHUD);
         }
 
+        // define scene object custom object shapes
+        for (size_t idx = 0; idx < this->settings.customModelList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::CustomModel* cm = vizSettings->add_custommodels();
+            CustomModel *cmp = &(this->settings.customModelList[idx]);
+            cm->set_modelpath(cmp->modelPath);
+            for (size_t i=0; i<cmp->simBodiesToModify.size(); i++) {
+                cm->add_simbodiestomodify(cmp->simBodiesToModify[i]);
+            }
+            for (size_t i=0; i<3;i++) {
+                cm->add_offset(cmp->offset[i]);
+                cm->add_rotation(cmp->rotation[i]*R2D);  // Unity expects degrees
+                cm->add_scale(cmp->scale[i]);
+            }
+            cm->set_customtexturepath(cmp->customTexturePath);
+            cm->set_normalmappath(cmp->normalMapPath);
+        }
+
         // define camera one settings
         vizProtobufferMessage::VizMessage::CameraOneSettings* camOne = new vizProtobufferMessage::VizMessage::CameraOneSettings;
         camOne->set_spacecraftname(this->settings.cameraOne.spacecraftName);

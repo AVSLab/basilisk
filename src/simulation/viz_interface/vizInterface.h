@@ -89,6 +89,16 @@ typedef struct {
 }ActuatorGuiSettings;
 
 typedef struct {
+    std::string modelPath;                  //!< Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+    std::vector<std::string> simBodiesToModify; //!< Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" to apply custom model to all spacecraft in simulation
+    double offset[3];                       //!< [m] offset to use to draw the model
+    double rotation[3];                     //!< [rad] 1-2-3 Euler rotation about x, y, z axes in spacecraft CS
+    double scale[3];                        //!< [] desired model scale in x, y, z in spacecraft CS
+    std::string customTexturePath;          //!< (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
+    std::string normalMapPath;              //!< (Optional) Path to the normal map for the customTexture
+}CustomModel;
+
+typedef struct {
     double      ambient;        //!< [-] Ambient background lighting. Should be a value between 0 and 8.  A value of -1 means it is not set.
     int32_t     orbitLinesOn;   //! toogle for showing orbit lines (-1, 0, 1)
     int32_t     spacecraftCSon; //! toogle for showing spacecraft CS (-1, 0, 1)
@@ -98,6 +108,7 @@ typedef struct {
     CameraSettings cameraOne;   //! msg containing camera one settings
     CameraSettings cameraTwo;   //! msg containing camera one settings
     CameraSettings cameraPlanet;//! msg containing the planet camera settings
+    std::vector<CustomModel> customModelList;  //! vector of custom object models
     std::vector<ActuatorGuiSettings> actuatorGuiSettingsList; //! msg containing the flags on displaying the actuator GUI elements
     std::string skyBox;         //! string containing the star field options, '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
     bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,
