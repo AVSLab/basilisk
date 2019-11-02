@@ -22,9 +22,6 @@
 import numpy as np
 import pytest
 
-import numpy as np
-import pytest
-
 from Basilisk.simulation import solarFlux
 from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
 from Basilisk.simulation.simMessages import SCPlusStatesSimMsg
