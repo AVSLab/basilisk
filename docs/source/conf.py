@@ -274,6 +274,17 @@ class fileCrawler():
         name = os.path.basename(os.path.normpath(index_path))
         lines = name + "\n" + "=" * len(name) + "\n\n"
 
+        # pull in folder documentation rst file if it exists
+        try:
+            pathToFolder, folderName = dir_paths[0].split(name)
+            docFileName = os.path.join(os.path.join(pathToFolder, name), name + '.rst')
+            if os.path.isfile(docFileName):
+                with open(docFileName, 'r') as docFile:
+                    docContents = docFile.read()
+                lines += docContents + "\n\n"
+        except:
+            pass
+
         # Add a linking point to all local directories
         lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories" + ":\n\n"
         for dir_path in sorted(dir_paths):
@@ -334,6 +345,13 @@ class fileCrawler():
                 lines = ""
                 lines += ".. _" + c_file_basename + ":\n\n"
                 lines += c_file_basename + "\n" + "=" * len(c_file_basename) + "\n\n"
+
+                # pull in the module documentation file if it exists
+                docFileName = src_path + '/' + c_file_basename + '.rst'
+                if os.path.isfile(docFileName):
+                    with open(docFileName, 'r') as docFile:
+                        docContents = docFile.read()
+                    lines += docContents + "\n\n"
 
                 # Link the path with the modules for Breathe
                 module_files.extend([s for s in c_file_local_paths if c_file_basename in s])
