@@ -33,7 +33,7 @@
 STRUCTASLIST(FaultDetectionData)
 GEN_SIZEOF(CameraConfigMsg)
 GEN_SIZEOF(OpNavFswMsg)
-%include "simFswInterfaceMessages/circlesOpNavMsg.h"
+GEN_SIZEOF(NavAttIntMsg)
 %include "simFswInterfaceMessages/cameraConfigMsg.h"
 %include "simFswInterfaceMessages/navAttIntMsg.h"
 %include "../fswAlgorithms/fswMessages/opNavFswMsg.h"

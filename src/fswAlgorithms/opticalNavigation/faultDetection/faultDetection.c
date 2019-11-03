@@ -117,75 +117,77 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                      &opNavMsgOut, moduleID);
     }
-    else if (opNavIn2.valid == 1 && opNavIn1.valid == 0){
-        memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
-        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                     &opNavMsgOut, moduleID);
+    else if (opNavIn1.valid == 0 && opNavIn2.valid == 1){
+        /*! - If secondary measurments are trusted use them as primary */
+        if (configData->faultMode==1){
+            memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
+            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                         &opNavMsgOut, moduleID);
+        }
+        /*! - If secondaries are not trusted, do not risk corrupting measurment */
+        if (configData->faultMode==0){
+            opNavMsgOut.valid = 0;
+            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                         &opNavMsgOut, moduleID);
+        }
     }
     /*! - If they are both valid proceed to the fault detection */
     else if (opNavIn1.valid == 1 && opNavIn2.valid == 1){
         opNavMsgOut.valid = 1;
         double error = 0;
         /*! -- Dissimilar mode compares the two measurements: if the mean +/- 3-sigma covariances overlap use the nominal nav solution */
-        if (configData->faultMode==0){
-            double faultDirection[3];
-            double Z1Cov[3], Z2Cov[3], covar1T[3][3], covar2T[3][3];
-            double faultNorm;
-            
-            /*! Get the direction and norm between the the two measurements in camera frame*/
-            v3Subtract(opNavIn2.r_BN_C, opNavIn1.r_BN_C, faultDirection);
-            faultNorm = v3Norm(faultDirection);
-            v3Normalize(faultDirection, faultDirection);
-            
-            /*! Get the largest covariance directions (radial in camera frame) */
-            m33Transpose(RECAST3X3 opNavIn1.covar_C, covar1T);
-            m33Transpose(RECAST3X3 opNavIn2.covar_C, covar2T);
-            v3Copy(&covar1T[3][2], Z1Cov);
-            v3Copy(&covar2T[3][2], Z2Cov);
-            
-            /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
-            if (faultNorm > v3Norm(Z1Cov) + v3Norm(Z2Cov)){
-                error = 1;
-                memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
-                opNavMsgOut.faultDetected = 1;
-                WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                             &opNavMsgOut, moduleID);
-            }
-            /*! If the difference between vectors is low, use primary */
-            else{
-                /*! Bring all the measurements and covariances into their respective frames */
-                memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
-                WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                             &opNavMsgOut, moduleID);
-            }
-
+        double faultDirection[3];
+        double faultNorm;
+        
+        /*! Get the direction and norm between the the two measurements in camera frame*/
+        v3Subtract(opNavIn2.r_BN_C, opNavIn1.r_BN_C, faultDirection);
+        faultNorm = v3Norm(faultDirection);
+        v3Normalize(faultDirection, faultDirection);
+        
+        /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
+        if (faultNorm > configData->sigmaFault*(vNorm(opNavIn1.covar_C, 9) + vNorm(opNavIn2.covar_C, 9))){
+            error = 1;
+            memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
+            opNavMsgOut.faultDetected = 1;
+            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                         &opNavMsgOut, moduleID);
+        }
+        /*! If the difference between vectors is low, use primary */
+        else if (configData->faultMode==0){
+            /*! Bring all the measurements and covariances into their respective frames */
+            memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
+            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                         &opNavMsgOut, moduleID);
         }
         /*! -- Merge mode combines the two measurements and uncertainties if they are similar */
-        else if (configData->faultMode==1 && error == 0){
-            double P1invX1[3], P2invX2[3], X_N[3], P_N[3][3], P_B[3][3], P_C[3][3];
+        else if (configData->faultMode==1){
+            double P1invX1[3], P2invX2[3], X_C[3], P_C[3][3], P_B[3][3], P_N[3][3];
             double P1inv[3][3], P2inv[3][3];
             
-            /*! The covariance merge is given by P = (P1^{-1} + P2^{-2})^{-1} */
-            m33Inverse(RECAST3X3 opNavIn1.covar_N, P1inv);
-            m33Inverse(RECAST3X3 opNavIn2.covar_N, P2inv);
-            m33Add(P1inv, P2inv, P_N);
-            
+            /*! The covariance merge is given by P = (P1^{-1} + P2^{-1})^{-1} */
+            m33Inverse(RECAST3X3 opNavIn1.covar_C, P1inv);
+            m33Inverse(RECAST3X3 opNavIn2.covar_C, P2inv);
+            m33Add(P1inv, P2inv, P_C);
+            m33Inverse(P_C, P_C);
+
             /*! The estimage merge is given by x = P (P1^{-1}x1 + P2^{-1}x2) */
-            m33MultV3(P1inv, opNavIn1.r_BN_N, P1invX1);
-            m33MultV3(P2inv, opNavIn2.r_BN_N, P2invX2);
-            v3Add(P1invX1, P2invX2, X_N);
-            m33MultV3(P_N, X_N, X_N);
+            m33MultV3(P1inv, opNavIn1.r_BN_C, P1invX1);
+            m33MultV3(P2inv, opNavIn2.r_BN_C, P2invX2);
+            v3Add(P1invX1, P2invX2, X_C);
+            m33MultV3(P_C, X_C, X_C);
+            v3Copy(X_C, opNavMsgOut.r_BN_C);
             
             /*! Bring all the measurements and covariances into their respective frames */
-            mCopy(P_N, 3, 3, opNavMsgOut.covar_N);
-            m33MultM33(dcm_BN, P_N, P_B);
-            m33tMultM33(dcm_NC, P_N, P_C);
-            m33MultM33t(P_B, dcm_BN, P_B);
-            m33MultM33(P_C, dcm_NC , P_C);
+            m33MultV3(dcm_NC, X_C, opNavMsgOut.r_BN_N);
             mCopy(P_C, 3, 3, opNavMsgOut.covar_C);
+            m33tMultM33(dcm_CB, P_C, P_B);
+            m33MultM33(dcm_NC, P_C, P_N);
+            m33MultM33(P_B, dcm_CB, P_B);
+            m33MultM33t(P_N, dcm_NC , P_N);
+            mCopy(P_N, 3, 3, opNavMsgOut.covar_N);
             mCopy(P_B, 3, 3, opNavMsgOut.covar_B);
-            m33MultV3(dcm_BN, X_N, opNavMsgOut.r_BN_B);
-            m33tMultV3(dcm_NC, X_N, opNavMsgOut.r_BN_C);
+            m33tMultV3(dcm_CB, X_C, opNavMsgOut.r_BN_B);
+            m33MultV3(dcm_NC, X_C, opNavMsgOut.r_BN_N);
             opNavMsgOut.timeTag = opNavIn1.timeTag;
         }
         WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),

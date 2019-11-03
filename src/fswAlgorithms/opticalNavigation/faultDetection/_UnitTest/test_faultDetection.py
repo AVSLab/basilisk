@@ -8,22 +8,28 @@ from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms.faultDetection import faultDetection
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-import os, inspect
+import os, inspect, pytest
 import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-@pytest.mark.parametrize("r_c, valid", [
-                      ([10,10,1],  1), #Mars image
-                      ([1, 1, 1],  1), # Moon images
-    ])
+@pytest.mark.parametrize("r_c1, r_c2, valid1, valid2, faultMode", [
+                      ([10, 10, 1], [10, 10, 1], 1, 1, 0), #No merge, all valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 1, 0, 0), #No merge, one valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 0, 1, 0),  # No merge, other valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 0, 1, 1),  # Merge, other valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 0, 0, 0),  # No merge, none valid, no fault
+                      ([10, 10, 1], [100, 10, 1], 1, 1, 0),  # No merge, all valid, fault
+                      ([10, 10, 1], [100, 10, 1], 1, 1, 1),  # merge, all valid, fault
+                      ([10, 10, 1], [11, 9, 0.5], 1, 1, 1),  # merge, all valid, no fault
+])
 
-def test_faultdetection(show_plots, r_c, valid):
+def test_faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     """ Test opNav fault detection. """
-    [testResults, testMessage] = faultdetection(show_plots, r_c, valid)
+    [testResults, testMessage] = faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode)
     assert testResults < 1, testMessage
 
-def faultdetection(show_plots, r_c, valid):
+def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     """ Test the faultdetection module. Setup a simulation """
 
     testFailCount = 0  # zero unit test result counter
@@ -45,11 +51,14 @@ def faultdetection(show_plots, r_c, valid):
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    faults = opNavFaultDetection.FaultDetection()  # Create a config struct
+    faults = faultDetection.FaultDetectionData()  # Create a config struct
     faults.navMeasPrimaryMsgName = "primary_opnav"
     faults.navMeasSecondaryMsgName = "secondary_opnav"
     faults.cameraConfigMsgName = "camera_config_name"
     faults.attInMsgName = "nav_att_name"
+    faults.opNavOutMsgName = "output_nav_msg"
+    faults.sigmaFault = 3
+    faults.faultMode = faultMode
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
@@ -57,67 +66,117 @@ def faultdetection(show_plots, r_c, valid):
     faultsWrap.ModelTag = "faultDet"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, pixelLineWrap, pixelLine)
+    unitTestSim.AddModelToTask(unitTaskName, faultsWrap, faults)
 
     # Create the input messages.
-    inputPrimary = pixelLineConverter.OpNavFswMsg()
-    inputSecondary = pixelLineConverter.OpNavFswMsg()
-    inputCamera = pixelLineConverter.CameraConfigMsg()
-    inputAtt = pixelLineConverter.NavAttIntMsg()
+    inputPrimary = faultDetection.OpNavFswMsg()
+    inputSecondary = faultDetection.OpNavFswMsg()
+    inputCamera = faultDetection.CameraConfigMsg()
+    inputAtt = faultDetection.NavAttIntMsg()
 
     # Set camera
     inputCamera.focalLength = 1.
     inputCamera.sensorSize = [10, 10] # In mm
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.3,0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.cameraConfigMsgName, inputCamera)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.attInMsgName, inputAtt)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.attInMsgName, inputAtt)
 
     BN = rbk.MRP2C(inputAtt.sigma_BN)
     CB = rbk.MRP2C(inputCamera.sigma_CB)
-    # Set circles
-    inputPrimary.r_BN_C = r_c
+    NC = np.dot(BN.T, CB.T)
+    # Set primary
+    inputPrimary.r_BN_C = r_c1
+    inputPrimary.r_BN_N = np.dot(NC, np.array(r_c1)).tolist()
+    inputPrimary.valid = valid1
     inputPrimary.covar_C = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+    inputPrimary.covar_N = np.dot(np.dot(NC, np.array([0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]).reshape([3,3])), NC.T).flatten().tolist()
     inputPrimary.timeTag = 12345
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
-    # Set module for Mars
-    pixelLine.opNavOutMsgName = "output_nav_msg"
-    unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.navMeasPrimaryMsgName, inputPrimary)
+
+    # Set secondary
+    inputSecondary.r_BN_C = r_c2
+    inputSecondary.r_BN_N = np.dot(NC, np.array(r_c2)).tolist()
+    inputSecondary.valid = valid2
+    inputSecondary.covar_C = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+    inputSecondary.covar_N = np.dot(np.dot(NC, np.array([0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]).reshape([3,3])), NC.T).flatten().tolist()
+    inputSecondary.timeTag = 12345
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.navMeasSecondaryMsgName, inputSecondary)
 
     # Initialize the simulation
+    unitTestSim.TotalSim.logThisMessage(faults.opNavOutMsgName)
     unitTestSim.InitializeSimulation()
     # The result isn't going to change with more time. The module will continue to produce the same result
     unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     # Truth Vlaues
+    faultDetectedTrue= 0
+    timTagExp = inputPrimary.timeTag
+    if valid1 ==0 and valid2==0:
+        timTagExp = 0
+        r_Cexp = [0,0,0]
+        covar_Cexp = [0,0,0,0,0,0,0,0,0]
+    if valid1 == 0  and valid2 ==1:
+        if faultMode == 0:
+            timTagExp = 0
+            r_Cexp = [0, 0, 0]
+            covar_Cexp = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        if faultMode == 1:
+            r_Cexp = r_c2
+            covar_Cexp =  [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+    if valid1 == 1  and valid2 ==0:
+        r_Cexp = r_c1
+        covar_Cexp =  [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+    if valid1 == 1  and valid2 ==1:
+        r1 = np.array(r_c1)
+        r2 = np.array(r_c2)
+        faultNorm = np.linalg.norm(r2 - r1)
 
-    timTagExp = inputCircles.timeTag
+        covarz = np.array([0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]).reshape([3,3])
+        z1 = covarz[:,2]
+        z2 = np.copy(z1)
+        if (faultNorm > faults.sigmaFault*(np.linalg.norm(z1)+np.linalg.norm(z2))):
+            faultDetectedTrue = 1
+            r_Cexp = r_c2
+            covar_Cexp = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+        elif faultMode == 0:
+            r_Cexp = r_c1
+            covar_Cexp =  [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+        elif faultMode == 1:
+            covar_Cexp = np.linalg.inv(np.linalg.inv(covarz) + np.linalg.inv(covarz)).flatten().tolist()
+            r_Cexp = np.dot(np.linalg.inv(np.linalg.inv(covarz) + np.linalg.inv(covarz)), np.dot(np.linalg.inv(covarz), r1) +  np.dot(np.linalg.inv(covarz), r2)).tolist()
+
 
     posErr = 1e-10
     covarErr = 1e-10
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
-    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_BN_N',  list(range(3)))
-    outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar_N',  list(range(9)))
-    outputTime = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.timeTag')
+    outputR = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.r_BN_C',  list(range(3)))
+    outputCovar = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.covar_C',  list(range(9)))
+    outputTime = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.timeTag')
+    detected = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.faultDetected')
     #
     #
     for i in range(len(outputR[-1, 1:])):
-        if np.abs(r_Nexp[i] - outputR[-1, i+1]) > 1E-10 and np.isnan(outputR.any()):
+        if np.abs(r_Cexp[i] - outputR[-1, i+1]) > 1E-10 or np.isnan(outputR.any()):
             testFailCount += 1
             testMessages.append("FAILED: Position Check in pixelLine")
 
     for i in range(len(outputCovar[-1, 1:])):
-        if np.abs((covar_Nexp[i] - outputCovar[-1, i+1])) > 1E-10 and np.isnan(outputTime.any()):
+        if np.abs((covar_Cexp[i] - outputCovar[-1, i+1])) > 1E-10 or np.isnan(outputTime.any()):
             testFailCount += 1
             testMessages.append("FAILED: Covar Check in pixelLine")
 
-    if np.abs((timTagExp - outputTime[-1, 1])/timTagExp) > 1E-10 and np.isnan(outputTime.any()):
+    if np.abs((timTagExp - outputTime[-1, 1])) > 1E-10 or np.isnan(outputTime.any()):
+        testFailCount += 1
+        testMessages.append("FAILED: Time Check in pixelLine")
+
+    if np.abs(faultDetectedTrue - detected[-1, 1]) > 1E-10 or np.isnan(outputTime.any()):
         testFailCount += 1
         testMessages.append("FAILED: Time Check in pixelLine")
     #
@@ -125,11 +184,11 @@ def faultdetection(show_plots, r_c, valid):
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + pixelLineWrap.ModelTag)
+        print("PASSED: " + faultsWrap.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + pixelLineWrap.ModelTag)
+        print("Failed: " + faultsWrap.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
@@ -138,4 +197,4 @@ def faultdetection(show_plots, r_c, valid):
 
 
 if __name__ == '__main__':
-    test_pixelLine_converter()
+    faultdetection(False ,[10, 10, 1], [11, 9, 0.5], 1, 1, 1)
