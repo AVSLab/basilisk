@@ -213,7 +213,7 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, int gaussian, int dark
         AddCosmicRay(mFilters, mFilters, 0, 0);
     }
     if(cosmicRayBurst == 1){
-        AddCosmicRayBurst(mFilters, mFilters, 0);
+        AddCosmicRayBurst(mFilters, mFilters, cosmicRayBurstCount);
     }
     mFilters.convertTo(mDst, mSource.type());
 }
@@ -263,7 +263,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
-        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5);
+        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2);
         if (this->saveImages == 1){
             cv::imwrite(localPath, blurred);
         }
@@ -272,7 +272,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5);
+        ApplyFilters(imageCV, blurred, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2);
         if (this->saveImages == 1){
             cv::imwrite(localPath, blurred);
         }
