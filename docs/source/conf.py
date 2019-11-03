@@ -49,7 +49,7 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     "sphinx_rtd_theme",
     'recommonmark',
-    'breathe',
+    'breathe'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -212,7 +212,7 @@ epub_exclude_files = ['search.html']
 # -- Extension configuration -------------------------------------------------
 
 
-# breathe_projects = {"Basilisk": "~/Basilisk/src/*"}
+# breathe_projects = {"Basilisk": "../../src/*"}
 
 from glob import glob
 import shutil
@@ -414,17 +414,18 @@ class fileCrawler():
             return
 
 rebuild = True
-officialSrc = "../../../Basilisk/src"
-officialDoc = "./Documentation"
+officialSrc = "../../src"
+officialDoc = "./Documentation/"
 
 fileCrawler = fileCrawler(rebuild)
 import pickle
 
 if rebuild:
-    if os.path.exists("./Documentation/"):
-        shutil.rmtree("./Documentation/")
-    breathe_projects_source = {}
-    breathe_projects_source = fileCrawler.run("../../../Basilisk/src/") # When I run this, scenario finds the wrong doc_string
+    if os.path.exists(officialDoc):
+        shutil.rmtree(officialDoc)
+    # adjust the fileCrawler path to a local folder to just build a sub-system
+    breathe_projects_source = fileCrawler.run("../../src/") # When I run this, scenario finds the wrong doc_string
+    # breathe_projects_source = fileCrawler.run("../../src/simulation/power") # When I run this, scenario finds the wrong doc_string
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)
 else:
