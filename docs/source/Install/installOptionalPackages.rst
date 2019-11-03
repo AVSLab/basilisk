@@ -21,16 +21,12 @@ Running ``pytest`` in a multi-threaded manner
 
 While Basilisk is a single threaded simulation, it is possible to run
 ``pytest`` in a multi-threaded manner. Install the ``pytest-xdist``
-package using:
-
-::
+package using::
 
    pip3 install --user pytest-xdist
 
 After installing this utility you now run the multi-threaded version of
-``pytest`` for 8 threads using
-
-::
+``pytest`` for 8 threads using::
 
    python3 -m pytest -n 8
 
@@ -40,11 +36,9 @@ Graphing via datashader
 -----------------------
 
 Installing
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 
-In order to run the full ``datashader`` capabilities of the `Monte Carlo
-scenarios <@ref%20MonteCarloSimulation>`__, you must run the following
-commands::
+In order to run the full ``datashader`` capabilities of the :ref:`Monte Carlo example <scenarioMonteCarloAttRW>`, you must run the following commands::
 
    pip3 install --user datashader
    pip3 install --user holoviews
