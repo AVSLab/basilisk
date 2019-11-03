@@ -29,15 +29,12 @@
 #ifndef BASILISK_SIMPOWERSTORAGEBASE_H
 #define BASILISK_SIMPOWERSTORAGEBASE_H
 
-/*! \addtogroup SimModelGroup
- * @{
- */
+/*!
+ 
+ \verbatim embed:rst
 
-/*! @brief General energy storage base class used to calculate net power in/out and stored energy.
-
-## Module Purpose
-###  Executive Summary
-    The simPowerStorageBase is a base class that is used generate a standard interface and list of features for modules that store electrical power.  This class is used by other modules as a parent class and cannot be instantiated by itself.  All Basilisk power storateg modules based on this simPowerStorageBase inherit the following common properties:
+ Executive Summary
+    The PowerStorageBase is a base class that is used generate a standard interface and list of features for modules that store electrical power.  This class is used by other modules as a parent class and cannot be instantiated by itself.  All Basilisk power storateg modules based on this simPowerStorageBase inherit the following common properties:
 
     1. Writes out a storageStatusSimMsg containing the current stored power (in Watt-Seconds or Joules), the current net power (in Watts), and the battery storage capacity (in Watt-Seconds or Joules).
     2. Allows for multiple PowerNodeUsageSimMsg corresponding to individual simPowerNodeBase instances to be subscribed to using the addPowerNodeToModel method.
@@ -50,24 +47,32 @@
 
     For more information on how to set up and use classes derived from this module, see the simple power system example: @ref scenarioSimplePowerDemo
 
-### Module Assumptions and Limitations
+ Module Assumptions and Limitations
     The base class makes no specific energy storate device related assumptions.
 
-### Message Connection Descriptions
+ Message Connection Descriptions
     The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-    Msg Variable Name | Msg Type | Description
-    ------------------|----------|-------------
-    nodePowerUseMsgNames | PowerNodeUsageSimMsg | Input messages. Vector of power node usage messages. Set using `addPowerNodeToModel`.
-    batPowerOutMsgName |  PowerStorageStatusSimMsg |  Output message. Describes battery capacity, charge level, net power.
+    .. table:: Module I/O Messages
+        :widths: 25 25 100
 
- ## User Guide
+        +-----------------------+---------------------------------+---------------------------------------------------+
+        | Msg Variable Name     | Msg Type                        | Description                                       |
+        +=======================+=================================+===================================================+
+        | nodePowerUseMsgNames  | :ref:`powerNodeUsageSimMsg`     | Input messages. Vector of power node usage        |
+        |                       |                                 | usage messages. Set using ``addPowerNodeToModel`` |
+        +-----------------------+---------------------------------+---------------------------------------------------+
+        | batPowerOutMsgName    | :ref:`PowerStorageStatusSimMsg` | Output message. Describes battery                 |
+        |                       |                                 | capacity, charge level, net power.                |
+        +-----------------------+---------------------------------+---------------------------------------------------+
+
+ User Guide
     - The base class behavior requires the initial energy storage to be specified through `storedCharge_Init`.
     - The integration time step is evaluated as the time between module calls.
     - The user must set the output message name variable `batPowerOutMsgName`
     - The input message names are provided by calling the method `addPowerNodeToModel()`
 
-
+ \endverbatim
  */
 
 class PowerStorageBase: public SysModel  {
@@ -110,6 +115,5 @@ protected:
 
 };
 
-/*! @} */
 
 #endif //BASILISK_SIMPOWERSTORAGEBASE_H
