@@ -87,6 +87,7 @@ private:
     int32_t imageOutMsgID;                //!< ID for the outgoing message
     int32_t cameraOutID;                //!< ID for the outgoing message
     uint64_t CurrentSimNanos;
+    void* pointImageOut;      //!< void pointer for image memory passing
 };
 
 /* @} */

@@ -38,7 +38,8 @@
 Camera::Camera()
 {
     this->OutputBufferCount = 2;
-
+    this->pointImageOut = NULL;
+    
     /*! Default values for the camera.  */
     strcpy(this->parentName, "spacecraft");
     this->cameraID = 1;
@@ -224,11 +225,19 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, int gaussian, int dark
  */
 void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
+    if (this->pointImageOut != NULL) {
+        /*! If the permanent image buffer is not populated, it will be equal to null*/
+        free(this->pointImageOut);
+        this->pointImageOut = NULL;
+    }
+    
     this->CurrentSimNanos = CurrentSimNanos;
     std::string localPath;
     CameraImageMsg imageBuffer;
+    CameraImageMsg imageOut;
     CameraConfigMsg cameraMsg;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
+    memset(&imageOut, 0x0, sizeof(CameraImageMsg));
     memset(&cameraMsg, 0x0, sizeof(CameraConfigMsg));
     
     /*! - Populate the camera message */
@@ -283,8 +292,19 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         return;}
  
     /*! - Output the saved image */
-    SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
+    imageOut.valid = 1;
+    imageOut.cameraID = imageBuffer.cameraID;
+    imageOut.imageType = imageBuffer.imageType;
+    imageOut.imageBufferLength = (int32_t)sizeof(blurred.data);
+    this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
+    memcpy(this->pointImageOut, imageOut.imagePointer, imageOut.imageBufferLength*sizeof(char));
     
+    imageOut.imagePointer = (void *)blurred.data;
+    SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageOut), this->moduleID);
+    
+    /*! - Free the previous image memory */
+    free(imageBuffer.imagePointer);
+
     return;
 }
 
