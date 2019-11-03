@@ -24,9 +24,9 @@
 
 
 
-/*! This method transforms pixel, line, and diameter data into heading data for orbit determination or heading determination.
+/*! Self-init for the fault detection module
  @return void
- @param configData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the model
  @param moduleID The module identification integer
  */
 void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
@@ -37,9 +37,9 @@ void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
                                                  moduleID);
 }
 
-/*! This method subscribes to the camera and circle messages
+/*! This method subscribes to the camera and attitude, and navigation messages
  @return void
- @param configData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the model
  @param moduleID The module identification integer
  */
 void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
@@ -56,7 +56,7 @@ void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 
 /*! This resets the module to original states.
  @return void
- @param configData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
@@ -65,9 +65,9 @@ void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int
 
 }
 
-/*! This method reads in the camera and circle messages and extracts navigation data from them. It outputs the heading (norm and direction) to the celestial body identified in the inertial frame. It provides the heading to the most robust circle identified by the image processing algorithm.
+/*! This method reads in the two compared navigation messages and outputs the best measurement possible. It compares the faults of each and uses camera and attitude knowledge to output the information in all necessary frames.
  @return void
- @param configData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */

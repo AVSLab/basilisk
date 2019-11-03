@@ -14,8 +14,8 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 @pytest.mark.parametrize("r_c1, r_c2, valid1, valid2, faultMode", [
-                      ([10, 10, 1], [10, 10, 1], 1, 1, 0), #No merge, all valid, no fault
-                      ([10, 10, 1], [10, 10, 1], 1, 0, 0), #No merge, one valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 1, 1, 0), # No merge, all valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 1, 0, 0),  #No merge, one valid, no fault
                       ([10, 10, 1], [10, 10, 1], 0, 1, 0),  # No merge, other valid, no fault
                       ([10, 10, 1], [10, 10, 1], 0, 1, 1),  # Merge, other valid, no fault
                       ([10, 10, 1], [10, 10, 1], 0, 0, 0),  # No merge, none valid, no fault
@@ -25,7 +25,44 @@ path = os.path.dirname(os.path.abspath(filename))
 ])
 
 def test_faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
-    """ Test opNav fault detection. """
+    """ Test opNav fault detection
+
+   Validation Test Description
+   ---------------------------
+   This module tests the fault detection scenario. The logic behind the fault detection is explained in the doxygen documentation.
+   In order to properly test the proper functioning of the fault detection, all the possible combinations are run (8).
+   The expected results are computed in python and are tested with the output.
+
+   Test Parameters
+   ---------------
+   As this is a parameterized unit test, note that the test case parameters values are shown automatically in the \
+   pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what \
+   each parameter controls.  This is a convenient location to include the accuracy variable used in the validation test.
+   - accuracy: [float]
+       absolute accuracy value of 1E-10 is used in this test
+   - case 1: ([10, 10, 1], [10, 10, 1], 1, 1, 0)
+        No measurement merge, all are valid, no faults
+   - case 2: ([10, 10, 1], [10, 10, 1], 1, 0, 0)
+        No measurement merge, one valid, no faults
+   - case 3: ([10, 10, 1], [10, 10, 1], 0, 1, 0)
+        No measurement merge, other valid, no faults
+   - case 4: ([10, 10, 1], [10, 10, 1], 0, 1, 1)
+        Merge on, other valid, no faults
+   - case 5: ([10, 10, 1], [10, 10, 1], 0, 0, 0)
+        No merge, none valid, no faults
+   - case 6: ([10, 10, 1], [100, 10, 1], 1, 1, 0)
+        No merge, all measurements valid, fault
+   - case 7: ([10, 10, 1], [100, 10, 1], 1, 1, 1)
+        Merge, all measurements valid, fault
+   - case 8: ([10, 10, 1], [10, 10, 1], 1, 1, 1)
+        Merge, all measurements valid, no fault
+
+   Description of Variables Being Tested
+   -------------------------------------
+    The time, detection of a fault, measurement, and measurement covariances are tested on the output.
+    These are r_BN_N, covar_N, time, faultDetected
+
+       """
     [testResults, testMessage] = faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode)
     assert testResults < 1, testMessage
 
@@ -152,9 +189,7 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
 
 
     posErr = 1e-10
-    covarErr = 1e-10
-    unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
-    unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
+    print(posErr)
 
     outputR = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.r_BN_C',  list(range(3)))
     outputCovar = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.covar_C',  list(range(9)))

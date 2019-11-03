@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _PIXEL_LINE_CONVERTER_H_
-#define _PIXEL_LINE_CONVERTER_H_
+#ifndef _FAULT_DETECTION_H_
+#define _FAULT_DETECTION_H_
 
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
@@ -32,11 +32,11 @@
 
 
 /*! \defgroup faultDetection
- *  @brief Converter that takes a image processing message and camera information and outputs a relative position to the object.
+ *  @brief Module that takes two image processing messages, camera information, and attitude knowledge. It outputs a fault detection and a best measurement given the covariances.
 
  *  @{
  */
-/*! @brief The configuration structure for the pixelLine Converter module.*/
+/*! @brief The configuration structure for the opnav fault detection module.*/
 typedef struct {
     char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
     char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
