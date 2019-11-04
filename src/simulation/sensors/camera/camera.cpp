@@ -291,8 +291,11 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
         return;}
  
+    /*! - Encode the cv mat into a png for the future modules to decode it the same way */
     std::vector<unsigned char> buf;
-    imencode(".jpg", image, buf, 0);
+    std::vector<int> compression;
+    compression.push_back(0);
+    cv::imencode(".png", blurred, buf, compression);
     /*! - Output the saved image */
     imageOut.valid = 1;
     imageOut.cameraID = imageBuffer.cameraID;
