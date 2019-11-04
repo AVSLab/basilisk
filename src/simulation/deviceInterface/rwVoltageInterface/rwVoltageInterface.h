@@ -28,11 +28,6 @@
 #include <Eigen/Dense>
 
 
-/*! \addtogroup SimModelGroup
- * @{
- */
-
-//!@brief Interface module to convert RW input voltage to a motor torque output
 class RWVoltageInterface: public SysModel {
 public:
     RWVoltageInterface();
@@ -65,6 +60,5 @@ private:
     RWArrayVoltageIntMsg inputVoltageBuffer;//!< [V] One-time allocation for time savings
 };
 
-/*! @} */
 
 #endif

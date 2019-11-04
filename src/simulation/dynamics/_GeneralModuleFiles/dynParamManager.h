@@ -28,9 +28,6 @@
 #include "stateData.h"
 
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
 class StateVector {
 public:
@@ -40,9 +37,6 @@ public:
     StateVector operator*(double scaleFactor);
 };
 
-/*! Manager of states for Basilisk dynamical systems.  Allows the state-
-           effector models of a dynamic object to create, get, and update states 
-           present in the model.*/
 class DynParamManager {
 public:
     std::map<std::string, Eigen::MatrixXd> dynProperties;
@@ -63,6 +57,5 @@ public:
     
 };
 
-/* @} */
 
 #endif /* STATE_MANAGER_H */

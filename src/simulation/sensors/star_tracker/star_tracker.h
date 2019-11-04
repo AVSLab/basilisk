@@ -29,19 +29,8 @@
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
-//!@brief Sensor model to simulate a Star Tracker.
-/*!
- The module
- [PDF Description](Basilisk-star_tracker-20161101.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- The corruption types are outlined in this
- [PDF document](BasiliskCorruptions.pdf).
- */
+
 class StarTracker: public SysModel {
 public:
     StarTracker();
@@ -84,6 +73,5 @@ private:
     GaussMarkov errorModel;           //!< [-] Gauss-markov error states
 };
 
-/* @} */
 
 #endif

@@ -29,21 +29,7 @@
 #include "simMessages/eclipseSimMsg.h"
 #include "utilities/linearAlgebra.h"
 
-/*! \addtogroup SimModelGroup
- *  This group is used to model parts of the vehicle and the surrounding environment
- *  in the simulation system.  All components/dynamics/environment models are a
- *  part of this group.
- * @{
- */
 
-//! @brief The eclipse class gets generates sun illumination state at a particular inertial position
-/*!
- The module
- [PDF Description](Basilisk-eclipse-20171101.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
 
 class Eclipse: public SysModel {
 public:
@@ -81,6 +67,5 @@ private:
 
 };
 
-/*! @} */
 
 #endif

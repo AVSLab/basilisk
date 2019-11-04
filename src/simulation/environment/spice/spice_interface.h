@@ -29,21 +29,7 @@
 #include "utilities/avsEigenSupport.h"
 #include "simMessages/epochSimMsg.h"
 
-/*! \addtogroup SimModelGroup
- *  This group is used to model parts of the vehicle and the surrounding environment
- *  in the simulation system.  All components/dynamics/environment models are a
- *  part of this group.
- * @{
- */
 
-
-//! @brief The SPICE interface class gets time and planetary body information from the JPL ephemeris library
-/*!
- The module
- [PDF Description](Basilisk-SPICE_INTERFACE20170712.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-*/
 
 class SpiceInterface: public SysModel {
 public:
@@ -95,6 +81,5 @@ private:
     
 };
 
-/*! @} */
 
 #endif

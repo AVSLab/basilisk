@@ -30,13 +30,7 @@
 #include "simMessages/magneticFieldSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
-/*! @brief Evaluate a centered dipole magnetic field model about a planet for a range of spacecraft locations.
-    For more information on this module see this [PDF Documentation](Basilisk-magFieldDipole-20190309.pdf).
- */
 class MagneticFieldCenteredDipole:  public MagneticFieldBase {
 public:
     MagneticFieldCenteredDipole();
@@ -54,6 +48,5 @@ public:
 
 };
 
-/*! @} */
 
 #endif /* CENTERED_DIPOLE_MAGNETIC_FIELD_H */

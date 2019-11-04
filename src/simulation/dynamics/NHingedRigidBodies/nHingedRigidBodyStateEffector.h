@@ -26,9 +26,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
-/*! \addtogroup SimModelGroup
- * @{
- */
+
 
 /*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of
  the N_hingedRigidBodyStateEffector class. */
@@ -57,17 +55,6 @@ struct HingedPanel {
     Eigen::Matrix3d ISPrimePntS_B;   //!< [kg-m^2/s] time body derivative IPntS in body frame components
 };
 
-/*! @brief This class is an instantiation of the stateEffector class and is a hinged rigid body effector. This effector
- is a rigid body attached to the hub through a torsional spring and damper that approximates a flexible appendage. See
- Allard, Schaub, and Piggott paper: "General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing"
- for a detailed description of this model. A hinged rigid body has 2 states: theta and thetaDot
-
- The module
- [PDF Description](Basilisk-NHINGEDRIGIDBODYSTATEEFFECTOR-20180103.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
 class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     std::string NHingedRigidBodyOutMsgName; //!< -- state output message name
@@ -119,6 +106,5 @@ public:
     void readInputMessages();       //!< -- method to read input messages
 };
 
-/* @} */
 
 #endif /* N_HINGED_RIGID_BODY_STATE_EFFECTOR_H */

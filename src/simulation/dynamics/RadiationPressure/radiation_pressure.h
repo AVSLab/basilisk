@@ -29,9 +29,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 
-/*! \addtogroup SimModelGroup
- * @{
- */
+
 
 
 typedef enum {
@@ -40,13 +38,7 @@ typedef enum {
 } srpModel_t;
 
 
-//! @brief Radiation pressure dynamics class used to compute
-/*!
- The module
- [PDF Description](Basilisk-RadiationPressure-20170712.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-*/
+
 //  SRP effects on body
 class RadiationPressure: public SysModel, public DynamicEffector{
 public:
@@ -90,6 +82,5 @@ private:
     EclipseSimMsg sunVisibilityFactor;              //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
 };
 
-/*! @} */
 
 #endif

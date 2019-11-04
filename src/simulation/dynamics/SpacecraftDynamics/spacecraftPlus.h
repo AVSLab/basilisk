@@ -34,23 +34,7 @@
 #include "hubEffector.h"
 
 
-/*! \addtogroup SimModelGroup Simulation C++ Modules
- * @{
- */
 
-/*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
- dynamicEffectors attached to it. The spacecraftPlus allows for both translation and
- rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching 
- stateEffectors. dynamicEffectors such as thrusters, external force and torque, SRP etc can be added to the spacecraft 
- by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
-  the hub.
-
- The module
- [PDF Description](Basilisk-SPACECRAFTPLUS-20170808.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
 class SpacecraftPlus : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
@@ -117,6 +101,5 @@ private:
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
 };
 
-/* @} */
 
 #endif /* SPACECRAFT_PLUS_H */

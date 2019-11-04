@@ -42,23 +42,7 @@ typedef enum {
     MAX_CSSFAULT
 } CSSFaultState_t;
 
-/*! \addtogroup SimModelGroup Simulation C++ Modules
- * @{
- */
 
-
-//!@brief Coarse sun sensor model
-/*! This class is designed to model the state of a single coarse sun sensor 
-attached to a spacecraft.  It emulates the "counts" that will typically be 
-output by the ADC on board of a spacecraft.
-
- The module
- [PDF Description](Basilisk-CoarseSunSensor-20170803.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- The corruption types are outlined in this
- [PDF document](BasiliskCorruptions.pdf).
- */
 class CoarseSunSensor: public SysModel {
 public:
     CoarseSunSensor();
@@ -140,6 +124,5 @@ class CSSConstellation: public SysModel {
     CSSArraySensorIntMsg outputBuffer;             //!< [-] buffer used to write output message
 };
 
-/*! @} */
 
 #endif

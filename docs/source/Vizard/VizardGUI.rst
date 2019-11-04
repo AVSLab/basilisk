@@ -2,7 +2,7 @@
    :maxdepth: 1
    :hidden:
 
-.. _vizard:
+.. _vizardGUI:
 
 User Guide
 ==========
