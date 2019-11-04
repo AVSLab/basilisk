@@ -30,15 +30,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>
 
-/*! \defgroup rateServoFullNonlinear
- * @brief This module implements a nonlinear rate servo control uses the attiude steering message and
- * determine the ADCS control torque vector.
- *
- * The module [PDF Description](AVS-Sim-nonlinRateServo-2019-0327.pdf)
- * contains further information on this module's function,
- * how to run it, as well as testing.
- * @{
- */
+
 
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
 typedef struct {
@@ -87,6 +79,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

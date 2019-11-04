@@ -25,9 +25,6 @@
 #include "fswMessages/attGuidFswMsg.h"
 
 
-/*! \defgroup simpleDeadband
- * @{
- */
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -64,6 +61,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

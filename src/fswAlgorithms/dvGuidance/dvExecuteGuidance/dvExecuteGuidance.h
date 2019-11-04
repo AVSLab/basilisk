@@ -26,9 +26,6 @@
 #include "fswMessages/dvBurnCmdFswMsg.h"
 #include <stdint.h>
 
-/*! \defgroup dvExecuteGuidance
- * @{
- */
 
 typedef struct {
     uint32_t burnExecuting;    /*!< [-] Flag indicating whether burn is executing*/
@@ -63,6 +60,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

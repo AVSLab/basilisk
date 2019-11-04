@@ -25,18 +25,8 @@
 #include "fswMessages/rateCmdFswMsg.h"
 #include <stdint.h>
 
-/*! \defgroup PRV_Steering
- * @{
- */
 
-/*!@brief Data structure for the PRV steering attitude control routine.
-
- The module
- [PDF Description](AVS-Sim-PRV_Steering-2016-0108.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
-
+/*! module configuration message definition */
 typedef struct {
     /* declare module private variables */
     double K1;                          /*!< [rad/sec] Proportional gain applied to principal rotation angle error */
@@ -69,6 +59,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

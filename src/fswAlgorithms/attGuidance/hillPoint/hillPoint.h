@@ -28,16 +28,7 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
 
-/*! \defgroup hillPoint
- @brief This attitude guidance module computes the orbital Hill reference frame states.
 
- The orbit can be any type of Keplerian motion, including circular, elliptical or hyperbolic.
- The module
- [PDF Description](hillPoint.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- * @{
- */
 
 
 /*!@brief Data structure for module to compute the Hill-frame pointing navigation solution.
@@ -74,6 +65,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

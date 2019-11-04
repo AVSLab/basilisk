@@ -29,16 +29,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 
 
-/*! \defgroup rwMotorVoltage
- * @{
- */
-
-/*!@brief Data structure for module to compute the RW motor voltage from the command torque.
-
- The module
- [PDF Description](Basilisk-rwMotorVoltage-20170113.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
+/*!@brief module configuration message
  */
 
 typedef struct {
@@ -81,6 +72,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

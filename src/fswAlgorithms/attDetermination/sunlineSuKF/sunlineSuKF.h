@@ -30,12 +30,7 @@
 #include "fswMessages/cssConfigFswMsg.h"
 
 
-/*! \defgroup sunlineSuKF
- * @brief This module implements and tests a Switch Unscented Kalman Filter in order to estimate the sunline direction.
 
- More information can be found in the [module PDF Description](Sunline_SuKF.pdf)
- * @{
- */
 
 typedef struct {
     double cssRelScale;                          //!< Relative scale factor for this CSS
@@ -131,6 +126,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

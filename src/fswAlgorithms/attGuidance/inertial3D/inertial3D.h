@@ -24,11 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/attRefFswMsg.h"
 
-/*! \defgroup inertial3D
- * @brief This attitude guidance module create a reference attitude message that points in fixed inertial direction. The module [PDF Description](Basilisk-Inertial3D-2016-01-15.pdf) contains further information on this module's function,
-     how to run it, as well as testing.
- * @{
- */
+
 
 
 /*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
@@ -54,6 +50,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

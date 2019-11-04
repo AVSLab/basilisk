@@ -28,10 +28,7 @@
 #define MAX_CHEB_RECORDS 4
 
 
-/*! \defgroup chebyPosEphem
- *  @{
- */
-/*! @brief Structure that defines the layout of an Ephemeris "record."  This is 
+/*! @brief Structure that defines the layout of an Ephemeris "record."  This is
            basically the set of coefficients for the body x/y/z positions and 
            the time factors associated with those coefficients
 */
@@ -44,9 +41,7 @@ typedef struct {
 }ChebyEphemRecord;
 
 /*! @brief Top level structure for the Chebyshev position ephemeris 
-           fit system.  Allows the user to specify a set of chebyshev 
-           coefficients and then use the input time to determine where 
-           a given body is in space
+           fit system. e
 */
 typedef struct {
     char posFitOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output navigation message for pos/vel*/
@@ -75,6 +70,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

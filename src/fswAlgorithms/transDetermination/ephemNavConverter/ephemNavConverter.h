@@ -22,12 +22,7 @@
 
 #include "messaging/static_messaging.h"
 
-/*! \defgroup ephemNavConverter
- *  @brief Converter that takes an ephemeris output message and converts it over to a translational
- *  state estimate message. More information can be found
- *  in the [PDF Description](Basilisk-ephemNavConverter-20190326.pdf).
- *  @{
- */
+
 /*! @brief The configuration structure for the ephemNavConverter module.*/
 typedef struct {
     char stateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for pos/vel
@@ -51,6 +46,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

@@ -29,12 +29,10 @@
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include <string.h>
 
-/*! \defgroup sunlineSEKF
- * @{
- */
+
 
 /*! @brief Top level structure for the CSS-based Switch Extended Kalman Filter.
- Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
+ Used to estimate the sun state in the vehicle body frame. */
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
@@ -117,6 +115,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

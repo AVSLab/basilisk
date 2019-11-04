@@ -29,17 +29,8 @@
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include <stdint.h>
 
-/*! \defgroup MRP_Feedback
- * @brief This module implements a nonlinear MRP feedback control that tracks
- an arbitrary reference orientation.
- 
-  The module [PDF Description](Basilisk-MRP_Feedback-2016-0108.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- @{
- */
 
-/*! @brief Data structure for the MRP feedback attitude control routine. */
+/*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 typedef struct {
     double K;                           //!< [rad/sec] Proportional gain applied to MRP errors
     double P;                           //!< [N*m*s]   Rate error feedback gain applied
@@ -83,6 +74,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif
