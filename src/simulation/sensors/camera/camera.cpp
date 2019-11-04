@@ -291,15 +291,16 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
         return;}
  
+    std::vector<unsigned char> buf;
+    imencode(".jpg", image, buf, 0);
     /*! - Output the saved image */
     imageOut.valid = 1;
     imageOut.cameraID = imageBuffer.cameraID;
     imageOut.imageType = imageBuffer.imageType;
-    imageOut.imageBufferLength = (int32_t)sizeof(blurred.data);
+    imageOut.imageBufferLength = (int32_t)buf.size();
     this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
     memcpy(this->pointImageOut, imageOut.imagePointer, imageOut.imageBufferLength*sizeof(char));
     
-    imageOut.imagePointer = (void *)blurred.data;
     SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageOut), this->moduleID);
     
     /*! - Free the previous image memory */
