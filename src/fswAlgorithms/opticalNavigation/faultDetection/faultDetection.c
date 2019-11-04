@@ -189,6 +189,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
             m33tMultV3(dcm_CB, X_C, opNavMsgOut.r_BN_B);
             m33MultV3(dcm_NC, X_C, opNavMsgOut.r_BN_N);
             opNavMsgOut.timeTag = opNavIn1.timeTag;
+            opNavMsgOut.planetID = opNavIn1.planetID;
         }
         WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                      &opNavMsgOut, moduleID);
