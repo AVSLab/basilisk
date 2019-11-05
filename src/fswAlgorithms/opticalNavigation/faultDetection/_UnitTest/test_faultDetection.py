@@ -14,14 +14,19 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 @pytest.mark.parametrize("r_c1, r_c2, valid1, valid2, faultMode", [
-                      ([10, 10, 1], [10, 10, 1], 1, 1, 0), # No merge, all valid, no fault
-                      ([10, 10, 1], [10, 10, 1], 1, 0, 0),  #No merge, one valid, no fault
-                      ([10, 10, 1], [10, 10, 1], 0, 1, 0),  # No merge, other valid, no fault
-                      ([10, 10, 1], [10, 10, 1], 0, 1, 1),  # Merge, other valid, no fault
-                      ([10, 10, 1], [10, 10, 1], 0, 0, 0),  # No merge, none valid, no fault
-                      ([10, 10, 1], [100, 10, 1], 1, 1, 0),  # No merge, all valid, fault
-                      ([10, 10, 1], [100, 10, 1], 1, 1, 1),  # merge, all valid, fault
-                      ([10, 10, 1], [11, 9, 0.5], 1, 1, 1),  # merge, all valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 1, 1, 1), # No merge, all valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 1, 0, 1),  #No merge, one valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 1, 0, 2),  #No merge, one valid, no fault, mode 2
+                      ([10, 10, 1], [10, 10, 1], 0, 1, 1),  # No merge, other valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 0, 1, 2),  # No merge, other valid, no fault, mode 2
+                      ([10, 10, 1], [10, 10, 1], 0, 1, 0),  # Merge, other valid, no fault
+                      ([10, 10, 1], [10, 10, 1], 0, 0, 1),  # No merge, none valid, no fault
+                      ([10, 10, 1], [100, 10, 1], 1, 1, 1),  # No merge, all valid, fault
+                      ([10, 10, 1], [100, 10, 1], 1, 1, 0),  # merge, all valid, fault
+                      ([10, 10, 1], [11, 9, 0.5], 1, 1, 0),  # merge, all valid, no fault
+                      ([10, 10, 1], [11, 9, 0.5], 1, 1, 2),  # merge, all valid, no fault, mode 2
+                      ([10, 10, 1], [11, 9, 0.5], 1, 1, 0),  # merge, all valid, no fault
+
 ])
 
 def test_faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
@@ -44,17 +49,23 @@ def test_faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
         No measurement merge, all are valid, no faults
    - case 2: ([10, 10, 1], [10, 10, 1], 1, 0, 0)
         No measurement merge, one valid, no faults
-   - case 3: ([10, 10, 1], [10, 10, 1], 0, 1, 0)
+   - case 3: ([10, 10, 1], [10, 10, 1], 1, 0, 2)
+        No measurement merge, one valid, no faults, mode 2
+   - case 4: ([10, 10, 1], [10, 10, 1], 0, 1, 0)
         No measurement merge, other valid, no faults
-   - case 4: ([10, 10, 1], [10, 10, 1], 0, 1, 1)
+   - case 5: ([10, 10, 1], [10, 10, 1], 0, 1, 0)
+        No measurement merge, other valid, no faults, mode 2
+   - case 6: ([10, 10, 1], [10, 10, 1], 0, 1, 1)
         Merge on, other valid, no faults
-   - case 5: ([10, 10, 1], [10, 10, 1], 0, 0, 0)
+   - case 7: ([10, 10, 1], [10, 10, 1], 0, 0, 0)
         No merge, none valid, no faults
-   - case 6: ([10, 10, 1], [100, 10, 1], 1, 1, 0)
+   - case 8: ([10, 10, 1], [100, 10, 1], 1, 1, 0)
         No merge, all measurements valid, fault
-   - case 7: ([10, 10, 1], [100, 10, 1], 1, 1, 1)
+   - case 9: ([10, 10, 1], [100, 10, 1], 1, 1, 1)
         Merge, all measurements valid, fault
-   - case 8: ([10, 10, 1], [10, 10, 1], 1, 1, 1)
+   - case 10: ([10, 10, 1], [100, 10, 1], 1, 1, 2)
+    Merge, all measurements valid, fault, mode 2
+   - case 11: ([10, 10, 1], [10, 10, 1], 1, 1, 1)
         Merge, all measurements valid, no fault
 
    Description of Variables Being Tested
@@ -158,16 +169,21 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
         r_Cexp = [0,0,0]
         covar_Cexp = [0,0,0,0,0,0,0,0,0]
     if valid1 == 0  and valid2 ==1:
-        if faultMode == 0:
+        if faultMode > 0:
             timTagExp = 0
             r_Cexp = [0, 0, 0]
             covar_Cexp = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        if faultMode == 1:
+        if faultMode == 0:
             r_Cexp = r_c2
             covar_Cexp =  [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     if valid1 == 1  and valid2 ==0:
-        r_Cexp = r_c1
-        covar_Cexp =  [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+        if faultMode < 2:
+            r_Cexp = r_c1
+            covar_Cexp =  [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+        if faultMode == 2:
+            timTagExp = 0
+            r_Cexp = [0, 0, 0]
+            covar_Cexp = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     if valid1 == 1  and valid2 ==1:
         r1 = np.array(r_c1)
         r2 = np.array(r_c2)
@@ -180,10 +196,10 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
             faultDetectedTrue = 1
             r_Cexp = r_c2
             covar_Cexp = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
-        elif faultMode == 0:
+        elif faultMode > 0:
             r_Cexp = r_c1
             covar_Cexp =  [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
-        elif faultMode == 1:
+        elif faultMode == 0:
             covar_Cexp = np.linalg.inv(np.linalg.inv(covarz) + np.linalg.inv(covarz)).flatten().tolist()
             r_Cexp = np.dot(np.linalg.inv(np.linalg.inv(covarz) + np.linalg.inv(covarz)), np.dot(np.linalg.inv(covarz), r1) +  np.dot(np.linalg.inv(covarz), r2)).tolist()
 

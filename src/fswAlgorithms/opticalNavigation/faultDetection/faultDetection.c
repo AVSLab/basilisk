@@ -66,6 +66,10 @@ void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int
 }
 
 /*! This method reads in the two compared navigation messages and outputs the best measurement possible. It compares the faults of each and uses camera and attitude knowledge to output the information in all necessary frames.
+ Three fault modes are possible.
+ FaultMode = 0 is the less restricitve: it uses either of the measurements availabe and merges them if they are both available
+ FaultMode = 1 is more restricitve: only the primary is used if both are available and the secondary is only used for a dissimilar check
+ FaultMode = 2 is most restricive: the primary is not used in the abscence of the secondary measurement
  @return void
  @param configData The configuration data associated with the model
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -111,21 +115,29 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                      &opNavMsgOut, moduleID);
     }
-    /*! - If only one of two are valid use that one */
+    /*! - Only one of two are valid */
     else if (opNavIn1.valid == 1 && opNavIn2.valid == 0){
+        /*! - Only one of two are valid */
+        if (configData->faultMode<2){
         memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
         WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                      &opNavMsgOut, moduleID);
+        }
+        else{
+            opNavMsgOut.valid = 0;
+            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                         &opNavMsgOut, moduleID);
+        }
     }
     else if (opNavIn1.valid == 0 && opNavIn2.valid == 1){
         /*! - If secondary measurments are trusted use them as primary */
-        if (configData->faultMode==1){
+        if (configData->faultMode==0){
             memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
             WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                          &opNavMsgOut, moduleID);
         }
         /*! - If secondaries are not trusted, do not risk corrupting measurment */
-        if (configData->faultMode==0){
+        if (configData->faultMode>0){
             opNavMsgOut.valid = 0;
             WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                          &opNavMsgOut, moduleID);
@@ -134,7 +146,6 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
     /*! - If they are both valid proceed to the fault detection */
     else if (opNavIn1.valid == 1 && opNavIn2.valid == 1){
         opNavMsgOut.valid = 1;
-        double error = 0;
         /*! -- Dissimilar mode compares the two measurements: if the mean +/- 3-sigma covariances overlap use the nominal nav solution */
         double faultDirection[3];
         double faultNorm;
@@ -145,22 +156,21 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         v3Normalize(faultDirection, faultDirection);
         
         /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
-        if (faultNorm > configData->sigmaFault*(vNorm(opNavIn1.covar_C, 9) + vNorm(opNavIn2.covar_C, 9))){
-            error = 1;
+        if (faultNorm > configData->sigmaFault*sqrt((vNorm(opNavIn1.covar_C, 9) + vNorm(opNavIn2.covar_C, 9)))){
             memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
             opNavMsgOut.faultDetected = 1;
             WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                          &opNavMsgOut, moduleID);
         }
         /*! If the difference between vectors is low, use primary */
-        else if (configData->faultMode==0){
+        else if (configData->faultMode>0){
             /*! Bring all the measurements and covariances into their respective frames */
             memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
             WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                          &opNavMsgOut, moduleID);
         }
         /*! -- Merge mode combines the two measurements and uncertainties if they are similar */
-        else if (configData->faultMode==1){
+        else if (configData->faultMode==0){
             double P1invX1[3], P2invX2[3], X_C[3], P_C[3][3], P_B[3][3], P_N[3][3];
             double P1inv[3][3], P2inv[3][3];
             
