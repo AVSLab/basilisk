@@ -54,68 +54,56 @@ from Basilisk.utilities import vizSupport
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioCentralBodyGroup
-## @{
-## Demonstration of using planetStates.planetPositionVelocity and isCentralBody to set
-## spacecraft initial states in an absolute or relative frame
-#
-# Central Body Setup {#scenarioCentralBody}
-# ====
-
-
-## @}
 def run(show_plots, useCentral):
     """
-        This script sets up a basic spacecraft in orbit about Earth. One option uses earth.isCentralBody = True and the
-        other uses isCentralBody = False. The nuances of spacecraft position and velocity I/O in these cases is
+        This script sets up a basic spacecraft in orbit about Earth. One option uses ``earth.isCentralBody = True``
+        and the
+        other uses ``isCentralBody = False``. The nuances of spacecraft position and velocity I/O in these cases are
         demonstrated.
 
-        .. image:: ../../../_images/static/test_scenarioBasicOrbit.svg
+        .. image:: /_images/static/test_scenarioBasicOrbit.svg
            :align: center
+
+        The script is found in the folder ``src/examples/OrbitalSimulations`` and executed by using::
+
+            python3 scenarioCentralBody.py
 
         Args:
             show_plots (bool): Determines if the script should display plots
-            useCentral (bool):
-
-        Returns:
-            None
+            useCentral (bool): Specifies if the planet is the center of the coordinate system
 
         .. note:: This script is a good reference for configuring the following modules:
 
                   * :ref:`spacecraftPlus`
                   * :ref:`gravityEffector`
 
-        .. seealso::
-                     * :ref:`scenarioBasicOrbit`
-                     * :ref:`scenarioBasicOrbitLivePlot`
-                     * :ref:`scenarioBasicOrbitStream`
-                     * :ref:`scenarioOrbitMultiBody`
-                     * :ref:`scenarioOrbitManeuver`
 
 
-        Resulting Images
-        ================
+        **Resulting Images**
+
+        Running this example script will yield the following results.
+
+        ::
+
+            show_plots = True, useCentral = False
+
+        .. figure:: /_images/Scenarios/scenarioCentralBody10.svg
+           :align: center
+
+        .. figure:: /_images/Scenarios/scenarioCentralBody20.svg
+           :align: center
 
         ::
 
             show_plots = True, useCentral = True
 
-        .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
+        .. figure:: /_images/Scenarios/scenarioCentralBody11.svg
            :align: center
 
-        .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
+        .. figure:: /_images/Scenarios/scenarioCentralBody21.svg
            :align: center
-
         """
 
-    # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
-    #
-    #       python3 scenarioCentralBody.py
-    #
-    # Simulation Scenario Setup Details
-    # -----
-    # The basics of the spacecraft and simulation set up are shown in
-    # scenarioBasicOrbit and only the particulars are discussed here.
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -290,6 +278,9 @@ def run(show_plots, useCentral):
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Inertial Position [km]')
+    figureList = {}
+    pltName = fileName + "1" + str(int(useCentral))
+    figureList[pltName] = plt.figure(1)
 
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
@@ -319,6 +310,8 @@ def run(show_plots, useCentral):
     plt.xlabel('$i_e$ Cord. [km]')
     plt.ylabel('$i_p$ Cord. [km]')
     plt.grid()
+    pltName = fileName + "2" + str(int(useCentral))
+    figureList[pltName] = plt.figure(2)
 
     if show_plots:
         plt.show()
@@ -326,7 +319,7 @@ def run(show_plots, useCentral):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return out_r, out_v, truth_r, truth_v
+    return out_r, out_v, truth_r, truth_v, figureList
 
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script

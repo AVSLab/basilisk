@@ -92,8 +92,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
 
 
-    Resulting Images
-    ================
+    **Resulting Images**
+
     The following images illustrate the expected simulation run returns for a range of script configurations.
 
     ::
@@ -253,10 +253,10 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # specifies the spacecraft center of mass location with the above code.  If the simulation output should be
     # about another body fixed point B, this can be done as well.  This is useful in particular with more challenging
     # dynamics where the center of mass moves relative to the body.  The following vector would specify the location of
-    # the spacecraft hub center of mass (Bc) relative to this body fixed point.
-    # ~~~~~~~~~~~~~~~~{.py}
+    # the spacecraft hub center of mass (Bc) relative to this body fixed point, as in
+    #
     #    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    # ~~~~~~~~~~~~~~~~
+    #
 
     # If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub
     # is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecraft contains
