@@ -36,7 +36,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/05-Sensors')
+sys.path.append(path + '/../examples')
 import scenarioCSSFilters
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each

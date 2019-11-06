@@ -43,7 +43,7 @@ except ImportError:
     pytestmark = pytest.mark.skip(reason="viz interface not built without required libraries")
 
 
-sys.path.append(path + '/../examples/11-Vizard')
+sys.path.append(path + '/../examples')
 import scenarioVizPoint
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

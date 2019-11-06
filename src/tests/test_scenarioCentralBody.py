@@ -36,7 +36,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/OrbitalSimulations')
+sys.path.append(path + '/../examples')
 import scenarioCentralBody
 
 

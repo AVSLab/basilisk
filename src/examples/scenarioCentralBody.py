@@ -64,7 +64,7 @@ def run(show_plots, useCentral):
         .. image:: /_images/static/test_scenarioBasicOrbit.svg
            :align: center
 
-        The script is found in the folder ``src/examples/OrbitalSimulations`` and executed by using::
+        The script is found in the folder ``src/examples`` and executed by using::
 
             python3 scenarioCentralBody.py
 

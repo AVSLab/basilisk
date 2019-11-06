@@ -15,11 +15,11 @@ This section contains scripts that illustrate how to setup a simple spacecraft o
 
 .. toctree::
 
-   Basic Orbit Simulations <OrbitalSimulations/scenarioBasicOrbit>
-   Delta_v Orbit Maneuvers <OrbitalSimulations/scenarioOrbitManeuver>
-   Multiple Gravitational Bodies <OrbitalSimulations/scenarioOrbitMultiBody>
-   Defining Motion Relative to Planet <OrbitalSimulations/scenarioCentralBody>
-   Simulating Trajectory about Multiple Celestial Bodies <OrbitalSimulations/scenarioPatchedConics>
+   Basic Orbit Simulations <scenarioBasicOrbit>
+   Delta_v Orbit Maneuvers <scenarioOrbitManeuver>
+   Multiple Gravitational Bodies <scenarioOrbitMultiBody>
+   Defining Motion Relative to Planet <scenarioCentralBody>
+   Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
 
 .. toctree::
 
@@ -34,11 +34,11 @@ Attitude Regulation Control
 
 .. toctree::
 
-   Inertial Attitude Pointing <AttitudeSimulations/scenarioAttitudeFeedback>
-   Using Separate TAsk Group for Control <AttitudeSimulations/scenarioAttitudeFeedback2T>
-   Inertial Pointing with Python Module <AttitudeSimulations/scenarioAttitudePythonPD>
-   Basic Attitude Pointing in Deep Space <AttitudeSimulations/scenarioAttitudePointing>
-   Complex Attitude Pointing in Deep Space <AttitudeSimulations/scenarioAttitudeFeedbackNoEarth>
+   Inertial Attitude Pointing <scenarioAttitudeFeedback>
+   Using Separate TAsk Group for Control <scenarioAttitudeFeedback2T>
+   Inertial Pointing with Python Module <scenarioAttitudePythonPD>
+   Basic Attitude Pointing in Deep Space <scenarioAttitudePointing>
+   Complex Attitude Pointing in Deep Space <scenarioAttitudeFeedbackNoEarth>
 
 
 Attitude Guidance
@@ -46,8 +46,8 @@ Attitude Guidance
 
 .. toctree::
 
-   Hill Frame Pointing <AttitudeSimulations/scenarioAttitudeGuidance>
-   Velocity Frame Pointing <AttitudeSimulations/scenarioAttGuideHyperbolic>
+   Hill Frame Pointing <scenarioAttitudeGuidance>
+   Velocity Frame Pointing <scenarioAttGuideHyperbolic>
 
 
 Attitude Control with Actuators
@@ -55,8 +55,8 @@ Attitude Control with Actuators
 
 .. toctree::
 
-   Pointing with Reaction Wheels <AttitudeSimulations/scenarioAttitudeFeedbackRW>
-   Pointing with Attitude Thrusters <AttitudeSimulations/scenarioAttitudeFeedback2T_TH>
+   Pointing with Reaction Wheels <scenarioAttitudeFeedbackRW>
+   Pointing with Attitude Thrusters <scenarioAttitudeFeedback2T_TH>
 
 
 Attitude Steering Control
@@ -64,15 +64,15 @@ Attitude Steering Control
 
 .. toctree::
 
-   MRP Steering Law <AttitudeSimulations/scenarioAttitudeSteering>
+   MRP Steering Law <scenarioAttitudeSteering>
 
 Complex Spacecraft Dynamics Simulations
 ---------------------------------------
 
 .. toctree::
 
-   Fuel Slosh <AdvDynamicsSimulations/scenarioFuelSlosh>
-   Flexible (Hinged) Panels <AdvDynamicsSimulations/scenarioHingedRigidBody>
+   Fuel Slosh <scenarioFuelSlosh>
+   Flexible (Hinged) Panels <scenarioHingedRigidBody>
 
 
 Planetary Environments
@@ -83,8 +83,8 @@ Magnetic Field Models
 
 .. toctree::
 
-   Centered Dipole Model <Environments/scenarioMagneticFieldCenteredDipole>
-   World Magnetic Model WMM <Environments/scenarioMagneticFieldWMM>
+   Centered Dipole Model <scenarioMagneticFieldCenteredDipole>
+   World Magnetic Model WMM <scenarioMagneticFieldWMM>
 
 
 
@@ -96,8 +96,8 @@ Coarse Sun Sensors
 
 .. toctree::
 
-   Adding CSS Sensors <Sensors/scenarioCSS>
-   Estimating Sun Heading with CSS <Sensors/scenarioCSSFilters>
+   Adding CSS Sensors <scenarioCSS>
+   Estimating Sun Heading with CSS <scenarioCSSFilters>
 
 
 Three-Axis Magnetometers
@@ -105,7 +105,7 @@ Three-Axis Magnetometers
 
 .. toctree::
 
-   Adding a Three-Axis Magnetometer (TAM)  <Sensors/scenarioTAM>
+   Adding a Three-Axis Magnetometer (TAM)  <scenarioTAM>
 
 
 
@@ -117,7 +117,7 @@ Power Sub-System
 
 .. toctree::
 
-   Basic Power Usage and Tracking  <SubSystems/scenarioPowerDemo>
+   Basic Power Usage and Tracking  <scenarioPowerDemo>
 
 
 Monte Carlo Simulations
@@ -125,8 +125,8 @@ Monte Carlo Simulations
 
 .. toctree::
 
-   MC run with RW control  <MonteCarlo/scenarioMonteCarloAttRW>
-   MC run using Python Spice setup  <MonteCarlo/scenarioMonteCarloSpice>
+   MC run with RW control  <scenarioMonteCarloAttRW>
+   MC run using Python Spice setup  <scenarioMonteCarloSpice>
 
 
 bskSim()-Based Simulation
@@ -168,7 +168,7 @@ Advanced Simulation Options
 
 .. toctree::
 
-   Setting the Integrator  <AdvancedOptions/scenarioIntegrators>
+   Setting the Integrator  <scenarioIntegrators>
 
 
 
@@ -180,7 +180,7 @@ Live Plotting
 
 .. toctree::
 
-   Regular Basilisk simulation using Live Plotting  <AdvVisualization/scenarioBasicOrbitLivePlot>
+   Regular Basilisk simulation using Live Plotting  <scenarioBasicOrbitLivePlot>
    bskSim Basilisk simulation using Live Plotting <BskSim/scenarios/scenario_BasicOrbit_LivePlot>
 
 
@@ -189,8 +189,8 @@ Interfacing with Vizard
 
 .. toctree::
 
-   Live Streaming to Vizard  <AdvVisualization/scenarioBasicOrbitStream>
-   Pointing a Vizard Camera  <AdvVisualization/scenarioVizPoint>
+   Live Streaming to Vizard  <scenarioBasicOrbitStream>
+   Pointing a Vizard Camera  <scenarioVizPoint>
 
 
 

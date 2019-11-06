@@ -64,7 +64,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     .. image:: /_images/static/test_scenarioBasicOrbit.svg
        :align: center
 
-    The script is found in the folder ``src/examples/OrbitalSimulations`` and executed by using::
+    The script is found in the folder ``src/examples`` and executed by using::
 
         python3 scenarioBasicOrbit.py
 
@@ -100,50 +100,50 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
         show_plots = True, orbitCase='LEO', useSphericalHarmonics=False, planetCase='Earth'
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
        :align: center
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
        :align: center
 
     ::
 
         show_plots = True, orbitCase='GTO', useSphericalHarmonics=False, planetCase='Earth'
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg
        :align: center
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
        :align: center
 
     ::
 
         show_plots = True, orbitCase='GEO', useSphericalHarmonics=False, planetCase='Earth'
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg
        :align: center
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
        :align: center
 
     ::
 
         show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Earth'
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg
        :align: center
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg
        :align: center
 
     ::
 
         show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Mars'
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
        :align: center
 
-    .. figure:: ../../../_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
+    .. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
        :align: center
 
     """
