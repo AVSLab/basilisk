@@ -26,7 +26,7 @@
 #include "fswMessages/stAttFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 
-/
+
 /*! @brief Module configuration message.  */
 typedef struct {
     double dcm_BP[9];                /*!< Row major platform 2 body DCM*/
