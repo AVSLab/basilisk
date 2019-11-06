@@ -6,7 +6,7 @@ Example Scripts
 
 To learn how to use Basilisk it is often convenient to study sample scripts and see how they were implemented.  Below are a series of example Basilisk scripts grouped by topics and complexity.  The first sections illustrate how to setup simple spacecraft simulations and then the following sections begin to add more complexity.
 
-The example script source code can be viewed directly within the browser.  The python code contains additional comments to explain what is being setup and tested here.
+The example script source code can be viewed directly within the browser by clicking on the Source link next to the python method name.  The python code contains additional comments to explain what is being setup and tested here.  The example instructions are all stored as extensive comments within the python script.  Read the script source to study how this example functions.
 
 
 Orbital Simulations
