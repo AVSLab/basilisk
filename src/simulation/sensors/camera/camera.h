@@ -59,7 +59,7 @@ public:
     void AddSaltPepper(const cv::Mat, cv::Mat &mDst, float, float);
     void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float, double);
     void AddCosmicRayBurst(const cv::Mat, cv::Mat &mDst, double);
-    void ApplyFilters(cv::Mat, cv::Mat &mDst, int, int, int, int, int, float, float, float, float, double);
+    void ApplyFilters(cv::Mat, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, int cosmicRays, int blurparam);
 public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
@@ -81,6 +81,13 @@ public:
     double cameraPos_B[3];     //!< [m] Camera position in body frame */
     double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
     char skyBox[MAX_MESSAGE_SIZE]; //!< [-] name of skyboz in use */
+    
+    /*! Noise paramters */
+    double gaussian;        //!< Gaussian  */
+    double darkCurrent;    //!< Dark current intensity  */
+    double saltPepper;    //!< Stuck and Dark pixels */
+    int cosmicRays;        //!< Random cosmic rays (number)*/
+    int blurParam;        //!< Blur over image in pixels */
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t imageInMsgID;                //!< ID for the outgoing message

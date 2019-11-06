@@ -59,18 +59,18 @@ except ImportError:
 # Provide a unique test method name, starting with 'test_'.
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp, saveImage", [
-                    ("mars.jpg",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
+@pytest.mark.parametrize("image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage", [
+                    ("mars.jpg",    2,          2,      2,   1,   3 , False) #Mars image
     ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, image, saveImage):
+def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = cameraTest(show_plots, image, saveImage)
+    [testResults, testMessage] = cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage)
     assert testResults < 1, testMessage
 
 
-def cameraTest(show_plots, image, saveImage):
+def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage):
 
     # Truth values from python
     imagePath = path + '/' + image
@@ -124,6 +124,13 @@ def cameraTest(show_plots, image, saveImage):
     moduleConfig.cameraIsOn = 1
     moduleConfig.sigma_CB = [0,0,1]
 
+    # Noise parameters
+    moduleConfig.gaussian = gauss
+    moduleConfig.darkCurrent = darkCurrent
+    moduleConfig.saltPepper = saltPepper
+    moduleConfig.cosmicRays = cosmic
+    moduleConfig.blurParam = blurSize
+
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.cameraOutMsgName, testProcessRate)
 
@@ -164,4 +171,4 @@ def cameraTest(show_plots, image, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    cameraTest(True, "mars.jpg",  True) # Mars image
+    cameraTest(True, "mars.jpg", 2,          0,      2,   1,   3 , True) # Mars image
