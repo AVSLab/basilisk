@@ -268,38 +268,51 @@ class fileCrawler():
                 dirs.append(path)
         return sorted(files), sorted(dirs)
 
+    def populateDocIndex(self, index_path, file_paths, dir_paths):
 
-    def populateDocIndex(self,index_path, file_paths, dir_paths):
-        # Title the page
+        # get the folder name
         name = os.path.basename(os.path.normpath(index_path))
-        lines = name + "\n" + "=" * len(name) + "\n\n"
+        lines = ""
 
-        # pull in folder documentation rst file if it exists
+        # if a _default.rst file exists in a folder, then use it to generate the index.rst file
         try:
             pathToFolder, folderName = dir_paths[0].split(name)
-            docFileName = os.path.join(os.path.join(pathToFolder, name), name + '.rst')
-            if os.path.isfile(docFileName):
-                with open(docFileName, 'r') as docFile:
-                    docContents = docFile.read()
-                lines += docContents + "\n\n"
-        except:
-            pass
+            docFileName = os.path.join(os.path.join(pathToFolder, name),  '_default.rst')
+            with open(docFileName, 'r') as docFile:
+                docContents = docFile.read()
+            lines += docContents + "\n\n"
 
-        # Add a linking point to all local directories
-        lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories" + ":\n\n"
-        for dir_path in sorted(dir_paths):
-            dirName = os.path.basename(os.path.normpath(dir_path))
-            lines += "   " + dirName + "/index\n"
+        except: # Auto-generate the index.rst file
 
-        # Add a linking point to all local files
-        lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
-        calledNames = []
-        for file_path in sorted(file_paths):
-            fileName = os.path.basename(os.path.normpath(file_path))
-            fileName = fileName[:fileName.rfind('.')]
-            if not fileName in calledNames:
-                lines += "   " + fileName + "\n"
-                calledNames.append(fileName)
+            # Title the page
+            lines += name + "\n" + "=" * len(name) + "\n\n"
+
+            # pull in folder documentation rst file if it exists
+            try:
+                pathToFolder, folderName = dir_paths[0].split(name)
+                docFileName = os.path.join(os.path.join(pathToFolder, name), name + '.rst')
+                if os.path.isfile(docFileName):
+                    with open(docFileName, 'r') as docFile:
+                        docContents = docFile.read()
+                    lines += docContents + "\n\n"
+            except:
+                pass
+
+            # Add a linking point to all local directories
+            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories" + ":\n\n"
+            for dir_path in sorted(dir_paths):
+                dirName = os.path.basename(os.path.normpath(dir_path))
+                lines += "   " + dirName + "/index\n"
+
+            # Add a linking point to all local files
+            lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+            calledNames = []
+            for file_path in sorted(file_paths):
+                fileName = os.path.basename(os.path.normpath(file_path))
+                fileName = fileName[:fileName.rfind('.')]
+                if not fileName in calledNames:
+                    lines += "   " + fileName + "\n"
+                    calledNames.append(fileName)
 
         if self.newFiles:
             with open(index_path + "/index.rst", "w") as f:
