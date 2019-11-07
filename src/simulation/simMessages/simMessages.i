@@ -51,6 +51,8 @@
 #include "powerStorageStatusSimMsg.h"
 #include "bodyHeadingSimMsg.h"
 
+#include "dataStorageStatusSimMsg.h"
+#include "dataNodeUsageSimMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -123,6 +125,10 @@ GEN_SIZEOF(PowerNodeUsageSimMsg)
 GEN_SIZEOF(PowerStorageStatusSimMsg)
 %include "bodyHeadingSimMsg.h"
 GEN_SIZEOF(BodyHeadingSimMsg)
+%include "dataStorageStatusSimMsg.h"
+GEN_SIZEOF(DataStorageStatusSimMsg)
+#include "dataNodeUsageSimMsg.h"
+GEN_SIZEOF(DataNodeUsageSimMsg)
 
 #ifndef CSHARP_ROX
 %pythoncode %{
