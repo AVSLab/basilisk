@@ -284,10 +284,28 @@ class rwFactory(object):
         """
         return len(self.rwList)
 
+    def getConfigMessage(self):
+        """
+        Returns a rwConfigMsg instance based on the current setup.
 
+        :return: rwConfigParams
+        """
 
+        GsMatrix_B = []
+        JsList = []
+        uMaxList = []
+        for rw in self.rwList:
+            GsMatrix_B.extend(rw.gsHat_B)
+            JsList.extend([rw.Js])
+            uMaxList.extend([rw.uMax])
 
+        rwConfigParams = fswMessages.RWArrayConfigFswMsg()
+        rwConfigParams.GsMatrix_B = GsMatrix_B
+        rwConfigParams.JsList = JsList
+        rwConfigParams.uMax = uMaxList
+        rwConfigParams.numRW = len(rwList)
 
+        return rwConfigParams
 
     #
     #   Honeywell HR16 (100Nm, 75Nm, 50Nm)

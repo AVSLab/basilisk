@@ -198,6 +198,25 @@ class thrusterFactory(object):
         """
         return len(self.thrusterList)
 
+    def getConfigMessage(self):
+        """
+            Returns a THRArrayConfigFswMsg reflecting the current thruster setup.
+        :return:
+        """
+
+        thrMessage = fswMessages.THRArrayConfigFswMsg()
+
+        i = 0
+        for item in thrList:
+            fswMessages.ThrustConfigArray_setitem(thrMessage.thrusters, i, item)
+            i += 1
+
+        messageSize = thrClass.getStructSize()
+
+        thrClass.numThrusters = len(thrList)
+
+        return thrMessage
+
     #
     #   MOOG Monarc-1
     #
