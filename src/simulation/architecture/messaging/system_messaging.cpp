@@ -222,7 +222,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     if(MessageName == "")
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %" PRId64 " tried to create a message without a name.  Please try again.", moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %" PRId64 " tried to create a message of type: %s without a name.  Please try again.", moduleID, messageStruct.c_str());
         this->CreateFails++;
         return(-1);
     }
