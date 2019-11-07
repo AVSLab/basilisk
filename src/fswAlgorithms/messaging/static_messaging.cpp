@@ -92,7 +92,7 @@ int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
         MessageName, messageSize, moduleID);
     if(localMsgID < 0)
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "failed to find a message to link for: %s", MessageName);
+        BSK_PRINT_BRIEF(MSG_WARNING, "Module %d failed to find a message to link for: %s", moduleID, MessageName);
         
     }
     return(localMsgID);

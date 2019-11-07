@@ -441,8 +441,8 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
         }
         else
         {
-            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from a module that doesn't publish for %s . You get nothing.",
-                            this->FindMessageName(MessageID).c_str());
+            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %" PRId64 "that doesn't publish for %s . You get nothing.",
+                            MessageID, this->FindMessageName(MessageID).c_str());
             this->WriteFails++;
             return(false);
         }
