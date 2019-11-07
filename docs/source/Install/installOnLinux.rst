@@ -67,9 +67,9 @@ For Basilisk Python 2 and Python 3 inter-compatability, build using both followi
 
 #. CMake here in the build directory with Unix Makefiles, where the source code is located at: ``../src``::
 
-    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src
+    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src
 
-   The ``CMAKE_BUILD_TYPE`` argument can be changed to ``Release`` as well.
+   The ``CMAKE_BUILD_TYPE`` argument can be changed to ``Debug`` as well, but the run-time performance will be significantly slower.
 
 #. Can do a multi core make by running ``make -j<number of cores +1>`` such as ``make -j5``.
 
