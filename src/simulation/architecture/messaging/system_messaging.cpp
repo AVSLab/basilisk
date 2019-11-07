@@ -442,7 +442,7 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
         else
         {
             BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %" PRId64 "that doesn't publish for %s . You get nothing.",
-                            moduleID, this->FindMessageName(MessageID).c_str());
+                            MessageID, this->FindMessageName(MessageID).c_str());
             this->WriteFails++;
             return(false);
         }
@@ -450,8 +450,8 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
     // Check the message size
     if(MsgSize != MsgHdr->MaxMessageSize)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %d that was incorrect size for: %s. ( %d instead of %d.) You get nothing.",
-                  moduleID, MsgHdr->MessageName, MsgSize, MsgHdr->MaxMessageSize);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request that was incorrect size for: %s . You get nothing.",
+                  MsgHdr->MessageName);
         this->WriteFails++;
         return(false);
     }
