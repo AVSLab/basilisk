@@ -25,7 +25,6 @@ import numpy
 
 from . import macros
 from Basilisk.simulation import simMessages
-from Basilisk.fswAlgorithms import fswMessages
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -295,19 +294,16 @@ class rwFactory(object):
         GsMatrix_B = []
         JsList = []
         uMaxList = []
-        for rw in self.rwList.values():
-            
-            flatGsHat = [element for sublist in rw.gsHat_B for element in sublist]
-            
-            GsMatrix_B.extend(flatGsHat)
+        for rw in self.rwList:
+            GsMatrix_B.extend(rw.gsHat_B)
             JsList.extend([rw.Js])
-            uMaxList.extend([rw.u_max])
+            uMaxList.extend([rw.uMax])
 
         rwConfigParams = fswMessages.RWArrayConfigFswMsg()
         rwConfigParams.GsMatrix_B = GsMatrix_B
         rwConfigParams.JsList = JsList
         rwConfigParams.uMax = uMaxList
-        rwConfigParams.numRW = len(self.rwList)
+        rwConfigParams.numRW = len(rwList)
 
         return rwConfigParams
 

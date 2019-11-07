@@ -27,7 +27,6 @@ import sys, os, inspect
 import numpy
 
 from Basilisk.simulation import simMessages
-from Basilisk.fswAlgorithms import fswMessages
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -202,22 +201,19 @@ class thrusterFactory(object):
     def getConfigMessage(self):
         """
             Returns a THRArrayConfigFswMsg reflecting the current thruster setup.
-        :return: thrMessage: THRArrayConfigFswMsg instance
+        :return:
         """
 
         thrMessage = fswMessages.THRArrayConfigFswMsg()
 
         i = 0
-        for simThruster in self.thrusterList.values():
-            #   Converts from THRConfigSimMsg to THRConfigFswMsg
-            fswThruster = fswMessages.THRConfigFswMsg()
-            fswThruster.maxThrust = simThruster.MaxThrust
-            fswThruster.rThrust_B = [val for sublist in simThruster.thrLoc_B for val in sublist]
-            fswThruster.tHatThrust_B = [val for sublist in simThruster.thrDir_B for val in sublist]
-            fswMessages.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
+        for item in thrList:
+            fswMessages.ThrustConfigArray_setitem(thrMessage.thrusters, i, item)
             i += 1
 
-        thrMessage.numThrusters = len(self.thrusterList.values())
+        messageSize = thrClass.getStructSize()
+
+        thrClass.numThrusters = len(thrList)
 
         return thrMessage
 
