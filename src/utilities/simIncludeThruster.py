@@ -27,6 +27,7 @@ import sys, os, inspect
 import numpy
 
 from Basilisk.simulation import simMessages
+from Basilisk.fswAlgorithms import fswMessages
 try:
     from collections.abc import OrderedDict
 except ImportError:
