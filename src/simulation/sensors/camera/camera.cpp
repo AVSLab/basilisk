@@ -316,7 +316,8 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     imageOut.imageType = imageBuffer.imageType;
     imageOut.imageBufferLength = (int32_t)buf.size();
     this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
-    memcpy(this->pointImageOut, imageOut.imagePointer, imageOut.imageBufferLength*sizeof(char));
+    memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
+    imageOut.imagePointer = this->pointImageOut;
     
     SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageOut), this->moduleID);
     
