@@ -47,6 +47,14 @@ Configuring Swig
 The standard windows swig version 3 or 4 is suitable for Basilisk (see `Configuration
 Instructions <http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe>`__).
 
+- Download the swig zip file, which includes ``swig.exe`` file, and unzip it into somewhere like ``C:/Program Files/Swig``
+- Add swig path into environment variables using the following steps:
+
+  - Right-click on My Computer, Select Properties
+  - Under the Advanced tab, Select Environment Variables
+  - Under the System Variables panel, Select Path, and Click Edit
+  - Add the ``swig.exe`` directory to your path
+
 Example added path formats::
 
    PYTHON_INCLUDE = C:\Program Files\Python27\include 
@@ -121,10 +129,11 @@ When all the prerequisite installations are complete, the project can be built a
 
         cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 
+#. If the build was not setup correctly, you can delete the ``dist3`` folder and re-run the above command to get another clean build attempt.
 
 #. To test your setup you can run one of the example scenario scripts.
 
-   -  For example, in the terminal window, make ``basilisk/src/examples/01-OrbitalSimulations`` the
+   -  For example, in the terminal window, make ``basilisk/src/examples`` the
       current directory.
    -  Run one of the tutorial scenarios, such as::
 
