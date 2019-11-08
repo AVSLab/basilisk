@@ -44,13 +44,14 @@ Camera::Camera()
     strcpy(this->parentName, "spacecraft");
     this->cameraID = 1;
     this->fieldOfView = 0.7;
-    this->resolution[0]=512;
-    this->resolution[1]=512;
+    this->resolution[0] = 512;
+    this->resolution[1] = 512;
     this->renderRate = 60*1E9;
     v2Set(1E-3, 1E-3, this->sensorSize);
     v3SetZero(this->cameraPos_B);
     v3SetZero(this->sigma_CB);
     this->cameraIsOn = 0;
+    this->filename = "";
     this->focalLength = this->sensorSize[0]/2/tan(this->fieldOfView/2.);
     strcpy(this->skyBox, "black");
 
@@ -212,8 +213,8 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
     if (gaussian > 0){
         float scale = 2;
         AddGaussianNoise(mFilters, mFilters, 0, gaussian * scale);
+        cv::threshold(mFilters, mFilters, 25, 255, cv::THRESH_TOZERO);
     }
-    cv::threshold(mFilters, mFilters, 25, 255, cv::THRESH_TOZERO);
     if(blurparam > 0){
         blur(mFilters, mFilters, cv::Size(blurparam, blurparam), cv::Point(-1 , -1));
     }
@@ -238,12 +239,6 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
  */
 void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
-    if (this->pointImageOut != NULL) {
-        /*! If the permanent image buffer is not populated, it will be equal to null*/
-        free(this->pointImageOut);
-        this->pointImageOut = NULL;
-    }
-    
     this->CurrentSimNanos = CurrentSimNanos;
     std::string localPath;
     CameraImageMsg imageBuffer;
@@ -299,31 +294,34 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         if (this->saveImages == 1){
             cv::imwrite(localPath, blurred);
         }
+        /*! If the permanent image buffer is not populated, it will be equal to null*/
+        if (this->pointImageOut != NULL) {
+            free(this->pointImageOut);
+            this->pointImageOut = NULL;
+        }
+        /*! - Encode the cv mat into a png for the future modules to decode it the same way */
+        std::vector<unsigned char> buf;
+        std::vector<int> compression;
+        compression.push_back(0);
+        cv::imencode(".png", blurred, buf, compression);
+        /*! - Output the saved image */
+        imageOut.valid = 1;
+        imageOut.timeTag = imageBuffer.timeTag;
+        imageOut.cameraID = imageBuffer.cameraID;
+        imageOut.imageType = imageBuffer.imageType;
+        imageOut.imageBufferLength = (int32_t)buf.size();
+        this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
+        memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
+        imageOut.imagePointer = this->pointImageOut;
+        
+        SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageOut), this->moduleID);
+        
+        return;
     }
     else{
         /*! - If no image is present, write zeros in message */
         SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
         return;}
  
-    /*! - Encode the cv mat into a png for the future modules to decode it the same way */
-    std::vector<unsigned char> buf;
-    std::vector<int> compression;
-    compression.push_back(0);
-    cv::imencode(".png", blurred, buf, compression);
-    /*! - Output the saved image */
-    imageOut.valid = 1;
-    imageOut.cameraID = imageBuffer.cameraID;
-    imageOut.imageType = imageBuffer.imageType;
-    imageOut.imageBufferLength = (int32_t)buf.size();
-    this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
-    memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
-    imageOut.imagePointer = this->pointImageOut;
-    
-    SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageOut), this->moduleID);
-    
-    /*! - Free the previous image memory */
-    free(imageBuffer.imagePointer);
-
-    return;
 }
 

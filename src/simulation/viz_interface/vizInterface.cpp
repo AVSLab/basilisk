@@ -368,6 +368,7 @@ void VizInterface::ReadBSKMessages()
         this->cssConfigMessage = localCSSConfigArray;
     }
     
+    
     /*! Read incoming camera config msg */
     if (this->cameraConfMsgId.msgID != -1){
         CameraConfigMsg localCameraConfigArray;
@@ -641,10 +642,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*! Enter in lock-step with the vizard to simulate a camera */
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
-        if (this->opNavMode == 1 ||
-            (this->opNavMode == 2 && (CurrentSimNanos%this->cameraConfigMessage.renderRate == 0
-                                      ||this->firstPass < 11)) ||
-            this->liveStream
+        if (this->opNavMode == 1
+            ||(this->opNavMode == 2 && ((CurrentSimNanos%this->cameraConfigMessage.renderRate == 0 && this->cameraConfigMessage.isOn == 1) ||this->firstPass < 11))
+            || this->liveStream
             ){
             // Receive pong
             /*! - The viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before attempting to go into opNavMode 2 */
