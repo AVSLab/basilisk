@@ -192,8 +192,9 @@ void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhol
 void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
-    for(int i = 0; i < num; i++){
-        AddCosmicRay(mCosmic, mCosmic, 0, i+1);
+    for(int i = 0; i < std::round(num); i++){
+        /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about 5 rays per image*/
+        AddCosmicRay(mCosmic, mCosmic, 1/(std::pow(num,2)+0.02), i+1);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
@@ -205,7 +206,7 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
  * @param float probability of getting a ray each frame
  * @return void
  */
-void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, int cosmicRays, int blurparam){
+void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam){
     
     cv::Mat mFilters(mSource.size(), mSource.type());
     mSource.convertTo(mFilters, mSource.type());
@@ -213,10 +214,11 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
     if (gaussian > 0){
         float scale = 2;
         AddGaussianNoise(mFilters, mFilters, 0, gaussian * scale);
-        cv::threshold(mFilters, mFilters, 25, 255, cv::THRESH_TOZERO);
+        cv::threshold(mFilters, mFilters, gaussian*6, 255, cv::THRESH_TOZERO);
     }
     if(blurparam > 0){
-        blur(mFilters, mFilters, cv::Size(blurparam, blurparam), cv::Point(-1 , -1));
+        int blurSize = std::round(blurparam);
+        blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1 , -1));
     }
     if(darkCurrent > 0){
         float scale = 15;
@@ -227,7 +229,7 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
         AddSaltPepper(mFilters, mFilters, saltPepper * scale, saltPepper * scale);
     }
     if(cosmicRays > 0){
-        AddCosmicRayBurst(mFilters, mFilters, cosmicRays);
+        AddCosmicRayBurst(mFilters, mFilters, std::round(cosmicRays));
     }
     
     mFilters.convertTo(mDst, mSource.type());

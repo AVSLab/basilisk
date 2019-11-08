@@ -59,7 +59,7 @@ public:
     void AddSaltPepper(const cv::Mat, cv::Mat &mDst, float, float);
     void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float, double);
     void AddCosmicRayBurst(const cv::Mat, cv::Mat &mDst, double);
-    void ApplyFilters(cv::Mat, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, int cosmicRays, int blurparam);
+    void ApplyFilters(cv::Mat, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam);
 public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
@@ -86,8 +86,8 @@ public:
     double gaussian;        //!< Gaussian  */
     double darkCurrent;    //!< Dark current intensity  */
     double saltPepper;    //!< Stuck and Dark pixels */
-    int cosmicRays;        //!< Random cosmic rays (number)*/
-    int blurParam;        //!< Blur over image in pixels */
+    double cosmicRays;        //!< Random cosmic rays (number)*/
+    double blurParam;        //!< Blur over image in pixels */
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t imageInMsgID;                //!< ID for the outgoing message

@@ -484,7 +484,7 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
      of observations*/
     mSetIdentity(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
     mCopy(configData->opNavInMsg.covar_N, ODUKF_N_MEAS, ODUKF_N_MEAS, configData->measNoise);
-    mScale(configData->noiseSF, configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS, configData->measNoise);
+    mScale(configData->noiseSF, &AT, 2*configData->countHalfSPs, configData->numObs, &AT);
     badUpdate += ukfCholDecomp(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS, cholNoise);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            cholNoise, configData->numObs*configData->numObs*sizeof(double));
