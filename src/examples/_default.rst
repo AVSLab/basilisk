@@ -25,6 +25,7 @@ Orbital Simulations
 This section contains scripts that illustrate how to setup a simple spacecraft orbital simulations.
 
 .. toctree::
+   :maxdepth: 1
 
    Basic Orbit Simulations <scenarioBasicOrbit>
    Delta_v Orbit Maneuvers <scenarioOrbitManeuver>
@@ -33,6 +34,7 @@ This section contains scripts that illustrate how to setup a simple spacecraft o
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
 
 .. toctree::
+   :maxdepth: 1
 
     OrbitalSimulations/
 
@@ -44,6 +46,7 @@ Attitude Regulation Control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Inertial Attitude Pointing <scenarioAttitudeFeedback>
    Using Separate TAsk Group for Control <scenarioAttitudeFeedback2T>
@@ -56,6 +59,7 @@ Attitude Guidance
 ^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Hill Frame Pointing <scenarioAttitudeGuidance>
    Velocity Frame Pointing <scenarioAttGuideHyperbolic>
@@ -65,6 +69,7 @@ Attitude Control with Actuators
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Pointing with Reaction Wheels <scenarioAttitudeFeedbackRW>
    Pointing with Attitude Thrusters <scenarioAttitudeFeedback2T_TH>
@@ -74,6 +79,7 @@ Attitude Steering Control
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    MRP Steering Law <scenarioAttitudeSteering>
 
@@ -81,6 +87,7 @@ Complex Spacecraft Dynamics Simulations
 ---------------------------------------
 
 .. toctree::
+   :maxdepth: 1
 
    Fuel Slosh <scenarioFuelSlosh>
    Flexible (Hinged) Panels <scenarioHingedRigidBody>
@@ -93,6 +100,7 @@ Magnetic Field Models
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Centered Dipole Model <scenarioMagneticFieldCenteredDipole>
    World Magnetic Model WMM <scenarioMagneticFieldWMM>
@@ -106,6 +114,7 @@ Coarse Sun Sensors
 ^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Adding CSS Sensors <scenarioCSS>
    Estimating Sun Heading with CSS <scenarioCSSFilters>
@@ -115,6 +124,7 @@ Three-Axis Magnetometers
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Adding a Three-Axis Magnetometer (TAM)  <scenarioTAM>
 
@@ -127,6 +137,7 @@ Power Sub-System
 ^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Basic Power Usage and Tracking  <scenarioPowerDemo>
 
@@ -135,6 +146,7 @@ Monte Carlo Simulations
 -----------------------
 
 .. toctree::
+   :maxdepth: 1
 
    MC run with RW control  <scenarioMonteCarloAttRW>
    MC run using Python Spice setup  <scenarioMonteCarloSpice>
@@ -144,6 +156,7 @@ bskSim()-Based Simulation
 -------------------------
 
 .. toctree::
+   :maxdepth: 1
 
    Basic Orbital Simulation  <BskSim/scenarios/scenario_BasicOrbit>
    Attitude Detumble Control  <BskSim/scenarios/scenario_FeedbackRW>
@@ -161,6 +174,7 @@ Formation Flying Dynamics
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Two-Spacecraft Formation  <BskSim/scenarios/scenario_BasicOrbitFormation>
 
@@ -169,6 +183,7 @@ Formation Flying Control
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
 
@@ -178,6 +193,7 @@ Advanced Simulation Options
 ---------------------------
 
 .. toctree::
+   :maxdepth: 1
 
    Setting the Integrator  <scenarioIntegrators>
 
@@ -190,6 +206,7 @@ Live Plotting
 ^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Regular Basilisk simulation using Live Plotting  <scenarioBasicOrbitLivePlot>
    bskSim Basilisk simulation using Live Plotting <BskSim/scenarios/scenario_BasicOrbit_LivePlot>
@@ -199,6 +216,7 @@ Interfacing with Vizard
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
+   :maxdepth: 1
 
    Live Streaming to Vizard  <scenarioBasicOrbitStream>
    Pointing a Vizard Camera  <scenarioVizPoint>
