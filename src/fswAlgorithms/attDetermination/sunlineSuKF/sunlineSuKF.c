@@ -214,7 +214,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     v3Normalize(&configData->state[0], sunheading_hat);
     
     /*! - Check for switching frames */
-    if (v3Dot(configData->bVec_B, sunheading_hat) > configData->switchTresh)
+    if (fabs(v3Dot(configData->bVec_B, sunheading_hat)) > configData->switchTresh)
     {
         sunlineSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
