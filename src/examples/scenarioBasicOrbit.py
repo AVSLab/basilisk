@@ -1,4 +1,24 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
 """
+Overview
+--------
 
 This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
 approximation or run with high-order spherical harmonic terms.  The following diagram illustrates how the
@@ -15,7 +35,8 @@ The script is found in the folder ``src/examples`` and executed by using::
                    returning to the :ref:`examples` before moving on.
 
 
-**Making a copy of the example Basilisk scenario script**
+Making a Copy of the Example Basilisk Scenario Script
+-----------------------------------------------------
 
 However, to play with any scenario scripts as tutorials, you should make a copy of
 them into a custom folder outside of the Basilisk directory.
@@ -33,7 +54,8 @@ Copy the folder ``{basiliskPath}/examples`` into a new folder in a different dir
 Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the copied integrated tests.
 
 
-**Vizard Visualization Option**
+Vizard Visualization Option
+---------------------------
 
 If you wish to transmit the simulation data to the United based `Vizard <vizard>`_ Visualization application,
 then uncomment
@@ -60,7 +82,8 @@ Vizard settings can also be scripted from the Basilisk python script.
 A complete discussion on these options and features can be found the the `Vizard Settings <vizardSettings>`_ page.
 
 
-**Results of the examples scripts**
+Illustration of Simulation Results
+----------------------------------
 
 The following images illustrate the expected simulation run returns for a range of script configurations.
 

@@ -1,4 +1,25 @@
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+"""
+Overview
+--------
+
 This script sets up a basic spacecraft in orbit about Earth. One option uses ``earth.isCentralBody = True``
 and the other uses ``isCentralBody = False``. The nuances of spacecraft position and velocity I/O in these cases are
 demonstrated.
@@ -14,6 +35,10 @@ The script is found in the folder ``src/examples`` and executed by using::
 
           * :ref:`spacecraftPlus`
           * :ref:`gravityEffector`
+
+
+Illustration of Simulation Results
+----------------------------------
 
 Running this example script will yield the following results.
 
@@ -37,7 +62,7 @@ Running this example script will yield the following results.
 .. figure:: /_images/Scenarios/scenarioCentralBody21.svg
    :align: center
 
-'''
+"""
 
 
 
