@@ -1,22 +1,134 @@
-""""""
-'''
- ISC License
+"""
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
+approximation or run with high-order spherical harmonic terms.  The following diagram illustrates how the
+Basilisk components are interconnected.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+.. image:: /_images/static/test_scenarioBasicOrbit.svg
+   :align: center
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioBasicOrbit.py
+
+.. important:: This scenario is currently the most minimal example available. If it doesn't make sense consider
+                   returning to the :ref:`examples` before moving on.
+
+
+**Making a copy of the example Basilisk scenario script**
+
+However, to play with any scenario scripts as tutorials, you should make a copy of
+them into a custom folder outside of the Basilisk directory.
+
+To copy them, first find the location of the Basilisk installation. After installing, you can find the
+installed location of Basilisk by opening a python interpreter and running the commands:
+
+.. code-block:: python
+
+   import Basilisk
+   basiliskPath = Basilisk.__path__[0]
+   print basiliskPath
+
+Copy the folder ``{basiliskPath}/examples`` into a new folder in a different directory.
+Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the copied integrated tests.
+
+
+**Vizard Visualization Option**
+
+If you wish to transmit the simulation data to the United based `Vizard <vizard>`_ Visualization application,
+then uncomment
+the following line from the python scenario script. This will cause the BSK simulation data
+to be stored in a binary file inside the _VizFiles sub-folder with the scenario folder. This file can be read in by
+`Vizard <vizard>`_ and played back after running the BSK simulation. ::
+
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+
+The vizInterface module must be built into BSK. This is done if the correct `CMake options <cmakeOptions>`_
+are selected. The default
+CMake will include this vizInterface module in the BSK build. See the BSK HTML documentation on more
+information of CMake options. By using the gravFactory support class to create and add planetary bodies
+the vizInterface module will automatically be able to find the correct celestial body ephemeris names.
+If these names are changed, then the vizSupport.py support library has to be customized. Currently Vizard
+supports playback of stored simulation data files, as well as streaming the data directly to Vizard.
+By default the Viz is running in realtime mode with a 1x
+speed up factor of the data playback. On the bottom right of the Vizard GUI this can be increased or decreased.
+Further, some display elements such as thruster or reaction wheel panels are only visible if such devices are
+being simulated in BSK.
+
+While Vizard has many visualization features that can be customized from within the application, many
+Vizard settings can also be scripted from the Basilisk python script.
+A complete discussion on these options and features can be found the the `Vizard Settings <vizardSettings>`_ page.
+
+
+**Results of the examples scripts**
+
+The following images illustrate the expected simulation run returns for a range of script configurations.
+
+::
+
+    show_plots = True, orbitCase='LEO', useSphericalHarmonics=False, planetCase='Earth'
+
+This scenario places the spacecraft about the Earth in a LEO orbit and without considering gravitational
+spherical harmonics.
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
+   :align: center
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
+   :align: center
+
+::
+
+    show_plots = True, orbitCase='GTO', useSphericalHarmonics=False, planetCase='Earth'
+
+This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit inclination.
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg
+   :align: center
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
+   :align: center
+
+::
+
+    show_plots = True, orbitCase='GEO', useSphericalHarmonics=False, planetCase='Earth'
+
+This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit inclination.
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg
+   :align: center
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
+   :align: center
+
+::
+
+    show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Earth'
+
+This case illustrates a circular LEO with a non-zero orbit inclination.
+In this case the Earth's spherical harmonics are turned on.
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg
+   :align: center
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg
+   :align: center
+
+::
+
+    show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Mars'
+
+This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit inclination.
+In this simulation setup the planet's spherical harmonics are turned on.
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
+   :align: center
+
+.. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
+   :align: center
+
+"""
+
 
 
 #
@@ -57,22 +169,11 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 
 def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """
-    This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
-    approximation or run with high-order spherical harmonic terms.  The following diagram illustrates how the
-    Basilisk components are interconnected.
-
-    .. image:: /_images/static/test_scenarioBasicOrbit.svg
-       :align: center
-
-    The script is found in the folder ``src/examples`` and executed by using::
-
-        python3 scenarioBasicOrbit.py
-
-    At the end of the script you can specify the following example parameters.
+    At the end of the python script you can specify the following example parameters.
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        orbitCase (str): {'LEO', 'GEO', 'GTO'}
+        orbitCase (str):
 
             ======  ============================
             String  Definition
@@ -85,67 +186,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         useSphericalHarmonics (Bool): False to use first order gravity approximation: :math:`\\frac{GMm}{r^2}`
 
         planetCase (str): {'Earth', 'Mars'}
-
-
-    .. important:: This scenario is currently the most minimal example available. If it doesn't make sense consider
-                   returning to the :ref:`examples` before moving on.
-
-
-
-    **Resulting Images**
-
-    The following images illustrate the expected simulation run returns for a range of script configurations.
-
-    ::
-
-        show_plots = True, orbitCase='LEO', useSphericalHarmonics=False, planetCase='Earth'
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
-       :align: center
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
-       :align: center
-
-    ::
-
-        show_plots = True, orbitCase='GTO', useSphericalHarmonics=False, planetCase='Earth'
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg
-       :align: center
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
-       :align: center
-
-    ::
-
-        show_plots = True, orbitCase='GEO', useSphericalHarmonics=False, planetCase='Earth'
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg
-       :align: center
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
-       :align: center
-
-    ::
-
-        show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Earth'
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg
-       :align: center
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg
-       :align: center
-
-    ::
-
-        show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Mars'
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
-       :align: center
-
-    .. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
-       :align: center
-
     """
 
     # Create simulation variable names

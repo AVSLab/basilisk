@@ -1,22 +1,68 @@
-''' '''
-'''
- ISC License
+"""
+This tutorial considers a patched conics approach to an interplanetary transfer from Earth to Jupiter, by way of a
+heliocentric Hohmann transfer.  The patched conic solution is evaluated making the typical conic trajectory
+assumptions where an impulsive Dv changes an Earth-centric circular orbit into a hyperbolic departure orbit that
+escapes the Earth system in the Earth's heliocentric direction.  After an elliptical heliocentric transfer orbit
+the craft reaches the Jupiter region.  The Jupiter relative arrival is a hyperbolic arrival orbit.
+To simulate this solution, a continuous multi-body gravity integration is performed to illustrate
+how close the patched conic solution is to reaching a Jupiter fly-by.  The simulation is started and stopped to
+change the integration time steps to appropriate values, and also change relative to what planet the trajectory is
+logged.  However, the simulation state always includes the gravity of Earth, Sun and Jupiter.  To keep this tutorial
+simple, the planets are assumed to be at fixed locations and their ephemeris message is not updated.
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+The detail of the simulation script is as follows.
+This script sets up a basic spacecraft which starts in circular Low Earth Orbit, with logging with respect to the
+Earth. The spacecraft then leaves on a hyperbolic orbit with respect to Earth until it reaches the edge of the Earth's
+sphere of influence. The frame of reference is then switched to a Sun centered inertial, and the planetary positions
+are adjusted accordingly.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+The Earth's velocity is then added to the spacecraft (to account for the heliocentric velocity of the
+spacecraft) and the simulation is run until the spacecraft approaches Jupiter's Sphere of Influence (SOI). To allow
+the simulation to catch up, the time step is reduced just prior to approaching Jupiter's SOI. Then the logging is set
+to be relative to Jupiter.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+Note that the output position and velocity (when reading message logs) will be relative to the planet that is the
+central body during that logging period. So to use the last state in each segment, it needed to be adjusted to account
+for the planet/Sun's position and velocity.
 
-'''
+How to setup a basic spacecraft simulation is shown in the earlier tutorial :ref:`scenarioBasicOrbit`.
+Simulating a Hohmann transfer is illustrated in :ref:`scenarioOrbitManeuver`.
+Setting up multiple gravitational bodies is shown in :ref:`scenarioOrbitMultiBody`
+while providing pseudo-SPICE messages is laid out in :ref:`scenarioCSS`.
+
+This simulation combines all those techniques as well as changing logging relative to multiple bodies for a single
+simulation.
+
+The script is found in the folder ``src/examples`` and executed by using::
+
+      python3 scenarioPatchedConics.py
+
+The following images illustrate the expected simulation run returns for a range of script configurations.
+
+::
+
+    show_plots = True
+
+Plots below illustrate the scenario results for the Earth-centered departure, the heliocentric Hohmann transfer, the
+Jupiter centered fly-by, and a heliocentric log plot of the entire transfer.
+
+.. image:: /_images/Scenarios/scenarioPatchedConics1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioPatchedConics2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioPatchedConics3.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioPatchedConics4.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioPatchedConics5.svg
+   :align: center
+
+"""
+
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -38,151 +84,13 @@ from Basilisk.simulation import spacecraftPlus, simMessages, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 
 
-## \page scenarioPatchedConicGroup
-## @{
-## Simulating a patched conic trajectory solution using a continuous integration with multiple gravity bodies.
-#
-# Patched Conics {#scenarioPatchedConics}
-# ====
-#
-# Scenario Description
-# -----
-# This tutorial considers a patched conics approach to an interplanetary transfer from Earth to Jupiter, by way of a
-# heliocentric Hohmann transfer.  The patched conic solution is evaluated making the typical conic trajectory
-# assumptions where an impulsive Dv changes an Earth-centric circular orbit into a hyperbolic departure orbit that
-# escapes the Earth system in the Earth's heliocentric direction.  After an elliptical heliocentric transfer orbit
-# the craft reaches the Jupiter region.  The Jupiter relative arrival is a hyperbolic arrival orbit.
-# To simulate this solution, a continuous multi-body gravity integration is performed to illustrate
-# how close the patched conic solution is to reaching a Jupiter fly-by.  The simulation is started and stopped to
-# change the integration time steps to appropriate values, and also change relative to what planet the trajectory is
-# logged.  However, the simulation state always includes the gravity of Earth, Sun and Jupiter.  To keep this tutorial
-# simple, the planets are assumed to be at fixed locations and their ephemeris message is not updated.
-#
-# The detail of the simulation script is as follows.
-# This script sets up a basic spacecraft which starts in circular Low Earth Orbit, with logging with respect to the
-# Earth. The spacecraft then leaves on a hyperbolic orbit with respect to Earth until it reaches the edge of the Earth's
-# sphere of influence. The frame of reference is then switched to a Sun centered inertial, and the planetary positions
-# are adjusted accordingly.
-#
-# The Earth's velocity is then added to the spacecraft (to account for the heliocentric velocity of the
-# spacecraft) and the simulation is run until the spacecraft approaches Jupiter's Sphere of Influence (SOI). To allow
-# the simulation to catch up, the time step is reduced just prior to approaching Jupiter's SOI. Then the logging is set
-# to be relative to Jupiter.
-#
-# Note that the output position and velocity (when reading message logs) will be relative to the planet that is the
-# central body during that logging period. So to use the last state in each segment, it needed to be adjusted to account
-# for the planet/Sun's position and velocity.
-#
-#
-# Simulation Scenario Setup Details
-# -----
-# How to setup a basic spacecraft simulation is shown in the earlier tutorial
-# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
-# Simulating a Hohmann transfer is illustrated in [scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver).
-# Setting up multiple gravitational bodies is shown in [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody)
-# while providing pseudo-SPICE messages is laid out in [scenarioCSS.py](@ref scenarioCSS).
-#
-# This simulation combines all those techniques as well as changing logging relative to multiple bodies for a single
-# simulation.
-#
-# In order to specify which body the spacecraft position and velocities are integrated relative to, the `isCentralBody`
-# flag is used.
-#
-#
-# The planets and the Sun are artificially placed at the beginning of this tutorial using state messages to mimic
-# SPICE states. An example of this is shown below.
-#
-# ~~~~~~~~~~~~~{.py}
-# sunStateMsg = simMessages.SpicePlanetStateSimMsg()
-# sunStateMsg.PositionVector = [0.0, 0.0, 0.0]
-# sunStateMsg.VelocityVector = [0.0, 0.0, 0.0]
-# unitTestSupport.setMessage(scSim.TotalSim,
-#                            simProcessName,
-#                            sun.bodyInMsgName,
-#                            sunStateMsg)
-# ~~~~~~~~~~~~~
-# However, since this is a simplified scenario where the planets are not moving, both the Earth and Jupiter are
-# assigned zero velocities in the ephemeris messages. The spacecraft's velocity is manually adjusted to add Earth's
-# velocity after the spacecraft reaches the edge of Earth's Sphere of Influence, and to discount Jupiter's velocity upon
-# entering Jupiter's Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative
-# positions and velocities even when the planets are not moving.
-#
-# Initially the Earth-centered departure logging is set to 5 seconds.
-# However, in order to speed up computation, we need to update the simulation time step for an interplanetary transfer.
-#
-# The simulation is stopped when the spacecraft reaches the edge of Earth's Sphere of Influence, and a new time step of
-# 1 week is specified by the following:
-# ~~~~~~~~~~~~~{.py}
-# simulationTimeStep = macros.sec2nano(1 * 7 * 24 * 60 * 60)
-# ~~~~~~~~~~~~~
-#
-# The logging is then updated to match the new new simulationTimeStep via the following:
-# ~~~~~~~~~~~~~{.py}
-# scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
-# ~~~~~~~~~~~~~
-# And the task period is updated in the simulation using:
-# ~~~~~~~~~~~~~{.py}
-# dynProcess.updateTaskPeriod(simTaskName, simulationTimeStep)
-# ~~~~~~~~~~~~~
-#
-# The Earth's position and  velocity also need to be added to the spacecraft to account for the heliocentric postion
-# and velocity of the spacecraft. Similar to scenarioOrbitManeuver.py, the states are retrieved, manipulated and fed
-# back to the simulation by:
-#
-# ~~~~~~~~~~~~~{.py}
-# posRef = scObject.dynManager.getStateObject("hubPosition")
-# velRef = scObject.dynManager.getStateObject("hubVelocity")
-# rN = unitTestSupport.EigenVector3d2np(posRef.getState())
-# vN = unitTestSupport.EigenVector3d2np(velRef.getState())
-# pos_N_Earth = [0.0, -149598023 * 1000, 0.0]
-# depVel_N_Earth = [29.7859 * 1000, 0, 0]
-# rN = rN + pos_N_Earth
-# vN = vN + depVel_N_Earth
-# posRef.setState(unitTestSupport.np2EigenVectorXd(rN))
-# velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
-# ~~~~~~~~~~~~~
-#
-# Since the next time-step is pre-calculated, the simulation is stopped prior to approaching Jupiter's Sphere of
-# Influence. This ensures there is no loss or conflicts in the logged data. The time step is reduced to 100 seconds, and
-# The simulation is propagated until it reaches Jupiter's SOI. Similar to the Interplanetary section, the position and
-# velocity states are pulled and manipulated to be Jupiter-centric and then fed back to the simulation.
-#
-# ~~~~~~~~~~~~~{.py}
-# posRef = scObject.dynManager.getStateObject("hubPosition")
-# velRef = scObject.dynManager.getStateObject("hubVelocity")
-# rN = unitTestSupport.EigenVector3d2np(posRef.getState())
-# vN = unitTestSupport.EigenVector3d2np(velRef.getState())
-#
-# pos_N_Jup = [0.0, rJupiter, 0.0]
-# vel_N_Jup = [-13.0697 * 1000, 0.0, 0.0]
-#
-# rN = rN - pos_N_Jup
-# vN = vN - vel_N_Jup
-#
-# posRef.setState(unitTestSupport.np2EigenVectorXd(rN))
-# velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
-# ~~~~~~~~~~~~~
-#
-# The simulation is then run to log the fly-by data.
-#
-# At the end of the transfer, the logged data (which is always in the inertial frame, in this case, the heliocentric
-# frame) for each section is manipulated for plotting purposes.
-# To show the Earth-centered departure, the position and velocity of the spacecraft are adjusted to be Earth-centric.
-# The heliocentric Hohmann transfer does not need to be adjusted since it is already in the form required.
-# The position and velocity data of the spacecraft within Jupiter's SOI are adjusted to be Jupiter centered so the
-# trajectory of the flyby with respect to Jupiter can be shown.
-#
-# Plots found when running this scenario show the Earth-centered departure, the heliocentric Hohmann transfer, the
-# Jupiter centered fly-by, and a heliocentric log plot of the entire transfer.
-#
-# ![Earth Centered Departure Perifocal Frame](Images/Scenarios/scenarioPatchedConics1.svg "Earth Centered Departure Perifocal Frame")
-# ![Earth Centered Departure Radius](Images/Scenarios/scenarioPatchedConics2.svg "Earth Centered Departure Radius")
-# ![Heliocentric Transfer Arc](Images/Scenarios/scenarioPatchedConics3.svg "Heliocentric Transfer Arc")
-# ![Jupiter Centered Arrival](Images/Scenarios/scenarioPatchedConics4.svg "Jupiter Centered Arrival")
-# ![Heliocentric Transfer Radius](Images/Scenarios/scenarioPatchedConics5.svg "Heliocentric Transfer Radius")
-## @}
-
 def run(show_plots):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+    """
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -208,11 +116,23 @@ def run(show_plots):
     # by default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
     # name of the SPICE object needs to be changed.
+    # In order to specify which body the spacecraft position and velocities are integrated relative to, the `isCentralBody`
+    # flag is used.
     earth.isCentralBody = True
     scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(list(gravFactory.gravBodies.values())))
     scSim.AddModelToTask(simTaskName, scObject)
 
+    #
     # create simulation messages
+    #
+    # The planets and the Sun are artificially placed at the beginning of this tutorial using state messages to mimic
+    # SPICE states. An example of this is shown below.
+    # However, since this is a simplified scenario where the planets are not moving, both the Earth and Jupiter are
+    # assigned zero velocities in the ephemeris messages. The spacecraft's velocity is manually adjusted to add Earth's
+    # velocity after the spacecraft reaches the edge of Earth's Sphere of Influence,
+    # and to discount Jupiter's velocity upon
+    # entering Jupiter's Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative
+    # positions and velocities even when the planets are not moving.
     sunStateMsg = simMessages.SpicePlanetStateSimMsg()
     sunStateMsg.PositionVector = [0.0, 0.0, 0.0]
     sunStateMsg.VelocityVector = [0.0, 0.0, 0.0]
@@ -280,8 +200,8 @@ def run(show_plots):
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(v_E)  # m/s - v_BN_N
 
     # set the simulation time
-
     simulationTime = macros.sec2nano(t0_Tp)
+
     #
     #   Setup data logging before the simulation is initialized
     #
@@ -321,21 +241,26 @@ def run(show_plots):
 
     endEarthTime = len(posData)
 
-
-
-    ##############################################################
+    #
     # Interplanetary Hohmann Transfer
-
+    #
+    # change who is the central body
     earth.isCentralBody = False
     sun.isCentralBody = True
 
-    # create the dynamics task and specify the integration update time
+    # The simulation is stopped when the spacecraft reaches the edge of Earth's Sphere of Influence, and a new time step of
+    # 1 week is specified by the following:
     simulationTimeStep = macros.sec2nano(1 * 7 * 24 * 60 * 60)  # Changing timestep to 1 week
 
-    # Updating the simulation timestep and the logging
+    # The logging is then updated to match the new new simulationTimeStep via the following:
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
+    # And the task period is updated in the simulation using:
     dynProcess.updateTaskPeriod(simTaskName, simulationTimeStep)
 
+    # The Earth's position and  velocity also need to be added to the spacecraft to account
+    # for the heliocentric position
+    # and velocity of the spacecraft. Similar to scenarioOrbitManeuver.py, the states are retrieved,
+    # manipulated and fed back to the simulation by:
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     rN = unitTestSupport.EigenVector3d2np(posRef.getState())
@@ -356,11 +281,15 @@ def run(show_plots):
 
     endSunTime = len(hohmann_PosData)
 
-    ##############################################################
+    #
     # CHANGING TIME STEP BEFORE JUPITER ARRIVAL
-
-    # This allows the logging to catch up
-
+    #
+    # Since the next time-step is pre-calculated, the simulation is stopped prior to approaching Jupiter's Sphere of
+    # Influence. This ensures there is no loss or conflicts in the logged data.
+    # The time step is reduced to 100 seconds, and
+    # the simulation is propagated until it reaches Jupiter's SOI. Similar to the
+    # Interplanetary section, the position and
+    # velocity states are pulled and manipulated to be Jupiter-centric and then fed back to the simulation.
     simulationTimeStep = macros.sec2nano(100.)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
     dynProcess.updateTaskPeriod(simTaskName, simulationTimeStep)
@@ -371,9 +300,20 @@ def run(show_plots):
     timeSwitch_posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
     endTimeStepSwitchTime = len(timeSwitch_posData)
 
-    ##############################################################
+    #
     # Jupiter Fly-by
-
+    #
+    # The simulation is then run to log the fly-by data.
+    #
+    # At the end of the transfer, the logged data (which is always in the inertial frame,
+    # in this case, the heliocentric
+    # frame) for each section is manipulated for plotting purposes.
+    # To show the Earth-centered departure, the position and velocity of
+    # the spacecraft are adjusted to be Earth-centric.
+    # The heliocentric Hohmann transfer does not need to be adjusted since it is already in the form required.
+    # The position and velocity data of the spacecraft within Jupiter's SOI are adjusted to be Jupiter centered so the
+    # trajectory of the flyby with respect to Jupiter can be shown.
+    #
     sun.isCentralBody = False
     jupiter.isCentralBody = True
 
@@ -404,12 +344,7 @@ def run(show_plots):
     posJup = dataPos[endTimeStepSwitchTime:-1]
     velJup = dataVel[endTimeStepSwitchTime:-1]
 
-
-    #######################################
-    # Data Manipulation
-
     # Earth Centered Departure
-
     pos_S_EC = []
     vel_S_EC = []
     for idx in range (0,endEarthTime):
@@ -419,7 +354,6 @@ def run(show_plots):
         vel_S_EC.append(v_S_E)
 
     # Jupiter Centered Arrival
-
     pos_S_JC = []
 
     for idx in range(10450,len(posJup)):
@@ -429,9 +363,7 @@ def run(show_plots):
     pos_S_JC = np.array(pos_S_JC)
 
 
-    #########################################
     # Plots
-
     np.set_printoptions(precision=16)
     # plot the results
 

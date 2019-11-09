@@ -1,23 +1,59 @@
-''' '''
-'''
- ISC License
+"""
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+This script sets up a 3-DOF spacecraft which is orbiting Earth.  The purpose
+is to illustrate how to start and stop the Basilisk simulation to apply
+some :math:`\Delta v`'s for simple orbit maneuvers.  Read :ref:`scenarioBasicOrbit`
+to learn how to setup an orbit simulation.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+The script is found in the folder ``src/examples`` and executed by using::
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+      python3 scenarioOrbitManeuver.py
 
-'''
+The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains the spacecraft object.  The BSK simulation is run for a fixed period.  After stopping, the
+states are changed and the simulation is resumed.
 
+.. image:: /_images/static/test_scenarioOrbitManeuver.svg
+   :align: center
+
+When the simulation completes 2 plots are shown for each case.  One plot always shows
+the inertial position vector components, while the second plot either shows a plot
+of the radius time history (Hohmann maneuver), or the
+inclination angle time history plot (Inclination change maneuver).
+
+The following images illustrate the expected simulation run returns for a range of script configurations.
+
+::
+
+    show_plots = True, maneuverCase = 0
+
+In this case a classical Hohmann transfer is being
+simulated to go from LEO to reach and stay at GEO. The math behind such maneuvers can be found
+in textbooks such as `Analytical Mechanics of Space Systems <http://arc.aiaa.org/doi/book/10.2514/4.102400>`__.
+
+.. image:: /_images/Scenarios/scenarioOrbitManeuver10.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioOrbitManeuver20.svg
+   :align: center
+
+::
+
+    show_plots = True, maneuverCase = 1
+
+In this case a classical plane change is being
+simulated to go rotate the orbit plane first 8 degrees, then another 4 degrees after
+orbiting 90 degrees. The math behind such maneuvers can be found
+in textbooks such as `Analytical Mechanics of Space Systems
+<http://arc.aiaa.org/doi/book/10.2514/4.102400>`__.
+
+.. image:: /_images/Scenarios/scenarioOrbitManeuver11.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioOrbitManeuver21.svg
+   :align: center
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -55,112 +91,25 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioOrbitManeuverGroup
-## @{
-## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
-#
-# Orbit Maneuvers using Simulation Starting/Stopping in Python {#scenarioOrbitManeuver}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 3-DOF spacecraft which is orbiting Earth.  The purpose
-# is to illustrate how to start and stop the Basilisk simulation to apply
-# some Delta_v's for simple orbit maneuvers.  Read
-# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
-# orbit simulation. The scenarios can be run with the followings setups
-# parameters:
-# Setup | maneuverCase
-# ----- | -------------------
-# 1     | 0 (Hohmann)
-# 2     | 1 (Inclination)
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioOrbitManeuver.py
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains the spacecraft object.  The BSK simulation is run for a fixed period.  After stopping, the
-# states are changed and the simulation is resumed.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioOrbitManeuver.svg "Illustration")
-#
-# When the simulation completes 2 plots are shown for each case.  One plot always shows
-# the inertial position vector components, while the second plot either shows a plot
-# of the radius time history (Hohmann maneuver), or the
-# inclination angle time history plot (Inclination change maneuver).
-#
-# The dynamics simulation is setup using a SpacecraftPlus() module with the Earth's
-# gravity module attached.  Note that the rotational motion simulation is turned off to leave
-# pure 3-DOF translation motion simulation.  After running the simulation for 1/4 of a period
-# the simulation is stopped to apply impulsive changes to the inertial velocity vector.
-# ~~~~~~~~~~~~~~~~~{.py}
-#    scSim.ConfigureStopTime(simulationTime)
-#    scSim.ExecuteSimulation()
-# ~~~~~~~~~~~~~~~~~
-# Next, the state manager objects are called to retrieve the latest inerital position and
-# velocity vector components:
-# ~~~~~~~~~~~~~~~~~{.py}
-#    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-#    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
-# ~~~~~~~~~~~~~~~~~
-# After computing the maneuver specific Delta_v's, the state managers velocity is updated through
-# ~~~~~~~~~~~~~~~~~{.py}
-#     velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
-# ~~~~~~~~~~~~~~~~~
-# To start up the simulation again, not that the total simulation time must be provided,
-# not just the next incremental simulation time.
-# ~~~~~~~~~~~~~~~~~{.py}
-#     scSim.ConfigureStopTime(simulationTime+T2)
-#     scSim.ExecuteSimulation()
-# ~~~~~~~~~~~~~~~~~
-# This process is then repeated for the second maneuver.
-#
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          0            # Maneuver Case (0 - Hohmann, 1 - Inclination)
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The remaining argument controls the
-# type of maneuver that is being simulated.  In this case a classical Hohmann transfer is being
-# simulated to go from LEO to reach and stay at GEO. The math behind such maneuvers can be found
-# in textbooks such as *Analytical Mechanics of Space Systems*
-# (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).
-# The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver10.svg "Position history")
-# ![Orbit Radius Illustration](Images/Scenarios/scenarioOrbitManeuver20.svg "Radius Illustration")
-#
-# Setup 2
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          1            # Maneuver Case (0 - Hohmann, 1 - Inclination)
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The remaining argument controls the
-# type of maneuver that is being simulated.  In this case a classical plane change is being
-# simulated to go rotate the orbit plane first 8 degrees, then another 4 degrees after
-# orbiting 90 degrees. The math behind such maneuvers can be found
-# in textbooks such as *Analytical Mechanics of Space Systems*
-# (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The final orbit inclination angle is 8.94 degrees
-# which is indicated as a dashed line below.
-# The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver11.svg "Position history")
-# ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
-#
-## @}
+
+
+
 def run(show_plots, maneuverCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        maneuverCase (int):
+
+            ======  ============================
+            Int     Definition
+            ======  ============================
+            0       Hohmann maneuver
+            1       Inclination change maneuver
+            ======  ============================
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -240,15 +189,18 @@ def run(show_plots, maneuverCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    #
-    #   configure a simulation stop time time and execute the simulation run
-    #
+    # The dynamics simulation is setup using a SpacecraftPlus() module with the Earth's
+    # gravity module attached.  Note that the rotational motion simulation is turned off to leave
+    # pure 3-DOF translation motion simulation.  After running the simulation for 1/4 of a period
+    # the simulation is stopped to apply impulsive changes to the inertial velocity vector.
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    # get the current spacecraft states
+    # Next, the state manager objects are called to retrieve the latest inertial position and
+    # velocity vector components:
     rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
     vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+
     # compute maneuver Delta_v's
     if maneuverCase == 1:
         # inclination change
@@ -259,6 +211,8 @@ def run(show_plots, maneuverCase):
         vHat = np.cross(hHat, rHat)
         v0 = np.dot(vHat, vVt)
         vVt = vVt - (1. - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
+
+        # After computing the maneuver specific Delta_v's, the state managers velocity is updated through
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
         T2 = macros.sec2nano(P * 0.25)
     else:
@@ -271,11 +225,14 @@ def run(show_plots, maneuverCase):
         T2 = macros.sec2nano((np.pi) / n1)
         vHat = vVt / v0
         vVt = vVt + vHat * (v0p - v0)
+        # After computing the maneuver specific Delta_v's, the state managers velocity is updated through
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
-    # run simulation for 2nd chunk
+    # To start up the simulation again, note that the total simulation time must be provided,
+    # not just the next incremental simulation time.
     scSim.ConfigureStopTime(simulationTime + T2)
     scSim.ExecuteSimulation()
+    # This process is then repeated for the second maneuver.
 
     # get the current spacecraft states
     rVt = unitTestSupport.EigenVector3d2np(posRef.getState())

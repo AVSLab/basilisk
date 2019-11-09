@@ -1,22 +1,44 @@
-''' '''
 '''
- ISC License
+This script sets up a basic spacecraft in orbit about Earth. One option uses ``earth.isCentralBody = True``
+and the other uses ``isCentralBody = False``. The nuances of spacecraft position and velocity I/O in these cases are
+demonstrated.
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+.. image:: /_images/static/test_scenarioBasicOrbit.svg
+   :align: center
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+The script is found in the folder ``src/examples`` and executed by using::
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+    python3 scenarioCentralBody.py
+
+.. note:: This script is a good reference for configuring the following modules:
+
+          * :ref:`spacecraftPlus`
+          * :ref:`gravityEffector`
+
+Running this example script will yield the following results.
+
+::
+
+    show_plots = True, useCentral = False
+
+.. figure:: /_images/Scenarios/scenarioCentralBody10.svg
+   :align: center
+
+.. figure:: /_images/Scenarios/scenarioCentralBody20.svg
+   :align: center
+
+::
+
+    show_plots = True, useCentral = True
+
+.. figure:: /_images/Scenarios/scenarioCentralBody11.svg
+   :align: center
+
+.. figure:: /_images/Scenarios/scenarioCentralBody21.svg
+   :align: center
 
 '''
+
 
 
 #
@@ -56,52 +78,9 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def run(show_plots, useCentral):
     """
-        This script sets up a basic spacecraft in orbit about Earth. One option uses ``earth.isCentralBody = True``
-        and the
-        other uses ``isCentralBody = False``. The nuances of spacecraft position and velocity I/O in these cases are
-        demonstrated.
-
-        .. image:: /_images/static/test_scenarioBasicOrbit.svg
-           :align: center
-
-        The script is found in the folder ``src/examples`` and executed by using::
-
-            python3 scenarioCentralBody.py
-
         Args:
             show_plots (bool): Determines if the script should display plots
             useCentral (bool): Specifies if the planet is the center of the coordinate system
-
-        .. note:: This script is a good reference for configuring the following modules:
-
-                  * :ref:`spacecraftPlus`
-                  * :ref:`gravityEffector`
-
-
-
-        **Resulting Images**
-
-        Running this example script will yield the following results.
-
-        ::
-
-            show_plots = True, useCentral = False
-
-        .. figure:: /_images/Scenarios/scenarioCentralBody10.svg
-           :align: center
-
-        .. figure:: /_images/Scenarios/scenarioCentralBody20.svg
-           :align: center
-
-        ::
-
-            show_plots = True, useCentral = True
-
-        .. figure:: /_images/Scenarios/scenarioCentralBody11.svg
-           :align: center
-
-        .. figure:: /_images/Scenarios/scenarioCentralBody21.svg
-           :align: center
         """
 
 
