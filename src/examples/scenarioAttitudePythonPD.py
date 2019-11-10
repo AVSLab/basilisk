@@ -1,23 +1,99 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+This script demonstrates how to stabilize the tumble of a spacecraft orbiting the
+Earth that is initially tumbling, but uses 3 separate threads, one of them written in  python.
+The simulation sets up a 6-DOF spacecraft which is orbiting the Earth. This setup
+is similar to the :ref:`scenarioAttitudeFeedbackRW`,
+but here the dynamics
+simulation and the Flight Software (FSW) algorithms are run at different time steps.
+The scenario runs two different cases.  The first is with the nominal MRP_PD (c-code), the
+second is with the same module coded into a python process.  Identical results should be
+obtained.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioAttitudePythonPD.py
 
+It is assumed at this point that you are familiar with how to set up simulations in Basilisk and that
+you have a good understanding of processes/Tasks/models/etc.  This document tries to call out the
+unique changes that are needed for python processes.
+
+The simulation layout is broken up into three different processes.  In the nominal sim (with MRP_PD c-code),
+the processes contain the following contents:
+
+#. Dynamics and control leading up to MRP_PD
+#. MRP_PD (c-code)
+#. RWA control based on MRP_PD outputs
+
+For the simulation with the python task, the scenario is broken up as follows:
+
+#. Dynamics and control leading up to MRP_PD
+#. MRP_PD (python-code)
+#. RWA control based on MRP_PD outputs
+
+The process, task, and model settings for the standard models follow a procedure identical to the
+other tutorials.  Then for Python processes, the spin up procedure closely mirrors that of the
+regular processes.
+
+For the python processes, the creation step is almost identical to the creation step for standard
+C/C++ processes.  Instead of:
+
+.. code-block:: python
+
+      scSim.dynProcessSecond = scSim.CreateNewProcess(scSim.simControlProc, 2)
+
+we use:
+
+.. code-block:: python
+
+      scSimPy.dynProcessSecond = scSimPy.CreateNewPythonProcess(scSimPy.simControlProc, 2)
+
+With this process, we've embedded Py in most of the naming, but that is an arbitrary user
+choice, the only thing that matters is the ``CreateNewPythonProcess`` instead of ``CreateNewProcess``.
+Note that the prioritization is the same procedure as is used for standard tasks.
+
+Then, models are created using model classes that have been defined (more on this later).  These
+models are then attached to the python task which has been attached to the python process.  Again
+the same prioritization procedures are used for the python tasks as are used for the standard tasks.
+
+When the simulation completes 3 plots are shown for the MRP attitude history, the differences
+between the attitude history, and the differences between the RWA commands.  The attitude history
+should show a clean overlay, and there should be zero differences.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, useJitterSimple = False, useRWVoltageIO = False
+
+.. image:: /_images/Scenarios/scenarioAttitudePythonPD100.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudePythonPD200.svg
+   :align: center
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -73,76 +149,16 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioAttitudePythonPDGroup
-##   @{
-## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
-# Earth that is initially tumbling, but uses 3 separate threads, one of them python.
-#
-# Attitude Detumbling Simulation in a Three Process Simulation Setup {#scenarioAttitudePythonPD}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth. This setup
-# is similar to the [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
-# but here the dynamics
-# simulation and the Flight Software (FSW) algorithms are run at different time steps.
-# The scenario runs two different cases.  The first is with the nominal MRP_PD (c-code), the
-# second is with the same module coded into a python process.  Identical results should be
-# obtained.
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioAttitudePythonPD.py
-#
-# When the simulation completes 3 plots are shown for the MRP attitude history, the differences
-# between the attitude history, and the differences between the RWA commands.  The attitude history
-# should show a clean overlay, and there should be zero differences.
-#
-# It is assumed at this point that you are familiar with how to set up simulations in Basilisk and that
-# you have a good understanding of processes/Tasks/models/etc.  This document tries to call out the
-# unique changes that are needed for python processes.
-#
-# The simulation layout is broken up into three different processes.  In the nominal sim (with MRP_PD c-code),
-# the processes contain the following contents:
-# -# Dynamics and control leading up to MRP_PD
-# -# MRP_PD (c-code)
-# -# RWA control based on MRP_PD outputs
-#
-# For the simulation with the python task, the scenario is broken up as follows:
-# -# Dynamics and control leading up to MRP_PD
-# -# MRP_PD (python-code)
-# -# RWA control based on MRP_PD outputs
-#
-# The process, task, and model settings for the standard models follow a procedure identical to the
-# other tutorials.  Then for Python processes, the spin up procedure closely mirrors that of the
-# regular processes.
-#
-# For the python processes, the creation step is almost identical to the creation step for standard
-# C/C++ processes.  Instead of:
-# ~~~~~~~~~~~~~~{.py}
-#       scSim.dynProcessSecond = scSim.CreateNewProcess(scSim.simControlProc, 2)
-# ~~~~~~~~~~~~~~
-# We use:
-# ~~~~~~~~~~~~~~{.py}
-#       scSimPy.dynProcessSecond = scSimPy.CreateNewPythonProcess(scSimPy.simControlProc, 2)
-# ~~~~~~~~~~~~~~
-# With this process, we've embedded Py in most of the naming, but that is an arbitrary user
-# choice, the only thing that matters is the CreateNewPythonProcess instead of CreateNewProcess.
-# Note that the prioritization is the same procedure as is used for standard tasks.
-#
-# Then, models are created using model classes that have been defined (more on this later).  These
-# models are then attached to the python task which has been attached to the python process.  Again
-# the same prioritization procedures are used for the python tasks as are used for the standard tasks.
-#
-##  @}
-
-
-
-
 def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
 
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useJitterSimple (bool): Specify if the RW jitter should be modeled
+        useRWVoltageIO (bool): Specify if the RW voltage interface should be modeled
+
+    """
     simulationTimeStep = macros.sec2nano(.1)
 
 
@@ -246,7 +262,8 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
         plt.plot(timeData, dataUsReq[:, idx] - dataUsReqBase[:, idx])
     plt.xlabel('Time [min]')
     plt.ylabel('RW tau diff [Nm] ')
-
+    pltName = fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    figureList[pltName] = plt.figure(2)
 
     if show_plots:
         plt.show()
@@ -524,36 +541,35 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     return dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW
 
 
-## \page scenarioAttitudePythonPDGroup
-##   @{
-# ====
-#
-# PythonMRPPD module implementation
-# -----
-#
-# This class inherits from the PythonModelClass available in the simulationArchTypes module.
-# The PythonModelClass is the parent class which your Python BSK modules must inherit.
-# The class uses the following
-# virtual functions:
-# -# selfInit: The method that creates all of the messages that will be written by the
-#    python model that is implemented in your class.
-# -# crossInit: The method that will subscribe to all of the input messages that your class
-#    needs in order to perform its function.
-# -# reset: The method that will initialize any persistent data in your model to a common
-#    "ready to run" state (e.g. filter states, integral control sums, etc).
-# -# updateState: The method that will be called at the rate specified
-#    in the PythonTask that was created in the input file.
-#
-# Additionally, your class should ensure that in the __init__ method, your call the super
-# __init__ method for the class so that the base class' constructor also gets called to
-# initialize the model-name, activity, moduleID, and other important class members:
-# ~~~~~~~~~~~~~~{.py}
-#       super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
-# ~~~~~~~~~~~~~~
-# You class must implement the above four functions. Beyond these four funcitons you class
-# can complete any other computations you need (Numpy, matplotlib, vision processing
-# AI, whatever).
+
 class PythonMRPPD(simulationArchTypes.PythonModelClass):
+    """
+    This class inherits from the :ref:`PythonModelClass` available in the ``simulationArchTypes`` module.
+    The :ref:`PythonModelClass` is the parent class which your Python BSK modules must inherit.
+    The class uses the following
+    virtual functions:
+
+    #. ``selfInit``: The method that creates all of the messages that will be written by the
+       python model that is implemented in your class.
+    #. ``crossInit``: The method that will subscribe to all of the input messages that your class
+       needs in order to perform its function.
+    #. ``reset``: The method that will initialize any persistent data in your model to a common
+       "ready to run" state (e.g. filter states, integral control sums, etc).
+    #. ``updateState``: The method that will be called at the rate specified
+       in the PythonTask that was created in the input file.
+
+    Additionally, your class should ensure that in the ``__init__`` method, your call the super
+    ``__init__`` method for the class so that the base class' constructor also gets called to
+    initialize the model-name, activity, moduleID, and other important class members:
+
+    .. code-block:: python
+
+        super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
+
+    You class must implement the above four functions. Beyond these four functions you class
+    can complete any other computations you need (``Numpy``, ``matplotlib``, vision processing
+    AI, whatever).
+    """
     def __init__(self, modelName, modelActive=True, modelPriority=-1):
         super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
 
@@ -626,7 +642,6 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         return
 
 
-##  @}
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script

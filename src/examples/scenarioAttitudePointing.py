@@ -1,23 +1,77 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Demonstrates how to stabilize the attitude tumble without translational motion.
+This script sets up a 6-DOF spacecraft, but without specifying any orbital motion.  Thus,
+this scenario simulates the spacecraft translating in deep space.  The scenario is a simplified
+version of :ref:`scenarioAttitudeFeedback` with the orbital setup removed.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioAttitudePointing.py
 
+As with :ref:`scenarioAttitudeFeedback`, when
+the simulation completes 3 plots are shown for the MRP attitude history, the rate
+tracking errors, as well as the control torque vector.
+
+The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+modules.
+
+.. image:: /_images/static/test_scenarioAttitudePointing.svg
+   :align: center
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, useLargeTumble = False
+
+Here a small initial tumble is simulated.  The
+resulting attitude and control torque histories are shown below.  The spacecraft quickly
+regains a stable orientation without tumbling past 180 degrees.
+
+.. image:: /_images/Scenarios/scenarioAttitudePointing10.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudePointing20.svg
+   :align: center
+
+::
+
+    show_plots = True, useLargeTumble = True
+
+Note that, as expected,
+the orientation error tumbles past 180 degrees before stabilizing to zero.  The control
+torque effort is also much larger in this case.
+
+.. image:: /_images/Scenarios/scenarioAttitudePointing11.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudePointing21.svg
+   :align: center
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -61,76 +115,16 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioAttitudePointingGroup
-##   @{
-## Demonstrates how to stabilize the tumble without translational motion.
-#
-# Pure Attitude Detumbling Simulation in a Single Simulation Process {#scenarioAttitudePointing}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft, but without specifying any orbital motion.  Thus,
-# this scenario simulates the spacecraft translating in deep space.  The scenario is a simplified
-# version of [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) with the orbital setup
-# removed.  The scenario is
-# setup to be run in 2 different setups:
-# Setup | useLargeTumble
-# ----- | -------------------
-# 1     | False
-# 2     | True
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioAttitudePointing.py
-#
-# As with [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback), when
-# the simulation completes 3 plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the control torque vector.
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudePointing.svg "Illustration")
-#
-# ~~~~~~~~~~~~~~~~
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          False        # useLargeTumble
-#        )
-# ~~~~~~~~~~~~~
-# Here a small initial tumble is simulated.  The
-# resulting attitude and control torque histories are shown below.  The spacecraft quickly
-# regains a stable orientation without tumbling past 180 degrees.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudePointing20.svg "Torque history")
-#
-# Setup 2
-# ------
-#
-# Here the python main function is changed to read:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True         # useLargeTumble
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  Note that, as expected,
-# the orientation error tumbles past 180 degrees before stabilizing to zero.  The control
-# torque effort is also much larger in this case.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudePointing21.svg "Torque history")
-##  @}
 def run(show_plots, useLargeTumble):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useLargeTumble (bool): Specify if a large initial tumble rate should be used
+
+    """
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 

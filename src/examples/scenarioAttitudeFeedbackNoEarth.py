@@ -1,22 +1,99 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Demonstrates how to simulate an attitude control scenario without having any gravity
+bodies present. In essence, the spacecraft is hovering in deep space.  The goal is to
+stabilize the tumble of a spacecraft and point it towards a fixed inertial direction.
+This script sets up a 6-DOF spacecraft which is hovering in deep space.  The scenario duplicates
+the scenario in :ref:`scenarioAttitudeFeedback` without adding
+Earth gravity body to the simulation.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+      python3 scenarioAttitudeFeedbackNoEarth.py
+
+When the simulation completes 3 plots are shown for the MRP attitude history, the rate
+tracking errors, as well as the control torque vector.
+
+The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+modules.
+
+.. image:: /_images/static/test_scenarioAttitudeFeedbackNoEarth.svg
+   :align: center
+
+The spacecraft simulation is identical to :ref:`scenarioAttitudeFeedback`.
+The primary difference is that the gravity body is not included.
+
+
+Illustration of Simulation Results
+----------------------------------
+The following simulation runs should output identical results to the scenario runs in
+:ref:`scenarioAttitudeFeedback` as the attitude pointing goal
+is an inertial orientation, and thus independent of the satellite being in Earth orbit or
+hovering in deep space.
+
+::
+
+    show_plots = True, useUnmodeledTorque = False, useIntGain = False, useKnownTorque = False
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth1000.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth2000.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = False
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth1100.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth2100.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = True, useKnownTorque = False
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth1110.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth2110.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = True
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth1101.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackNoEarth2101.svg
+   :align: center
+
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -63,140 +140,18 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioAttitudeFeedbackNoEarthGroup
-##   @{
-# Demonstrates how to simulate an attitude control scenario without having any gravity
-# bodies present. In essence, the spacecraft is hovering in deep space.  The goal is to
-#  stabilize the tumble of a spacecraft and point it towards a fixed inertial direction.
-#
-# Attitude Detumbling Simulation Without any Gravity Bodies {#scenarioAttitudeFeedbackNoEarth}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft which is hovering in deep space.  The scenario duplicates
-# the scenario in [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedbackNoEarth) without adding
-# Earth gravity body to the simulation.  The scenario is
-# setup to be run in four different setups:
-# Setup | useUnmodeledTorque  | useIntGain | useKnownTorque
-# ----- | ------------------- | ---------- | --------------
-# 1     | False               | False      | False
-# 2     | True                | False      | False
-# 3     | True                | True       | False
-# 4     | True                | False      | True
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioAttitudeFeedbackNoEarth.py
-#
-# When the simulation completes 3 plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the control torque vector.
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedbackNoEarth.svg "Illustration")
-#
-# The spacecraft simulation is identical to [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedbackNoEarth)
-# with identical reaction wheel included.  The primary difference is that the gravity body is not included.
-# When initializing the spacecraft states, only the attitude states must be set.  The position and velocity
-# states are initialized automatically to zero.
-# ~~~~~~~~~~~~~~~~{.py}
-#     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-#     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
-# ~~~~~~~~~~~~~~~~
-#
-# The following simulation runs should output identical results to the scenario runs in
-# [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedbackNoEarth) as the attitude pointing goal
-# is an inertial orientation, and thus independent of the satellite being in Earth orbit or
-# hovering in deep space.
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          False,       # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 3 arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario has both the unmodeled torque and integral feedback turned off.  The
-# resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth1000.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth2000.svg "Torque history")
-#
-# Setup 2
-# ------
-#
-# Here the python main function is changed to read:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  Note that, as expected,
-# the orientation error doesn't settle to zero, but rather converges to a non-zero offset
-# proportional to the unmodeled torque being simulated.  Also, the control torques settle on
-# non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth1100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth2100.svg "Torque history")
-#
-# Setup 3
-# ------
-#
-# The 3rd scenario turns on both the unmodeled external torque and the integral
-# feedback term:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  In this case
-# the orientation error does settle to zero.  The integral term changes the control torque
-# to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth1110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth2110.svg "Torque history")
-#
-# Setup 4
-# ------
-#
-# The 4th scenario turns on the unmodeled external torque but keeps the integral
-# feedback term off.  Instead, the external disturbance is fed forward in the
-# attitude control solution.
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          True         # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  In this case
-# the orientation error does settle to zero as the feedforward term compensates for
-# the external torque.  The control torque is now caused
-# to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth1101.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedbackNoEarth2101.svg "Torque history")
-#
-##  @}
-def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
-    '''Call this routine directly to run the tutorial scenario.'''
 
+def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useUnmodeledTorque (bool): Specify if an external torque should be included
+        useIntGain (bool): Specify if the feedback control uses an integral feedback term
+        useKnownTorque (bool): Specify if the external torque is feed forward in the contro
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -314,6 +269,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
                                mrpControlConfig.vehConfigInMsgName,
                                vehicleConfigOut)
 
+    # The primary difference is that the gravity body is not included.
+    # When initializing the spacecraft states, only the attitude states must be set.  The position and velocity
+    # states are initialized automatically to zero.
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 

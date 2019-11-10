@@ -1,22 +1,89 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+This script illustrates how to setup different integration methods for a basic 3-DOF orbit scenario.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+      python3 scenarioIntegrators.py
+
+The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
+simulate the gravitational accelerations.  The spacecraft object provides the states that the integration
+module needs to perform the time integration.
+
+.. image:: /_images/static/test_scenarioIntegrators.svg
+   :align: center
+
+If :ref:`spacecraftPlus`, or any other dynamics module, is created without specifying a particular
+integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
+different integration scheme, the following code is used before the dynamics module is added to the
+python task list:
+
+.. code-block:: python
+   integratorObject = svIntegrators.svIntegratorEuler(scObject)
+   scObject.setIntegrator(integratorObject)
+
+The first line invokes an instance of the desired state vector integration module, and provides
+the dynamics module (spacecraftPlus() in this case) as the input.  This specifies to the integrator
+module which other module will provide the ``equationOfMotion()`` function to evaluate the derivatives of
+the state vector.  The send line ties the integration module to the dynamics module.  After that we are
+done.
+
+The integrator scenario script is setup to evaluate the default integration method (RK4), a first order
+Euler integration method, as well as a second order RK2 method.
+
+When the simulation completes a plot is shown for illustrating both the true and the numerically
+evaluated orbit.
+
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, integratorCase = {'rk4', 'rk2', 'euler'}
+
+The following figure illustrates the resulting
+trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.
+The RK4 method still approximates the true orbit well, while the RK2 method is starting to show some visible
+errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating
+that much smaller time steps must be used with this method in this scenario.
+
+.. image:: /_images/Scenarios/scenarioIntegrators.svg
+   :align: center
+
+
+Creating New Integrator Modules
+-------------------------------
+
+New integration modules can be readily created for Basilisk.  They are all stored in the folder
+``Basilisk/src/simulation/dynamics/Integrators/``.
+
+The integrators must be created to function on a general state vector and be independent of the particular
+dynamics being integrated.  Note that the default integrator is placed inside the ``_GeneralModulesFiles``
+folder within the ``dynamics`` folder.
+
+"""
 
 
 #
@@ -54,73 +121,23 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioIntegratorsGroup
-##   @{
-## How to setup different integration methods for a basic 3-DOF orbit scenario.
-#
-# Specifying a Dynamics Integrator Module {#scenarioIntegrators}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 3-DOF spacecraft which is orbiting a Earth.  The purpose
-# is to illustrate how to specify a particular integrator to be used.
-# The scenarios can be run with the followings setups parameters:
-# Setup | integratorCase
-# ----- | -------------------
-# 1     | "rk4" (RK4 - default)
-# 2     | "euler" (Euler)
-# 3     | "rk2" (RK2)
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioIntegrators.py
-#
-# When the simulation completes a plot is shown for illustrating both the true and the numerically
-# evaluated orbit.
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
-# simulate the gravitational accelerations.  The spacecraft object provides the states that the integration
-# module needs to perform the time integration.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioIntegrators.svg "Illustration")
-#
-# If spacecraftPlus(), or any other dynamics module, is created without specifying a particular
-# integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
-# different integration scheme, the following code is used before the dynamics module is added to the
-# python task list:
-#~~~~~~~~~~~~~~~~~{.py}
-#   integratorObject = svIntegrators.svIntegratorEuler(scObject)
-#   scObject.setIntegrator(integratorObject)
-#~~~~~~~~~~~~~~~~~
-# The first line invokes an instance of the desired state vector integration module, and provides
-# the dynamics module (spacecraftPlus() in this case) as the input.  This specifies to the integrator
-# module which other module will provide the equationOfMotion() function to evaluate the derivatives of
-# the state vector.  The send line ties the integration module to the dynamics module.  After that we are
-# done.
-#
-# The integrator scenario script is setup to evaluate the default integration method (RK4), a first order
-# Euler integration method, as well as a second order RK2 method.  The following figure illustrates the resulting
-# trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.
-# ![Orbit Illustration](Images/Scenarios/scenarioIntegrators.svg "orbit comparison")
-# The RK4 method still approximates the true orbit well, while the RK2 method is starting to show some visible
-# errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating
-# that much smaller time steps must be used with this method in this scenario.
-#
-# Creating new Integration modules
-# -----
-#
-# New integration modules can readily be created for Basilisk.  They are all stored in the folder
-#~~~~~~~~~~~~~~~~~
-#   Basilisk/simulation/dynamics/Integrators/
-#~~~~~~~~~~~~~~~~~
-# The integrators must be created to function on a general state vector and be independent of the particular
-# dynamics being integrated.  Note that the default integrator is placed inside the `_GeneralModulesFiles`
-# folder within the `dynamics` folder.
-#
-##  @}
 def run(show_plots, integratorCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        integratorCase (bool): Specify if an external torque should be included
+
+            ======  ============================
+            String  Definition
+            ======  ============================
+            'rk4'   RK4 - default
+            'rk2'   RK2
+            'euler' Euler or RK1
+            ======  ============================
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"

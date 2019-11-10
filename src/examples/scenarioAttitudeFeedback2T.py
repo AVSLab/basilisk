@@ -1,22 +1,101 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Demonstrates how to stabilize the tumble of a spacecraft orbiting the
+Earth that is initially tumbling, but uses 2 separate threads.
+This script sets up a 6-DOF spacecraft which is orbiting the Earth. This setup
+is similar to the :ref:`scenarioAttitudeFeedback`,
+but here the dynamics
+simulation and the Flight Software (FSW) algorithms are run at different time steps
+using two separate task groups (also called processes).
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+      python3 scenarioAttitudeFeedback2T.py
+
+The simulation layout is shown in the following illustration.  Both a simulation process is created
+which contains the spacecraft simulation modules.  A separate FSW algorithm process is run
+at a different updated rate to evaluate the Flight Software (FSW) algorithm
+modules.  Interface messages are now shared across SIM and FSW message passing interfaces (MPIs).
+
+.. image:: /_images/static/test_scenarioAttitudeFeedback2T.svg
+   :align: center
+
+A key difference to the 1-process setup is that after the processes are created, the
+dynamics and FSW messages system must be linked to connect messages with the same name.
+Note that the interface references are added to the process that they are SUPPLYING data
+to.  Reversing that setting is hard to detect as the data will still show up, it will just
+have a single frame of latency.
+
+When the simulation completes 3 plots are shown for the MRP attitude history, the rate
+tracking errors, as well as the control torque vector.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, useUnmodeledTorque = False, useIntGain = False
+
+Note that now the FSW algorithms are called in a separate process, in the first time step the
+navigation message has not been copied over, and the initial FSW values for the tracking
+errors are zero.  This is why there is a slight difference in the resulting closed loop
+performance.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T100.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T200.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = False
+
+As expected, the orientation error doesn't settle to zero, but rather converges to a non-zero offset
+proportional to the un-modeled torque being simulated.  Also, the control torques settle on
+non-zero steady-state values.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T110.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T210.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = True
+
+In this case the orientation error does settle to zero.  The integral term changes the control torque
+to settle on a value that matches the un-modeled external torque.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T111.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T211.svg
+   :align: center
+
+
+"""
 
 
 #
@@ -67,131 +146,21 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-## \page scenarioAttitudeFeedback2TGroup
-##   @{
-## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
-# Earth that is initially tumbling, but uses 2 separate threads.
-#
-# Attitude Detumbling Simulation in a Two Process Simulation Setup {#scenarioAttitudeFeedback2T}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth. This setup
-# is similar to the [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
-# but here the dynamics
-# simulation and the Flight Software (FSW) algorithms are run at different time steps.
-# The scenario is again
-# setup to be run in three different setups:
-# Scenarios Simulation Setup Cases
-#
-# Setup | useUnmodeledTorque  | useIntGain
-# ----- | ------------------- | -------------
-# 1     | False               | False
-# 2     | True                | False
-# 3     | True                | True
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioAttitudeFeedback2T.py
-#
-# When the simulation completes 3 plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the control torque vector.
-#
-# The simulation layout is shown in the following illustration.  Both a simulation process is created
-# which contains the spacecraft simulation modules.  A separate FSW algorithm process is run
-# at a different updated rate to evaluate the Flight Software (FSW) algorithm
-# modules.  Interface messages are now shared across SIM and FSW message passing interfaces (MPIs).
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedback2T.svg "Illustration")
-#
-# A key difference to the 1-process setup is that after the processes are created, the
-# dynamics and FSW messages system must be linked to connect messages with the same name.
-# Note that the interface references are added to the process that they are SUPPLYING data
-# to.  Reversing that setting is hard to detect as the data will still show up, it will just
-# have a single frame of latency.  This is done in the following two-step process:
-# ~~~~~~~~~~~~~~{.py}
-#     dyn2FSWInterface = sim_model.SysInterface()
-#     fsw2DynInterface = sim_model.SysInterface()
-#
-#     dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
-#     fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
-#
-#     dynProcess.addInterfaceRef(fsw2DynInterface)
-#     fswProcess.addInterfaceRef(dyn2FSWInterface)
-# ~~~~~~~~~~~~~~
-# Next, after the simulation has been initialized and the modules messages are created
-# a discover process must be called that links messages that have the same name.  This is
-# achieved through the combined initialization and message discovery macro.
-# ~~~~~~~~~~~~~~{.py}
-#     scSim.InitializeSimulationAndDiscover()
-# ~~~~~~~~~~~~~~
-#
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,       # show_plots
-#          False,       # useUnmodeledTorque
-#          False        # useIntGain
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 2 arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario has both the unmodeled torque and integral feedback turned off.  The
-# resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback2T100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T200.svg "Torque history")
-# Note that now the FSW algorithms are called in a separate process, in the first time step the
-# navigation message has not been copied over, and the initial FSW values for the tracking
-# errors are zero.  This is why there is a slight difference in the resulting closed loop
-# performance.
-#
-# Setup 2
-# ------
-#
-# Here the python main function is changed to read:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,       # show_plots
-#          True,       # useUnmodeledTorque
-#          False        # useIntGain
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  Note that, as expected,
-# the orientation error doesn't settle to zero, but rather converges to a non-zero offset
-# proportional to the unmodeled torque being simulated.  Also, the control torques settle on
-# non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback2T110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T210.svg "Torque history")
-#
-# Setup 3
-# ------
-#
-# The final scenario turns on both the unmodeled external torque and the integral
-# feedback term:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,       # show_plots
-#          True,       # useUnmodeledTorque
-#          True        # useIntGain
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  In this case
-# the orientation error does settle to zero.  The integral term changes the control torque
-# to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback2T111.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T211.svg "Torque history")
-#
-##  @}
-def run(show_plots, useUnmodeledTorque, useIntGain):
-    '''Call this routine directly to run the tutorial scenario.'''
 
+
+
+
+
+def run(show_plots, useUnmodeledTorque, useIntGain):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useUnmodeledTorque (bool): Specify if an external torque should be included
+        useIntGain (bool): Specify if the feedback control uses an integral feedback term
+
+    """
     # Create simulation variable names
     dynTaskName = "dynTask"
     dynProcessName = "dynProcess"
@@ -358,6 +327,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #
     #   initialize Simulation
     #
+    # Next, after the simulation has been initialized and the modules messages are created
+    # a discover process must be called that links messages that have the same name.  This is
+    # achieved through the combined initialization and message discovery macro.
     scSim.InitializeSimulationAndDiscover()
 
     # this next call ensures that the FSW and Dynamics Message that have the same

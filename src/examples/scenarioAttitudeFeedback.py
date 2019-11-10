@@ -1,22 +1,134 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Demonstrates how to stabilize the tumble of a spacecraft orbiting the
+Earth that is initially tumbling.
+This script sets up a 6-DOF spacecraft which is orbiting the Earth.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+      python3 scenarioAttitudeFeedback.py
+
+The simulation layout is
+shown in the following illustration.  A single simulation process is created
+which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+modules.
+
+.. image:: /_images/static/test_scenarioAttitudeFeedback.svg
+   :align: center
+
+The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which a gravity
+effector is attached.  Note that both the rotational and translational degrees of
+freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
+information on how to setup orbit, see :ref:`scenarioBasicOrbit`.
+
+The control torque is simulated using the :ref:`extForceTorque` module.  This module can
+accept a torque in body frame components either through an input message, or through
+a module internal torque vector which can be set in python.  In this simulation, the
+flight software is providing the attitude control torque message which is connected to
+the torque input message of this module.  If an external torque is being simulated,
+then the module internal torque vector is set to a constant value.
+
+The flight software algorithm module require a navigation message with the
+spacecraft orientation and attitude rates.  This is setup using the :ref:`simple_nav`
+module. By just invoking a sensor module it is setup to run without any simulated
+corruptions.  Thus in this simulation it will return truth measurements.
+
+Next the flight software algorithms need to be setup.  The inertial pointing reference
+frame definition is provided through the simple :ref:`inertial3D` module.  The only input
+it requires is the desired inertial heading.
+
+The reference frame states and the navigation message (output of :ref:`simple_nav` are fed
+into the :ref:`attTrackingError` module.  It is setup to compute the attitude tracking error
+between the body frame :math:`\cal B` and the reference frame :math:`\cal R`.
+If a body fixed frame other than :math:`\cal B`
+needs to be driven towards *R*, this could be configured as well in this module.
+
+Finally the tracking errors are fed to the classic MRP feedback control module.  The
+algorithm of this is discussed in the text book
+`Analytical Mechanics of Space Systems <http://dx.doi.org/10.2514/4.105210>`__.
+The control torque output vector message of this
+module is connected back to the input message of the :ref:`extForceTorque` module to close
+the control loop.
+
+When the simulation completes 3 plots are shown for the MRP attitude history, the rate
+tracking errors, as well as the control torque vector.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, useUnmodeledTorque = False, useIntGain = False, useKnownTorque = False
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback1000.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2000.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = False
+
+Note that, as expected,
+the orientation error doesn't settle to zero, but rather converges to a non-zero offset
+proportional to the un-modeled torque being simulated.  Also, the control torques settle on
+non-zero steady-state values.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback1100.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2100.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = True, useKnownTorque = False
+
+In this case the orientation error does settle to zero.  The integral term changes the control torque
+to settle on a value that matches the un-modeled external torque.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback1110.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2110.svg
+   :align: center
+
+::
+
+    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = True
+
+In this case the orientation error does settle to zero as the feed-forward term compensates for
+the external torque.  The control torque is now caused
+to settle on a value that matches the un-modeled external torque.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback1101.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2101.svg
+   :align: center
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -61,222 +173,17 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioAttitudeFeedbackGroup
-##   @{
-# Demonstrates how to stabilize the tumble of a spacecraft orbiting the
-# Earth that is initially tumbling.
-#
-# Attitude Detumbling Simulation in a Single Simulation Process {#scenarioAttitudeFeedback}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The scenario is
-# setup to be run in four different setups:
-# Setup | useUnmodeledTorque  | useIntGain | useKnownTorque
-# ----- | ------------------- | ---------- | --------------
-# 1     | False               | False      | False
-# 2     | True                | False      | False
-# 3     | True                | True       | False
-# 4     | True                | False      | True
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioAttitudeFeedback.py
-#
-# When the simulation completes 3 plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the control torque vector.
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedback.svg "Illustration")
-#
-#
-# The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
-# effector is attached.  Note that both the rotational and translational degrees of
-# freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
-# information on how to setup orbit, see [scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
-#
-# The control torque is simulated using the extForceTorque() module.  This module can
-# accept a torque in body frame components either through an input message, or through
-# a module internal torque vector which can be set in python.  In this simulation, the
-# flight software is providing the attitude control torque message which is connected to
-# the torque input message of this module.  If an external torque is being simulated,
-# then the module internal torque vector is set to a constant value.
-# ~~~~~~~~~~~~~~~~{.py}
-#     extFTObject = extForceTorque.ExtForceTorque()
-#     extFTObject.ModelTag = "externalDisturbance"
-#     # use the input flag to determine which external torque should be applied
-#     # Note that all variables are initialized to zero.  Thus, not setting this
-#     # vector would leave it's components all zero for the simulation.
-#     if useUnmodeledTorque:
-#         extFTObject.extTorquePntB_B = [[0.25],[-0.25],[0.1]]
-#     scObject.addDynamicEffector(extFTObject)
-#     scSim.AddModelToTask(simTaskName, extFTObject)
-# ~~~~~~~~~~~~~~~~
-#
-# Lastly, the flight software algorithm module require a navigation message with the
-# spacecraft orientation and attitude rates.  This is setup using the simple_nav()
-# module. By just invoking a sensor module it is setup to run without any simulated
-# corruptions.  Thus in this simulation it will return truth measurements.
-# ~~~~~~~~~~~~~~~~{.py}
-#     sNavObject = simple_nav.SimpleNav()
-#     sNavObject.ModelTag = "SimpleNavigation"
-#     scSim.AddModelToTask(simTaskName, sNavObject)
-# ~~~~~~~~~~~~~~~~
-#
-# Next the flight software algorithms need to be setup.  The inertial pointing reference
-# frame definition is provided through the simple inertial3D() module.  The only input
-# it requires is the desired inertial heading.
-# ~~~~~~~~~~~~~~~~{.py}
-#     inertial3DConfig = inertial3D.inertial3DConfig()
-#     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-#     inertial3DWrap.ModelTag = "inertial3D"
-#     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-#     inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
-#     inertial3DConfig.outputDataName = "guidanceInertial3D"
-# ~~~~~~~~~~~~~~~~
-#
-# The reference frame states and the navigation message (output of simple_nav()) are fed
-# into the attTrackingError() module.  It is setup to compute the attitude tracking error
-# between the body frame *B* and the reference frame *R*.  If a body fixed frame other than *B*
-# needs to be driven towards *R*, this could be configured as well in this module.
-# ~~~~~~~~~~~~~~~~{.py}
-#     attErrorConfig = attTrackingError.attTrackingErrorConfig()
-#     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-#     attErrorWrap.ModelTag = "attErrorInertial3D"
-#     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-#     attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-#     attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-#     attErrorConfig.inputNavName = sNavObject.outputAttName
-# ~~~~~~~~~~~~~~~~
-#
-# Finally the tracking errors are fed to the classic MRP feedback control module.  The
-# algorithm of this is discussed in the text book *Analytical Mechanics of Space Systems*
-# (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The control torque output vector message of this
-# module is connected back to the input message of the extForceTorque() module to close
-# the control loop.
-# ~~~~~~~~~~~~~~~~{.py}
-#     mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
-#     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-#     mrpControlWrap.ModelTag = "MRP_Feedback"
-#     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-#     mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-#     mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
-#     mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
-#     mrpControlConfig.K  =   3.5
-#     if useIntGain:
-#         mrpControlConfig.Ki =   0.0002      # make value negative to turn off integral feedback
-#     else:
-#         mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
-#     mrpControlConfig.P  = 30.0
-#     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
-#     if useKnownTorque:
-#         mrpControlConfig.knownTorquePntB_B = [0.25,-0.25,0.1]
-# ~~~~~~~~~~~~~~~~
-#
-# The MRP Feedback algorithm requires the vehicle confirguration structure. This defines various spacecraft
-# related states such as the inertia tensor and the position vector between the primary Body-fixed frame
-# B origin and the center of mass (defaulted to zero).  This message is set through
-# ~~~~~~~~~~~~~~~~{.py}
-#     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-#     vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
-#     unitTestSupport.setMessage(scSim.TotalSim,
-#                                simProcessName,
-#                                mrpControlConfig.vehConfigInMsgName,
-#                                vehicleConfigOut)
-# ~~~~~~~~~~~~~~~~
-# Here the container object is first created, then the inertia tensor is set.  Finally the macro
-# setMessage() can be used to conveniently create, size and write this message to a process.
-#
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          False,       # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 3 arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario has both the unmodeled torque and integral feedback turned off.  The
-# resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1000.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2000.svg "Torque history")
-#
-# Setup 2
-# ------
-#
-# Here the python main function is changed to read:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  Note that, as expected,
-# the orientation error doesn't settle to zero, but rather converges to a non-zero offset
-# proportional to the unmodeled torque being simulated.  Also, the control torques settle on
-# non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2100.svg "Torque history")
-#
-# Setup 3
-# ------
-#
-# The 3rd scenario turns on both the unmodeled external torque and the integral
-# feedback term:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  In this case
-# the orientation error does settle to zero.  The integral term changes the control torque
-# to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2110.svg "Torque history")
-#
-# Setup 4
-# ------
-#
-# The 4th scenario turns on the unmodeled external torque but keeps the integral
-# feedback term off.  Instead, the external disturbance is fed forward in the
-# attitude control solution.
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          True         # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  In this case
-# the orientation error does settle to zero as the feedforward term compensates for
-# the external torque.  The control torque is now caused
-# to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1101.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2101.svg "Torque history")
-#
-##  @}
 def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
 
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useUnmodeledTorque (bool): Specify if an external torque should be included
+        useIntGain (bool): Specify if the feedback control uses an integral feedback term
+        useKnownTorque (bool): Specify if the external torque is feed forward in the contro
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -396,13 +303,17 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # create simulation messages
     #
 
-    # create the FSW vehicle configuration message
+    # The MRP Feedback algorithm requires the vehicle configuration structure. This defines various spacecraft
+    # related states such as the inertia tensor and the position vector between the primary Body-fixed frame
+    # B origin and the center of mass (defaulted to zero).  This message is set through
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
                                mrpControlConfig.vehConfigInMsgName,
                                vehicleConfigOut)
+    # Here the container object is first created, then the inertia tensor is set.  Finally the macro
+    # setMessage() can be used to conveniently create, size and write this message to a process.
 
     #
     #   set initial Spacecraft States

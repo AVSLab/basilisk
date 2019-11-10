@@ -49,8 +49,7 @@ Attitude Regulation Control
    :maxdepth: 1
 
    Inertial Attitude Pointing <scenarioAttitudeFeedback>
-   Using Separate TAsk Group for Control <scenarioAttitudeFeedback2T>
-   Inertial Pointing with Python Module <scenarioAttitudePythonPD>
+   Using Separate Task Group for Control <scenarioAttitudeFeedback2T>
    Basic Attitude Pointing in Deep Space <scenarioAttitudePointing>
    Complex Attitude Pointing in Deep Space <scenarioAttitudeFeedbackNoEarth>
 
@@ -195,7 +194,8 @@ Advanced Simulation Options
 .. toctree::
    :maxdepth: 1
 
-   Setting the Integrator  <scenarioIntegrators>
+   Setting Type of Integrator <scenarioIntegrators>
+   Using a Python BSK Module <scenarioAttitudePythonPD>
 
 
 
