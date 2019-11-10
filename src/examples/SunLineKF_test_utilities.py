@@ -23,7 +23,6 @@ from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-path = os.path.split(path)[0]
 
 import matplotlib.pyplot as plt
 
