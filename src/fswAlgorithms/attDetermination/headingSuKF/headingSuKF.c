@@ -162,7 +162,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     
     
     /*! - Check for switching frames */
-    if (v3Dot(configData->bVec_B, heading_hat) > configData->switchTresh)
+    if (fabs(v3Dot(configData->bVec_B, heading_hat)) > configData->switchTresh)
     {
         headingSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
