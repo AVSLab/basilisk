@@ -1,23 +1,118 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+r"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Discusses how to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
+This script sets up a 6-DOF spacecraft which is orbiting the Earth.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioAttitudeGuidance.py
 
+The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+modules.
+
+.. image:: /_images/static/test_scenarioAttitudeGuidance.svg
+   :align: center
+
+When the simulation completes 4 plots are shown for the MRP attitude history, the rate
+tracking errors, the control torque vector, as well as the projection of the body-frame B
+axes :math:`\hat b_1`, :math:`\hat b_2` and :math:`\hat b_3` onto the respect
+Hill or Orbit frame axes :math:`\hat\imath_r`,
+:math:`\hat\imath_{\theta}` and :math:`\hat\imath_h`.  This latter plot illustrates how the body
+is being aligned with respect to this Hill frame.
+
+The basic simulation setup is the same as the one used in
+:ref:`scenarioAttitudeFeedback`.
+The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which a gravity
+effector is attached.  Note that both the rotational and translational degrees of
+freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
+information on how to setup orbit, see :ref:`scenarioBasicOrbit`.
+
+In contrast to the simple inertial pointing guidance example :ref:`scenarioAttitudeFeedback`,
+this module also requires the
+spacecraft's position and velocity information.  The planet ephemeris message relative to which the Hill pointing
+is being achieved by setting the ``inputCelMessName`` message.
+This is useful, for example, if orbiting the sun, and wanting to point the spacecraft back at the
+Earth which is also orbiting the sun.
+Note that while the celestial body ephemeris input message must be set, it can be a non-existing message.
+In that case a zero message is created which corresponds to the planet having a zero position and velocity vector.
+If non-zero ephemeris information is required then the input name must point
+to a message of type :ref:`EphemerisIntMsg`.
+In this scenario, however, the spacecraft is to point at the Earth while already orbiting the Earth and the input
+message name is set to a dummy message.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, useAltBodyFrame = False
+
+The default scenario shown has the ``useAltBodyFrame`` flag turned off.  This means that we seek
+to align the body frame *B* with the Hill reference frame :math:`\cal R`.    The
+resulting attitude and control torque histories are shown below.  Note that the projections
+of the body frame axes onto the Hill frame axes all converge to +1, indicating that :math:`\cal B` becomes
+asymptotically aligned with :math:`\cal R` as desired.
+
+.. image:: /_images/Scenarios/scenarioAttitudeGuidance10.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeGuidance20.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeGuidance40.svg
+   :align: center
+
+::
+
+    show_plots = True, useAltBodyFrame = True
+
+Here the control should not align the principal body frame *B* with *R*, but rather an alternate,
+corrected body frame :math:`{\cal B}_c`.  For example, consider the Earth observing sensors
+to be mounted pointing in the
+positive :math:`\hat b_1` direction. In earlier scenario this sensor platform is actually pointing away from
+the Earth.  Thus, we define the corrected body frame orientation as a 180 deg rotation about
+:math:`\hat b_2`.  This flips the orientation of the final first and third body axis.  This is achieved
+through::
+
+  attErrorConfig.sigma_R0R = [0,1,0]
+
+The DCM :math:`[R_0R]` is the same as the body to corrected body DCM :math:`[B_cB]`.
+The resulting attitude and control torque histories are shown below.  Note that the projections
+of the 2nd body frame axis onto the 2nd Hill frame axes converges to +1, while the other
+projections converge to -1.  This indicates that the desired asymptotic Earth observing attitude
+is achieved.
+
+.. image:: /_images/Scenarios/scenarioAttitudeGuidance11.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeGuidance21.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeGuidance41.svg
+   :align: center
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -68,6 +163,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # Plotting functions
 def plot_attitude_error(timeLineSet, dataSigmaBR):
+    """Plot the attitude result."""
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
@@ -81,6 +177,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     ax.set_yscale('log')
 
 def plot_control_torque(timeLineSet, dataLr):
+    """Plot the control torque response."""
     plt.figure(2)
     for idx in range(1, 4):
         plt.plot(timeLineSet, dataLr[:, idx],
@@ -91,6 +188,7 @@ def plot_control_torque(timeLineSet, dataLr):
     plt.ylabel('Control Torque $L_r$ [Nm]')
 
 def plot_rate_error(timeLineSet, dataOmegaBR):
+    """Plot the body angular velocity tracking error."""
     plt.figure(3)
     for idx in range(1, 4):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
@@ -102,6 +200,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     return
 
 def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
+    """Plot the spacecraft orientation."""
     vectorPosData = unitTestSupport.pullVectorSetFromData(dataPos)
     vectorVelData = unitTestSupport.pullVectorSetFromData(dataVel)
     vectorMRPData = unitTestSupport.pullVectorSetFromData(dataSigmaBN)
@@ -126,128 +225,15 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
     plt.ylabel('Orientation Illustration')
 
 
-## \page scenarioAttitudeGuidanceGroup
-##   @{
-## How to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
-#
-# Attitude Alignment with Hill Orbit Frame {#scenarioAttitudeGuidance}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The scenario is
-# setup to be run in two different setups:
-# Setup | useAltBodyFrame
-# ----- | -------------------
-# 1     | False
-# 2     | True
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioAttitudeGuidance.py
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeGuidance.svg "Illustration")
-#
-# When the simulation completes 4 plots are shown for the MRP attitude history, the rate
-# tracking errors, the control torque vector, as well as the projection of the body-frame B
-# axes \f$\hat b_1\f$, b2 and b3 onto the respect Hill or Orbit frame axes \f$\hat\imath_r\f$,
-# \f$\hat\imath_{\theta}\f$ and \f$\hat\imath_h\f$.  This latter plot illustrates how the body
-# is being aligned with respect to this Hill frame.
-#
-# The basic simulation setup is the same as the one used in
-# [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
-# The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
-# effector is attached.  Note that both the rotational and translational degrees of
-# freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
-# information on how to setup orbit, see [scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
-#
-# However, instead of doing an inertial pointing maneuver, here the hillFrame() attitude guidance module
-# is used:
-# ~~~~~~~~~~~~~{.py}
-#     attGuidanceConfig = hillPoint.hillPointConfig()
-#     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-#     attGuidanceWrap.ModelTag = "hillPoint"
-#     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-#     # if you want to set attGuidanceConfig.inputCelMessName, then you need a planet ephemeris message of
-#     # type EphemerisIntMsg.  In the line below a non-existing message name is used to create an empty planet
-#     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
-#     attGuidanceConfig.inputCelMessName = "empty_earth_msg"
-#     attGuidanceConfig.outputDataName = "guidanceOut"
-#     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
-# ~~~~~~~~~~~~~
-#
-# In contrast to the simple inertial pointing guidance module, this module also requires the
-# spacecraft's position and velocity information.  The planet ephemeris message relative to which the Hill pointing
-# is being achieved by setting the `inputCelMessName` message.
-# This is useful, for example, if orbiting the sun, and wanting to point the spacecraft back at the
-# Earth which is also orbiting the sun.
-# Note that while the celestial body ephemeris input message must be set, it can be a non-existing message.
-# In that case a zero message is created which corresponds to the planet having a zero position and velocity vector.
-# If non-zero ephemeris information is required then the input name must point to a message of type EphemerisIntMsg.
-# In this scenario, however, the spacecraft is to point at the Earth while already orbiting the Earth and the input
-# message name is set to a dummy message.
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          False        # useAltBodyFrame
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The remaining argument(s) control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario shown has the `useAltBodyFrame` flag turned off.  This means that we seek
-# to align the body frame *B* with the Hill reference frame *R*.    The
-# resulting attitude and control torque histories are shown below.  Note that the projections
-# of the body frame axes onto the Hill frame axes all converge to +1, indidcating that B becomes
-# asympotically aligned with R as desired.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeGuidance10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeGuidance20.svg "Torque history")
-# ![Body/Hill Frame Axis Projections](Images/Scenarios/scenarioAttitudeGuidance40.svg "Axes Projection")
-#
-#
-# Setup 2
-# -----
-#
-# To run the second scenario, change the main routine at the bottom of the file to read:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True         # useAltBodyFrame
-#        )
-# ~~~~~~~~~~~~~
-# Here the control should not align the principal body frame *B* with *R*, but rather an alternate,
-# corrected body frame *Bc*.  For example, consider the Earth observing sensors to be mounted pointing in the
-# positive \f$\hat b_1\f$ direction. In scenario 1 this sensor platform is actually pointing away from
-# the Earth.  Thus, we define the corrected body frame orientation as a 180 deg rotation about
-# \f$\hat b_2\f$.  This flips the orientation of the final first and third body axis.  This is achieved
-# through:
-# ~~~~~~~~~~~~~{.py}
-#   attErrorConfig.sigma_R0R = [0,1,0]
-# ~~~~~~~~~~~~~
-#   The DCM \f$[R_0R]\f$ is the same as the body to corrected body DCM \f$[B_cB]\f$.
-# The resulting attitude and control torque histories are shown below.  Note that the projections
-# of the 2nd body frame axis onto the 2nd Hill frame axes converges to +1, while the other
-# projections converge to -1.  This indicates that the desired asymptotic Earth observing attitude
-# is achieved.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeGuidance11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeGuidance21.svg "Torque history")
-# ![Body/Hill Frame Axis Projections](Images/Scenarios/scenarioAttitudeGuidance41.svg "Axes Projection")
-#
-##  @}
-
-
 def run(show_plots, useAltBodyFrame):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
 
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useAltBodyFrame (bool): Specify if the alternate body frame should be aligned with Hill frame.
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"

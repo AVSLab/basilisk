@@ -1,23 +1,259 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+r"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the Earth.
+This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
+illustrate how the Reaction Wheel (RW) state effector can be added to the rigid :ref:`spacecraftPlus` hub,
+and what flight algorithm module is used to control these RWs.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The first setup runs the RW control to produce a desired set of RW motor torques
+which are then connected directly to the RW device input states.  The second setup illustrates
+how to setup voltage based I/O modules to the RW devices, both on the FSW and SIM side.
 
-'''
+The script is found in the folder ``src/examples`` and executed by using::
 
+      python3 scenarioAttitudeFeedbackRW.py
+
+The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+modules.
+
+.. image:: /_images/static/test_scenarioAttitudeFeedbackRW.svg
+   :align: center
+
+When the simulation completes several plots are shown for the MRP attitude history, the rate
+tracking errors, as well as the RW motor torque components, as well as the RW wheel speeds.
+
+The fundamental simulation setup is the same as the one used in
+:ref:`scenarioAttitudeFeedback`.
+The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which an Earth gravity
+effector is attached.  The simple navigation module is still used to output the inertial attitude
+, angular rate, as well as position and velocity message. The simulation is setup to run in a single
+process again.  If the flight algorithms and simulation tasks are to run at different rates, then see
+:ref:`scenarioAttitudeFeedback2T` on how to setup a 2 thread simulation.
+
+How to Add RW Devices to the Spacecraft Simulation
+--------------------------------------------------
+
+For the spacecraft simulation side of this script, the new element is adding RW effectors to the
+the rigid spacecraft hub.  The support macro ``simIncludeRW.py`` provides several convenient tools to facilitate
+this simulated RW setup process.  This script allows the user to readily create RWs from a database of
+public RW specifications, customize them if needed, and add them to the :ref:`spacecraftPlus` module.
+
+The first task is to create a fresh instance of the RW factory class ``rwFactory()``.  This factory is able
+to create a list of RW devices, and return copies that can easily be manipulated and customized if needed.
+The next step in this code is to store the correct ``RWModel`` state.  This can be either a balanced wheel,
+a wheel with a simple jitter model, or a wheel with a fully coupled model.
+
+
+The next step in this simulation setup is to use create() to include a particular RW devices.
+The :ref:`rwFactory` class contains several
+public specifications of RW devices which can be accessed by specifying the wheel name, ``Honeywell_HR16``
+in this case.  The  2nd required argument is the spin axis :math:`\hat{\mathbf g}_B`.  It is a unit
+vector expressed in the :math:`\cal B`-frame.  The remaining arguments are all optional.  In this simulation
+each RW is given a different initial RW spin :math:`\Omega`
+in units of RPMs.  The 3rd RW specifies the body-relative location of the RW center of mass.  The
+other two RWs use a default value which is a zero vector.
+This last position vector is only used if an off-balanced RW device is being modeled.
+
+Each RW device has several default options that can be customized if needed.  For example,
+the ``Honeywell_HR16`` comes in three different momentum storage configurations.  When calling the
+`create()` command, the desired storage capacity must be specified through the ``maxMomentum`` argument.
+
+The following table provides a comprehensive list of all the optional arguments of the ``create()``
+command.  This table list the arguments, default values, as well as expected units.
+
++---------------------+-------+----------+----------------------------------------+--------------------+
+|  Argument           | Units | Type     | Description                            | Default            |
++=====================+=======+==========+========================================+====================+
+| RWModel             |       | String   | flag indicating the RW dynamical model.| ``BalancedWheels`` |
+|                     |       |          | Options are ``BalancedWheels``,        |                    |
+|                     |       |          | ``JitterSimple`` and                   |                    |
+|                     |       |          | ``JitterFullyCoupled``                 |                    |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| Omega               | RPM   | Float    | initial Wheel speed                    | 0.0                |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| maxMomentum         | Nms   | Float    | maximum RW angular momentum storage    | 0.0                |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| useRWfriction       |       | Bool     | flag to turn on RW wheel friction      | False              |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| useMinTorque        |       | Bool     | flag to turn on a min. RW torque       | False              |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| useMaxTorque        |       | Bool     | flag to turn on RW torque saturation   | True               |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| linearFrictionRatio |       | Float    | Coulomb static friction value to model | -1 (Off)           |
+|                     |       |          | stickage, negative values turn off this|                    |
+|                     |       |          | feature                                |                    |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| rWB_B               | m     | Float(3) | RW center of mass location relative to | [0.0, 0.0, 0.0]    |
+|                     |       |          | B, in :math`\cal B`-frame components   |                    |
++---------------------+-------+----------+----------------------------------------+--------------------+
+| label               |       | String   | unique device label, must be not exceed| RWi                |
+|                     |       |          | 10 characters.  If not provided, the   |                    |
+|                     |       |          | function will auto-generate names using|                    |
+|                     |       |          | RWi where i is the RW wheel index      |                    |
+|                     |       |          | starting with 1.                       |                    |
++---------------------+-------+----------+----------------------------------------+--------------------+
+
+The command ``addToSpacecraft()`` adds all the created RWs to the :ref:`spacecraftPlus` module.  The final step
+is as always to add the vector of RW effectors (called ``rwStateEffector`` above) to the list of simulation
+tasks.  However, note that the dynamic effector should be evaluated before the :ref:`spacecraftPlus` module,
+which is why it is being added with a higher priority than the `scObject` task.  Generally speaking
+we should have the execution order::
+
+    effectors -> dynamics -> sensors
+
+
+If you want to configure or customize the RWs, the ``rwFactor()`` class is very convenient. Assume you want
+to override the default value of the maximum RW speed from 6000RPM to 10,000RPM.  After declaring the RW
+and keeping a copy named RW1, ``Omega_max`` stage is changed using::
+
+    RW1.Omega_max = 10000.0*macros.RPM
+
+These changes must be made before adding the RWs to the spacecraft.  If the `RW1` handler is not
+stored when the RW is create, any setup RW devices can be recalled through the device label.
+For example, the above modification could also be done with::
+
+    rwFactory.rwList['RW1'].Omega_max = 10000.0*macros.RPM
+
+Flight Algorithm Changes to Control RWs
+---------------------------------------
+
+The general flight algorithm setup is the same as in the earlier simulation script. Here we
+use again the :ref:`inertial3D` guidance module, the :ref:`attTrackingError` module to evaluate the
+tracking error states, and the :ref:`MRP_Feedback` module to provide the desired :math:`{\mathbf L}_r`
+control torque vector.  In this simulation we want the MRP attitude control module to take
+advantage of the RW spin information.  This is achieved by adding the 2 extra lines::
+
+    mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+    mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
+
+The first line specifies the RW configuration flight message name, and the second name
+connects the RW speed output message as an input message to this control module.  This simulates
+the RW speed information being sensed and returned to this algorithm.  This message names
+are not provided, then the BSK control modules automatically turn off any RW gyroscopic
+compensation.
+
+Instead of directly simulating this control torque vector, new
+algorithm modules are required to first map :math:`{\mathbf L}_r` on the set of RW motor torques
+:math:`u_B`.  This is achieved by adding the :ref:`rwMotorTorque` module.
+Note that the output vector of RW motor torques :math:`u_B` is set to connect with
+the RW state effector command input message.  Further, this module inputs the typical
+vehicle configuration message, as well as a message containing the flight algorithm
+information of the RW devices.  This torque mapping module can map the full 3D :math:`{\mathbf L}_r`
+vector onto RW motor torques, or only a subset.  This is specified through the ``controlAxes_B`` variable
+which specifies up to 3 orthogonal axes to be controlled.  In this simulation the full 3D vector is
+mapped onto motor torques.
+
+The flight algorithm needs to know how many RW devices are on the spacecraft and what their
+spin axis :math:`\hat{\mathbf g}_B` are.  This is set through a flight software message that is read
+in by flight algorithm modules that need this info.  To write the required flight RW configuration message
+a separate support macros called ``fswSetupRW.py``  is used.
+
+The a ``clearSetup()`` should be called first to clear out any pre-existing RW devices from an
+earlier simulation run.  Next, the script above uses the same RW information as what the simulation
+uses.  In this configuration we are simulating perfect RW device knowledge.  If imperfect RW knowledge
+is to be simulated, then the user would input the desired flight states rather than the true
+simulation states.  The support macro ``writeConfigMessage()`` creates the required RW flight configuration
+message.
+
+Setting up an Analog RW Interface Module
+----------------------------------------
+
+The scenario illustrates how to setup a RW analog I/O module.  This is illustrated in the updated
+flow diagram illustration.
+
+.. image:: /_images/static/test_scenarioAttitudeFeedbackRWc2.svg
+   :align: center
+
+The default interface voltage output name will connect with the default RW
+input message name.  Naturally, these can be customized if needed.  The one parameter
+that must be set is the voltage to torque conversion gain of the electric motor being modeled.
+
+On the FSW side, the commanded motor torques must be directed towards a new module that converts
+the required torque to a commanded voltage.  The first step is to re-direct the
+rWMotorTorque() output to not directly be the input to the RW SIM devices, but rather the
+input to the RW voltage command module:
+
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, useJitterSimple = False, useRWVoltageIO = False
+
+Note that in the RW motor torque plot both the required control torque :math:`\hat u_B` and the true
+motor torque :math:`u_B\f` are shown.  This illustrates that with this maneuver the RW devices are being
+saturated, and the attitude still eventually stabilizes.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW100.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW200.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW300.svg
+   :align: center
+
+::
+
+    show_plots = True, useJitterSimple = True, useRWVoltageIO = False
+
+Here the simple RW jitter model is engaged for each of the RWs. Change this option before the RW is created.
+As this is set before any of the RW created in this
+scenario, all the RWs have jitter engaged if this '`useJitterSimple`' flag is set.
+The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to
+the balanced RW case.  But there is a distinct numerical difference.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW110.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW210.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW310.svg
+   :align: center
+
+::
+
+    show_plots = True, useJitterSimple = False, useRWVoltageIO = True
+
+Here the simple RW jitter model is engaged for each of the RWs. Change this option before the RW is created.
+As this is set before any of the RW created in this
+scenario, all the RWs have jitter engaged if this '`useJitterSimple`' flag is set.
+The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to
+the balanced RW case.  But there is a distinct numerical difference.
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW101.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW201.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW301.svg
+   :align: center
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -49,6 +285,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # Plotting functions
 def plot_attitude_error(timeData, dataSigmaBR):
+    """Plot the attitude errors."""
     plt.figure(1)
     for idx in range(1, 4):
         plt.plot(timeData, dataSigmaBR[:, idx],
@@ -59,6 +296,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
+    """Plot the RW command torques."""
     plt.figure(2)
     for idx in range(1, 4):
         plt.plot(timeData, dataUsReq[:, idx],
@@ -70,6 +308,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     plt.ylabel('RW Motor Torque (Nm)')
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
+    """Plot the RW actual motor torques."""
     plt.figure(2)
     for idx in range(1, 4):
         plt.plot(timeData, dataUsReq[:, idx],
@@ -84,6 +323,7 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     plt.ylabel('RW Motor Torque (Nm)')
 
 def plot_rate_error(timeData, dataOmegaBR):
+    """Plot the body angular velocity rate tracking errors."""
     plt.figure(3)
     for idx in range(1, 4):
         plt.plot(timeData, dataOmegaBR[:, idx],
@@ -94,6 +334,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     plt.ylabel('Rate Tracking Error (rad/s) ')
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
+    """Plot the RW spin rates."""
     plt.figure(4)
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
@@ -105,6 +346,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 
 
 def plot_rw_voltages(timeData, dataVolt, numRW):
+    """Plot the RW voltage inputs."""
     plt.figure(5)
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataVolt[:, idx],
@@ -114,358 +356,16 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Voltage (V)')
 
-
-## \page scenarioAttitudeFeedbackRWGroup
-## @{
-# Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the
-# Earth.
-#
-# Attitude Detumbling Simulation using RW Effectors {#scenarioAttitudeFeedbackRW}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
-# illustrate how Reaction Wheel (RW) state effector can be added to the rigid
-# spacecraftPlus() hub, and what flight algorithm module is used to control these RWs.
-#  The scenario is
-# setup to be run in multiple configurations:
-# Setup | useJitterSimple    | useRWVoltageIO
-# ----- | -------------------|----------------
-# 1     | False              | False
-# 2     | True               | False
-# 3     | False              | True
-#
-# The first setup runs the RW control to produce a desired set of RW motor torques
-# which are then connected directly to the RW device input states.  The second setup illustrates
-# how to setup voltage based I/O modules to the RW devices, both on the FSW and SIM side.
-#
-# To run the default scenario 1., call the python script from a Terminal window through
-#
-#       python3 scenarioAttitudeFeedbackRW.py
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedbackRW.svg "Illustration")
-#
-# When the simulation completes several plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the RW motor torque components, as well as the RW wheel speeds.
-#
-#
-# ### Setup Changes to Simulate RW Dynamic Effectors
-#
-# The fundamental simulation setup is the same as the one used in
-# [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
-# The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
-# effector is attached.  The simple navigation module is still used to output the inertial attitude
-# , angular rate, as well as position and velocity message. The simulation is setup to run in a single
-# process again.  If the flight algorithms and simulation tasks are to run at different rates, then see
-# [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T) on how to setup a 2 thread simulation.
-#
-# For the spacecraft simulation side of this script, the new element is adding RW effectors to the
-# the rigid spacecraft hub.  The support macro `simIncludeRW.py` provides several convenient tools to facilitate
-# this RW setup process.  This script allows the user to readily create RWs from a database of
-# public RW specifications, customize them if needed, and add them to the spacecraftPlus() module.
-# The specific code required is:
-# ~~~~~~~~~~~~~{.py}
-#     # Make a fresh RW factory instance, this is critical to run multiple times
-#     rwFactory = simIncludeRW.rwFactory()
-#
-#     # store the RW dynamical model type
-#     varRWModel = rwFactory.BalancedWheels
-#     if useJitterSimple:
-#         varRWModel = rwFactory.JitterSimple
-#
-#     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-#     RW1 = rwFactory.create('Honeywell_HR16'
-#                            , [1, 0, 0]
-#                            , maxMomentum=50.
-#                            , Omega=100.                 # RPM
-#                            , RWModel= varRWModel
-#                            )
-#     RW2 = rwFactory.create('Honeywell_HR16'
-#                            , [0, 1, 0]
-#                            , maxMomentum=50.
-#                            , Omega=200.                 # RPM
-#                            , RWModel= varRWModel
-#                            )
-#
-#     RW3 = rwFactory.create('Honeywell_HR16'
-#                            , [0, 0, 1]
-#                            , maxMomentum=50.
-#                            , Omega=300.                 # RPM
-#                            , rWB_B = [0.5, 0.5, 0.5]    # meters
-#                            , RWModel= varRWModel
-#                            )
-#
-#     numRW = rwFactory.getNumOfDevices()
-#
-#     # create RW object container and tie to spacecraft object
-#     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-#     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
-#
-#     # add RW object array to the simulation process
-#     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
-# ~~~~~~~~~~~~~
-# The first task is to create a fresh instance of the RW factory class `rwFactorY()`.  This factory is able
-# to create a list of RW devices, and return copies that can easily be manipulated and custumized if needed.
-# The next step in this code is to store the correct `RWModel` state.  This can be either a balanced wheel,
-# a wheel with a simple jitter model, or a wheel with a fully coupled model.
-#
-# The next step in this simulation setup is to use create() to include a particular RW devices.
-# The `rwFactory()` class contains several
-# public specifications of RW devices which can be accessed by specifying the wheel name, `Honeywell_HR16`
-# in this case.  The  2nd required argument is the spin axis \f$\hat{\mathbf g}_B\f$.  It is a unit
-# vector expressed in the \f$\cal B\f$-frame.  The remaining arguments are all optional.  In this simulation
-# each RW is given a different initial RW spin \f$\Omega\f$
-# in units of RPMs.  The 3rd RW specifies the body-relative location of the RW center of mass.  The
-# other two RWs use a default value which is a zero vector.
-# This last position vector is only used if an off-balanced RW device is being modeled.
-#
-# Each RW device has several default options that can be customized if needed.  For example,
-# the `Honeywell_HR16` comes in three different momentum storage configurations.  When calling the
-# `create()` command, the desired storage capacity must be specified through the `maxMomentum` argument.
-#
-# The following table provides a comprehensive list of all the optional arguments of the `create()`
-# command.  This table list the arguments, default values, as well as expected units.
-#
-# Argument      | Units    | Type | Description  | Default
-# ------------- | ---------|------|------------- |-------------
-# RWModel       | -        | Integer | flag indicating the RW dynamical model.  Options are BalancedWheels, JitterSimple and  JitterFullyCoupled | BalancedWheels
-# Omega         | RPM      | Float | initial Wheel speed | 0.0
-# maxMomentum   | Nms      | Float | maximum RW angular momentum storage  | 0.0
-# useRWfriction | -        | Bool  | flag to turn on RW wheel friction | False
-# useMinTorque  | -        | Bool  | flag to turn on a min. RW torque | False
-# useMaxTorque  | -        | Bool  | flag to turn on RW torque saturation | True
-# linearFrictionRatio | -  | Float | Coulomb static friction value to model stickage, negative values turn off this feature | -1.0 (turned off)
-# rWB_B         | m        | 3x1 Float | RW center of mass location relative to B, in \f$\cal B\f$-frame components | [0.0, 0.0, 0.0]
-# label         | -        | string | unique device label, must be not exceed 10 characters.  If not provided, the function will autogenerate names using RWi where i is the RW wheel index starting with 1. | RWi
-#
-# The command `addToSpacecraft()` adds all the created RWs to the spacecraftPlus() module.  The final step
-# is as always to add the vector of RW effectors (called `rwStateEffector` above) to the list of simulation
-# tasks.  However, note that the dynamic effector should be evaluated before the spacecraftPlus() module,
-# which is why it is being added with a higher priority than the `scObject` task.  Generally speaking
-# we should have the execution order:
-#
-#       effectors -> dynamics -> sensors
-#
-#
-# To log the RW information, the following code is used:
-# ~~~~~~~~~~~~~~~~~{.py}
-#     scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-#     rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
-#     for item in rwOutName:
-#         scSim.TotalSim.logThisMessage(item, samplingTime)
-# ~~~~~~~~~~~~~~~~~
-# A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
-# here to be plotted later on.  However, RW specific messages are also being created which
-# contain a wealth of information.  Their default naming is automated and shown above.  This
-# allows us to log RW specific information such as the actual RW motor torque being applied.
-#
-# If you want to configure or customize the RWs, the `rwFactor()` class is very convenient. Assume you want
-# to override the default value of the maximum RW speed from 6000RPM to 10,000RPM.  After declaring the RW
-# and keeping a copy named RW1, `Omega_max` stage is changed using:
-# ~~~~~~~~~~~~~{.py}
-# RW1.Omega_max = 10000.0*macros.RPM
-# ~~~~~~~~~~~~~
-# These changes must be made before adding the RWs to the spacecraft.  If the `RW1` handler is not
-# stored when the RW is create, any setup RW devices can be recalled through the device label.
-# For example, the above modification could also be done with
-# ~~~~~~~~~~~~~{.py}
-# rwFactory.rwList['RW1'].Omega_max = 10000.0*macros.RPM
-# ~~~~~~~~~~~~~
-#
-# ### Flight Algorithm Changes to Control RWs
-#
-# The general flight algorithm setup is the same as in the earlier simulation script. Here we
-# use again the inertial3D() guidance module, the attTrackingError() module to evaluate the
-# tracking error states, and the MRP_Feedback() module to provide the desired \f${\mathbf L}_r\f$
-# control torque vector.  In this simulation we want the MRP attitude control module to take
-# advantage of the RW spin information.  This is achieved by adding the 2 extra lines:
-# ~~~~~~~~~~~~~~~{.py}
-#     mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-#     mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
-# ~~~~~~~~~~~~~~~
-# The first line specifies the RW configuration flight message name, and the second name
-# connects the RW speed output message as an input message to this control module.  This simulates
-# the RW speed information being sensed and returned to this algorithm.  This message names
-# are not provided, then the BSK control modules automatically turn off any RW gyroscopic
-# compensation.
-#
-# Instead of directly simulating this control torque vector, new
-# algorithm modules are required to first map \f${\mathbf L}_r\f$ on the set of RW motor torques
-# \f$u_B\f$.
-# ~~~~~~~~~~~~~~~{.py}
-#     # add module that maps the Lr control torque into the RW motor torques
-#     rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-#     rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-#     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-#     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
-#     # Initialize the test module msg names
-#     rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
-#     rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
-#     rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
-#     # Make the RW control all three body axes
-#     controlAxes_B = [
-#              1,0,0
-#             ,0,1,0
-#             ,0,0,1
-#         ]
-#     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
-# ~~~~~~~~~~~~~~~
-# Note that the output vector of RW motor torques \f$u_B\f$ is set to connect with
-# the RW state effector command input message.  Further, this module inputs the typical
-# vehicle configuration message, as well as a message containing the flight algorithm
-# information of the RW devices.  This torque mapping module can map the full 3D \f${\mathbf L}_r\f$
-# vector onto RW motor torques, or only a subset.  This is specified through the `controlAxes_B` variable
-# which specifies up to 3 orthogonal axes to be controlled.  In this simulation the full 3D vector is
-# mapped onto motor torques.
-#
-# The flight algorithm need to know how many RW devices are on the spacecraft and what their
-# spin axis \f$\hat{\mathbf g}_B\f$ are.  This is set through a flight software message that is read
-# in by flight algorithm modules that need this info.  To write the required flight RW configuration message
-# a separate support macros called `fswSetupRW.py`  is used.
-# ~~~~~~~~~~~~~~~~{.py}
-#     # FSW RW configuration message
-#     # use the same RW states in the FSW algorithm as in the simulation
-#     fswSetupRW.clearSetup()
-#     for key, rw in rwFactory.rwList.iteritems():
-#         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js)
-#     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
-# ~~~~~~~~~~~~~~~~
-# Again a `clearSetup()` should be called first to clear out any pre-existing RW devices from an
-# earlier simulation run.  Next, the script above uses the same RW information as what the simulation
-# uses.  In this configuration we are simulating perfect RW device knowledge.  If imperfect RW knowledge
-# is to be simulated, then the user would input the desired flight states rather than the true
-# simulation states.  The support macro `writeConfigMessage()` creates the required RW flight configuration
-# message.
-#
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        False,       # useJitterSimple
-#        False        # useRWVoltageIO
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario has the RW jitter turned off.  The
-# resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW100.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW200.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW300.svg "RW Omega history")
-# Note that in the RW motor torque plot both the required control torque \f$\hat u_B\f$ and the true
-# motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
-# saturated, and the attitude still eventually stabilizes.
-#
-#
-# Setup 2
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        True,        # useJitterSimple
-#        False        # useRWVoltageIO
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  Here the simple RW jitter
-# model is engaged for each of the RWs.  To turn this on, the command
-# ~~~~~~~~~~~~~~{.py}
-#     simIncludeRW.options.RWModel = simIncludeRW.JitterSimple
-# ~~~~~~~~~~~~~~
-# Change this option before the RW is created.  As this is set before any of the RW created in this
-# scenario, all the RWs have jitter engaged if this 'useJitterSimple' flag is set. The
-# resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW110.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW210.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW310.svg "RW Omega history")
-# The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to
-# the balanced RW case.  But there is a distinct numerical difference.
-#
-# Setup 3
-# -----
-# The second scenario illustrates how to setup RW analog I/O modules.  This is illustrated in the updated
-# flow diagram illustration.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedbackRWc2.svg "Illustration")
-#
-# On the simulation side, the
-# voltage interface is setup by adding
-# ~~~~~~~~~~~~~~{.py}
-#     rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
-#     rwVoltageIO.ModelTag = "rwVoltageInterface"
-#
-#     # set module parameters(s)
-#     rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
-#
-#     # Add test module to runtime call list
-#     scSim.AddModelToTask(simTaskName, rwVoltageIO)
-# ~~~~~~~~~~~~~~
-# The default interface voltage output name will connect with the default RW
-# input message name.  Naturally, these can be customized if needed.  The one parameter
-# that must be set is the voltage to torque conversion gain of the electric motor being modeled.
-#
-# On the FSW side, the commanded motor torques must be directed towards a new module that converts
-# the required torque to a commanded voltage.  The first step is to re-direct the
-# rWMotorTorque() output to not directly be the input to the RW SIM devices, but rather the
-# input to the RW voltage command module:
-# ~~~~~~~~~~~~~~{.py}
-# rwMotorTorqueConfig.outputDataName = "rw_torque_Lr"
-# ~~~~~~~~~~~~~~
-# Next, the rwMotorVoltage() module is setup using:
-# ~~~~~~~~~~~~~~{.py}
-#       fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
-#       fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
-#       fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
-#
-#       # Add test module to runtime call list
-#       scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
-#
-#       # Initialize the test module configuration data
-#       fswRWVoltageConfig.torqueInMsgName = rwMotorTorqueConfig.outputDataName
-#       fswRWVoltageConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
-#       fswRWVoltageConfig.voltageOutMsgName = rwVoltageIO.rwVoltageInMsgName
-#
-#       # set module parameters
-#       fswRWVoltageConfig.VMin = 0.0  # Volts
-#       fswRWVoltageConfig.VMax = 10.0  # Volts
-# ~~~~~~~~~~~~~~
-# Note that the rwMotorTorque() output is connect here as the input, and the
-# SIM RW voltage input name is used as the output name of this FSW module to connect
-# the FSW voltage command the the SIM RW voltage motor module.
-#
-# To run this scenario, modify the bottom of the script to read:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        False,       # useJitterSimple
-#        True         # useRWVoltageIO
-#        )
-# ~~~~~~~~~~~~~
-# The resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW101.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW201.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW301.svg "RW Omega history")
-# ![RW Voltage History](Images/Scenarios/scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
-# Note that the rwMotorVoltage() module is run here in a simple open-loop manner.  See the
-# [rwMotorVoltage documentation](../fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
-# for more info.  By connecting the RW availability message it is possible turn
-# off the voltage command for particular wheels.  Also, by specifying the RW speed message input
-# name it is possible to turn on a torque tracking feedback loop in this module.
-## @}
 def run(show_plots, useJitterSimple, useRWVoltageIO):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useJitterSimple (bool): Specify if the RW simple jitter model should be included
+        useRWVoltageIO (bool): Specify if the RW voltage interface should be simulated.
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -645,8 +545,13 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
+    # To log the RW information, the following code is used:
     scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
     rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
+    # A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
+    # here to be plotted later on.  However, RW specific messages are also being created which
+    # contain a wealth of information.  Their default naming is automated and shown above.  This
+    # allows us to log RW specific information such as the actual RW motor torque being applied.
     for item in rwOutName:
         scSim.TotalSim.logThisMessage(item, samplingTime)
     if useRWVoltageIO:
