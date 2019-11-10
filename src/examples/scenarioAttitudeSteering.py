@@ -1,22 +1,86 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+r"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Demonstrates how to use the :ref:`MRP_Steering` module to stabilize the attiude relative to the Hill Frame.
+Details on the math of this module can be found in this `paper <http://doi.org/10.1016/j.actaastro.2018.03.022>`__.
+This script sets up a spacecraft with 3 RWs which is orbiting the Earth.  The goal is to
+illustrate how to use the :ref:`MRP_Steering` module with a rate sub-servo system to control
+the attitude.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioAttitudeSteering.py
+
+The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+modules.
+
+.. image:: /_images/static/test_scenarioAttitudeSteering.svg
+   :align: center
+
+The spacecraft is equipped with three RW, just as in the
+:ref:`scenarioAttitudeFeedbackRW` tutorial.  The :ref:`hillPoint` guidance module is
+used to align the body frame :math:`\cal B` to the Hill frame :math:`\cal H`.
+The :ref:`rateServoFullNonlinear` module is
+used to create the rate tracking sub-servo system.  How to setup the Hill frame
+guidance module is discussed in
+:ref:`scenarioAttitudeGuidance`.
+
+When the simulation completes several plots are shown for the MRP attitude history, the rate
+tracking errors, as well as the RW motor torque components, as well as the RW wheel speeds.
+
+Illustration of Simulation Results
+----------------------------------
+
+The following images illustrate the expected simulation run returns for a range of script configurations.
+
+::
+
+    show_plots = True, simCase = 0
+
+Here an unknown external torque
+is applied, but the integral feedback term is included as well.
+Note that in the RW motor torque plot both the required control torque :math:`\hat u_B` and the true
+motor torque :math:`u_B` are shown.  This illustrates that with this maneuver the RW devices are being
+saturated, and the attitude still eventually stabilizes.
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringSigmaBR0.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringomegaBR0.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringrwUs0.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringOmega0.svg
+   :align: center
+
+In this simulation setup the integral feedback term is included, and the unknown external torque
+is automatically compensated for to yield exponential convergence.  This convergence is despite having to track
+a time-varying Hill frame on an elliptic orbit.  This illustrates that all the orbital motion is propoerly
+feed-forward compensated.
+
+"""
 
 
 #
@@ -71,6 +135,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 def plot_attitude_error(timeData, dataSigmaBR):
+    """Plot the attitude error."""
     plt.figure(1)
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
@@ -81,6 +146,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
+    """plot the commanded RW torque."""
     plt.figure(2)
     for idx in range(1, 4):
         plt.plot(timeData, dataUsReq[:, idx],
@@ -92,6 +158,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     plt.ylabel('RW Motor Torque (Nm)')
 
 def plot_rw_motor_torque(timeData, dataRW, numRW):
+    """Plot the actual RW motor torque."""
     plt.figure(2)
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataRW[idx - 1][:, 1]),
@@ -102,6 +169,7 @@ def plot_rw_motor_torque(timeData, dataRW, numRW):
     plt.ylabel('RW Motor Torque (Nm)')
 
 def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
+    """Plot the body angular velocity tracking errors"""
     plt.figure(3)
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
@@ -118,6 +186,7 @@ def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
 
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
+    """Plot the RW speeds."""
     plt.figure(4)
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
@@ -129,134 +198,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 
 
 
-## \page scenarioAttitudeSteeringGroup
-##   @{
-## Demonstrates how to use the MRP_Steering() module to stabilize the attiude relative to the Hill Frame.
-#
-# Attitude Stabilization using MRP Steering and a Rate Sub-Servo System {#scenarioAttitudeSteering}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a spacecraft with 3 RWs which is orbiting the Earth.  The goal is to
-# illustrate how to use the `MRP_Steering()` module with a rate sub-servo system to control
-# the attitude.
-#  The scenario is setup to be run in multiple configurations:
-# Case  | Description
-# ----- | ------------------
-# 1     | Detumble with balanced gains (for inner- and outer-loop separation principle), including integral feedback
-# 2     | Detumble with balanced gains (for inner- and outer-loop separation principle), without integral feedback
-# 3     | Small detumble with strong steering gain violating separation principle, with \f$\omega'_{\cal B^{\ast}/R}\f$
-# 4     | Small detumble with strong steering gain violating separation principle, without \f$\omega'_{\cal B^{\ast}/R}\f$
-#
-# The first case has a scenario that should exponentially converge to zero, while the 2nd case will only provide a bounded
-# (or Lagrange stable) response.  The latter two scenarios illustrate the performance if the outer loop feedback gain
-# is too strong, violating the sub-servo separation principle, and how removing a particular term in case 3 can still
-# lead to a locally stable response.
-#
-# To run the default scenario 1., call the python script from a Terminal window through
-#
-#       python3 scenarioAttitudeSteering.py
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeSteering.svg "Illustration")
-# The spacecraft is equipped with three RW, just as in the
-# [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) tutorial.  The `hillPoint()` guidance module is
-# used to align the body frame \f$\cal B\f$ to the Hill frame \f$\cal H\f$.  The `rateServoFullNonlinear()` module is
-# used to create the rate tracking sub-servo system.  How to setup the Hill frame guidance module is discussed in
-# [scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance).
-#
-# When the simulation completes several plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the RW motor torque components, as well as the RW wheel speeds.
-#
-#
-# The following code discusses how to setup the `MRP_Steering()` module:
-# ~~~~~~~~~~~~~{.py}
-#     # setup the MRP steering control module
-#     mrpControlConfig = MRP_Steering.MRP_SteeringConfig()
-#     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-#     mrpControlWrap.ModelTag = "MRP_Steering"
-#
-#     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-#
-#     mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-#     mrpControlConfig.outputDataName = "rate_steering"
-#     if simCase < 2:
-#         mrpControlConfig.K1 = 0.05
-#         mrpControlConfig.ignoreOuterLoopFeedforward = False
-#     else:
-#         mrpControlConfig.K1 = 2.2
-#         if simCase == 2:
-#             mrpControlConfig.ignoreOuterLoopFeedforward = False
-#         else:
-#             mrpControlConfig.ignoreOuterLoopFeedforward = True
-#     mrpControlConfig.K3 = 0.75
-#     mrpControlConfig.omega_max = 1. * macros.D2R
-# ~~~~~~~~~~~~~
-# This illustrates how to set the steering law gains, as well as the selective feedforward term inclusion.
-# Details of this Steering law can be found in this
-# <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper.</b></a>
-#
-# The next step is to configure the rate tracking sub-servo module.
-# ~~~~~~~~~~~~~~~~~{.py}
-#     # setup Rate servo module
-#     servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
-#     servoWrap = scSim.setModelDataWrap(servoConfig)
-#     servoWrap.ModelTag = "rate_servo"
-#
-#     servoConfig.inputGuidName = attErrorConfig.outputDataName
-#     servoConfig.vehConfigInMsgName = "vehicleConfigName"
-#     servoConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-#     servoConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
-#     servoConfig.inputRateSteeringName = mrpControlConfig.outputDataName
-#     servoConfig.outputDataName = "torque_command"
-#
-#     if simCase == 1:
-#         servoConfig.Ki = -1
-#     else:
-#         servoConfig.Ki = 5.
-#     servoConfig.P = 150.0
-#     servoConfig.integralLimit = 2. / servoConfig.Ki * 0.1
-#     servoConfig.knownTorquePntB_B = [0., 0., 0.]
-#
-#     scSim.AddModelToTask(simTaskName, servoWrap, servoConfig)
-# ~~~~~~~~~~~~~~~~~
-# The mathematical details of this paper are also found at
-# <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper</b></a>.
-#
-#
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        0            # simCase
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last arguments control the
-# simulation scenario flags determines which simulation case is run.  Here an unknown external torque
-# is applied, but the integral feedback term is included as well.    The
-# resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR0.svg "MRP history")
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR0.svg "omega history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeSteeringrwUs0.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeSteeringOmega0.svg "RW Omega history")
-# Note that in the RW motor torque plot both the required control torque \f$\hat u_B\f$ and the true
-# motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
-# saturated, and the attitude still eventually stabilizes.
-#
-# Note that in this simulation setup the integral feedback term is included, and the unknown external torque
-# is automatically compensated for to yield exponential convergence.  This convergence is despite having to track
-# a time-varying Hill frame on an elliptic orbit.  This illustrates that all the orbital motion is propoerly
-# feed-forward compensated.
-#
-#
+
 # Setup 2
 # -----
 #
@@ -316,7 +258,35 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 #
 ##  @}
 def run(show_plots, simCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    r"""
+    At the end of the python script you can specify the following example parameters.
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        simCase (int):
+
+            =======  ==============================================================
+            simCase  Definition
+            =======  ==============================================================
+            1        Detumble with balanced gains (for inner- and outer-loop
+                     separation principle), including integral feedback
+            2        Detumble with balanced gains (for inner- and outer-loop
+                     separation principle), without integral feedback
+            3        Small detumble with strong steering gain violating
+                     separation principle, with :math:`\omega'_{\cal B^{\ast}/R}`
+            4        Small detumble with strong steering gain violating separation
+                     principle, without :math:`\omega'_{\cal B^{\ast}/R}`
+            =======  ==============================================================
+
+            The first case has a scenario that should exponentially converge to zero,
+            while the 2nd case will only provide a bounded
+            (or Lagrange stable) response.  The latter two scenarios illustrate the
+            performance if the outer loop feedback gain
+            is too strong, violating the sub-servo separation principle, and how
+            removing a particular term in case 3 can still
+            lead to a locally stable response.
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"

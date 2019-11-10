@@ -1,23 +1,143 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+This script sets up a 3-DOF spacecraft which is orbiting a planet that
+has a magnetic field.  The purpose
+is to illustrate how to create and setup the centered dipole
+magnetic field, as well as determine the
+magnetic field at a spacecraft location.  The orbit setup is similar to that used in
+:ref:`scenarioBasicOrbit`.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioMagneticFieldCenteredDipole.py
 
+Simulation Scenario Setup Details
+---------------------------------
+
+The simulation layout is shown in the following illustration.
+A single simulation process is created
+which contains the spacecraft object.  The spacecraft state message
+is connected to the magnetic field
+module which outputs the local magnetic field in inertial frame components.
+
+.. image:: /_images/static/test_scenario_MagneticFieldCenteredDipole.svg
+   :align: center
+
+When the simulation completes 2 plots are shown for each case.  One plot always shows
+the inertial position vector components, while the second plot shows the local magnetic field
+vector components with respect to the inertial frame.
+
+Note that the magnetic field module are zeroed, and appropriate
+parameters must be specified for the planet.  The
+following code illustrates setting the Earth dipole parameters::
+
+    magModule.g10 = -30926.00 / 1e9 * 0.5  # Tesla
+    magModule.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
+    magModule.h11 =   5817.00 / 1e9 * 0.5  # Tesla
+    magModule.planetRadius = 6371.2 * 1000  # meters
+
+The python support file ``simSetPlanetEnvironment.py`` provides helper
+functions to setup command magnetic field
+environments including the centered dipole models for Mercury,
+Earth, Jupiter, Saturn, Uranus and Neptune.
+
+The default
+planet's position vector is assumed to be the inertial frame origin
+and an identity orientation matrix.
+If a different planet state message is required this can be specified
+through the optional input message ``planetPosInMsgName``.
+
+The magnetic field module can produce the magnetic field for a vector of
+spacecraft locations, not just for a
+single spacecraft.  Let ``scObject`` be an instance of :ref:`SpacecraftPlus`,
+then the spacecraft state output message
+is added to the magnetic field module through::
+
+    magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
+
+Note that this command can be repeated if the magnetic field should be
+evaluated for different spacecraft.
+
+Every time a spacecraft is added to the magnetic field module,
+an automated output message name is created.
+For `magModule` is "CenteredDipole_0_data" as the ModelTag string is
+``CenteredDipole`` and the spacecraft number is 0.
+This output name is created in the  ``addSpacecraftToModel()`` function.
+However, if the default output name is used for the second planetary
+magnetic field model, then both module share
+the same output name and one will overwrite the others output.
+To ensure the second magnetic field has a unique
+output name, the default name is replaced with a unique message.
+
+The reach of the magnetic field model is specified through the module
+variables ``envMinReach`` and ``envMaxReach``.
+Their default values are -1 which turns off this feature, giving the
+magnetic field evaluation infinite reach.
+As the elliptical Earth scenario uses 2 Earth-fixed magnetic fields,
+we want ``magModule2`` to only evaluate a
+magnetic field if the orbit radius is less than ``req*1.3``.  Similarly,
+for radii above ``req*1.3`` we want the first
+magnetic field model to be used.
+
+Illustration of Simulation Results
+----------------------------------
+
+The following images illustrate the expected simulation run returns for a range of script configurations.
+
+::
+
+    show_plots = True, orbitCase='circular', planetCase='Earth'
+
+.. image:: /_images/Scenarios/scenarioMagneticFieldCenteredDipole1circularEarth.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioMagneticFieldCenteredDipole2circularEarth.svg
+   :align: center
+
+::
+
+   show_plots = True, orbitCase='elliptical', planetCase='Earth'
+
+This case illustrates an elliptical Earth orbit inclination where 2 dipole magnetic
+fields are attached. One model acts above 1.3 Earth radius, and the other below that region.
+
+.. image:: /_images/Scenarios/scenarioMagneticFieldCenteredDipole1ellipticalEarth.svg
+  :align: center
+
+.. image:: /_images/Scenarios/scenarioMagneticFieldCenteredDipole2ellipticalEarth.svg
+  :align: center
+
+::
+
+    show_plots = True, orbitCase='elliptical', planetCase='Jupiter'
+
+.. image:: /_images/Scenarios/scenarioMagneticFieldCenteredDipole1ellipticalJupiter.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioMagneticFieldCenteredDipole2ellipticalJupiter.svg
+   :align: center
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -50,174 +170,16 @@ from Basilisk.utilities import vizSupport
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-## \page scenarioMagneticFieldCenteredDipoleGroup
-## @{
-## Demonstration of setting up a centered dipole magnetic field model about a planet
-#
-# Orbital Simulation Including a Centered Dipole Magnetic Field {#scenarioMagneticFieldCenteredDipole}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 3-DOF spacecraft which is orbiting a planet that has a magnetic field.  The purpose
-# is to illustrate how to create and setup the centered dipole magnetic field, as well as determine the
-# magnetic field at a spacecraft location.  The orbit setup is similar to that used in
-# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).  The scenarios can be run with the followings setups
-# parameters:
-# Setup | orbitCase           | planetCase
-# ----- | ------------------- | ---------------------
-# 1     | circular            | Earth
-# 2     | elliptical          | Earth
-# 3     | elliptical          | Jupiter
-#
-# To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
-#
-#       python3 scenarioMagneticFieldCenteredDipole.py
-#
-#
-# Simulation Scenario Setup Details
-# -----
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains the spacecraft object.  The spacecraft state message is connected to the magnetic field
-# module which outputs the local magnetic field in inertial frame components.
-# ![Simulation Flow Diagram](Images/doc/test_scenario_MagneticFieldCenteredDipole.svg "Illustration")
-#
-# When the simulation completes 2 plots are shown for each case.  One plot always shows
-# the inertial position vector components, while the second plot shows the local magnetic field
-# vector components with respect to the inertial frame.
-#
-# The dynamics simulation is setup using a SpacecraftPlus() module.  The magnetic field module is created using:
-#~~~~~~~~~~~~~~~~~{.py}
-#     magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()()
-#     magModule.ModelTag = "CenteredDipole"
-#~~~~~~~~~~~~~~~~~
-# Note that the magnetic field module are zeroed, and appropriate parameters must be specified for the planet.  The
-# following code illustrates setting the Earth dipole parameters:
-#~~~~~~~~~~~~~~~~~{.py}
-#   magModule.g10 = -30926.00 / 1e9 * 0.5  # Tesla
-#   magModule.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
-#   magModule.h11 =   5817.00 / 1e9 * 0.5  # Tesla
-#   magModule.planetRadius = 6371.2 * 1000  # meters
-#~~~~~~~~~~~~~~~~~
-# The python support file `simSetPlanetEnvironment.py` provides helper functions to setup command magnetic field
-# environments including the centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and Neptune.
-# Thus, for the Jupiter scenario case the following command is used:.
-#~~~~~~~~~~~~~~~~~{.py}
-#   simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'jupiter')
-#~~~~~~~~~~~~~~~~~
-#
-# The default
-# planet's position vector is assumed to be the inertial frame origin and an identity orientation matrix.
-# If a different planet state message is required this can be specified through the optional input message
-#~~~~~~~~~~~~~~~~~{.py}
-#     magModule.planetPosInMsgName = "planet_state_ephemeris_msg"
-#~~~~~~~~~~~~~~~~~
-# The magnetic field module can produce the magnetic field for a vector of spacecraft locations, not just for a
-# single spacecraft.  Let `scObject` be an instance of SpacecraftPlus(), then the spacecraft state output message
-# is added to the magnetic field module through
-#~~~~~~~~~~~~~~~~~{.py}
-#     magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
-#~~~~~~~~~~~~~~~~~
-# Note that this command can be repeated if the magnetic field should be evaluated for different spacecraft.
-#
-# Next, this module is attached to the simulation process with
-#~~~~~~~~~~~~~~~~~{.py}
-#   scSim.AddModelToTask(simTaskName, magModule)
-#~~~~~~~~~~~~~~~~~
-#
-# Note that more then one magnetic field can be attached to a planet.  In the elliptic Earth orbit scenario
-# a second magnetic field module `magModule2` is created with a different custom dipole model.  It is connected to the
-# same spacecraft state message as the first magnetic field model.
-# ~~~~~~~~~~~~~~~~~{.py}
-#   magModule2 = magneticField.MagneticField()
-#   magModule2.ModelTag = "CenteredDipole2"
-#   magModule2.addSpacecraftToModel(scObject.scStateOutMsgName)
-# ~~~~~~~~~~~~~~~~~
-# To manually setup a centered magnetic field dipole model, this can be done with
-# ~~~~~~~~~~~~~~~~~{.py}
-#   magModule2.setEnvType(magneticField.MODEL_CENTERED_DIPOLE)
-#   magModule2.dipoleParams.g10 = -30926.00 / 1e9 * 0.5  # Tesla
-#   magModule2.dipoleParams.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
-#   magModule2.dipoleParams.h11 =   5817.00 / 1e9 * 0.5  # Tesla
-#   magModule2.planetRadius = 6371.2 * 1000  # meters
-# ~~~~~~~~~~~~~~~~~
-# Every time a spacecraft is added to the magnetic field module, an automated output message name is created.
-# For `magModule` is "CenteredDipole_0_data" as the ModelTag string is `CenteredDipole` and the spacecraft number is 0.
-# This output name is created in the  `addSpacecraftToModel()` function.
-# However, if the default output name is used for the second planetary magnetic field model, then both module share
-# the same output name and one will overwrite the others output.  To ensure the second magnetic field has a unique
-# output name, the default name is replaced with a unique message name using:
-# ~~~~~~~~~~~~~~~~~{.py}
-#   magModule2.envOutMsgNames[0] = 'second_earth_mag_field'
-# ~~~~~~~~~~~~~~~~~
-#
-# The reach of the magnetic field model is specified through the module variables `envMinReach` and `envMaxReach`.
-# Their default values are -1 which turns off this feature, giving the magnetic field evaluation infinite reach.
-# As the elliptical Earth scenario uses 2 Earth-fixed magnetic fields, we want `magModule2` to only evaluate a
-# magnetic field if the orbit radius is less than `req*1.3`.  Similarly, for radii above `req*1.3` we want the first
-# magnetic field model to be used.  This behavior is setup using:
-# ~~~~~~~~~~~~~~~~~{.py}
-#   magModule2.envMaxReach = req*1.3
-#   magModule.envMinReach = magModule2.envMaxReach
-# ~~~~~~~~~~~~~~~~~
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#  run(
-#         True,          # show_plots
-#         'circular',  # orbit Case (circular, elliptical)
-#         'Earth'      # planetCase (Earth, Jupiter)
-#     )
-# ~~~~~~~~~~~~~
-#
-# This scenario places the spacecraft about the Earth in a circular LEO orbit.  The
-# resulting position coordinates and magnetic field components are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticFieldCenteredDipole1circularEarth.svg "Position history")
-# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticFieldCenteredDipole2circularEarth.svg "Magnetic Field Illustration")
-#
-# Setup 2
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#  run(
-#         True,          # show_plots
-#         'elliptical',  # orbit Case (circular, elliptical)
-#         'Earth'      # planetCase (Earth, Jupiter)
-#     )
-# ~~~~~~~~~~~~~
-# This case illustrates an elliptical Earth orbit inclination where 2 dipole magnetic fields are attached.
-# One model acts above 1.3 Earth radius, and the other below that region.  The
-# resulting position coordinates and magnetic field illustrations are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticFieldCenteredDipole1ellipticalEarth.svg "Position history")
-# ![Magnetic Field Illustration with model 1 as solid and model 2 as dashed](Images/Scenarios/scenarioMagneticFieldCenteredDipole2ellipticalEarth.svg "Magnetic Field Illustration")
-#
-#
-# Setup 3
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#  run(
-#         True,          # show_plots
-#         'elliptical',  # orbit Case (circular, elliptical)
-#         'Jupiter'      # planetCase (Earth, Jupiter)
-#     )
-# ~~~~~~~~~~~~~
-# This case illustrates an elliptical orbit about Jupiter.  The
-# resulting position coordinates and magnetic field illustrations are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticFieldCenteredDipole1ellipticalJupiter.svg "Position history")
-# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticFieldCenteredDipole2ellipticalJupiter.svg "Magnetic Field Illustration")
-#
-## @}
 def run(show_plots, orbitCase, planetCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    At the end of the python script you can specify the following example parameters.
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        orbitCase (str): {'circular', 'elliptical'}
+        planetCase (str): {'Earth', 'Junpiter'}
+
+    """
 
 
     # Create simulation variable names
@@ -276,7 +238,12 @@ def run(show_plots, orbitCase, planetCase):
     scSim.AddModelToTask(simTaskName, magModule)
 
     if planetCase == 'Earth' and orbitCase == 'elliptical':
-        # add a second magnetic field model
+        # Note that more then one magnetic field can be attached to a planet.
+        # In the elliptic Earth orbit scenario
+        # a second magnetic field module `magModule2` is created with a
+        # different custom dipole model.  It is connected to the
+        # same spacecraft state message as the first magnetic field model.
+
         magModule2 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
         magModule2.ModelTag = "CenteredDipole2"
         magModule2.addSpacecraftToModel(scObject.scStateOutMsgName)

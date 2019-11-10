@@ -94,10 +94,10 @@ The following images illustrate the expected simulation run returns for a range 
 This scenario places the spacecraft about the Earth in a LEO orbit and without considering gravitational
 spherical harmonics.
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
    :align: center
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
    :align: center
 
 ::
@@ -106,10 +106,10 @@ spherical harmonics.
 
 This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit inclination.
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg
    :align: center
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
    :align: center
 
 ::
@@ -118,10 +118,10 @@ This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zer
 
 This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit inclination.
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg
    :align: center
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
    :align: center
 
 ::
@@ -131,10 +131,10 @@ This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit incl
 This case illustrates a circular LEO with a non-zero orbit inclination.
 In this case the Earth's spherical harmonics are turned on.
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg
    :align: center
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg
    :align: center
 
 ::
@@ -144,10 +144,10 @@ In this case the Earth's spherical harmonics are turned on.
 This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit inclination.
 In this simulation setup the planet's spherical harmonics are turned on.
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
    :align: center
 
-.. figure:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
    :align: center
 
 """
