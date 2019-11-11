@@ -238,6 +238,8 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
         m33MultM33(dcm_CB, RECAST3X3 configData->covar, tempCovar);
         m33MultM33t(tempCovar, dcm_CB, RECAST3X3 opnavOutputBuffer.covar_C);
     }
+    opnavOutputBuffer.valid = configData->opnavInBuffer.valid;
+    opnavOutputBuffer.timeTag = configData->opnavInBuffer.timeTag;
     WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpNavFswMsg),
                  &opnavOutputBuffer, moduleID);
     
