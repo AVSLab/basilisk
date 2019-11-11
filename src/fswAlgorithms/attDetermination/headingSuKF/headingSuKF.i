@@ -34,12 +34,14 @@
 GEN_SIZEOF(HeadingFilterFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(OpNavFswMsg);
+GEN_SIZEOF(CameraConfigMsg)
 GEN_SIZEOF(HeadingSuKFConfig);
 %include "headingSuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/headingFilterFswMsg.h"
 %include "../../fswMessages/opNavFswMsg.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
 
 %pythoncode %{
 import sys

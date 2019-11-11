@@ -52,6 +52,12 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
     /*! - Find the message ID for the coarse sun sensor data message */
     configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
         sizeof(OpNavFswMsg), moduleID);
+    /*! - Find the message ID for the camera message if non zero name*/
+    if (strcmp(configData->cameraConfigMsgName, "") != 1){
+    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,
+                                                       sizeof(CameraConfigMsg), moduleID);
+    configData->putInCameraFrame = 1;
+    }
     
 }
 
@@ -143,23 +149,29 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     double tempYVec[OPNAV_MEAS];
     double heading_hat[3];
     double states_BN[HEAD_N_STATES_SWITCH];
+    double rNorm;
     int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
     HeadingFilterFswMsg headingDataOutBuffer;
     OpNavFswMsg opnavOutputBuffer;
-    
+    CameraConfigMsg cameraConfig;
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
     memset(&(configData->opnavInBuffer), 0x0, sizeof(OpNavFswMsg));
+    memset(&cameraConfig, 0x0, sizeof(CameraConfigMsg));
     v3SetZero(configData->obs);
     v3SetZero(configData->postFits);
     ReadMessage(configData->opnavDataInMsgId, &ClockTime, &ReadSize,
         sizeof(OpNavFswMsg), (void*) (&(configData->opnavInBuffer)), moduleID);
-    
+    if (configData->putInCameraFrame == 1){
+        uint64_t ClockTimeCam;
+        uint32_t ReadSizeCam;
+        ReadMessage(configData->cameraConfigMsgID, &ClockTimeCam, &ReadSizeCam,
+                    sizeof(CameraConfigMsg), (void*) (&cameraConfig), moduleID);
+    }
     v3Normalize(&configData->state[0], heading_hat);
-    
     
     /*! - Check for switching frames */
     if (fabs(v3Dot(configData->bVec_B, heading_hat)) > configData->switchTresh)
@@ -167,13 +179,15 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
         headingSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
     
-    /*! - If the time tag from the measured data is new compared to previous step, 
+    /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && ReadSize > 0)
+    if(newTimeTag >= configData->timeTag && ReadSize > 0 && configData->opnavInBuffer.valid ==1)
     {
+        rNorm = v3Norm(configData->opnavInBuffer.r_BN_B);
         headingSuKFTimeUpdate(configData, newTimeTag);
         headingSuKFMeasUpdate(configData, newTimeTag);
+
     }
     
     /*! - If current clock time is further ahead than the measured time, then
@@ -216,7 +230,14 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar_B);
     v3Copy(&states_BN[0], opnavOutputBuffer.r_BN_B);
     v3Normalize(opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
-    v3Scale(-1, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
+    v3Scale(-rNorm, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
+    if (configData->putInCameraFrame ==1){
+        double dcm_CB[3][3], tempCovar[3][3];
+        MRP2C(cameraConfig.sigma_CB, dcm_CB);
+        m33tMultV3(dcm_CB, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_C);
+        m33MultM33(dcm_CB, RECAST3X3 configData->covar, tempCovar);
+        m33MultM33t(tempCovar, dcm_CB, RECAST3X3 opnavOutputBuffer.covar_C);
+    }
     WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpNavFswMsg),
                  &opnavOutputBuffer, moduleID);
     

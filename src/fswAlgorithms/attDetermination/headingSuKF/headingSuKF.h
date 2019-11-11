@@ -26,6 +26,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/headingFilterFswMsg.h"
 #include "fswMessages/opNavFswMsg.h"
+#include "simFswInterfaceMessages/cameraConfigMsg.h"
 
 
 
@@ -36,7 +37,9 @@ typedef struct {
     char opnavOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char opnavDataInMsgName[MAX_STAT_MSG_LENGTH];/*!< The name of the input opnav data message*/
-    
+    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
+
+    int putInCameraFrame;         /*!< [-] If camera message is found output the result to the camera frame as well as the body and inertial frame*/
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
 	int numObs;                   /*!< [-] Number of measurements this cycle */
@@ -82,7 +85,9 @@ typedef struct {
     
     int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-    int32_t opnavDataInMsgId; 
+    int32_t opnavDataInMsgId;
+    int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
+
 }HeadingSuKFConfig;
 
 #ifdef __cplusplus
