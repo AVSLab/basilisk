@@ -37,7 +37,7 @@ def test_simplePowerDemo(show_plots):
 
     # each test method requires a single assert method to be called
     try:
-        figureList = scenarioPowerDemo.run()
+        figureList = scenarioPowerDemo.run(False)
 
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):

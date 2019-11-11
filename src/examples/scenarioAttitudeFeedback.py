@@ -181,7 +181,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
         show_plots (bool): Determines if the script should display plots
         useUnmodeledTorque (bool): Specify if an external torque should be included
         useIntGain (bool): Specify if the feedback control uses an integral feedback term
-        useKnownTorque (bool): Specify if the external torque is feed forward in the contro
+        useKnownTorque (bool): Specify if the external torque is feed forward in the control
 
     """
 

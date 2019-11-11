@@ -1,22 +1,98 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2019, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+Demonstrates how to add a Three-Axis Magnetometer (TAM) sensor to a spacecraft.
+This script sets up a 3-DOF spacecraft which is orbiting a planet with a magnetic field.
+The orbit setup is similar to that used in :ref:`scenarioBasicOrbit`.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+      python3 scenarioTAM.py
+
+Simulation Scenario Setup Details
+---------------------------------
+The simulation layout is shown in the following illustration. A single simulation process is created
+which contains the spacecraft object. The spacecraft state and the magnetic field model
+(World Magnetic Model (WMM), Centered Dipole Magnetic Field etc.) messages  are connected to
+the :ref:`magnetometer` module which outputs the local magnetic field measurements in sensor frame components.
+
+.. image:: /_images/static/test_scenario_magnetometer.svg
+   :align: center
+
+When the simulation completes 2 plots are shown for each case. One plot shows the radius in km,
+while the second plot shows the magnetic field measurement vector components with respect to the sensor frame.
+
+The dynamics simulation is setup using a :ref:`SpacecraftPlus` module.
+The magnetic field module is created using one of the magnetic field models, e.g.
+:ref:`scenarioMagneticFieldCenteredDipole`
+which requires setting appropriate parameters for the specific planet,
+:ref:`scenarioMagneticFieldWMM` which is a model specific to only Earth.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, orbitCase = 'circular', planetCase = 'Earth', useBias = False, useBounds = False
+
+.. image:: /_images/Scenarios/scenarioTAM1circularEarth.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioTAM2circularEarth.svg
+   :align: center
+
+::
+
+    show_plots = True, orbitCase = 'elliptical', planetCase = 'Earth', useBias = True, useBounds = False
+
+.. image:: /_images/Scenarios/scenarioTAM1ellipticalEarth.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioTAM2ellipticalEarth.svg
+   :align: center
+
+::
+
+    show_plots = True, orbitCase = 'circular', planetCase = 'Jupiter', useBias = False, useBounds = True
+
+.. image:: /_images/Scenarios/scenarioTAM1circularJupiter.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioTAM2circularJupiter.svg
+   :align: center
+
+::
+
+    show_plots = True, orbitCase = 'elliptical', planetCase = 'Jupiter', useBias = False, useBounds = False
+
+.. image:: /_images/Scenarios/scenarioTAM1ellipticalJupiter.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioTAM2ellipticalJupiter.svg
+   :align: center
+
+"""
+
+
 #
 # Basilisk Scenario Script and Integrated Test
 #
@@ -35,152 +111,6 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 bskPath = __path__[0]
 
-## \page scenarioTAMGroup
-## @{
-## Demonstrates how to add a Three-Axis Magnetometer (TAM) sensor to a spacecraft.
-#
-# Three-Axis Magnetometer (TAM) Simulation {#scenarioTAM}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 3-DOF spacecraft which is orbiting a planet with a magnetic field.
-# The orbit setup is similar to that used in [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
-# The scenarios can be run with the followings setups parameters:
-# Setup | orbitCase           | planetCase            | useBias               | useBounds
-# ----- | ------------------- | --------------------- | --------------------- | ---------------------
-# 1     | circular            | Earth                 | False                 | False
-# 2     | elliptical          | Earth                 | True                  | False
-# 3     | circular            | Jupiter               | False                 | True
-# 4     | elliptical          | Jupiter               | False                 | False
-#
-# To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
-#
-#       python3 scenarioTAM.py
-#
-# Simulation Scenario Setup Details
-# -----
-# The simulation layout is shown in the following illustration. A single simulation process is created
-# which contains the spacecraft object. The spacecraft state and the magnetic field model
-# (World Magnetic Model (WMM), Centered Dipole Magnetic Field etc.) messages  are connected to
-# the magnetometer module which outputs the local magnetic field measurements in sensor frame components.
-# ![Simulation Flow Diagram](Images/doc/test_scenario_magnetometer.svg "Illustration")
-#
-# When the simulation completes 2 plots are shown for each case. One plot shows the radius in km,
-# while the second plot shows the magnetic field measurement vector components with respect to the sensor frame.
-#
-# The dynamics simulation is setup using a SpacecraftPlus() module.
-# The magnetic field module is created using one of the magnetic field models, e.g.
-# [MagneticFieldCenteredDipole](@ref scenarioMagneticFieldCenteredDipoleGroup)
-# which requires setting appropriate parameters for the specific planet,
-# [MagneticFieldWMM](@ref scenarioMagneticFieldWMMGroup) which is a model specific to only Earth.
-# The TAM sensor unit is created using:
-#~~~~~~~~~~~~~~~~~{.py}
-#     TAM = magnetometer.Magnetometer()
-#~~~~~~~~~~~~~~~~~
-# The minimum variables that must be set for TAM includes:
-# ~~~~~~~~~~~~~~~~{.py}
-#     TAM.ModelTag = "TAM_sensor"
-#     TAM.tamDataOutMsgName = "TAM_output"
-# ~~~~~~~~~~~~~~~~
-# Next, this module is attached to the simulation process with
-#~~~~~~~~~~~~~~~~~{.py}
-#   scSim.AddModelToTask(simTaskName, TAM)
-#~~~~~~~~~~~~~~~~~
-# The input message from the magnetic field model is specified in the data logging phase as:
-# ~~~~~~~~~~~~~~~~~{.py}
-#   TAM.magIntMsgName = magModule.envOutMsgNames[0]
-# ~~~~~~~~~~~~~~~~~
-# The Gaussian noise is setup as,
-# ~~~~~~~~~~~~~~~~{.py}
-#   TAM.SenNoiseStd = 100e-9  # Tesla
-# ~~~~~~~~~~~~~~~~
-# The continuous constant bias, and the bounds of the saturation are set for the useBias and useBounds conditions:
-# ~~~~~~~~~~~~~~~~{.py}
-#   TAM.SenBias = [0, 0, -1e-6]  # Tesla
-#   TAM.minOutput = -3.5e-4  # Tesla
-#   TAM.maxOutput = 3.5e-4  # Tesla
-# ~~~~~~~~~~~~~~~~
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#  run(
-#         True,        # show_plots
-#         'circular',  # orbit Case (circular, elliptical)
-#         'Earth',     # planetCase (Earth, Jupiter)
-#          False,      # useBias
-#          False       # useBounds
-#     )
-# ~~~~~~~~~~~~~
-#
-# This scenario places the spacecraft about the Earth in a circular LEO orbit.  The
-# resulting position coordinates and magnetic field components are shown below.
-# ![Orbit Radius History](Images/Scenarios/scenarioTAM1circularEarth.svg "Position history")
-# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2circularEarth.svg "Magnetic Field Measurements Illustration")
-#
-# Setup 2
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#  run(
-#         True,          # show_plots
-#         'elliptical',  # orbit Case (circular, elliptical)
-#         'Earth'        # planetCase (Earth, Jupiter)
-#          True,         # useBias
-#          False         # useBounds
-#     )
-# ~~~~~~~~~~~~~
-# TThis case illustrates an elliptical Earth orbit.
-# The resulting radius and magnetic field measurements illustrations are shown below.
-# ![Orbit Radius History](Images/Scenarios/scenarioTAM1ellipticalEarth.svg "Position history")
-# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2ellipticalEarth.svg "Magnetic Field Measurements Illustration")
-#
-#
-# Setup 3
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#  run(
-#         True,        # show_plots
-#         'circular',  # orbit Case (circular, elliptical)
-#         'Jupiter'    # planetCase (Earth, Jupiter)
-#          False,      # useBias
-#          True        # useBounds
-#     )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular orbit about Jupiter.
-# The resulting radius and magnetic field measurements illustrations are shown below.
-# ![Orbit Radius History](Images/Scenarios/scenarioTAM1circularJupiter.svg "Position history")
-# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2circularJupiter.svg "Magnetic Field Measurements Illustration")
-#
-# Setup 4
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#  run(
-#         True,          # show_plots
-#         'elliptical',  # orbit Case (circular, elliptical)
-#         'Jupiter'      # planetCase (Earth, Jupiter)
-#          False,        # useBias
-#          False         # useBounds
-#     )
-# ~~~~~~~~~~~~~
-# This case illustrates an elliptical orbit about Jupiter.
-# The resulting radius and magnetic field measurements illustrations are shown below.
-# ![Orbit Radius History](Images/Scenarios/scenarioTAM1ellipticalJupiter.svg "Position history")
-# ![Magnetic Field Measurements Illustration](Images/Scenarios/scenarioTAM2ellipticalJupiter.svg "Magnetic Field Measurements Illustration")
-#
-## @}
 
 # import simulation related support
 from Basilisk.simulation import magneticFieldCenteredDipole
@@ -201,7 +131,17 @@ from Basilisk.utilities import vizSupport
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def run(show_plots, orbitCase, planetCase, useBias, useBounds):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        orbitCase (str): Specify the type of orbit to be simulated {'elliptical', 'circular'}
+        planetCase (str): Specify about which the spacecraft is orbiting {'Earth', 'Jupiter'}
+        useBias (bool): Flag to use a sensor bias
+        useBounds (bool): Flag to use TAM sensor bounds
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -271,8 +211,10 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     # add the magnetic field module to the simulation task stack
     scSim.AddModelToTask(simTaskName, magModule)
 
+    # create the minimal TAM module
     TAM = magnetometer.Magnetometer()
     TAM.ModelTag = "TAM_sensor"
+    # specify the optional TAM variables
     TAM.scaleFactor = 1.0
     TAM.tamDataOutMsgName = "TAM_output"
     TAM.senNoiseStd = 100e-9
