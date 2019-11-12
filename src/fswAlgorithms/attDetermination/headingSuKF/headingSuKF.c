@@ -54,9 +54,9 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
         sizeof(OpNavFswMsg), moduleID);
     /*! - Find the message ID for the camera message if non zero name*/
     if (strcmp(configData->cameraConfigMsgName, "") != 1){
-    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,
-                                                       sizeof(CameraConfigMsg), moduleID);
-    configData->putInCameraFrame = 1;
+        configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,
+                                                           sizeof(CameraConfigMsg), moduleID);
+        configData->putInCameraFrame = 1;
     }
     
 }
@@ -149,7 +149,6 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     double tempYVec[OPNAV_MEAS];
     double heading_hat[3];
     double states_BN[HEAD_N_STATES_SWITCH];
-    double rNorm;
     int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -184,7 +183,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     newTimeTag = ClockTime * NANO2SEC;
     if(newTimeTag >= configData->timeTag && ReadSize > 0 && configData->opnavInBuffer.valid ==1)
     {
-        rNorm = v3Norm(configData->opnavInBuffer.r_BN_B);
+        configData->rNorm = v3Norm(configData->opnavInBuffer.r_BN_B);
         headingSuKFTimeUpdate(configData, newTimeTag);
         headingSuKFMeasUpdate(configData, newTimeTag);
 
@@ -230,7 +229,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar_B);
     v3Copy(&states_BN[0], opnavOutputBuffer.r_BN_B);
     v3Normalize(opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
-    v3Scale(-rNorm, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
+    v3Scale(-configData->rNorm, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_B);
     if (configData->putInCameraFrame ==1){
         double dcm_CB[3][3], tempCovar[3][3];
         MRP2C(cameraConfig.sigma_CB, dcm_CB);
@@ -452,9 +451,8 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    mSetIdentity(configData->qObs, OPNAV_MEAS, OPNAV_MEAS);
-    mScale(configData->qObsVal, configData->qObs, OPNAV_MEAS,
-           OPNAV_MEAS, configData->qObs);
+    mCopy(configData->opnavInBuffer.covar_B, OPNAV_MEAS, OPNAV_MEAS, configData->qObs);
+    mScale(1/(configData->rNorm*configData->rNorm), configData->qObs, OPNAV_MEAS,OPNAV_MEAS, configData->qObs);
     ukfCholDecomp(configData->qObs, OPNAV_MEAS, OPNAV_MEAS, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*OPNAV_MEAS]),
            qChol, OPNAV_MEAS*OPNAV_MEAS*sizeof(double));
