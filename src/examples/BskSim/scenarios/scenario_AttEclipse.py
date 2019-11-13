@@ -1,155 +1,129 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+r"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+This bskSim script demonstrates how to use sun safe pointing in conjunction with the Eclipse,
+RW, CSS Weighted Least Squares Estimator, and
+CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal of the scenario is to
+illustrate
 
-'''
-## \page scenario_AttEclipseGroup
-## @{
-# Demonstrates how to use sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator, and
-# CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
-#
-# Sun Safe Pointing Attitude Guidance Simulation with Eclipse Module {#scenario_AttitudeEclipse}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal of the scenario is to
-# illustrate 1) how to add the eclipse module to simulate shadows being cast over a CSS constellation, 2)
-# how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs, and 3)
-# configure a custom timestep for the dynamics and FSW processes.
-#
-# To run the default scenario, call the python script from a Terminal window through
-#
-#       python3 scenario_AttitudeEclipse.py
-#
-# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenario_AttEclipseUpdated.svg "Illustration")
-#
-# To begin, one must first create a class that will
-# inherent from the masterSim class and provide a name to the sim.
-# This is accomplished through:
-# ~~~~~~~~~~~~~{.py}
-#   class scenario_AttEclipse(BSKScenario):
-#      def __init__(self, masterSim):
-#          super(scenario_AttEclipse, self).__init__(masterSim)
-#          self.name = 'scenario_AttEclipse'
-# ~~~~~~~~~~~~~
-#
-# Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
-# through:
-# ~~~~~~~~~~~~~{.py}
-#   self.masterSim.modeRequest = "sunSafePoint"
-# ~~~~~~~~~~~~~
-# which triggers the `initiateSunSafePointing` event within the BSK_FSW.py script.
-#
-# Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 seconds leads to excessively long
-# computational time. The user can change the standard time step for either or both processes by changing the fswRate and dynRate.
-# ~~~~~~~~~~~~~{.py}
-#   TheBSKSim = BSKSim(1.0, 1.0)
-# ~~~~~~~~~~~~~
-# The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).
-# The user is cautioned when setting a changing the standard time step
-# as too large a time step can lead to propagated inaccuracy.
-#
-# When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
-# attitude error, RW motor torque, and RW speed.
-#
-#
-# Custom Dynamics Configurations Instructions
-# -----
-# The fundamental simulation setup is a combination of the setups used in
-# [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) and [scenarioCSS.py](@ref scenarioCSS).
-# The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
-# effector is attached. In addition a CSS constellation and RW pyramid are attached.
-#
-# The new element is adding the eclipse module to the simulation environment.
-#
-# To configure the eclipse module, use the following code:
-# ~~~~~~~~~~~~~{.py}
-#         self.eclipseObject.sunInMsgName = 'sun_planet_data'
-#         self.eclipseObject.addPlanetName('earth')
-#         self.eclipseObject.addPlanetName('moon')
-#         self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
-# ~~~~~~~~~~~~~
-# To attach the module to the simulation use:
-# ~~~~~~~~~~~~~{.py}
-#     SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
-# ~~~~~~~~~~~~~
-# The module requires spice data regarding the location of the sun, the planets, and the spacecraft
-# to simulate shadow-casting effects. In combination these inputs can produce an output that is attached to the
-# CSS constellation which simulates a shadow. The eclipse object output is called using:
-#
-#         eclipse_data_0
-#
-# which gets sent to the individual CSS sensors.
-#
-#
-# Custom FSW Configurations Instructions
-# -----
-# The general flight algorithm setup is different than the earlier simulation scripts. Here we
-# use the sunSafePoint() guidance module, the CSSWlsEst() module to evaluate the
-# sun pointing vector, and the MRP_Feedback() module to provide the desired \f${\mathbf L}_r\f$
-# control torque vector.
-#
-# The sunSafePoint() guidance module is used to steer the spacecraft to point towards the sun direction vector.
-# This is used for functionality like safe mode, or a power generation mode. The inputs of the module are the
-# sun direction vector (as provided by the CSSWlsEst module), as well as the body rate information (as provided by the
-#  simpleNav module). The guidance module can be configured using:
-# ~~~~~~~~~~~~~{.py}
-# self.sunSafePointData = sunSafePoint.sunSafePointConfig()
-# self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
-# self.sunSafePointWrap.ModelTag = "sunSafePoint"
-# self.sunSafePointData.attGuidanceOutMsgName = "guidanceOut"
-# self.sunSafePointData.imuInMsgName = SimBase.get_DynModel().simpleNavObject.outputNavAttName
-# self.sunSafePointData.sunDirectionInMsgName = self.cssWlsEstData.navStateOutMsgName
-# self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
-# ~~~~~~~~~~~~~
-# The sHatBdyCmd defines the desired body pointing vector that will align with the sun direction vector.
-# The sun direction vector itself is calculated through the use of a CSS constellation and the CSSWlsEst module. The
-# setup for the CSS constellation can be found in the [scenarioCSS.py](@ref scenarioCSS) scenario. The CSSWlsEst module
-# is a weighted least-squares minimum-norm algorithm used to estimate the body-relative sun heading using a cluster of
-# coarse sun sensors. The algorithm requires a minimum of three CSS to operate correctly.
-#
-# To use the weighted least-squares estimator use the following code:
-# ~~~~~~~~~~~~~{.py}
-#         self.cssWlsEstData.cssDataInMsgName = SimBase.get_DynModel().CSSConstellationObject.outputConstellationMessage
-#         self.cssWlsEstData.cssConfigInMsgName = "css_config_data"
-#         self.cssWlsEstData.navStateOutMsgName = "sun_point_data"
-# ~~~~~~~~~~~~~
-# The resulting simulation illustrations are shown below.
-# ![Eclipse Shadow Factor](Images/Scenarios/scenario_AttEclipse_shadowFraction.svg "Eclipse Shadow Factor")
-# This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through
-# the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.
-# ![Sun Direction Vector](Images/Scenarios/scenario_AttEclipse_sunDirectionVector.svg "Sun Direction Vector")
-# The CSSWlsEst module calculates the position of the sun based on input from the CSS. The corresponding vector's three
-# components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to
-#  [0.0,0.0,0.0].
-# ![Attitude Error Norm](Images/Scenarios/scenario_AttEclipse_attitudeErrorNorm.svg "Attitude Error Norm")
-# The spacecraft does not change attitude if the sun direction vector is not detectable. Once the CSS rediscovers the sun upon
-# exiting the eclipse, the spacecraft corrects and realigns with the sun direction vector.
-# ![Rate Tracking Error](Images/Scenarios/scenario_AttEclipse_rateError.svg "Rate Tracking Error")
-# ![RW Motor Torque](Images/Scenarios/scenario_AttEclipse_rwMotorTorque.svg "RW Motor Torque [Nm]")
-# ![RW Speed](Images/Scenarios/scenario_AttEclipse_rwSpeed.svg "RW Speed [RPM]")
-#
-#
-## @}
+#. how to add the eclipse module to simulate shadows being cast over a CSS constellation,
+#. how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs, and
+#. configure a custom timestep for the dynamics and FSW processes.
 
+The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
+
+      python3 scenario_AttitudeEclipse.py
+
+The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
+modules.
+
+.. image:: /_images/static/test_scenario_AttEclipseUpdated.svg
+   :align: center
+
+Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 seconds leads to excessively long
+computational time. The user can change the standard time step for either or both processes by
+changing the ``fswRate`` and ``dynRate``::
+
+  TheBSKSim = BSKSim(1.0, 1.0)
+
+The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).
+The user is cautioned when setting a changing the standard time step
+as too large a time step can lead to propagated inaccuracy.
+
+When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
+attitude error, RW motor torque, and RW speed.
+
+Custom Dynamics Configurations Instructions
+-------------------------------------------
+The fundamental simulation setup is a combination of the setups used in
+:ref:`scenarioAttitudeFeedback` and :ref:`scenarioCSS`.
+The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which an Earth gravity
+effector is attached. In addition a CSS constellation and RW pyramid are attached.
+
+The new element is adding the eclipse module ``self.eclipseObject`` to the simulation environment.
+
+The module requires spice data regarding the location of the sun, the planets, and the spacecraft
+to simulate shadow-casting effects. In combination these inputs can produce an output that is attached to the
+CSS constellation which simulates a shadow. The eclipse object output is called using ``eclipse_data_0``
+which gets sent to the individual CSS sensors.
+
+Custom FSW Configurations Instructions
+--------------------------------------
+
+The general flight algorithm setup is different than the earlier simulation scripts. Here we
+use the :ref:`sunSafePoint` guidance module, the :ref:`CSSWlsEst` module to evaluate the
+sun pointing vector, and the :ref:`MRP_Feedback` module to provide the desired :math:`{\mathbf L}_r`
+control torque vector.
+
+The :ref:`sunSafePoint` guidance module is used to steer the spacecraft to point towards the sun direction vector.
+This is used for functionality like safe mode, or a power generation mode. The inputs of the module are the
+sun direction vector (as provided by the :ref:`CSSWlsEst` module), as well as the body rate
+information (as provided by the simpleNav module).
+
+The ``sHatBdyCmd`` defines the desired body pointing vector that will align with the sun direction vector.
+The sun direction vector itself is calculated through the use of a CSS constellation and the :ref:`CSSWlsEst`
+module. The
+setup for the CSS constellation can be found in the :ref:`scenarioCSS` scenario. The :ref:`CSSWlsEst` module
+is a weighted least-squares minimum-norm algorithm used to estimate the body-relative sun heading using a cluster of
+coarse sun sensors. The algorithm requires a minimum of three CSS to operate correctly.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    showPlots = True
+
+This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through
+the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.
+
+.. image:: /_images/Scenarios/scenario_AttEclipse_shadowFraction.svg
+   :align: center
+
+The :ref:`CSSWlsEst` module calculates the position of the sun based on input from the CSS.
+The corresponding vector's three
+components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to
+[0.0,0.0,0.0].
+
+.. image:: /_images/Scenarios/scenario_AttEclipse_sunDirectionVector.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenario_AttEclipse_attitudeErrorNorm.svg
+   :align: center
+
+The spacecraft does not change attitude if the sun direction vector is not detectable.
+Once the CSS rediscovers the sun upon
+exiting the eclipse, the spacecraft corrects and realigns with the sun direction vector.
+
+.. image:: /_images/Scenarios/scenario_AttEclipse_rwMotorTorque.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenario_AttEclipse_rwSpeed.svg
+   :align: center
+
+"""
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport, vizSupport
@@ -172,7 +146,9 @@ import BSK_Plotting as BSK_plt
 
 sys.path.append(path + '/../../scenarios')
 
-# Create your own scenario child class
+# To begin, one must first create a class that will
+# inherent from the masterSim class and provide a name to the sim.
+# This is accomplished through:
 class scenario_AttitudeEclipse(BSKScenario):
     def __init__(self, masterSim):
         super(scenario_AttitudeEclipse, self).__init__(masterSim)
@@ -181,8 +157,10 @@ class scenario_AttitudeEclipse(BSKScenario):
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
+        # Within configure_initial_conditions(), the user needs to first define the
+        # spacecraft FSW mode for the simulation through:
         self.masterSim.modeRequest = 'sunSafePoint'
+        # which triggers the `initiateSunSafePointing` event within the BSK_FSW.py script.
 
         # Configure Dynamics initial conditions
 
@@ -261,6 +239,14 @@ class scenario_AttitudeEclipse(BSKScenario):
 
 
 def run(showPlots):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        showPlots (bool): Determines if the script should display plots
+
+    """
+
     # Instantiate base simulation
     TheBSKSim = BSKSim(1.0, 1.0)
     TheBSKSim.set_DynModel(BSK_Dynamics)

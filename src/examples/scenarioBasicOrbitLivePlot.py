@@ -1,23 +1,51 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+This script duplicates the basic orbit simulation in the scenario :ref:`scenarioBasicOrbit`.
+The difference is that instead of plotting the results after the simulation has stopped in this script a separate
+thread is created to update the plots live during the simulation run itself. For more information on doing live
+plotting see help file :ref:`usingLivePlotting`.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioBasicOrbitLivePlot.py
 
+As with :ref:`scenarioBasicOrbit`, different simulation scenarios are setup which are
+controlled through the simulation flags set at the end of the file.
+
+To enable live plotting with a regular Basilisk simulation additional
+python packages ``Pipe``, ``Process`` must be imported.
+
+Without live plotting you simply call ``ExecuteSimulation()`` and plot the logged data.  The plotting and logging
+is done now within the method ``plot()``.
+
+If ``livePlots`` is true, then a separate process is created to poll the BSK process for data and plot the data
+incrementally.  The live plotting is done with the method ``live_outputs()``.  Be cautious in how much data should be
+plotted live as this can greatly slow down the simulation.  Remember that less can be more.
+
+To avoid the live plotting simulation running too fast, a software-based realtime clock
+module is used with an acceleration factor of 50x.
+
+"""
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -50,68 +78,29 @@ from Basilisk.simulation import clock_synch
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
-## @page scenarioBasicOrbitLiveGroup
-## @{
-#
-# Basic Orbit Setup Using Live Plotting {#scenarioBasicOrbitLive}
-# ====
-#
-# Scenario Description
-# -----
-# This script duplicates the basic orbit simulation in the scenario [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
-# The difference is that instead of plotting the results after the simulation has stopped in this script a separate
-# thread is created to update the plots live during the simulation run itself.  For more information on doing live
-# plotting see help file [using Live Plotting](@ref usingLivePlotting).
-#
-# To run the default scenario, call the python script through
-#
-#       python3 scenarioBasicOrbitLivePlot.py
-#
-# As with [scenarioBasicOrbit.py](@ref scenarioBasicOrbit), different simulation scenarios are setup which are
-# controlled through the simulation flags set at the end of the file.
-#
-# To enable live plotting with a regular Basilisk simulation additional python packages must be imported.
-#~~~~~~~~~~~~~~{.py}
-# from multiprocessing import Pipe, Process
-# from time import sleep
-#~~~~~~~~~~~~~~
-#
-# After configuring the stop time, in livePlotting mode the simulation must be executed differently.  Note the code:
-#~~~~~~~~~~~~~~{.py}
-#     if livePlots:
-#         #plotting refresh rate in ms
-#         refreshRate = 1000
-#         plotComm, simComm = Pipe()
-#         plotArgs = [showPlots, scSim, scObject, useSphericalHarmonics, planetCase, planet, oe, P, mu, orbitCase]
-#         simProc = Process(target = scSim.ExecuteSimulation, args = (showPlots, livePlots, simComm, plot, plotArgs))
-#         plotProc = Process(target = live_outputs, args = (plotComm, scObject, useSphericalHarmonics, planetCase, planet, oe, P, mu, refreshRate))
-#         # Execute simulation and live plotting
-#         simProc.start(), plotProc.start()
-#         simProc.join(), plotProc.join()
-#         return
-#     else:
-#         scSim.ExecuteSimulation()
-#         posData, figureList = plot(showPlots, scSim, scObject, useSphericalHarmonics, planetCase, planet, oe, P, mu, orbitCase)
-#         return posData, figureList
-#~~~~~~~~~~~~~~
-# Without live plotting you simply call `ExecuteSimulation()` and plot the logged data.  The plotting and logging
-# is done now within the method `plot()`.
-#
-# If `livePlots` is true, then a separate process is created to poll the BSK process for data and plot the data
-# incrementally.  The live plotting is done with the method `live_outputs()`.  Be cautious in how much data should be
-# plotted live as this can greatly slow down the simulation.  Remember that less can be more.
-#
-# To avoid the live plotting simulation running too fast, a software-based realtime clock
-# module is used with an acceleration factor of 50x.
-#~~~~~~~~~~~~~~~{.py}
-#   clockSync = clock_synch.ClockSynch()
-#   clockSync.accelFactor = 50.0
-#   scSim.AddModelToTask(simTaskName, clockSync)
-#~~~~~~~~~~~~~~~
-## @}
-def run(showPlots, livePlots, orbitCase, useSphericalHarmonics, planetCase):
-    '''Call this routine directly to run the tutorial scenario.'''
 
+
+def run(showPlots, livePlots, orbitCase, useSphericalHarmonics, planetCase):
+    """
+        At the end of the python script you can specify the following example parameters.
+
+        Args:
+            show_plots (bool): Determines if the script should display plots
+            livePlots (bool): Determines if the script should use live plotting
+            orbitCase (str):
+
+                ======  ============================
+                String  Definition
+                ======  ============================
+                'LEO'   Low Earth Orbit
+                'GEO'   Geosynchronous Orbit
+                'GTO'   Geostationary Transfer Orbit
+                ======  ============================
+
+            useSphericalHarmonics (Bool): False to use first order gravity approximation: :math:`\\frac{GMm}{r^2}`
+
+            planetCase (str): {'Earth', 'Mars'}
+        """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -235,7 +224,7 @@ def run(showPlots, livePlots, orbitCase, useSphericalHarmonics, planetCase):
     scSim.ConfigureStopTime(simulationTime)
 
     if livePlots:
-        #plotting refresh rate in ms
+        # After configuring the stop time, in livePlotting mode the simulation must be executed differently.  Note the code:
         refreshRate = 1000
         plotComm, simComm = Pipe()
         plotArgs = [showPlots, scSim, scObject, useSphericalHarmonics, planetCase, planet, oe, P, mu, orbitCase]

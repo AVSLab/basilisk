@@ -1,122 +1,57 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+r"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+This script duplicates the ``bskSim`` basic orbit simulation in the scenario
+:ref:`scenario_BasicOrbit`.
+The difference is that instead of plotting the results after the simulation has stopped in this script a separate
+thread is created to update the plots live during the simulation run itself.  For more information on doing live
+plotting see help file :ref:`usingLivePlotting`.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
 
-'''
+      python3 scenario_BasicOrbit_LivePlot.py
+
+# To enable live plotting with a ``bskSim`` Basilisk simulation additional
+python packages ``Pipe``, ``Process``, ``Lock`` must be imported.
 
 
-## @page scenario_BasicOrbitLiveGroup
-## @{
-# Demonstrates live plotting with a 'bskSim' showing a spacecraft which is orbiting Earth.
-#
-# BSK Simulation: Basic Orbit with Live Plotting {#scenario_BasicOrbitLive}
-# ====
-#
-# Scenario Description
-# -----
-# This script duplicates the `bskSim` basic orbit simulation in the scenario
-# [scenario_BasicOrbit.py](@ref scenario_BasicOrbit).
-# The difference is that instead of plotting the results after the simulation has stopped in this script a separate
-# thread is created to update the plots live during the simulation run itself.  For more information on doing live
-# plotting see help file [using Live Plotting](@ref usingLivePlotting).
-#
-# To run the scenario, call the bskSim python simulation script withing `src\tests\bskSimScenarios\scenarios`
-#  from a Terminal window through:
-#
-#       python3 scenario_BasicOrbit_LivePlot.py
-#
-# To enable live plotting with a `bskSim` Basilisk simulation additional python packages must be imported.
-# ~~~~~~~~~~~~~~{.py}
-# from multiprocessing import Pipe, Process, Lock
-# from time import sleep
-# import matplotlib.pyplot as plt
-# import numpy as np
-# ~~~~~~~~~~~~~~
-#
-# Next, the `bskSim` plotting routines must be called with a unique ID number.  This is done in this example
-# with:
-# ~~~~~~~~~~~~~~{.py}
-#         plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
-#         BSK_plt.plot_orbit(r_BN_N, plotID)
-#         plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
-#         BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN, plotID)
-# ~~~~~~~~~~~~~~
-#
-# The next step is to setup the `live_outputs()` method which details what to plot in a live manner.
-# ~~~~~~~~~~~~~~{.py}
-#     def live_outputs(self, plotComm, rate):
-#         dataRequests = self.setup_live_outputs()
-#         lock = Lock()
-#         while True:
-#             for request in dataRequests:
-#                 #send request for data
-#                 plotComm.send(request)
-#                 response = plotComm.recv()
-#
-#                 if response == "TERM":
-#                     plt.close("all")
-#                     return
-#                 pltArgs = []
-#                 if response["plotFun"] == "plot_orbit":
-#                     lock.acquire()
-#                     for resp in response["dataResp"]:
-#                         pltArgs.append(np.array(resp))
-#                     pltArgs.append(response["plotID"])
-#                     getattr(BSK_plt, response["plotFun"])(*pltArgs)
-#                     lock.release()
-#                     plt.pause(.01)
-#                 elif response["plotFun"] == "plot_orientation":
-#                     lock.acquire()
-#                     pltArgs.append(response["dataResp"][0][:, 0] * macros.NANO2MIN)
-#                     for resp in response["dataResp"]:
-#                         pltArgs.append(np.array(resp))
-#                     pltArgs.extend((response["plotID"], True))
-#                     getattr(BSK_plt, response["plotFun"])(*pltArgs)
-#                     lock.release()
-#                     plt.pause(.01)
-#             sleep(rate/1000.)
-# ~~~~~~~~~~~~~~
-# The `setup_live_outputs()` method returns the required `dataRequests` structure as discussed in the [Live Plotting](@ref usingLivePlotting) documentation page.
-# ~~~~~~~~~~~~~~{.py}
-#  def setup_live_outputs(self):
-#         #define plots of interest here
-#         dataRequests = [{"plotID" : 1,
-#                         "plotFun" : "plot_orbit",
-#                         "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]},
-#                         {"plotID" : 2,
-#                         "plotFun" : "plot_orientation",
-#                         "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N",
-#                                     self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N",
-#                                     self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN"]}]
-#         return dataRequests
-# ~~~~~~~~~~~~~~
-#
-# To run the Basilisk simulation a similar setup is used as with the regular BSK simulation by running:
-# ~~~~~~~~~~~~~~{.py}
-#         refreshRate = 1000
-#         plotComm, simComm = Pipe()
-#         plotArgs = [showPlots]
-#         simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (showPlots, livePlots, simComm, TheScenario.pull_outputs, plotArgs))
-#         plotProc = Process(target = TheScenario.live_outputs, args = (plotComm, refreshRate))
-#         # Execute simulation and live plotting
-#         simProc.start(), plotProc.start()
-#         simProc.join(), plotProc.join()
-# ~~~~~~~~~~~~~~
-## @}
+Next, the ``bskSim`` plotting routines must be called with a unique ID number.  This is done in this example
+with::
+
+        plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
+        BSK_plt.plot_orbit(r_BN_N, plotID)
+        plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
+        BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN, plotID)
+
+The next step is to setup the ``live_outputs()`` method which details what to plot in a live manner.
+
+The ``setup_live_outputs()`` method returns the required ``dataRequests`` structure as
+discussed in the :ref:`usingLivePlotting` documentation page.
+
+
+"""
+
+
+
 
 
 # Import utilities
@@ -248,6 +183,14 @@ class scenario_BasicOrbitLive(BSKScenario):
 
 
 def run(showPlots, livePlots=False):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        showPlots (bool): Determines if the script should display plots
+        livePlots (bool): Determines if the live plotting feature should be used
+
+    """
     # Instantiate base simulation
     TheBSKSim = BSKSim()
     TheBSKSim.set_DynModel(BSK_Dynamics)
@@ -274,6 +217,7 @@ def run(showPlots, livePlots=False):
     # Run simulation
     figureList = {}
     if livePlots:
+        # To run the Basilisk simulation a similar setup is used as with the regular BSK simulation by running:
         #plotting refresh rate in ms
         refreshRate = 1000
         plotComm, simComm = Pipe()

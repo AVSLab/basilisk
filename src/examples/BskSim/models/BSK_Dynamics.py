@@ -35,6 +35,10 @@ bskPath = __path__[0]
 
 
 class BSKDynamicModels():
+    """
+    General bskSim simulation class that sets up the spacecraft simulation configuration.
+
+    """
     def __init__(self, SimBase, dynRate):
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName
@@ -72,6 +76,9 @@ class BSKDynamicModels():
     # These are module-initialization methods
 
     def SetSpacecraftHub(self):
+        """
+        Specify the spacecraft hub parameters.
+        """
         self.scObject.ModelTag = "spacecraftBody"
         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
         self.I_sc = [900., 0., 0.,
@@ -84,6 +91,9 @@ class BSKDynamicModels():
 
 
     def SetGravityBodies(self):
+        """
+        Specify what gravitational bodies to include in the simulation
+        """
         timeInitString = "2012 MAY 1 00:28:30.0"
         gravBodies = self.gravFactory.createBodies(['earth', 'sun', 'moon'])
         gravBodies['earth'].isCentralBody = True
@@ -102,18 +112,24 @@ class BSKDynamicModels():
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     def SetEclipseObject(self):
+        """
+        Specify what celestial object is causing an eclipse message.
+        """
         self.eclipseObject.sunInMsgName = 'sun_planet_data'
         self.eclipseObject.addPlanetName('earth')
         self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
 
     def SetExternalForceTorqueObject(self):
+        """Set the external force and torque object."""
         self.extForceTorqueObject.ModelTag = "externalDisturbance"
         self.scObject.addDynamicEffector(self.extForceTorqueObject)
 
     def SetSimpleNavObject(self):
+        """Set the navigation sensor object."""
         self.simpleNavObject.ModelTag = "SimpleNavigation"
 
     def SetReactionWheelDynEffector(self):
+        """Set the 4 reaction wheel devices."""
         # Make a fresh RW factory instance, this is critical to run multiple times
         self.rwFactory = simIncludeRW.rwFactory()
         
@@ -140,6 +156,7 @@ class BSKDynamicModels():
         self.rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
 
     def SetThrusterStateEffector(self):
+        """Set the 8 ACS thrusters."""
         # Make a fresh TH factory instance, this is critical to run multiple times
         thFactory = simIncludeThruster.thrusterFactory()
 
@@ -176,6 +193,7 @@ class BSKDynamicModels():
                                   self.scObject)
 
     def SetCSSConstellation(self):
+        """Set the 8 CSS sensors"""
         self.CSSConstellationObject.ModelTag = "cssConstellation"
         self.CSSConstellationObject.outputConstellationMessage = "CSSConstellation_output"
 
@@ -214,6 +232,9 @@ class BSKDynamicModels():
 
     # Global call to initialize every module
     def InitAllDynObjects(self):
+        """
+        Initialize all the dynamics objects.
+        """
         self.SetSpacecraftHub()
         self.SetGravityBodies()
         self.SetExternalForceTorqueObject()
@@ -226,6 +247,7 @@ class BSKDynamicModels():
 
     # Global call to create every required one-time message
     def WriteInitDynMessages(self, SimBase):
+        """Write out the required dynamics configuration messages."""
 
         unitTestSupport.setMessage(SimBase.TotalSim,
                                    SimBase.DynamicsProcessName,

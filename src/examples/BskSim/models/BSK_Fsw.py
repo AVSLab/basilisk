@@ -34,6 +34,7 @@ from Basilisk.utilities import unitTestSupport
 
 
 class BSKFswModels():
+    """Defines the bskSim FSW class"""
     def __init__(self, SimBase, fswRate):
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
@@ -160,33 +161,39 @@ class BSKFswModels():
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
     def SetInertial3DPointGuidance(self):
+        """Define the inertial 3D guidance module"""
         self.inertial3DData.sigma_R0N = [0.2, 0.4, 0.6]
         self.inertial3DData.outputDataName = "att_reference"
 
     def SetHillPointGuidance(self, SimBase):
+        """Define the Hill pointing guidance module"""
         self.hillPointData.outputDataName = "att_reference"
         self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
         self.hillPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
 
     def SetSunSafePointGuidance(self, SimBase):
+        """Define the sun safe pointing guidance module"""
         self.sunSafePointData.attGuidanceOutMsgName = "att_guidance"
         self.sunSafePointData.imuInMsgName = SimBase.DynModels.simpleNavObject.outputAttName
         self.sunSafePointData.sunDirectionInMsgName = self.cssWlsEstData.navStateOutMsgName
         self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
 
     def SetVelocityPointGuidance(self, SimBase):
+        """Define the velocity pointing guidance module"""
         self.velocityPointData.outputDataName = "att_reference"
         self.velocityPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
         self.velocityPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
         self.velocityPointData.mu = SimBase.DynModels.gravFactory.gravBodies['earth'].mu
 
     def SetAttitudeTrackingError(self, SimBase):
+        """Define the attitude tracking error module"""
         self.trackingErrorData.inputNavName = SimBase.DynModels.simpleNavObject.outputAttName
         # Note: SimBase.DynModels.simpleNavObject.outputAttName = "simple_att_nav_output"
         self.trackingErrorData.inputRefName = "att_reference"
         self.trackingErrorData.outputDataName = "att_guidance"
 
     def SetCSSWlsEst(self, SimBase):
+        """Set the FSW CSS configuration information """
         cssConfig = fswMessages.CSSConfigFswMsg()
         totalCSSList = []
         nHat_B_vec = [
@@ -216,6 +223,7 @@ class BSKFswModels():
         self.cssWlsEstData.navStateOutMsgName = "sun_point_data"
 
     def SetMRPFeedbackControl(self, SimBase):
+        """Set the MRP feedback module configuration"""
         self.mrpFeedbackControlData.inputGuidName = "att_guidance"
         self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
         self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
@@ -228,6 +236,7 @@ class BSKFswModels():
 
 
     def SetMRPFeedbackRWA(self):
+        """Set the MRP feedback information if RWs are considered"""
         self.mrpFeedbackRWsData.K = 3.5
         self.mrpFeedbackRWsData.Ki = -1  # Note: make value negative to turn off integral feedback
         self.mrpFeedbackRWsData.P = 30.0
@@ -240,6 +249,7 @@ class BSKFswModels():
         self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
 
     def SetMRPSteering(self):
+        """Set the MRP Steering module"""
         self.mrpSteeringData.K1 = 0.05
         self.mrpSteeringData.ignoreOuterLoopFeedforward = False
         self.mrpSteeringData.K3 = 0.75
@@ -248,6 +258,7 @@ class BSKFswModels():
         self.mrpSteeringData.outputDataName = "rate_steering"
 
     def SetRateServo(self, SimBase):
+        """Set the rate servo module"""
         self.rateServoData.inputGuidName = "att_guidance"
         self.rateServoData.vehConfigInMsgName = "adcs_config_data"
         self.rateServoData.rwParamsInMsgName = "rwa_config_data"
@@ -261,6 +272,7 @@ class BSKFswModels():
 
 
     def SetVehicleConfiguration(self, SimBase):
+        """Set the spacecraft configuration information"""
         vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
         # use the same inertia in the FSW algorithm as in the simulation
         vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
@@ -270,6 +282,7 @@ class BSKFswModels():
                                     vehicleConfigOut)
 
     def SetRWConfigMsg(self, SimBase):
+        """Set the RW device information"""
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
@@ -286,6 +299,7 @@ class BSKFswModels():
 
 
     def SetRWMotorTorque(self, SimBase):
+        """Set the RW motor torque information"""
         controlAxes_B = [
         1.0, 0.0, 0.0
         , 0.0, 1.0, 0.0
@@ -298,6 +312,7 @@ class BSKFswModels():
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
+        """Initialize all the FSW objects"""
         self.SetInertial3DPointGuidance()
         self.SetHillPointGuidance(SimBase)
         self.SetCSSWlsEst(SimBase)

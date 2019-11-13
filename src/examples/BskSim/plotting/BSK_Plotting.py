@@ -146,10 +146,9 @@ def plot_shadow_fraction(time, shadow_factor, id=None):
     return
 
 def plot_sun_point(time, sunPoint, id=None):
-    plt.figure(id)
+    plot3components(sunPoint, id)
     plt.xlabel('Time')
     plt.ylabel('Sun Point Vec')
-    plot3components(sunPoint, id)
     return
 
 def plot_orbit(r_BN, id=None):

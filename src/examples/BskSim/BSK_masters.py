@@ -32,6 +32,8 @@ sys.path.append(path + '/models')
 
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
+    """Main bskSim simulation class"""
+
     def __init__(self, fswRate=0.1, dynRate=0.1):
         self.dynRate = dynRate
         self.fswRate = fswRate
@@ -77,6 +79,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
 
 class BSKScenario(object):
+    """Define the bskSim scenario class."""
     def __init__(self, masterSim):
         self.name = "scenario"
         self.masterSim = masterSim
