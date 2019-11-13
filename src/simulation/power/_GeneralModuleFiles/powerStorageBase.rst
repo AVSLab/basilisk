@@ -15,7 +15,7 @@ For more information on how to set up and use classes derived from this module, 
 
 Module Assumptions and Limitations
 ----------------------------------
-The base class makes no specific energy storate device related assumptions.
+The base class makes no specific energy storage device related assumptions.
 
 Message Connection Descriptions
 -------------------------------
