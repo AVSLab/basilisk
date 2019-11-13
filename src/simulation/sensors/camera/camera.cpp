@@ -170,18 +170,22 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
  * @param float probability of getting a ray each frame
  * @return void
  */
-void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset){
+void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     uint64 initValue = CurrentSimNanos;
     cv::RNG rng(initValue + time(0) + randOffset);
-    //std::cout<<time(0)<<std::endl;
     
     float prob = rng.uniform(0.0, 1.0);
     if (prob > probThreshhold) {
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
-    
-    cv::Point p1 = cv::Point(rng.uniform(0, mCosmic.rows), rng.uniform(0, mCosmic.cols));
-    cv::Point p2 = cv::Point(rng.uniform(0, mCosmic.rows), rng.uniform(0, mCosmic.cols));
+        
+    int x = rng.uniform(0, mCosmic.rows);
+    int y = rng.uniform(0, mCosmic.cols);
+    int deltax = rng.uniform(-maxSize/2, maxSize/2);
+    int deltay = rng.uniform(-maxSize/2, maxSize/2);
+        
+    cv::Point p1 = cv::Point(x, y);
+    cv::Point p2 = cv::Point(x + deltax, y + deltay);
     
     line(mCosmic, p1, p2, cv::Scalar(255, 255, 255), 1, cv::LINE_8);
     
@@ -194,7 +198,7 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
     mSrc.convertTo(mCosmic, mSrc.type());
     for(int i = 0; i < std::round(num); i++){
         /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about 5 rays per image*/
-        AddCosmicRay(mCosmic, mCosmic, 1/(std::pow(num,2)+0.02), i+1);
+        AddCosmicRay(mCosmic, mCosmic, 1/(std::pow(num,2)+0.02), i+1, 50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }

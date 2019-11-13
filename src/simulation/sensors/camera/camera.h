@@ -57,7 +57,7 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void AddGaussianNoise(const cv::Mat, cv::Mat &mDst, double, double);
     void AddSaltPepper(const cv::Mat, cv::Mat &mDst, float, float);
-    void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float, double);
+    void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float, double, int);
     void AddCosmicRayBurst(const cv::Mat, cv::Mat &mDst, double);
     void ApplyFilters(cv::Mat, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam);
 public:
