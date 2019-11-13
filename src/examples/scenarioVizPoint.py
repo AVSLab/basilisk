@@ -1,22 +1,88 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+.. figure:: /_images/static/Vizard1.jpg
+   :align: center
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Illustration of Vizard showing a custom spacecraft camera view.
 
-'''
+Overview
+--------
+
+This scenario demonstrates how instantiate a visualization interface. This includes setting camera
+parameters and capture rates. This stems for an attitude detumble scenario, but focuses on
+pointing towards a celestial body in order to display the visualization Vizard, and show
+the camera capabilities.
+
+The script is found in the folder ``src/examples`` and executed by using::
+
+    python3 scenarioVizPoint.py
+
+When the simulation completes 3 plots are shown for the MRP attitude history, the rate
+tracking errors, as well as the control torque vector.  The ``run()`` method is setup to write out the
+Vizard data file to sub-folder ``_VizFiles/scenarioVizPoint_UnityViz.bin``.  By running :ref:`Vizard <vizard>`
+and playing back this data file you will see the custom camera view that is created as
+illustrated in the Vizard snapshot above.
+
+The simulation layout is identical the the :ref:`scenarioAttitudeFeedback` scenario when it comes to FSW modules
+The spacecraft starts in a tumble and controls it's rate as well as points to the Earth.
+
+Two mission scenarios can be simulated.
+The first one mimics the DSCOVR mission spacecraft and its EPIC camera pointing towards Earth.
+The second simulates a spacecraft orbiting about Mars. The attitude results are the same as
+the attitude feedback scenario, and pictured in the following plots. The differences lies in
+where they are pointing.
+
+.. image:: /_images/Scenarios/scenarioVizPoint1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioVizPoint2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioVizPoint3.svg
+   :align: center
+
+In each case a spacecraft fixed camera is simulated.  This is done by creating a camera
+configuration message called ``camera_config_data``.  The :ref:`vizInterface` module
+searches for a message with this name by default.  If it exists, the camera information
+is read in and sent across to Vizard to render out that camera view point image.  If the
+camera message should be written to another message name, then the :ref:`vizInterface` parameter
+``cameraConfInMsgName`` can be set to this new name.
+
+DSCOVR Mission Setup
+--------------------
+
+The first setup has the spacecraft pointing to Earth, from a distant, L1 vantage point.
+The scenario controls the spacecraft attitude to Earth pointing mode, and snaps pictures at
+a defined rate.
+This camera parameters are taken from NASA's `EPIC <https://epic.gsfc.nasa.gov>`__ camera website on the date
+2018 OCT 23 04:35:25.000 (UTC time).
+In this setup the pointing needs to be set to Earth, given it's position.
+
+Mars Orbit Setup
+----------------
+
+The second control scenario points the spacecraft towards Mars on a Mars orbit.
+
+"""
+
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -60,142 +126,30 @@ from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import vizSupport
 
 
-## \page scenarioVizPointGroup
-## @{
-## Demonstration the viz/camera capabilities.
-#
-# \image html Images/doc/Vizard1.jpg "Vizard Interface showing BSK Camera View"width=600px
-#
-# Pointing the spacecraft camera to Mars, or the Earth in attitude detumble scenario {#scenarioVizPoint}
-# ====
-#
-# Scenario Description
-# -----
-# This scenario demonstrates how instantiate a visualization interface. This includes setting camera
-# parameters and capture rates. This stems for an attitude detumble scenario, but focuses on
-# pointing towards a celestial body in order to display the visualization Vizard, and show
-# the camera capabilities.
-#
-# Setup |       DSCOVR        | Earth Orbit |
-# ----- | ------------------- | ----------- |
-# 1     | True                | False       |
-# 2     | False               | True        |
-#
-#
-# To run the default scenario 1., call the python script through
-#
-#       python3 scenarioVizPoint.py
-#
-# When the simulation completes 3 plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the control torque vector.
-#
-# The simulation layout is identical the the [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) scenario when it comes to FSW modules
-# The spacecraft starts in a tumble and controls it's rate as well as points to the Earth.
-#
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#             run(
-#                 False,  # show_plots
-#                 True,  # dscovr
-#                 False,  # marsOrbit
-#             )
-# ~~~~~~~~~~~~~
-# The first argument either displays the plots from the control, or not.
-# The last two arguments separate two scenarios:
-# The first one mimics the DSCOVR mission spacecraft and its EPIC camera pointing towards Earth.
-# The second simulates a spacecraft orbiting about Mars. The attitude results are the same as
-# the attitude feedback scenario, and pictured in the following plots. The differences lies in
-#  where they are pointing
-# ![MRP Attitude History](Images/Scenarios/scenarioVizPoint1.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioVizPoint2.svg "Torque history")
-#
-# Setup 1
-# -----
-#
-# The first setup has the spacecraft pointing to Earth, from a distant, L1 vantage point.
-# The scenario controls the spacecraft attitude to Earth pointing mode, and snaps pictures at
-# a defined rate. The important camera parameters are set as such:
-#
-# ~~~~~~~~~~~~~{.py}
-# planets = ['sun', 'earth']
-# cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
-# cameraConfig.cameraID = 1
-# cameraConfig.renderRate = int(59 * 1E9)  # in ns
-# cameraConfig.sigma_CB = [0, 0, 1]
-# cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
-# cameraConfig.fieldOfView = 0.62  # in degrees
-# cameraConfig.sensorSize = [30.72, 30.72]  # in mm
-# cameraConfig.resolution = [2048, 2048]  # in pixels
-# cameraMsgName = 'camera_config_data'
-# cameraMessageSize = cameraConfig.getStructSize()
-# scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
-# scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
-# ~~~~~~~~~~~~~
-#
-# This data is taken from NASA's <a href="https://epic.gsfc.nasa.gov">link EPIC</a> camera website on the date
-# 2018 OCT 23 04:35:25.000 (UTC time).
-#
-# In this setup the pointing needs to be set to Earth, given it's position. This is done in the following lines:
-# ~~~~~~~~~~~~~{.py}
-# earthVec = np.array([129559501208.24178, 68180766143.44236, 29544768114.76163])
-# normal = np.array([0., 0., 1.])
-# sunVec = np.array([-32509693.54023, 1002377617.77831, 423017670.86700])
-# dscovrEarthDistance = 1405708000.
-# SEVangle = 7.28
-#
-# r_sc = dscovrEarthDistance * (sunVec - earthVec) / np.linalg.norm(sunVec - earthVec)
-# v_sc = np.zeros(3)
-#
-# b1_n = -(sunVec - earthVec) / np.linalg.norm(sunVec - earthVec)
-# b3_n = (normal - np.dot(normal, b1_n) * b1_n) / np.linalg.norm(normal - np.dot(normal, b1_n) * b1_n)
-# assert np.abs(np.dot(b1_n, b3_n)) < 1E-10, 'Wrong dcm'
-# b2_n = np.cross(b3_n, b1_n) / np.linalg.norm(np.cross(b3_n, b1_n))
-# NB = np.zeros([3, 3])
-# NB[:, 0] = b1_n
-# NB[:, 1] = b2_n
-# NB[:, 2] = b3_n
-#
-# earthPoint = rbk.C2MRP(NB.T)
-# ~~~~~~~~~~~~~
-#
-# The images output from that simulation can be seen as screen captures in the Visualization repository.
-#
-# Setup 2
-# ------
-#
-# The second control scenario points the spacecraft towards Mars on a Mars orbit.
-#
-# ~~~~~~~~~~~~~{.py}
-# simulationTime = macros.min2nano(6.25)
-# planets = ['mars']
-# cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
-# cameraConfig.cameraID = 1
-# cameraConfig.renderRate = int(30 * 1E9)  # in ns
-# cameraConfig.sigma_CB = [0, 0, 1]
-# cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
-# cameraConfig.fieldOfView = 50.  # in degrees
-# cameraConfig.sensorSize = [10., 10.]  # in mm
-# cameraConfig.resolution = [512, 512]  # in pixels
-# cameraMsgName = 'camera_config_data'
-# cameraMessageSize = cameraConfig.getStructSize()
-# scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
-# scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
-# ~~~~~~~~~~~~~
-#
-# Given the geometry, the vector set for pointing which provides images of Mars is given as follows:
-#
-# ~~~~~~~~~~~~~{.py}
-# earthPoint = np.array([0.,0.,0.1])
-# ~~~~~~~~~~~~~
-#
-# Images of the screenshots taken by Vizard can be found in its repository under Assets/Screenshots
-# when the scenario is run from python.
-##  @}
-def run(show_plots, dscovr, marsOrbit):
-    '''Call this routine directly to run the tutorial scenario.'''
+def run(show_plots, missionType, saveVizardFile):
+    """
+    At the end of the python script you can specify the following example parameters.
 
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        missionType (str):
+
+            ==========  ==================================
+            String      Definition
+            ==========  ==================================
+            'dscovr'    Simulates the NASA DSCOVR mission
+            'marsOrbit' Simulates an orbit about Mars
+            ==========  ==================================
+
+        saveVizardFile (bool): Flag to save off the Vizard data file
+
+    """
+
+    missionOptions = ['dscovr', 'marsOrbit'];
+    if missionType not in missionOptions:
+        print("ERROR: scenarioVizPoint received the wrong mission type " + missionType
+              + ". Options include " + str(missionOptions))
+        exit(1)
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -217,7 +171,7 @@ def run(show_plots, dscovr, marsOrbit):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    if dscovr:
+    if missionType ==  'dscovr':
         # setup Grav Bodies and Spice messages
         gravFactory = simIncludeGravBody.gravBodyFactory()
         bodies = gravFactory.createBodies(['earth', 'sun'])
@@ -232,7 +186,7 @@ def run(show_plots, dscovr, marsOrbit):
 
         gravFactory.spiceObject.zeroBase = 'earth'
         scSim.AddModelToTask(simTaskName, spiceObject)
-        # Setup Camera
+        # Setup Camera.
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = int(59 * 1E9)  # in ns
@@ -268,8 +222,6 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   setup the simulation tasks/objects
     #
-
-
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
@@ -304,7 +256,7 @@ def run(show_plots, dscovr, marsOrbit):
     #   setup the FSW algorithm tasks
     #
 
-    if dscovr:
+    if missionType == 'dscovr':
         # Set up pointing frame and camera position given the initial conditions on Oct 23rd 2018 4:35 UTC
         # and the DDSCOVR data
         earthVec = np.array([129559501208.24178, 68180766143.44236,29544768114.76163])
@@ -386,7 +338,7 @@ def run(show_plots, dscovr, marsOrbit):
     #
     # setup the orbit using classical orbit elements
     # for orbit around Earth
-    if marsOrbit:
+    if missionType == 'marsOrbit':
         oe = orbitalMotion.ClassicElements()
         oe.a = 16000000 # meters
         oe.e = 0.1
@@ -406,7 +358,9 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   initialize Simulation
     #
-    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, saveFile=fileNamePath, gravBodies=gravFactory)
+    if saveVizardFile:
+        vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+                                            saveFile=fileNamePath, gravBodies=gravFactory)
     scSim.InitializeSimulationAndDiscover()
 
     #
@@ -460,6 +414,8 @@ def run(show_plots, dscovr, marsOrbit):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
+    pltName = fileName + "3"
+    figureList[pltName] = plt.figure(3)
 
     if show_plots:
         plt.show()
@@ -476,7 +432,7 @@ def run(show_plots, dscovr, marsOrbit):
 #
 if __name__ == "__main__":
     run(
-        False,  # show_plots
-        True,  # dscovr
-        False,  # marsOrbit
+        True,               # show_plots
+        'dscovr',           # missionType: dscovr or marsOrbit
+        True                # saveVizardFile: flag to save the Vizard data file
     )

@@ -53,13 +53,13 @@ import scenarioVizPoint
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("dscovr, marsOrbit", [
-    (False, True),
-    (True, False)]
+@pytest.mark.parametrize("missionType", [
+    ('dscovr'),
+    ('marsOrbit')]
 )
 @pytest.mark.scenarioTest
 
-def test_scenarioViz(show_plots, dscovr, marsOrbit):
+def test_scenarioViz(show_plots, missionType):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
 
@@ -67,7 +67,7 @@ def test_scenarioViz(show_plots, dscovr, marsOrbit):
     testMessages = []                       # create empty array to store test log messages
 
     # provide a unique test method name, starting with test_
-    figureList = scenarioVizPoint.run(show_plots, dscovr, marsOrbit)
+    figureList = scenarioVizPoint.run(show_plots, missionType, False)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):

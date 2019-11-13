@@ -1,22 +1,64 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+"""
+Overview
+--------
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+This script duplicates the basic orbit simulation in the scenario :ref:`scenarioBasicOrbit`.
+The difference is that this version allows for the Basilisk simulation data to be live streamed to the
+:ref:`vizard` visualization program.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+The script is found in the folder ``src/examples`` and executed by using::
 
-'''
+    python3 scenarioBasicOrbitStream.py
+
+To enable live data streaming, the ``enableUnityVisualization()`` method is provided with ``liveStream``
+argument using::
+
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
+                                        liveStream=True)
+
+When starting Basilisk simulation it prints now to the terminal that it is trying to connect to Vizard::
+
+    Waiting for Vizard at tcp://localhost:5556
+
+Copy ``tcp://localhost:5556`` and open the Vizard application.  Enter this address in the connection field and select
+"Direct Communication" mode as well as "Live Streaming".  After this the Basilisk simulation resumes and
+will live stream the data to Vizard.
+
+.. figure:: /_images/static/vizard-ImgStream.png
+   :align: center
+   :scale: 50 %
+
+   Vizard Direct Communication Panel Illustration
+
+
+To avoid the simulation running too quickly, this tutorial example script includes the ``clock_sync`` module that
+enables a 50x realtime mode using:
+
+    clockSync = clock_synch.ClockSynch()
+    clockSync.accelFactor = 50.0
+    scSim.AddModelToTask(simTaskName, clockSync)
+
+This way a 10s simulation time step will take 0.2 seconds with the 50x speed up factor.
+
+"""
 
 
 #
@@ -46,57 +88,27 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 from Basilisk.simulation import clock_synch
 
-## @page scenarioBasicOrbitLiveStreamGroup
-## @{
-#
-# Live Vizard Streaming Example with Basic Orbit Simulation {#scenarioBasicOrbitLiveStream}
-# ====
-#
-# Scenario Description
-# -----
-# This script duplicates the basic orbit simulation in the scenario [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
-# The difference is that this version allows for the Basilisk simulation data to be live streamed to the
-# [Vizard](@ref vizard) visualization program.
-#
-# The same scenarios can be run with the followings setups parameters:
-# Setup | orbitCase           | useSphericalHarmonics | planetCase
-# ----- | ------------------- | --------------------- | -----------
-# 1     | LEO                 | False                 | Earth
-# 2     | GTO                 | False                 | Earth
-# 3     | GEO                 | False                 | Earth
-# 4     | LEO                 | True                  | Earth
-# 5     | LEO                 | False                 | Mars
-#
-# To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
-#
-#       python3 scenarioBasicOrbitStream.py
-#
-# To enable live data streaming, the `enableUnityVisualization()` method is provided with `liveStream` argument using
-#~~~~~~~~~~~~~~{.py}
-# vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-#                                     liveStream=True)
-#~~~~~~~~~~~~~~
-#
-# When starting Basilisk simulation it prints now to the terminal that it is trying to connect to Vizard:
-#
-#       Waiting for Vizard at tcp://localhost:5556
-#
-# Copy `tcp://localhost:5556` and open the Vizard application.  Enter this address in the connection field and select
-# "Direct Communication" mode as well as "Live Streaming".  After this the Basilisk simulation resumes and will live stream the data to Vizard.
-# \image html Images/doc/vizard-ImgStream.png "Vizard Direct Communication Panel Illustration" width=500px
-#
-# To avoid the simulation running too quickly, this tutorial example script includes the `clock_sync` module that
-# enables a 50x realtime mode using.
-# ~~~~~~~~~~~~~~~{.py}
-#   clockSync = clock_synch.ClockSynch()
-#   clockSync.accelFactor = 50.0
-#   scSim.AddModelToTask(simTaskName, clockSync)
-# ~~~~~~~~~~~~~~~
-# This way a 10s simulation time step will take 0.2 seconds with the 50x speed up factor.
-#
-## @}
 def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """
+    At the end of the python script you can specify the following example parameters.
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        livePlots (bool): Determines if the script should use live plotting
+        orbitCase (str):
+
+            ======  ============================
+            String  Definition
+            ======  ============================
+            'LEO'   Low Earth Orbit
+            'GEO'   Geosynchronous Orbit
+            'GTO'   Geostationary Transfer Orbit
+            ======  ============================
+
+        useSphericalHarmonics (Bool): False to use first order gravity approximation: :math:`\\frac{GMm}{r^2}`
+
+        planetCase (str): {'Earth', 'Mars'}
+    """
 
 
     # Create simulation variable names
