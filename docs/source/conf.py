@@ -455,8 +455,11 @@ if rebuild:
     if os.path.exists(officialDoc):
         shutil.rmtree(officialDoc)
     # adjust the fileCrawler path to a local folder to just build a sub-system
-    breathe_projects_source = fileCrawler.run("../../src/") # When I run this, scenario finds the wrong doc_string
-    # breathe_projects_source = fileCrawler.run("../../src/simulation/power") # When I run this, scenario finds the wrong doc_string
+    breathe_projects_source = fileCrawler.run(officialSrc)
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/transDetermination")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/viz_interface")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/examples")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/utilities")
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)
 else:
