@@ -33,6 +33,7 @@ def setupFilterData(filterObject):
     filterObject.opnavOutMsgName = "opnav_state_estimate"
     filterObject.filtDataOutMsgName = "heading_filter_data"
     filterObject.opnavDataInMsgName = "opnav_sensor_data"
+    filterObject.cameraConfigMsgName = "camera_config_data"
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -42,17 +43,14 @@ def setupFilterData(filterObject):
     filterObject.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0]
     filterObject.covarInit = [0.1, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.1, 0.0, 0.0, 0.0,
-                          0.0, 0.0, .1, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.001, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.001]
+                          0.0, 0.0, 0.1, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.01, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.01]
 
     qNoiseIn = np.identity(5)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01
     qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001
     filterObject.qNoise = qNoiseIn.reshape(25).tolist()
-    filterObject.qObsVal = 0.001
-    filterObject.sensorUseThresh = 0.
-
 
 def test_functions_ukf(show_plots):
     """Module Unit Test"""
@@ -385,7 +383,9 @@ def StateUpdateSunLine(show_plots):
     for i in range(t1):
         if i > 0 and i%20 == 0:
             inputData.timeTag = macros.sec2nano(i * 0.5)
+            inputData.valid = 1
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
+            inputData.covar_B = [0.0001**2,0,0,0,0.0001**2,0,0,0,0.0001**2]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
@@ -418,6 +418,8 @@ def StateUpdateSunLine(show_plots):
         if i%20 == 0:
             inputData.timeTag = macros.sec2nano(i*0.5 +t1 +1)
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
+            inputData.valid = 1
+            inputData.covar_B = [0.0001**2,0,0,0,0.0001**2,0,0,0,0.0001**2]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
@@ -437,13 +439,12 @@ def StateUpdateSunLine(show_plots):
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
             print(abs(stateLog[-1, i+1] - stateTarget[i]))
-            print("here")
             testFailCount += 1
             testMessages.append("State update failure")
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
     FilterPlots.StateCovarPlot(stateErrorLog, covarLog, 'Update_Error', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Update', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, 0.001,  'Update', show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:

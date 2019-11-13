@@ -53,7 +53,7 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
     configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
         sizeof(OpNavFswMsg), moduleID);
     /*! - Find the message ID for the camera message if non zero name*/
-    if (strcmp(configData->cameraConfigMsgName, "") != 1){
+    if (strcmp(configData->cameraConfigMsgName, "")){
         configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,
                                                            sizeof(CameraConfigMsg), moduleID);
         configData->putInCameraFrame = 1;
@@ -177,16 +177,18 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     {
         headingSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
+    configData->rNorm = v3Norm(configData->opnavInBuffer.r_BN_B);
+    if (configData->rNorm<1){
+        configData->rNorm =1;
+    }
     
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
     if(newTimeTag >= configData->timeTag && ReadSize > 0 && configData->opnavInBuffer.valid ==1)
     {
-        configData->rNorm = v3Norm(configData->opnavInBuffer.r_BN_B);
         headingSuKFTimeUpdate(configData, newTimeTag);
         headingSuKFMeasUpdate(configData, newTimeTag);
-
     }
     
     /*! - If current clock time is further ahead than the measured time, then
