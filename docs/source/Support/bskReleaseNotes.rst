@@ -16,6 +16,10 @@ In Progress Features
 - create modules to determine if a satellite can see a ground point such as a communication station
 
 
+Upcoming Version 1.X.X
+----------------------
+- text goes here
+
 Version 1.3.0
 -------------
 - Update template illustrating how the validation accuracy can be recording in the ``pytest`` parameters.
