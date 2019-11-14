@@ -49,10 +49,11 @@ typedef struct {
 	double lambdaVal;             /*!< [-] Lambda parameter for filter*/
 	double gamma;                 /*!< [-] Gamma parameter for filter*/
     double qObsVal;               /*!< [-] OpNav instrument noise parameter*/
-    double rNorm;                    /*!< [-] OpNav measurment norm*/
-	double dt;                     /*!< [s] seconds since last data epoch */
-	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
-
+    double rNorm;                 /*!< [-] OpNav measurment norm*/
+	double dt;                    /*!< [s] seconds since last data epoch */
+	double timeTag;               /*!< [s]  Time tag for statecovar/etc */
+    double noiseSF;               /*!< [-]  Scale factor for noise */
+    
     double bVec_B[HEAD_N_STATES];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
     

@@ -458,6 +458,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     ukfCholDecomp(configData->qObs, OPNAV_MEAS, OPNAV_MEAS, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*OPNAV_MEAS]),
            qChol, OPNAV_MEAS*OPNAV_MEAS*sizeof(double));
+    mScale(configData->noiseSF , AT, 2*configData->countHalfSPs, OPNAV_MEAS, AT);
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
     ukfQRDJustR(AT, 2*configData->countHalfSPs+OPNAV_MEAS,
@@ -495,7 +496,6 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
           a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
           multiplication is done (equation 27), we have the Kalman Gain.*/
     ukfUInv(syT, OPNAV_MEAS, OPNAV_MEAS, syInv);
-    
     mMultM(pXY, (size_t) configData->numStates, OPNAV_MEAS, syInv,
            OPNAV_MEAS, OPNAV_MEAS, kMat);
     ukfLInv(sy, OPNAV_MEAS, OPNAV_MEAS, syInv);
