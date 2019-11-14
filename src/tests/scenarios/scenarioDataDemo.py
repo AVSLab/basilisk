@@ -28,6 +28,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.simulation import partitionedStorageUnit
 from Basilisk.simulation import simpleStorageUnit
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import eclipse
@@ -99,25 +100,55 @@ def run():
     scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
 
     # Create an instrument
-    simpleInstrument = simpleInstrument.SimpleInstrument()
-    simpleInstrument.ModelTag = "instrument1"
-    simpleInstrument.nodeBaudRate = 1. #baud
-    simpleInstrument.nodeDataName = "Instrument 1". #baud
-    simpleInstrument.nodeDataOutMsgName = "dataNodeMsg"
-    scenarioSim.AddModelToTask(taskName, simpleInstrument)
+    instrument = simpleInstrument.SimpleInstrument()
+    instrument.ModelTag = "instrument1"
+    instrument.nodeBaudRate = 1. #baud
+    instrument.nodeDataName = "Instrument 1" #baud
+    instrument.nodeDataOutMsgName = "Instrument1Msg"
+    scenarioSim.AddModelToTask(taskName, instrument)
 
-    # Create a simpleStorageUnit and attach the instrument to it
-    dataMonitor = simpleStorageUnit.SimpleStorageUnit()
+    # Create another instrument
+    instrument2 = simpleInstrument.SimpleInstrument()
+    instrument2.ModelTag = "instrument2"
+    instrument2.nodeBaudRate = 3. #baud
+    instrument2.nodeDataName = "Instrument 2" #baud
+    instrument2.nodeDataOutMsgName = "Instrument2Msg"
+    scenarioSim.AddModelToTask(taskName, instrument2)
+
+    # Create a "transmitter"
+    transmitter = simpleInstrument.SimpleInstrument()
+    transmitter.ModelTag = "transmitter"
+    transmitter.nodeBaudRate = -1. #baud
+    transmitter.nodeDataName = "Instrument 2" #baud
+    transmitter.nodeDataOutMsgName = "TransmitterMsg"
+    scenarioSim.AddModelToTask(taskName, transmitter)
+
+    # Create a partitionedStorageUnit and attach the instrument to it
+    dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
     dataMonitor.storageUnitDataOutMsgName = "dataMonitorMsg"
     dataMonitor.storageCapacity = 1E5 # bits
-    dataMonitor.storedData_Init = 0.0 # bits
-    dataMonitor.addDataNodeToModel(simpleInstrument.nodeDataOutMsgName)
+    dataMonitor.storedDataSum_Init = 0.0 # bits
+    dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsgName)
+    dataMonitor.addDataNodeToModel(instrument2.nodeDataOutMsgName)
+    dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsgName)
     scenarioSim.AddModelToTask(taskName, dataMonitor)
 
+    # Create a simpleStorageUnit and attach the instrument to it
+    dataMonitor2 = simpleStorageUnit.SimpleStorageUnit()
+    dataMonitor2.ModelTag = "dataMonitor2"
+    dataMonitor2.storageUnitDataOutMsgName = "dataMonitorMsg2"
+    dataMonitor2.storageCapacity = 1E5 # bits
+    dataMonitor2.storedDataSum_Init = 0.0 # bits
+    dataMonitor2.addDataNodeToModel(instrument.nodeDataOutMsgName)
+    dataMonitor2.addDataNodeToModel(instrument2.nodeDataOutMsgName)
+    dataMonitor2.addDataNodeToModel(transmitter.nodeDataOutMsgName)
+    scenarioSim.AddModelToTask(taskName, dataMonitor2)
+
     # Setup logging on the data system
-    scenarioSim.TotalSim.logThisMessage(simpleInstrument.nodeDataOutMsgName, testProcessRate)
+    scenarioSim.TotalSim.logThisMessage(instrument.nodeDataOutMsgName, testProcessRate)
     scenarioSim.TotalSim.logThisMessage(dataMonitor.storageUnitDataOutMsgName, testProcessRate)
+    scenarioSim.TotalSim.logThisMessage(dataMonitor2.storageUnitDataOutMsgName, testProcessRate)
 
     # Also log attitude/orbit parameters
     scenarioSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
@@ -134,44 +165,68 @@ def run():
     # Begin the simulation time run set above
     scenarioSim.ExecuteSimulation()
 
-    print(dataMonitor.getStoredData())
+    dataVector = dataMonitor.getStoredDataAll()
+    print("Partitioned Storage Unit:")
+    for data in dataVector:
+        print(data.dataInstanceName, data.dataInstanceSum)
+    print("\n")
 
-    # # This pulls the actual data log from the simulation run.
-    # # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    # supplyData = scenarioSim.pullMessageLogData(simpleInstrument.nodeDataOutMsgName + ".netData")
-    # storageData = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + ".storageLevel")
-    #
-    # scOrbit = scenarioSim.pullMessageLogData(scObject.scStateOutMsgName + ".r_BN_N", list(range(3)))
-    # scAtt = scenarioSim.pullMessageLogData(scObject.scStateOutMsgName+".sigma_BN", list(range(3)))
-    #
-    # planetOrbit = scenarioSim.pullMessageLogData(planet.bodyInMsgName+".PositionVector", list(range(3)))
-    #
-    # tvec = supplyData[:,0]
-    # tvec = tvec * macros.NANO2HOUR
-    #
-    # #   Plot the data states
-    # # Stopped here. Revisiting instrument implementation first.
-    # figureList = {}
-    # plt.close("all")  # clears out plots from earlier test runs
-    # plt.figure(1)
-    # plt.plot(tvec,storageData[:,1]/3600.,label='Stored Power (W-Hr)')
-    # plt.plot(tvec,netData[:,1],label='Net Power (W)')
-    # plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
-    # plt.plot(tvec,sinkData[:,1],label='Power Draw (W)')
-    # plt.xlabel('Time (Hr)')
-    # plt.ylabel('Power (W)')
-    # plt.grid(True)
-    # plt.legend()
-    #
-    # pltName = "scenario_powerDemo"
-    # figureList[pltName] = plt.figure(1)
-    #
-    # return figureList
+    dataVector2 = dataMonitor2.getStoredDataAll()
+    print("Simple Storage Unit:")
+    for data2 in dataVector2:
+        print(data2.dataInstanceName, data2.dataInstanceSum)
 
-#
+    storageLevel = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + '.storageLevel')
+
+    storageNetBaud = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + '.currentNetBaud')
+
+    #storedDataIns1 = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + '.storedData' + '.dataInstanceSum', list(range(32)))
+    storedDataIns1 = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + '.storedData', list(range(32)))
+
+    #storedData = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + '.storedData')
+    #storedDataIns1Name = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + ".storedData"+ ".dataInstanceName", list(range(128)))
+    # storedDataIns2 = scenarioSim.pullMessageLogData(dataMonitor.storageUnitDataOutMsgName + ".storedData" + ".dataInstanceSum", list(range(1)))
+    for instance in storedDataIns1:
+        print(instance)
+
+    storedDataMsg = dataMonitor.getStoredDataMsg()
+
+    print(storedDataMsg.storedData.dataInstanceSum)
+
+    tvec = storageLevel[:,0]
+    tvec = tvec * macros.NANO2HOUR
+
+    #   Plot the data states
+    # Stopped here. Revisiting instrument implementation first.
+    figureList = {}
+    plt.close("all")  # clears out plots from earlier test runs
+    plt.figure(1)
+    plt.plot(tvec,storageLevel[:,1],label='Data Unit Total Storage Level (bits)')
+    plt.plot(tvec,storedDataIns1[:,1],label='Instrument 1 Contribution (bits)')
+    plt.xlabel('Time (Hr)')
+    plt.ylabel('Data Stored (bits)')
+    plt.grid(True)
+    plt.legend()
+
+    pltNameBits = "scenario_dataDemoBits"
+    figureList[pltNameBits] = plt.figure(1)
+
+    plt.figure(2)
+
+    plt.plot(tvec,storageNetBaud[:,1],label='Net Baud Rate (bits/s)')
+    plt.xlabel('Time (Hr)')
+    plt.ylabel('Baud Rate (bps)')
+    plt.grid(True)
+    plt.legend()
+
+    pltNameBaud = "scenario_dataDemoBaud"
+    figureList[pltNameBaud] = plt.figure(2)
+
+    return figureList
+
 # This statement below ensures that the unitTestScript can be run as a
 # stand-alone python script
-#
+
 if __name__ == "__main__":
     fig = run()
     plt.show()

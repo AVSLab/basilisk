@@ -17,31 +17,23 @@
 
  */
 
+%module simpleInstrument
+%{
 #include "simpleInstrument.h"
-#include "../../simMessages/dataNodeUsageSimMsg.h"
+%}
 
-/*! Constructor, which sets the default nodeDataOut to zero.
-*/
-SimpleInstrument::SimpleInstrument(){
+%include "swig_common_model.i"
+%include "sys_model.h"
+%include "../_GeneralModuleFiles/dataNodeBase.h"
+%include "simpleInstrument.h"
 
-    this->nodeBaudRate = 0.0;
-    this->nodeDataName;
-    return;
+%include "../../simMessages/dataNodeUsageSimMsg.h"
+%include "../../simFSWInterfaceMessages/deviceStatusIntMsg.h"
 
-}
+GEN_SIZEOF(DataNodeUsageSimMsg)
+GEN_SIZEOF(DeviceStatusIntMsg)
 
-SimpleInstrument::~SimpleInstrument(){
-
-    return;
-}
-
-/*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
-*/
-void SimpleInstrument::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg){
-
-    dataUsageSimMsg->baudRate = this->nodeBaudRate;
-    //dataUsageSimMsg->dataName = this->nodeDataName;
-    strncpy (dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-
-    return;
-}
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

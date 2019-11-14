@@ -38,7 +38,7 @@
 #include "tamSensorIntMsg.h"
 #include "thrArrayOnTimeCmdIntMsg.h"
 #include "macroDefinitions.h"
-#include "dataNodeStatusIntMsg."
+#include "deviceStatusIntMsg.h"
 #include "powerNodeStatusIntMsg.h"
 %}
 
@@ -83,8 +83,8 @@ GEN_SIZEOF(TAMSensorIntMsg)
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
 %include "powerNodeStatusIntMsg.h"
 GEN_SIZEOF(PowerNodeStatusIntMsg)
-%include "dataNodeStatusIntMsg.h"
-GEN_SIZEOF(DataNodeStatusIntMsg)
+%include "deviceStatusIntMsg.h"
+GEN_SIZEOF(DeviceStatusIntMsg)
 
 %include "macroDefinitions.h"
 

@@ -40,3 +40,25 @@ void SimpleStorageUnit::customReset(__uint64_t CurrentClock){
     }
     return;
 }
+
+void SimpleStorageUnit::integrateDataStatus(double currentTime){
+    this->currentTimestep = currentTime - this->previousTime;
+
+    //! - loop over all the data nodes
+    std::vector<DataNodeUsageSimMsg>::iterator it;
+    for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
+        if (storedData.size() == 0){
+            this->storedData.push_back({{'S','T','O','R','E','D',' ','D','A','T','A'}, 0});
+        }
+        else{
+            this->storedData[0].dataInstanceSum += it->baudRate * (this->currentTimestep);
+        }
+    }
+
+    // Sum all data in storedData vector
+    this->storedDataSum = this->storedData[0].dataInstanceSum;
+
+    // Update previousTime
+    this->previousTime = currentTime;
+    return;
+}

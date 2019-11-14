@@ -70,7 +70,7 @@ void DataNodeBase::CrossInit()
     //! - subscribe to the spacecraft messages and create associated output message buffer
     if(this->nodeStatusInMsgName.length() > 0) {
         this->nodeStatusInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
-                                                                                     sizeof(DataNodeStatusIntMsg),
+                                                                                     sizeof(DeviceStatusIntMsg),
                                                                                      moduleID);
     }
     //!- call the custom CrossInit() method to all additional cross initialization steps
@@ -86,10 +86,9 @@ void DataNodeBase::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-void DataNodeBase::writeMessages(uint_64t CurrentClock)
+void DataNodeBase::writeMessages(uint64_t CurrentClock)
 {
-    std::vector<int64_t>::iterator it;
-    //! - write magnetic field output messages for each spacecaft's locations
+    //! - write dataNode output messages - baud rate and name
     SystemMessaging::GetInstance()->WriteMessage(this->nodeDataOutMsgId,
                                                  CurrentClock,
                                                  sizeof(DataNodeUsageSimMsg),
@@ -103,7 +102,7 @@ void DataNodeBase::writeMessages(uint_64t CurrentClock)
 
 bool DataNodeBase::readMessages()
 {
-    DataNodeStatusIntMsg statusMsg;
+    DeviceStatusIntMsg statusMsg;
     SingleMessageHeader localHeader;
 
     //! - read in the power node use/supply messages
@@ -111,14 +110,14 @@ bool DataNodeBase::readMessages()
     bool tmpStatusRead = true;
     if(this->nodeStatusInMsgId >= 0)
     {
-        memset(&statusMsg, 0x0, sizeof(DataNodeStatusIntMsg));
+        memset(&statusMsg, 0x0, sizeof(DeviceStatusIntMsg));
         tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->nodeStatusInMsgId, &localHeader,
-                                                                    sizeof(DataNodeStatusIntMsg),
+                                                                    sizeof(DeviceStatusIntMsg),
                                                                     reinterpret_cast<uint8_t*>(&statusMsg),
                                                                     moduleID);
 
         this->nodeStatusMsg = statusMsg;
-        this->dataStatus = this->nodeStatusMsg.dataStatus;
+        this->dataStatus = this->nodeStatusMsg.deviceStatus;
         dataRead = dataRead && tmpStatusRead;
     }
 

@@ -17,31 +17,24 @@
 
  */
 
-#include "simpleInstrument.h"
-#include "../../simMessages/dataNodeUsageSimMsg.h"
+#ifndef BASILISK_PARTITIONEDSTORAGEUNIT_H
+#define BASILISK_PARTITIONEDSTORAGEUNIT_H
 
-/*! Constructor, which sets the default nodeDataOut to zero.
-*/
-SimpleInstrument::SimpleInstrument(){
+#include "onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
-    this->nodeBaudRate = 0.0;
-    this->nodeDataName;
-    return;
+class PartitionedStorageUnit: public DataStorageUnitBase {
 
-}
+public:
+    PartitionedStorageUnit();
+    ~PartitionedStorageUnit();
 
-SimpleInstrument::~SimpleInstrument(){
+private:
+    void customReset(uint64_t CurrentClock);
 
-    return;
-}
+public:
+    double storageCapacity; //!< [bits] Storage capacity in bits.
 
-/*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
-*/
-void SimpleInstrument::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg){
+};
 
-    dataUsageSimMsg->baudRate = this->nodeBaudRate;
-    //dataUsageSimMsg->dataName = this->nodeDataName;
-    strncpy (dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-
-    return;
-}
+#endif //BASILISK_PARTITIONEDSTORAGEUNIT_H

@@ -17,31 +17,26 @@
 
  */
 
-#include "simpleInstrument.h"
-#include "../../simMessages/dataNodeUsageSimMsg.h"
+#include "partitionedStorageUnit.h"
+#include "utilities/bsk_Print.h"
 
-/*! Constructor, which sets the default nodeDataOut to zero.
-*/
-SimpleInstrument::SimpleInstrument(){
-
-    this->nodeBaudRate = 0.0;
-    this->nodeDataName;
-    return;
-
-}
-
-SimpleInstrument::~SimpleInstrument(){
-
+/*! The constructor creates a SimpleBattery instance with zero stored data */
+PartitionedStorageUnit::PartitionedStorageUnit(){
+    this->storageCapacity = -1.0;
+    this->storedDataSum = 0.0;
     return;
 }
 
-/*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
-*/
-void SimpleInstrument::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg){
+PartitionedStorageUnit::~PartitionedStorageUnit(){
+    return;
+}
 
-    dataUsageSimMsg->baudRate = this->nodeBaudRate;
-    //dataUsageSimMsg->dataName = this->nodeDataName;
-    strncpy (dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-
+/*! Custom reset function/
+ * @param CurrentClock
+ */
+void PartitionedStorageUnit::customReset(__uint64_t CurrentClock){
+    if (this->storageCapacity <= 0.0) {
+        BSK_PRINT(MSG_ERROR, "The storageCapacity variable must be set to a positive value.");
+    }
     return;
 }

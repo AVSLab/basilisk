@@ -17,31 +17,27 @@
 
  */
 
-#include "simpleInstrument.h"
-#include "../../simMessages/dataNodeUsageSimMsg.h"
+%module partitionedStorageUnit
+%{
+    #include "partitionedStorageUnit.h"
+%}
 
-/*! Constructor, which sets the default nodeDataOut to zero.
-*/
-SimpleInstrument::SimpleInstrument(){
 
-    this->nodeBaudRate = 0.0;
-    this->nodeDataName;
-    return;
+%include "swig_common_model.i"
+%include "sys_model.h"
+%template(storedDataVector) std::vector<dataInstance>;
+%include "../_GeneralModuleFiles/dataStorageUnitBase.h"
+struct dataInstance;
+%include "partitionedStorageUnit.h"
 
-}
+%include "../../simMessages/dataNodeUsageSimMsg.h"
+%include "../../simMessages/dataStorageStatusSimMsg.h"
 
-SimpleInstrument::~SimpleInstrument(){
+GEN_SIZEOF(DataNodeUsageSimMsg)
+GEN_SIZEOF(DataStorageStatusSimMsg)
+GEN_SIZEOF(dataInstance)
 
-    return;
-}
-
-/*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
-*/
-void SimpleInstrument::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg){
-
-    dataUsageSimMsg->baudRate = this->nodeBaudRate;
-    //dataUsageSimMsg->dataName = this->nodeDataName;
-    strncpy (dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-
-    return;
-}
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

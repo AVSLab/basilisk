@@ -27,7 +27,7 @@
 #include <string>
 #include "_GeneralModuleFiles/sys_model.h"
 #include <simMessages/dataNodeUsageSimMsg.h>
-#include "simFswInterfaceMessages/dataNodeStatusIntMsg.h"
+#include "simFswInterfaceMessages/deviceStatusIntMsg.h"
 
 class DataNodeBase: public SysModel {
 public:
@@ -53,16 +53,20 @@ public:
     std::string nodeDataOutMsgName; //!< Message name for the node's output message
     std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
     double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
-    std::string nodeDataName; //!< Name of the data (Instrument 1, Instrument 2, etc)
+    //std::string nodeDataName; //!< Name of the data (Instrument 1, Instrument 2, etc)
+    char nodeDataName[128];
     uint64_t dataStatus; //!< Device data mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
 protected:
     int64_t nodeDataOutMsgId;
     int64_t nodeStatusInMsgId;
     DataNodeUsageSimMsg nodeDataMsg;
-    DataNodeStatusIntMsg nodeStatusMsg;
+    DeviceStatusIntMsg nodeStatusMsg;
     double currentDataConsumption;
     double previousTime; //! Previous time used for integration
+
+private:
+    uint64_t outputBufferCount;
 };
 
 #endif //BASILISK_DATANODEBASE_H

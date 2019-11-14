@@ -17,31 +17,21 @@
 
  */
 
-#include "simpleInstrument.h"
-#include "../../simMessages/dataNodeUsageSimMsg.h"
+#ifndef BASILISK_DEVICESTATUSINTMSG_H
+#define BASILISK_DEVICESTATUSINTMSG_H
 
-/*! Constructor, which sets the default nodeDataOut to zero.
-*/
-SimpleInstrument::SimpleInstrument(){
+/*! \defgroup simFswInterfaceMessages
+ *  @{
+ */
 
-    this->nodeBaudRate = 0.0;
-    this->nodeDataName;
-    return;
+enum deviceState {On = 1, Off = 0};
 
-}
+//! @brief Power node command message used to change the state of power modules.
+typedef struct{
+    enum deviceState deviceStatus;      //!< device status indicator; 0 is off, 1 is on
+}DeviceStatusIntMsg;
+//dataNodeStatusIntMsg
+//uint64_t dataStatus
+/*! @} */
 
-SimpleInstrument::~SimpleInstrument(){
-
-    return;
-}
-
-/*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
-*/
-void SimpleInstrument::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg){
-
-    dataUsageSimMsg->baudRate = this->nodeBaudRate;
-    //dataUsageSimMsg->dataName = this->nodeDataName;
-    strncpy (dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-
-    return;
-}
+#endif //BASILISK_DEVICESTATUSINTMSG_H

@@ -17,6 +17,12 @@
 
  */
 
+struct dataInstance{
+    char dataInstanceName[128];
+    //std::string dataInstanceName;
+    double dataInstanceSum;
+}; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
+
 #ifndef BASILISK_DATASTORAGESTATUSSIMMSG_H
 #define BASILISK_DATASTORAGESTATUSSIMMSG_H
 
@@ -25,11 +31,11 @@
  */
 
 /*! @brief Message to store current storage unit stored data, storage capacity, and received data.*/
-
 typedef struct{
     double storageLevel; //!< [b] Storage unit stored data in bits.
     double storageCapacity; //!< [b] Maximum data storage unit capacity.
     double currentNetBaud; //!< [baud] Current data written to or removed from the storage unit net power.
+    dataInstance storedData[32]; //! Data stored in the storage unit.
 }DataStorageStatusSimMsg;
 
 #endif //BASILISK_DATASTORAGESTATUSSIMMSG_H

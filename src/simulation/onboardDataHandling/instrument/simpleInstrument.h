@@ -22,7 +22,7 @@
 
 #include "onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
 
-class simpleInstrument: public DataNodeBase {
+class SimpleInstrument: public DataNodeBase {
 
 public:
     SimpleInstrument();

@@ -17,14 +17,16 @@
 
  */
 
-%module simpleInstrument
+%module simpleStorageUnit
 %{
-    #include "simpleStorageUnit.h
+#include "simpleStorageUnit.h"
 %}
+
 
 %include "swig_common_model.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/simDataStorageUnitBase.h"
+%template(storedDataVector) std::vector<dataInstance>;
+%include "../_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "simpleStorageUnit.h"
 
 %include "../../simMessages/dataNodeUsageSimMsg.h"

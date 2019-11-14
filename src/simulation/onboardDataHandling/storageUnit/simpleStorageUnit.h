@@ -20,11 +20,11 @@
 #ifndef BASILISK_SIMPLESTORAGEUNIT_H
 #define BASILISK_SIMPLESTORAGEUNIT_H
 
-#include "onboardDataHandling/_GeneralModuleFiles/simDataStorageUnitBase.h"
-#include "../../simMessages/dataStorageStatusSimMsg.h"
+
+#include "onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
-class simpleStorageUnit: public simDataStorageUnitBase {
+class SimpleStorageUnit: public DataStorageUnitBase {
 
 public:
     SimpleStorageUnit();
@@ -32,10 +32,10 @@ public:
 
 private:
     void customReset(uint64_t CurrentClock);
-
-public:
-    double storageCapacity; //!< [bits] Storage capacity in bits.
+    void integrateDataStatus(double currentTime);
 
 };
 
 #endif //BASILISK_SIMPLESTORAGEUNIT_H
+
+
