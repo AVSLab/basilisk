@@ -68,6 +68,7 @@ private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
     int32_t imageInMsgID;                //!< ID for the outgoing message
+    cv::dnn::Net positionNet2;           //!< Network for evaluation of centers
 };
 
 /* @} */
