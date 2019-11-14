@@ -267,6 +267,7 @@ function(findAndCreateSwigModules SubModule)
 		    "${FileDir}/*.cpp"
 		    "${FileDir}/*.c"
 		    "${FileDir}/*.h"
+		    "${FileDir}/*.rst"
 		)
 	    set(gen_files "")
 	    set(swig_dep_files "")

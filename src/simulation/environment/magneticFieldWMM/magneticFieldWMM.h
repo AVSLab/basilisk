@@ -33,14 +33,7 @@
 #include "GeomagnetismHeader.h"
 #include <time.h>
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
-/*! @brief Evaluate a magnetic field model about Earth for a range of spacecraft locations using the World Magnetic Model (WMM).
- 
-    For more information on this module see this [PDF Documentation](Basilisk-magFieldWMM-20190618.pdf).
- */
 class MagneticFieldWMM:  public MagneticFieldBase {
 public:
     MagneticFieldWMM();
@@ -70,6 +63,5 @@ private:
     MAGtype_Date           userDate;
 };
 
-/*! @} */
 
 #endif /* WMM_MAGNETIC_FIELD_H */

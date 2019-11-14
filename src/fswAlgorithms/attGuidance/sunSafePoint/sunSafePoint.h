@@ -25,12 +25,9 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include <stdint.h>
 
-/*! \defgroup sunSafePoint
- * @{
- */
 
-/*! @brief Top level structure for the sun-safe attitude guidance routine.
- This algorithm is intended to be incredibly simple and robust*/
+
+/*! @brief Top level structure for the sun-safe attitude guidance routine.*/
 typedef struct {
     char attGuidanceOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char sunDirectionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
@@ -63,6 +60,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

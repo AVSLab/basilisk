@@ -32,19 +32,7 @@
 #include "utilities/avsEigenMRP.h"
 
 
-/*! \addtogroup SimModelGroup Simulation C++ Modules
- * @{
- */
 
-//!@brief Sensor model to simulate an IMU.
-/*!
- The module
- [PDF Description](Basilisk-IMU-20170712.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- The corruption types are outlined in this
- [PDF document](BasiliskCorruptions.pdf).
- */
 class ImuSensor: public SysModel {
 public:
     ImuSensor();
@@ -125,6 +113,5 @@ private:
     Eigen::Vector3d prv_PN_out;                 /// -- time step PRV_PN for either next method or output messages
 };
 
-/* @} */
 
 #endif

@@ -102,10 +102,7 @@ typedef struct {
     bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,
 }VizSettings;
 
-/*! @brief Abstract class that is used to implement an effector impacting a GRAVITY body
-           that does not itself maintain a state or represent a changing component of
-           the body (for example: gravity, thrusters, solar radiation pressure, etc.)
- */
+
 class VizInterface : public SysModel {
 public:
     VizInterface();

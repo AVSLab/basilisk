@@ -28,9 +28,7 @@
 #include "fswMessages/opNavFswMsg.h"
 
 
-/*! \defgroup headingSuKF
- * @{
- */
+
 
 /*!@brief Data structure for heading Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
  */
@@ -108,6 +106,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

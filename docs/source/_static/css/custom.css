@@ -1,0 +1,44 @@
+div.textblock a, div.textblock a:visited, p a, p a:visited, 
+a, a:hover, a:visited,
+a.reference, a.internal, a.current {
+	color: #cfb87c;
+	font-weight: bold;
+}
+
+div.wy-menu > p.caption > span.caption-text {
+	color: white;
+	font-weight: bold;
+}
+a.el, a.el:visited {
+	color: #565A5C;
+}
+
+.wy-side-nav-search>div.version {
+	color: #565A5C; # CU dark gray
+}
+
+.wy-nav-content {
+    max-width: none;
+}
+
+code span.pre {
+	color: #cb7ccf;
+}
+
+th.head, .wy-nav-top  {
+	color: white;
+	background-color: #565A5C;
+}
+
+th.head p {
+	margin: 0px;
+}
+
+tr td p, th.head p {
+	font-size: small;
+}
+
+/* override table no-wrap */
+.wy-table-responsive table td, .wy-table-responsive table th {
+    white-space: normal;
+}

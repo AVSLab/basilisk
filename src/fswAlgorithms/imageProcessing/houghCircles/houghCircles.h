@@ -36,18 +36,6 @@
 
 
 
-/*! \defgroup houghCircles
-
- @brief Module reads in a message containing a pointer to an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
-
- The module
- [PDF Description](Basilisk-houghCircles-20190213.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- @{
- */
-
 class HoughCircles: public SysModel {
 public:
     HoughCircles();
@@ -81,7 +69,6 @@ private:
     int32_t imageInMsgID;                //!< ID for the outgoing message
 };
 
-/* @} */
 
 #endif
 

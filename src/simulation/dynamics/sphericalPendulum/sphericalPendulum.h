@@ -26,19 +26,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 
-/*! \addtogroup SimModelGroup Simulation C++ Modules
- * @{
- */
 
-/*! @brief This class in an instantiation of the state effector class and implements an effector representing spherical
-pendulum
-
- The module
- [PDF Description](Basilisk-SPHERICALPENDULUM-20180518.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
 class SphericalPendulum :
 	public StateEffector, public SysModel, public FuelSlosh
 {
@@ -108,6 +96,5 @@ public:
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
 };
 
-/* @} */
 
 #endif /* SPHERICAL_PENDULUM_H */

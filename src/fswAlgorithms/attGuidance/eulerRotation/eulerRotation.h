@@ -26,9 +26,7 @@
 #include "fswMessages/attRefFswMsg.h"
 
 
-/*! \defgroup eulerRotation
- * @{
- */
+
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -74,6 +72,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

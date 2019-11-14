@@ -24,19 +24,7 @@
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include <stdint.h>
 
-/*! \addtogroup SimModelGroup Simulation C++ Modules
- * @{
- */
 
-/*!
- @brief RK1 or Euler integrator. It only implements the method integrate() to advance one time step.
-
- The module
- [PDF Description](Basilisk-Integrators20170724.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
 class svIntegratorEuler : public StateVecIntegrator
 {
 public:
@@ -46,6 +34,5 @@ public:
     
 };
 
-/* @} */
 
 #endif /* svIntegratorEuler_h */

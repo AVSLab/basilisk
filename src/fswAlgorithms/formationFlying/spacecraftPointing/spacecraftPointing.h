@@ -27,9 +27,6 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include <stdint.h>
 
-/*! \defgroup spacecraftPointing
- * @{
- */
 
 /*! @brief Top level structure for the spacecraft pointing module.*/
 typedef struct {
@@ -62,6 +59,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

@@ -7,7 +7,10 @@ dist/
 dist3/
 .pytest_cache 
 docs/html
-docs/Images/Scenarios/*
+docs/build
+docs/source/Documentation/*
+docs/source/_images/Scenarios/*
+docs/source/breathe.data
 src/tests/scenarios/data
 xml/*
 *.swp
@@ -15,7 +18,6 @@ xml/*
 lastfailed
 .idea
 **/AutoTex/
-**/AutoTeX/
 cmake-build*/*
 *.aux
 *.log

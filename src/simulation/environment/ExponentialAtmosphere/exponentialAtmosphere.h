@@ -30,14 +30,7 @@
 #include "simMessages/atmoPropsSimMsg.h"
 #include "../_GeneralModuleFiles/atmosphereBase.h"
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
-/*! @brief Evaluate an exponential atmosphere model at a given height above a planetary surface.
- For more information on this module see this [PDF Documentation](Basilisk-atmosphere-20190221.pdf).
-
- */
 class ExponentialAtmosphere:  public AtmosphereBase {
 public:
     ExponentialAtmosphere();
@@ -53,6 +46,5 @@ public:
     double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
 };
 
-/*! @} */
 
 #endif /* EXPONENTIAL_ATMOSPHERE_H */

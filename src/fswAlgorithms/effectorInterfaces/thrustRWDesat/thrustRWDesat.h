@@ -31,13 +31,9 @@
 #include <stdlib.h>
 
 
-/*! \defgroup thrusterRWDesat
- * @{
- */
 
-/*! @brief Top level structure for the DV attitude effector management algorithm.  
-   This algorithm is used to control both the RCS and DV thrusters when 
-   executing a trajectory adjustment.*/
+
+/*! @brief module configuration message */
 typedef struct {
     char inputSpeedName[MAX_STAT_MSG_LENGTH]; /*!< (-) The name of the input RW speeds message*/
     char inputRWConfigData[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the RWA configuration message*/
@@ -77,6 +73,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

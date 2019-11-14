@@ -32,13 +32,9 @@
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 #include <math.h>
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
 
 //Fuel tank models
-/*! @brief This class is an abstract class that has the minimum interfaces for a tank model */
 struct FuelTankModel {
 	double propMassInit;                               //!< [kg] Initial propellant mass in tank
 	Eigen::Vector3d r_TcT_TInit;                       //!< [m] Initial position vector from B to tank point in B frame comp.
@@ -238,15 +234,6 @@ extern FuelTankModelCentrifugalBurn_t FuelTankModelCentrifugalBurn;
 
 extern FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL];
 
-/*! @brief This class is an instantiation of the stateEffector abstract class and implements an effector representing a 
- fuel tank. This fuel tank has one state associated with it and is the mass of the fuel inside the tank
-
- The module
- [PDF Description](Basilisk-FUELTANK-20171203.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
 class FuelTank :
 	public StateEffector, public SysModel
 {
@@ -290,6 +277,5 @@ public:
 };
 
 
-/* @} */
 
 #endif /* FUEL_TANK_H */

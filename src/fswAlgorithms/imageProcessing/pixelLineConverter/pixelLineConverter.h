@@ -30,16 +30,7 @@
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
 
-/*! \defgroup pixelLineConverter
- *  @brief Converter that takes a image processing message and camera information and outputs a relative position to the object.
- 
- The module
- [PDF Description](Basilisk-pixelLineConverter-20190524.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
 
- *  @{
- */
 /*! @brief The configuration structure for the pixelLine Converter module.*/
 typedef struct {
     char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
@@ -68,6 +59,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

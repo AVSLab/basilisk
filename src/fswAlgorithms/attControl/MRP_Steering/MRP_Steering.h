@@ -25,13 +25,7 @@
 #include "fswMessages/rateCmdFswMsg.h"
 #include <stdint.h>
 
-/*! \defgroup MRP_Steering
- *@brief This module implements a kinematic MRP steering control whose command output is a desired body rate vector.
 
- The module [PDF Description](AVS-Sim-MRP_Steering-2016-0108.pdf)
- contains further information on this module's function, how to run it, as well as testing.
-  @{
- */
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 typedef struct {
@@ -65,6 +59,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

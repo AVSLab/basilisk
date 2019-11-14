@@ -25,14 +25,6 @@
 #include "messaging/static_messaging.h"
 #include "./simFswInterfaceMessages/ephemerisIntMsg.h"
 
-/*! \defgroup ephemDifference
- * @brief This module reads in the position and velocity of multiple orbital bodies
- *  and outputs position and velocity of each body relative to a single other
- *  orbital body position and velocity.
- *
- * More information can be found in the [PDF Description](Basilisk-ephemDifference-2019-03-27.pdf).
- *  @{
- */
 
 /*! @brief Container with paired input/output message names and IDs */
 typedef struct{
@@ -65,6 +57,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

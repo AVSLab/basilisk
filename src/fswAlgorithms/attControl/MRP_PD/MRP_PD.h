@@ -26,14 +26,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>
 
-/*! \defgroup MRP_PD
- @brief Attitude tracking control module using proportional/derivative MRP feedback and no RWs.
 
- This module is similar to MRP_Feedback(), but without the RW or the integral feedback option. The feedback control is able to asympotically track a reference attitude if there are no unknown dynamics and the attitude control torque is implemented with a thruster set.   The module
- [PDF Description](Basilisk-MRP_PD-2019-03-29.pdf)
- contains further information on this module's function, how to run it, as well as testing.
-   @{
- */
 
 /*! @brief Module configuration message definition. */
 typedef struct {
@@ -68,6 +61,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

@@ -30,16 +30,7 @@
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
 
-/*! \defgroup horizonOpNav
- *  @brief Converter that takes a limb message and camera information and outputs a relative position to the object. This algorithm was developed by J. Christian.
- 
- The module
- [PDF Description](Basilisk-horizonOpNav-20190918.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
 
- *  @{
- */
 /*! @brief The configuration structure for the horizon OpNav module.*/
 typedef struct {
     char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
@@ -70,6 +61,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

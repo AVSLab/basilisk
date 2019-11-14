@@ -34,21 +34,15 @@
 
 
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
 //! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.
 typedef struct {
     double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction
-    double dragCoeff;                    //!< --  Nondimensional drag coefficient
+    double dragCoeff;                        //!< --  Nondimensional drag coefficient
     Eigen::Vector3d comOffset;               //!< m distance from center of mass to center of projected area
 }DragBaseData;
 
-//! @brief Drag dynamics class used to compute drag effects on spacecraft bodies
-/*! This class is used to implement drag dynamic effects on spacecraft using a variety of simple or complex models, which will include
-cannonball (attitude-independent) drag, single flat-plate drag, faceted drag models, and an interface to full-CAD GPU-accellerated
-drag models. */
+
 class DragDynamicEffector: public SysModel, public DynamicEffector {
 public:
     DragDynamicEffector();
@@ -80,6 +74,5 @@ private:
     
 };
 
-/* @} */
 
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

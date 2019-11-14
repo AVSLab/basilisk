@@ -25,34 +25,8 @@
 #include "fswMessages/tamSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/tamSensorIntMsg.h"
 
-/*! \addtogroup sensorInterfaces
-* @{
-*/
 
-/*! \defgroup tamComm
-@brief This is the TAM sensor interface module.
-
-## Module Purpose
-
-### Executive Summary
-
-This module reads in a message of type TAMSensorBodyFswMsg, outputs the magnetometer measurement vector in vehicle's body coordinates \f$\mbox{(tam_B)}\f$
-with the name of tamOutMsgName.
-
-### Message Connection Descriptions
-The following table lists the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
-Msg Variable Name | Msg Type | Description
-------------------|----------|-------------
-tamInMsgName| TAMSensorIntMsg | TAM sensor interface input message
-tamOutMsgName| TAMSensorBodyFswMsg | TAM sensor interface output message
-
-### User Guide
-
-In order to transform the \f$\mbox{tam_S}\f$ vector of TAMSensorIntMsg from sensor to body frame, \f$\mbox{dcm_BS}\f$ should be defined.
-
-
- */
-
+/*! module configuration message definition */
 typedef struct {
     double dcm_BS[9];                         //!< [T] Row - Sensor to Body DCM
     char tamInMsgName[MAX_STAT_MSG_LENGTH];   //!< [-] The name of the TAM interface input message

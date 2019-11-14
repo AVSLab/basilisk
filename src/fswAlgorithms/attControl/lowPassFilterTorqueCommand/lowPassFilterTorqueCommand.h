@@ -25,23 +25,14 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 
-/*! \defgroup lowPassFilterTorqueCommand
- * @{
- */
+
 
 #define NUM_LPF       2                             /*            number of states to track, including current state */
 
 
-/*!@brief Data structure for the algorithm Module that applies a low pass filter to the
- attitude control torque command.
 
- The module
- [PDF Description](AVS-Sim-LowPassFilterControlTorque-20160108.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
 
-/*! @brief Top level structure for the sub-module routines. */
+/*! @brief module configuration message. */
 typedef struct {
     /* declare module private variables */
     double   h;                                     /*!< [s]      filter time step (assumed to be fixed */
@@ -76,6 +67,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

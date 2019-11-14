@@ -63,12 +63,12 @@ SimpleNav::~SimpleNav()
     initializes the various containers used in the model as well as creates the 
     output message.  The error states are allocated as follows:
     Total states: 18
-    Position errors [0-2]
-    Velocity errors [3-5]
-    Attitude errors [6-8]
-    Body Rate errors [9-11]
-    Sun Point error [12-14]
-    Accumulated DV errors [15-17]
+        - Position errors [0-2]
+        - Velocity errors [3-5]
+        - Attitude errors [6-8]
+        - Body Rate errors [9-11]
+        - Sun Point error [12-14]
+        - Accumulated DV errors [15-17]
     @return void
 */
 void SimpleNav::SelfInit()

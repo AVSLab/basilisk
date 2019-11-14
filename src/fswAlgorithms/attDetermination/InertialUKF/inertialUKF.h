@@ -33,11 +33,6 @@
 #include <string.h>
 
 
-/*! \defgroup inertialUKF
- @brief This module filters incoming star tracker measurements and reaction wheel data in order to get the best possible inertial attitude estimate. The filter used is an unscented Kalman filter using the Modified Rodrigues Parameters (MRPs) as a non-singular attitude measure.  Measurements can be coming in from several camera heads.
-
- * @{
- */
 
 /*! @brief Star Tracker (ST) sensor container structure.  Contains the msg input name and Id and sensor noise value.
  */
@@ -155,6 +150,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

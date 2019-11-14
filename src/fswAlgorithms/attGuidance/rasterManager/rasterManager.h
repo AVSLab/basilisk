@@ -25,15 +25,13 @@
 #include "fswMessages/attStateFswMsg.h"
 
 
-/*! \defgroup rasterManager
- * @{
- */
 
-/*! @brief Top level structure for the sub-module routines. */
+
 
 #define MAX_RASTER_SET 36
 
 
+/*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* Declare module private variables */
     double scanningAngles[3 * MAX_RASTER_SET];
@@ -66,6 +64,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

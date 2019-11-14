@@ -28,9 +28,7 @@
 #include <stdlib.h>
 
 
-/*! \defgroup dvAttEffect
- * @{
- */
+
 
 #define MAX_NUM_THR_GROUPS 4
 
@@ -41,9 +39,7 @@ typedef struct {
 }effPairs;
 
 
-/*! @brief Top level structure for the DV attitude effector management algorithm.  
-   This algorithm is used to control both the RCS and DV thrusters when 
-   executing a trajectory adjustment.*/
+/*! @brief module configuration message */
 typedef struct {
     char inputControlName[MAX_STAT_MSG_LENGTH]; /*!< - The name of the Input message*/
     int32_t inputMsgID;      /*!< - ID for the incoming guidance errors*/
@@ -69,6 +65,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

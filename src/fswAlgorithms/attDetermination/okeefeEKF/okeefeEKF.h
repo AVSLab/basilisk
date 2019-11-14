@@ -29,11 +29,8 @@
 #include <string.h>
 
 
-/*! \defgroup okeefeEKF
- * @{
- */
 
-/*!@brief Data structure for CSS Extended kalman filter estimator without gyros measurements. Please see the _Documentation folder for details on how this Kalman Filter Functions.
+/*!@brief Data structure for CSS Extended kalman filter estimator without gyros measurements.
  */
 
 typedef struct {
@@ -115,6 +112,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

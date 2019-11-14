@@ -146,7 +146,7 @@ void VizInterface::CrossInit()
     }
 
     /*! Define CSS configuration input messages */
-    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cameraConfInMsgName);
+    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cssConfInMsgName);
     if (msgInfo.itemFound) {
         this->cssConfInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cssConfInMsgName,
                                                                                         sizeof(CSSConfigFswMsg), moduleID);

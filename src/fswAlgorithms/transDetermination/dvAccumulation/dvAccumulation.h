@@ -25,12 +25,7 @@
 #include "fswMessages/AccDataFswMsg.h"
 #include "fswMessages/AccPktDataFswMsg.h"
 
-/*! \defgroup dvAccumulation
- *  @brief This module reads in a message with an array of accelerometer measurements and integrates them to determine an accumulated \f$\Delta\mathbf{v}\f$ value.
 
- On reset the net \f$\Delta\mathbf{v}\f$ is set to zero.  The output navigation message contains the latest measurements time tag and the total \f$\Delta\mathbf{v}\f$. More information on can be found in the [module PDF Description](Basilisk-dvAccumulation-2019-03-28.pdf)
- *  @{
- */
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
@@ -62,6 +57,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

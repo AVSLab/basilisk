@@ -27,12 +27,6 @@
 #include <stdint.h>
 
 
-/*! \defgroup sunlineEphem
- * @brief This module computes an ephemeris-based sunline heading.
- *
- * More information can be found in the [PDF Description](Basilisk-SunlineEphem-20181204.pdf).
- * @{
- */
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -63,6 +57,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

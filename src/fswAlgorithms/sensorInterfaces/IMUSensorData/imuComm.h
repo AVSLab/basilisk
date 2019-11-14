@@ -26,11 +26,8 @@
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 
 
-/*! \defgroup imuComm
- *  @{
- */
-/*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
- CSS interface*/
+
+/*! @brief module configuration message */
 typedef struct {
     double dcm_BP[9];    /*!< Row major platform 2 bdy DCM*/
     char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
@@ -55,6 +52,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

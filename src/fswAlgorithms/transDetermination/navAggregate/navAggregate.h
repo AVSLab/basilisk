@@ -26,12 +26,6 @@
 
 #define MAX_AGG_NAV_MSG 10
 
-/*! \defgroup navAggregate
- *  @brief This module takes in a series of navigation messages and
- *  constructs a navigation output message using a select subset of information from
- *  the input messages.  For more information see the [PDF Description](Basilisk-navAggregate-2019-02-21.pdf).
- *  @{
- */
 
 /*! structure containing the attitude navigation message name, ID and local buffer*/
 typedef struct {
@@ -81,6 +75,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

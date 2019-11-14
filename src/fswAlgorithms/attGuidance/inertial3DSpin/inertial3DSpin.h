@@ -24,18 +24,10 @@
 #include <stdint.h>
 #include "fswMessages/attRefFswMsg.h"
 
-/*! \defgroup inertial3DSpin
- * @{
+
+
+/*!@brief module configurate structure definition.
  */
-
-/*!@brief Data structure for module to compute the Inertial-3D spinning pointing navigation solution.
-
- The module
- [PDF Description](AVS-Sim-Inertial3DSpin-2015-12-22.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
-
 typedef struct {
     /* declare module private variables */
     double sigma_RN[3];
@@ -67,6 +59,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

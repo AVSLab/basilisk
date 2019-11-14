@@ -21,15 +21,9 @@
 #ifndef stateVecIntegrator_h
 #define stateVecIntegrator_h
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
 class DynamicObject;
 
-/*!
- @brief Base clase for every StateVecIntegrator. For creating a new StateVecIntegrator, inherit this class and override the integrate() method. integrate() only needs to advance one time step. DO NOT CHANGE THIS CLASS, if possible.
- */
 class StateVecIntegrator
 {
 
@@ -42,6 +36,5 @@ protected:
     DynamicObject* dynPtr; //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
 };
 
-/* @} */
 
 #endif /* StateVecIntegrator_h */

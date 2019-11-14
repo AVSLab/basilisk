@@ -28,12 +28,8 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
-/*! \defgroup sunSafeACS
- * @{
- */
 
-/*! @brief Top level structure for the sun-safe attitude control routine.
- This algorithm is intended to be incredibly simple and robust*/
+/*! @brief module configuration message */
 typedef struct {
     ThrustGroupData thrData;  /*!< Collection of thruster configuration data*/
     char inputControlName[MAX_STAT_MSG_LENGTH]; /*!< -- The name of the Input message*/
@@ -53,6 +49,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif
