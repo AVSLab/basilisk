@@ -38,7 +38,7 @@ CenterRadiusCNN::CenterRadiusCNN()
     this->saveImages = 0;
     this->blurrSize = 5;
 
-    std::string pathToNetwork = './position_net2_trained_11-14.onnx';
+    std::string pathToNetwork = "./position_net2_trained_11-14.onnx";
 
     this->positionNet2 = cv::dnn::readNetFromONNX(pathToNetwork);
     this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
@@ -133,21 +133,12 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     float x_pred = output.at<float>(0,0);
     float y_pred = output.at<float>(0,1);
     float rad_pred = output.at<float>(0,2);
-
-
-
-
-
-
-
-    cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
-    cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
-    cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
     /*!- If no circles are found do not validate the image as a measurement */
     if (circlesFound >0){
         circleBuffer.valid = 1;
         circleBuffer.planetIds[0] = 2;
+        
     }
     
     SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
