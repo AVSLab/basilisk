@@ -25,6 +25,7 @@
 #
 
 import sys, os, inspect
+import pytest
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -33,6 +34,7 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../examples/07-MonteCarlo')
 import scenarioMonteCarloSpice
 
+@pytest.mark.scenarioTest
 
 def test_MonteCarloSimulationDatashader(show_plots):
     '''This function is called by the py.test environment.'''

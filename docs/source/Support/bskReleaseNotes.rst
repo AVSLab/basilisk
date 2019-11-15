@@ -18,7 +18,7 @@ In Progress Features
 
 Upcoming Version 1.X.X
 ----------------------
-- text goes here
+- small fixes to the new HTML documentation
 
 Version 1.3.0
 -------------

@@ -16,7 +16,7 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-"""
+r"""
 
 .. figure:: /_images/static/Vizard1.jpg
    :align: center

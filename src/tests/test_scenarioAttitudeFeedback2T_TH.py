@@ -51,6 +51,8 @@ import scenarioAttitudeFeedback2T_TH
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useDVThrusters", [False, True])
+@pytest.mark.scenarioTest
+
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedback2T_TH(show_plots, useDVThrusters):
     '''This function is called by the py.test environment.'''

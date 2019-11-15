@@ -80,6 +80,47 @@ is automatically compensated for to yield exponential convergence.  This converg
 a time-varying Hill frame on an elliptic orbit.  This illustrates that all the orbital motion is propoerly
 feed-forward compensated.
 
+::
+
+    show_plots = True, simCase = 1
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringSigmaBR1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringomegaBR1.svg
+   :align: center
+
+
+::
+
+    show_plots = True, simCase = 2
+
+This setup investigates the small depature motion stability about the Hill frame.  Here only small initial
+attitude and rate errors are introduced.  However, the outer loop feedback gain :math:`K_1` is increased such that
+it violates the sub-servo loop separation principle.
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringSigmaBR2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringomegaBR2.svg
+   :align: center
+
+Here the local motion is now unstable, as predicted in this
+`conference paper <http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf>`__.
+
+
+::
+
+    show_plots = True, simCase = 3
+
+This setup also investigates the small departure motion stability about the Hill frame.  However, in this case
+the feedword term :math:`\omega'_{\cal B^\ast/R}` is omitted, which is predicted to yield locally stabilizing control
+similar in performance to a standard proportional-derivative or PD feedback control.
+
+.. image:: /_images/Scenarios/scenarioAttitudeSteeringSigmaBR3.svg
+   :align: center
+
+
 """
 
 
@@ -199,64 +240,6 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 
 
 
-# Setup 2
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        1            # simCase
-#        )
-# ~~~~~~~~~~~~~
-# This setup is the same as the first setup, but the integral feedback term is turned off.
-# The resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR1.svg "MRP history")
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR1.svg "omega history")
-# In this case the response, as expected, is only bounded or Lagrange stable, and does not longer converge
-# due to the unmodeled external torque.
-#
-# Setup 3
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        2            # simCase
-#        )
-# ~~~~~~~~~~~~~
-# This setup investigates the small depature motion stability about the Hill frame.  Here only small initial
-# attitude and rate errors are introduced.  However, the outer loop feedback gain \f$K_1\f$ is increased such that
-# it violates the sub-servo loop separation principle.
-# The
-# resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR2.svg "MRP history")
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR2.svg "omega history")
-# Here the local motion is now unstable, as predicted in
-# <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper</b></a>.
-#
-# Setup 4
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        3            # simCase
-#        )
-# ~~~~~~~~~~~~~
-# This setup also investigates the small depature motion stability about the Hill frame.  However, in this case
-# the feedword term \f$\omega'_{\cal B^\ast/R}\f$ is ommited, which is predicted to yield locally stabilizing control
-# similar in performance to a standard proportional-derivative or PD feedback control.
-# The
-# resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR3.svg "MRP history")
-#
-##  @}
 def run(show_plots, simCase):
     r"""
     At the end of the python script you can specify the following example parameters.
@@ -268,13 +251,13 @@ def run(show_plots, simCase):
             =======  ==============================================================
             simCase  Definition
             =======  ==============================================================
-            1        Detumble with balanced gains (for inner- and outer-loop
+            0        Detumble with balanced gains (for inner- and outer-loop
                      separation principle), including integral feedback
-            2        Detumble with balanced gains (for inner- and outer-loop
+            1        Detumble with balanced gains (for inner- and outer-loop
                      separation principle), without integral feedback
-            3        Small detumble with strong steering gain violating
+            2        Small detumble with strong steering gain violating
                      separation principle, with :math:`\omega'_{\cal B^{\ast}/R}`
-            4        Small detumble with strong steering gain violating separation
+            3        Small detumble with strong steering gain violating separation
                      principle, without :math:`\omega'_{\cal B^{\ast}/R}`
             =======  ==============================================================
 
