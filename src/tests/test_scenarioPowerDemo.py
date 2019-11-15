@@ -20,6 +20,7 @@
 
 import sys, os, inspect
 from Basilisk.utilities import unitTestSupport
+import pytest
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -28,6 +29,7 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../examples')
 import scenarioPowerDemo
 
+@pytest.mark.scenarioTest
 
 def test_simplePowerDemo(show_plots):
     '''This function is called by the py.test environment.'''
