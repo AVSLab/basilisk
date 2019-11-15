@@ -21,9 +21,6 @@
 #include <stdarg.h>
 #include "utilities/bskPrint.h"
 
-int global_;
-int global_c;
-
 BSKPrint::BSKPrint()
 {
   this->_msgLevel = MSG_DEBUG;
