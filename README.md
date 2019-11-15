@@ -8,11 +8,11 @@
 ### How do I get set up? ###
 The following links contain installation instructions for the supported platforms:
 
-- [Setup a macOS Development Environment](http://hanspeterschaub.info/bskHtml/install_mac_o_s.html)
+- [Setup a macOS Development Environment](http://hanspeterschaub.info/bskHtml/Install/installOnMacOS.html)
 
-- [Setup a Linux Development Environment](http://hanspeterschaub.info/bskHtml/install_linux.html)
+- [Setup a Linux Development Environment](http://hanspeterschaub.info/bskHtml/Install/installOnLinux.html)
 
-- [Setup a Windows Development Environment](http://hanspeterschaub.info/bskHtml/install_windows.html)
+- [Setup a Windows Development Environment](http://hanspeterschaub.info/bskHtml/Install/installOnWindows.html)
 
 
 
@@ -23,7 +23,7 @@ The following links contain installation instructions for the supported platform
 
 
 ### Getting Started
-To get started with Basilisk (BSK), several tutorial python files are provided in the installed package.  Within this web page documentation site, they are listed and discussed in the <a href="modules.html">Manual</a> tab.  The documentation lists the scenarios in an order that facilitates learning basic BSK features. In the source code they are stored under `src\tests\scenarios`. A good start would be to run `scenarioBasicOrbit.py`.
+To get started with Basilisk (BSK), several tutorial python files are provided in the installed package.  Within this web page documentation site, they are listed and discussed in the <a href="modules.html">Manual</a> tab.  The documentation lists the scenarios in an order that facilitates learning basic BSK features. In the source code they are stored under `src\examples\`. A good start would be to run `scenarioBasicOrbit.py`.
 
 To play with the tutorials, it is suggested the user makes a copy of these tutorial files, and use the copies in order to learn, test and experiment. To copy them, first find the location of the Basilisk installation. After installing, you can find the installed location of Basilisk by opening a python interpreter and running:
 
@@ -33,9 +33,9 @@ basiliskPath = Basilisk.__path__[0]
 print(basiliskPath)
 ```
 
-Now copy the folder `{basiliskPath}/tests` into a new folder, and change to that directory.
+Now copy the folder `{basiliskPath}/src/examples` into a new folder, and change to that directory.
 
-To run the default scenario 1 of scenarioBasicOrbit, in the directory of the copied tutorials, call the python script: `python3 test_scenarioBasicOrbit.py`
+To run the default scenario 1 of scenarioBasicOrbit, in the directory of the copied tutorials, call the python script: `python3 scenarioBasicOrbit.py`
 
 
 Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
