@@ -19,7 +19,7 @@
 '''
 #
 #   Unit Test Script
-#   Module Name:        HoughCirlces
+#   Module Name:        CNN
 #   Author:             Thibaud Teil
 #   Creation Date:      March 13, 2019
 #
@@ -47,7 +47,7 @@ from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
 
 try:
-    from Basilisk.fswAlgorithms import houghCircles
+    from Basilisk.fswAlgorithms import centerRadiusCNN
 except ImportError:
     importErr = True
     reasonErr = "Hough Circles not built---check OpenCV option"

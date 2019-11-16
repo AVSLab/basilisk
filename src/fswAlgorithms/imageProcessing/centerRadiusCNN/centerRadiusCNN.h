@@ -64,6 +64,9 @@ public:
     int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels
     int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
+    int32_t imageSize[2];                 //!< [-] Size of image input to the net
+    double pixelNoise[3];                 //!< [-] Pixel Noise for the estimate
+
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message

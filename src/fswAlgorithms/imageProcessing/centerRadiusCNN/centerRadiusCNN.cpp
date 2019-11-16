@@ -37,7 +37,11 @@ CenterRadiusCNN::CenterRadiusCNN()
     this->filename = "";
     this->saveImages = 0;
     this->blurrSize = 5;
-
+    this->imageSize[0] = 512;
+    this->imageSize[1] = 512;
+    for (int i=0; i<3; i++){
+        this->pixelNoise[i] = 5;
+    }
     std::string pathToNetwork = "./position_net2_trained_11-14.onnx";
 
     this->positionNet2 = cv::dnn::readNetFromONNX(pathToNetwork);
@@ -126,18 +130,24 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     }
     // evaluate CNN on image
     // TODO Thibaud, come clean this up for actual usefulness please
-    cv::Mat img_blob = cv::dnn::blobFromImage(imageCV, 1.0/255.0, cv::Size(512, 512), cv::Scalar(0,0,0), true);
+    cv::Mat img_blob = cv::dnn::blobFromImage(imageCV, 1.0/255.0, cv::Size(this->imageSize[0], this->imageSize[1]), cv::Scalar(0,0,0), true);
 
     positionNet2.setInput(img_blob);
     cv::Mat output = positionNet2.forward();
-    float x_pred = output.at<float>(0,0);
-    float y_pred = output.at<float>(0,1);
-    float rad_pred = output.at<float>(0,2);
+    double x_pred = output.at<double>(0,0);
+    double y_pred = output.at<double>(0,1);
+    double rad_pred = output.at<double>(0,2);
     
     /*!- If no circles are found do not validate the image as a measurement */
     if (circlesFound >0){
         circleBuffer.valid = 1;
         circleBuffer.planetIds[0] = 2;
+        circleBuffer.circlesCenters[0] = x_pred;
+        circleBuffer.circlesCenters[1] = y_pred;
+        circleBuffer.circlesRadii[0] = rad_pred;
+        for (int j=0; j<3; j++){
+            circleBuffer.uncertainty[j] = this->pixelNoise[j];
+        }
         
     }
     
