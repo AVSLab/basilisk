@@ -3,7 +3,9 @@
 Basilisk Release Notes
 ======================
 
-**Note:** We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/tests/scenarios`` folder.  More documentation and tutorial scripts are in development.
+.. Note::
+
+    We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/tests/scenarios`` folder.  More documentation and tutorial scripts are in development.
 
 In Progress Features
 --------------------
@@ -16,9 +18,11 @@ In Progress Features
 - create modules to determine if a satellite can see a ground point such as a communication station
 
 
-Upcoming Version 1.X.X
-----------------------
+Version 1.3.1
+-------------
 - small fixes to the new HTML documentation
+- correct the path includes in Monte Carlo Integrated tests
+- updated the ``MRP_Steering`` module documentation to include plots of all test cases
 
 Version 1.3.0
 -------------
