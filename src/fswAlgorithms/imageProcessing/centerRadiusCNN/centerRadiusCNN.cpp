@@ -34,6 +34,7 @@
 /*! The constructor for the CenterRadiusCNN module. It also sets some default values at its creation.  */
 CenterRadiusCNN::CenterRadiusCNN()
 {
+    this->OutputBufferCount = 2;
     this->filename = "";
     this->saveImages = 0;
     this->imageSize[0] = 512;
@@ -41,11 +42,7 @@ CenterRadiusCNN::CenterRadiusCNN()
     for (int i=0; i<3; i++){
         this->pixelNoise[i] = 5;
     }
-    std::string pathToNetwork = "./position_net2_trained_11-14.onnx";
-
-    this->positionNet2 = cv::dnn::readNetFromONNX(pathToNetwork);
-    this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
-    this->positionNet2.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+    this->pathToNetwork = "./position_net2_trained_11-14.onnx";
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -54,6 +51,16 @@ CenterRadiusCNN::CenterRadiusCNN()
  */
 void CenterRadiusCNN::SelfInit()
 {
+    /*! - Read in the CNN */
+    std::ifstream test(this->pathToNetwork);
+    if (!test)
+    {
+        std::cout << "The CNN file doesn't exist" << std::endl;
+    }
+    this->positionNet2 = cv::dnn::readNetFromONNX(this->pathToNetwork);
+    this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
+    this->positionNet2.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+    
     /*! - Create output message for module */
     this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,sizeof(CirclesOpNavMsg),this->OutputBufferCount,"CirclesOpNavMsg",moduleID);
 }
@@ -95,7 +102,6 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
     cv::Mat imageCV, blurred;
-    int circlesFound=0;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
     /*! - Load in the trained CNN model*/
@@ -127,18 +133,17 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
         return;
     }
-    // evaluate CNN on image
-    // TODO Thibaud, come clean this up for actual usefulness please
+    /*!-  evaluate CNN on image */
     cv::Mat img_blob = cv::dnn::blobFromImage(imageCV, 1.0/255.0, cv::Size(this->imageSize[0], this->imageSize[1]), cv::Scalar(0,0,0), true);
 
     positionNet2.setInput(img_blob);
     cv::Mat output = positionNet2.forward();
-    double x_pred = output.at<double>(0,0);
-    double y_pred = output.at<double>(0,1);
-    double rad_pred = output.at<double>(0,2);
+    float x_pred = output.at<float>(0,0);
+    float y_pred = output.at<float>(0,1);
+    float rad_pred = output.at<float>(0,2);
     
     /*!- If no circles are found do not validate the image as a measurement */
-    if (circlesFound >0){
+    if (x_pred != this->imageSize[0]/2 && y_pred != this->imageSize[1]/2 && rad_pred != this->imageSize[1]/4){
         circleBuffer.valid = 1;
         circleBuffer.planetIds[0] = 2;
         circleBuffer.circlesCenters[0] = x_pred;
@@ -147,12 +152,10 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
         for (int j=0; j<3; j++){
             circleBuffer.uncertainty[j] = this->pixelNoise[j];
         }
-        
     }
-    
+
     SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
     
-//    free(imageBuffer.imagePointer);
     return;
 }
 

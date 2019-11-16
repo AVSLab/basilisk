@@ -61,7 +61,7 @@ except ImportError:
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, saveImage", [
                     ("mars.png",  False), #Mars image
-                   ("moons.png",   False) # Moon images
+                   ("mars2.jpg",   False) # Mars images
     ])
 
 # update "module" in this function name to reflect the module name
@@ -108,15 +108,16 @@ def cnnTest(show_plots, image, saveImage):
     moduleConfig.imageInMsgName = "sample_image"
     moduleConfig.opnavCirclesOutMsgName = "circles"
 
+    moduleConfig.pathToNetwork = path + "/../position_net2_trained_11-14.onnx"
     moduleConfig.filename = imagePath
     moduleConfig.imageSize = [512, 512]
     moduleConfig.pixelNoise = [5,5,5]
 
     circles = []
     if image == "mars.png":
-        circles = [(250, 260, 110)]
+        circles = [(254.81655883789062, 263.2418518066406, 120.9570541381836)]
     if image == "mars2.jpg":
-        circles = [(205, 155, 110)]
+        circles = [(269.21127319, 231.63162231, 144.85394287)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = centerRadiusCNN.CameraImageMsg()
@@ -142,7 +143,6 @@ def cnnTest(show_plots, image, saveImage):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    # pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
     centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", list(range(10*2)))
     radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", list(range(10)))
 
@@ -185,4 +185,4 @@ def cnnTest(show_plots, image, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    cnnTest(True, "mars2.jpg", True) # Moon images
+    cnnTest(True, "mars.png", True) # Moon images

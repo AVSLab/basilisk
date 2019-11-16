@@ -59,6 +59,7 @@ public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
+    std::string pathToNetwork;                  //!< Path to the trained CNN
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
