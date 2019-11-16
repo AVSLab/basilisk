@@ -37,8 +37,6 @@ CenterRadiusCNN::CenterRadiusCNN()
     this->OutputBufferCount = 2;
     this->filename = "";
     this->saveImages = 0;
-    this->imageSize[0] = 512;
-    this->imageSize[1] = 512;
     for (int i=0; i<3; i++){
         this->pixelNoise[i] = 5;
     }
@@ -134,7 +132,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
         return;
     }
     /*!-  evaluate CNN on image */
-    cv::Mat img_blob = cv::dnn::blobFromImage(imageCV, 1.0/255.0, cv::Size(this->imageSize[0], this->imageSize[1]), cv::Scalar(0,0,0), true);
+    cv::Mat img_blob = cv::dnn::blobFromImage(imageCV, 1.0/255.0, cv::Size(imageCV.rows,imageCV.cols), cv::Scalar(0,0,0), true);
 
     positionNet2.setInput(img_blob);
     cv::Mat output = positionNet2.forward();
@@ -143,14 +141,14 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     float rad_pred = output.at<float>(0,2);
     
     /*!- If no circles are found do not validate the image as a measurement */
-    if (x_pred != this->imageSize[0]/2 && y_pred != this->imageSize[1]/2 && rad_pred != this->imageSize[1]/4){
+    if (x_pred != imageCV.rows/2 && y_pred != imageCV.cols/2 && rad_pred != imageCV.cols/4){
         circleBuffer.valid = 1;
         circleBuffer.planetIds[0] = 2;
-        circleBuffer.circlesCenters[0] = x_pred;
-        circleBuffer.circlesCenters[1] = y_pred;
-        circleBuffer.circlesRadii[0] = rad_pred;
+        circleBuffer.circlesCenters[0] = (double)x_pred;
+        circleBuffer.circlesCenters[1] = (double)y_pred;
+        circleBuffer.circlesRadii[0] = (double)rad_pred;
         for (int j=0; j<3; j++){
-            circleBuffer.uncertainty[j] = this->pixelNoise[j];
+            circleBuffer.uncertainty[j+3*j] = this->pixelNoise[j];
         }
     }
 

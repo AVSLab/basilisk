@@ -110,7 +110,6 @@ def cnnTest(show_plots, image, saveImage):
 
     moduleConfig.pathToNetwork = path + "/../position_net2_trained_11-14.onnx"
     moduleConfig.filename = imagePath
-    moduleConfig.imageSize = [512, 512]
     moduleConfig.pixelNoise = [5,5,5]
 
     circles = []

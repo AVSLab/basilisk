@@ -63,7 +63,6 @@ public:
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
-    int32_t imageSize[2];                 //!< [-] Size of image input to the net
     double pixelNoise[3];                 //!< [-] Pixel Noise for the estimate
 
 private:
