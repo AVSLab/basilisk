@@ -152,6 +152,7 @@ def run(show_plots, orbitCase, planetCase):
     simpleNavObj = simple_nav.SimpleNav()
     simpleNavObj.inputStateName = scObject.scStateOutMsgName
     simpleNavObj.outputAttName = 'nav_att_out'
+    scSim.AddModelToTask(simTaskName, simpleNavObj)
 
     scObject.addDynamicEffector(dragEffector)
 
@@ -228,7 +229,7 @@ def run(show_plots, orbitCase, planetCase):
     samplingTime = simulationTime // (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
-    scSim.TotalSim.logThisMessage(simpleNavObj.outputAttName,samplingTime)
+    scSim.TotalSim.logThisMessage(simpleNavObj.outputAttName, samplingTime)
     scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
     #
     #   initialize Spacecraft States with initialization variables
