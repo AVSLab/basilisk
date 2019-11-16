@@ -31,7 +31,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/07-MonteCarlo')
+sys.path.append(path + '/../examples/')
 import scenarioMonteCarloSpice
 
 @pytest.mark.scenarioTest
