@@ -36,7 +36,6 @@ CenterRadiusCNN::CenterRadiusCNN()
 {
     this->filename = "";
     this->saveImages = 0;
-    this->blurrSize = 5;
     this->imageSize[0] = 512;
     this->imageSize[1] = 512;
     for (int i=0; i<3; i++){

@@ -50,7 +50,7 @@ try:
     from Basilisk.fswAlgorithms import centerRadiusCNN
 except ImportError:
     importErr = True
-    reasonErr = "Hough Circles not built---check OpenCV option"
+    reasonErr = "CenterRadiusCNN not built---check OpenCV option"
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -59,19 +59,19 @@ except ImportError:
 # Provide a unique test method name, starting with 'test_'.
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp, saveImage", [
-                    ("mars.png",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
-                   ("moons.png",    5,         10,      25,     10,       20,       200,   1, False) # Moon images
+@pytest.mark.parametrize("image, saveImage", [
+                    ("mars.png",  False), #Mars image
+                   ("moons.png",   False) # Moon images
     ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
+def test_module(show_plots, image, saveImage):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage)
+    [testResults, testMessage] = cnnTest(show_plots, image, saveImage)
     assert testResults < 1, testMessage
 
 
-def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
+def cnnTest(show_plots, image, saveImage):
 
     # Truth values from python
     imagePath = path + '/' + image
@@ -100,8 +100,8 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = houghCircles.HoughCircles()
-    moduleConfig.ModelTag = "houghCircles"
+    moduleConfig = centerRadiusCNN.CenterRadiusCNN()
+    moduleConfig.ModelTag = "cnn"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
@@ -109,23 +109,17 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     moduleConfig.opnavCirclesOutMsgName = "circles"
 
     moduleConfig.filename = imagePath
-    moduleConfig.expectedCircles = maxCircles
-    moduleConfig.cannyThresh = cannyHigh
-    moduleConfig.voteThresh = cannyLow
-    moduleConfig.houghMinDist = minDist
-    moduleConfig.houghMinRadius = minRad
-    moduleConfig.blurrSize = blur
-    moduleConfig.dpValue = dp
-    moduleConfig.houghMaxRadius = int(input_image.size[0]/1.25)
+    moduleConfig.imageSize = [512, 512]
+    moduleConfig.pixelNoise = [5,5,5]
 
     circles = []
     if image == "mars.png":
         circles = [(250, 260, 110)]
-    if image == "moons.png":
-        circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
+    if image == "mars2.jpg":
+        circles = [(205, 155, 110)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = houghCircles.CameraImageMsg()
+    inputMessageData = centerRadiusCNN.CameraImageMsg()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
     unitTestSupport.setMessage(unitTestSim.TotalSim,
@@ -191,4 +185,4 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 # stand-along python script
 #
 if __name__ == "__main__":
-    houghCirclesTest(True, "moons.png",     5,         10,      25,     10,       20,       200,   1, True) # Moon images
+    cnnTest(True, "mars2.jpg", True) # Moon images
