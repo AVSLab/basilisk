@@ -14,7 +14,13 @@ The ``pytest`` program can run a series of test on python scripts that begin wit
 
     pip3 install --user pytest
 
-Note that version 4.0.0 or higher works properly with Basilisk, while versions between 3.6.1 and 4.0.0 had some bugs that impacted some Basilisk tests.
+Note that version 4.0.1 or higher works properly with Basilisk, while versions between 3.6.1 and 4.0.0 had some bugs that impacted some Basilisk tests.
+
+If you want to use ``pytest`` to generate a validation HTML report using the ``--report`` argument,
+then the ``pytest-html`` package must be installed
+
+   pip3 install --user pytest-html
+
 
 Running ``pytest`` in a multi-threaded manner
 ---------------------------------------------
@@ -31,6 +37,8 @@ After installing this utility you now run the multi-threaded version of
    python3 -m pytest -n 8
 
 or replace 8 with the number of cores your computer has available
+
+
 
 Graphing via datashader
 -----------------------

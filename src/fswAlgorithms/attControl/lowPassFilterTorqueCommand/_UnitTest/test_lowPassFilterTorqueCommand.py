@@ -45,6 +45,7 @@ from Basilisk.utilities import macros
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_lowPassFilterControlTorque(show_plots):     # update "subModule" in this function name to reflect the module name
+    """Module Unit Test"""
     [testResults, testMessage] = subModuleTestFunction(show_plots)
     assert testResults < 1, testMessage
 

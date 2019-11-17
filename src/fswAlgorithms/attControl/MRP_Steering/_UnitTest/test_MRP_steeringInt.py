@@ -49,6 +49,7 @@ from Basilisk.utilities import RigidBodyKinematics
 
 
 def test_mrp_steering_tracking(show_plots,K1, K3, omegaMax):
+    "module integrated test"
     [testResults, testMessage] = mrp_steering_tracking(show_plots,K1, K3, omegaMax)
     assert testResults < 1, testMessage
 

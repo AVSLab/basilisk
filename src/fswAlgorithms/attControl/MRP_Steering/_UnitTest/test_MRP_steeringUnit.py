@@ -45,6 +45,7 @@ from Basilisk.utilities import RigidBodyKinematics
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_mrp_steering_tracking(show_plots, K1, K3, omegaMax):
+    """Module Unit Test"""
     [testResults, testMessage] = mrp_steering_tracking(show_plots, K1, K3, omegaMax)
     assert testResults < 1, testMessage
 

@@ -151,6 +151,7 @@ class DataStore:
 
 # provide a unique test method name, starting with test_
 def test_orb_elem_convert(a, e, i, AN, AP, f, mu, name, DispPlot=False):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = orbElem(a, e, i, AN, AP, f, mu, name, DispPlot)
     assert testResults < 1, testMessage

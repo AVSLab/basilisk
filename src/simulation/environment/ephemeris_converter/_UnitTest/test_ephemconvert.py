@@ -35,6 +35,7 @@ bskPath = __path__[0]
 
 # provide a unique test method name, starting with test_
 def test_ephemConvert(show_plots):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitephemeris_converter(show_plots)
     assert testResults < 1, testMessage

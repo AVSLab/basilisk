@@ -74,6 +74,7 @@ def setupFilterData(filterObject, initialized):
 
 
 def test_all_sunline_kf(show_plots, kellyOn):
+    """Module Unit Test"""
     [testResults, testMessage] = SwitchMethods()
     assert testResults < 1, testMessage
     [testResults, testMessage] = StatePropSunLine(show_plots)

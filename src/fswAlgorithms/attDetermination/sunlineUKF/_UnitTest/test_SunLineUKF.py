@@ -66,6 +66,7 @@ def setupFilterData(filterObject):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_all_sunline_kf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = sunline_utilities_test(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = testStatePropSunLine(show_plots)

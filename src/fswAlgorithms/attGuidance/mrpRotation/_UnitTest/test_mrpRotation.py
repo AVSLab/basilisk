@@ -56,6 +56,7 @@ import truth_mrpRotation as truth
 
 # provide a unique test method name, starting with test_
 def test_mrpRotation(show_plots, cmdStateFlag, testReset):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, cmdStateFlag, testReset)
     assert testResults < 1, testMessage

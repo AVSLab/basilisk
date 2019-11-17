@@ -73,6 +73,7 @@ for i in range(0, 4):
 
 # provide a unique test method name, starting with test_
 def test_unitDynamicsModes(show_plots, torqueInput, forceNInput, forceBInput):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDynamicsModesTestFunction(
             show_plots, torqueInput, forceNInput, forceBInput)

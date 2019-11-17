@@ -1,22 +1,22 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        fswModuleTemplate
@@ -47,8 +47,8 @@ class DataStore:
         self.variableState = None  # replace/add with appropriate variables for test result data storing
 
     def plotData(self):
-        """All test plotting to be performed here.
-
+        """
+        All test plotting to be performed here.
         """
         plt.figure(1) # plot a sample variable.
         plt.plot(self.variableState[:, 0]*macros.NANO2SEC, self.variableState[:, 1], label='Sample Variable')
@@ -73,32 +73,31 @@ def plotFixture(show_plots):
 # provide a unique test method name, starting with test_
 def test_module(plotFixture, show_plots):     # update "module" in this function name to reflect the module name
     """
-Validation Test Description
----------------------------
-Compose a general description of what is being tested in this unit test script.  Add enough information so\
-the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only \
-one version of this script will run.
+    Validation Test Description
+    ---------------------------
+    Compose a general description of what is being tested in this unit test script.  Add enough information so
+    the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only
+    one version of this script will run.
 
-Description of Variables Being Tested
--------------------------------------
-Here discuss what parameters are being checked.  For example, in this file we are checking the values of the \
-variables
+    Description of Variables Being Tested
+    -------------------------------------
+    Here discuss what parameters are being checked.  For example, in this file we are checking the values of the
+    variables
 
-    dummy
-    outputVector[3]
+    - ``dummy``
+    - ``outputVector[3]``
 
-General Documentation Comments
-------------------------------
-If the script generates figures, these figures will be automatically pulled from matplotlib and included below. \
-Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content \
-should be understood by just looking at the figure.
+    General Documentation Comments
+    ------------------------------
+    If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below.
+    Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content
+    should be understood by just looking at the figure.
 
-At the end of the script where a print statement says that the script passes, also add a print statement \
-saying what accuracy tolerance(s) were used.
+    At the end of the script where a print statement says that the script passes, also add a print statement
+    saying what accuracy tolerance(s) were used.
 
-Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting \
-contained within this HTML pytest report.
-
+    Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting
+    contained within this HTML ``pytest`` report.
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes

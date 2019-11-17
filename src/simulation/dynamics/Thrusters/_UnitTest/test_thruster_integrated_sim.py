@@ -51,6 +51,7 @@ def thrusterIntegratedTest(show_plots):
     assert testResults < 1, testMessage
 
 def test_thrusterIntegratedTest(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.

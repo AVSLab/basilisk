@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Basilisk's documentation!
-====================================
+Welcome to the Basilisk Astrodynamics Framework documentation
+=============================================================
+
 
 .. toctree::
    :maxdepth: 1
@@ -15,6 +16,7 @@ Welcome to Basilisk's documentation!
    Quick-Start
    Support
    Documentation/index
+   Forum
 
 .. toctree::
    :maxdepth: 1

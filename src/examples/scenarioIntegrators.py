@@ -40,6 +40,7 @@ different integration scheme, the following code is used before the dynamics mod
 python task list:
 
 .. code-block:: python
+
    integratorObject = svIntegrators.svIntegratorEuler(scObject)
    scObject.setIntegrator(integratorObject)
 
@@ -129,13 +130,13 @@ def run(show_plots, integratorCase):
         show_plots (bool): Determines if the script should display plots
         integratorCase (bool): Specify if an external torque should be included
 
-            ======  ============================
-            String  Definition
-            ======  ============================
-            'rk4'   RK4 - default
-            'rk2'   RK2
-            'euler' Euler or RK1
-            ======  ============================
+            =======  ============================
+            String   Definition
+            =======  ============================
+            'rk4'    RK4 - default
+            'rk2'    RK2
+            'euler'  Euler or RK1
+            =======  ============================
 
     """
 

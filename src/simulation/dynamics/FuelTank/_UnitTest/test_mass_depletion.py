@@ -44,6 +44,7 @@ def massDepletionTest(show_plots):
 
 # @pytest.mark.xfail #Currently not sure if this is valid or not
 def test_massDepletionTest(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.

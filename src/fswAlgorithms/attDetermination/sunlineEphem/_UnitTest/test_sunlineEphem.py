@@ -77,6 +77,7 @@ def plotFixture(show_plots):
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_module(show_plots):     # update "module" in this function name to reflect the module name
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
     [testResults, testMessage] = sunlineEphemTestFunction(show_plots)

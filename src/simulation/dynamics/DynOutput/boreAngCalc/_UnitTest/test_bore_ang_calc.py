@@ -88,6 +88,7 @@ def testFixture():
                           ([1.0, 0.0, 0.0], [0.0, 0.0, 0.0])])
 # # provide a unique test method name, starting with test_
 def test_bore_ang_calc(testFixture, show_plots, boresightLoc, eulerLoc):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc)
     assert testResults < 1, testMessage

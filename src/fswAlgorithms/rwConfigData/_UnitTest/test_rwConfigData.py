@@ -13,6 +13,7 @@ from Basilisk.fswAlgorithms.fswMessages import fswMessages
 import numpy as np
 
 def test_rwConfigData():
+    """Module Unit Test"""
     [testResults, testMessage] = rwConfigDataTestFunction()
     assert testResults < 1, testMessage
 

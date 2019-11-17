@@ -19,7 +19,11 @@ In Progress Features
 
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- added the ability to include the unit test python files, along with their documentation, within the sphinx html documentation
+- updated Vizard live streaming documentation
+- updated unit test templates to have better formatting of the html validation report obtained with ``pytest --report``
+- exclude some un-needed files from the html documenation
+- general sphinx documentation related fixed and enhancements
 
 Version 1.3.1
 -------------

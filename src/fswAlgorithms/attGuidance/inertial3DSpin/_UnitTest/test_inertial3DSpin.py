@@ -50,6 +50,7 @@ from Basilisk.utilities import macros as mc
 #@pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_inertial3DSpin(show_plots):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = subModuleTestFunction(show_plots)
     assert testResults < 1, testMessage

@@ -174,7 +174,7 @@ The post fit residuals, give further confirmation of a working filter:
 
 
 Setup 3 - OEKF
--------------
+--------------
 
 The 3rd scenario uses a second type of Extended Kalman Filter (:ref:`okeefeEKF`).
 This filter takes in fewer states as it only estimates the sunheading. In order to

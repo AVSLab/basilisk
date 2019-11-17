@@ -55,6 +55,7 @@ def setupFilterData(filterObject):
 
 
 def test_functions_ukf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = heading_utilities_test(show_plots)
     assert testResults < 1, testMessage
 
@@ -65,6 +66,7 @@ def test_functions_ukf(show_plots):
 # provide a unique test method name, starting with test_
 
 def test_all_heading_kf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = StatePropSunLine(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = StateUpdateSunLine(show_plots)

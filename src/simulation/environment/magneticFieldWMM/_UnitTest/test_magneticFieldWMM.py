@@ -77,6 +77,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris)
     assert testResults < 1, testMessage

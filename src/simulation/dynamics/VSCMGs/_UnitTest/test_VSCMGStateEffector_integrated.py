@@ -118,6 +118,7 @@ def findPeaks(Y,maxfind):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_VSCMGIntegratedTest(show_plots,useFlag,testCase):
+    """Module Unit Test"""
     [testResults, testMessage] = VSCMGIntegratedTest(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 

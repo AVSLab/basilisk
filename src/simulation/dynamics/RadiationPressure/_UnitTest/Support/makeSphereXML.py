@@ -73,7 +73,7 @@ for i in range(numPoints):
         # ax.scatter(sHat_B.x[numPoints*i+j], sHat_B.y[numPoints*i+j], sHat_B.z[numPoints*i+j])
 
 # plt.show()
-lookupFile = open('cannonballLookup.xml', 'w')
+lookupFile = open('cannonballLookup2.xml', 'w')
 
 nl = '\n'
 singleTab = '   '

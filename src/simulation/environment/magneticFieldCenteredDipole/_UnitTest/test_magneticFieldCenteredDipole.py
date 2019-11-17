@@ -64,6 +64,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris)
     assert testResults < 1, testMessage

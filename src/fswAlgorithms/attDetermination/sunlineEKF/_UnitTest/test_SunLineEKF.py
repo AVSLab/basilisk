@@ -55,6 +55,7 @@ def setupFilterData(filterObject):
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def test_all_functions_ekf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = sunline_individual_test()
     assert testResults < 1, testMessage
     [testResults, testMessage] = StatePropStatic()
@@ -85,6 +86,7 @@ def test_all_functions_ekf(show_plots):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_all_sunline_ekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+    """Module Unit Test"""
     [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
     assert testResults < 1, testMessage
 

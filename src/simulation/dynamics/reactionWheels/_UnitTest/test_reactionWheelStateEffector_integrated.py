@@ -55,6 +55,7 @@ mpl.rc("figure", figsize=(5.75,4))
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_reactionWheelIntegratedTest(show_plots,useFlag,testCase):
+    """Module Unit Test"""
     [testResults, testMessage] = reactionWheelIntegratedTest(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 

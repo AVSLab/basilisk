@@ -221,6 +221,7 @@ class fileCrawler():
     def __init__(self, newFiles=False):
         self.newFiles = newFiles
         self.breathe_projects_source = {}
+        self.counter = 0
 
     def grabRelevantFiles(self,dir_path):
         dirs_in_dir = glob(dir_path + '*/')
@@ -234,9 +235,9 @@ class fileCrawler():
         removeList = []
         for i in range(len(dirs_in_dir)):
             if "_Documentation" in dirs_in_dir[i] or \
-                    "_UnitTest" in dirs_in_dir[i] or \
                     "__pycache__" in dirs_in_dir[i] or \
                     "_VizFiles" in dirs_in_dir[i] or \
+                    "Support" in dirs_in_dir[i] or \
                     "cmake" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
@@ -247,7 +248,14 @@ class fileCrawler():
         # Remove unnecessary source files (all files except .py, .c, .cpp, .h)
         removeList = []
         for i in range(len(files_in_dir)):
-            if "__init__" in files_in_dir[i]:
+            if "__init__" in files_in_dir[i] or \
+                    "conftest.py" in files_in_dir[i] or \
+                    "*.xml" in files_in_dir[i] or \
+                    "vizMessage.pb.cc" in files_in_dir[i] or \
+                    "vizMessage.pb.h" in files_in_dir[i] or \
+                    "vizMessage.proto" in files_in_dir[i] or \
+                    "EGM9615.h" in files_in_dir[i] or \
+                    "reportconf.py" in files_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
             del files_in_dir[i]
@@ -287,10 +295,10 @@ class fileCrawler():
             # Title the page
             lines += name + "\n" + "=" * len(name) + "\n\n"
 
-            # pull in folder documentation rst file if it exists
+            # pull in folder _doc.rst file if it exists
             try:
                 pathToFolder, folderName = dir_paths[0].split(name)
-                docFileName = os.path.join(os.path.join(pathToFolder, name), name + '.rst')
+                docFileName = os.path.join(os.path.join(pathToFolder, name), '_doc.rst')
                 if os.path.isfile(docFileName):
                     with open(docFileName, 'r') as docFile:
                         docContents = docFile.read()
@@ -298,14 +306,8 @@ class fileCrawler():
             except:
                 pass
 
-            # Add a linking point to all local directories
-            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories" + ":\n\n"
-            for dir_path in sorted(dir_paths):
-                dirName = os.path.basename(os.path.normpath(dir_path))
-                lines += "   " + dirName + "/index\n"
-
             # Add a linking point to all local files
-            lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+            lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files:\n\n"
             calledNames = []
             for file_path in sorted(file_paths):
                 fileName = os.path.basename(os.path.normpath(file_path))
@@ -314,8 +316,14 @@ class fileCrawler():
                     lines += "   " + fileName + "\n"
                     calledNames.append(fileName)
 
+            # Add a linking point to all local directories
+            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories:\n\n"
+            for dir_path in sorted(dir_paths):
+                dirName = os.path.basename(os.path.normpath(dir_path))
+                lines += "   " + dirName + "/index\n"
+
         if self.newFiles:
-            with open(index_path + "/index.rst", "w") as f:
+            with open(os.path.join(index_path, "index.rst"), "w") as f:
                 f.write(lines)
 
 
@@ -360,7 +368,7 @@ class fileCrawler():
                 lines += c_file_basename + "\n" + "=" * len(c_file_basename) + "\n\n"
 
                 # pull in the module documentation file if it exists
-                docFileName = src_path + '/' + c_file_basename + '.rst'
+                docFileName = os.path.join(src_path, c_file_basename + '.rst')
                 if os.path.isfile(docFileName):
                     with open(docFileName, 'r') as docFile:
                         docContents = docFile.read()
@@ -375,21 +383,19 @@ class fileCrawler():
                 # Populate the module's .rst
                 for module_file in module_files_temp:
                     if ".h" in module_file:
+                        if name == "_GeneralModuleFiles":
+                            name += str(self.counter)
+                            self.counter += 1
                         lines += """.. autodoxygenfile:: """ + module_file + """\n   :project: """ + name + """\n\n"""
                         lines += """.. inheritance-diagram:: """ + module_file + """\n\n"""
 
                 if self.newFiles:
-                    with open(path + "/" + c_file_basename + ".rst", "w") as f:
+                    with open(os.path.join(path,  c_file_basename + ".rst"), "w") as f:
                         f.write(lines)
 
             sources.update({name: (src_path, module_files)})
 
-
-
-
-
-
-        # Create the .rst file for the python mmodule
+        # Create the .rst file for the python module
         if not py_file_paths == []:
             # Add the module path to sys.path so sphinx can produce docs
             src_dir = path[path.find("/")+1:]

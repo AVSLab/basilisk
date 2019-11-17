@@ -44,6 +44,7 @@ from Basilisk.simulation import spacecraftDynamics
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def hingedRigidBodyAllTest(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = test_hingedRigidBodyGravity(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_hingedRigidBodyNoGravity(show_plots)

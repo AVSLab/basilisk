@@ -57,6 +57,7 @@ from Support import results_rwMotorTorque
 
 # update "module" in this function name to reflect the module name
 def test_rwMotorTorque(show_plots, numControlAxes, numWheels, RWAvailMsg):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg)
     assert testResults < 1, testMessage

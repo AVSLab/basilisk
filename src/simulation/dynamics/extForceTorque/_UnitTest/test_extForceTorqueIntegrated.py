@@ -47,6 +47,7 @@ def extForceBodyAndTorqueAllTest():
     assert testResults < 1, testMessage
 
 def test_extForceBodyAndTorque():
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.

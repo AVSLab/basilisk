@@ -83,6 +83,7 @@ from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, numAttNav, numTransNav):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = navAggregateTestFunction(show_plots, numAttNav, numTransNav)
     assert testResults < 1, testMessage

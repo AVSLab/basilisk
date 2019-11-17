@@ -38,6 +38,7 @@ from Basilisk.utilities import unitTestSupport
     , "testEnvironment"])
 # provide a unique test method name, starting with test_
 def test_unitDynamicsModes(testName):
+    """AVS Library Self Check"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitAVSLibrarySelfCheck(testName)
     assert testResults < 1, testMessage

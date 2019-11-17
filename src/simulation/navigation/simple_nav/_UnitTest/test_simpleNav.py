@@ -47,6 +47,7 @@ def listNorm(inputList):
 # @pytest.mark.xfail(True)
 
 def test_unitSimpleNav(show_plots):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitSimpleNav(show_plots)
     assert testResults < 1, testMessage

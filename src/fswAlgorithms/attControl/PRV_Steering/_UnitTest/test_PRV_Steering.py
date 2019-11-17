@@ -59,6 +59,7 @@ from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 # provide a unique test method name, starting with test_
 @pytest.mark.parametrize("simCase", [0, 1])
 def test_PRV_Steering(show_plots, simCase):     # update "subModule" in this function name to reflect the module name
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = subModuleTestFunction(show_plots, simCase)
     assert testResults < 1, testMessage

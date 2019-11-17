@@ -134,12 +134,12 @@ def run(show_plots, missionType, saveVizardFile):
         show_plots (bool): Determines if the script should display plots
         missionType (str):
 
-            ==========  ==================================
-            String      Definition
-            ==========  ==================================
-            'dscovr'    Simulates the NASA DSCOVR mission
-            'marsOrbit' Simulates an orbit about Mars
-            ==========  ==================================
+            ===========  ==================================
+            String       Definition
+            ===========  ==================================
+            'dscovr'     Simulates the NASA DSCOVR mission
+            'marsOrbit'  Simulates an orbit about Mars
+            ===========  ==================================
 
         saveVizardFile (bool): Flag to save off the Vizard data file
 

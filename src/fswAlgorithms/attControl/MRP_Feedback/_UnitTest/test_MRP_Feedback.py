@@ -56,6 +56,7 @@ from Basilisk.fswAlgorithms.fswMessages import fswMessages
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
 def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
 
     [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, useRwAvailability)

@@ -52,6 +52,7 @@ unitTestSupport.writeTeXSnippet("toleranceVelValue", str(orbitVelAccuracy), path
     (False, -1)
 ])
 def test_chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
+    """Module Unit Test"""
     [testResults, testMessage] = chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag)
     assert testResults < 1, testMessage
 

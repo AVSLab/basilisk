@@ -53,6 +53,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_attTrackingError(show_plots):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = subModuleTestFunction(show_plots)
     assert testResults < 1, testMessage

@@ -1,22 +1,22 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2019, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        Magnetometer - TAM
@@ -49,36 +49,33 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol):
     """
-    Validation Test Description
-    ---------------------------
-    This section describes the specific unit tests conducted on this module. \
-    The test contains 16 tests and is located at 'test_magnetometer.py'. \
+    **Validation Test Description**
+
+    This section describes the specific unit tests conducted on this module.
+    The test contains 16 tests and is located at ``test_magnetometer.py``.
     The success criteria is to match the outputs with the generated truth.
 
-    Test Parameters:
-    -----------
-    - useNoiseStd: [string]
-        Defines if the standard deviation of the magnetometer measurements is used for this parameterized unit test
-    - useBias: [string]
-        Defines if the bias on the magnetometer measurements is used for this parameterized unit test
-    - useMinOut: [string]
-        Defines if the minimum bound for the measurement saturation is used for this parameterized unit test
-    - useMaxOut: [string]
-        Defines if the maximum bound for the measurement saturation is used for this parameterized unit test
-    - useScaleFactor: [string]
-        Defines if the scaling on the measurement is used for this parameterized unit test
-    - errTol: [double]
-        Defines the error tolerance for this parameterized unit test
+    Args:
 
-    Description of Variables Being Tested
-    -------------------------------------
+        useNoiseStd (string): Defines if the standard deviation of the magnetometer measurements is used for this
+            parameterized unit test
+        useBias (string): Defines if the bias on the magnetometer measurements is used for this parameterized unit test
+        useMinOut (string): Defines if the minimum bound for the measurement saturation is used for this
+            parameterized unit test
+        useMaxOut (string): Defines if the maximum bound for the measurement saturation is used for this
+            parameterized unit test
+        useScaleFactor (string): Defines if the scaling on the measurement is used for this parameterized unit test
+        errTol (double): Defines the error tolerance for this parameterized unit test
+
+    **Description of Variables Being Tested**
+
     In this file, we are checking the values of the variable:
 
-    tamData[3]
+    ``tamData[3]``
 
     which is pulled from the log data to see if they match with the expected truth values.
 
-        """
+    """
 
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol)

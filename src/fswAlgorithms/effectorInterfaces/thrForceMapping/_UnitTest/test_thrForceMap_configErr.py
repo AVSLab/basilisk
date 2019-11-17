@@ -65,6 +65,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop,
                                                    numControlAxis, saturateThrusters, misconfigThruster)

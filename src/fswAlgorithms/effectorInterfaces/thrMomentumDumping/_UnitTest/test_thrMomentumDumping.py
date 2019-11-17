@@ -59,6 +59,7 @@ from Basilisk.utilities import fswSetupThrusters
 
 # update "module" in this function name to reflect the module name
 def test_thrMomentumDumping(show_plots, resetCheck, largeMinFireTime):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime)
     assert testResults < 1, testMessage

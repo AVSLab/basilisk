@@ -145,6 +145,7 @@ def testPlottingFixture(show_plots):
 
 # provide a unique test method name, starting with test_
 def test_unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos, useMsg):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos, useMsg)
     assert testResults < 1, testMessage

@@ -115,6 +115,7 @@ def asEigen(v):
 
 # provide a unique test method name, starting with test_
 def test_unitSimVSCMG(show_plots, useFlag, testCase):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitSimVSCMG(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
