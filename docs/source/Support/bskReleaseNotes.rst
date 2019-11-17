@@ -17,6 +17,10 @@ In Progress Features
 - create data tracking capabilities within BSK where devices can store or communicate data
 - create modules to determine if a satellite can see a ground point such as a communication station
 
+Upcoming Version 1.X.X
+----------------------
+- text here
+
 Version 1.3.2
 -------------
 - added the ability to include the unit test python files, along with their documentation, within the sphinx html documentation
