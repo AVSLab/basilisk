@@ -113,9 +113,11 @@ void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, do
     cv::Mat mSrc_16SC;
     //CV_16SC3 means signed 16 bit shorts three channels
     cv::Mat mGaussian_noise = cv::Mat(mSrc.size(), CV_16SC3);
+    /*!  Generates random noise in a normal distribution.*/
     randn(mGaussian_noise, cv::Scalar::all(Mean), cv::Scalar::all(StdDev));
     
     mSrc.convertTo(mSrc_16SC, CV_16SC3);
+    /*!  Adds the noise layer to the image layer with a weighted add to prevent overflowing the pixels.*/
     addWeighted(mSrc_16SC, 1.0, mGaussian_noise, 1.0, 0.0, mSrc_16SC);
     mSrc_16SC.convertTo(mDst,mSrc.type());
 }
@@ -129,13 +131,14 @@ void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, do
  * @return void
  */
 void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb){
-    // use this to have different stuck pixels every time
+    /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
     // RNG rng(initValue);
     
-    // use this to always have the same stuck pixels
+    /*! This line makes the hot and dead pixels the same frame to frame.*/
     cv::RNG rng;
     
+    /*!  Determines the amount of hot/dead pixels based on the input probabilities.*/
     int amount1 = mSrc.rows * mSrc.cols * pa;
     int amount2 = mSrc.rows * mSrc.cols * pb;
     
@@ -152,6 +155,7 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
     white.val[1] = 255;
     white.val[2] = 255;
     
+    /*!  Chooses random pixels to be stuck or dead in the amount calculated previously.*/
     for(int counter = 0; counter < amount1; counter++){
         mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows), rng.uniform(0, mSaltPepper.cols)) = black;
     }
@@ -164,50 +168,67 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
 }
 
 /*!
- * Adds a cosmic ray to an image.
+ * Adds a cosmic ray to an image. The ray is modelled as a single pixel wide white line.
  * @param cv::Mat source image
  * @param cv::Mat destination of modified image
  * @param float probability of getting a ray each frame
+ * @param double if adding multiple rays pass in the number of each to guarantee a random ray
+ * @param int max length of cosmic ray
  * @return void
  */
 void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
+    /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = CurrentSimNanos;
     cv::RNG rng(initValue + time(0) + randOffset);
     
     float prob = rng.uniform(0.0, 1.0);
     if (prob > probThreshhold) {
-    cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
-    mSrc.convertTo(mCosmic, mSrc.type());
-        
-    int x = rng.uniform(0, mCosmic.rows);
-    int y = rng.uniform(0, mCosmic.cols);
-    int deltax = rng.uniform(-maxSize/2, maxSize/2);
-    int deltay = rng.uniform(-maxSize/2, maxSize/2);
-        
-    cv::Point p1 = cv::Point(x, y);
-    cv::Point p2 = cv::Point(x + deltax, y + deltay);
+        cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
+        mSrc.convertTo(mCosmic, mSrc.type());
     
-    line(mCosmic, p1, p2, cv::Scalar(255, 255, 255), 1, cv::LINE_8);
+        /*!  Chooses a random point on the image. Then chooses a second random point within 50 pixels in either direction.*/
+        int x = rng.uniform(0, mCosmic.rows);
+        int y = rng.uniform(0, mCosmic.cols);
+        int deltax = rng.uniform(-maxSize/2, maxSize/2);
+        int deltay = rng.uniform(-maxSize/2, maxSize/2);
+        
+        cv::Point p1 = cv::Point(x, y);
+        cv::Point p2 = cv::Point(x + deltax, y + deltay);
+        line(mCosmic, p1, p2, cv::Scalar(255, 255, 255), 1, cv::LINE_8);
     
-    mCosmic.convertTo(mDst, mSrc.type());
+        mCosmic.convertTo(mDst, mSrc.type());
     }
 }
 
+/*!
+ * Adds a user specified number of cosmic rays to an image. Rays are modelled as a single pixel wide white line.
+ * The maximum length is hard-coded as 50 pixels.
+ * @param cv::Mat source image
+ * @param cv::Mat destination of modified image
+ * @param double number of cosmic rays to be added
+ * @return void
+ */
 void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
     for(int i = 0; i < std::round(num); i++){
         /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about 5 rays per image*/
+        /*! Currently length is limited to 50 pixels*/
         AddCosmicRay(mCosmic, mCosmic, 1/(std::pow(num,2)+0.02), i+1, 50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
 
 /*!
- * Adds a cosmic ray to an image.
+ * Applys all of the various pertubations to an image with user specified levels.
+ * Each parameter is a double scaling actor. A parameter of 0 will result in the respective perturbation not being applied.
  * @param cv::Mat source image
  * @param cv::Mat destination of modified image
- * @param float probability of getting a ray each frame
+ * @param double scaling factor for gaussian noise
+ * @param double scaling factor for dark current
+ * @param double scaling factor for hot and dead pixels
+ * @param double number of cosmic rays to add
+ * @param double size of blur to apply
  * @return void
  */
 void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam){

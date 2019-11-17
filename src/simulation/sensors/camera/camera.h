@@ -83,9 +83,9 @@ public:
     char skyBox[MAX_MESSAGE_SIZE]; //!< [-] name of skyboz in use */
     
     /*! Noise paramters */
-    double gaussian;        //!< Gaussian  */
+    double gaussian;        //!< Gaussian noise level */
     double darkCurrent;    //!< Dark current intensity  */
-    double saltPepper;    //!< Stuck and Dark pixels */
+    double saltPepper;    //!< Stuck and Dark pixels probability */
     double cosmicRays;        //!< Random cosmic rays (number)*/
     double blurParam;        //!< Blur over image in pixels */
 private:
