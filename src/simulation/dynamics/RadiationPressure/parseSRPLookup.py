@@ -23,6 +23,7 @@ import numpy as np
 
 
 class SRPLookupTableHandler:
+    """Class to handle an SRP Lookup table"""
     def __init__(self):
         self.sHatBLookup = np.zeros([1, 3])
         self.forceBLookup = np.zeros([1, 3])
