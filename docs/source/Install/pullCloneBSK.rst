@@ -6,7 +6,7 @@
 
 
 Pulling/Cloning a copy from the Repository
-===================
+==========================================
 
 The Basilisk frameworked is developed using the Git version control system.  The following directions explain how to cloe or pull a copy from the repository.  
 

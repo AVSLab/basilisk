@@ -96,7 +96,7 @@ command.  This table list the arguments, default values, as well as expected uni
 +---------------------+-------+----------+----------------------------------------+--------------------+
 
 
-The command ``addToSpacecraft()`` adds all the created thrusters to the `spacecraftPlus()` module.  The final step
+The command ``addToSpacecraft()`` adds all the created thrusters to the :ref:`spacecraftPlus` module.  The final step
 is to add the :ref:`thrusterDynamicEffector` to the list of simulation tasks.
 
 
