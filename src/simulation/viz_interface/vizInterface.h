@@ -92,7 +92,7 @@ typedef struct {
     std::string modelPath;                  //!< Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
     std::vector<std::string> simBodiesToModify; //!< Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" to apply custom model to all spacecraft in simulation
     double offset[3];                       //!< [m] offset to use to draw the model
-    double rotation[3];                     //!< [rad] 1-2-3 Euler rotation about x, y, z axes in spacecraft CS
+    double rotation[3];                     //!< [rad] 3-2-1 Euler angles to rotate CAD about z, y, x axes
     double scale[3];                        //!< [] desired model scale in x, y, z in spacecraft CS
     std::string customTexturePath;          //!< (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
     std::string normalMapPath;              //!< (Optional) Path to the normal map for the customTexture
