@@ -11,18 +11,20 @@ User Guide
 Startup Panel
 -------------
 
-Vizard Startup When starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above. There is an option on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key. Note that the Vizard screen size can be dynamically changed after startup as well.
+hen starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above. There is an option on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key. Note that the Vizard screen size can be dynamically changed after startup as well.
 
 .. image:: ../_images/static/vizard-img0.png
    :align: center
    :scale: 50 %
 	
-Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the ``Select`` button and navigate to the binary BSK recording file. After a file has been selected press the ``Start Visualization`` button.
+Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
 
 .. image:: ../_images/static/vizard-img2.png
    :align: center
-   :scale: 70 %
-	
+   :scale: 50 %
+
+To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream`) the socket address, such as ``tcp://localhost:5556``, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
+
 View Modes 
 -----------------------
 To engage with the visualization, the
@@ -122,7 +124,7 @@ Add Keep Out/In Cone
 This feature allows for a cone to be added relative to the spacecraft
 which indicates if a cone about a particular body-fixed axis intersects
 with a celestial object. For example, this can be used to add a cone to
-validate that the sensor axis doesn’t get too close to the sun (keep out
+validate that the sensor axis doesn't get too close to the sun (keep out
 cone), or if the solar panel normal axis stays within some cone to the
 sun (keep in cone). If the cone in/out condition is not triggered, then
 the cone is opaque. If the in/out condition is triggered, then the cone
@@ -160,10 +162,9 @@ screen grab button is present.
 	
 ``Skybox`` Menu Item
 --------------------------
-| The default star field is a realistic NASA star field. The alternate
-  option is an ESO Milky Way star field that is more visually pleasing,
-  but less realistic.
-| 
+The default star field is a realistic NASA star field. The alternate
+option is an ESO Milky Way star field that is more visually pleasing,
+but less realistic.
 
 .. image:: ../_images/static/vizard-img3.png
 	:align: center

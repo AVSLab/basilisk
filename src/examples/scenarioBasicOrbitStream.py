@@ -50,7 +50,7 @@ will live stream the data to Vizard.
 
 
 To avoid the simulation running too quickly, this tutorial example script includes the ``clock_sync`` module that
-enables a 50x realtime mode using:
+enables a 50x realtime mode using::
 
     clockSync = clock_synch.ClockSynch()
     clockSync.accelFactor = 50.0
@@ -320,14 +320,6 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     plt.close("all")
 
     return posData, figureList
-
-# Setup | orbitCase           | useSphericalHarmonics | planetCase
-# ----- | ------------------- | --------------------- | -----------
-# 1     | LEO                 | False                 | Earth
-# 2     | GTO                 | False                 | Earth
-# 3     | GEO                 | False                 | Earth
-# 4     | LEO                 | True                  | Earth
-# 5     | LEO                 | False                 | Mars
 
 #
 # This statement below ensures that the unit test scrip can be run as a
