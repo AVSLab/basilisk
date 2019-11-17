@@ -306,14 +306,8 @@ class fileCrawler():
             except:
                 pass
 
-            # Add a linking point to all local directories
-            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories" + ":\n\n"
-            for dir_path in sorted(dir_paths):
-                dirName = os.path.basename(os.path.normpath(dir_path))
-                lines += "   " + dirName + "/index\n"
-
             # Add a linking point to all local files
-            lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+            lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files:\n\n"
             calledNames = []
             for file_path in sorted(file_paths):
                 fileName = os.path.basename(os.path.normpath(file_path))
@@ -321,6 +315,12 @@ class fileCrawler():
                 if not fileName in calledNames:
                     lines += "   " + fileName + "\n"
                     calledNames.append(fileName)
+
+            # Add a linking point to all local directories
+            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories:\n\n"
+            for dir_path in sorted(dir_paths):
+                dirName = os.path.basename(os.path.normpath(dir_path))
+                lines += "   " + dirName + "/index\n"
 
         if self.newFiles:
             with open(os.path.join(index_path, "index.rst"), "w") as f:
