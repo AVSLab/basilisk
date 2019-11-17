@@ -20,21 +20,16 @@ The following Frequency Answer Questions are general and not operating system sp
 
     After installing this utility you now run the multi-threaded version of ``pytest`` for 8 threads using::
 
-        pytest -n 8
+        python3 -m pytest -n 8
 
+#. How can I used ``pytest`` to generate a Basilisk validation HTML report?
 
-#. How can I build my own version of the HTML Basilisk documentation?
+    You will need to install ``pytest-html`` package, see :ref:`installOptionalPackages`.  Then you
+    can do this with::
 
-    Documentation is critical. The most up to date version will always be the one build by your copy of Basilisk. The web site documentation only shows that of the latest tagged release. To build you own version, you need to use the Doxygen application (http://www.doxygen.org/download.html) or command line tool version. Run the application with the file::
+        python3 -m pytest --report
 
-        basilisk/docs/DoxyData
-
-    For the SVG graphics to properly be created, you must install ``graphviz`` package on your system. On macOS you can use::
-
-        brew install graphviz
-
-    to get the ``graphviz`` tools installed.
-
+    This generates an HTML report in a local ``tests/report`` folder.
 
 #. How do I perform a clean build of Basilisk?
 
