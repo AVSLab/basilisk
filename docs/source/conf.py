@@ -323,7 +323,7 @@ class fileCrawler():
                     calledNames.append(fileName)
 
         if self.newFiles:
-            with open(index_path + "/index.rst", "w") as f:
+            with open(os.path.join(index_path, "index.rst"), "w") as f:
                 f.write(lines)
 
 
@@ -368,7 +368,7 @@ class fileCrawler():
                 lines += c_file_basename + "\n" + "=" * len(c_file_basename) + "\n\n"
 
                 # pull in the module documentation file if it exists
-                docFileName = src_path + '/' + c_file_basename + '.rst'
+                docFileName = os.path.join(src_path, c_file_basename + '.rst')
                 if os.path.isfile(docFileName):
                     with open(docFileName, 'r') as docFile:
                         docContents = docFile.read()
@@ -387,7 +387,7 @@ class fileCrawler():
                         lines += """.. inheritance-diagram:: """ + module_file + """\n\n"""
 
                 if self.newFiles:
-                    with open(path + "/" + c_file_basename + ".rst", "w") as f:
+                    with open(os.path.join(path,  c_file_basename + ".rst"), "w") as f:
                         f.write(lines)
 
             sources.update({name: (src_path, module_files)})
