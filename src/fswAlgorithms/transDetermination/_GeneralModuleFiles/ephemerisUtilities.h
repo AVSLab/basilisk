@@ -29,7 +29,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    /*! Calculate Chebychev Polynominal */
     double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
                                double evalValue);
 

@@ -233,7 +233,6 @@ class fileCrawler():
         # Remove any directories that shouldn't be added directly to the website
         removeList = []
         for i in range(len(dirs_in_dir)):
-            # "_UnitTest" in dirs_in_dir[i] or \
             if "_Documentation" in dirs_in_dir[i] or \
                     "__pycache__" in dirs_in_dir[i] or \
                     "_VizFiles" in dirs_in_dir[i] or \
@@ -392,17 +391,12 @@ class fileCrawler():
 
             sources.update({name: (src_path, module_files)})
 
-
-
-
-
-
-        # Create the .rst file for the python mmodule
+        # Create the .rst file for the python module
         if not py_file_paths == []:
             # Add the module path to sys.path so sphinx can produce docs
             src_dir = path[path.find("/")+1:]
             src_dir = src_dir[src_dir.find("/")+1:]
-            sys.path.append(os.path.abspath(officialSrc+"/"+src_dir))
+            sys.path.append(os.path.abspath(os.path.join(officialSrc, src_dir)))
 
         for py_file in sorted(py_file_paths):
             fileName = os.path.basename(py_file)
@@ -412,7 +406,7 @@ class fileCrawler():
             lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
             lines += """.. automodule:: """ + fileName + """\n   :members:\n   :show-inheritance:\n\n"""
             if self.newFiles:
-                with open(path+"/"+fileName+".rst", "w") as f:
+                with open(os.path.join(path, fileName+".rst"), "w") as f:
                     f.write(lines)
 
         return sources
