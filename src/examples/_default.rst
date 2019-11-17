@@ -20,7 +20,6 @@ The python code contains additional comments to explain what is being setup and 
 
 Orbital Simulations
 -------------------
-This section contains scripts that illustrate how to setup a simple spacecraft orbital simulations.
 
 .. toctree::
    :maxdepth: 1
@@ -30,11 +29,6 @@ This section contains scripts that illustrate how to setup a simple spacecraft o
    Multiple Gravitational Bodies <scenarioOrbitMultiBody>
    Defining Motion Relative to Planet <scenarioCentralBody>
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
-
-.. toctree::
-   :maxdepth: 1
-
-    OrbitalSimulations/
 
 
 Attitude Simulations

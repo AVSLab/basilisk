@@ -46,7 +46,7 @@ The simulation layout is shown in the following illustrations.
 
 
 Configuring the scenario file
------
+-----------------------------
 The simulation layout is very similar to the one used for the :ref:`scenario_BasicOrbit` file.
 Two simulation processes are created: one which contains dynamics modules, and one that contains
 the Flight Software (FSW) modules. First of all, it can be observed that the Dynamics- and FSW files used are
