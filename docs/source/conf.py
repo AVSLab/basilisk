@@ -251,6 +251,9 @@ class fileCrawler():
             if "__init__" in files_in_dir[i] or \
                     "conftest.py" in files_in_dir[i] or \
                     "*.xml" in files_in_dir[i] or \
+                    "vizMessage.pb.cc" in files_in_dir[i] or \
+                    "vizMessage.pb.h" in files_in_dir[i] or \
+                    "vizMessage.proto" in files_in_dir[i] or \
                     "EGM9615.h" in files_in_dir[i] or \
                     "reportconf.py" in files_in_dir[i]:
                 removeList.extend([i])
