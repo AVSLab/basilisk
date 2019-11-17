@@ -1,22 +1,22 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        fswModuleTemplateParametrized
@@ -53,61 +53,64 @@ from Basilisk.utilities import macros
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
+# of the multiple test runs for this test.  Note that the order in that you add the parametrize method
+# matters for the documentation in that it impacts the order in which the test arguments are shown.
+# The first parametrize arguments are shown last in the pytest argument list
+@pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize("param1, param2", [
      (1, 1)
     ,(1, 3)
     ,(2, 2)
 ])
-@pytest.mark.parametrize("accuracy", [1e-12])
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, param1, param2, accuracy):
     """
-Validation Test Description
----------------------------
-Compose a general description of what is being tested in this unit test script.  Add enough information so\
-the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only \
-one version of this script will run.  Note that the ``pytest`` HTML report will list each parameterized test case \
-individually.  This way it is clear what set of parameters passed.  But, this also means that this doc-string \
-content will be copied into each report so each test description is individually complete.  If there is a discussion \
-you want to include that is specific to the a parameterized test case, then include this at the end of the file \
-with a conditional print() statement that only executes for that particular parameterized test.
+    **Validation Test Description**
 
-Test Parameters
----------------
-As this is a parameterized unit test, note that the test case parameters values are shown automatically in the \
-pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what \
-each parameter controls.  This is a convenient location to include the accuracy variable used in the validation test.
+    Compose a general description of what is being tested in this unit test script.  Add enough information so the
+    reader understands the purpose and limitations of the test.  As this test script is not parameterized, only one
+    version of this script will run.  Note that the ``pytest`` HTML report will list each parameterized test case
+    individually.  This way it is clear what set of parameters passed.  But, this also means that this doc-string
+    content will be copied into each report so each test description is individually complete.  If there is a
+    discussion you want to include that is specific to the a parameterized test case, then include this at the
+    end of the file with a conditional print() statement that only executes for that particular parameterized test.
 
-- ``accuracy``: [float] absolute accuracy value used in the validation tests
-- ``param1``: [int] Dummy test parameter for this parameterized unit test
-- ``param2``: [int] Dummy test parameter for this parameterized unit test
+    **Test Parameters**
 
-Description of Variables Being Tested
--------------------------------------
-Here discuss what parameters are being checked.  For example, in this file we are checking the values of the \
-variables
+    As this is a parameterized unit test, note that the test case parameters values are shown automatically in the
+    pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what
+    each parameter controls.  This is a convenient location to include the accuracy variable used in the
+    validation test.
 
-- ``dummy``
-- ``outputVector[3]``
+    Args:
+        param1 (int): Dummy test parameter for this parameterized unit test
+        param2 (int): Dummy test parameter for this parameterized unit test
+        accuracy (float): absolute accuracy value used in the validation tests
 
-Figure Discussion
------------------
-If the test script produces figures you might include a brief discussion on what the simulation results show. \
-Discuss why these results validate the operation of the BSK module.
+    **Description of Variables Being Tested**
 
-General Documentation Comments
-------------------------------
-If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below. \
-Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content \
-should be understood by just looking at the figure.
+    Here discuss what parameters are being checked.  For example, in this file we are checking the values of the
+    variables
 
-At the end of the script where a print statement says that the script passes.
+    - ``dummy``
+    - ``outputVector[3]``
 
-Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting \
-contained within this HTML ``pytest`` report.
+    **Figure Discussion**
 
+    If the test script produces figures you might include a brief discussion on what the simulation results show.
+    Discuss why these results validate the operation of the BSK module.
+
+    **General Documentation Comments**
+
+    If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below.
+    Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content
+    should be understood by just looking at the figure.
+
+    At the end of the script where a print statement says that the script passes.
+
+    Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting
+    contained within this HTML ``pytest`` report.
     """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = fswModuleTestFunction(show_plots, param1, param2, accuracy)
@@ -224,7 +227,6 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
-    accuracy = 1e-12
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
@@ -259,7 +261,6 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag)
-        print("This test uses an accuracy value of " + str(accuracy))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

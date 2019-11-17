@@ -1,22 +1,22 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        simpleSolarPanel
@@ -48,21 +48,26 @@ from Basilisk.utilities import astroFunctions
 @pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
 def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
     """
+    **Validation Test Description**
+
     Unit test for simpleSolarPanel. The unit test specifically covers:
 
-        1. Shadowing: Does the panel correctly reflect shadowing from eclipse or attitude?
-            This is tested by setting an eclipse value to either 0 or 1 and verifying that the panel produces power or not.
+    1. Shadowing: Does the panel correctly reflect shadowing from eclipse or attitude?
 
-        2. Attitude dependence: Does the spacecraft power output correctly evaluate given the spacecraft attitude?
-            This is tested at three values of the attitude corresponding to sun-facing, a 60 degree rotation away from the sun (half power),
-            and a 90 degree rotation away from the sun (expected power).
+        This is tested by setting an eclipse value to either 0 or 1 and verifying that the panel produces power or not.
 
-        3. Orbit dependence: Does distance from the sun impact power generation?
-            This is evaluated by testing the solar panel at both Earth (1AU) and Mars (1.52 AU) to see whether power production
-            drops.
+    2. Attitude dependence: Does the spacecraft power output correctly evaluate given the spacecraft attitude?
 
-    Nominal power generation when face-on towards the Sun at earth is set to be 1372.5398 W, which assumes a 1m^2 solar panel
-    that operates at perfect efficiency.
+        This is tested at three values of the attitude corresponding to sun-facing, a 60 degree rotation away
+        from the sun (half power), and a 90 degree rotation away from the sun (expected power).
+
+    3. Orbit dependence: Does distance from the sun impact power generation?
+
+        This is evaluated by testing the solar panel at both Earth (1AU) and Mars (1.52 AU) to see whether
+        power production drops.
+
+    Nominal power generation when face-on towards the Sun at earth is set to be 1372.5398 W, which assumes
+    a 1m^2 solar panel that operates at perfect efficiency.
     """
 
     panelResults, panelMessage = run(show_plots, orbitDistance, eclipseValue, scAttitude)
