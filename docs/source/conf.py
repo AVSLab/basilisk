@@ -221,6 +221,7 @@ class fileCrawler():
     def __init__(self, newFiles=False):
         self.newFiles = newFiles
         self.breathe_projects_source = {}
+        self.counter = 0
 
     def grabRelevantFiles(self,dir_path):
         dirs_in_dir = glob(dir_path + '*/')
@@ -382,6 +383,9 @@ class fileCrawler():
                 # Populate the module's .rst
                 for module_file in module_files_temp:
                     if ".h" in module_file:
+                        if name == "_GeneralModuleFiles":
+                            name += str(self.counter)
+                            self.counter += 1
                         lines += """.. autodoxygenfile:: """ + module_file + """\n   :project: """ + name + """\n\n"""
                         lines += """.. inheritance-diagram:: """ + module_file + """\n\n"""
 
