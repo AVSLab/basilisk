@@ -15,13 +15,13 @@ hen starting up the Vizard software the user is presented with a resolution and 
 
 .. image:: ../_images/static/vizard-img0.png
    :align: center
-   :width: 50 %
+   :scale: 50 %
 	
 Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
 
 .. image:: ../_images/static/vizard-img2.png
    :align: center
-   :width: 90 %
+   :scale: 50 %
 
 To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream`) the socket address, such as ``tcp://localhost:5556``, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
 
@@ -74,7 +74,6 @@ motor torques are shown.
 
 .. image:: ../_images/static/vizard-ImgRW.png
    :align: center
-   :width: 90 %
 	
 Thruster States
 ----------------
@@ -92,7 +91,6 @@ Thruster States
 
 .. image:: ../_images/static/vizard-ImgTHR.png
    :align: center
-   :width: 90 %
 
 Vizard Configuration Options
 ----------------------------
@@ -106,7 +104,6 @@ Vizard Configuration Options
 
 .. image:: ../_images/static/vizard-imgAxes.png
    :align: center
-   :width: 90 %
 
 
 Add Pointing Vector
@@ -121,7 +118,6 @@ heading, etc. However, each line color can be customized as needed.
 
 .. image:: ../_images/static/vizard-ImgPointing.png
    :align: center
-   :width: 90 %
 
 Add Keep Out/In Cone
 --------------------------
@@ -136,7 +132,6 @@ becomes solid.
 
 .. image:: ../_images/static/vizard-ImgCones.png
    :align: center
-   :width: 90 %
 	
 ``Camera`` Menu Item
 ---------------------------------------
@@ -154,7 +149,6 @@ orbit axis, along track or orbit normal.
 
 .. image:: ../_images/static/vizard-imgCamera1.png
    :align: center
-   :width: 90 %
 	
 Inertial Camera
 ---------------
@@ -165,15 +159,44 @@ screen grab button is present.
 
 .. image:: ../_images/static/vizard-imgCamera2.png
    :align: center
-   :width: 90 %
-	
-``Skybox`` Menu Item
---------------------------
-The default star field is a realistic NASA star field. The alternate
-option is an ESO Milky Way star field that is more visually pleasing,
-but less realistic.
 
-.. image:: ../_images/static/vizard-img3.png
+
+Import a Custom Shape Model
+---------------------------
+
+.. image:: ../_images/static/vizard-ImgCAD-1.jpg
    :align: center
-   :width: 90 %
-    
+   :scale: 75 %
+
+Vizard starts up showing a default spacecraft shape.  To select a different shape, a custom CAD model can be imported using the OBJ file format.  Go to the ``File`` menu and select ``Import OBJ Model``:
+
+
+.. image:: ../_images/static/vizard-ImgCAD-2.jpg
+   :align: center
+   :scale: 75 %
+
+Next, select the OBJ file that is to be imported into Vizard.
+
+
+.. image:: ../_images/static/vizard-ImgCAD-3.jpg
+   :align: center
+   :scale: 75 %
+
+The next panel allows the CAD model import to be customized.  The user can modify the origin offset,
+the CAD orientation and the CAD scaling.  The latter is useful to convert the CAD model into meters
+used by Vizard.  The model center and model extrema information is provided as a convenient.  A
+bounding box can also be draw as a convenient to make sure this is correctly configured.  Note that if a model is to be applied for each simulation instance, then see how ``createCustomModel()`` can be configured to script this OBJ import process as illustrated in :ref:`vizardSettings`.
+
+
+.. image:: ../_images/static/vizard-ImgCAD-4.jpg
+   :align: center
+   :scale: 75 %
+
+At this point a panel appears that allows you select the object for which you want to apply a new
+shape, and what shape you want to apply.  When ready, press `Apply Models to Selected Objects` to
+apply the custom space object shape.  Note that instead of an OBJ file a custom shape can also be
+selected such as a sphere, cylinder or cube.
+
+.. image:: ../_images/static/vizard-ImgCAD-5.jpg
+   :align: center
+   :scale: 75 %

@@ -457,3 +457,64 @@ The following tale illustrates the arguments for the
     |                   |         |         |              | background  |
     |                   |         |         |              | image file. |
     +-------------------+---------+---------+--------------+-------------+
+
+
+Defining the Custom Spacecraft Shape model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can specify a custom OBJ model to be used with Vizard spacecraft representation.
+An sample is shown in the followig screen capture.
+
+.. image:: /_images/static/vizard-ImgCustomCAD.png
+   :align: center
+   :scale: 80 %
+
+This functionality can be controlled by using the ‘createCustomModel’ helper method.
+
+.. code-block::
+
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+	gravBodies=gravFactory, saveFile=fileName)
+	vizSupport.createCustomModel(viz,
+	                            modelPath="/Users/hp/Downloads/Topex-Posidon/Topex-Posidon-composite.obj",
+	                            scale=[2, 2, 10])
+
+
+The following table illustrates the arguments for the ``createCustomModel`` method.
+
+.. table:: Custom Space Object OBJ Import Parameter Options
+    :widths: 15 10 10 15 50
+
+    +-------------------+---------+---------+--------------+------------------------------+
+    | Variable          | Type    | Units   | Required     | Description                  |
+    +===================+=========+=========+==============+==============================+
+    | modelPath         | string  |         | Yes          | Path to model obj -OR-       |
+    |                   |         |         |              | "CUBE", "CYLINDER", or       |
+    |                   |         |         |              | "SPHERE" to use a primitive  |
+    |                   |         |         |              | shape                        |
+    +-------------------+---------+---------+--------------+------------------------------+
+    | simBodiesToModify | string  |         | No, default  | Which bodies in scene to     |
+    |                   |         |         | is `bsk-Sat` | replace with this model, use |
+    |                   |         |         |              | "ALL_SPACECRAFT" to apply    |
+    |                   |         |         |              | custom model to all          |
+    |                   |         |         |              | spacecraft in simulation     |
+    +-------------------+---------+---------+--------------+------------------------------+
+    | offset            | float(3)|  m      | No, default  | offset to use to draw the    |
+    |                   |         |         | is (0,0,0)   | model                        |
+    +-------------------+---------+---------+--------------+------------------------------+
+    | rotation          | float(3)|  rad    | No, default  | 3-2-1 Euler angles to rotate |
+    |                   |         |         | is (0,0,0)   | CAD about z, y, x axes       |
+    +-------------------+---------+---------+--------------+------------------------------+
+    | scale             | float(3)|         | No, default  | desired model scale in       |
+    |                   |         |         | is (0,0,0)   | x, y, z in spacecraft CS     |
+    +-------------------+---------+---------+--------------+------------------------------+
+    | customTexturePath | string  |         | No           | Path to texture to apply to  |
+    |                   |         |         |              | model (note that a custom    |
+    |                   |         |         |              | model's .mtl will be         |
+    |                   |         |         |              | automatically imported with  |
+    |                   |         |         |              | its textures during custom   |
+    |                   |         |         |              | model import)                |
+    +-------------------+---------+---------+--------------+------------------------------+
+    | normalMapPath     | string  |         | No           | Path to the normal map for   |
+    |                   |         |         |              | the customTexture            |
+    +-------------------+---------+---------+--------------+------------------------------+
