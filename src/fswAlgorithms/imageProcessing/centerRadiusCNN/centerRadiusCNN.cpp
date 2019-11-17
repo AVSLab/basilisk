@@ -53,7 +53,7 @@ void CenterRadiusCNN::SelfInit()
     std::ifstream test(this->pathToNetwork);
     if (!test)
     {
-        std::cout << "The CNN file doesn't exist" << std::endl;
+        std::cout << "The CNN file was not found" << std::endl;
     }
     this->positionNet2 = cv::dnn::readNetFromONNX(this->pathToNetwork);
     this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
@@ -71,7 +71,9 @@ void CenterRadiusCNN::SelfInit()
 void CenterRadiusCNN::CrossInit()
 {
     /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
+    if(this->imageInMsgName != ""){
+        this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
+    }
 }
 
 /*! This is the destructor */
@@ -143,6 +145,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     /*!- If no circles are found do not validate the image as a measurement */
     if (x_pred != imageCV.rows/2 && y_pred != imageCV.cols/2 && rad_pred != imageCV.cols/4){
         circleBuffer.valid = 1;
+        circleBuffer.cameraID = 1;
         circleBuffer.planetIds[0] = 2;
         circleBuffer.circlesCenters[0] = (double)x_pred;
         circleBuffer.circlesCenters[1] = (double)y_pred;

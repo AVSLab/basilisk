@@ -105,7 +105,7 @@ def cnnTest(show_plots, image, saveImage):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.imageInMsgName = "sample_image"
+    # moduleConfig.imageInMsgName = "sample_image"
     moduleConfig.opnavCirclesOutMsgName = "circles"
 
     moduleConfig.pathToNetwork = path + "/../position_net2_trained_11-14.onnx"
@@ -117,18 +117,9 @@ def cnnTest(show_plots, image, saveImage):
         circles = [(254.81655883789062, 263.2418518066406, 120.9570541381836)]
     if image == "mars2.jpg":
         circles = [(269.21127319, 231.63162231, 144.85394287)]
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    inputMessageData = centerRadiusCNN.CameraImageMsg()
-    inputMessageData.timeTag = int(1E9)
-    inputMessageData.cameraID = 1
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.imageInMsgName,
-                               inputMessageData)
-
+ 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.imageInMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.opnavCirclesOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
