@@ -247,7 +247,9 @@ class fileCrawler():
         # Remove unnecessary source files (all files except .py, .c, .cpp, .h)
         removeList = []
         for i in range(len(files_in_dir)):
-            if "__init__" in files_in_dir[i]:
+            if "__init__" in files_in_dir[i] or \
+                    "conftest.py" in files_in_dir[i] or \
+                    "reportconf.py" in files_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
             del files_in_dir[i]
