@@ -68,9 +68,9 @@ Validation Test Description
 ---------------------------
 Compose a general description of what is being tested in this unit test script.  Add enough information so\
 the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only \
-one version of this script will run.  Note that the pytest HTML report will list each parameterized test case \
+one version of this script will run.  Note that the ``pytest`` HTML report will list each parameterized test case \
 individually.  This way it is clear what set of parameters passed.  But, this also means that this doc-string \
-content will be copied into each report so each test description is individually complete.  If there is a discusssion \
+content will be copied into each report so each test description is individually complete.  If there is a discussion \
 you want to include that is specific to the a parameterized test case, then include this at the end of the file \
 with a conditional print() statement that only executes for that particular parameterized test.
 
@@ -78,21 +78,19 @@ Test Parameters
 ---------------
 As this is a parameterized unit test, note that the test case parameters values are shown automatically in the \
 pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what \
-each parameter controls.  This is a conveninet location to include the accuracy variable used in the validation test.
-- accuracy: [float]
-    absolute accuracy value used in the validation tests
-- param1: [int]
-    Dummy test parameter for this parameterized unit test
-- param2: [int]
-    Dummy test parameter for this parameterized unit test
+each parameter controls.  This is a convenient location to include the accuracy variable used in the validation test.
+
+- ``accuracy``: [float] absolute accuracy value used in the validation tests
+- ``param1``: [int] Dummy test parameter for this parameterized unit test
+- ``param2``: [int] Dummy test parameter for this parameterized unit test
 
 Description of Variables Being Tested
 -------------------------------------
 Here discuss what parameters are being checked.  For example, in this file we are checking the values of the \
 variables
 
-    dummy
-    outputVector[3]
+- ``dummy``
+- ``outputVector[3]``
 
 Figure Discussion
 -----------------
@@ -101,14 +99,14 @@ Discuss why these results validate the operation of the BSK module.
 
 General Documentation Comments
 ------------------------------
-If the script generates figures, these figures will be automatically pulled from matplotlib and included below. \
+If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below. \
 Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content \
 should be understood by just looking at the figure.
 
 At the end of the script where a print statement says that the script passes.
 
 Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting \
-contained within this HTML pytest report.
+contained within this HTML ``pytest`` report.
 
     """
     # each test method requires a single assert method to be called

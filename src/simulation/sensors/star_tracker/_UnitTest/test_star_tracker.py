@@ -68,6 +68,7 @@ def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [[1e6],[1e6],[1e6]]):
 
 # provide a unique test method name, starting with test_
 def test_unitSimStarTracker(show_plots, useFlag, testCase):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitSimStarTracker(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage

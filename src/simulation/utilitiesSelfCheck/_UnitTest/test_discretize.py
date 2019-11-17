@@ -35,6 +35,7 @@ from Basilisk.utilities import unitTestSupport
     , ["testDiscretize"])
 # provide a unique test method name, starting with test_
 def test_discretize(testName):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDiscretizeCheck(testName)
     assert testResults < 1, testMessage

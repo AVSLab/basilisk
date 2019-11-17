@@ -56,6 +56,7 @@ def setupFilterData(filterObject):
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def test_all_functions_oekf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = sunline_individual_test()
     assert testResults < 1, testMessage
     [testResults, testMessage] = StatePropStatic()

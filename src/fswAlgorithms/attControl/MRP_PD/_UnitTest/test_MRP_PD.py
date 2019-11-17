@@ -43,6 +43,7 @@ from Basilisk.utilities import macros
 @pytest.mark.parametrize("setExtTorque", [False, True])
 
 def test_mrp_PD_tracking(show_plots, setExtTorque):
+    """Module Unit Test"""
     [testResults, testMessage] = mrp_PD_tracking(show_plots, setExtTorque)
     assert testResults < 1, testMessage
 

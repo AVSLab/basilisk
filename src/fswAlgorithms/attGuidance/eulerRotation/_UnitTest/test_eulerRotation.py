@@ -39,6 +39,7 @@ from Basilisk.fswAlgorithms.fswMessages import fswMessages
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_eulerRotation(show_plots):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots)
     assert testResults < 1, testMessage

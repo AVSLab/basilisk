@@ -52,6 +52,7 @@ from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 def test_rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit,
                                    useRwAvailability):
+    """Module Unit Test"""
 
     [testResults, testMessage] = rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, omega_BastR_B,
                                                            integralLimit, useRwAvailability)

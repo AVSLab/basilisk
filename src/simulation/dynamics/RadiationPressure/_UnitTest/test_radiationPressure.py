@@ -60,6 +60,7 @@ from Basilisk.utilities import orbitalMotion as om
     , ("cannonballLookup", False)
 ])
 def test_unitRadiationPressure(show_plots, modelType, eclipseOn):
+    """Module Unit Test"""
     [testResults, testMessage] = unitRadiationPressure(show_plots, modelType, eclipseOn)
     assert testResults < 1, testMessage
 

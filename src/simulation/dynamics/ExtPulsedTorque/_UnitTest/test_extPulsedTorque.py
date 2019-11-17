@@ -63,6 +63,7 @@ from Basilisk.simulation import ExtPulsedTorque
 
 # provide a unique test method name, starting with test_
 def test_module(show_plots, offCount):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(
             show_plots, offCount)

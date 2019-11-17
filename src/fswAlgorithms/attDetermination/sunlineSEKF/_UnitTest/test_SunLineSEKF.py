@@ -55,6 +55,7 @@ def setupFilterData(filterObject):
 
 
 def test_all_functions_sekf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = sunline_individual_test()
     assert testResults < 1, testMessage
     [testResults, testMessage] = StatePropStatic()

@@ -59,6 +59,7 @@ from Basilisk.utilities import fswSetupRW
 
 # update "module" in this function name to reflect the module name
 def test_thrMomentumManagement(show_plots, hsMinCheck):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrMomentumManagementTestFunction(show_plots, hsMinCheck)
     assert testResults < 1, testMessage

@@ -10,6 +10,7 @@ from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms.vehicleConfigData import vehicleConfigData
 
 def test_vehicleConfigData():
+    """Module Unit Test"""
     [testResults, testMessage] = vehicleConfigDataTestFunction()
 
 def vehicleConfigDataTestFunction():

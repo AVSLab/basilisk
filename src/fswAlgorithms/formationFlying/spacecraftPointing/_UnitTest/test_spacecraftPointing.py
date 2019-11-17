@@ -59,6 +59,7 @@ from Basilisk.utilities import astroFunctions as af
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_spacecraftPointing(show_plots, case):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = spacecraftPointingTestFunction(show_plots, case)
     assert testResults < 1, testMessage

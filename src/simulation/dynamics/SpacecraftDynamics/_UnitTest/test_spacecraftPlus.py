@@ -52,6 +52,7 @@ def spacecraftPlusAllTest(show_plots):
     assert testResults < 1, testMessage
 
 def test_SCTranslation(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -173,6 +174,7 @@ def test_SCTranslation(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCTransAndRotation(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -355,6 +357,7 @@ def test_SCTransAndRotation(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCRotation(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -579,6 +582,7 @@ def test_SCRotation(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCTransBOE(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -726,6 +730,7 @@ def test_SCTransBOE(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCPointBVsPointC(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.

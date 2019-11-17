@@ -118,6 +118,7 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 
 # provide a unique test method name, starting with test_
 def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration ,  long_angle, lat_angle,  location, rate, cutoff, rampDown):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle , location, rate, cutoff, rampDown)
     assert testResults < 1, testMessage

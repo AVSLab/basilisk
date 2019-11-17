@@ -44,6 +44,7 @@ from Basilisk.utilities.simIncludeGravBody import gravBodyFactory
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_radiationPressureIntegratedTest(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = radiationPressureIntegratedTest(show_plots)
     assert testResults < 1, testMessage
 

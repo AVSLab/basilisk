@@ -25,6 +25,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 def test_cssComm(numSensors, sensorData):
+    """Module Unit Test"""
     [testResults, testMessage] = cssCommTestFunction(numSensors, sensorData)
     assert testResults < 1, testMessage
 

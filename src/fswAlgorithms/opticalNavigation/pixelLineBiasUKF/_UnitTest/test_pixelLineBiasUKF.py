@@ -99,9 +99,11 @@ def setupFilterData(filterObject):
 # provide a unique test method name, starting with test_
 
 def test_methods_kf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = relOD_method_test(show_plots)
     assert testResults < 1, testMessage
 def test_propagation_kf(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = StatePropRelOD(show_plots, 10.0)
     assert testResults < 1, testMessage
 

@@ -100,6 +100,7 @@ def computeCelestialTwoBodyPoint(R_P1, v_P1, a_P1, R_P2, v_P2, a_P2):
     return sigma_RN, omega_RN_N, domega_RN_N
 
 def test_celestialTwoBodyPoint(show_plots):
+    """Module Unit Test"""
 
     # each test method requires a single assert method to be called
 

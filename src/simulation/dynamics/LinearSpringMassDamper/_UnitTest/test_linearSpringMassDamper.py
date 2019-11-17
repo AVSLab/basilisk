@@ -48,6 +48,7 @@ from Basilisk.utilities import simIncludeThruster
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_fuelSloshAllTest(show_plots,useFlag,testCase):
+    """Module Unit Test"""
     [testResults, testMessage] = fuelSloshTest(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 

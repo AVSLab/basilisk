@@ -44,6 +44,7 @@ from Basilisk.utilities import macros
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_dualHingedRigidBody(show_plots,useFlag,testCase):
+    """Module Unit Test"""
     [testResults, testMessage] = dualHingedRigidBodyTest(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 

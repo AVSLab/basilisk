@@ -84,12 +84,12 @@ Description of Variables Being Tested
 Here discuss what parameters are being checked.  For example, in this file we are checking the values of the \
 variables
 
-    dummy
-    outputVector[3]
+- ``dummy``
+- ``outputVector[3]``
 
 General Documentation Comments
 ------------------------------
-If the script generates figures, these figures will be automatically pulled from matplotlib and included below. \
+If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below. \
 Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content \
 should be understood by just looking at the figure.
 
@@ -97,7 +97,7 @@ At the end of the script where a print statement says that the script passes, al
 saying what accuracy tolerance(s) were used.
 
 Don't use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting \
-contained within this HTML pytest report.
+contained within this HTML ``pytest`` report.
 
     """
     # each test method requires a single assert method to be called

@@ -61,6 +61,7 @@ from Basilisk.utilities import fswSetupThrusters
 
 # update "module" in this function name to reflect the module name
 def test_thrFiringSchmitt(show_plots, resetCheck, dvOn):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn)
     assert testResults < 1, testMessage

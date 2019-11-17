@@ -49,6 +49,7 @@ from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = rateMsgConvertFunction(show_plots)
     assert testResults < 1, testMessage

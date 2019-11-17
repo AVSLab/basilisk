@@ -35,6 +35,7 @@ from Basilisk.utilities import unitTestSupport
     , ["testGaussMarkov"])
 # provide a unique test method name, starting with test_
 def test_unitGausMarkov(testName):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitGaussMarkovSelfCheck(testName)
     assert testResults < 1, testMessage

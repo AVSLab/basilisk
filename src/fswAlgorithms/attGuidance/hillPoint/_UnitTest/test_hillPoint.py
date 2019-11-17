@@ -51,6 +51,7 @@ from Basilisk.utilities import astroFunctions as af
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_hillPoint(show_plots):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = hillPointTestFunction(show_plots)
     assert testResults < 1, testMessage

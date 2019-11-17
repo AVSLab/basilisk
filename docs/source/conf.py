@@ -233,10 +233,11 @@ class fileCrawler():
         # Remove any directories that shouldn't be added directly to the website
         removeList = []
         for i in range(len(dirs_in_dir)):
+            # "_UnitTest" in dirs_in_dir[i] or \
             if "_Documentation" in dirs_in_dir[i] or \
-                    "_UnitTest" in dirs_in_dir[i] or \
                     "__pycache__" in dirs_in_dir[i] or \
                     "_VizFiles" in dirs_in_dir[i] or \
+                    "Support" in dirs_in_dir[i] or \
                     "cmake" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
@@ -249,6 +250,8 @@ class fileCrawler():
         for i in range(len(files_in_dir)):
             if "__init__" in files_in_dir[i] or \
                     "conftest.py" in files_in_dir[i] or \
+                    "*.xml" in files_in_dir[i] or \
+                    "EGM9615.h" in files_in_dir[i] or \
                     "reportconf.py" in files_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
@@ -289,10 +292,10 @@ class fileCrawler():
             # Title the page
             lines += name + "\n" + "=" * len(name) + "\n\n"
 
-            # pull in folder documentation rst file if it exists
+            # pull in folder _doc.rst file if it exists
             try:
                 pathToFolder, folderName = dir_paths[0].split(name)
-                docFileName = os.path.join(os.path.join(pathToFolder, name), name + '.rst')
+                docFileName = os.path.join(os.path.join(pathToFolder, name), '_doc.rst')
                 if os.path.isfile(docFileName):
                     with open(docFileName, 'r') as docFile:
                         docContents = docFile.read()

@@ -45,6 +45,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_tankModelTest(show_plots):
+    """Module Unit Test"""
     [testResults, testMessage] = tankModelConstantVolume(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = tankModelConstantDensity(show_plots)

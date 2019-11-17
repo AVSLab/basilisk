@@ -35,6 +35,7 @@ from Basilisk.utilities import unitTestSupport
     , ["testSaturate"])
 # provide a unique test method name, starting with test_
 def test_unitSaturate(testName):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitSaturateSelfCheck(testName)
     assert testResults < 1, testMessage

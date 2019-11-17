@@ -60,6 +60,7 @@ from Basilisk.utilities import macros as mc
 ])
 
 def test_module(show_plots, case):
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = opNavPointTestFunction(show_plots, case)
     assert testResults < 1, testMessage
