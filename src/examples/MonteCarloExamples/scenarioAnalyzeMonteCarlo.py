@@ -137,7 +137,7 @@ def run(show_plots):
         # plotList.extend([statPlots])
         plotList.extend([shadowFactorPlot])
 
-    return
+    analysis.renderPlots(plotList)
 
 if __name__ == '__main__':
     run(False)
