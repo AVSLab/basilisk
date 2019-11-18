@@ -165,15 +165,27 @@ sys.path.append(path + '/../../scenarios')
 
 
 # Create your own scenario child class
-class scenario_BasicOrbit(BSKScenario):
-    def __init__(self, masterSim):
-        super(scenario_BasicOrbit, self).__init__(masterSim)
+class scenario_BasicOrbit(BSKSim, BSKScenario):
+    def __init__(self):
+        super(scenario_BasicOrbit, self).__init__()
         self.name = 'scenario_BasicOrbit'
+
+        self.set_DynModel(BSK_Dynamics)
+        self.set_FswModel(BSK_Fsw)
+        self.initInterfaces()
+
+        self.configure_initial_conditions()
+        self.log_outputs()
+
+        # if this scenario is to interface with the BSK Viz, uncomment the following line
+        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
+        #                                     gravBodies=self.DynModels.gravFactory,
+        #                                     saveFile=filename)
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
-        self.masterSim.modeRequest = 'standby'
+        self.modeRequest = 'standby'
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
@@ -183,27 +195,27 @@ class scenario_BasicOrbit(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)
         # Dynamics process outputs
-        samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputAttName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
+        samplingTime = self.get_DynModel().processTasksTimeStep
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputAttName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
 
     def pull_outputs(self, showPlots):
         print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
-        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
+        sigma_BN = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
+        r_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
+        v_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -221,6 +233,17 @@ class scenario_BasicOrbit(BSKScenario):
 
         return figureList
 
+def runScenario(scenario):
+
+    # Initialize simulation
+    scenario.InitializeSimulationAndDiscover()
+
+    # Configure run time and execute simulation
+    simulationTime = macros.min2nano(10.)
+    scenario.ConfigureStopTime(simulationTime)
+
+    scenario.ExecuteSimulation()
+
 
 def run(showPlots):
     """
@@ -231,33 +254,9 @@ def run(showPlots):
 
     """
 
-    # Instantiate base simulation
-    TheBSKSim = BSKSim()
-    TheBSKSim.set_DynModel(BSK_Dynamics)
-    TheBSKSim.set_FswModel(BSK_Fsw)
-    TheBSKSim.initInterfaces()
-
     # Configure a scenario in the base simulation
-    TheScenario = scenario_BasicOrbit(TheBSKSim)
-    TheScenario.log_outputs()
-    TheScenario.configure_initial_conditions()
-
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(TheBSKSim, TheBSKSim.DynModels.taskName, TheBSKSim.DynamicsProcessName,
-    #                                     gravBodies=TheBSKSim.DynModels.gravFactory,
-    #                                     saveFile=filename)
-
-    # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
-
-    # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
-    TheBSKSim.ConfigureStopTime(simulationTime)
-
-    TheBSKSim.ExecuteSimulation()
-
-
-    # Pull the results of the base simulation running the chosen scenario
+    TheScenario = scenario_BasicOrbit()
+    runScenario(TheScenario)
     figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList

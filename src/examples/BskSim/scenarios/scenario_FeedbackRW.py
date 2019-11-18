@@ -131,19 +131,33 @@ import BSK_Dynamics, BSK_Fsw
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 
-# The scenario must inherit from the BSK_master class using:
-class scenario_AttitudeFeedbackRW(BSKScenario):
-    def __init__(self, masterSim):
-        super(scenario_AttitudeFeedbackRW, self).__init__(masterSim)
+# Create your own scenario child class
+class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
+    def __init__(self):
+        super(scenario_AttitudeFeedbackRW, self).__init__()
         self.name = 'scenario_AttitudeFeedbackRW'
-        self.masterSim = masterSim
+
+
+        self.set_DynModel(BSK_Dynamics)
+        self.set_FswModel(BSK_Fsw)
+        self.initInterfaces()
+
+        self.configure_initial_conditions()
+        self.log_outputs()
+
+
+
+        # if this scenario is to interface with the BSK Viz, uncomment the following line
+        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
+        #                                     gravBodies=self.DynModels.gravFactory,
+        #                                     saveFile=filename,
+        #                                     numRW=self.DynModels.rwFactory.getNumOfDevices())
+
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
-        # Within configure_initial_conditions(), the user needs to first define the spacecraft
-        # FSW mode for the simulation through:
-        self.masterSim.modeRequest = 'inertial3D'
-        # which triggers the `initiateInertial3D` event within the BSK_FSW.py script.
+        # Configure FSW mode
+        self.modeRequest = 'inertial3D'
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
@@ -154,15 +168,13 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
 
-        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        # The initial conditions for the scenario are the same as found within scenario_BasicOrbit.py except the tumble of the
-        # spacecraft must be simulated by adding:
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)
@@ -170,12 +182,10 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         # Dynamics process outputs: log messages below if desired.
 
         # FSW process outputs
-        samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
-        # Within BSK_Scenario.py log_outputs(), the user must log additional messages to observe how the spacecraft corrected
-        # for its initial tumbling through:
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+        samplingTime = self.get_FswModel().processTasksTimeStep
+        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
         return
 
     def pull_outputs(self, showPlots):
@@ -185,14 +195,14 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         # Dynamics process outputs: pull log messages below if any
 
         # FSW process outputs
-        dataUsReq = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
-        sigma_BR = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        RW_speeds = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
+        dataUsReq = self.pullMessageLogData(
+            self.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
+        sigma_BR = self.pullMessageLogData(
+            self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
+        omega_BR_B = self.pullMessageLogData(
+            self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
+        RW_speeds = self.pullMessageLogData(
+            self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -212,42 +222,29 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         return figureList
 
 
-def run(showPlots):
-    """
-    The scenarios can be run with the followings setups parameters:
-
-    Args:
-        showPlots (bool): Determines if the script should display plots
-
-    """
-    # Instantiate base simulation
-    TheBSKSim = BSKSim()
-    TheBSKSim.set_DynModel(BSK_Dynamics)
-    TheBSKSim.set_FswModel(BSK_Fsw)
-    TheBSKSim.initInterfaces()
-
-    # Configure a scenario in the base simulation
-    TheScenario = scenario_AttitudeFeedbackRW(TheBSKSim)
-    TheScenario.log_outputs()
-    TheScenario.configure_initial_conditions()
-
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(TheBSKSim, TheBSKSim.DynModels.taskName, TheBSKSim.DynamicsProcessName,
-    #                                     gravBodies=TheBSKSim.DynModels.gravFactory,
-    #                                     saveFile=filename,
-    #                                     numRW=TheBSKSim.DynModels.rwFactory.getNumOfDevices())
-
+def runScenario(scenario):
     # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
+    scenario.InitializeSimulationAndDiscover()
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
-    TheBSKSim.ConfigureStopTime(simulationTime)
+    scenario.ConfigureStopTime(simulationTime)
     print('Starting Execution')
-    TheBSKSim.ExecuteSimulation()
+    scenario.ExecuteSimulation()
     print('Finished Execution. Post-processing results')
 
     # Pull the results of the base simulation running the chosen scenario
+
+def run(showPlots):
+    """
+        The scenarios can be run with the followings setups parameters:
+
+        Args:
+            showPlots (bool): Determines if the script should display plots
+
+    """
+    TheScenario = scenario_AttitudeFeedbackRW()
+    runScenario(TheScenario)
     figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList

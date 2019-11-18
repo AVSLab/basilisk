@@ -1,22 +1,32 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+r"""
+Overview
+--------
 
-'''
+This script is a basic demonstration of how to run Monte Carlo simulations. Look at the source code for
+further discussion and instructions.
+
+"""
+
 import inspect
 import os
 import numpy as np
@@ -36,10 +46,10 @@ from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
-sys.path.append(path+"/../bskSimScenarios/scenarios/")
+sys.path.append(path+"/../BskSim/scenarios/")
 import scenario_AttFeedback
 
-def main():
+def run(show_plots):
     '''This function is called by the py.test environment.'''
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
@@ -56,9 +66,6 @@ def main():
     monteCarlo.setVerbose(True) # Optional: Produce supplemental text output in console describing status
     monteCarlo.setVarCast('float') # Optional: Downcast the retained numbers to float32 to save on storage space
     monteCarlo.setDispMagnitudeFile(True) # Optional: Produce a .txt file that shows dispersion in std dev units
-
-
-
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
@@ -80,13 +87,17 @@ def main():
     retentionPolicy = RetentionPolicy()
     samplingTime = int(2E9)
     retentionPolicy.addMessageLog("simple_trans_nav_output", [("r_BN_N", list(range(3)))], samplingTime)
-    retentionPolicy.addMessageLog("reactionwheel_output_states", [("wheelSpeeds", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog("att_guidance", [("sigma_BR", list(range(3))), ("omega_BR_B", list(range(3)))], samplingTime)
     retentionPolicy.setDataCallback(displayPlots)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     failures = monteCarlo.executeSimulations()
-    monteCarlo.executeCallbacks()
-    plt.show()
+
+    if show_plots:
+        monteCarlo.executeCallbacks()
+        plt.show()
+
+    return
 
 def displayPlots(data, retentionPolicy):
     wheelSpeeds = data["messages"]["reactionwheel_output_states.wheelSpeeds"]
@@ -98,4 +109,4 @@ def displayPlots(data, retentionPolicy):
 
 
 if __name__ == "__main__":
-    main()
+    run(False)

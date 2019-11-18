@@ -1,22 +1,27 @@
-''' '''
-'''
- ISC License
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+r"""
+Overview
+--------
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+This script is base BSK Sim script used for the MC examples.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+"""
 
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport, vizSupport
 
@@ -94,22 +99,17 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
         # Dynamics process outputs: pull log messages below if any
 
         # FSW process outputs
-        # dataUsReq = self.pullMessageLogData(
-        #     self.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
         sigma_BR = self.pullMessageLogData(
             self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
         omega_BR_B = self.pullMessageLogData(
             self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        # RW_speeds = self.pullMessageLogData(
-        #     self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
+
 
         # Plot results
         #BSK_plt.clear_all_plots()
         timeData = sigma_BR[:, 0] * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
-        #BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
-        #BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
         figureList = {}
         if showPlots:
             BSK_plt.show_all_plots()
@@ -134,9 +134,18 @@ def runScenario(TheScenario):
 
 
 def run():
+    """
+        The scenarios can be run with the followings setups parameters:
+
+        Args:
+            showPlots (bool): Determines if the script should display plots
+
+    """
     scenario = scenario_AttFeedback()
     runScenario(scenario)
     scenario.pull_outputs(True)
+
+    return
 
 if __name__ == "__main__":
     run()

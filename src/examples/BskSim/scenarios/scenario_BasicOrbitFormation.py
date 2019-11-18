@@ -142,18 +142,26 @@ import BSK_Plotting as BSK_plt
 sys.path.append(path + '/../../scenarios')
 
 
+
 # Create your own scenario child class
-class scenario_BasicOrbitFormation(BSKScenario):
-    def __init__(self, masterSim):
-        super(scenario_BasicOrbitFormation, self).__init__(masterSim)
+class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
+    def __init__(self):
+        super(scenario_BasicOrbitFormation, self).__init__()
         self.name = 'scenario_BasicOrbitFormation'
+
+        self.set_DynModel(BSK_FormationDynamics)
+        self.set_FswModel(BSK_FormationFsw)
+        self.initInterfaces()
+
+        self.configure_initial_conditions()
+        self.log_outputs()
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
-        self.masterSim.modeRequest = 'inertial3D'
+        self.modeRequest = 'inertial3D'
 
-        self.mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
+        self.mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
 
         # Configure Dynamics initial conditions
         self.oe = orbitalMotion.ClassicElements()
@@ -165,10 +173,10 @@ class scenario_BasicOrbitFormation(BSKScenario):
         self.oe.f = 85.3 * macros.D2R
         rN, vN = orbitalMotion.elem2rv(self.mu, self.oe)
         orbitalMotion.rv2elem(self.mu, rN, vN)
-        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
         # Configure Dynamics initial conditions
         self.oe2 = orbitalMotion.ClassicElements()
@@ -180,42 +188,42 @@ class scenario_BasicOrbitFormation(BSKScenario):
         self.oe2.f = 85.3 * macros.D2R
         rN2, vN2 = orbitalMotion.elem2rv(self.mu, self.oe2)
         orbitalMotion.rv2elem(self.mu, rN2, vN2)
-        self.masterSim.get_DynModel().scObject2.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN2)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject2.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN2)  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject2.hub.sigma_BNInit = [[-0.3], [0.0], [0.5]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject2.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN2)  # m   - r_CN_N
+        self.get_DynModel().scObject2.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN2)  # m/s - v_CN_N
+        self.get_DynModel().scObject2.hub.sigma_BNInit = [[-0.3], [0.0], [0.5]]  # sigma_BN_B
+        self.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)
 
-        samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
+        samplingTime = self.get_DynModel().processTasksTimeStep
 
         # Dynamics process outputs
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject2.outputTransName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject2.outputTransName, samplingTime)
 
         # FSW process outputs
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData2.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData2.outputDataName, samplingTime)
 
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().scObject.scStateOutMsgName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().scObject2.scStateOutMsgName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().scObject.scStateOutMsgName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().scObject2.scStateOutMsgName, samplingTime)
 
     def pull_outputs(self, showPlots):
         print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        r_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
-        r_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", list(range(3)))
+        r_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
+        r_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", list(range(3)))
 
-        v_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
-        v_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", list(range(3)))
+        v_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
+        v_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", list(range(3)))
 
         # FSW process outputs
-        omega_BR_B_chief = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        omega_BR_B_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", list(range(3)))
+        omega_BR_B_chief = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
+        omega_BR_B_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", list(range(3)))
 
-        sigma_BR_chief = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        sigma_BR_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", list(range(3)))
+        sigma_BR_chief = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
+        sigma_BR_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", list(range(3)))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -224,7 +232,7 @@ class scenario_BasicOrbitFormation(BSKScenario):
         BSK_plt.plot_rate_error(timeData, omega_BR_B_chief)
         BSK_plt.plot_attitude_error(timeData, sigma_BR_deputy)
         BSK_plt.plot_rate_error(timeData, omega_BR_B_deputy)
-        BSK_plt.plot_planet(self.oe, self.masterSim.get_DynModel().gravFactory.gravBodies['earth'])
+        BSK_plt.plot_planet(self.oe, self.get_DynModel().gravFactory.gravBodies['earth'])
         BSK_plt.plot_peri_and_orbit(self.oe, self.mu, r_BN_N_chief, v_BN_N_chief)
         BSK_plt.plot_peri_and_orbit(self.oe2, self.mu, r_BN_N_deputy, v_BN_N_deputy)
 
@@ -239,6 +247,14 @@ class scenario_BasicOrbitFormation(BSKScenario):
 
         return figureList
 
+def runScenario(scenario):
+    scenario.InitializeSimulationAndDiscover()
+
+    # Configure run time and execute simulation
+    simulationTime = macros.min2nano(10.)
+    scenario.ConfigureStopTime(simulationTime)
+    scenario.ExecuteSimulation()
+
 
 def run(showPlots):
     """
@@ -248,32 +264,12 @@ def run(showPlots):
         showPlots (bool): Determines if the script should display plots
 
     """
-
-    # Instantiate base simulation
-    TheBSKSim = BSKSim()
-    TheBSKSim.set_DynModel(BSK_FormationDynamics)
-    TheBSKSim.set_FswModel(BSK_FormationFsw)
-    TheBSKSim.initInterfaces()
-    
-    # Configure a scenario in the base simulation
-    TheScenario = scenario_BasicOrbitFormation(TheBSKSim)
-    
-    TheScenario.configure_initial_conditions()
-    TheScenario.log_outputs()
-
-    # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
-
-    # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
-    TheBSKSim.ConfigureStopTime(simulationTime)
-
-    TheBSKSim.ExecuteSimulation()
-
-    # Pull the results of the base simulation running the chosen scenario
+    TheScenario = scenario_BasicOrbitFormation()
+    runScenario(TheScenario)
     figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
+
 
 if __name__ == "__main__":
     run(True)

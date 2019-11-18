@@ -1,3 +1,28 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+r"""
+Overview
+--------
+
+This script is a basic demonstration of a script that can be used to rerun a set or subset of Monte Carlo simulations
+
+"""
 
 import inspect
 import os, sys
@@ -12,15 +37,20 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
 bskPath = __path__[0]
 
-sys.path.append(path+"/../bskSimScenarios/scenarios/")
+sys.path.append(path+"/../BskSim/scenarios/")
 
-def main(time=None):
+def run(time=None):
     '''
     Instructions:
+
     1) Change the scenario name
+
     2) Provide the number of processes to spawn
+
     3) Provide the run numbers you wish to rerun
+
     4) Add any new retention policies to the bottom
+
     '''
 
     # Step 1-3: Change to the relevant scenario
@@ -32,14 +62,15 @@ def main(time=None):
 
     #
     # # Generic initialization
-    # exec("import " + scenarioName)
     icName = path + "/" + scenarioName + "MC/"
     newDataDir = path + "/" + scenarioName + "MC/rerun"
 
-    exec("simulationModule = "+scenarioName + "." + scenarioName) # ex. scenarioMonteCarlo.scenarioMonteCarlo
+
+    exec('import '+ scenarioName)
+    simulationModule = eval(scenarioName + "." + scenarioName) # ex. scenarioMonteCarlo.scenarioMonteCarlo
     if time is not None:
         exec (scenarioName + '.' + scenarioName + '.simBaseTime = time')  # ex. scenarioMonteCarlo.scenarioMonteCarlo.simBaseTime = time
-    exec("executionModule =" + scenarioName + ".runScenario") # ex. scenarioMonteCarlo.run
+    executionModule = eval(scenarioName + ".runScenario") # ex. scenarioMonteCarlo.run
 
     monteCarlo.setSimulationFunction(simulationModule)
     monteCarlo.setExecutionFunction(executionModule)
@@ -64,5 +95,5 @@ def main(time=None):
 
 
 if __name__ == "__main__":
-    main()
+    run()
 

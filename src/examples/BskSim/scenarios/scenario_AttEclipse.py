@@ -149,18 +149,28 @@ sys.path.append(path + '/../../scenarios')
 # To begin, one must first create a class that will
 # inherent from the masterSim class and provide a name to the sim.
 # This is accomplished through:
-class scenario_AttitudeEclipse(BSKScenario):
-    def __init__(self, masterSim):
-        super(scenario_AttitudeEclipse, self).__init__(masterSim)
+# Create your own scenario child class
+class scenario_AttitudeEclipse(BSKSim, BSKScenario):
+    def __init__(self):
+        super(scenario_AttitudeEclipse, self).__init__(fswRate=1.0, dynRate=1.0)
         self.name = 'scenario_AttitudeEclipse'
-        self.masterSim = masterSim
+
+        self.set_DynModel(BSK_Dynamics)
+        self.set_FswModel(BSK_Fsw)
+        self.initInterfaces()
+
+        self.configure_initial_conditions()
+        self.log_outputs()
+
+        # if this scenario is to interface with the BSK Viz, uncomment the following line
+        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
+        #                                     gravBodies=self.DynModels.gravFactory,
+        #                                     saveFile=filename)
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
-        # Within configure_initial_conditions(), the user needs to first define the
-        # spacecraft FSW mode for the simulation through:
-        self.masterSim.modeRequest = 'sunSafePoint'
-        # which triggers the `initiateSunSafePointing` event within the BSK_FSW.py script.
+        # Configure FSW mode
+        self.modeRequest = 'sunSafePoint'
 
         # Configure Dynamics initial conditions
 
@@ -171,28 +181,28 @@ class scenario_AttitudeEclipse(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)
-        samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
+        samplingTime = self.get_DynModel().processTasksTimeStep
 
         # Dynamics process outputs: log messages below if desired.
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().scObject.scStateOutMsgName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage("eclipse_data_0", samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().scObject.scStateOutMsgName, samplingTime)
+        self.TotalSim.logThisMessage("eclipse_data_0", samplingTime)
 
         # FSW process outputs
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().sunSafePointData.sunDirectionInMsgName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().sunSafePointData.sunDirectionInMsgName, samplingTime)
         return
 
     def pull_outputs(self, showPlots):
@@ -200,20 +210,20 @@ class scenario_AttitudeEclipse(BSKScenario):
         num_RW = 4 # number of wheels used in the scenario
 
         # Dynamics process outputs: pull log messages below if any
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", list(range(3)))
-        shadowFactor = self.masterSim.pullMessageLogData("eclipse_data_0.shadowFactor")
+        r_BN_N = self.pullMessageLogData(self.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", list(range(3)))
+        shadowFactor = self.pullMessageLogData("eclipse_data_0.shadowFactor")
 
         # FSW process outputs
-        dataUsReq = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
-        sigma_BR = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        RW_speeds = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
-        sunPoint = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().sunSafePointData.sunDirectionInMsgName + ".vehSunPntBdy", list(range(3)))
+        dataUsReq = self.pullMessageLogData(
+            self.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
+        sigma_BR = self.pullMessageLogData(
+            self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
+        omega_BR_B = self.pullMessageLogData(
+            self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
+        RW_speeds = self.pullMessageLogData(
+            self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
+        sunPoint = self.pullMessageLogData(
+            self.get_FswModel().sunSafePointData.sunDirectionInMsgName + ".vehSunPntBdy", list(range(3)))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -237,49 +247,33 @@ class scenario_AttitudeEclipse(BSKScenario):
         return figureList
 
 
-
-def run(showPlots):
-    """
-    The scenarios can be run with the followings setups parameters:
-
-    Args:
-        showPlots (bool): Determines if the script should display plots
-
-    """
-
-    # Instantiate base simulation
-    TheBSKSim = BSKSim(1.0, 1.0)
-    TheBSKSim.set_DynModel(BSK_Dynamics)
-    TheBSKSim.set_FswModel(BSK_Fsw)
-    TheBSKSim.initInterfaces()
-
-    # Configure an scenario in the base simulation
-    TheScenario = scenario_AttitudeEclipse(TheBSKSim)
-    TheScenario.log_outputs()
-    TheScenario.configure_initial_conditions()
-
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(TheBSKSim, TheBSKSim.DynModels.taskName, TheBSKSim.DynamicsProcessName,
-    #                                     gravBodies=TheBSKSim.DynModels.gravFactory,
-    #                                     saveFile=filename)
-
+def runScenario(TheScenario):
     # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
+    TheScenario.InitializeSimulationAndDiscover()
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(60.0)
-    TheBSKSim.ConfigureStopTime(simulationTime)
+    TheScenario.ConfigureStopTime(simulationTime)
     print('Starting Execution')
-    TheBSKSim.ExecuteSimulation()
+    TheScenario.ExecuteSimulation()
     print('Finished Execution. Post-processing results')
 
+
+def run(showPlots):
+    """
+        The scenarios can be run with the followings setups parameters:
+
+        Args:
+            showPlots (bool): Determines if the script should display plots
+
+    """
+
+    scenario = scenario_AttitudeEclipse()
+    runScenario(scenario)
     # Pull the results of the base simulation running the chosen scenario
-    figureList = TheScenario.pull_outputs(showPlots)
+    figureList = scenario.pull_outputs(showPlots)
 
     return figureList
-
-
-
 
 
 if __name__ == "__main__":

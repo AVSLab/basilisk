@@ -220,7 +220,13 @@ def runScenario(scenario, livePlots=False, showPlots=False):
         scenario.ExecuteSimulation()
 
 def run(showPlots, livePlots=False):
+    """
+        The scenarios can be run with the followings setups parameters:
 
+        Args:
+            showPlots (bool): Determines if the script should display plots
+
+    """
     # Configure a scenario in the base simulation
     TheScenario = scenario_BasicOrbitLive()
     runScenario(TheScenario, livePlots=livePlots, showPlots=showPlots)
