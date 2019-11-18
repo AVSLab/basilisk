@@ -82,7 +82,7 @@ typedef struct {
     
     int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-    int32_t opnavDataInMsgId;
+    int32_t opnavDataInMsgId;   /*!< [-] ID for the opNav data in put message */
     int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
 
 }HeadingSuKFConfig;
