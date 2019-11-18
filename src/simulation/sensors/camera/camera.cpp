@@ -56,6 +56,11 @@ Camera::Camera()
     strcpy(this->skyBox, "black");
 
     /*! Default values for the perturbations.  */
+    this->gaussian = 0;
+    this->darkCurrent = 0;
+    this->saltPepper = 0;
+    this->cosmicRays = 0;
+    this->blurParam = 0;
     
     return;
 }
