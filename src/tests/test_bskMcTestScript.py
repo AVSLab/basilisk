@@ -30,6 +30,7 @@
 
 import sys, os, inspect
 import pytest
+import shutil
 import importlib
 from Basilisk.utilities import unitTestSupport
 
@@ -45,29 +46,32 @@ sys.path.append(path + '/../examples/MonteCarloExamples')
 # @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
 
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("bskSimCase", [
-    ('scenario_AttFeedbackMC')
-    , ('scenarioAnalyzeMonteCarlo')
-    , ('scenarioRerunMonteCarlo')
-                                        ])
 @pytest.mark.scenarioTest
 
-def test_scenarioBskMcScenarios(show_plots, bskSimCase):
+def test_scenarioBskMcScenarios(show_plots):
+    # These need to be run in serial such that the data is produced for analysis
+    scenarios = ['scenario_AttFeedbackMC',
+                 'scenarioAnalyzeMonteCarlo',
+                 'scenarioRerunMonteCarlo']
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-    # import the bskSim script to be tested
-    scene_plt = importlib.import_module(bskSimCase)
 
-    try:
-        figureList = scene_plt.run(False)
+    for bskSimCase in scenarios:
+        # import the bskSim script to be tested
+        scene_plt = importlib.import_module(bskSimCase)
 
-    except OSError as err:
-        testFailCount = testFailCount + 1
-        testMessages.append("OS error: {0}".format(err))
+        try:
+            figureList = scene_plt.run(False)
 
+        except OSError as err:
+            testFailCount = testFailCount + 1
+            testMessages.append("OS error: {0}".format(err))
+
+
+    print(path+ "/../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
+    if os.path.exists(path+ "/../examples/MonteCarloExamples/scenario_AttFeedbackMC/"):
+        shutil.rmtree(path+ "/../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
 

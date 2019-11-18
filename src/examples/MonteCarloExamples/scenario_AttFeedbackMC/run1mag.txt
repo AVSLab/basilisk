@@ -1,4 +1,0 @@
-'TaskList[0].TaskModels[0].hub.mHub':'['32.37 %']', 
-'TaskList[0].TaskModels[0].hub.omega_BN_BInit':'[-0.31 sigma,1.47 sigma,-1.47 sigma]', 
-'TaskList[0].TaskModels[0].hub.r_BcB_B':'[0.41 sigma,1.15 sigma,1.27 sigma]', 
-'TaskList[0].TaskModels[0].hub.sigma_BNInit':'[-99.33 %,-101.46 %,-76.53 %]', 

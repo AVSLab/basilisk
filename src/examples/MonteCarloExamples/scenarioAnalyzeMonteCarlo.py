@@ -95,9 +95,6 @@ def run(show_plots):
     :param optional_plots: plots additional user-defined plots
     '''
 
-    # TODO: Assert that the directory has data to make sure the data has been run initially
-    # assert
-
     show_all_data = True
     show_extreme_data = False
     optional_plots = False
@@ -139,5 +136,5 @@ def run(show_plots):
 
     analysis.renderPlots(plotList)
 
-if __name__ == '__main__':
-    run(False)
+run(False)
+

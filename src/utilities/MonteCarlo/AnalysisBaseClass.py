@@ -193,6 +193,7 @@ class mcAnalysisBaseClass:
         :param plotList: List of plots to render
         :return: nothing.
         '''
+        hv.extension('bokeh')
         renderer = hv.renderer('bokeh').instance(mode='server')
 
         if self.save_as_static:
@@ -211,7 +212,6 @@ class mcAnalysisBaseClass:
                     hv.save(image, self.dataDir + self.staticDir + "/" + title + ".html")
                 else:
                     renderer.server_doc(image)
-
                 # Print information about the rendering process
                 print("LOADED: " + title +"\t\t\t" +
                       "Percent Complete: " + str(round((i + 1) / len(plotList) * 100, 2)) + "% \t\t\t"
