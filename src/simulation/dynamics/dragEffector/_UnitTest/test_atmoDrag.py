@@ -99,6 +99,9 @@ def cannonballDragComp(dragCoeff, dens, area, vel, att):
 
 def run(show_plots, orbitCase, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -108,7 +111,7 @@ def run(show_plots, orbitCase, planetCase):
     simProcessName = "simProcess"
 
     #  Create a sim module as an empty container
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     #  create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
@@ -120,7 +123,7 @@ def run(show_plots, orbitCase, planetCase):
 
 
     #   Initialize new atmosphere and drag model, add them to task
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
+    newAtmo = exponentialAtmosphere.ExponentialAtmosphere(msgLevel)
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
 
@@ -149,7 +152,7 @@ def run(show_plots, orbitCase, planetCase):
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
-    simpleNavObj = simple_nav.SimpleNav()
+    simpleNavObj = simple_nav.SimpleNav(msgLevel)
     simpleNavObj.inputStateName = scObject.scStateOutMsgName
     simpleNavObj.outputAttName = 'nav_att_out'
     scSim.AddModelToTask(simTaskName, simpleNavObj)

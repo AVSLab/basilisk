@@ -38,6 +38,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.utilities import SimulationBaseClass
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):
@@ -88,12 +89,15 @@ def test_unitSimReactionWheel(show_plots, useFlag, testCase):
 
 
 def unitSimReactionWheel(show_plots, useFlag, testCase):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFail = False
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
     # configure module
-    ReactionWheel = reactionWheelStateEffector.ReactionWheelStateEffector()
+    ReactionWheel = reactionWheelStateEffector.ReactionWheelStateEffector(msgLevel)
     ReactionWheel.ModelTag = "ReactionWheel"
 
     numRW = 2

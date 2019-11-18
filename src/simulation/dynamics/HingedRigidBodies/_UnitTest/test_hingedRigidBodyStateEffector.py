@@ -59,6 +59,9 @@ def hingedRigidBodyAllTest(show_plots):
     assert testResults < 1, testMessage
 
 def test_hingedRigidBodyGravity(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -71,7 +74,7 @@ def test_hingedRigidBodyGravity(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -282,23 +285,26 @@ def test_hingedRigidBodyGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_hingedRigidBodyNoGravity(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter  
+    testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraftDynamics.SpacecraftDynamics()
     scObject.ModelTag = "spacecraftBody"
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -354,7 +360,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
-    
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
@@ -505,6 +511,9 @@ def test_hingedRigidBodyNoGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_hingedRigidBodyNoGravityDamping(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -520,7 +529,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -685,6 +694,9 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_hingedRigidBodyThetaSS(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -700,7 +712,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     stepSize = 0.1
@@ -742,7 +754,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[0], [1], [0]]
@@ -853,7 +865,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
     format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-    
+
     if show_plots:
         plt.show()
     plt.close("all")
@@ -877,6 +889,9 @@ def test_hingedRigidBodyThetaSS(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_hingedRigidBodyFrequencyAmp(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -892,7 +907,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     stepSize = 0.1
@@ -934,7 +949,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     force = 1
@@ -1158,6 +1173,9 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -1173,7 +1191,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     stepSize = 0.1
@@ -1223,7 +1241,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     torque2_B = numpy.cross(momentArm2_B,force2_B)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
     extFTObject.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]

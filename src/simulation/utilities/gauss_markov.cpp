@@ -51,9 +51,9 @@ GaussMarkov::~GaussMarkov()
 {
 }
 
-/*! This method performs almost all of the work for the Gauss Markov random 
-    walk.  It uses the current random walk configuration, propagates the current 
-    state, and then applies appropriate errors to the states to set the current 
+/*! This method performs almost all of the work for the Gauss Markov random
+    walk.  It uses the current random walk configuration, propagates the current
+    state, and then applies appropriate errors to the states to set the current
     error level.
     @return void
 */
@@ -62,7 +62,7 @@ void GaussMarkov::computeNextState()
     Eigen::VectorXd errorVector;
     Eigen::VectorXd ranNums;
     size_t i;
-    
+
     //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
        (this->propMatrix.size() != (size_t) (this->numStates*this->numStates)))
@@ -72,14 +72,14 @@ void GaussMarkov::computeNextState()
     }
     if(this->stateBounds.size() != (size_t) this->numStates)
     {
-        BSK_PRINT(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
+        bskPrint.printMessage(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
         return;
     }
 
     //! - Propagate the state forward in time using the propMatrix and the currentState
     errorVector = this->currentState;
     this->currentState = this->propMatrix * errorVector;
-    
+
     //! - Compute the random numbers used for each state.  Note that the same generator is used for all
     ranNums.resize((int64_t) this->numStates);
 
@@ -87,9 +87,9 @@ void GaussMarkov::computeNextState()
     {
         ranNums[i] = this->rNum(rGen);
         if (this->stateBounds[i] > 0.0){
-            
+
             double stateCalc = fabs(this->currentState[i]) > this->stateBounds[i]*1E-10 ? fabs(this->currentState[i]) : this->stateBounds[i];
-            
+
             double boundCheck = (this->stateBounds[i]*2.0 - stateCalc)/stateCalc;
             boundCheck = boundCheck > this->stateBounds[i]*1E-10 ? boundCheck : this->stateBounds[i]*1E-10;
             boundCheck = 1.0/exp(boundCheck*boundCheck*boundCheck);
@@ -105,4 +105,3 @@ void GaussMarkov::computeNextState()
     this->currentState += errorVector;
 
 }
-

@@ -50,12 +50,15 @@ def test_radiationPressureIntegratedTest(show_plots):
 
 
 def radiationPressureIntegratedTest(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
 
     #  Create a sim module as an empty container
-    sim = SimulationBaseClass.SimBaseClass()
+    sim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     dynProcess = sim.CreateNewProcess(simProcessName)
 
@@ -68,7 +71,7 @@ def radiationPressureIntegratedTest(show_plots):
     scObject.ModelTag = "spacecraftBody"
     sim.AddModelToTask(simTaskName, scObject)
 
-    srp = radiation_pressure.RadiationPressure() # default model is the SRP_CANNONBALL_MODEL
+    srp = radiation_pressure.RadiationPressure(msgLevel) # default model is the SRP_CANNONBALL_MODEL
     srp.area = 1.0
     srp.coefficientReflection = 1.3
     sim.AddModelToTask(simTaskName, srp, None, -1)
@@ -80,8 +83,9 @@ def radiationPressureIntegratedTest(show_plots):
     planet.isCentralBody = True
     mu = planet.mu
     spice_path = bskPath + '/supportData/EphemerisData/'
-    spice = gravFactory.createSpiceInterface(spice_path,
-                                                '2021 MAY 04 07:47:49.965 (UTC)')
+    spice = gravFactory.createSpiceInterface(msgLevel,
+                                             spice_path,
+                                             '2021 MAY 04 07:47:49.965 (UTC)')
     spice.planetNames.append("sun")
     spice.ModelTag = "SpiceInterfaceData"
     spice.outputBufferCount = 100000

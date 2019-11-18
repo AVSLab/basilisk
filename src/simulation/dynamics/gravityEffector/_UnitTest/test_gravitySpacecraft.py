@@ -61,7 +61,7 @@ def test_singleGravityBody(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
@@ -175,6 +175,9 @@ def test_singleGravityBody(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_multiBodyGravity(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -188,7 +191,7 @@ def test_multiBodyGravity(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"

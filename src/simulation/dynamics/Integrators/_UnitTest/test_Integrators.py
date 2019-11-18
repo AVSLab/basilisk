@@ -66,6 +66,9 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 
 def run(doUnitTests, show_plots, integratorCase):
     '''Call this routine directly to run the tutorial scenario.'''
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -74,7 +77,7 @@ def run(doUnitTests, show_plots, integratorCase):
     simProcessName = "simProcess"
 
     #  Create a sim module as an empty container
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     #
     #  create the simulation process

@@ -20,7 +20,7 @@
 #include "dynamicObject.h"
 
 /*! This is the constructor, just setting the variables to zero */
-DynamicObject::DynamicObject()
+DynamicObject::DynamicObject(msgLevel_t msgLevel) : dynManager(msgLevel)
 {
     return;
 }

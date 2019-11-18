@@ -120,6 +120,8 @@ def SetDensityMsgTest(dragEffector):
     return testFailCount, testMessages
 
 def TestDragCalculation():
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
     #   Init test support variables
     showVal = False
@@ -130,7 +132,7 @@ def TestDragCalculation():
     ##   Simulation initialization
     simTaskName = "simTask"
     simProcessName = "simProcess"
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(5.)
@@ -141,7 +143,7 @@ def TestDragCalculation():
     scObject.ModelTag = "spacecraftBody"
 
     ##   Initialize new atmosphere and drag model, add them to task
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
+    newAtmo = exponentialAtmosphere.ExponentialAtmosphere(msgLevel)
     newAtmo.ModelTag = "ExpAtmo"
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
 
@@ -267,6 +269,8 @@ def TestDragCalculation():
 
 
 def TestShadowCalculation():
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
     #   Init test support variables
     showVal = False
@@ -277,7 +281,7 @@ def TestShadowCalculation():
     ##   Simulation initialization
     simTaskName = "simTask"
     simProcessName = "simProcess"
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(10.)
@@ -287,12 +291,12 @@ def TestShadowCalculation():
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
-    simpleNavObj = simple_nav.SimpleNav()
+    simpleNavObj = simple_nav.SimpleNav(msgLevel)
     simpleNavObj.inputStateName = scObject.scStateOutMsgName
     simpleNavObj.outputAttName = 'nav_att_out'
 
     ##   Initialize new atmosphere and drag model, add them to task
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
+    newAtmo = exponentialAtmosphere.ExponentialAtmosphere(msgLevel)
     newAtmo.ModelTag = "ExpAtmo"
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
 

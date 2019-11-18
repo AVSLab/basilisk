@@ -100,6 +100,9 @@ def test_unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyro
 
 
 def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -107,7 +110,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     unitProcName = "TestProcess"  # arbitrary name (don't change)
 
     # initialize SimulationBaseClass
-    unitSim = SimulationBaseClass.SimBaseClass()
+    unitSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # create the task and specify the integration update time
     unitProcRate_s = procRate
@@ -178,7 +181,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     r_SN_N[0][:] = r_SB_N + r_BN_N[0][:]
 
     #Sensor Setup
-    ImuSensor = imu_sensor.ImuSensor()
+    ImuSensor = imu_sensor.ImuSensor(msgLevel)
     ImuSensor.ModelTag = "imusensor"
     ImuSensor.sensorPos_B = np.array(r_SB_B) #must be set by user - no default. check if this works by giving an array - SJKC
     yaw = 0.7854 #should be given as parameter [rad]

@@ -65,15 +65,15 @@ def test_stateData(show_plots):
     stateName = "position"
     newState = stateArchitecture.StateData(stateName, stateUse)
     newState.setState(stateUse)
-    
+
     predictedDerivative = [[0.0], [0.0]]
 
     if(newState.getRowSize() != len(stateUse)):
         testFailCount += 1
-        testMessages.append("State row sized incorrectly") 
+        testMessages.append("State row sized incorrectly")
     if(newState.getColumnSize() != len(stateUse[0])):
         testFailCount += 1
-        testMessages.append("State column sized incorrectly") 
+        testMessages.append("State column sized incorrectly")
     if(newState.getName() != stateName):
         testFailCount += 1
         testMessages.append("State name incorrect")
@@ -99,7 +99,7 @@ def test_stateData(show_plots):
     if(stateUpdateNum.tolist() != stateUpdateNum.tolist()):
         testFailCount += 1
         testMessages.append("State propagation update check failure.")
-    
+
     priorState = stateUpdateNum
     scaleFactor = 0.25
     priorState *= scaleFactor
@@ -123,7 +123,7 @@ def test_stateData(show_plots):
         testMessages.append("Dummy state column sized incorrectly")
 
     dummyState.setState(newState.getState())
-    
+
     outState = dummyState + newState
     if(outState.getState() != (2.0*stateUpdateNum).tolist()):
         testFailCount += 1
@@ -151,13 +151,13 @@ def test_stateProperties(show_plots):
     gravList = [[9.81], [0.0], [0.1]]
     gravName = "g_N"
     newManager.createProperty(gravName, gravList)
-    
+
     propRef = newManager.getPropertyReference(gravName)
-    
+
     if propRef != gravList:
         testFailCount += 1
         testMessages.append("Create and property reference matching failed.")
-    
+
     newGravList = [[0.0], [9.81], [-0.1]]
     newManager.setPropertyValue(gravName, newGravList)
     propRef = newManager.getPropertyReference(gravName)
@@ -205,38 +205,38 @@ def test_stateArchitecture(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     newManager = stateArchitecture.DynParamManager()
-    
+
     positionName = "position"
     stateDim = [3, 1]
     posState = newManager.registerState(stateDim[0], stateDim[1], positionName)
-    
+
     velocityName = "velocity"
     stateDim = [3, 1]
     velState = newManager.registerState(stateDim[0], stateDim[1], velocityName)
-    
+
     flexName = "Array1_flex"
     flexDim = [2, 1]
     flexState = newManager.registerState(flexDim[0], flexDim[1], flexName)
-    
+
     if posState.getRowSize() != stateDim[0] or posState.getColumnSize() != stateDim[1]:
         testFailCount += 1
         testMessages.append("Position state returned improper size")
-    
+
     if velState.getName() != velocityName:
         testFailCount += 1
         testMessages.append("Failed to return proper state name for velocity")
-    
+
     if(newManager.registerState(stateDim[0], stateDim[1], positionName).getName() != positionName):
         testFailCount += 1
         testMessages.append("Failed to return proper state name in overload of call")
     newManager.registerState(stateDim[0], stateDim[1]+2, positionName)
-    
+
     positionStateLookup = newManager.getStateObject("Array1_flex")
 
     if(positionStateLookup.getName() != flexName):
         testFailCount += 1
         testMessages.append("State lookup for solar array flex failed")
-    
+
     vectorFactor = 4.0
     vecStart = [[1.0], [2.0], [3.5]]
     posState.setState(vecStart)
@@ -245,7 +245,7 @@ def test_stateArchitecture(show_plots):
     vectorComposite = vectorStart + vectorStart*vectorFactor + vectorStart*vectorFactor
     numpyOutput = numpy.array(vecStart) + numpy.array(vecStart)*vectorFactor + numpy.array(vecStart)*vectorFactor
     newManager.updateStateVector(vectorComposite)
-    
+
     if(velState.getState() != numpyOutput.tolist()):
         testFailCount += 1
         testMessages.append("Velocity state update via state-manager failed")
@@ -277,7 +277,7 @@ def test_EigenConversions(show_plots):
     inputArray = [[3.0], [1.0], [2.0]]
     outputArray = sim_model.new_doubleArray(3)
     stateArchitecture.eigenVector3d2CArray(inputArray, outputArray)
-    
+
     flatList =  [y for x in inputArray for y in x]
 
     for i in range(len(flatList)):
@@ -288,7 +288,7 @@ def test_EigenConversions(show_plots):
     inputArray = [[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]]
     outputArray = sim_model.new_doubleArray(9)
     stateArchitecture.eigenMatrix3d2CArray(inputArray, outputArray)
-    
+
     flatList =  [y for x in inputArray for y in x]
 
     for i in range(len(flatList)):
@@ -300,7 +300,7 @@ def test_EigenConversions(show_plots):
     inputArray = [[0.0, 1.0, 0.0, 2.0], [0.0, 0.0, 1.0, 0.5], [1.0, 0.0, 0.0, 2.7]]
     outputArray = sim_model.new_doubleArray(12)
     stateArchitecture.eigenMatrixXd2CArray(inputArray, outputArray)
-    
+
     flatList =  [y for x in inputArray for y in x]
 
     for i in range(len(flatList)):
@@ -317,4 +317,3 @@ def test_EigenConversions(show_plots):
 
 if __name__ == "__main__":
     stateArchitectureAllTest(False)
-    

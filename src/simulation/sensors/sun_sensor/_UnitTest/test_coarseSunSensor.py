@@ -86,6 +86,9 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #
     #   Sim Setup
     #
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0
     testMessages = []
     testTaskName = "unitTestTask"
@@ -93,7 +96,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     testTaskRate = macros.sec2nano(0.1)
 
     # Create a simulation container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
@@ -101,7 +104,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #
     #   Single CSS Setup
     #   Sets up a single CSS with inputs from the pytest parameterization
-    singleCss = coarse_sun_sensor.CoarseSunSensor()
+    singleCss = coarse_sun_sensor.CoarseSunSensor(msgLevel)
     singleCss.ModelTag = "singleCss"
     singleCss.fov = fov
     singleCss.kellyFactor = kelly

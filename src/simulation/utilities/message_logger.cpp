@@ -18,7 +18,6 @@
  */
 
 #include "utilities/message_logger.h"
-#include "utilities/bsk_Print.h"
 #include <cstring>
 #include <iostream>
 #include <map>
@@ -28,8 +27,9 @@
 /*! This constructor is used to initialize the message logging data.  It clears
  out the message log list and resets the logger to a clean state.
  */
-messageLogger::messageLogger()
+messageLogger::messageLogger(msgLevel_t msgLevel)
 {
+    bskPrint._msgLevel = msgLevel;
     logData.clear();
     allLogsLinked = true;
     initBufferSize = 50000;
@@ -100,7 +100,7 @@ void messageLogger::linkMessages()
         //! - Warn the user if linking failed and note that logging won't work for that message
         else
         {
-            BSK_PRINT_BRIEF(MSG_WARNING, "failed to find message: %s Disabling logging for it.", it->messageName.c_str());
+            bskPrint.printMessage(MSG_WARNING, "failed to find message: %s Disabling logging for it.", it->messageName.c_str());
         }
     }
 }
@@ -179,19 +179,19 @@ bool messageLogger::readLog(MessageIdentData & messageID, SingleMessageHeader *d
         headPtr = reinterpret_cast<SingleMessageHeader*> (dataPtr);
         memcpy(dataHeader, headPtr, sizeof(SingleMessageHeader));
         dataPtr += sizeof(SingleMessageHeader);
-        uint64_t bytesUse = maxBytes > headPtr->WriteSize ? headPtr->WriteSize : 
+        uint64_t bytesUse = maxBytes > headPtr->WriteSize ? headPtr->WriteSize :
         maxBytes;
         memcpy(msgPayload, dataPtr, bytesUse);
         return(true);
     }
-    
+
     return false;
 }
 
 uint64_t messageLogger::getLogCount(int64_t processID, int64_t messageID)
 {
     std::vector<messageLogContainer>::iterator it;
-    
+
     uint64_t messageCount = 0;
 
     for(it=logData.begin(); it != logData.end(); it++)
@@ -223,7 +223,7 @@ void messageLogger::clearLogs()
     {
         addMessageLog(mapIt->first, mapIt->second);
     }
-    
+
 }
 
 void messageLogger::archiveLogsToDisk(std::string outFileName)
@@ -265,9 +265,9 @@ void messageLogger::loadArchiveFromDisk(std::string inFileName)
 		char *msgName = new char[messageNameLength];
 		iFile.read(msgName, messageNameLength);
 		newContainer.messageName = msgName;
-		iFile.read(reinterpret_cast<char*> (&newContainer.messageID), 
+		iFile.read(reinterpret_cast<char*> (&newContainer.messageID),
 			sizeof(newContainer.messageID));
-		iFile.read(reinterpret_cast<char*> (&newContainer.logInstanceCount), 
+		iFile.read(reinterpret_cast<char*> (&newContainer.logInstanceCount),
 			sizeof(newContainer.logInstanceCount));
 		iFile.read(reinterpret_cast<char*> (&dataBufferSize), sizeof(dataBufferSize));
 		newContainer.messageBuffer.ClearStorage();
@@ -276,7 +276,7 @@ void messageLogger::loadArchiveFromDisk(std::string inFileName)
 		newContainer.storOff.clear();
 		SingleMessageHeader *headPtr;
 		uint64_t bytesRead = 0;
-		uint8_t *dataPtr; 
+		uint8_t *dataPtr;
 		while (bytesRead < dataBufferSize)
 		{
 			dataPtr = &(newContainer.messageBuffer.StorageBuffer[bytesRead]);

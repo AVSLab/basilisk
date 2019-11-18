@@ -82,12 +82,15 @@ def test_unitDynamicsModes(show_plots, torqueInput, forceNInput, forceBInput):
 
 
 def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBInput):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
     unitProcessName = "testProcess"
 
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
 
     #
@@ -99,7 +102,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
 
-    extFTObject = extForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
     extFTObject.ModelTag = "externalDisturbance"
 
     if torqueInput==1 or torqueInput==3:

@@ -41,7 +41,10 @@ def test_unitExponentialAtmosphere():
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
 
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+    
+    newAtmo = exponentialAtmosphere.ExponentialAtmosphere(msgLevel)
     newAtmo.ModelTag = "ExpAtmo"
 
     testResults = []
@@ -99,6 +102,9 @@ def AddSpacecraftToModel(atmoModel):
 ##  Test specific atmospheric model performance
 
 def TestExponentialAtmosphere():
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0
     testMessages = []
 
@@ -112,7 +118,7 @@ def TestExponentialAtmosphere():
     simProcessName = "simProcess"
 
     #  Create a sim module as an empty container
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     #  create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
@@ -122,7 +128,7 @@ def TestExponentialAtmosphere():
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
+    newAtmo = exponentialAtmosphere.ExponentialAtmosphere(msgLevel)
     newAtmo.ModelTag = "ExpAtmo"
 
 

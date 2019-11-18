@@ -75,11 +75,13 @@ def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
     assert panelResults < 1, [panelMessage]
 
 def run(showPlots, orbitDistance, eclipseValue, scAttitude):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
     #   Test initialization
-    testFailCount = 0                      
-    testMessages = []                      
-    unitTaskName = "unitTask"             
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
     #   Specify test-against parameter
@@ -89,7 +91,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     referenceMultiplier = 1.0 * eclipseValue * sunDistanceMult * scAttMult  #     Nominally set to 1.0; modified by other vals
 
     #   Simulation set-up
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
     testProcessRate = macros.sec2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
@@ -111,7 +113,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, "scMsg", scMessage)
 
     #   Module set-up
-    panel = simpleSolarPanel.SimpleSolarPanel()
+    panel = simpleSolarPanel.SimpleSolarPanel(msgLevel)
     panel.setPanelParameters(np.array([1,0,0]),1.0, 1.0)
     panel.stateInMsgName = "scMsg"
     panel.sunEclipseInMsgName = "EclipseMsg"
@@ -119,13 +121,13 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     panel.nodePowerOutMsgName = "panelMsg"
 
     unitTestSim.AddModelToTask(unitTaskName, panel)
-    
+
     unitTestSim.TotalSim.logThisMessage(panel.nodePowerOutMsgName, testProcessRate)
 
     #   Execute the sim for 1 second.
     unitTestSim.InitializeSimulationAndDiscover()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
-    
+
     unitTestSim.ExecuteSimulation()
 
 
@@ -136,7 +138,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     if not unitTestSupport.isDoubleEqual(powerData[1,:], referencePower*referenceMultiplier, tol):
         testFailCount+=1
         testMessages.append('Error: simpleSolarPanel did not compute power correctly.')
-    
+
     return [testFailCount, ''.join(testMessages)]
 
 

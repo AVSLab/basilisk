@@ -204,6 +204,9 @@ and pck00010.tpc.
 
 
 def unitEclipse(show_plots, eclipseCondition, planet):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     __tracebackhide__ = True
 
     testFailCount = 0
@@ -213,7 +216,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     testTaskRate = macros.sec2nano(1)
 
     # Create a simulation container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
@@ -237,7 +240,8 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     # setup Spice interface for some solar system bodies
     timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
+    gravFactory.createSpiceInterface(msgLevel
+                                     , bskPath + '/supportData/EphemerisData/'
                                      , timeInitString
                                      , spicePlanetNames = ["sun", "venus", "earth", "mars barycenter"]
                                      )
@@ -313,7 +317,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     unitTestSim.AddModelToTask(testTaskName, gravFactory.spiceObject, None, -1)
 
-    eclipseObject = eclipse.Eclipse()
+    eclipseObject = eclipse.Eclipse(msgLevel)
     eclipseObject.addPositionMsgName(scObject_0.scStateOutMsgName)
     eclipseObject.addPlanetName('earth')
     eclipseObject.addPlanetName('mars barycenter')

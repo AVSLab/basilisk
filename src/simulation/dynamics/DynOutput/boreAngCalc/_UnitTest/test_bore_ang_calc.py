@@ -95,6 +95,9 @@ def test_bore_ang_calc(testFixture, show_plots, boresightLoc, eulerLoc):
 
 # Run unit test
 def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -103,7 +106,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    TotalSim = SimulationBaseClass.SimBaseClass()
+    TotalSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time

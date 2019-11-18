@@ -33,9 +33,9 @@ class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors
     StateVecIntegrator *integrator;                   //!< -- Integrator used to propagate state forward
-    
+
 public:
-    DynamicObject();                                  //!< -- Constructor
+    DynamicObject(msgLevel_t msgLevel);                                  //!< -- Constructor
     virtual ~DynamicObject();                         //!< -- Destructor
     virtual void initializeDynamics();                //!< -- Initializes the dynamics and variables
     virtual void computeEnergyMomentum(double t);     //!< -- Method to compute energy and momentum of the system

@@ -72,12 +72,15 @@ def test_module(show_plots, offCount):
 
 
 def run(show_plots, offCount):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
     unitProcessName = "testProcess"
 
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
 
     #
@@ -199,4 +202,3 @@ if __name__ == "__main__":
     test_module(False,       # show_plots
                 0            # offCount
                )
-

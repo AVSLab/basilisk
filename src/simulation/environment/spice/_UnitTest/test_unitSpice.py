@@ -152,6 +152,9 @@ def test_unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTr
 
 # Run unit test
 def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos, useMsg):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -160,14 +163,14 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    TotalSim = SimulationBaseClass.SimBaseClass()
+    TotalSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
     # Initialize the spice modules that we are using.
-    SpiceObject = spice_interface.SpiceInterface()
+    SpiceObject = spice_interface.SpiceInterface(msgLevel)
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     SpiceObject.outputBufferCount = 10000

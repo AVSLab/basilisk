@@ -126,6 +126,9 @@ def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , 
 
 # Run the test
 def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle, location, rate, cutoff, rampDown):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -141,7 +144,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     Isp = 226.7
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
     # terminateSimulation() is needed if multiple unit test scripts are run
     # that run a simulation for the test. This creates a fresh and
     # consistent simulation environment for each test run.
@@ -180,7 +183,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
     #  Create a Simulation
     testRate = int(rate) # Parametrized rate of test
-    TotalSim = SimulationBaseClass.SimBaseClass()
+    TotalSim = SimulationBaseClass.SimBaseClass(msgLevel)
     #Create a new process for the unit test task and add the module to tasking
     testProc = TotalSim.CreateNewProcess(unitProcessName)
     testProc.addTask(TotalSim.CreateNewTask(unitTaskName, testRate))
@@ -727,4 +730,3 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
 if __name__ == "__main__":
     unitThrusters(ResultsStore(), False, "ON", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "ON", "ON")
-

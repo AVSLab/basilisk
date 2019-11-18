@@ -72,13 +72,16 @@ def test_module(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphem
 
 
 def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
     # terminateSimulation() is needed if multiple unit test scripts are run
     # that run a simulation for the test. This creates a fresh and
     # consistent simulation environment for each test run.
@@ -90,7 +93,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
 
     # Construct algorithm and associated C++ container
-    testModule = exponentialAtmosphere.ExponentialAtmosphere()
+    testModule = exponentialAtmosphere.ExponentialAtmosphere(msgLevel)
     testModule.ModelTag = "exponential"
 
     if useDefault:

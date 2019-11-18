@@ -29,13 +29,14 @@
 /*! This method initializes some basic parameters for the module.
  @return void
  */
-MagneticFieldBase::MagneticFieldBase()
+MagneticFieldBase::MagneticFieldBase(msgLevel_t msgLevel)
 {
+    this->bskPrint._msgLevel = msgLevel;
     this->planetPosInMsgName = "";
     this->OutputBufferCount = 2;
 
     //! - zero class variables
-    this->planetRadius = 0.0; 
+    this->planetRadius = 0.0;
     this->r_BP_N.fill(0.0);
     this->r_BP_P.fill(0.0);
     this->scStateInMsgNames.clear();
@@ -266,7 +267,7 @@ bool MagneticFieldBase::readMessages()
                 this->scStates.push_back(scMsg);
             }
     } else {
-        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
+        bskPrint.printMessage(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 

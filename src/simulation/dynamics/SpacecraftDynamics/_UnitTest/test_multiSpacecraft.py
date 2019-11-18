@@ -61,7 +61,7 @@ def test_SCConnected(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -326,6 +326,9 @@ def test_SCConnected(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCConnectedAndUnconnected(show_plots):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -341,7 +344,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time

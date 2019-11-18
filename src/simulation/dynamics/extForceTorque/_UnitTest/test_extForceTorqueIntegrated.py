@@ -63,7 +63,7 @@ def test_extForceBodyAndTorque():
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
@@ -72,8 +72,8 @@ def test_extForceBodyAndTorque():
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
-
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
@@ -95,7 +95,7 @@ def test_extForceBodyAndTorque():
 
     unitTestSim.InitializeSimulation()
 
-    extFTObject = extForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
     extFTObject.extForce_B = [[1], [2], [3]]
@@ -145,6 +145,9 @@ def test_extForceBodyAndTorque():
     return [testFailCount, ''.join(testMessages)]
 
 def test_extForceInertialAndTorque():
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -160,7 +163,7 @@ def test_extForceInertialAndTorque():
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
@@ -190,7 +193,7 @@ def test_extForceInertialAndTorque():
 
     unitTestSim.InitializeSimulation()
 
-    extFTObject = extForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
     extFTObject.extForce_N = [[-1], [-0.5], [0.5]]

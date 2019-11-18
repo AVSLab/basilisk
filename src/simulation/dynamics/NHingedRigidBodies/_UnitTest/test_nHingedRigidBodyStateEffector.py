@@ -83,6 +83,9 @@ values have all been confirmed to be conserved.
     assert testResults < 1, testMessage
 
 def nHingedRigidBody(show_plots, testCase):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -98,7 +101,7 @@ def nHingedRigidBody(show_plots, testCase):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time

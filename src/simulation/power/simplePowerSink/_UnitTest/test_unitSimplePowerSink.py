@@ -63,7 +63,7 @@ def test_default():
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -108,7 +108,7 @@ def test_status():
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time

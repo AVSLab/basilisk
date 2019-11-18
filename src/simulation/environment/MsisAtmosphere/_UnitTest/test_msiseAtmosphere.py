@@ -70,6 +70,9 @@ def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, setEpoch):
 
 def run(show_plots, orbitCase, setEpoch):
     '''Call this routine directly to run the script.'''
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -83,7 +86,7 @@ def run(show_plots, orbitCase, setEpoch):
     simProcessName = "simProcess"
 
     #  Create a sim module as an empty container
-    scSim = SimulationBaseClass.SimBaseClass()
+    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     #  create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
@@ -93,7 +96,7 @@ def run(show_plots, orbitCase, setEpoch):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
-    newAtmo = msisAtmosphere.MsisAtmosphere()
+    newAtmo = msisAtmosphere.MsisAtmosphere(msgLevel)
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "MsisAtmo"
 
@@ -218,7 +221,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
-    #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3, and must be adjusted by a factor of 1e-3 to match kg/m^3 
+    #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3, and must be adjusted by a factor of 1e-3 to match kg/m^3
     if not unitTestSupport.isDoubleEqualRelative(densData[0,1], refAtmoData[5]*1000., accuracy):
             testFailCount += 1
             testMessages.append(

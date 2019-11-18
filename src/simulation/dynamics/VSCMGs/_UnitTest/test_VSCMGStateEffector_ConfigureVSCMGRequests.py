@@ -122,12 +122,15 @@ def test_unitSimVSCMG(show_plots, useFlag, testCase):
 
 
 def unitSimVSCMG(show_plots, useFlag, testCase):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     testFail = False
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
     # configure module
-    VSCMG = vscmgStateEffector.VSCMGStateEffector()
+    VSCMG = vscmgStateEffector.VSCMGStateEffector(msgLevel)
     VSCMG.ModelTag = "VSCMG"
 
     numVSCMG = 2

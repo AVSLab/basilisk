@@ -158,6 +158,9 @@ def test_orb_elem_convert(a, e, i, AN, AP, f, mu, name, DispPlot=False):
 
 # Run unit test
 def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
+    # Define BSKPrint message level
+    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
+
     # Elem2RV
     testFailCount1 = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -167,7 +170,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    TotalSim = SimulationBaseClass.SimBaseClass()
+    TotalSim = SimulationBaseClass.SimBaseClass(msgLevel)
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # # create the dynamics task and specify the integration update time
@@ -175,7 +178,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Initialize the modules that we are using.
-    orb_elemObject = orb_elem_convert.OrbElemConvert()
+    orb_elemObject = orb_elem_convert.OrbElemConvert(msgLevel)
     orb_elemObject.ModelTag = "OrbElemConvertData"
 
     # Add Model To Task
@@ -348,7 +351,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     testMessages = []  # create empty array to store test log messages
 
     for g in range(2):
-        TotalSim = SimulationBaseClass.SimBaseClass()
+        TotalSim = SimulationBaseClass.SimBaseClass(msgLevel)
         DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
 
         # # create the dynamics task and specify the integration update time
@@ -356,7 +359,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, testProcessRate))
 
         # Initialize the modules that we are using.
-        orb_elemObject = orb_elem_convert.OrbElemConvert()
+        orb_elemObject = orb_elem_convert.OrbElemConvert(msgLevel)
         orb_elemObject.ModelTag = "OrbElemConvertData"
 
         # Add Model To Task
