@@ -53,7 +53,22 @@ def setupFilterData(filterObject):
     filterObject.qNoise = qNoiseIn.reshape(25).tolist()
 
 def test_functions_ukf(show_plots):
-    """Module Unit Test"""
+    """
+    Validation Test Description
+    ---------------------------
+    This subtest runs through the general modules file for square root and unscented filters. These methods include
+    LU decompositions, QR decompositions that only provide the R matrix, as well as L, U inverses, and Cholesky
+    decompositions.
+
+    Description of Variables Being Tested
+    -------------------------------------
+    Each method of the general module file for square root and unscented filters are tested to machine precision
+    with errors of 1E-14
+
+    General Documentation Comments
+    ------------------------------
+    This is a similar test used to other filter modules
+    """
     [testResults, testMessage] = heading_utilities_test(show_plots)
     assert testResults < 1, testMessage
 
@@ -64,7 +79,25 @@ def test_functions_ukf(show_plots):
 # provide a unique test method name, starting with test_
 
 def test_all_heading_kf(show_plots):
-    """Module Unit Test"""
+    """
+    Validation Test Description
+    ---------------------------
+    - The StatePropSunLine subtest runs the filter and creates synthetic measurements to trigger the measurement update method.
+    This is tested in two parts. The filter first stabilizes to a value, and then the value is abruptly changed
+    in order for the filter to snap back to the solution.
+    Measurements are provided every 10seconds which provides the sparse data that is usually characteristic of OpNav.
+
+    - The StateUpdateSunLine subtest runs the filter without measurements to only trigger the time update method.
+    This ensures the filter stays at true values if no measurements are provided.
+
+    Description of Variables Being Tested
+    -------------------------------------
+    - For the propagation: The state output by the filter is tested compared to the commanded target, and the covariance is ensured to converge.
+    These are both tested to 1E-1 because of noise introduced in the measurements.
+
+    - The measurement updated state output by the filter is tested compared to the expected target.
+    The stability of the state is tested to 1E-10.
+    """
     [testResults, testMessage] = StatePropSunLine(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = StateUpdateSunLine(show_plots)
@@ -334,9 +367,7 @@ def heading_utilities_test(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def StateUpdateSunLine(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
+
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -455,9 +486,6 @@ def StateUpdateSunLine(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def StatePropSunLine(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter

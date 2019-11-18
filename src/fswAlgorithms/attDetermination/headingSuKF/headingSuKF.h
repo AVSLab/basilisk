@@ -29,10 +29,6 @@
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 
 
-
-
-/*!@brief Data structure for heading Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
- */
 typedef struct {
     char opnavOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
