@@ -32,6 +32,18 @@ import sys, os, inspect
 import pytest
 import shutil
 import importlib
+import warnings
+FOUND_DATESHADER = True
+try:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=DeprecationWarning)
+        import pandas
+        import datashader
+        import holoviews
+    import bokeh
+except ImportError:
+    FOUND_DATESHADER = False
+
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -46,8 +58,9 @@ sys.path.append(path + '/../examples/MonteCarloExamples')
 # @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
 
+@pytest.mark.skipif(not FOUND_DATESHADER, reason = "Datashader not found")
+@pytest.mark.slowtest
 @pytest.mark.scenarioTest
-
 def test_scenarioBskMcScenarios(show_plots):
     # These need to be run in serial such that the data is produced for analysis
     scenarios = ['scenario_AttFeedbackMC',
