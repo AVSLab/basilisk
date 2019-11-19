@@ -49,9 +49,9 @@ public:
     void ApplyFilters(cv::Mat, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam);
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
-    std::string imageOutMsgName;          //!< The name of the ImageFswMsg output message
-    std::string cameraOutMsgName;          //!< The name of the ImageFswMsg output message
+    std::string imageInMsgName;          //!< The name of the ImageFswMsg input message
+    std::string imageOutMsgName;          //!< The name of the CameraImageMsg output message
+    std::string cameraOutMsgName;          //!< The name of the CameraConfigMsg output message
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
@@ -60,21 +60,21 @@ public:
     char parentName[MAX_MESSAGE_SIZE];  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn; //!< [-] Is the camera currently taking images
     int cameraID; //!< [-] Is the camera currently taking images
-    double fieldOfView;        //!< [rad]   Camera Field of View */
-    int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
-    uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond */
-    double focalLength;        //!< [m] Camera Focal Length in meters*/
-    double sensorSize[2];      //!< [m] Size of the camera sensor-paired with resolution gives you pixel size in mm*/
-    double cameraPos_B[3];     //!< [m] Camera position in body frame */
-    double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
-    char skyBox[MAX_MESSAGE_SIZE]; //!< [-] name of skyboz in use */
+    double fieldOfView;        //!< [rad]   Camera Field of View
+    int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
+    uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond
+    double focalLength;        //!< [m] Camera Focal Length in meters
+    double sensorSize[2];      //!< [m] Size of the camera sensor-paired with resolution gives you pixel size in mm
+    double cameraPos_B[3];     //!< [m] Camera position in body frame
+    double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame
+    char skyBox[MAX_MESSAGE_SIZE]; //!< [-] name of skyboz in use
     
     /*! Noise paramters */
-    double gaussian;        //!< Gaussian noise level */
-    double darkCurrent;    //!< Dark current intensity  */
-    double saltPepper;    //!< Stuck and Dark pixels probability */
-    double cosmicRays;        //!< Random cosmic rays (number)*/
-    double blurParam;        //!< Blur over image in pixels */
+    double gaussian;        //!< Gaussian noise level
+    double darkCurrent;    //!< Dark current intensity
+    double saltPepper;    //!< Stuck and Dark pixels probability
+    double cosmicRays;        //!< Random cosmic rays (number)
+    double blurParam;        //!< Blur over image in pixels 
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t imageInMsgID;                //!< ID for the outgoing message
