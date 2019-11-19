@@ -37,7 +37,7 @@ to install this tool.
 
 The following python packages must be installed via ``pip``::
 
-    pip3 install --user sphinx sphinx_rtd_theme breathe
+    pip3 install --user sphinx sphinx_rtd_theme breathe recommonmark
 
 
 Creating HTML Documentation
