@@ -66,13 +66,13 @@ except ImportError:
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage):
     """
-        Validation Test Description
-        ---------------------------
+        **Validation Test Description**
+
         This module tests the proper functioning of the camera module. This is done by first ensuring that the reading
         and writing of the camera parameters are properly executed. The test then corrupts a test image accordingly.
 
-        Description of Variables Being Tested
-        -------------------------------------
+        **Description of Variables Being Tested**
+
         The camera parameters tested are the camera position MRP and the isOn value for the camera. These ensure that
         the position is properly written and read. The image is also corrupted with the parameterized test information.
         Although not directly tested this ensures that the variables are properly read and that all the openCV functions
@@ -81,8 +81,8 @@ def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
         - ``camera_MRP``
         - ``isON``
 
-        General Documentation Comments
-        ------------------------------
+        **General Documentation Comments**
+
         The script could benefit from more profound image processing testing. Currently the bulk of the image processing
         is only tested by the result image.
         """
