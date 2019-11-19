@@ -24,9 +24,14 @@ Overview
 This script is a basic demonstration of a script that can be used to plot Monte Carlo data with 
 bokeh and datashaders. 
 
-.. important:: This script must be called from command line using
-               ``/usr/local/bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py``
+.. important::
 
+   1.   The name guard at the end of the file must be removed before this script can run.
+        It is provided here to ensure that the sphinx documentation generation process does not
+        run this script automatically.
+
+   2.   This script must be called from command line using
+        ``/usr/local/bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py``
 
 """
 
@@ -47,7 +52,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 def plotSuite(dataDir):
-    '''
+    """
     This is the function to populate with all of the plots to be generated using datashaders and bokeh.
     Each variable requires a call to ``pull_and_format_df()`` to ensure the dataframe will be compatible with
     the developed datashader utilities.
@@ -57,7 +62,7 @@ def plotSuite(dataDir):
 
     Returns: List of DS_Plots
 
-    '''
+    """
     plotList = []
     sigma_BR = pull_and_format_df(dataDir + "att_guidance.sigma_BR.data", 3)
     sigmaPlot = DS_Plot(sigma_BR, title="Attitude Error",
@@ -78,7 +83,7 @@ def plotSuite(dataDir):
 
 
 def run(show_plots):
-    '''
+    """
     **This script is meant to be configured based on the user's needs. It can be configured using the following
     three booleans:**
 
@@ -93,7 +98,7 @@ def run(show_plots):
     :param show_all_data: plot all MC runs for the plots specified in the plotSuite method
     :param show_extreme_data: call plotSuite method for user-defined number of extrema MC runs
     :param optional_plots: plots additional user-defined plots
-    '''
+    """
 
     show_all_data = True
     show_extreme_data = False
@@ -136,5 +141,10 @@ def run(show_plots):
 
     analysis.renderPlots(plotList)
 
-run(False)
+# The following name guard must be removed before this script can run.  It is provided here
+# to ensure that the sphinx documentation generation process does not run this script
+# automatically.
+if __name__ == "__main__":
+    run(False)
+
 

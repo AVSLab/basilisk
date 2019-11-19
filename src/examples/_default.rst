@@ -133,19 +133,6 @@ Power Sub-System
    Basic Power Usage and Tracking  <scenarioPowerDemo>
 
 
-Monte Carlo Simulations
------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   MC run with RW control  <scenarioMonteCarloAttRW>
-   MC run using Python Spice setup  <scenarioMonteCarloSpice>
-   MC run using BSK Sim Framework  <MonteCarloExamples/scenario_AttFeedbackMC>
-   MC rerun using prior MC run parameters  <MonteCarloExamples/scenarioRerunMonteCarlo>
-   MC Plotting using datashaders and bokeh  <MonteCarloExamples/scenarioAnalyzeMonteCarlo>
-
-
 
 bskSim()-Based Simulation
 -------------------------
@@ -159,6 +146,20 @@ bskSim()-Based Simulation
    Velocity Frame Pointing Control  <BskSim/scenarios/scenario_AttGuidHyperbolic>
    MRP Steering Attitude Control  <BskSim/scenarios/scenario_AttSteering>
    Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
+
+
+
+Monte Carlo Simulations
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   MC run with RW control  <scenarioMonteCarloAttRW>
+   MC run using Python Spice setup  <scenarioMonteCarloSpice>
+   MC run using BSK Sim Framework  <MonteCarloExamples/scenario_AttFeedbackMC>
+   MC rerun using prior MC run parameters  <MonteCarloExamples/scenarioRerunMonteCarlo>
+   MC Plotting using datashaders and bokeh  <MonteCarloExamples/scenarioAnalyzeMonteCarlo>
 
 
 
