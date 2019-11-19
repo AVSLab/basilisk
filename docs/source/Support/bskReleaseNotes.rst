@@ -19,7 +19,7 @@ In Progress Features
 
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- updates to the Monte Carlo controller and plotting algorithms to make use of better use of Pandas and Datashader
 
 Version 1.3.2
 -------------

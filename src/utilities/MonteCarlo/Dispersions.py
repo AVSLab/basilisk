@@ -32,10 +32,14 @@ class SingleVariableDispersion(object):
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
+        self.magnitude = []
 
     @abc.abstractmethod
     def generate(self, sim):
         pass
+
+    def getDispersionMag(self):
+        return self.magnitude
 
     def checkBounds(self, value):
         if self.bounds is None:
@@ -53,6 +57,9 @@ class SingleVariableDispersion(object):
     def generateString(self, sim):
         return str(self.generate(sim))
 
+    def generateMagString(self):
+        return str(self.getDispersionMag())
+
 
 class UniformDispersion(SingleVariableDispersion):
     def __init__(self, varName, bounds=None):
@@ -62,6 +69,10 @@ class UniformDispersion(SingleVariableDispersion):
 
     def generate(self, sim):
         dispValue = random.uniform(self.bounds[0], self.bounds[1])
+
+        mid = (self.bounds[1] + self.bounds[0])/2.
+        scale = self.bounds[1] - mid
+        self.magnitude.append(str(round((dispValue - mid)/scale*100,2)) + " %")
         return dispValue
 
 
@@ -75,6 +86,8 @@ class NormalDispersion(SingleVariableDispersion):
         dispValue = random.gauss(self.mean, self.stdDeviation)
         if self.bounds is not None:
             dispValue = self.checkBounds(dispValue)
+        if self.stdDeviation !=0 :
+            self.magnitude.append(str(round((dispValue - self.mean)/self.stdDeviation,2)) + " sigma")
         return dispValue
 
 
@@ -84,11 +97,15 @@ class VectorVariableDispersion(object):
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
+        self.magnitude = []
         return
 
     @abc.abstractmethod
     def generate(self, sim=None):
         pass
+
+    def getDispersionMag(self):
+        return self.magnitude
 
     def perturbVectorByAngle(self, vector, angle):
         rndVec = np.random.random(3)
@@ -96,19 +113,48 @@ class VectorVariableDispersion(object):
             rndVec[0] *= -1
         eigenAxis = np.cross(vector, rndVec)
         thrusterMisalignDCM = self.eigAxisAndAngleToDCM(eigenAxis, angle)
+        self.magnitude.append(str(round(np.arccos(np.dot(rndVec, vector)/np.linalg.norm(rndVec)/np.linalg.norm(vector))*180./np.pi,2)) + " deg")
         return np.dot(thrusterMisalignDCM, vector)
 
     def perturbCartesianVectorUniform(self, vector):
         dispValues = np.zeros(3)
         for i in range(len(vector)):
             dispValues[i] = random.uniform(self.bounds[0], self.bounds[1])
+            mid = (self.bounds[1] + self.bounds[0])
+            scale = self.bounds[1] - mid
+            self.magnitude.append(str(round((dispValues[i] - mid)/scale*100,2)) + " %")
         return dispValues
 
     def perturbCartesianVectorNormal(self, vector):
         dispValues = np.zeros(3)
         for i in range(len(vector)):
             dispValues[i] = random.gauss(self.mean, self.stdDeviation)
+            if self.stdDeviation != 0 :
+                self.magnitude.append(str(round((dispValues[i] - self.mean)/self.stdDeviation,2)) + " $\sigma$")
         return dispValues
+
+    def cart2Spherical(self, cartVector):
+        # Spherical Coordinate Set: [rho, theta, phi]
+        x = cartVector[0]
+        y = cartVector[1]
+        z = cartVector[2]
+
+        rho = np.linalg.norm(cartVector)
+        phi = np.arctan2(y, x)[0]
+        theta = np.arccos(z)[0]
+
+        return [rho, phi, theta]
+
+    def spherical2Cart(self, spherVec):
+        rho = spherVec[0]
+        phi = spherVec[1]
+        theta = spherVec[2]
+
+        x = rho * np.sin(theta) * np.cos(phi)
+        y = rho * np.sin(theta) * np.sin(phi)
+        z = rho * np.cos(theta)
+
+        return [x,y,z]
 
     @staticmethod
     def eigAxisAndAngleToDCM(axis, angle):
@@ -144,6 +190,14 @@ class VectorVariableDispersion(object):
         val = val[0:-1] + ']'
         return val
 
+    def generateMagString(self):
+        nextValue = self.getDispersionMag()
+        val = '['
+        for i in range(len(self.magnitude)):
+            val += str(nextValue[i]) + ','
+        val = val[0:-1] + ']'
+        return val
+
     def getName(self):
         return self.varName
 
@@ -173,26 +227,93 @@ class NormalVectorDispersion(VectorVariableDispersion):
 
 
 class UniformVectorAngleDispersion(VectorVariableDispersion):
-    def __init__(self, varName, phiBounds=None, thetaBounds=None):
+    def __init__(self, varName, phiBoundsOffNom=None, thetaBoundsOffNom=None):
         super(UniformVectorAngleDispersion, self).__init__(varName, None)
         # @TODO these bounds are not currently being applied to the generated values
-        self.phiBounds = phiBounds
-        if phiBounds is None:
-            self.phiBounds = ([0.0, 2 * np.pi])
-        self.thetaBounds = thetaBounds
-        if thetaBounds is None:
-            self.thetaBounds = self.phiBounds
+
+        self.phiBoundsOffNom = phiBoundsOffNom
+        self.thetaBoundsOffNom = thetaBoundsOffNom
+
+        if phiBoundsOffNom is None:
+            self.phiBoundsOffNom = [-np.pi / 2, np.pi / 2]
+        if thetaBoundsOffNom is None:
+            self.thetaBoundsOffNom = [-np.pi, np.pi]
+
+        self.magnitude = []
 
     def generate(self, sim=None):
-        vector = eval('sim.' + self.varName)
-        phiRnd = random.uniform(self.phiBounds[0], self.phiBounds[1])
-        thetaRnd = random.uniform(self.thetaBounds[0], self.thetaBounds[1])
-        dispVec = np.array(vector) + np.array([[np.sin(phiRnd) * np.cos(thetaRnd)],
-                                               [np.sin(phiRnd) * np.sin(thetaRnd)],
-                                               [phiRnd]])
-        dispVec = dispVec / np.linalg.norm(dispVec)
+        # Note this dispersion is applied off of the nominal
+        vectorCart = eval('sim.' + self.varName)
+        vectorCart = vectorCart/np.linalg.norm(vectorCart)
+        vectorSphere = self.cart2Spherical(vectorCart)
+
+        meanPhi = vectorSphere[1] # Nominal phi
+        meanTheta = vectorSphere[2] #Nominal theta
+
+        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
+        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
+
+        phiRnd = np.random.uniform(meanPhi+self.phiBounds[0], meanPhi+self.phiBounds[1])
+        thetaRnd = np.random.uniform(meanTheta+self.thetaBounds[0], meanTheta+self.thetaBounds[1])
+
+        phiRnd = self.checkBounds(phiRnd, self.phiBounds)
+        thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
+
+        newVec = self.spherical2Cart([1.0, phiRnd, thetaRnd])
+        dispVec = newVec/np.linalg.norm(newVec) # Shouldn't technically need the normalization but doing it for completeness
+
+        midPhi = (self.phiBounds[1] + self.phiBounds[0])/2.
+        scalePhi = self.phiBounds[1] - midPhi
+        midTheta = (self.thetaBounds[1] + self.thetaBounds[0])/2.
+        scaleTheta = self.thetaBounds[1] - midTheta
+        self.magnitude.append(str(round((phiRnd - midPhi)/scalePhi*100,2)) + " %")
+        self.magnitude.append(str(round((thetaRnd - midTheta)/scaleTheta*100,2)) + " %")
+
         return dispVec
 
+
+class NormalVectorAngleDispersion(VectorVariableDispersion):
+    def __init__(self, varName, thetaStd = np.pi/3.0, phiStd=np.pi/3.0, thetaBoundsOffNom=None, phiBoundsOffNom=None):
+        super(NormalVectorAngleDispersion, self).__init__(varName, None)
+        # @TODO these bounds are not currently being applied to the generated values
+
+        self.thetaStd = thetaStd
+        self.phiStd = phiStd
+
+        self.phiBoundsOffNom = phiBoundsOffNom
+        self.thetaBoundsOffNom = thetaBoundsOffNom
+
+        if phiBoundsOffNom is None:
+            self.phiBoundsOffNom = [-np.pi/2, np.pi/2]
+        if thetaBoundsOffNom is None:
+            self.thetaBoundsOffNom = [-np.pi, np.pi]
+
+        self.magnitude = []
+
+    def generate(self, sim=None):
+        vectorCart = eval('sim.' + self.varName)
+        vectorCart = vectorCart/np.linalg.norm(vectorCart)
+        vectorSphere = self.cart2Spherical(vectorCart)
+
+        meanPhi = vectorSphere[1] # Nominal phi
+        meanTheta = vectorSphere[2] # Nominal theta
+
+        phiRnd = np.random.normal(meanPhi, self.phiStd, 1)
+        thetaRnd = np.random.normal(meanTheta, self.thetaStd, 1)
+
+        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
+        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
+
+        phiRnd = self.checkBounds(phiRnd, self.phiBounds)
+        thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
+
+        newVec = self.spherical2Cart([1.0, phiRnd, thetaRnd])
+        dispVec = newVec/np.linalg.norm(newVec) # Shouldn't technically need the normalization but doing it for completeness
+
+        self.magnitude.append(str(round((phiRnd - meanPhi) / self.phiStd, 2)) + " $\sigma$")
+        self.magnitude.append(str(round((thetaRnd - meanTheta) / self.thetaStd, 2)) + " $\sigma$")
+
+        return dispVec
 
 class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
     def __init__(self, varName, bounds=None):
@@ -205,6 +326,7 @@ class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
         super(UniformEulerAngleMRPDispersion, self).__init__(varName, bounds)
         if self.bounds is None:
             self.bounds = ([0, 2 * np.pi])
+        self.magnitude = []
 
     def generate(self, sim=None):
         rndAngles = np.zeros((3, 1))
@@ -212,6 +334,8 @@ class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
             rndAngles[i] = (self.bounds[1] - self.bounds[0]) * np.random.random() + self.bounds[0]
         dispMRP = rbk.euler3232MRP(rndAngles)
         dispMRP = dispMRP.reshape(3)
+        for i in range(3):
+            self.magnitude.append(str(round((dispMRP[i] - np.pi)/np.pi*100,2))+ " %")
         return dispMRP
 
 
@@ -232,6 +356,7 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
         # if self.bounds is None:
         #     self.bounds = ([-np.pi/2, np.pi/2])
         self.thrusterIndex = thrusterIndex
+        self.magnitude = []
 
     def getName(self):
         return '.'.join(self.varNameComponents[0:-1]) + '.thrDir_B'
@@ -249,6 +374,17 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
 
         return val
 
+    def generateMagString(self):
+        nextValue = self.getDispersionMag()
+
+        val = '['
+        for i in range(len(self.magnitude)):
+            val += str(nextValue[i])
+            val += ', '
+        val += ']'
+
+        return val
+
     def generate(self, sim=None):
         if sim is None:
             print(("No simulation object parameter set in '" + self.generate.__name__
@@ -262,6 +398,8 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
             angle = np.random.normal(0, self.phiStd, 1)
             dirVec = np.array(dirVec).reshape(3).tolist()
             dispVec = self.perturbVectorByAngle(dirVec, angle)
+            angleDisp = np.arccos(np.dot(dirVec, dispVec)/np.linalg.norm(dirVec)/np.linalg.norm(dispVec))
+            self.magnitude.append(str(round(angleDisp / self.phiStd,2))+ " sigma")
         return dispVec
 
 
@@ -270,12 +408,17 @@ class UniformVectorCartDispersion(VectorVariableDispersion):
         super(UniformVectorCartDispersion, self).__init__(varName, bounds)
         if self.bounds is None:
             self.bounds = ([-1.0, 1.0])
+        self.magnitude = []
 
     def generate(self, sim=None):
         dispVec = []
         for i in range(3):
             rnd = random.uniform(self.bounds[0], self.bounds[1])
             rnd = self.checkBounds(rnd, self.bounds)
+            for i in range(3):
+                mid = (self.bounds[1] + self.bounds[0])/2.
+                scale = self.bounds[1] - mid
+                self.magnitude.append(str(round((rnd - mid) / scale * 100,2))+ " %")
             dispVec.append(rnd)
         return dispVec
 
@@ -285,17 +428,23 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
         super(NormalVectorCartDispersion, self).__init__(varName, bounds)
         self.mean = mean
         self.stdDeviation = stdDeviation
+        self.magnitude = []
 
     def generate(self, sim=None):
         dispVec = []
         for i in range(3):
             if isinstance(self.stdDeviation, collections.Sequence):
                 rnd = random.gauss(self.mean[i], self.stdDeviation[i])
+                if self.stdDeviation[i] != 0:
+                    self.magnitude.append(str(round((rnd - self.mean[i])/self.stdDeviation[i],2))+ " sigma")
             else:
                 rnd = random.gauss(self.mean, self.stdDeviation)
+                if self.stdDeviation != 0:
+                    self.magnitude.append(str(round((rnd - self.mean) / self.stdDeviation,2))+ " sigma")
             if self.bounds is not None:
                 rnd = self.checkBounds(rnd, self.bounds)
             dispVec.append(rnd)
+
         return dispVec
 
 
@@ -313,6 +462,7 @@ class InertiaTensorDispersion:
         self.stdDiag = stdDiag
         self.stdAngle = stdAngle
         self.bounds = boundsDiag
+        self.magnitude = []
         if self.stdDiag is None:
             self.stdDiag = 1.0
         if self.bounds is None:
@@ -335,9 +485,14 @@ class InertiaTensorDispersion:
                 rnd = random.gauss(0, self.stdDiag)
                 rnd = self.checkBounds(rnd)
                 temp.append(rnd)
+                if self.stdDiag != 0:
+                    self.magnitude.append(str(round(rnd/self.stdDiag,2))+ " sigma")
             dispIdentityMatrix = np.identity(3) * temp
             # generate random values for the similarity transform to produce off-diagonal terms
             angles = np.random.normal(0, self.stdAngle, 3)
+            for i in range(3):
+                if self.stdAngle != 0:
+                    self.magnitude.append(str(round(angles[i] / self.stdAngle,2))+ " sigma")
             disp321Matrix = rbk.euler3212C(angles)
 
             # disperse the diagonal elements
@@ -346,6 +501,9 @@ class InertiaTensorDispersion:
             dispI = np.dot(np.dot(disp321Matrix, dispI), disp321Matrix.T)
 
         return dispI
+
+    def getDispersionMag(self):
+        return self.magnitude
 
     def checkBounds(self, value):
         if value < self.bounds[0]:
@@ -365,6 +523,14 @@ class InertiaTensorDispersion:
             if i is not 2:
                 val += ','
         val = val[0:] + ']'
+        return val
+
+    def generateMagString(self):
+        nextValue = self.getDispersionMag()
+        val = '['
+        for i in range(len(self.magnitude)):
+            val += str(nextValue[i]) + ','
+        val = val[0:-1] + ']'
         return val
 
     def getName(self):

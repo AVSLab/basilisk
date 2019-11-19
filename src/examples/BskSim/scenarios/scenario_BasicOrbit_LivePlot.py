@@ -82,15 +82,22 @@ sys.path.append(path + '/../../scenarios')
 
 
 # Create your own scenario child class
-class scenario_BasicOrbitLive(BSKScenario):
-    def __init__(self, masterSim, showPlots, livePlots):
-        super(scenario_BasicOrbitLive, self).__init__(masterSim)
+class scenario_BasicOrbitLive(BSKSim, BSKScenario):
+    def __init__(self):
+        super(scenario_BasicOrbitLive, self).__init__()
         self.name = 'scenario_BasicOrbitLive'
+
+        self.set_DynModel(BSK_Dynamics)
+        self.set_FswModel(BSK_Fsw)
+        self.initInterfaces()
+
+        self.configure_initial_conditions()
+        self.log_outputs()
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
-        self.masterSim.modeRequest = 'standby'
+        self.modeRequest = 'standby'
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
@@ -100,27 +107,27 @@ class scenario_BasicOrbitLive(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)
         # Dynamics process outputs
-        samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputAttName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
+        samplingTime = self.get_DynModel().processTasksTimeStep
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputAttName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
 
     def pull_outputs(self, showPlots):
         print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
+        sigma_BN = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
+        r_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+        v_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -173,64 +180,57 @@ class scenario_BasicOrbitLive(BSKScenario):
         #define plots of interest here
         dataRequests = [{"plotID" : 1,
                         "plotFun" : "plot_orbit",
-                        "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]},
+                        "dataReq" : [self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]},
                         {"plotID" : 2,
                         "plotFun" : "plot_orientation",
-                        "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N",
-                                    self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N",
-                                    self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN"]}]
+                        "dataReq" : [self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N",
+                                    self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N",
+                                    self.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN"]}]
         return dataRequests
 
 
-def run(showPlots, livePlots=False):
-    """
-    The scenarios can be run with the followings setups parameters:
-
-    Args:
-        showPlots (bool): Determines if the script should display plots
-        livePlots (bool): Determines if the live plotting feature should be used
-
-    """
-    # Instantiate base simulation
-    TheBSKSim = BSKSim()
-    TheBSKSim.set_DynModel(BSK_Dynamics)
-    TheBSKSim.set_FswModel(BSK_Fsw)
-    TheBSKSim.initInterfaces()
-
-    # Configure a scenario in the base simulation
-    TheScenario = scenario_BasicOrbitLive(TheBSKSim, showPlots, livePlots)
-    TheScenario.log_outputs()
-    TheScenario.configure_initial_conditions()
+def runScenario(scenario, livePlots=False, showPlots=False):
 
     if livePlots:
         clockSync = clock_synch.ClockSynch()
         clockSync.accelFactor = 50.0
-        TheBSKSim.AddModelToTask(TheBSKSim.DynModels.taskName, clockSync)
+        scenario.AddModelToTask(scenario.DynModels.taskName, clockSync)
 
     # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
+    scenario.InitializeSimulationAndDiscover()
 
     # Configure run time
     simulationTime = macros.min2nano(10.)
-    TheBSKSim.ConfigureStopTime(simulationTime)
+    scenario.ConfigureStopTime(simulationTime)
 
     # Run simulation
     figureList = {}
     if livePlots:
-        # To run the Basilisk simulation a similar setup is used as with the regular BSK simulation by running:
-        #plotting refresh rate in ms
+        # plotting refresh rate in ms
         refreshRate = 1000
         plotComm, simComm = Pipe()
         plotArgs = [showPlots]
-        simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (showPlots, livePlots, simComm, TheScenario.pull_outputs, plotArgs))
-        plotProc = Process(target = TheScenario.live_outputs, args = (plotComm, refreshRate))
+        simProc = Process(target=scenario.ExecuteSimulation,
+                          args=(showPlots, livePlots, simComm, scenario.pull_outputs, plotArgs))
+        plotProc = Process(target=scenario.live_outputs, args=(plotComm, refreshRate))
         # Execute simulation and live plotting
         simProc.start(), plotProc.start()
         simProc.join(), plotProc.join()
     else:
-        TheBSKSim.ExecuteSimulation()
-        figureList = TheScenario.pull_outputs(showPlots)
+        scenario.ExecuteSimulation()
 
+def run(showPlots, livePlots=False):
+    """
+        The scenarios can be run with the followings setups parameters:
+
+        Args:
+            showPlots (bool): Determines if the script should display plots
+
+    """
+    # Configure a scenario in the base simulation
+    TheScenario = scenario_BasicOrbitLive()
+    runScenario(TheScenario, livePlots=livePlots, showPlots=showPlots)
+    figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
 

@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
     import pandas as pd
@@ -25,7 +26,7 @@ def curve_per_df_component(df):
     :return:
     '''
     idx = pd.IndexSlice
-    df = df.interpolate(method="linear")
+    df = df.interpolate(method = "linear")
     df_list = []
     for i in np.unique(df.columns.codes[1]):
         # Select all of the component
@@ -145,7 +146,7 @@ class DS_Plot():
         3) populating various annotations and asethetic configurations
         :return: hv.DynImage()
         '''
-
+        hv.extension('bokeh')
         # Overlay these curves
         curves, missingData = self.generateCurves()
         overlay = hv.NdOverlay(curves, kdims='k')#.opts(framewise=True)
@@ -171,8 +172,8 @@ class DS_Plot():
 
         if not self.labels == []:
             color_key = [(name, color) for name, color in zip(self.labels, self.cmap)]
-            legend = hv.NdOverlay(
-                {n: hv.Points([np.nan, np.nan], label=str(n)).opts(style=dict(color=c)) for n, c in color_key})
+            legend = hv.NdOverlay({n: hv.Points([np.nan, np.nan], label=str(n)).opts(style=dict(color=c)) for n, c in color_key})
             image = image*legend
 
-        return image
+        return image, self.title
+

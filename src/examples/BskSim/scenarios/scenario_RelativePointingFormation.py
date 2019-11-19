@@ -147,17 +147,24 @@ import BSK_Plotting as BSK_plt
 sys.path.append(path + '/../../scenarios')
 
 # Create your own scenario child class
-class scenario_RelativePointingFormation(BSKScenario):
-    def __init__(self, masterSim):
-        super(scenario_RelativePointingFormation, self).__init__(masterSim)
+class scenario_RelativePointingFormation(BSKSim, BSKScenario):
+    def __init__(self):
+        super(scenario_RelativePointingFormation, self).__init__()
         self.name = 'scenario_RelativePointingFormation'
+
+        self.set_DynModel(BSK_FormationDynamics)
+        self.set_FswModel(BSK_FormationFsw)
+        self.initInterfaces()
+
+        self.configure_initial_conditions()
+        self.log_outputs()
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
-        self.masterSim.modeRequest = 'spacecraftPointing'
+        self.modeRequest = 'spacecraftPointing'
 
-        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
@@ -169,10 +176,10 @@ class scenario_RelativePointingFormation(BSKScenario):
         oe.f = 0.1 * macros.D2R
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]] # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]] # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
         # Configure Dynamics initial conditions
         oe2 = orbitalMotion.ClassicElements()
@@ -184,51 +191,51 @@ class scenario_RelativePointingFormation(BSKScenario):
         oe2.f = 0.0 * macros.D2R
         rN2, vN2 = orbitalMotion.elem2rv(mu, oe2)
         orbitalMotion.rv2elem(mu, rN2, vN2)
-        self.masterSim.get_DynModel().scObject2.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN2)  # m   - r_CN_N
-        self.masterSim.get_DynModel().scObject2.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN2)  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject2.hub.sigma_BNInit = [[-0.3], [0.0], [0.5]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject2.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN2)  # m   - r_CN_N
+        self.get_DynModel().scObject2.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN2)  # m/s - v_CN_N
+        self.get_DynModel().scObject2.hub.sigma_BNInit = [[-0.3], [0.0], [0.5]]  # sigma_BN_B
+        self.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)
 
-        samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
+        samplingTime = self.get_DynModel().processTasksTimeStep
 
         # Dynamics process outputs
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject2.outputTransName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject2.outputTransName, samplingTime)
 
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputAttName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject2.outputAttName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputAttName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject2.outputAttName, samplingTime)
 
         # # FSW process outputs
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData2.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData2.outputDataName, samplingTime)
 
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().spacecraftPointing.attReferenceOutMsgName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().spacecraftPointing.attReferenceOutMsgName, samplingTime)
 
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackControlData.outputDataName, samplingTime)
+        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackControlData.outputDataName, samplingTime)
 
     def pull_outputs(self, showPlots):
         print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        r_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
-        r_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", list(range(3)))
+        r_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
+        r_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", list(range(3)))
 
-        v_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
-        v_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", list(range(3)))
+        v_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
+        v_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", list(range(3)))
 
-        sigma_BN_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
-        sigma_BN_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputAttName + ".sigma_BN", list(range(3)))
+        sigma_BN_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
+        sigma_BN_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputAttName + ".sigma_BN", list(range(3)))
 
         # FSW process outputs
-        omega_BR_B_chief = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        omega_BR_B_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", list(range(3)))
+        omega_BR_B_chief = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
+        omega_BR_B_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", list(range(3)))
 
-        sigma_BR_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", list(range(3)))
+        sigma_BR_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", list(range(3)))
 
-        sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".sigma_RN", list(range(3)))
-        omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".omega_RN_N", list(range(3)))
+        sigma_RN = self.pullMessageLogData(self.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".sigma_RN", list(range(3)))
+        omega_RN_N = self.pullMessageLogData(self.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".omega_RN_N", list(range(3)))
 
 
         # Plot results
@@ -251,38 +258,21 @@ class scenario_RelativePointingFormation(BSKScenario):
 
         return figureList
 
-
-def run(showPlots):
-    """
-    The scenarios can be run with the followings setups parameters:
-
-    Args:
-        showPlots (bool): Determines if the script should display plots
-
-    """
-
-    # Instantiate base simulation
-    TheBSKSim = BSKSim()
-    TheBSKSim.set_DynModel(BSK_FormationDynamics)
-    TheBSKSim.set_FswModel(BSK_FormationFsw)
-    TheBSKSim.initInterfaces()
-
-    # Configure a scenario in the base simulation
-    TheScenario = scenario_RelativePointingFormation(TheBSKSim)
-
-    TheScenario.configure_initial_conditions()
-    TheScenario.log_outputs()
-
+def runScenario(scenario):
     # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
+    scenario.InitializeSimulationAndDiscover()
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.0)
-    TheBSKSim.ConfigureStopTime(simulationTime)
+    scenario.ConfigureStopTime(simulationTime)
 
-    TheBSKSim.ExecuteSimulation()
+    scenario.ExecuteSimulation()
 
-    # Pull the results of the base simulation running the chosen scenario
+def run(showPlots):
+
+    TheScenario = scenario_RelativePointingFormation()
+    runScenario(TheScenario)
+
     figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList

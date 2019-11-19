@@ -141,6 +141,10 @@ Monte Carlo Simulations
 
    MC run with RW control  <scenarioMonteCarloAttRW>
    MC run using Python Spice setup  <scenarioMonteCarloSpice>
+   MC run using BSK Sim Framework  <MonteCarloExamples/scenario_AttFeedbackMC>
+   MC rerun using prior MC run parameters  <MonteCarloExamples/scenarioRerunMonteCarlo>
+   MC Plotting using datashaders and bokeh  <MonteCarloExamples/scenarioAnalyzeMonteCarlo>
+
 
 
 bskSim()-Based Simulation

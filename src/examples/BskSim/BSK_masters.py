@@ -79,10 +79,9 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
 
 class BSKScenario(object):
-    """Define the bskSim scenario class."""
-    def __init__(self, masterSim):
+    def __init__(self):
         self.name = "scenario"
-        self.masterSim = masterSim
+        #self.masterSim = masterSim
 
     def configure_initial_conditions(self):
         """
