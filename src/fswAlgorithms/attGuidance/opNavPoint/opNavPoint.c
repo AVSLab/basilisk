@@ -137,8 +137,8 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         /*! - If a valid image is in save the heading direction for future use*/
         if (opNavMsg.valid == 1){
             configData->lastTime = callTime*1E-9;
-            v3Copy(opNavMsg.r_BN_N, configData->currentHeading_N);
             v3Copy(opNavMsg.r_BN_C, currentHeading_C);
+            m33tMultV3(dcm_CN, opNavMsg.r_BN_C, configData->currentHeading_N);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);
             v3Scale(1/hNorm, currentHeading_C, currentHeading_C);

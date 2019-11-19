@@ -108,7 +108,8 @@ def PostFitResiduals(Res, noise, string, show_plots):
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='lower right')
-    plt.ylim([-10*noise, 10*noise])
+    if noise >1E-5:
+        plt.ylim([-10*noise, 10*noise])
     plt.title('First Position Component')
     plt.grid()
 
@@ -116,7 +117,8 @@ def PostFitResiduals(Res, noise, string, show_plots):
     plt.plot(t , Res[:, 2], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
+    if noise >1E-5:
+        plt.ylim([-10*noise, 10*noise])
     plt.title('Second Position Component')
     plt.grid()
 
@@ -124,7 +126,8 @@ def PostFitResiduals(Res, noise, string, show_plots):
     plt.plot(t , Res[:, 3], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
+    if noise > 1E-5:
+        plt.ylim([-10 * noise, 10 * noise])
     plt.title('Third Position Component')
     plt.grid()
 

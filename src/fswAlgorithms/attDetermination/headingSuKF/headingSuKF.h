@@ -26,17 +26,16 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/headingFilterFswMsg.h"
 #include "fswMessages/opNavFswMsg.h"
+#include "simFswInterfaceMessages/cameraConfigMsg.h"
 
 
-
-
-/*!@brief Data structure for heading Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
- */
 typedef struct {
     char opnavOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char opnavDataInMsgName[MAX_STAT_MSG_LENGTH];/*!< The name of the input opnav data message*/
-    
+    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
+
+    int putInCameraFrame;         /*!< [-] If camera message is found output the result to the camera frame as well as the body and inertial frame*/
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
 	int numObs;                   /*!< [-] Number of measurements this cycle */
@@ -46,10 +45,11 @@ typedef struct {
 	double lambdaVal;             /*!< [-] Lambda parameter for filter*/
 	double gamma;                 /*!< [-] Gamma parameter for filter*/
     double qObsVal;               /*!< [-] OpNav instrument noise parameter*/
-
-	double dt;                     /*!< [s] seconds since last data epoch */
-	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
-
+    double rNorm;                 /*!< [-] OpNav measurment norm*/
+	double dt;                    /*!< [s] seconds since last data epoch */
+	double timeTag;               /*!< [s]  Time tag for statecovar/etc */
+    double noiseSF;               /*!< [-]  Scale factor for noise */
+    
     double bVec_B[HEAD_N_STATES];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
     
@@ -82,7 +82,9 @@ typedef struct {
     
     int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-    int32_t opnavDataInMsgId; 
+    int32_t opnavDataInMsgId;   /*!< [-] ID for the opNav data in put message */
+    int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
+
 }HeadingSuKFConfig;
 
 #ifdef __cplusplus
