@@ -33,19 +33,6 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 
 
-
-/*! \addtogroup SimModelGroup
-
- @brief Module reads in a message containing a pointer to an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
-
- The module
- [PDF Description](Basilisk-camera-20191003.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- @{
- */
-
 class Camera: public SysModel {
 public:
     Camera();
