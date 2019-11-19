@@ -25,7 +25,7 @@ Module Programming
    ``simulation/simMessages/simMessages.i``,
    ``simulation/simFswInterfaceMessages/simFswInterfaceMessages.i`` or
    ``fswAlgorithms/fswMessages/fswMessages.i``
--  Are all module input and output messages Swig’s in the module ``*.i``
+-  Are all module input and output messages Swig’d in the module ``*.i``
    file
 -  Does the code contain appropriate general comments
 -  Does the code contain Doxygen compatible function descriptions,
@@ -58,9 +58,9 @@ Module Functionality Testing
 
 Is a ``_UnitTest`` folder included that:
 
--  has the python file name start with\ ``test_``
--  has a test method that starts with ``test_xxxx()``
--  has sufficient comments within the test file to explain what is done
+-  includes a python file name starting with\ ``test_``
+-  provides a test method that starts with ``test_xxxx()``
+-  contains sufficient comments within the test file to explain what is done
 -  only uses the test module (if possible), and creates the various
    required input messages
 -  checks the module output for all input and module configuration
@@ -83,3 +83,6 @@ If an integrated test is provided as a ``test_XXX.py`` file.  Does this test met
 
 See the :ref:`FAQ <FAQ>` on how to run generate an html validation report using ``pytest --report``.  Note that it is ok to just run this report for the module being tested.
 
+Update Release Notes
+--------------------
+Update the BSK release notes in ``/docs/source/Support/bskReleaseNotes.rst`` to include information about the new features being added.
