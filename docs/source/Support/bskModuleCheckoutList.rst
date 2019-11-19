@@ -1,4 +1,6 @@
 
+.. _bskModuleCheckoutList:
+
 Basilisk Module Checkout List 
 =============================
 
