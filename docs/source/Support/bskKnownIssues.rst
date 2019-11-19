@@ -1,3 +1,6 @@
+
+.. _bskKnownIssues:
+
 Basilisk Known Issues
 =====================
 

@@ -1,9 +1,17 @@
 
+.. _bskModuleCheckoutList:
+
 Basilisk Module Checkout List 
 =============================
 
 This documents contains a series of action items that should be checked
 before a Basilisk (BSK) module is approved.
+
+Building Basilisk and Testing
+-----------------------------
+
+-   Do a clean build of Basilisk and make sure all code compiles as expected (see :ref:`FAQ <FAQ>` on how to do a clean build)
+-   From the ``src`` directory, run ``pytest`` and ensure all tests are passing as expected (see :ref:`installOptionalPackages` for info on installing and running ``pytest``)
 
 Style and Formatting
 --------------------
@@ -19,11 +27,11 @@ Module Programming
    ``simulation/simMessages/simMessages.i``,
    ``simulation/simFswInterfaceMessages/simFswInterfaceMessages.i`` or
    ``fswAlgorithms/fswMessages/fswMessages.i``
--  Are all module input and output messages Swig’s in the module ``*.i``
+-  Are all module input and output messages Swig’d in the module ``*.i``
    file
--  Does the code contain appropriate comments
+-  Does the code contain appropriate general comments
 -  Does the code contain Doxygen compatible function descriptions,
-   variable defintions, etc.
+   variable definitions, etc.
 -  Module startup and initialization
 
    -  The ``SelfInit()`` routine should declare the module output
@@ -31,14 +39,30 @@ Module Programming
    -  The ``CrossInit()`` routine should subscribe to the module input
       messages
    -  The ``Reset()`` in the FSW modules should reset all the default
-      moudle configuration parameters.
+      module configuration parameters.
+
+Module Documentation
+--------------------
+
+Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` should be the same name as the module c or c++ file name.  The :ref:`fswModuleTemplate` module contains a sample documentation set for a Basilisk module.   The required sections include:
+
+-   Executive Summary
+-   Module Assumptions and Limitations
+-   Message Connection Descriptions
+-   User Guide
+
+The section `Detailed Module Description` is optional and used if there is extensive functionality and modeling to discuss.
+
+As part of the code checkout build and test the associated documentation (see :ref:`createHtmlDocumentation`).
 
 Module Functionality Testing
 ----------------------------
 
-Is a \_UnitTest folder included that:
+Is a ``_UnitTest`` folder included that:
 
--  has the python file name start with\ ``test_``
+-  includes a python file name starting with\ ``test_``
+-  provides a test method that starts with ``test_xxxx()``
+-  contains sufficient comments within the test file to explain what is done
 -  only uses the test module (if possible), and creates the various
    required input messages
 -  checks the module output for all input and module configuration
@@ -50,16 +74,17 @@ Is a \_UnitTest folder included that:
 -  can also be run with the python command instead of pytest (by
    updating the ``__main()__`` function at the bottom of the python
    file)
--  if the module depends on other modules, clear out teh ``*.pyc`` files
-   in ``utilities/``
-
-Module Documentation
---------------------
-
-Does the module ``*.h`` file contain doxygen code that provides the module documentation?  A sample can be found in the ``fswTemplateModule`` folder.
 
 Module Integrated Test
 ----------------------
-If an integrated test is provided as a ``test_XXX.py`` file, does the text function include the expected validation setup, assumption and results documentation within the method doc-string?  A sample can be found in the ``fswTemplateModule`` folder.
+If an integrated test is provided as a ``test_XXX.py`` file.  Does this test method have a complete description of what is being tested?  The :ref:`test_fswModuleTemplateParametrized.py <test_fswModuleTemplateParametrized>` file contains a template illustrating the expected information.  Required sections include
 
+    -   Validation Test Description
+    -   Test Parameter Discussion
+    -   Description of variables being tested
 
+See the :ref:`FAQ <FAQ>` on how to run generate an html validation report using ``pytest --report``.  Note that it is ok to just run this report for the module being tested.
+
+Update Release Notes
+--------------------
+Update the BSK release notes in ``/docs/source/Support/bskReleaseNotes.rst`` to include information about the new features being added.
