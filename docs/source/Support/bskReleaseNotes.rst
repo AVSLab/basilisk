@@ -20,6 +20,7 @@ In Progress Features
 Upcoming Version 1.X.X
 ----------------------
 - updates to the Monte Carlo controller and plotting algorithms to make use of better use of Pandas and Datashader
+- Added a message to the heading estimator in order to perform OpNav pointing
 
 Version 1.3.2
 -------------
