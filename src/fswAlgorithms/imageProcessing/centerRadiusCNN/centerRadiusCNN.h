@@ -32,19 +32,6 @@
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
-
-/*! \defgroup centerRadiusCNN
-
- @brief Module reads in a message containing a pointer to an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
-
- The module
- [PDF Description](Basilisk-centerRadiusCNN-20190213.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- @{
- */
-
 class CenterRadiusCNN: public SysModel {
 public:
     CenterRadiusCNN();
@@ -72,7 +59,6 @@ private:
     cv::dnn::Net positionNet2;           //!< Network for evaluation of centers
 };
 
-/* @} */
 
 #endif
 
