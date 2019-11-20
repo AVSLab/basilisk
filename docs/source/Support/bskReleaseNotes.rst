@@ -24,6 +24,7 @@ Upcoming Version 1.X.X
 - added a general message to the Sphinx HTML documentation landing page
 - updated the :ref:`bskModuleCheckoutList` with updated information and expectations
 - added a new help page on :ref:`makeBskFork`
+- Added a fault detection module for optical navigation
 
 Version 1.3.2
 -------------
