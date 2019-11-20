@@ -13,13 +13,13 @@ Startup Panel
 
 hen starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above. There is an option on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key. Note that the Vizard screen size can be dynamically changed after startup as well.
 
-.. image:: ../_images/static/vizard-img0.png
+.. image:: ../_images/static/vizard-img0.jpg
    :align: center
    :scale: 50 %
 	
 Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
 
-.. image:: ../_images/static/vizard-img2.png
+.. image:: ../_images/static/vizard-img2.jpg
    :align: center
    :scale: 50 %
 
@@ -72,7 +72,7 @@ If Reaction Wheels or RWs are modeled, then a RW panel can be opened
 from within the ``Actuator`` menu bar item. Here the RW wheel speeds and
 motor torques are shown. 
 
-.. image:: ../_images/static/vizard-ImgRW.png
+.. image:: ../_images/static/vizard-ImgRW.jpg
    :align: center
 	
 Thruster States
@@ -89,7 +89,7 @@ Thruster States
   axes being modeled.
 | 
 
-.. image:: ../_images/static/vizard-ImgTHR.png
+.. image:: ../_images/static/vizard-ImgTHR.jpg
    :align: center
 
 Vizard Configuration Options
@@ -102,7 +102,7 @@ Vizard Configuration Options
   
 | 
 
-.. image:: ../_images/static/vizard-imgAxes.png
+.. image:: ../_images/static/vizard-imgAxes.jpg
    :align: center
 
 
@@ -116,7 +116,7 @@ lines can be hidden or removed as needed. Some celestial bodies come
 with default colors such as yellow for sun heading, or red for Mars
 heading, etc. However, each line color can be customized as needed.
 
-.. image:: ../_images/static/vizard-ImgPointing.png
+.. image:: ../_images/static/vizard-ImgPointing.jpg
    :align: center
 
 Add Keep Out/In Cone
@@ -130,7 +130,7 @@ sun (keep in cone). If the cone in/out condition is not triggered, then
 the cone is opaque. If the in/out condition is triggered, then the cone
 becomes solid. 
 
-.. image:: ../_images/static/vizard-ImgCones.png
+.. image:: ../_images/static/vizard-ImgCones.jpg
    :align: center
 	
 ``Camera`` Menu Item
@@ -147,7 +147,7 @@ grab a screen shot if needed. The user can select relative to which
 planet the camera should point, and if the camera should point along
 orbit axis, along track or orbit normal. 
 
-.. image:: ../_images/static/vizard-imgCamera1.png
+.. image:: ../_images/static/vizard-imgCamera1.jpg
    :align: center
 	
 Inertial Camera
@@ -157,30 +157,28 @@ Up to two custom views can be generated that look out of the spacecraft
 +/- x-, y- and z-axis. Again the field of view can be configured, and a
 screen grab button is present. 
 
-.. image:: ../_images/static/vizard-imgCamera2.png
+.. image:: ../_images/static/vizard-imgCamera2.jpg
    :align: center
 
 
 Import a Custom Shape Model
 ---------------------------
+When Vizard starts up it represents the spacecraft using a default CAD model called ``bsk-Sat``.  The following section illustrates how this default spacecraft model can be replaced with with a custom CAD model in an ``.obj`` file format, or by using a built-in shape primitive.
 
 .. image:: ../_images/static/vizard-ImgCAD-1.jpg
    :align: center
-   :scale: 75 %
 
 Vizard starts up showing a default spacecraft shape.  To select a different shape, a custom CAD model can be imported using the OBJ file format.  Go to the ``File`` menu and select ``Import OBJ Model``:
 
 
 .. image:: ../_images/static/vizard-ImgCAD-2.jpg
    :align: center
-   :scale: 75 %
 
 Next, select the OBJ file that is to be imported into Vizard.
 
 
 .. image:: ../_images/static/vizard-ImgCAD-3.jpg
    :align: center
-   :scale: 75 %
 
 The next panel allows the CAD model import to be customized.  The user can modify the origin offset,
 the CAD orientation and the CAD scaling.  The latter is useful to convert the CAD model into meters
@@ -190,7 +188,6 @@ bounding box can also be draw as a convenient to make sure this is correctly con
 
 .. image:: ../_images/static/vizard-ImgCAD-4.jpg
    :align: center
-   :scale: 75 %
 
 At this point a panel appears that allows you select the object for which you want to apply a new
 shape, and what shape you want to apply.  When ready, press `Apply Models to Selected Objects` to
@@ -199,4 +196,3 @@ selected such as a sphere, cylinder or cube.
 
 .. image:: ../_images/static/vizard-ImgCAD-5.jpg
    :align: center
-   :scale: 75 %
