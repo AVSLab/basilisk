@@ -25,7 +25,7 @@
 '''
 
 import pytest
-import sys, os, inspect
+import sys, os, inspect, time
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -60,7 +60,7 @@ except ImportError:
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage", [
-    ("mars.jpg", 0, 0, 0, 0, 0, True),  # Mars image
+    ("mars.jpg",    0,          0,      0,   0,   0,  True),  # Mars image
     ("mars.jpg",    2,          2,      2,   1,   3 , True) #Mars image
 ])
 
@@ -203,6 +203,12 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     if np.abs(isOnValues[-1,1] - moduleConfig.cameraIsOn)>1E-10:
         testFailCount+=1
         testMessages.append("Test failed isOn " + image)
+
+    # Clean up
+    try:
+        os.remove(path + "/0.000000.jpg")
+    except FileNotFoundError:
+        pass
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

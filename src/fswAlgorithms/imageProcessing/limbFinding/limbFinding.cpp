@@ -98,6 +98,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     if (this->saveDir != ""){
         dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
     }
+    else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
     
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
