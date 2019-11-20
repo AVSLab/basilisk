@@ -12,7 +12,7 @@ Forking from the Repository and Making a Pull Request
 
 #. Use a browser to go to the Basilisk Bitbucket Repository
 
-#. Click on the Plus sign in order to Fork the Basilisk Repository into your own account as illustrated in the followign screen capture:
+#. Click on the Plus sign in order to Fork the Basilisk Repository into your own account as illustrated in the following screen capture:
 
    .. image:: /_images/static/fork-1.jpg
       :align: center
