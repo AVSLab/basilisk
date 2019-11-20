@@ -23,6 +23,7 @@ Upcoming Version 1.X.X
 - Added a message to the heading estimator in order to perform OpNav pointing
 - added a general message to the Sphinx HTML documentation landing page
 - updated the :ref:`bskModuleCheckoutList` with updated information and expectations
+- added a new help page on :ref:`makeBskFork`
 
 Version 1.3.2
 -------------

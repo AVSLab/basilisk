@@ -4,21 +4,32 @@
    contain the root `toctree` directive.
 
 Support
-====================================
+=======
+
+
+User Information
+----------------
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
-   
-   Support/CodingGuidlines
+
+   Support/bskReleaseNotes
+   Support/bskKnownIssues
    Support/FAQ
    Support/FAQmacOS
-   Support/MigratingToPython3
-   Support/bskKnownIssues
-   Support/bskModuleCheckoutList
-   Support/bskReleaseNotes
    Support/createHtmlDocumentation
+
+Coder Information
+-----------------
+
+.. toctree::
+   :maxdepth: 1
+
+   Support/CodingGuidlines
+   Support/bskModuleCheckoutList
+   Support/makeBskFork
    Support/UnderstandingBasilisk
+   Support/MigratingToPython3
 
 
 
