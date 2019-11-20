@@ -25,6 +25,7 @@ Upcoming Version 1.X.X
 - updated the :ref:`bskModuleCheckoutList` with updated information and expectations
 - added a new help page on :ref:`makeBskFork`
 - Added a fault detection module for optical navigation
+- Added camera module to own the message and to add corruptions to images
 
 Version 1.3.2
 -------------

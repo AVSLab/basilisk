@@ -91,6 +91,7 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
  */
 void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
+    std::string dirName;
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -98,9 +99,10 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     
     cv::Mat imageCV, blurred;
     int circlesFound=0;
-    if (this->saveDir !=""){
-        this->saveDir = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+    if (this->saveDir != ""){
+        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
     }
+    else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     if(this->imageInMsgName != "")
