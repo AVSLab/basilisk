@@ -106,6 +106,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     input_image = Image.open(imagePath)
     input_image.load()
     #################################################
+    corrupted = (gauss>0) or (darkCurrent>0) or (saltPepper>0) or (cosmic>0) or (blurSize>0)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -170,21 +171,23 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
     # Truth values from python
-    imagePath = path + '/' + '0.000000.jpg'
-    output_image = Image.open(imagePath)
+    if corrupted:
+        corruptedPath = path + '/' + '0.000000.jpg'
+    else:
+        corruptedPath = path + '/' + '0.500000.jpg'
+    output_image = Image.open(corruptedPath)
 
     isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
     pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
 
     #  Error check for corruption
     err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2))/np.linalg.norm(np.linalg.norm(input_image, axis=2))
-    corrupted = (gauss>0) or (darkCurrent>0) or (saltPepper>0) or (cosmic>0) or (blurSize>0)
 
     if (err < 1E-2 and corrupted):
         testFailCount += 1
@@ -207,6 +210,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     # Clean up
     try:
         os.remove(path + "/0.000000.jpg")
+        os.remove(path + "/0.500000.jpg")
     except FileNotFoundError:
         pass
 
