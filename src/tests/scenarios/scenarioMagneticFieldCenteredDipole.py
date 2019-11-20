@@ -265,7 +265,7 @@ def run(show_plots, orbitCase, planetCase):
 
 
     # create the magnetic field
-    magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole(msgLevel)  # default is Earth centered dipole module
+    magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
     magModule.ModelTag = "CenteredDipole"
     magModule.addSpacecraftToModel(scObject.scStateOutMsgName)  # this command can be repeated if multiple
 

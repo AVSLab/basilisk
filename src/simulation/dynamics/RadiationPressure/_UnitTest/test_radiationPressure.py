@@ -66,9 +66,6 @@ def test_unitRadiationPressure(show_plots, modelType, eclipseOn):
 
 
 def unitRadiationPressure(show_plots, modelType, eclipseOn):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -85,14 +82,14 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     sigma_BN = [0.1, 0.2, -0.3]
 
     # Create a simulation container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
-    srpDynEffector = radiation_pressure.RadiationPressure(msgLevel)
+    srpDynEffector = radiation_pressure.RadiationPressure()
     srpDynEffector.ModelTag = "RadiationPressure"
-    srpDynEffector2 = radiation_pressure.RadiationPressure(msgLevel)
+    srpDynEffector2 = radiation_pressure.RadiationPressure()
     srpDynEffector2.ModelTag = "RadiationPressure2"
 
     if modelType == "cannonball":

@@ -68,7 +68,7 @@ def test_thrusterIntegratedTest(show_plots):
     thrusterCommandName = "acs_thruster_cmds"
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time

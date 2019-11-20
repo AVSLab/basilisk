@@ -53,9 +53,6 @@ def test_fuelSloshAllTest(show_plots,useFlag,testCase):
     assert testResults < 1, testMessage
 
 def fuelSloshTest(show_plots,useFlag,testCase):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -63,16 +60,16 @@ def fuelSloshTest(show_plots,useFlag,testCase):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-
+    
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-
+    
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
+    
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
-
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -171,7 +168,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         unitTestSim.particle1.c = 15.0
         unitTestSim.particle2.c = 17.0
         unitTestSim.particle3.c = 11.0
-
+    
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 

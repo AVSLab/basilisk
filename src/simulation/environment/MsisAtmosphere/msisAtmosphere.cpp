@@ -20,6 +20,7 @@
 #include "msisAtmosphere.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
+#include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/geodeticConversion.h"
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"

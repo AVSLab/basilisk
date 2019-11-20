@@ -50,7 +50,6 @@
 
 %include "../../simMessages/powerNodeUsageSimMsg.h"
 %include "../../simMessages/powerStorageStatusSimMsg.h"
-%include "../../utilities/bskPrint.h"
 
 GEN_SIZEOF(PowerNodeUsageSimMsg)
 GEN_SIZEOF(PowerStorageStatusSimMsg)

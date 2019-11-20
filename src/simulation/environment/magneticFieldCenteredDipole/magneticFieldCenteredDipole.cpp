@@ -23,7 +23,7 @@
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
  @return void
  */
-MagneticFieldCenteredDipole::MagneticFieldCenteredDipole(msgLevel_t msgLevel) : MagneticFieldBase(msgLevel)
+MagneticFieldCenteredDipole::MagneticFieldCenteredDipole()
 {
     //! - Set the default magnetic properties to yield a zero response
     this->g10 = 0.0;            // [T]

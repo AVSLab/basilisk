@@ -72,7 +72,7 @@ void GaussMarkov::computeNextState()
     }
     if(this->stateBounds.size() != (size_t) this->numStates)
     {
-        bskPrint.printMessage(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
+        //BSK_PRINT_placement(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
         return;
     }
 

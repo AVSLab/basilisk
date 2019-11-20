@@ -49,10 +49,8 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
             It is an empty string if not to read a message
         relTol (float): positive, the relative tolerance to which the result is checked.
     """
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
-    sim = SimulationBaseClass.SimBaseClass(msgLevel)
+    sim = SimulationBaseClass.SimBaseClass()
     sim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))

@@ -53,9 +53,6 @@ def test_scenarioSphericalPendulum(show_plots, useFlag, testCase):
 
 def sphericalPendulumTest(show_plots, useFlag,testCase):
     '''Call this routine directly to run the test scenario.'''
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -67,7 +64,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     simTaskName = "simTask"
     simProcessName = "simProcess"
     # create simulation
-    scSim=SimulationBaseClass.SimBaseClass(msgLevel)
+    scSim=SimulationBaseClass.SimBaseClass()
     # close possible other simulation
     #crete a dynamical process
     dynProcess = scSim.CreateNewProcess(simProcessName)

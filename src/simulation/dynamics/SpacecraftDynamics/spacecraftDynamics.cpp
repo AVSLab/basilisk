@@ -240,7 +240,7 @@ void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
 }
 
 /*! This is the constructor, setting variables to default values */
-SpacecraftDynamics::SpacecraftDynamics(msgLevel_t msgLevel) : DynamicObject(msgLevel)
+SpacecraftDynamics::SpacecraftDynamics()
 {
     // - Set default names
     this->sysTimePropertyName = "systemTime";
@@ -668,9 +668,9 @@ void SpacecraftDynamics::initializeSCPosVelocity(Spacecraft &spacecraft)
     return;
 }
 
-/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of
- the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled
- in this method. At the end of this method all of the states will have their corresponding state derivatives set in the
+/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of 
+ the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
+ in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
  dynParam Manager thus solving for Xdot*/
 void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
 {
@@ -968,7 +968,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
     return;
 }
 
-/*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and
+/*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and 
  calculate the accumulated deltaV */
 void SpacecraftDynamics::integrateState(double integrateToThisTime)
 {
@@ -1161,7 +1161,7 @@ void SpacecraftDynamics::calculateDeltaVandAcceleration(Spacecraft &spacecraft, 
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
- total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used
+ total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used 
  for validation purposes. */
 void SpacecraftDynamics::computeEnergyMomentum(double time)
 {
@@ -1355,6 +1355,6 @@ void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -(*this->primaryCentralSpacecraft.m_SC)(0,0)*(Eigen::Vector3d (*this->primaryCentralSpacecraft.c_B)).cross(cDotLocal_B);
     this->primaryCentralSpacecraft.totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
-
+    
     return;
 }

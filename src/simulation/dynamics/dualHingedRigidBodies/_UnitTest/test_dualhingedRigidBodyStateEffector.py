@@ -49,9 +49,6 @@ def test_dualHingedRigidBody(show_plots,useFlag,testCase):
     assert testResults < 1, testMessage
 
 def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -59,16 +56,16 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-
+    
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-
+    
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
+    
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
-
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    
     # Create test thread
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -155,7 +152,7 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-
+    
     unitTestSim.InitializeSimulation()
 
     # Add energy and momentum variables to log

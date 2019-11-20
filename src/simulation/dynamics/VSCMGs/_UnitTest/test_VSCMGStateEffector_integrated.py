@@ -123,9 +123,6 @@ def test_VSCMGIntegratedTest(show_plots,useFlag,testCase):
     assert testResults < 1, testMessage
 
 def VSCMGIntegratedTest(show_plots,useFlag,testCase):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -142,7 +139,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     rwCommandName = "vscmg_cmds"
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     if testCase == 'JitterFullyCoupled' or testCase == 'JitterFullyCoupledGravity':
@@ -203,7 +200,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     N = len(VSCMGs)
 
     # create RW object container and tie to spacecraft object
-    rwStateEffector = vscmgStateEffector.VSCMGStateEffector(msgLevel)
+    rwStateEffector = vscmgStateEffector.VSCMGStateEffector()
     rwStateEffector.ModelTag = "VSCMGs"
     for item in VSCMGs:
         rwStateEffector.AddVSCMG(item)

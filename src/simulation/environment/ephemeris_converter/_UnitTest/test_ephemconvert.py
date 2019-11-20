@@ -42,9 +42,6 @@ def test_ephemConvert(show_plots):
 
 
 def unitephemeris_converter(show_plots):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -53,7 +50,7 @@ def unitephemeris_converter(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    sim = SimulationBaseClass.SimBaseClass(msgLevel)
+    sim = SimulationBaseClass.SimBaseClass()
 
     simulationTime = macros.sec2nano(30.)
     numDataPoints = 600
@@ -66,7 +63,7 @@ def unitephemeris_converter(show_plots):
     planets = ['sun', 'earth', 'mars barycenter']
 
     # Initialize the spice module
-    spiceObject = spice_interface.SpiceInterface(msgLevel)
+    spiceObject = spice_interface.SpiceInterface()
     spiceObject.ModelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     spiceObject.outputBufferCount = 10000

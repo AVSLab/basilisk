@@ -33,7 +33,7 @@
 
 class MagneticFieldCenteredDipole:  public MagneticFieldBase {
 public:
-    MagneticFieldCenteredDipole(msgLevel_t msgLevel);
+    MagneticFieldCenteredDipole();
     ~MagneticFieldCenteredDipole();
 
 private:

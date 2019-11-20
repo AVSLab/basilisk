@@ -60,9 +60,6 @@ def test_reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     assert testResults < 1, testMessage
 
 def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -79,7 +76,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rwCommandName = "reactionwheel_cmds"
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     stepSize = 0.0001
@@ -173,7 +170,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         rw.U_s *= 1e4
 
     # create RW object container and tie to spacecraft object
-    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector(msgLevel)
+    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command

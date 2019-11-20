@@ -44,10 +44,7 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     This test checks that ``headingOut`` stores the pulled log of the module ``bodyHeadingOutMsg``.
 
 """
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
-    sim = SimulationBaseClass.SimBaseClass(msgLevel)
+    sim = SimulationBaseClass.SimBaseClass()
     sim.TotalSim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))

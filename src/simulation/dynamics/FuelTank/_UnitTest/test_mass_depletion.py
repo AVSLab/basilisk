@@ -61,7 +61,7 @@ def test_massDepletionTest(show_plots):
     thrusterCommandName = "acs_thruster_cmds"
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
@@ -247,9 +247,6 @@ def test_massDepletionTest(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def axisChangeHelper(r_BcB_B):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
@@ -258,7 +255,7 @@ def axisChangeHelper(r_BcB_B):
     thrusterCommandName = "acs_thruster_cmds"
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time

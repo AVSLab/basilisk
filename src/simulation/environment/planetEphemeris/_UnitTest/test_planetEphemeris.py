@@ -69,9 +69,6 @@ def test_module(show_plots, setRAN, setDEC, setLST, setRate):
 
 
 def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -79,7 +76,7 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
 
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
     # terminateSimulation() is needed if multiple unit test scripts are run
     # that run a simulation for the test. This creates a fresh and
     # consistent simulation environment for each test run.
@@ -91,7 +88,7 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = planetEphemeris.PlanetEphemeris(msgLevel)
+    moduleConfig = planetEphemeris.PlanetEphemeris()
     moduleConfig.ModelTag = 'planetEphemeris'
 
     # Add test module to runtime call list

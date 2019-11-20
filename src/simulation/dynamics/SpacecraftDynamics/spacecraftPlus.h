@@ -32,7 +32,6 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/scPlusMassPropsSimMsg.h"
 #include "hubEffector.h"
-#include "utilities/bskPrint.h"
 
 
 
@@ -75,7 +74,7 @@ public:
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
 
 public:
-    SpacecraftPlus(msgLevel_t msgLevel);                    //!< -- Constructor
+    SpacecraftPlus();                    //!< -- Constructor
     ~SpacecraftPlus();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c

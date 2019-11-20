@@ -54,9 +54,6 @@ def test_unitSimpleNav(show_plots):
 
 
 def unitSimpleNav(show_plots):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     path = os.path.dirname(os.path.abspath(__file__))
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -65,14 +62,14 @@ def unitSimpleNav(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the task and specify the integration update time
     unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
 
     #Now initialize the modules that we are using.  I got a little better as I went along
-    sNavObject = simple_nav.SimpleNav(msgLevel)
+    sNavObject = simple_nav.SimpleNav()
     unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
     spiceMessage = spice_interface.SpicePlanetStateSimMsg()
@@ -80,7 +77,7 @@ def unitSimpleNav(show_plots):
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
-    stateMessage.r_BN_N = vehPosition
+    stateMessage.r_BN_N = vehPosition 
     spiceMessage.PositionVector = sunPosition
     spiceMessage.PlanetName = "sun"
 

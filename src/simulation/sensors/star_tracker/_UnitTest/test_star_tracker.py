@@ -75,9 +75,6 @@ def test_unitSimStarTracker(show_plots, useFlag, testCase):
 
 
 def unitSimStarTracker(show_plots, useFlag, testCase):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     testFail = False
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -85,7 +82,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitProcName = "TestProcess"  # arbitrary name (don't change)
 
     # initialize SimulationBaseClass
-    unitSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitSim = SimulationBaseClass.SimBaseClass()
 
     # create the task and specify the integration update time
     unitProcRate = macros.sec2nano(0.1)
@@ -94,7 +91,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitProc.addTask(unitSim.CreateNewTask(unitTaskName, unitProcRate))
 
     # configure module
-    StarTracker = star_tracker.StarTracker(msgLevel)
+    StarTracker = star_tracker.StarTracker()
     StarTracker.ModelTag = "StarTracker"
     setRandomWalk(StarTracker)
 

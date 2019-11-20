@@ -23,7 +23,6 @@
 #include <string>
 #include <stdint.h>
 #include "architecture/messaging/system_messaging.h"
-#include "bskPrint.h"
 
 /*! \addtogroup SimArchGroup
  * @{
@@ -56,7 +55,7 @@ typedef struct {
 class messageLogger
 {
 public:
-    messageLogger(msgLevel_t msgLevel); //!< The MessageLogger constructor
+    messageLogger(); //!< The MessageLogger constructor
     ~messageLogger();//!< MessageLogger destructor
     void addMessageLog(std::string messageName, uint64_t messagePeriod=0);
     void linkMessages();
@@ -68,13 +67,12 @@ public:
     void clearLogs();
 	void archiveLogsToDisk(std::string outFileName);
 	void loadArchiveFromDisk(std::string inFileName);
-
+    
 public:
     uint64_t initBufferSize; //!< Default buffer size fo message log storage
     std::vector<messageLogContainer> logData; //!< Vector of log elements
 private:
     bool allLogsLinked; //!< Indicator of whether or not messages are all linked
-    BSKPrint bskPrint;
 };
 
 /*! @} */

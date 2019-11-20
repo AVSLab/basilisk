@@ -26,7 +26,6 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "stateData.h"
-#include "utilities/bskPrint.h"
 
 
 
@@ -43,7 +42,7 @@ public:
     std::map<std::string, Eigen::MatrixXd> dynProperties;
     StateVector stateContainer;
 public:
-    DynParamManager(msgLevel_t msgLevel);
+    DynParamManager();
     ~DynParamManager();
     StateData* registerState(uint32_t nRow, uint32_t nCol, std::string stateName);
     StateData* getStateObject(std::string stateName);
@@ -55,7 +54,6 @@ public:
     Eigen::MatrixXd* getPropertyReference(std::string propName);
     void setPropertyValue(const std::string propName,
                           const Eigen::MatrixXd & propValue);
-    BSKPrint bskPrint;
 
 };
 

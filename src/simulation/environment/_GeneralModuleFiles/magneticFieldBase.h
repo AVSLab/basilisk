@@ -28,24 +28,23 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/magneticFieldSimMsg.h"
-#include "utilities/bskPrint.h"
 
 
 class MagneticFieldBase: public SysModel  {
 public:
-    MagneticFieldBase(msgLevel_t msgLevel);
+    MagneticFieldBase();
     ~MagneticFieldBase();
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void addSpacecraftToModel(std::string tmpScMsgName);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void addSpacecraftToModel(std::string tmpScMsgName); 
+    void UpdateState(uint64_t CurrentSimNanos); 
 
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void updateLocalMagField(double currentTime);
-    void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState);
+    void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState); 
     virtual void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
@@ -61,7 +60,6 @@ public:
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
     double planetRadius;                     //!< [m]      Radius of the planet
-    BSKPrint bskPrint;
 
 protected:
     Eigen::Vector3d r_BP_N;                 //!< [m] sc position vector relative to planet in inertial N frame components

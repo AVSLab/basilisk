@@ -279,9 +279,6 @@ def sphericalHarmonics(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def singleGravityBody(show_plots):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     testCase = 'singleBody'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -297,14 +294,14 @@ def singleGravityBody(show_plots):
     DateSpice = "2015 February 10, 00:00:00.0 TDB"
 
     # Create a sim module as an empty container
-    TotalSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    TotalSim = SimulationBaseClass.SimBaseClass()
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
     # Initialize the modules that we are using.
-    SpiceObject = spice_interface.SpiceInterface(msgLevel)
+    SpiceObject = spice_interface.SpiceInterface()
 
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
@@ -413,9 +410,6 @@ def singleGravityBody(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def multiBodyGravity(show_plots):
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     testCase = 'multiBody' #for AutoTeX stuff
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -431,7 +425,7 @@ def multiBodyGravity(show_plots):
     # DateSpice = "2015 February 10, 00:00:00.0 TDB"
     #
     # # Create a sim module as an empty container
-    multiSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    multiSim = SimulationBaseClass.SimBaseClass()
     #
     DynUnitTestProc = multiSim.CreateNewProcess(unitProcessName)
     # # create the dynamics task and specify the integration update time

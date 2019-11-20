@@ -51,8 +51,6 @@ def test_storage_limits(show_plots):
 
     :return:
     """
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -60,14 +58,14 @@ def test_storage_limits(show_plots):
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    test_battery = simplePowerMonitor.SimplePowerMonitor(msgLevel)
+    test_battery = simplePowerMonitor.SimplePowerMonitor()
     test_battery.storedCharge_Init = 0
 
 

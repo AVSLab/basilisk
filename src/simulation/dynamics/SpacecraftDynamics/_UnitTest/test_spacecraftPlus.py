@@ -68,7 +68,7 @@ def test_SCTranslation(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)  # update process rate update time
@@ -175,12 +175,15 @@ def test_SCTranslation(show_plots):
 
 def test_SCTransAndRotation(show_plots):
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Module Unit Test"""
 =======
     # Define BSKPrint message level
     msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
 >>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
+=======
+>>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -196,7 +199,7 @@ def test_SCTransAndRotation(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
@@ -364,12 +367,15 @@ def test_SCTransAndRotation(show_plots):
 
 def test_SCRotation(show_plots):
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Module Unit Test"""
 =======
     # Define BSKPrint message level
     msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
 >>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
+=======
+>>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -385,7 +391,7 @@ def test_SCRotation(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     timeStep = 0.001
@@ -595,12 +601,15 @@ def test_SCRotation(show_plots):
 
 def test_SCTransBOE(show_plots):
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Module Unit Test"""
 =======
     # Define BSKPrint message level
     msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
 >>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
+=======
+>>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -616,7 +625,7 @@ def test_SCTransBOE(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     timeStep = 0.1
@@ -635,7 +644,7 @@ def test_SCTransBOE(show_plots):
     t3 = 10.
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[F1], [0], [0]]
@@ -749,12 +758,15 @@ def test_SCTransBOE(show_plots):
 
 def test_SCPointBVsPointC(show_plots):
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Module Unit Test"""
 =======
     # Define BSKPrint message level
     msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
 
 >>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
+=======
+>>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -770,7 +782,7 @@ def test_SCPointBVsPointC(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)  # update process rate update time
@@ -786,7 +798,7 @@ def test_SCPointBVsPointC(show_plots):
     torquePntC_B = numpy.cross(rFBc_B,force_B)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[torquePntC_B[0]], [torquePntC_B[1]], [torquePntC_B[2]]]
     extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
@@ -824,7 +836,7 @@ def test_SCPointBVsPointC(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)  # update process rate update time
@@ -840,7 +852,7 @@ def test_SCPointBVsPointC(show_plots):
     torquePntB_B = numpy.cross(rFB_B,force_B)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque(msgLevel)
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[torquePntB_B[0]], [torquePntB_B[1]], [torquePntB_B[2]]]
     extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]

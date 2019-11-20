@@ -33,7 +33,6 @@
 #include "simMessages/scStatesSimMsg.h"
 #include "simMessages/scMassPropsSimMsg.h"
 #include "../../simMessages/scEnergyMomentumSimMsg.h"
-#include "utilities/bskPrint.h"
 
 
 struct DockingData {
@@ -54,7 +53,7 @@ struct DockingData {
 
 class Spacecraft {
 public:
-    bool docked;
+    bool docked; 
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
     int64_t scEnergyMomentumOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
@@ -63,7 +62,7 @@ public:
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
     std::string scEnergyMomentumOutMsgName;   //!< -- Name of the state output message
-
+    
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
 
@@ -121,7 +120,7 @@ public:
 
     void SelfInitSC(int64_t moduleID);                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInitSC();                    //!< -- Hook to tie s/c plus back into provided msgs
-
+    
     void writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID); //!< -- Method to write all of the class output messages
     void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void initializeDynamicsSC(DynParamManager& statesIn);
@@ -145,7 +144,7 @@ public:
     int numberOfSCAttachedToPrimary;
 
 public:
-    SpacecraftDynamics(msgLevel_t msgLevel);                    //!< -- Constructor
+    SpacecraftDynamics();                    //!< -- Constructor
     ~SpacecraftDynamics();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
@@ -169,7 +168,7 @@ public:
     void determineAttachedSCStates();
 
 private:
-
+    
 };
 
 
