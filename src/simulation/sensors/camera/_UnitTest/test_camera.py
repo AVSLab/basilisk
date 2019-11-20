@@ -60,8 +60,9 @@ except ImportError:
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage", [
-                    ("mars.jpg",    2,          2,      2,   1,   3 , False) #Mars image
-    ])
+    ("mars.jpg", 0, 0, 0, 0, 0, True),  # Mars image
+    ("mars.jpg",    2,          2,      2,   1,   3 , True) #Mars image
+])
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage):
@@ -75,11 +76,18 @@ def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
 
         The camera parameters tested are the camera position MRP and the isOn value for the camera. These ensure that
         the position is properly written and read. The image is also corrupted with the parameterized test information.
-        Although not directly tested this ensures that the variables are properly read and that all the openCV functions
+        This is directly tested by differencing the initial and processed image to see a change.
+        and also ensures that the variables are properly read and that all the openCV functions
         are executing properly.
 
         - ``camera_MRP``
         - ``isON``
+        - ``imageNorm Values``
+
+        The comparative value for the test on the image is 1E-2 which depends on the corruptions but is allowed to me small
+        as the relative difference of the images is taken (whereas pixel values can get large).
+
+        The two parameterized test are set with and without corruptions.
 
         **General Documentation Comments**
 
@@ -162,14 +170,29 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
+    # Truth values from python
+    imagePath = path + '/' + '0.000000.jpg'
+    output_image = Image.open(imagePath)
+
     isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
     pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
 
+    #  Error check for corruption
+    err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2))/np.linalg.norm(np.linalg.norm(input_image, axis=2))
+    corrupted = (gauss>0) or (darkCurrent>0) or (saltPepper>0) or (cosmic>0) or (blurSize>0)
+
+    if (err < 1E-2 and corrupted):
+        testFailCount += 1
+        testMessages.append("Image not corrupted and show be: " + image)
+
+    if (err > 1E-2 and not corrupted):
+        testFailCount += 1
+        testMessages.append("Image corrupted and show not be: " + image)
 
     #   print out success message if no error were found
     for i in range(3):
@@ -180,7 +203,6 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     if np.abs(isOnValues[-1,1] - moduleConfig.cameraIsOn)>1E-10:
         testFailCount+=1
         testMessages.append("Test failed isOn " + image)
-
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
