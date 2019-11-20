@@ -66,6 +66,11 @@ except ImportError:
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, image, saveImage):
+    """
+    Unit test for CNN module for radius and center finding. Each parameter reads a different image.
+    They are both images of Mars, and were not in the training data.
+
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = cnnTest(show_plots, image, saveImage)
     assert testResults < 1, testMessage
