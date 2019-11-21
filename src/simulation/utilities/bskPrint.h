@@ -64,8 +64,9 @@ typedef struct BSKPrint BSKPrint;
     #define EXTERN
 #endif
 
-EXTERN BSKPrint* _BSKPrint_C(void);
+EXTERN BSKPrint* _BSKPrint(void);
 EXTERN void _BSKPrint_D(BSKPrint*);
 EXTERN void _readPrintLevel(BSKPrint*);
 EXTERN void _setPrintLevel(BSKPrint*, msgLevel_t);
+EXTERN void _printMessage(BSKPrint*, msgLevel_t, const char*);
 #endif

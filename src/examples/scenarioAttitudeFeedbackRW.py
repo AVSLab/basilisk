@@ -276,7 +276,7 @@ import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)
-from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus, bskPrint
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -541,6 +541,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
         # set module parameters
         fswRWVoltageConfig.VMin = 0.0  # Volts
         fswRWVoltageConfig.VMax = 10.0  # Volts
+
 
     #
     #   Setup data logging before the simulation is initialized

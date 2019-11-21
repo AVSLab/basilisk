@@ -32,8 +32,8 @@
  */
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
-        /*! Create output message for module */
-    configData->bskPrint = _BSKPrint_C();
+    /*! Create output message for module */
+    configData->bskPrint = _BSKPrint();
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttGuidFswMsg),
                                                "AttGuidFswMsg",

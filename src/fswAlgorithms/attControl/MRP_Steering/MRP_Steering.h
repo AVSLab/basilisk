@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/rateCmdFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 
 
@@ -35,18 +36,19 @@ typedef struct {
     double omega_max;                   //!< [rad/sec] Maximum rate command of steering control
 
     uint32_t ignoreOuterLoopFeedforward;//!< []      Boolean flag indicating if outer feedforward term should be included
-    
+
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output message
     int32_t outputMsgID;                        //!< [] ID for the outgoing body accel requests
     char inputGuidName[MAX_STAT_MSG_LENGTH];    //!< The name of the Input message
     int32_t inputGuidID;                        //!< [] ID for the incoming guidance errors
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID);
     void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID);
     void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, int64_t moduleID);
@@ -54,7 +56,7 @@ extern "C" {
 
     void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
-    
+
 #ifdef __cplusplus
 }
 #endif

@@ -55,7 +55,7 @@ void BSKPrint::printMessage(msgLevel_t targetLevel, const char* message, ...)
   }
 }
 
-EXTERN BSKPrint* _BSKPrint_C(void)
+EXTERN BSKPrint* _BSKPrint(void)
 {
     return new BSKPrint();
 }
@@ -73,4 +73,9 @@ EXTERN void _readPrintLevel(BSKPrint* bskPrint)
 EXTERN void _setPrintLevel(BSKPrint* bskPrint, msgLevel_t msgLevel)
 {
     bskPrint->setPrintLevel(msgLevel);
+}
+
+EXTERN void _printMessage(BSKPrint* bskPrint, msgLevel_t msgLevel, const char* message)
+{
+    bskPrint->printMessage(msgLevel, message);
 }

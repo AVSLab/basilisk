@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/rateCmdFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 
 
@@ -34,19 +35,21 @@ typedef struct {
                                             in steering saturation function */
     double omega_max;                   /*!< [rad/sec] Maximum rate command of steering control */
 
-    /* declare module IO interfaces */    
+    /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];               /*!< The name of the control output message */
     int32_t outputMsgID;                                    /*!< [-] ID for the control output message */
     char inputGuidName[MAX_STAT_MSG_LENGTH];                /*!< The name of the input guidance message*/
     int32_t inputGuidID;                                    /*!< [-] ID for the input guidance message*/
 
     RateCmdFswMsg outMsg;               /*!< -- copy of output message */
+
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }PRV_SteeringConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID);
     void CrossInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID);
     void Update_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, int64_t moduleID);
@@ -54,7 +57,7 @@ extern "C" {
 
     void PRVSteeringLaw(PRV_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
-    
+
 #ifdef __cplusplus
 }
 #endif

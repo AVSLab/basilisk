@@ -41,6 +41,7 @@
 void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
+    configData->bskPrint = _BSKPrint();
     configData->cmdTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 

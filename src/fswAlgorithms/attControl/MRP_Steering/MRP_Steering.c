@@ -18,7 +18,7 @@
  */
 /*
     MRP_STEERING Module
- 
+
  */
 
 #include "attControl/MRP_Steering/MRP_Steering.h"
@@ -36,6 +36,7 @@
 void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
+    configData->bskPrint = _BSKPrint();
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
         sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
 
@@ -76,7 +77,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime,
     RateCmdFswMsg outMsg;               /* copy of output message */
     uint64_t      timeOfMsgWritten;
     uint32_t      sizeOfMsgWritten;
-    
+
     /*! - Zero message copies*/
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     memset(&outMsg, 0x0, sizeof(RateCmdFswMsg));
@@ -91,7 +92,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime,
     /*! - Store the output message and pass it to the message bus */
     WriteMessage(configData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
                  (void*) &(outMsg), moduleID);
-    
+
     return;
 }
 

@@ -18,7 +18,7 @@
  */
 /*
     Thruster RW Momentum Management
- 
+
  */
 
 #include "attControl/thrMomentumManagement/thrMomentumManagement.h"
@@ -35,8 +35,9 @@
  */
 void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
-    
+
     /*! - Create output message for module */
+    configData->bskPrint = _BSKPrint();
     configData->deltaHOutMsgId = CreateNewMessage(configData->deltaHOutMsgName,
                                                sizeof(CmdTorqueBodyIntMsg),
                                                "CmdTorqueBodyIntMsg",          /* add the output structure name */

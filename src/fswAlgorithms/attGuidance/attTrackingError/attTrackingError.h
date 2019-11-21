@@ -40,7 +40,7 @@ typedef struct {
     int32_t outputMsgID;                            //!< ID for the outgoing message
     int32_t inputRefID;                             //!< ID for the incoming guidance reference message
     int32_t inputNavID;                             //!< ID for the incoming navigation message
-    BSKPrint *bskPrint;
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }attTrackingErrorConfig;
 
 #ifdef __cplusplus
