@@ -33,6 +33,7 @@
 #include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "../simulation/utilities/bskPrint.h"
 
 
 
@@ -40,12 +41,12 @@ class HoughCircles: public SysModel {
 public:
     HoughCircles();
     ~HoughCircles();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    
+
 public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
@@ -63,6 +64,7 @@ public:
     double noiseSF;                      //!< [-] Scale Factor for noise control
     int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
+    BSKPrint bskPrint;                //!< -- BSK Logging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
@@ -71,4 +73,3 @@ private:
 
 
 #endif
-

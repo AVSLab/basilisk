@@ -19,7 +19,7 @@
  */
 /*
     MRP_FEEDBACK Module
- 
+
  */
 
 #include "attControl/MRP_Feedback/MRP_Feedback.h"
@@ -44,7 +44,7 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
     configData->bskPrint = _BSKPrint();
     configData->attControlTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
-    
+
 }
 
 /*! @brief This method performs the second stage of initialization for this module.
@@ -64,7 +64,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
                                                  sizeof(AttGuidFswMsg), moduleID);
     configData->vehConfigInMsgId = subscribeToMessage(configData->vehConfigInMsgName,
                                                  sizeof(VehicleConfigFswMsg), moduleID);
-    
+
     configData->rwParamsInMsgId = -1;
     configData->rwSpeedsInMsgId = -1;
     configData->rwAvailInMsgId = -1;
@@ -76,7 +76,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
         configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                          sizeof(RWSpeedIntMsg), moduleID);
         } else {
-            BSK_PRINT(MSG_ERROR, "Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
+            _printMessage(configData->bskPrint, MSG_ERROR, "Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
             configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,
@@ -95,7 +95,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
     /* - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    int i;    
+    int i;
 
     /*! - zero and read in vehicle configuration message */
     VehicleConfigFswMsg sc;
@@ -109,7 +109,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
 
     /*! - zero the number of RW by default */
     configData->rwConfigParams.numRW = 0;
-    
+
     /*! - check if RW configuration message exists */
     if (configData->rwParamsInMsgId >= 0) {
         /*! - Zero and Read static RW config data message and store it in module variables*/
@@ -117,7 +117,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
         ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
-    
+
     /*! - Reset the integral measure of the rate tracking error */
     v3SetZero(configData->int_sigma);
 
@@ -180,7 +180,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
-    
+
     /*! - compute control update time */
     if (configData->priorTime == 0) {
         dt = 0.0;
@@ -191,13 +191,13 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
-    
+
     /*! - evaluate integral term */
     v3SetZero(configData->z);
     if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(configData->K * dt, guidCmd.sigma_BR, v3_1);
         v3Add(v3_1, configData->int_sigma, configData->int_sigma);
-        
+
         for (i=0;i<3;i++) {
             intCheck = fabs(configData->int_sigma[i]);
             if (intCheck > configData->integralLimit) {
@@ -228,7 +228,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
             v3Add(v3_6, v3_7, v3_6);
         }
     }
-    
+
     v3Add(guidCmd.omega_RN_B, v3_4, v3_8);
     v3Cross(v3_8, v3_6, v3_9);
     v3Subtract(Lr, v3_9, Lr);
@@ -246,7 +246,6 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     v3Copy(Lr, controlOut.torqueRequestBody);
     WriteMessage(configData->attControlTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(controlOut), moduleID);
-    
+
     return;
 }
-

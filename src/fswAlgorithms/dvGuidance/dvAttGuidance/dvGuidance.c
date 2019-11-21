@@ -33,11 +33,12 @@
  */
 void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg), "AttRefFswMsg", moduleID);
     return;
-    
+
 }
 
 /*! This method performs the second stage of initialization for the delta-V maneuver
@@ -67,8 +68,8 @@ void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
     return;
 }
 
-/*! This method takes its own internal variables and creates an output attitude 
-    command to use for burn execution.  It also flags whether the burn should 
+/*! This method takes its own internal variables and creates an output attitude
+    command to use for burn execution.  It also flags whether the burn should
     be happening or not.
  @return void
  @param configData The configuration data associated with the delta-V maneuver guidance
@@ -127,7 +128,6 @@ void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
     /*! - Write the output message */
     WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
         &attCmd, moduleID);
-    
+
     return;
 }
-

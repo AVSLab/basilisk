@@ -33,7 +33,7 @@
  */
 void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
-    
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->tamOutMsgID = CreateNewMessage(configData->tamOutMsgName,
         sizeof(TAMSensorBodyFswMsg), "TAMSensorBodyFswMsg", moduleID);
@@ -60,12 +60,12 @@ void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) > 1e-10) {
-        BSK_PRINT(MSG_WARNING, "dcm_BS is set to zero values.");
+        _printMessage(configData->bskPrint, MSG_WARNING, "dcm_BS is set to zero values.");
     }
 
     return;
 }
-    
+
 /*! This method takes the sensor data from the magnetometers and
  converts that information to the format used by the TAM nav.
  @return void
@@ -89,6 +89,6 @@ void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_
     /*! - Write aggregate output into output message */
     WriteMessage(configData->tamOutMsgID, callTime,    sizeof(TAMSensorBodyFswMsg),
                 (void*) & (configData->tamLocalOutput), moduleID);
-    
+
     return;
 }

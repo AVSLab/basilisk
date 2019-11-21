@@ -27,6 +27,7 @@
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -40,7 +41,7 @@ typedef struct {
 	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pusling (1)
 
 	uint64_t			prevCallTime;							//!< callTime from previous function call
-	
+
 
 	/* declare module IO interfaces */
 	char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH];        	//!< The name of the Input message
@@ -49,18 +50,20 @@ typedef struct {
 	int32_t 			onTimeOutMsgId;                            		//!< ID for the outgoing message
 	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			//!< The name of the thruster cluster Input message
 	int32_t  			thrConfInMsgId;                   				//!< ID for the incoming Thruster configuration data
-    
+
+	BSKPrint *bskPrint;                             //!< BSK Logging
+
 }thrFiringRemainderConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
     void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
     void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

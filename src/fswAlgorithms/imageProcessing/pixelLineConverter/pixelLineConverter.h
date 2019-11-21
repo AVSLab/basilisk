@@ -29,6 +29,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 /*! @brief The configuration structure for the pixelLine Converter module.*/
@@ -38,23 +39,23 @@ typedef struct {
     char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
     char circlesInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the circles message
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-
     int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t circlesInMsgID;    //!< [-] The ID associated with the incoming circle message
     int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }PixelLineConvertData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID);
     void CrossInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID);
     void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

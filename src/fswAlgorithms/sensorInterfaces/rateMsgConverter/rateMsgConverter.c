@@ -1,12 +1,12 @@
 /*
  ISC License
- 
+
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -23,7 +23,7 @@
             and adds this info to a msg of type NavAttIntMsg.
     Author: Hanspeter Schaub
     Date:   June 30, 2018
- 
+
  */
 
 #include <string.h>
@@ -39,6 +39,7 @@
  */
 void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     configData->navRateOutMsgID = CreateNewMessage(configData->navRateOutMsgName,
                                                    sizeof(NavAttIntMsg),
                                                    "NavAttIntMsg",
@@ -83,19 +84,19 @@ void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTi
     uint32_t sizeOfMsgWritten;
     IMUSensorBodyFswMsg inMsg;
     NavAttIntMsg outMsg;
-    
+
     /*! - read in the message of type IMUSensorBodyFswMsg */
     memset(&inMsg, 0x0, sizeof(inMsg));
     ReadMessage(configData->imuRateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(IMUSensorBodyFswMsg), (void*) &inMsg, moduleID);
-    
+
     /*! - create a zero message of type NavAttIntMsg which has the rate vector from the input message */
     memset(&outMsg, 0x0, sizeof(outMsg));
     v3Copy(inMsg.AngVelBody, outMsg.omega_BN_B);
-    
+
     /*! - write output message */
     WriteMessage(configData->navRateOutMsgID, callTime, sizeof(NavAttIntMsg),
                  (void*) &outMsg, moduleID);
-    
+
     return;
 }

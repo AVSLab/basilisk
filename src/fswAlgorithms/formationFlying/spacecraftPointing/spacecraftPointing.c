@@ -24,7 +24,6 @@
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simulation/utilities/astroConstants.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method initializes the configData for the spacecraft pointing module
  It checks to ensure that the inputs are sane and then creates the
@@ -34,12 +33,13 @@
  */
 void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->attReferenceOutMsgID = CreateNewMessage(configData->attReferenceOutMsgName,
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
-    
+
 }
 
 /*! This method performs the second stage of initialization for the spacecraft pointing
@@ -54,7 +54,7 @@ void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t 
                                                           sizeof(NavTransIntMsg), moduleID);
     configData->deputyPositionInMsgID = subscribeToMessage(configData->deputyPositionInMsgName,
                                                            sizeof(NavTransIntMsg), moduleID);
-    
+
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -83,14 +83,14 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t cal
     v3Normalize(A_z_B, dcm_AB[2]);
     C2MRP(dcm_AB, sigma_AB);
     v3Scale(-1, sigma_AB, configData->sigma_BA);
-    
+
     /* Set initial values of the sigma and omega of the previous timestep to zero. */
     v3SetZero(configData->old_sigma_RN);
     v3SetZero(configData->old_omega_RN_N);
-    
+
     /* Set the numerical error flag to zero. */
     configData->i = 0;
-    
+
     return;
 }
 
@@ -135,10 +135,10 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     double delta_omega_RN_N[3];                     /*!< ---  Difference between omega at t-1 and t */
     double domega_RN_N[3];                          /*!< ---  Angular acceleration of vector pointing from deputy to chief */
     double sigma_R1N[3];                            /*!< ---  MRP of R1-frame with respect to N-frame */
-    
+
     memset(&(chiefTransMsg), 0x0, sizeof(NavTransIntMsg));
     memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
-    
+
     ReadMessage(configData->chiefPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void*) &(chiefTransMsg), moduleID);
     ReadMessage(configData->deputyPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -146,7 +146,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
 
     /* Find the vector that points from the deputy spacecraft to the chief spacecraft. */
     v3Subtract(chiefTransMsg.r_BN_N, deputyTransMsg.r_BN_N, rho_N);
-    
+
     /* Build a coordinate system around the vector that points from the deputy to the chief and
         and determine the orientation of this R-frame with respect to the N-frame. */
     v3Normalize(rho_N, dcm_RN[0]);
@@ -177,44 +177,44 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     /* Find the timestep of the simulation. */
     dt = (callTime - configData->priorTime) * NANO2SEC;
     configData->priorTime = callTime;
-        
+
     /* sigma_dot_RN is calculated by dividing the difference in sigma by the timestep. */
     v3Scale((1.0/dt), delta_sigma_RN, sigma_dot_RN);
-        
+
     /* Due to the fact that sigma_dot_RN is actually the average increase in sigma over the timeperiod between t-1 and t,
        it turned out that the bevaviour of the simulation significantly improves in case the average of the B-matrix of old_sigma_RN
        and new_sigma_RN is taken, as well as the average of 1/((1+sigma^2)^2) (see Schaub and Junkins eq. 3.163). */
     old_sigma_RN_squared = configData->old_sigma_RN[0]*configData->old_sigma_RN[0] + configData->old_sigma_RN[1]*configData->old_sigma_RN[1] + configData->old_sigma_RN[2]*configData->old_sigma_RN[2];
     sigma_RN_squared = sigma_RN[0]*sigma_RN[0] + sigma_RN[1]*sigma_RN[1] + sigma_RN[2]*sigma_RN[2];
-        
+
     m33Set(1.0 - old_sigma_RN_squared + 2.0*configData->old_sigma_RN[0]*configData->old_sigma_RN[0], 2.0*(configData->old_sigma_RN[0]*configData->old_sigma_RN[1] - configData->old_sigma_RN[2]), 2.0*(configData->old_sigma_RN[0]*configData->old_sigma_RN[2] + configData->old_sigma_RN[1]),
         2.0*(configData->old_sigma_RN[1]*configData->old_sigma_RN[0] + configData->old_sigma_RN[2]), 1.0 - old_sigma_RN_squared + 2.0*configData->old_sigma_RN[1]*configData->old_sigma_RN[1], 2.0*(configData->old_sigma_RN[1]*configData->old_sigma_RN[2] - configData->old_sigma_RN[0]),
         2.0*(configData->old_sigma_RN[2]*configData->old_sigma_RN[0] - configData->old_sigma_RN[1]), 2.0*(configData->old_sigma_RN[2]*configData->old_sigma_RN[1] + configData->old_sigma_RN[0]), 1.0 - old_sigma_RN_squared + 2.0*configData->old_sigma_RN[2]*configData->old_sigma_RN[2],
         old_B_sigma_RN);
-        
+
     m33Set(1.0 - sigma_RN_squared + 2.0*sigma_RN[0]*sigma_RN[0], 2.0*(sigma_RN[0]*sigma_RN[1] - sigma_RN[2]), 2.0*(sigma_RN[0]*sigma_RN[2] +         sigma_RN[1]),
         2.0*(sigma_RN[1]*sigma_RN[0] + sigma_RN[2]), 1.0 - sigma_RN_squared + 2.0*sigma_RN[1]*sigma_RN[1], 2.0*(sigma_RN[1]*sigma_RN[2] - sigma_RN[0]),
         2.0*(sigma_RN[2]*sigma_RN[0] - sigma_RN[1]), 2.0*(sigma_RN[2]*sigma_RN[1] + sigma_RN[0]), 1.0 - sigma_RN_squared + 2.0*sigma_RN[2]*sigma_RN[2],
         B_sigma_RN);
-        
+
     /* Taking the average between entries of the old sigma matrix and the new sigma matrix. */
     m33Set((old_B_sigma_RN[0][0] + B_sigma_RN[0][0])/2, (old_B_sigma_RN[0][1] + B_sigma_RN[0][1])/2, (old_B_sigma_RN[0][2] + B_sigma_RN[0][2])/2,
            (old_B_sigma_RN[1][0] + B_sigma_RN[1][0])/2, (old_B_sigma_RN[1][1] + B_sigma_RN[1][1])/2, (old_B_sigma_RN[1][2] + B_sigma_RN[1][2])/2,
            (old_B_sigma_RN[2][0] + B_sigma_RN[2][0])/2, (old_B_sigma_RN[2][1] + B_sigma_RN[2][1])/2, (old_B_sigma_RN[2][2] + B_sigma_RN[2][2])/2,
            B_sigma_RN);
-        
+
     /* Find the angular velocity of the R-frame with respect to the N-frame according to Schaub and Junkin's chapter about MRPs. */
     m33Transpose(B_sigma_RN, B_trans);
     average_scale = 0.5*(1.0/((1.0 + sigma_RN_squared)*(1.0 + sigma_RN_squared)) + 1.0/((1.0 + old_sigma_RN_squared)*(1.0 + old_sigma_RN_squared)));
     m33Scale(average_scale, B_trans, B_sigma_RN_inv);
     m33MultV3(B_sigma_RN_inv, sigma_dot_RN, omega_RN_R);
     v3Scale(4.0, omega_RN_R, omega_RN_R);
-        
+
     /* Convert omega_RN_R to omega_RN_N. */
     v3Scale(-1, sigma_RN, sigma_NR);
     MRP2C(sigma_NR, dcm_NR);
     m33MultV3(dcm_NR, omega_RN_R, omega_RN_N);
-    
+
     /* Determine domega_RN_N. */
     v3Subtract(omega_RN_N, configData->old_omega_RN_N, delta_omega_RN_N);
     v3Scale((1.0/dt), delta_omega_RN_N, domega_RN_N);
@@ -222,7 +222,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
 
     /* Copy the sigma_RN variable to the old_sigma_RN variable. */
     v3Copy(sigma_RN, configData->old_sigma_RN);
-    
+
     /* Due to the numerical method used the first result from omega and the first two results of domega are incorrect.
         For this reason, these values are set to zero. Take into account that the first data point is an initialization
         datapoint. This is equal to zero for all parameters. So the actual simulation only starts after this first initialization
@@ -234,7 +234,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
         v3SetZero(domega_RN_N);
         configData->i += 1;
     }
-    
+
     /* One of the requirements for this module is that the user should be able to fill in a vector within the B-frame that points at
         the antenna. For this reason it is necessary to add the orientation of the B-frame with respect to the A-frame to the R-frame
         orientation with respect to the N-frame (add sigma_BA to sigma_RN). This results in the orientation of the R1-frame with respect
@@ -244,7 +244,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     v3Copy(sigma_R1N, configData->attReferenceOutBuffer.sigma_RN);
     v3Copy(omega_RN_N, configData->attReferenceOutBuffer.omega_RN_N);
     v3Copy(domega_RN_N, configData->attReferenceOutBuffer.domega_RN_N);
-    
+
     /* write the Guidance output message */
     WriteMessage(configData->attReferenceOutMsgID, callTime, sizeof(AttRefFswMsg),
                  (void*) &(configData->attReferenceOutBuffer), moduleID);

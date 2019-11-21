@@ -18,7 +18,7 @@
  */
 /*
     Inertial 3D Spin Module
- 
+
  */
 
 
@@ -40,6 +40,7 @@
  */
 void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),
@@ -74,7 +75,7 @@ void CrossInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
  */
 void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    
+
 }
 
 
@@ -112,10 +113,10 @@ void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t mo
                                  primPlanet.r_BdyZero_N,
                                  primPlanet.v_BdyZero_N,
                                  &attRefOut);
-    
+
     WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),   /* update module name */
                  (void*) &(attRefOut), moduleID);
-    
+
     return;
 }
 
@@ -127,34 +128,34 @@ void computeHillPointingReference(hillPointConfig *configData,
                                   double celBdyVelocityVector[3],
                                   AttRefFswMsg *attRefOut)
 {
-    
+
     double  relPosVector[3];
     double  relVelVector[3];
     double  dcm_RN[3][3];            /* DCM from inertial to reference frame */
     double  dcm_NR[3][3];            /* DCM from reference to inertial frame */
-    
+
     double  rm;                      /* orbit radius */
     double  h[3];                    /* orbit angular momentum vector */
     double  hm;                      /* module of the orbit angular momentum vector */
-    
+
     double  dfdt;                    /* rotational rate of the orbit frame */
     double  ddfdt2;                  /* rotational acceleration of the frame */
     double  omega_RN_R[3];           /* reference angular velocity vector in Reference frame R components */
     double  domega_RN_R[3];          /* reference angular acceleration vector in Reference frame R components */
-    
+
     /*! - Compute relative position and velocity of the spacecraft with respect to the main celestial body */
     v3Subtract(r_BN_N, celBdyPositonVector, relPosVector);
     v3Subtract(v_BN_N, celBdyVelocityVector, relVelVector);
-    
+
     /*! - Compute RN */
     v3Normalize(relPosVector, dcm_RN[0]);
     v3Cross(relPosVector, relVelVector, h);
     v3Normalize(h, dcm_RN[2]);
     v3Cross(dcm_RN[2], dcm_RN[0], dcm_RN[1]);
-    
+
     /*! - Compute R-frame orientation */
     C2MRP(dcm_RN, attRefOut->sigma_RN);
-    
+
     /*! - Compute R-frame inertial rate and acceleration */
     rm = v3Norm(relPosVector);
     hm = v3Norm(h);
@@ -177,5 +178,5 @@ void computeHillPointingReference(hillPointConfig *configData,
     m33Transpose(dcm_RN, dcm_NR);
     m33MultV3(dcm_NR, omega_RN_R, attRefOut->omega_RN_N);
     m33MultV3(dcm_NR, domega_RN_R, attRefOut->domega_RN_N);
-    
+
 }

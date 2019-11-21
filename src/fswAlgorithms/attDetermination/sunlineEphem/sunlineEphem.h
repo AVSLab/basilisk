@@ -24,6 +24,7 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 
 
@@ -36,23 +37,25 @@ typedef struct {
     char sunPositionInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the sun ephemeris input message
     char scPositionInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the spacecraft ephemeris input message
     char scAttitudeInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the spacecraft attitude input message
-    
+
     int32_t navStateOutMsgId;   //!<  [-]  ID for the outgoing body estimate message
     int32_t sunPositionInMsgId; //!<  [-]  ID for the incoming CSS sensor message
     int32_t scPositionInMsgId;  //!<  [-]  ID for the incoming spacecraft position message
     int32_t scAttitudeInMsgId;  //!<  [-]  ID for the incoming spacecraft attitude message
+
+    BSKPrint *bskPrint; //!< BSK Logging
 
 }sunlineEphemConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID);
     void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID);
     void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

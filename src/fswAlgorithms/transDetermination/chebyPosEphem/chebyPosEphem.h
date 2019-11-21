@@ -23,13 +23,14 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4
 
 
 /*! @brief Structure that defines the layout of an Ephemeris "record."  This is
-           basically the set of coefficients for the body x/y/z positions and 
+           basically the set of coefficients for the body x/y/z positions and
            the time factors associated with those coefficients
 */
 typedef struct {
@@ -40,7 +41,7 @@ typedef struct {
     double velChebyCoeff[3*MAX_CHEB_COEFF];   /*!< [-] Set of coefficients for the velocity estimate*/
 }ChebyEphemRecord;
 
-/*! @brief Top level structure for the Chebyshev position ephemeris 
+/*! @brief Top level structure for the Chebyshev position ephemeris
            fit system. e
 */
 typedef struct {
@@ -51,21 +52,23 @@ typedef struct {
     int32_t posFitOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
     int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
     uint32_t coeffSelector;    /*!< [-] Index in the ephArray that we are currently using*/
-    
+
     EphemerisIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
+
+    BSKPrint *bskPrint;   //!< BSK Logging
 }ChebyPosEphemData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID);
     void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID);
     void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                              int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

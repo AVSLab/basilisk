@@ -21,6 +21,7 @@
 #define _EPHEM_NAV_CONVERTER_H_
 
 #include "messaging/static_messaging.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 /*! @brief The configuration structure for the ephemNavConverter module.*/
@@ -29,19 +30,20 @@ typedef struct {
     char ephInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the clock correlation message
     int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t ephInMsgID;  //!< [-] The ID associated with the incoming clock correlation
+    BSKPrint *bskPrint;   //!< BSK Logging
 }EphemNavConverterData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID);
     void CrossInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID);
     void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
                               int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

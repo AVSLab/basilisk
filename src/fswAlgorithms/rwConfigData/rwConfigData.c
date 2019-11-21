@@ -18,7 +18,7 @@
  */
 /*
     FSW MODULE Template
- 
+
  */
 
 /* modify the path to reflect the new module names */
@@ -41,10 +41,11 @@
  */
 void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->rwParamsOutMsgID = CreateNewMessage(configData->rwParamsOutMsgName,
                                                     sizeof(RWArrayConfigFswMsg), "RWArrayConfigFswMsg", moduleID);
-    
+
 }
 
 /*! This method performs the second stage of initialization for this module.

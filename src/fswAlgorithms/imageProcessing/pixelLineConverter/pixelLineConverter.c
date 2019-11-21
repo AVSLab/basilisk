@@ -31,6 +31,7 @@
  */
 void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
                                                  sizeof(OpNavFswMsg),
                                                  "OpNavFswMsg",
@@ -88,7 +89,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
                 sizeof(CirclesOpNavMsg), &circlesIn, moduleID);
     ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), &attInfo, moduleID);
-    
+
     if (circlesIn.valid == 0){
         opNavMsgOut.valid = 0;
         WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
@@ -121,7 +122,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     v3Set(rtilde_C[0], rtilde_C[1], 1.0, rHat_BN_C);
     v3Scale(-1, rHat_BN_C, rHat_BN_C);
     v3Normalize(rHat_BN_C, rHat_BN_C);
-    
+
     m33MultV3(dcm_NC, rHat_BN_C, rHat_BN_N);
     m33tMultV3(dcm_CB, rHat_BN_C, rHat_BN_B);
 
@@ -138,10 +139,10 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
             planetRad = REQ_JUPITER;//in km
             opNavMsgOut.planetID = configData->planetTarget;
         }
-        
+
         denom = sin(atan(X*circlesIn.circlesRadii[0]/cameraSpecs.focalLength));
         rNorm = planetRad/denom; //in km
-        
+
         /*! - Compute the uncertainty */
         x_map = planetRad/denom*(X/cameraSpecs.focalLength);
         y_map = planetRad/denom*(Y/cameraSpecs.focalLength);
@@ -160,7 +161,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         mtMultM(dcm_CB, 3, 3, covar_In_C, 3, 3, covar_In_B);
         mMultM(covar_In_B, 3, 3, dcm_CB, 3, 3, covar_In_B);
     }
-    
+
     /*! - write output message */
     v3Scale(rNorm*1E3, rHat_BN_N, opNavMsgOut.r_BN_N); //in m
     v3Scale(rNorm*1E3, rHat_BN_C, opNavMsgOut.r_BN_C); //in m

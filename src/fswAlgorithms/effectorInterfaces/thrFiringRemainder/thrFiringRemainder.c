@@ -18,7 +18,7 @@
  */
 /*
     Thrust Firing Remainder
- 
+
  */
 
 #include "effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
@@ -36,6 +36,7 @@
  */
 void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->onTimeOutMsgId = CreateNewMessage(configData->onTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),
@@ -167,7 +168,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
 
 		/*! - Set the output data for each thruster */
 		thrOnTimeOut.OnTimeRequest[i] = onTime[i];
-		
+
 	}
 
     /*! - write the moduel output message */

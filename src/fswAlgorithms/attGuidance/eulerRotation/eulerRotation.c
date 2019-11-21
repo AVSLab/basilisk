@@ -18,10 +18,10 @@
  */
 /*
  Euler Angle Rotation Guidance Module with Constant Euler Rates
- 
+
  * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
  * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
- 
+
  */
 
 #include "attGuidance/eulerRotation/eulerRotation.h"
@@ -45,6 +45,7 @@
  */
 void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /* - Create output message for module */
     configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
                                                sizeof(AttRefFswMsg),
@@ -64,7 +65,7 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
     configData->attRefInMsgID = subscribeToMessage(configData->attRefInMsgName,
                                                 sizeof(AttRefFswMsg),
                                                 moduleID);
-    
+
     configData->desiredAttInMsgID = -1;
     if(strlen(configData->desiredAttInMsgName) > 0)
     {
@@ -122,7 +123,7 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, in
         /* - Check the command is new */
         checkRasterCommands(configData);
     }
-    
+
     /* - Compute time step to use in the integration downstream */
     computeTimeStep(configData, callTime);
     /* - Compute output reference frame */
@@ -156,7 +157,7 @@ void checkRasterCommands(eulerRotationConfig *configData)
     {
         v3Copy(configData->cmdSet, configData->angleSet);
         v3Copy(configData->cmdRates, configData->angleRates);
-        
+
         v3Copy(configData->cmdSet, configData->priorCmdSet);
         v3Copy(configData->cmdRates, configData->priorCmdRates);
     }
@@ -190,13 +191,13 @@ void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], d
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(angleSet[1]);
     c2 = cos(angleSet[1]);
     s3 = sin(angleSet[2]);
     c3 = cos(angleSet[2]);
-    
-    
+
+
     B_inv_deriv[0][0] = -angleRates[1] * c2;
     B_inv_deriv[0][1] = 0;
     B_inv_deriv[0][2] = 0;
@@ -229,14 +230,14 @@ void computeEulerRotationReference(eulerRotationConfig *configData,
     double RR0[3][3];               /*!< [] DCM rotating from R0 to R */
     double R0N[3][3];               /*!< [] DCM rotating from N to R0 */
     double RN[3][3];                /*!< [] DCM rotating from N to R */
-    
+
     MRP2C(sigma_R0N, R0N);
     v3Scale(configData->dt, configData->angleRates, attIncrement);
     v3Add(configData->angleSet, attIncrement, configData->angleSet);
     Euler3212C(configData->angleSet, RR0);
     m33MultM33(RR0, R0N, RN);
     C2MRP(RN, attRefOut->sigma_RN);
-    
+
     /* Compute angular velocity */
     double B_inv[3][3];             /*!< [] matrix related Euler angle rates to angular velocity vector components */
     double omega_RR0_R[3];          /*!< [r/s] angular velocity vector between R and R0 frame in R frame components */
@@ -245,7 +246,7 @@ void computeEulerRotationReference(eulerRotationConfig *configData,
     m33MultV3(B_inv, configData->angleRates, omega_RR0_R);
     m33tMultV3(RN, omega_RR0_R, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, attRefOut->omega_RN_N);
- 
+
     /* Compute angular acceleration */
     double B_inv_deriv[3][3];       /*!< [] time derivatie of matrix relating EA rates to omegas */
     double domega_RR0_R[3];         /*!< [r/s] inertial derivative of omega_RR0_R in R frame components */

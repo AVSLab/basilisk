@@ -25,6 +25,7 @@
 #include "fswMessages/attRefFswMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 
 
@@ -43,12 +44,13 @@ typedef struct {
     int32_t deputyPositionInMsgID;                      /*!< -- ID for the incoming deputy position message */
     uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
     AttRefFswMsg attReferenceOutBuffer;
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }spacecraftPointingConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID);
     void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID);
     void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,

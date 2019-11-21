@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswMessages/attRefFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -39,12 +40,13 @@ typedef struct {
     char inputRefName[MAX_STAT_MSG_LENGTH];          /*!< The name of the input guidance reference message */
     int32_t inputRefID;                              /*!< [-] ID for the incoming guidance reference message */
     AttRefFswMsg attRefOut;                             /*!< [-] structure for the output data */
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }inertial3DSpinConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
     void CrossInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
     void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);

@@ -30,11 +30,12 @@
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /* Create output message for module */
     configData->outputMsgID = CreateNewMessage(
         configData->outputControlName, sizeof(RWArrayTorqueIntMsg),
         "RWArrayTorqueIntMsg", moduleID);
-	
+
 }
 
 /*! This method performs the second stage of initialization for the RW null space control
@@ -105,8 +106,8 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 
 }
 
-/*! This method takes the input reaction wheel commands as well as the observed 
-    reaction wheel speeds and balances the commands so that the overall vehicle 
+/*! This method takes the input reaction wheel commands as well as the observed
+    reaction wheel speeds and balances the commands so that the overall vehicle
 	momentum is minimized.
  @return void
  @param configData The configuration data associated with the null space control
@@ -116,7 +117,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    
+
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     RWArrayTorqueIntMsg cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
@@ -124,7 +125,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 	RWArrayTorqueIntMsg finalControl;       /* [Nm]  array of final RW motor torques containing both
                                                        the control and null motion torques */
 	double dVector[MAX_EFF_CNT];            /* [Nm]  null motion wheel speed control array */
-    
+
     /*! - zero all message containers prior to evaluation */
     memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));
     memset(&cntrRequest, 0x0, sizeof(RWArrayTorqueIntMsg));

@@ -33,12 +33,13 @@
  */
 void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
     memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
     memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
-    
+
 }
 
 /*! This method performs the second stage of initialization for the sun safe attitude
@@ -54,7 +55,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
         sizeof(NavAttIntMsg), moduleID);
     configData->imuInMsgID = subscribeToMessage(configData->imuInMsgName,
         sizeof(NavAttIntMsg), moduleID);
-    
+
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -68,8 +69,10 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
 
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(configData->sHatBdyCmd)  < 0.1) {
-        BSK_PRINT(MSG_ERROR,"The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
-                  configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
+      char msg[255];
+      sprintf(msg, "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
+                configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
+      _printMessage(configData->bskPrint, MSG_ERROR, msg);
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->sHatBdyCmd, configData->sHatBdyCmd);    /* ensure that this vector is a unit vector */
@@ -127,7 +130,7 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
         configData->sunAngleErr = acos(ctSNormalized);
 
         /*
-            Compute the heading error relative to the sun direction vector 
+            Compute the heading error relative to the sun direction vector
          */
         if (configData->sunAngleErr < configData->smallAngle) {
             /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
@@ -163,6 +166,6 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
     /* write the Guidance output message */
     WriteMessage(configData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
                  (void*) &(configData->attGuidanceOutBuffer), moduleID);
-    
+
     return;
 }

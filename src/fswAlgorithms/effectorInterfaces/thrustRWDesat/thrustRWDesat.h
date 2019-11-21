@@ -27,6 +27,7 @@
 #include "fswMessages/rwConstellationFswMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -57,18 +58,19 @@ typedef struct {
     int32_t inputThrConID;     /*!< [-] ID for the thruster configuration data*/
     int32_t inputMassPropID;   /*!< [-] ID for the incoming mass property information*/
 	int32_t outputThrID;       /*!< (-) ID for the outgoing thruster commands*/
+  BSKPrint *bskPrint;                             //!< BSK Logging
 }thrustRWDesatConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
     void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
     void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
         int64_t moduleID);
 	void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

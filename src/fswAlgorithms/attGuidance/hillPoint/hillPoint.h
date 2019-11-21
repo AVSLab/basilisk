@@ -27,6 +27,7 @@
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -34,7 +35,7 @@
 /*!@brief Data structure for module to compute the Hill-frame pointing navigation solution.
  */
 typedef struct {
-    
+
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       //!<        The name of the output message
     int32_t outputMsgID;                            //!< (-)    ID for the outgoing message
@@ -42,13 +43,14 @@ typedef struct {
     int32_t inputNavID;                             //!< (-)    ID for the incoming IMU data message
     char inputCelMessName[MAX_STAT_MSG_LENGTH];     //!<        The name of the celestial body message
     int32_t inputCelID;                             //!< (-)    ID for the planet input message
+    BSKPrint *bskPrint;                             //!< BSK Logging
 
 }hillPointConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID);
     void CrossInit_hillPoint(hillPointConfig *configData, int64_t moduleID);
     void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID);

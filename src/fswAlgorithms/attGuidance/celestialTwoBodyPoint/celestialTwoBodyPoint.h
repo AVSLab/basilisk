@@ -25,6 +25,7 @@
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -39,8 +40,8 @@ typedef struct {
     double v_P2B_N[3];              //!< [m/s] planet 2 velocity vector relative to inertial frame, in N-frame components
     double a_P1B_N[3];              //!< [m/s^2] planet 1 acceleration vector relative to inertial frame, in N-frame components
     double a_P2B_N[3];              //!< [m/s^2] planet 2 acceleration vector relative to inertial frame, in N-frame components
-    
-    
+
+
     /* Declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message*/
     char inputNavDataName[MAX_STAT_MSG_LENGTH];     //!< The name of the incoming attitude command*/
@@ -50,22 +51,24 @@ typedef struct {
     int32_t inputNavID;                             //!< (-) ID for the incoming IMU data message*/
     int32_t inputCelID;                             //!< (-) ID for the incoming mass properties message*/
     int32_t inputSecID;                             //!< (-) ID for the secondary constraint message*/
-    
+
     /* Output attitude reference data to send */
     AttRefFswMsg attRefOut;
+
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }celestialTwoBodyPointConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, int64_t moduleID);
     void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, int64_t moduleID);
     void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleID);
     void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime);
-    
+
 #ifdef __cplusplus
 }
 #endif

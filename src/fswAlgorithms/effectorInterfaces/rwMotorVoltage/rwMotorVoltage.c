@@ -18,7 +18,7 @@
  */
 /*
     FSW MODULE: RW motor voltage command
- 
+
  */
 
 #include "effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
@@ -34,6 +34,7 @@
  */
 void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->voltageOutMsgID = CreateNewMessage(configData->voltageOutMsgName,
                                                sizeof(RWArrayVoltageIntMsg),
@@ -164,7 +165,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     }
 
     /*
-     store the output message 
+     store the output message
      */
     memcpy(configData->voltageOut.voltage,
            voltage,

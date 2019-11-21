@@ -24,6 +24,7 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "fswMessages/dvBurnCmdFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 
 
@@ -45,17 +46,18 @@ typedef struct {
     int32_t outputThrID;     /*!< [-] ID for the outgoing thruster command message*/
     int32_t inputNavID;      /*!< (-) ID for the incoming IMU data message*/
     int32_t inputBurnCmdID;  /*!< [-] ID for the incoming burn command data*/
+    BSKPrint *bskPrint;   //!< BSK Logging
 }dvExecuteGuidanceConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID);
     void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID);
     void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
         int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

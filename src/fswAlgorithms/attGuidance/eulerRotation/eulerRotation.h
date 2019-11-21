@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/attStateFswMsg.h"
 #include "fswMessages/attRefFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -39,26 +40,28 @@ typedef struct {
     double priorCmdRates[3];                    //!< [rad/s] prior commanded 321 Euler angle rates
     uint64_t priorTime;                         //!< [ns] last time the guidance module is called
     double dt;                                  //!< [s] integration time-step
-    
+
     /* Declare module IO interfaces */
     char        attRefOutMsgName[MAX_STAT_MSG_LENGTH];      //!< The name of the output message containing the Reference
     int32_t     attRefOutMsgID;                             //!< [-] ID for the outgoing Reference message
     char        attRefInMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the guidance reference Input message
     int32_t     attRefInMsgID;                              //!< [-] ID for the incoming guidance reference message
-    
+
     char        desiredAttInMsgName[MAX_STAT_MSG_LENGTH];   //!< The name of the incoming message containing the desired EA set
     int32_t     desiredAttInMsgID;                          //!< [-] ID for the incoming EA set message
+
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }eulerRotationConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
     void CrossInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
     void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
     void checkRasterCommands(eulerRotationConfig *configData);
     void computeTimeStep(eulerRotationConfig *configData, uint64_t callTime);
     void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3]);
@@ -67,7 +70,7 @@ extern "C" {
                                        double omega_R0N_N[3],
                                        double domega_R0N_N[3],
                                        AttRefFswMsg *attRefOut);
-    
+
 #ifdef __cplusplus
 }
 #endif

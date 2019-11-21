@@ -25,6 +25,7 @@
 
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -40,17 +41,18 @@ typedef struct {
     double MaxSensorValue; //!< Scale factor to go from sensor values to cosine
     uint32_t ChebyCount; //!< Count on the number of chebyshev polynominals we have
     double KellyCheby[MAX_NUM_CHEBY_POLYS]; //!< Chebyshev polynominals to fit output to cosine
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }CSSConfigData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID);
     void CrossInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID);
     void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t moduleID);
     void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

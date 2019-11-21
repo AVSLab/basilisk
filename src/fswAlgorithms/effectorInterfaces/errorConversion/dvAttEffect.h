@@ -24,6 +24,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "../_GeneralModuleFiles/thrustGroupData.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -45,12 +46,13 @@ typedef struct {
     int32_t inputMsgID;      /*!< - ID for the incoming guidance errors*/
     uint32_t numThrGroups;   /*!< - Count on the number of thrusters groups available*/
     ThrustGroupData thrGroups[MAX_NUM_THR_GROUPS]; /*!< - Thruster grouping container*/
+    BSKPrint *bskPrint;   //!< BSK Logging
 }dvAttEffectConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
     void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
     void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
@@ -60,7 +62,7 @@ extern "C" {
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
                                   CmdTorqueBodyIntMsg *contrReq, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

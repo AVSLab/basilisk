@@ -30,6 +30,7 @@
  */
 void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - create the attitude navigation output message */
     configData->navAttOutMsgID = CreateNewMessage(configData->outputAttName,
         sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);

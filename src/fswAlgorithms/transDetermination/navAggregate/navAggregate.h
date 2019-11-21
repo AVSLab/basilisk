@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 #define MAX_AGG_NAV_MSG 10
 
@@ -60,6 +61,8 @@ typedef struct {
     
     int32_t navTransOutMsgID;   /*!< [-] The ID associated with the outgoing message*/
     int32_t navAttOutMsgID;     /*!< [-] The ID associated with the outgoing message*/
+
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }NavAggregateData;
 
 #ifdef __cplusplus

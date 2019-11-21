@@ -24,6 +24,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/imuSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -37,17 +38,18 @@ typedef struct {
     int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
     IMUSensorBodyFswMsg LocalOutput; /*!< Output data structure*/
+    BSKPrint *bskPrint;   //!< BSK Logging
 }IMUConfigData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID);
     void CrossInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID);
     void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime,
         int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

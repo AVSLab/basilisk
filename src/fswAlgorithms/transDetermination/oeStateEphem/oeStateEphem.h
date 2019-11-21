@@ -24,6 +24,7 @@
 #include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20
@@ -47,9 +48,9 @@ typedef struct {
     uint32_t anomalyFlag;                 //!< [-] Flag indicating if the anomaly angle is true (0), mean (1)
 }ChebyOERecord;
 
-/*! @brief Top level structure for the Chebyshev position ephemeris 
-           fit system.  Allows the user to specify a set of chebyshev 
-           coefficients and then use the input time to determine where 
+/*! @brief Top level structure for the Chebyshev position ephemeris
+           fit system.  Allows the user to specify a set of chebyshev
+           coefficients and then use the input time to determine where
            a given body is in space
 */
 typedef struct {
@@ -60,19 +61,20 @@ typedef struct {
     int32_t stateFitOutMsgId;                     //!< [-] The ID associated with the outgoing message
     int32_t clockCorrInMsgId;                     //!< [-] The ID associated with the incoming clock correlation
     uint32_t coeffSelector;                       //!< [-] Index in the ephArray that we are currently using
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }OEStateEphemData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID);
     void CrossInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID);
     void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
                               int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

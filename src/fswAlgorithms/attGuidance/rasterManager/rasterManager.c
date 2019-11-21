@@ -18,10 +18,10 @@
  */
 /*
  Inertial 3D Spin Module
- 
+
  * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
  * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
- 
+
  */
 
 #include "attGuidance/rasterManager/rasterManager.h"
@@ -41,6 +41,7 @@
 
 void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->AttStateOutMsgID = CreateNewMessage(configData->AttStateOutMsgName,
                                                  sizeof(AttStateFswMsg),
@@ -48,7 +49,7 @@ void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
                                                  moduleID);
     configData->mnvrActive = 0;
     configData->scanSelector = 0;
-    
+
 }
 
 void CrossInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
@@ -80,21 +81,20 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
     } else {
         configData->mnvrActive = 0.0;
         configData->scanSelector += 1;
-        BSK_PRINT(MSG_INFORMATION,"Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ", configData->scanSelector,
+
+        char msg[255];
+        sprintf(msg, "Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ", configData->scanSelector,
                configData->attOutSet.state[0],
                configData->attOutSet.state[1],
                configData->attOutSet.state[2],
                configData->attOutSet.rate[0],
                configData->attOutSet.rate[1],
                configData->attOutSet.rate[2]);
+        _printMessage(configData->bskPrint, MSG_INFORMATION, msg);
     }
-    
-    
+
+
     WriteMessage(configData->AttStateOutMsgID, callTime, sizeof(AttStateFswMsg),
                  (void*) &(configData->attOutSet), moduleID);
     return;
 }
-
-
-
-

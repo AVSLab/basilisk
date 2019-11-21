@@ -27,6 +27,7 @@
 #include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 /*!@brief module configuration message
@@ -44,7 +45,7 @@ typedef struct {
     /* declare module IO interfaces */
     char voltageOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the voltage output message*/
     int32_t voltageOutMsgID;                        /*!< ID for the outgoing voltage message */
-    
+
     char torqueInMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the Input torque message*/
     int32_t torqueInMsgID;                          /*!< ID for the incoming torque message */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWArrayConfigFswMsg input message*/
@@ -57,17 +58,19 @@ typedef struct {
     RWArrayConfigFswMsg rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWArrayVoltageIntMsg voltageOut;                /*!< -- copy of the output message */
 
+    BSKPrint *bskPrint;                             //!< BSK Logging
+
 }rwMotorVoltageConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
     void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
     void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

@@ -25,6 +25,7 @@
 #include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/cssUnitConfigFswMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
@@ -50,12 +51,13 @@ typedef struct {
     int32_t cssConfigInMsgID;                           //!< ID for the incoming CSS configuration message
     int32_t navStateOutMsgId;                           //!< ID for the outgoing body estimate message
     int32_t cssWlsFiltResOutMsgId;                      //!< ID of the output residuals for CSS
+    BSKPrint *bskPrint;                                 //!< BSK Logging
 }CSSWLSConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID);
     void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID);
     void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
@@ -65,7 +67,7 @@ extern "C" {
                      double *y, double x[3]);
     void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
                              double *wlsEst, double *cssResiduals);
-    
+
 #ifdef __cplusplus
 }
 #endif

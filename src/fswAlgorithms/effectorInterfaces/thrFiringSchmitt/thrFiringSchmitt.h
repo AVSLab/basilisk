@@ -27,6 +27,7 @@
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -35,7 +36,7 @@
 typedef struct {
     /* declare module public variables */
     double              level_on;                               //!< [-] ON duty cycle fraction
-    double              level_off;                              //!< [-] OFF duty cycle fraction 
+    double              level_off;                              //!< [-] OFF duty cycle fraction
     double              thrMinFireTime;                         //!< [s] Minimum ON time for thrusters
     int                 baseThrustState;                        //!< [-] Indicates on-pulsing (0) or off-pusling (1)
 
@@ -54,17 +55,19 @@ typedef struct {
 	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];	//!< The name of the thruster cluster Input message
 	int32_t  			thrConfInMsgId;                   		//!< ID for the incoming Thruster configuration data
 
+  BSKPrint *bskPrint;                             //!< BSK Logging
+
 }thrFiringSchmittConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID);
     void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID);
     void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

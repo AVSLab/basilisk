@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attRefFswMsg.h"
 #include "fswMessages/dvBurnCmdFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 
 
@@ -34,6 +35,7 @@ typedef struct {
     char inputBurnDataName[MAX_STAT_MSG_LENGTH];//<! Input message that configures the vehicle burn
     int32_t outputMsgID;     //!< (-) ID for the outgoing body estimate message
     int32_t inputBurnCmdID;  //!< [-] ID for the incoming burn command data
+    BSKPrint *bskPrint;   //!< BSK Logging
 }dvGuidanceConfig;
 
 #ifdef __cplusplus

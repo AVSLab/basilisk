@@ -27,6 +27,7 @@
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
@@ -57,12 +58,14 @@ typedef struct {
     int32_t vehicleConfigDataInMsgId;               //!< [] ID for the incoming static vehicle data
     VehicleConfigFswMsg   sc;                       //!< spacecraft configuration message
 
+    BSKPrint *bskPrint;                             //!< BSK Logging
+
 }thrForceMappingConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID);
     void CrossInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID);
     void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID);

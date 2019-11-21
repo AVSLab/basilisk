@@ -34,6 +34,7 @@
  */
 void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Loop over number of thruster blocks and create output messages */
     configData->outputThrID = CreateNewMessage(
         configData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),
@@ -57,7 +58,7 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
     uint32_t sizeOfMsgWritten;
     double momentArm[3];
     double thrustDat_B[3];
-    
+
     /*! - Get the control data message ID*/
     configData->inputSpeedID = subscribeToMessage(configData->inputSpeedName,
         sizeof(RWSpeedIntMsg), moduleID);
@@ -74,14 +75,14 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
                 sizeof(VehicleConfigFswMsg), &localConfigData, moduleID);
     ReadMessage(configData->inputThrConID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrustData, moduleID);
-    
+
     /*! - Transform from structure S to body B frame */
     configData->numRWAs = localRWData.numRW;
     for(i=0; i<configData->numRWAs; i=i+1)
     {
         v3Copy(localRWData.reactionWheels[i].gsHat_B, &configData->rwAlignMap[i*3]);
     }
-    
+
     configData->numThrusters = localThrustData.numThrusters;
     for(i=0; i<configData->numThrusters; i=i+1)
     {
@@ -91,8 +92,8 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
         v3Copy(localThrustData.thrusters[i].tHatThrust_B, thrustDat_B);
         v3Cross(momentArm, thrustDat_B, &(configData->thrTorqueMap[i*3]));
     }
-    
-    
+
+
 }
 
 /*! This method takes in the current oberved reaction wheel angular velocities.
@@ -115,9 +116,9 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 	double currentMatch;          /* Assessment of the current match */
     double fireValue;             /* Amount of time to fire the jet for */
 	THRArrayOnTimeCmdIntMsg outputData;    /* Local output firings */
-  
+
     /*! - If we haven't met the cooldown threshold, do nothing */
-	if ((callTime - configData->previousFiring)*1.0E-9 < 
+	if ((callTime - configData->previousFiring)*1.0E-9 <
 		configData->thrFiringPeriod)
 	{
 		return;
@@ -126,12 +127,12 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
     /*! - Read the input rwheel speeds from the reaction wheels*/
     ReadMessage(configData->inputSpeedID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWSpeedIntMsg), (void*) &(rwSpeeds), moduleID);
-    
+
     /*! - Accumulate the total momentum vector we want to apply (subtract speed vectors)*/
 	v3SetZero(observedSpeedVec);
 	for (i = 0; i < configData->numRWAs; i++)
 	{
-		v3Scale(rwSpeeds.wheelSpeeds[i], &(configData->rwAlignMap[i * 3]), 
+		v3Scale(rwSpeeds.wheelSpeeds[i], &(configData->rwAlignMap[i * 3]),
 			singleSpeedVec);
 		v3Subtract(observedSpeedVec, singleSpeedVec, observedSpeedVec);
 	}
@@ -142,9 +143,9 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 		return;
 	}
 
-    /*! - Iterate through the list of thrusters and find the "best" match for the 
-          observed momentum vector that does not continue to perturb the velocity 
-          in the same direction as previous aggregate firings.  Only do this once we have 
+    /*! - Iterate through the list of thrusters and find the "best" match for the
+          observed momentum vector that does not continue to perturb the velocity
+          in the same direction as previous aggregate firings.  Only do this once we have
 		  removed the specified momentum accuracy from the current direction.*/
 	selectedThruster = -1;
 	bestMatch = 0.0;
@@ -169,9 +170,9 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 				configData->currDMDir);
 		}
 	}
-    
+
     /*! - Zero out the thruster commands prior to setting the selected thruster.
-          Only apply thruster firing if the best match is non-zero.  Find the thruster 
+          Only apply thruster firing if the best match is non-zero.  Find the thruster
 		  that best matches the current specified direction.
     */
 	memset(&outputData, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
@@ -190,7 +191,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 			bestMatch = fireValue - currentMatch;
 		}
 	}
-    /*! - If we have a valid match: 
+    /*! - If we have a valid match:
           - Set firing based on the best counter to the observed momentum.
           - Saturate based on the maximum allowable firing
           - Accumulate impulse and the total firing
@@ -209,7 +210,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
         v3Add(configData->accumulatedImp, singleSpeedVec,
             configData->accumulatedImp);
 	}
-   
+
     /*! - Write the output message to the thruster system */
 	WriteMessage(configData->outputThrID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
 		&(outputData), moduleID);
@@ -228,4 +229,3 @@ void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int
 	v3SetZero(configData->accumulatedImp);
 	configData->totalAccumFiring = 0.0;
 }
-

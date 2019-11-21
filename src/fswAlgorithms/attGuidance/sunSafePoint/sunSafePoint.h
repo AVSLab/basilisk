@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 #include <stdint.h>
 
 
@@ -44,12 +45,13 @@ typedef struct {
     int32_t sunDirectionInMsgID;/*!< -- ID for the incoming CSS sensor message*/
     int32_t imuInMsgID;        /*!< -- ID for the incoming IMU sensor message*/
     AttGuidFswMsg attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
+    BSKPrint *bskPrint;                             //!< BSK Logging
 }sunSafePointConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID);
     void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID);
     void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,

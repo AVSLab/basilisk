@@ -18,7 +18,7 @@
  */
 /*
     rateServoFullNonlinear Module
- 
+
  */
 
 #include "attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
@@ -70,7 +70,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
     configData->rwParamsInMsgId = -1;
     configData->rwSpeedsInMsgId = -1;
     configData->rwAvailInMsgId = -1;
-    
+
     if(strlen(configData->rwParamsInMsgName) > 0) {
         configData->rwParamsInMsgId = subscribeToMessage(configData->rwParamsInMsgName,
                                                          sizeof(RWArrayConfigFswMsg), moduleID);
@@ -78,7 +78,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
             configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                              sizeof(RWSpeedIntMsg), moduleID);
         } else {
-            BSK_PRINT(MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
+            _printMessage(configData->bskPrint, MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
             configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,
@@ -97,23 +97,23 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     /*! - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    int i;    
+    int i;
     VehicleConfigFswMsg sc;
-    
+
     memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
     ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
-    
+
     configData->rwConfigParams.numRW = 0;
     if (configData->rwParamsInMsgId >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
         ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
-    
+
     /* Reset the integral measure of the rate tracking error */
     v3SetZero(configData->z);
 
@@ -141,7 +141,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
     double              dt;                 /* [s] control update period */
-    
+
     double              Lr[3];              /* required control torque vector [Nm] */
     double              omega_BastN_B[3];   /* angular velocity of B^ast relative to inertial N, in body frame components */
     double              omega_BBast_B[3];   /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
@@ -157,10 +157,10 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     double              v3_7[3];
     int                 i;
     double              intLimCheck;
-        
+
     /*! - zero the output message */
     memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
-    
+
     /*! - compute control update time */
     if (configData->priorTime == 0) {
         dt = 0.0;
@@ -188,7 +188,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
-    
+
     /*! - compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
@@ -229,25 +229,24 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     }
     v3Cross(omega_BastN_B, v3_3, v3_4);
     v3Subtract(Lr, v3_4, Lr);
-    
+
     /* Lr +=  - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_5);
     v3Subtract(guidCmd.domega_RN_B, v3_5, v3_6);
     v3Add(v3_6, rateGuid.omegap_BastR_B, v3_6);
     m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_6, v3_7);
     v3Subtract(Lr, v3_7, Lr);
-    
+
     /* Add external torque: Lr += L */
     v3Add(configData->knownTorquePntB_B, Lr, Lr);
-    
+
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
-    
+
     /*! - Set output message and pass it to the message bus */
     v3Copy(Lr, controlOut.torqueRequestBody);
     WriteMessage(configData->cmdTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(controlOut), moduleID);
-    
+
     return;
 }
-

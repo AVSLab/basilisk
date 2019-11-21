@@ -24,6 +24,7 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/AccDataFswMsg.h"
 #include "fswMessages/AccPktDataFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
@@ -37,12 +38,13 @@ typedef struct {
     int32_t outputNavMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t accPktInMsgID;     //!< [-] The ID associated with the incoming accelerometer buffer
     double vehAccumDV_B[3];    //!< [m/s] The accumulated Delta_V in body frame components
+    BSKPrint *bskPrint;   //!< BSK Logging
 }DVAccumulationData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
     void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
     void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
@@ -52,7 +54,7 @@ extern "C" {
     void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q);
     int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end);
     void dvAccumulation_QuickSort(AccPktDataFswMsg *A, int start, int end);
-    
+
 #ifdef __cplusplus
 }
 #endif

@@ -18,7 +18,7 @@
  */
 /*
     Thrust Firing Schmitt
- 
+
  */
 
 #include "effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
@@ -39,6 +39,7 @@
  */
 void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->onTimeOutMsgId = CreateNewMessage(configData->onTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),

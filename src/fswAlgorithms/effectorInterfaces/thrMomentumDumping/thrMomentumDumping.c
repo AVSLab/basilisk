@@ -18,7 +18,7 @@
  */
 /*
     FSW MODULE thrMomentumDumping
- 
+
  */
 
 #include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
@@ -36,6 +36,7 @@
  */
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->thrusterOnTimeOutMsgId = CreateNewMessage(configData->thrusterOnTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),
@@ -112,7 +113,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     /*! - perform sanity check that the module maxCounterValue value is set to a positive value */
     if (configData->maxCounterValue < 1) {
-        BSK_PRINT(MSG_WARNING,"The maxCounterValue flag must be set to a positive value.");
+        _printMessage(configData->bskPrint, MSG_WARNING,"The maxCounterValue flag must be set to a positive value.");
     }
 
 }

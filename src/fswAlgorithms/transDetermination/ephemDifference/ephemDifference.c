@@ -33,6 +33,7 @@
 void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
     uint32_t i;
+    configData->bskPrint = _BSKPrint();
     configData->ephBdyCount = 0;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
@@ -46,7 +47,7 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
     }
 
     if (configData->ephBdyCount == 0) {
-        BSK_PRINT(MSG_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
+        _printMessage(configData->bskPrint, MSG_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
     }
 }
 
@@ -80,7 +81,7 @@ void CrossInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID
 void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
-    
+
 }
 
 /*! @brief This method recomputes the body postions and velocities relative to
@@ -99,11 +100,11 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
     EphemerisIntMsg tmpBaseEphem;
     EphemerisIntMsg tmpEphStore;
     memset(&tmpBaseEphem, 0x0, sizeof(EphemerisIntMsg));
-    
+
     ReadMessage(configData->ephBaseInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), (void *)&tmpBaseEphem, moduleID);
-    
-    
+
+
     for(i = 0; i < configData->ephBdyCount; i++)
     {
         memset(&tmpEphStore, 0x0, sizeof(EphemerisIntMsg));
@@ -111,14 +112,14 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
         ReadMessage(configData->changeBodies[i].ephInMsgId, &timeOfMsgWritten,
                     &sizeOfMsgWritten, sizeof(EphemerisIntMsg), (void *)&tmpEphStore,
                     moduleID);
-        
+
         v3Subtract(tmpEphStore.r_BdyZero_N,
                    tmpBaseEphem.r_BdyZero_N,
                    tmpEphStore.r_BdyZero_N);
         v3Subtract(tmpEphStore.v_BdyZero_N,
                    tmpBaseEphem.v_BdyZero_N,
                    tmpEphStore.v_BdyZero_N);
-        
+
         WriteMessage(configData->changeBodies[i].ephOutMsgId, callTime,
                      sizeof(EphemerisIntMsg), &tmpEphStore,
                      moduleID);

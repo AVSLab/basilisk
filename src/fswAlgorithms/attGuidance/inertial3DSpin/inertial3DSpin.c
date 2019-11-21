@@ -18,7 +18,7 @@
  */
 /*
     Inertial 3D Spin Module
- 
+
  * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
  * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
 
@@ -48,6 +48,7 @@
  */
 void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),
@@ -95,7 +96,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
     uint32_t sizeOfMsgWritten;
     ReadMessage(configData->inputRefID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
-    
+
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
     if (configData->priorTime == 0)
@@ -105,18 +106,18 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
     } else {
         dt = (callTime - configData->priorTime) * NANO2SEC;
     }
-    
+
     /*! - Generate inertial 3D Spinning Reference */
     computeReference_inertial3DSpin(configData,
                                     inputRef.omega_RN_N,
                                     inputRef.domega_RN_N,
                                     configData->omega_spin,
                                     dt);
-    
+
     /*! - Write output message */
     WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
                  (void*) &(configData->attRefOut), moduleID);
-    
+
     /*! Update prior time to current for next evaluation */
     configData->priorTime = callTime;
 }
@@ -129,19 +130,19 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
 {
     double omega_RN_N[3];
     double domega_RN_N[3];
-    
+
     /*! Compute angular rate */
     double dcm_RN[3][3];   /* DCM from inertial frame N to generated ref frame R */
     double omega_RR0_N[3]; /* angular rate of the generated ref R wrt the base ref R0 in inertial N components */
     MRP2C(configData->sigma_RN, dcm_RN);
     m33tMultV3(dcm_RN, omega_RR0_R, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
-    
+
     /*! Compute angular acceleration */
     double v3Temp[3]; /* temporary 3x1 array */
     v3Cross(omega_R0N_N, omega_RR0_N, v3Temp);
     v3Add(v3Temp, domega_R0N_N, domega_RN_N);
-    
+
     /*! Integrate Attitude */
     double B[3][3]; /* MRP rate matrix */
     double omega_RN_R[3]; /* inertial angular rate of ref R in R frame components */
@@ -151,7 +152,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
     m33MultV3(B, omega_RN_R, v3Temp);
     v3Add(configData->sigma_RN, v3Temp, configData->sigma_RN);
     MRPswitch(configData->sigma_RN, 1.0, configData->sigma_RN);
-    
+
     /*! Copy output in AttRefFswMsg struct */
     v3Copy(configData->sigma_RN, configData->attRefOut.sigma_RN);
     v3Copy(omega_RN_N, configData->attRefOut.omega_RN_N);

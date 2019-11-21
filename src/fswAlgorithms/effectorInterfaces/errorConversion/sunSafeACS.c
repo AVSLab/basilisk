@@ -31,11 +31,12 @@
  */
 void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
 {
+    configData->bskPrint = _BSKPrint();
     /*! - Create output message for module */
     configData->thrData.outputMsgID = CreateNewMessage(
         configData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
         "THRArrayOnTimeCmdIntMsg", moduleID);
-    
+
 }
 
 /*! This method performs the second stage of initialization for the sun safe ACS
@@ -49,7 +50,7 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
     /*! - Get the control data message ID*/
     configData->inputMsgID = subscribeToMessage(configData->inputControlName,
         sizeof(CmdTorqueBodyIntMsg), moduleID);
-    
+
 }
 
 /*! This method takes the estimated body-observed sun vector and computes the
@@ -64,12 +65,12 @@ void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     CmdTorqueBodyIntMsg cntrRequest;
-    
+
     /*! - Read the input parsed CSS sensor data message*/
     ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
     computeSingleThrustBlock(&(configData->thrData), callTime,
                              &cntrRequest, moduleID);
-    
+
     return;
 }

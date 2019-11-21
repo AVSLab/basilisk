@@ -24,6 +24,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/tamSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/tamSensorIntMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 /*! module configuration message definition */
@@ -34,17 +35,18 @@ typedef struct {
     int32_t tamSensorMsgID;                   //!< [-] TAM sensor IDs tied to the input name
     int32_t tamOutMsgID;                      //!< [-] TAM message ID for the output port
     TAMSensorBodyFswMsg tamLocalOutput;       //!< [-] TAM output data structure
+    BSKPrint *bskPrint;                       //!< BSK Logging
 }tamConfigData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID);
     void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID);
     void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_t moduleID);
     void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif
