@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -60,9 +59,10 @@ except ImportError:
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, saveImage", [
-                    ("mars.png",  False), #Mars image
-                   ("mars2.jpg",   False) # Mars images
-    ])
+                    ("mars.jpg",  False), #Mars image
+                   ("mars2.jpg",   False), # Mars images
+                   ("mars3.jpg", False)  # Mars images
+])
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, image, saveImage):
