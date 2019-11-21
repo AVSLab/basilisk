@@ -47,6 +47,8 @@ set(requires_zmq_modules "viz_interface/vizInterface.i")
 
 set(requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
 list(APPEND requires_opencv_modules "imageProcessing/limbFinding/limbFinding.i")
+list(APPEND requires_opencv_modules "sensors/camera/camera.i")
+
 
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.5.2@bincrafters/stable)
@@ -259,6 +261,9 @@ function(findAndCreateSwigModules SubModule)
 
  	    if((NOT USE_PROTOBUFFERS OR NOT USE_ZMQ) AND (module IN_LIST requires_protobuff_modules OR module IN_LIST requires_zmq_modules))
                continue()
+ 	    endif()
+ 	    if((NOT USE_OPENCV) AND (module IN_LIST requires_opencv_modules))
+ 	           continue()
  	    endif()
 
 	    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
