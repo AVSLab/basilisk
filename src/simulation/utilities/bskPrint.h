@@ -20,16 +20,17 @@
 #ifndef _BSK_PRINT_
 #define _BSK_PRINT_
 
-#include <map>
-#include <string>
-
-enum msgLevel_t{
+typedef enum {
     MSG_DEBUG,
     MSG_INFORMATION,
     MSG_WARNING,
     MSG_ERROR,
     MSG_SILENT          // the coder should never use this flag when using BSK_PRINT().  It is used to turn off all BSK_PRINT()
-};
+} msgLevel_t;
+
+#ifdef __cplusplus
+#include <map>
+#include <string>
 
 class BSKPrint
 {
@@ -53,4 +54,18 @@ class BSKPrint
     msgLevel_t _msgLevel;
 };
 
+#else
+typedef struct BSKPrint BSKPrint;
+#endif
+
+#ifdef __cplusplus
+    #define EXTERN extern "C"
+#else
+    #define EXTERN
+#endif
+
+EXTERN BSKPrint* _BSKPrint_C(void);
+EXTERN void _BSKPrint_D(BSKPrint*);
+EXTERN void _readPrintLevel(BSKPrint*);
+EXTERN void _setPrintLevel(BSKPrint*, msgLevel_t);
 #endif

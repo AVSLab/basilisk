@@ -25,6 +25,7 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/attRefFswMsg.h"
+#include "simulation/utilities/bskPrint.h"
 
 
 
@@ -39,12 +40,13 @@ typedef struct {
     int32_t outputMsgID;                            //!< ID for the outgoing message
     int32_t inputRefID;                             //!< ID for the incoming guidance reference message
     int32_t inputNavID;                             //!< ID for the incoming navigation message
+    BSKPrint *bskPrint;
 }attTrackingErrorConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID);
     void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID);
     void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID);
