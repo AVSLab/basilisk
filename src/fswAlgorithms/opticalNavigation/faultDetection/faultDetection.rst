@@ -35,10 +35,13 @@ Detailed Module Description
 ---------------------------
 
 The document provides details that are reminded here:
-Three fault modes are possible.
-FaultMode = 0 is the less restrictive: it uses either of the measurements available and merges them if they are both available
-FaultMode = 1 is more restrictive: only the primary is used if both are available and the secondary is only used for a dissimilar check
-FaultMode = 2 is most restrictive: the primary is not used in the absence of the secondary measurement
+Three fault modes are possible:
+
+- ``FaultMode`` = 0: is the less restrictive: it uses either of the measurements available and merges them if they are both available
+
+- ``FaultMode`` = 1: is more restrictive: only the primary is used if both are available and the secondary is only used for a dissimilar check
+
+- ``FaultMode`` = 2: is most restrictive: the primary is not used in the absence of the secondary measurement
 
 Equations
 ^^^^^^^^^
@@ -52,7 +55,7 @@ The rest of the module is logic driven as explained in the doxygen documentation
 
 User Guide
 ----------
-An exmaple setup is provided here:
+An example setup is provided here:
 
 .. code-block:: python
     :linenos:
