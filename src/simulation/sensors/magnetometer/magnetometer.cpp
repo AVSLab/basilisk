@@ -29,7 +29,6 @@
 #include "utilities/avsEigenSupport.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
-#include "utilities/bsk_Print.h"
 
 /*! This is the constructor, setting variables to default values. */
 Magnetometer::Magnetometer()
@@ -80,7 +79,7 @@ void Magnetometer::SelfInit()
                 this->outputBufferCount, "TAMDataSimMsg", this->moduleID);
     }
     else {
-        BSK_PRINT(MSG_ERROR, "Magnetometer message name (tamDataOutMsgName) is empty.");
+        bskPrint.printMessage(MSG_ERROR, "Magnetometer message name (tamDataOutMsgName) is empty.");
     }
 
     return;
@@ -97,7 +96,7 @@ void Magnetometer::CrossInit()
             this->moduleID);
     }
     else {
-        BSK_PRINT(MSG_ERROR, "Magnetic field interface message name (magIntMsgName) is empty.");
+        bskPrint.printMessage(MSG_ERROR, "Magnetic field interface message name (magIntMsgName) is empty.");
     }
 
     if (this->stateIntMsgName != "") {
@@ -105,7 +104,7 @@ void Magnetometer::CrossInit()
             sizeof(SCPlusStatesSimMsg),
             this->moduleID);
     } else {
-        BSK_PRINT(MSG_ERROR, "Spacecraft state message name (stateIntMsgName) is empty.");
+        bskPrint.printMessage(MSG_ERROR, "Spacecraft state message name (stateIntMsgName) is empty.");
     }
 
     return;
@@ -232,4 +231,3 @@ void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
     //! - Write output data
     this->writeOutputMessages(CurrentSimNanos);
 }
-

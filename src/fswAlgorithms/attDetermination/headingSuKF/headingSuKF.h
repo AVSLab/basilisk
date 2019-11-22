@@ -83,15 +83,11 @@ typedef struct {
 
     int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-<<<<<<< HEAD
     int32_t opnavDataInMsgId;   /*!< [-] ID for the opNav data in put message */
     int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
 
-=======
-    int32_t opnavDataInMsgId;
-
     BSKPrint *bskPrint;                             //!< BSK Logging
->>>>>>> Added logging methods for all fsw
+
 }HeadingSuKFConfig;
 
 #ifdef __cplusplus

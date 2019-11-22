@@ -19,7 +19,6 @@
 
 #include "navAggregate.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 

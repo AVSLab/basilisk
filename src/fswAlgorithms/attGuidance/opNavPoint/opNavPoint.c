@@ -23,7 +23,6 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simulation/utilities/astroConstants.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method initializes the configData for the opNav attitude guidance.
  It checks to ensure that the inputs are sane and then creates the

@@ -30,6 +30,7 @@
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "simMessages/fuelTankSimMsg.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
+#include "utilities/bskPrint.h"
 #include <math.h>
 
 
@@ -97,7 +98,7 @@ struct FuelTankModelEmptying_t :
 	double thetaStar;								   //!< [rad] angle from vertical to top of fuel
 	double thetaDotStar;                               //!< [rad/s] derivative of angle from vertical to top of fuel
 	double thetaDDotStar;							   //!< [rad/s^2] second derivative of angle from vertical to top of fuel
-	Eigen::Vector3d k3;								   //!< -- Direction of fuel depletion 
+	Eigen::Vector3d k3;								   //!< -- Direction of fuel depletion
 
 	void computeTankProps(double mFuel) {
 		rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*radiusTankInit);
@@ -134,10 +135,10 @@ struct FuelTankModelEmptying_t :
 		ITankPntT_T(2, 2) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
 			(2.0 / 3.0 + 1.0 / 4.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4) - 1 / 12.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)));
 		ITankPntT_T(0, 0) = ITankPntT_T(1, 1) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
-			(2.0 / 3.0 - 1.0 / 4.0*std::pow(std::cos(thetaStar), 5) + 1 / 24.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)) + 
+			(2.0 / 3.0 - 1.0 / 4.0*std::pow(std::cos(thetaStar), 5) + 1 / 24.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)) +
 				5.0 / 4.0*cos(thetaStar) + 1 / 8.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4));
 
-		
+
 	}
 	void computeTankPropDerivs(double mFuel, double mDotFuel) {
 		if (mFuel != propMassInit) {
@@ -176,7 +177,7 @@ struct FuelTankModelUniformBurn_t :
 {
 	double radiusTankInit;                             //!< [m] Initial radius of the cylindrical tank
 	double lengthTank;								   //!< [m] Length of the tank
-	
+
 	void computeTankProps(double mFuel) {
 		r_TcT_T = r_TcT_TInit;
 		ITankPntT_T.setZero();
@@ -246,14 +247,15 @@ public:
 	bool updateOnly;								   //!< -- Sets whether to use update only mass depletion
     std::string FuelTankOutMsgName;                    //!< -- fuel tank output message name
     FuelTankSimMsg FuelTankMassPropMsg;                //!< instance of messaging system message struct
+		BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub
 	StateData *massState;                              //!< -- state data for mass state
-	double fuelConsumption;							   //!< [kg/s] rate of fuel being consumed 
+	double fuelConsumption;							   //!< [kg/s] rate of fuel being consumed
 	double tankFuelConsumption;						   //!< [kg/s] rate of fuel being consumed from tank
 	FuelTankModel* fuelTankModel;					   //!< -- style of tank to simulate
-	Eigen::Matrix3d ITankPntT_B;					   
+	Eigen::Matrix3d ITankPntT_B;
 	Eigen::Vector3d r_TcB_B;
     int64_t FuelTankOutMsgId;                          //!< -- state output message ID
 

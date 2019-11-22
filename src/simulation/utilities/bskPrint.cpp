@@ -23,12 +23,8 @@
 
 BSKPrint::BSKPrint()
 {
-<<<<<<< HEAD
-  this->_msgLevel = MSG_DEBUG;
-=======
   //Default print verbosity
   this->_msgLevel = MSG_LEVEL_DEFAULT;
->>>>>>> Added bsk print methods for utils
 }
 
 BSKPrint::BSKPrint(msgLevel_t msgLevel)

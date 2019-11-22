@@ -25,6 +25,7 @@
 #include "architecture/system_model/sys_model_task.h"
 #include "_GeneralModuleFiles/sys_interface.h"
 #include "architecture/messaging/system_messaging.h"
+#include "utilities/bskPrint.h"
 /*! \addtogroup SimArchGroup
  * @{
  */
@@ -40,7 +41,7 @@ typedef struct {
 //! Class used to group a set of tasks into one process (task group) of execution
 class SysProcess
 {
-    
+
 public:
     SysProcess();
     SysProcess(std::string messageContainer);
@@ -66,7 +67,7 @@ public:
     void routeInterfaces();
     void disableAllTasks();
     void enableAllTasks();
-    
+
 public:
     std::vector<SysInterface*> intRefs;  //!< -- Interface references to move data to process
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
@@ -76,6 +77,7 @@ public:
     std::string processName;  //!< -- Identifier for process
 	bool processActive;  //!< -- Flag indicating whether the Process is active
     int64_t processPriority;  //!< [-] Priority level for process (higher first)
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 };
 
 /*! @} */

@@ -23,7 +23,6 @@
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
-#include "utilities/bsk_Print.h"
 #include <inttypes.h>
 
 /*! This is the constructor.  It sets some default initializers that can be
@@ -43,7 +42,7 @@ RadiationPressure::RadiationPressure()
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-    
+
     CallCounts = 0;
     return;
 }
@@ -71,17 +70,17 @@ void RadiationPressure::CrossInit()
     //! - Find the message ID associated with the ephmInMsgID string.
     //! - Warn the user if the message is not successfully linked.
     this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
- 
+
     if(sunEphmInMsgId < 0)
     {
-        BSK_PRINT(MSG_WARNING, "Did not find a valid sun ephemeris message with name: %s", this->sunEphmInMsgName.c_str());
+        bskPrint.printMessage(MSG_WARNING, "Did not find a valid sun ephemeris message with name: %s", this->sunEphmInMsgName.c_str());
     }
-    
+
     this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), this->moduleID);
-    
+
     if(this->stateInMsgId < 0)
     {
-        BSK_PRINT(MSG_WARNING, "Did not find a valid state input message with name: %" PRId64, this->stateInMsgId);
+        bskPrint.printMessage(MSG_WARNING, "Did not find a valid state input message with name: %" PRId64, this->stateInMsgId);
     }
 
     /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
@@ -100,7 +99,7 @@ void RadiationPressure::linkInStates(DynParamManager& statesIn)
 {
 }
 
-/*! This method is used to read the incoming ephmeris and 
+/*! This method is used to read the incoming ephmeris and
  spacecraft state messages. The data is stored in the associated
  buffer structure.
  @return void
@@ -112,13 +111,13 @@ void RadiationPressure::readInputMessages()
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader localHeader;
     memset(&localHeader, 0x0, sizeof(localHeader));
-    
+
     if(this->sunEphmInMsgId >= 0)
     {
         memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetStateSimMsg));
         succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
     }
-    
+
     memset(&localHeader, 0x0, sizeof(localHeader));
     this->stateRead = false;
     if(this->stateInMsgId >= 0)
@@ -135,7 +134,7 @@ void RadiationPressure::readInputMessages()
 }
 
 /*! This method computes the dynamic effect due to solar raidation pressure.
- It is an inherited method from the DynamicEffector class and 
+ It is an inherited method from the DynamicEffector class and
  is designed to be called by the simulation dynamics engine.
  @return void
  @param integTime Current simulation integration time
@@ -148,7 +147,7 @@ void RadiationPressure::computeForceTorque(double integTime)
     Eigen::Vector3d r_N(this->stateInBuffer.r_BN_N);
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
     Eigen::Vector3d s_N = sun_r_N - r_N;
-    
+
     if (this->srpModel == SRP_CANNONBALL_MODEL) {
         this->computeCannonballModel(s_N);
         this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.shadowFactor;
@@ -161,7 +160,7 @@ void RadiationPressure::computeForceTorque(double integTime)
         this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
         this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
     } else {
-        BSK_PRINT(MSG_ERROR,"Requested SRF Model not implemented.\n");
+        bskPrint.printMessage(MSG_ERROR,"Requested SRF Model not implemented.\n");
     }
 }
 
@@ -231,13 +230,13 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     double sunDist = s_B.norm();
     Eigen::Vector3d sHat_B = s_B/sunDist;
     Eigen::Vector3d tmpLookupSHat_B(0,0,0);
-    
+
     if (!this->stateRead) {
         this->forceExternal_B.setZero();
         this->torqueExternalPntB_B.setZero();
         return;
     }
-    
+
     // Find the lookup entry that most closely aligns with the current sHat_B direction
     // Look up force is expected to be evaluated at 1AU.
     // Therefore, we must scale the force by its distance from the sun squared.
@@ -253,7 +252,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
             currentDotProduct = tmpDotProduct;
         }
     }
-    
+
     this->forceExternal_B = this->lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
     this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
 }

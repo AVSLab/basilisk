@@ -25,22 +25,23 @@
 #include <vector>
 #include <random>
 #include <Eigen/Dense>
+#include "utilities/bskPrint.h"
 
 /*! \addtogroup Sim Utility Group
- *  This group contains the simulation utilities that are used globally on the 
- *  simulation side of the software.  Note that FSW should not generally use  
+ *  This group contains the simulation utilities that are used globally on the
+ *  simulation side of the software.  Note that FSW should not generally use
  *  these utilities once we reach a CDR level of maturity on a project.
  * @{
  */
 
-/*! This module is used to apply a second-order bounded Gauss-Markov random walk 
-    on top of an upper level process.  The intent is that the caller will perform 
-    the set methods (setUpperBounds, setNoiseMatrix, setPropMatrix) as often as 
+/*! This module is used to apply a second-order bounded Gauss-Markov random walk
+    on top of an upper level process.  The intent is that the caller will perform
+    the set methods (setUpperBounds, setNoiseMatrix, setPropMatrix) as often as
     they need to, call computeNextState, and then call getCurrentState cyclically
 */
 class GaussMarkov
 {
-    
+
 public:
     GaussMarkov();
     GaussMarkov(uint64_t size, uint64_t newSeed = 0x1badcad1);
@@ -69,7 +70,8 @@ public:
     Eigen::VectorXd currentState;  //!< -- State of the markov model
     Eigen::MatrixXd propMatrix;    //!< -- Matrix to propagate error state with
     Eigen::MatrixXd noiseMatrix;   //!< -- covariance matrix to apply errors with
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 private:
     uint64_t RNGSeed;                 //!< -- Seed for random number generator
     std::minstd_rand rGen; //!< -- Random number generator for model

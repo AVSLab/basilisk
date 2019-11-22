@@ -23,6 +23,7 @@
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
+#include "utilities/bskPrint.h"
 /*! \addtogroup SimArchGroup Simulation Architecture Classes
  * @{
  */
@@ -62,6 +63,7 @@ public:
     MessageInterfaceMatch processData;  //!< Definition of process movement
     std::vector<MessageInterfaceMatch> messageTraffic;  //!< Message movement
     bool needDelete;  //!< Used by destructor to clear memory for this exchange
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 private:
     uint64_t msgBufferSize;  //!< size of message in bytes currently being routed
     uint8_t *msgBuffer;
@@ -73,7 +75,7 @@ private:
  */
 class SysInterface
 {
-    
+
 public:
     SysInterface();
     virtual ~SysInterface();
@@ -85,11 +87,12 @@ public:
     virtual void routeInputs(int64_t processBuffer);
     void discoverAllMessages();
     void connectInterfaces();
-    
+
 public:
     std::vector<InterfaceDataExchange *> interfaceDef; //!< List of interfaces
     bool interfaceActive;                           //!< -- Flag indicate whether interface has been disabled
     bool interfacesLinked;                          //!< (-) Flag indicating ints have all been linked
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 private:
     InterfaceDataExchange *currentInterface;        //!< (-) allows user to get/set msgs for single int
 };

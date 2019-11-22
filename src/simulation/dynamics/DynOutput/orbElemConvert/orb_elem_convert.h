@@ -25,6 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/orbitalMotion.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -33,7 +34,7 @@ class OrbElemConvert: public SysModel {
 public:
     OrbElemConvert();
     ~OrbElemConvert();
-    
+
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
@@ -41,7 +42,7 @@ public:
     void Elements2Cartesian();
     void Cartesian2Elements();
     void ReadInputs();
-    
+
 public:
     double r_N[3];                    //!< m  Current position vector (inertial)
     double v_N[3];                    //!< m/s Current velocity vector (inertial)
@@ -57,7 +58,8 @@ public:
     bool Elements2Cart;               //!< -- Flag saying which direction to go
 	bool useEphemFormat;              //!< -- Flag indicating whether to use state or ephem
     bool inputsGood;                  //!< -- flag indicating that inputs are good
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 private:
     int64_t StateInMsgID;              // -- MEssage ID for incoming data
     int64_t StateOutMsgID;             // -- Message ID for outgoing data

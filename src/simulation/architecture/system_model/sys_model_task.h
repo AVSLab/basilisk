@@ -23,6 +23,7 @@
 #include <vector>
 #include <stdint.h>
 #include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/bskPrint.h"
 /*! \addtogroup SimArchGroup
  * @{
  */
@@ -36,7 +37,7 @@ typedef struct {
 //! Class used to group a set of models into one "Task" of execution
 class SysModelTask
 {
-    
+
 public:
     SysModelTask();
     SysModelTask(uint64_t InputPeriod, uint64_t InputDelay=0,
@@ -51,7 +52,7 @@ public:
 	void enableTask() {this->taskActive = true;}
 	void disableTask() {this->taskActive = false;}
     void updatePeriod(uint64_t newPeriod);
-    
+
 public:
     std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
     std::string TaskName;  //!< -- Identifier for Task
@@ -61,6 +62,7 @@ public:
     uint64_t PickupDelay;  //!< [ns] Time between dispatches
     uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time
 	bool taskActive;  //!< -- Flag indicating whether the Task has been disabled
+  BSKPrint bskPrint;                      //!< -- BSK Logging
 };
 
 /*! @} */

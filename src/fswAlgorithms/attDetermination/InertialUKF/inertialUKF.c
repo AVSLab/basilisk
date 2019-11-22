@@ -24,7 +24,6 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method creates the two moduel output messages.
  @return void
@@ -290,11 +289,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                 && configData->maxTimeJump > 0)
             {
                 configData->timeTag = newTimeTag - configData->maxTimeJump;
-<<<<<<< HEAD
-                BSK_PRINT(MSG_WARNING, "Large jump in state time that was set to max.");
-=======
 								_printMessage(configData->bskPrint, MSG_WARNING, "Large jump in state time that was set to max.");
->>>>>>> Added logging methods for all fsw
             }
             trackerValid += inertialUKFTimeUpdate(configData, newTimeTag);
             trackerValid += inertialUKFMeasUpdate(configData, configData->stSensorOrder[i]);

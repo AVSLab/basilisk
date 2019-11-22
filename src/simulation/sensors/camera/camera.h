@@ -31,13 +31,14 @@
 #include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "utilities/bskPrint.h"
 
 
 class Camera: public SysModel {
 public:
     Camera();
     ~Camera();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
@@ -55,7 +56,7 @@ public:
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
-    
+
     /*! Camera parameters */
     char parentName[MAX_MESSAGE_SIZE];  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn; //!< [-] Is the camera currently taking images
@@ -68,13 +69,15 @@ public:
     double cameraPos_B[3];     //!< [m] Camera position in body frame
     double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame
     char skyBox[MAX_MESSAGE_SIZE]; //!< [-] name of skyboz in use
-    
+
     /*! Noise paramters */
     double gaussian;        //!< Gaussian noise level
     double darkCurrent;    //!< Dark current intensity
     double saltPepper;    //!< Stuck and Dark pixels probability
     double cosmicRays;        //!< Random cosmic rays (number)
-    double blurParam;        //!< Blur over image in pixels 
+    double blurParam;        //!< Blur over image in pixels
+
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t imageInMsgID;                //!< ID for the outgoing message
@@ -87,4 +90,3 @@ private:
 /* @} */
 
 #endif
-

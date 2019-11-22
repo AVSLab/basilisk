@@ -23,6 +23,7 @@
 #include <Eigen/Dense>
 #include "../../utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
+#include "utilities/bskPrint.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -58,7 +59,8 @@ public:
     Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B
     Eigen::Vector3d r_BP_P;
     Eigen::Matrix3d dcm_BP;
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 public:
     StateEffector();                       //!< -- Contructor
     virtual ~StateEffector();              //!< -- Destructor

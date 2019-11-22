@@ -22,21 +22,23 @@
 
 #include <Eigen/Dense>
 #include "dynParamManager.h"
+#include "utilities/bskPrint.h"
 
 
 class DynamicEffector {
 public:
     DynamicEffector();                      //!< -- Constructor
     virtual ~DynamicEffector();             //!< -- Destructor
-    virtual void computeStateContribution(double integTime); 
+    virtual void computeStateContribution(double integTime);
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method to get access to other states/stateEffectors
     virtual void computeForceTorque(double integTime) = 0;  //!< -- Method to computeForce and torque on the body
-    
+
 public:
     Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector
     Eigen::Vector3d forceExternal_N;        //!< [N] External force applied by this effector in inertial components
     Eigen::Vector3d forceExternal_B;        //!< [N] External force applied by this effector in body frame components
     Eigen::Vector3d torqueExternalPntB_B;   //!< [Nm] External torque applied by this effector
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 };
 
 

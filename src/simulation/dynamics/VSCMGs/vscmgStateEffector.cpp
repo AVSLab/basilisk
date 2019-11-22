@@ -23,7 +23,6 @@
 #include <cstring>
 #include <iostream>
 #include <cmath>
-#include "utilities/bsk_Print.h"
 
 VSCMGStateEffector::VSCMGStateEffector()
 {
@@ -543,7 +542,7 @@ void VSCMGStateEffector::CrossInit()
 																	 moduleID);
 	if(CmdsInMsgID < 0)
 	{
-        BSK_PRINT(MSG_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
+        bskPrint.printMessage(MSG_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
 	}
 
 	std::vector<VSCMGConfigSimMsg>::iterator it;

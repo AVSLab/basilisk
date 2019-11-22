@@ -25,6 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/powerStorageStatusSimMsg.h"
 #include "simMessages/powerNodeUsageSimMsg.h"
+#include "utilities/bskPrint.h"
 
 #ifndef BASILISK_SIMPOWERSTORAGEBASE_H
 #define BASILISK_SIMPOWERSTORAGEBASE_H
@@ -57,6 +58,7 @@ public:
     std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of power node input message names
     std::string batPowerOutMsgName; //!< Vector of message names to be written out by the battery
     double storedCharge_Init;//!< [W-s] Initial stored charge set by the user. Defaults to 0.
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 protected:
     std::vector<std::int64_t> nodePowerUseMsgIds;

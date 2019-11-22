@@ -21,7 +21,6 @@
 #include <cstring>
 #include <iostream>
 #include "simMessages/spicePlanetStateSimMsg.h"
-#include "utilities/bsk_Print.h"
 
 //! The constructor.  Note that you may want to overwrite the message names.
 OrbElemConvert::OrbElemConvert()
@@ -61,7 +60,7 @@ void OrbElemConvert::SelfInit()
     uint64_t OutputSize = Elements2Cart ? stateMsgSize :
     sizeof(classicElements);
     std::string messageType = Elements2Cart ? useEphemFormat ? "SpicePlanetStateSimMsg" : "SCPlusStatesSimMsg" : "classicElements";
-    
+
     StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataString, OutputSize, OutputBufferCount,
         messageType, moduleID);
@@ -78,7 +77,7 @@ void OrbElemConvert::CrossInit()
                                                                       StateString, inputSize, moduleID);
     if(StateInMsgID < 0)
     {
-        BSK_PRINT(MSG_WARNING, "Did not find a valid message with name: %s", StateString.c_str());
+        bskPrint.printMessage(MSG_WARNING, "Did not find a valid message with name: %s", StateString.c_str());
     }
 }
 
@@ -90,7 +89,7 @@ void OrbElemConvert::CrossInit()
  */
 void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
-    
+
     SCPlusStatesSimMsg statesIn;
 	SpicePlanetStateSimMsg planetIn;
 	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&planetIn) :
@@ -120,7 +119,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
                                                      sizeof(classicElements), reinterpret_cast<uint8_t*> (&CurrentElem), moduleID);
     }
-    
+
 }
 
 /*! The name kind of says it all right?  Converts CurrentElem to pos/vel.
@@ -157,7 +156,7 @@ void OrbElemConvert::ReadInputs()
 
 	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :
 		reinterpret_cast<uint8_t *> (&LocalState);
-    
+
     //! - Set the input pointer and size appropriately based on input type
     uint8_t *InputPtr = Elements2Cart ? reinterpret_cast<uint8_t *>
     (&LocalElements) : msgPtr;
@@ -184,7 +183,7 @@ void OrbElemConvert::ReadInputs()
 			memcpy(v_N, LocalState.v_BN_N, 3 * sizeof(double));
 		}
     }
-    
+
 }
 
 /*! This method is the main carrier for the conversion routine.  If it detects

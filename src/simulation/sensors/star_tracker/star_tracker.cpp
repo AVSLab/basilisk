@@ -20,7 +20,6 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
-#include "utilities/bsk_Print.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <iostream>
 #include <cstring>
@@ -53,8 +52,8 @@ bool StarTracker::LinkMessages()
 {
     this->inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
         this->inputStateMessage, sizeof(SCPlusStatesSimMsg), this->moduleID);
-    
-    
+
+
     return(inputStateID >= 0);
 }
 
@@ -64,17 +63,17 @@ void StarTracker::SelfInit()
     this->outputStateID = SystemMessaging::GetInstance()->
         CreateNewMessage(this->outputStateMessage, sizeof(STSensorIntMsg),
         OutputBufferCount, "STSensorIntMsg", this->moduleID);
-    
+
     this->AMatrix.setIdentity(numStates, numStates);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(this->PMatrix.size() != numStates*numStates)
     {
-        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
+        bskPrint.printMessage(MSG_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
         return;
     }
     if(this->walkBounds.size() != numStates){
-        BSK_PRINT(MSG_ERROR, "Your walkbounds is not size 3. Quitting");
+        bskPrint.printMessage(MSG_ERROR, "Your walkbounds is not size 3. Quitting");
         return;
     }
     this->errorModel.setNoiseMatrix(this->PMatrix);
@@ -90,12 +89,12 @@ void StarTracker::CrossInit()
 void StarTracker::readInputMessages()
 {
     SingleMessageHeader localHeader;
-    
+
     if(!this->messagesLinked)
     {
         this->messagesLinked = LinkMessages();
     }
-    
+
     memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(this->inputStateID >= 0)
     {

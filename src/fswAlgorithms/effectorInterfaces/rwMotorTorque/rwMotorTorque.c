@@ -25,7 +25,6 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 #include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method creates the module output message.
  @return void

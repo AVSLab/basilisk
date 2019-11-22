@@ -25,6 +25,7 @@
 #include "../../simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/bskPrint.h"
 #include <Eigen/Dense>
 
 
@@ -32,7 +33,7 @@ class RWVoltageInterface: public SysModel {
 public:
     RWVoltageInterface();
     ~RWVoltageInterface();
-   
+
     void SelfInit();
     void CrossInit();
     void computeRWMotorTorque();
@@ -42,7 +43,7 @@ public:
     void setGains(Eigen::VectorXd gains); //!< --     Takes in an array of gains to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
     void setScaleFactors(Eigen::VectorXd scaleFactors); //!< --     Takes in an array of scale factors to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
     void setBiases(Eigen::VectorXd biases); //!< --     Takes in an array of biases to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
-    
+
 public:
     uint64_t outputBufferCount;         //!< --     Number of output state buffers in msg
     std::string rwVoltageInMsgName;     //!< --     Message that contains RW voltage input states
@@ -51,7 +52,8 @@ public:
     Eigen::VectorXd voltage2TorqueGain;          //!< Nm/V   gain to convert voltage to motor torque
     Eigen::VectorXd scaleFactor;                 //!<        scale the output - like a constant gain error
     Eigen::VectorXd bias;                        //!< Nm     A bias to add to the torque output
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 private:
     int64_t rwVoltageInMsgID;           //!< -- Message ID associated with RW voltage input state
     int64_t rwMotorTorqueOutMsgID;      //!< -- Message ID associated with RW motor torque output state

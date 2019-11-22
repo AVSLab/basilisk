@@ -22,6 +22,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -29,7 +30,7 @@ class PlanetHeading: public SysModel {
 public:
     PlanetHeading();
     ~PlanetHeading(){};
-    
+
     void SelfInit() override;
     void CrossInit() override;
     void UpdateState(uint64_t CurrentSimNanos) override;
@@ -41,6 +42,7 @@ public:
     std::string planetPositionInMsgName;
     std::string spacecraftStateInMsgName;
     std::string planetHeadingOutMsgName;
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     Eigen::Vector3d r_PN_N;  //!< [m] planet position

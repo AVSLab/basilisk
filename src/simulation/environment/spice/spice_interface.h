@@ -28,6 +28,7 @@
 #include "simMessages/spiceTimeSimMsg.h"
 #include "utilities/avsEigenSupport.h"
 #include "simMessages/epochSimMsg.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -35,7 +36,7 @@ class SpiceInterface: public SysModel {
 public:
     SpiceInterface();
     ~SpiceInterface();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
@@ -48,7 +49,7 @@ public:
     void computePlanetData();
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();
-    
+
 public:
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use
@@ -61,7 +62,7 @@ public:
     std::string outputTimePort; //!< -- Output time sampling port name to use
     uint64_t outputBufferCount; //!< -- Number of output buffers to use
     std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
-    
+
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
     double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
     double J2000Current;        //!< s Current J2000 elapsed time
@@ -72,13 +73,14 @@ public:
 
     std::string epochInMsgName; //!< -- Message name of the epoch message (optional)
     int64_t epochInMsgId;       //!< ID of the epoch message
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
     int64_t timeOutMsgID;       //!< -- Output time message ID
     std::map<uint32_t, SpicePlanetStateSimMsg> planetData; //!< -- Internal vector of planets
-    
+
 };
 
 

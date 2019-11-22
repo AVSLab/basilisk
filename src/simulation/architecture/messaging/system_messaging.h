@@ -26,6 +26,7 @@
 #include <set>
 #include <mutex>
 #include "architecture/messaging/blank_storage.h"
+#include "utilities/bskPrint.h"
 
 /*! \addtogroup SimArchGroup
  * @{
@@ -102,7 +103,7 @@ class SystemMessaging
 #endif
 
 {
-    
+
 public:
     static SystemMessaging* GetInstance();  //! -- returns a pointer to the sim instance of SystemMessaging
     int64_t AttachStorageBucket(std::string bufferName = "");  //! -- adds a new buffer to the messaging system
@@ -139,13 +140,14 @@ public:
     bool obtainWriteRights(int64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
     bool obtainReadRights(int64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
     uint64_t getFailureCount() {return (this->CreateFails + this->ReadFails + this->WriteFails);}
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     SystemMessaging();
     ~SystemMessaging();
     SystemMessaging(SystemMessaging const &) {};
     SystemMessaging& operator =(SystemMessaging const &){return(*this);};
-    
+
 private:
     static SystemMessaging *TheInstance;
     std::vector<MessageStorageContainer *> dataBuffers;

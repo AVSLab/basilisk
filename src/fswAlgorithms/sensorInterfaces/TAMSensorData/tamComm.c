@@ -20,7 +20,6 @@
 #include "sensorInterfaces/TAMSensorData/tamComm.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <math.h>

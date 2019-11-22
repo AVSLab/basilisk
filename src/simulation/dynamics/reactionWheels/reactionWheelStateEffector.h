@@ -34,6 +34,7 @@
 #include "../../simMessages/rwConfigLogSimMsg.h"
 #include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/bskPrint.h"
 
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
@@ -60,7 +61,7 @@ public:
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
-    
+
 public:
 	std::vector<RWConfigSimMsg> ReactionWheelData;  //!< -- RW information2
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
@@ -73,6 +74,7 @@ public:
     std::string nameOfReactionWheelThetasState;
 	size_t numRW;
 	size_t numRWJitter;
+  BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
 	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW

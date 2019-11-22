@@ -19,7 +19,6 @@
 
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
-#include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "powerStorageBase.h"
@@ -98,7 +97,7 @@ void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
     if (this->storedCharge_Init >= 0.0) {
     this->storedCharge = this->storedCharge_Init;
     } else {
-        BSK_PRINT(MSG_ERROR, "The storedCharge_Init variable must be set to a non-negative value.");
+        bskPrint.printMessage(MSG_ERROR, "The storedCharge_Init variable must be set to a non-negative value.");
     }
 
     //! - call the custom environment module reset method
@@ -154,7 +153,7 @@ bool PowerStorageBase::readMessages()
         }
     }
     else {
-        BSK_PRINT(MSG_WARNING, "Power storage has no power node messages to read.");
+        bskPrint.printMessage(MSG_WARNING, "Power storage has no power node messages to read.");
         powerRead = false;
     }
 

@@ -27,7 +27,6 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "simulation/utilities/astroConstants.h"
-#include "simulation/utilities/bsk_Print.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include <string.h>
 #include <math.h>

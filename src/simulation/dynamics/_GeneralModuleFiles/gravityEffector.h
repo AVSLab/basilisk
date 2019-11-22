@@ -27,6 +27,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "simMessages/spicePlanetStateSimMsg.h"
+#include "utilities/bskPrint.h"
 
 class SphericalHarmonics
 {
@@ -34,7 +35,7 @@ public:
     double maxDeg;        //! [-] Maximum degree of the spherical harmonics
     double radEquator;    //! [-] Reference radius for the planet
     double muBody;        //! [-] Gravitation parameter for the planet
-    
+
     std::vector<std::vector<double>> cBar;  //! [-] C coefficient set
     std::vector<std::vector<double>> sBar;  //! [-] S coefficient set
     std::vector<std::vector<double>> aBar;  //! [-] Normalized 'derived' Assoc. Legendre
@@ -42,7 +43,9 @@ public:
     std::vector<std::vector<double>> n2;    //! [-] What am I
     std::vector<std::vector<double>> nQuot1;//! [-] What am I
     std::vector<std::vector<double>> nQuot2;//! [-] What am I
-    
+
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 public:
 
     SphericalHarmonics();
@@ -52,7 +55,7 @@ public:
     Eigen::Vector3d computeField(const Eigen::Vector3d pos_Pfix, unsigned int degree,
                                                      bool include_zero_degree);
     bool harmReady();
-    
+
 };
 
 //!@brief Container for gravitational body data
@@ -71,17 +74,17 @@ public:
     // Default constructor
     GravBodyData();
     ~GravBodyData();
-    
+
     void initBody(int64_t moduleID); //!<        Method to initialize the gravity body
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
-    
+
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
     bool isDisplayBody;             //!<          Flag indicating that body is display
     bool useSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
-    
+
     double mu;                      //!< [m3/s^2] central body gravitational param
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
@@ -94,7 +97,8 @@ public:
     int64_t outputMsgID;            //!<          ID for output message data
     int64_t bodyMsgID;              //!<          ID for ephemeris data message
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 };
 
 
@@ -114,11 +118,11 @@ public:
     void setGravBodies(std::vector<GravBodyData *> gravBodies);
     void addGravBody(GravBodyData* gravBody);
     void prependSpacecraftNameToStates();
-    
+
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);
     void writeOutputMessages(uint64_t currentSimNanos);
-    
+
 public:
     std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
     std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times
@@ -127,7 +131,8 @@ public:
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //! [-] Name of the s/c this gravity model is attached to
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 private:
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
     Eigen::MatrixXd *timeCorr;                      //! [-] Time correlation property

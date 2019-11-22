@@ -34,7 +34,6 @@
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bsk_Print.h"
 
 
 

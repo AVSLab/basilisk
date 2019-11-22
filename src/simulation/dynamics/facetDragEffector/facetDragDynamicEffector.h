@@ -29,6 +29,7 @@
 #include "../../simMessages/atmoPropsSimMsg.h"
 #include "../dragEffector/dragDynamicEffector.h"
 #include "../../utilities/rigidBodyKinematics.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -72,6 +73,7 @@ public:
     StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     int64_t densInMsgId;                            //!< -- Message ID for incoming data
@@ -80,4 +82,4 @@ private:
 
 };
 
-#endif 
+#endif

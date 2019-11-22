@@ -20,7 +20,6 @@
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
-#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <stdlib.h>
 

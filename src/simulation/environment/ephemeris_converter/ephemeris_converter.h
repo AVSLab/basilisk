@@ -25,6 +25,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/idEphemerisSimMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -32,7 +33,7 @@ class EphemerisConverter: public SysModel {
 public:
     EphemerisConverter();
     ~EphemerisConverter();
-    
+
     bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
@@ -40,11 +41,12 @@ public:
     void readInputMessages();
     void convertEphemData(uint64_t clockNow);
     void writeOutputMessages(uint64_t Clock);
-    
+
 public:
     bool messagesLinked;        //!< [-] Flag used to determine if messages are cross-linked
     std::map<std::string, std::string> messageNameMap;   //!< [-] Map between input/output message names
     uint64_t numOutputBuffers;  //!< [-] Number of output buffers created for messages
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 private:
     std::map<int64_t, IDEphemerisSimMsg> messageIDMap; //!< [-] Map between input/output message IDs
 };

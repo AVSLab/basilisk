@@ -522,7 +522,7 @@ if(USE_PROTOBUFFERS)
 endif()
 add_subdirectory("simulation")
 add_subdirectory("fswAlgorithms")
-add_subdirectory("topLevelModules") 	
+add_subdirectory("topLevelModules")
 
 #run python script to modify swig gen code
 add_custom_target(OverwriteSwig ALL)

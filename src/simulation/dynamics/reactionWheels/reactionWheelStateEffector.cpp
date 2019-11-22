@@ -24,7 +24,6 @@
 #include <cstring>
 #include <iostream>
 #include <cmath>
-#include "utilities/bsk_Print.h"
 #include "utilities/avsEigenSupport.h"
 
 ReactionWheelStateEffector::ReactionWheelStateEffector()
@@ -45,7 +44,7 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 
     this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
     this->nameOfReactionWheelThetasState = "reactionWheelThetas";
-    
+
     return;
 }
 
@@ -82,7 +81,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         omegasForInit(RWIt - this->ReactionWheelData.begin(), 0) = RWIt->Omega;
         this->numRW++;
     }
-    
+
 	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfReactionWheelOmegasState);
 
 	if (numRWJitter > 0) {
@@ -107,7 +106,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPntB_B.setZero();
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
-    
+
     int thetaCount = 0;
     std::vector<RWConfigSimMsg>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
@@ -397,7 +396,7 @@ void ReactionWheelStateEffector::CrossInit()
 																	 moduleID);
 	if(CmdsInMsgID < 0)
 	{
-        BSK_PRINT(MSG_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
+        bskPrint.printMessage(MSG_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
 	}
 
 	std::vector<RWConfigSimMsg>::iterator it;
@@ -405,7 +404,7 @@ void ReactionWheelStateEffector::CrossInit()
 	{
         if (it->betaStatic == 0.0)
         {
-            BSK_PRINT(MSG_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!");
+            bskPrint.printMessage(MSG_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!");
         }
 		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
 		if (it->RWModel == JitterFullyCoupled) {
@@ -581,4 +580,3 @@ void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 	WriteOutputMessages(CurrentSimNanos);
 //
 }
-

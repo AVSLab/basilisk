@@ -155,11 +155,8 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     uint32_t ReadSize;
     HeadingFilterFswMsg headingDataOutBuffer;
     OpNavFswMsg opnavOutputBuffer;
-<<<<<<< HEAD
     CameraConfigMsg cameraConfig;
-=======
 
->>>>>>> Added logging methods for all fsw
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
@@ -169,7 +166,6 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     v3SetZero(configData->postFits);
     ReadMessage(configData->opnavDataInMsgId, &ClockTime, &ReadSize,
         sizeof(OpNavFswMsg), (void*) (&(configData->opnavInBuffer)), moduleID);
-<<<<<<< HEAD
     if (configData->putInCameraFrame == 1){
         uint64_t ClockTimeCam;
         uint32_t ReadSizeCam;
@@ -178,26 +174,17 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     }
     v3Normalize(&configData->state[0], heading_hat);
 
-=======
-
-    v3Normalize(&configData->state[0], heading_hat);
-
-
->>>>>>> Added logging methods for all fsw
     /*! - Check for switching frames */
     if (fabs(v3Dot(configData->bVec_B, heading_hat)) > configData->switchTresh)
     {
         headingSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
-<<<<<<< HEAD
+
     configData->rNorm = v3Norm(configData->opnavInBuffer.r_BN_B);
     if (configData->rNorm<1){
         configData->rNorm =1;
     }
 
-=======
-
->>>>>>> Added logging methods for all fsw
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
@@ -474,12 +461,8 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     ukfCholDecomp(configData->qObs, OPNAV_MEAS, OPNAV_MEAS, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*OPNAV_MEAS]),
            qChol, OPNAV_MEAS*OPNAV_MEAS*sizeof(double));
-<<<<<<< HEAD
     mScale(configData->noiseSF , AT, 2*configData->countHalfSPs, OPNAV_MEAS, AT);
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
-=======
-    /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
->>>>>>> Added logging methods for all fsw
           current Sy matrix*/
     ukfQRDJustR(AT, 2*configData->countHalfSPs+OPNAV_MEAS,
                 OPNAV_MEAS, rAT);
@@ -516,10 +499,6 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
           a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
           multiplication is done (equation 27), we have the Kalman Gain.*/
     ukfUInv(syT, OPNAV_MEAS, OPNAV_MEAS, syInv);
-<<<<<<< HEAD
-=======
-
->>>>>>> Added logging methods for all fsw
     mMultM(pXY, (size_t) configData->numStates, OPNAV_MEAS, syInv,
            OPNAV_MEAS, OPNAV_MEAS, kMat);
     ukfLInv(sy, OPNAV_MEAS, OPNAV_MEAS, syInv);

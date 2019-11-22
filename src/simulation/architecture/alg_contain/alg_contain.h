@@ -22,6 +22,7 @@
 #define ALG_CONTAIN_H
 
 #include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/bskPrint.h"
 
 /*! \addtogroup SimArchGroup
  * @{
@@ -38,7 +39,7 @@ public:
         void (*SelfPtr)(void*, uint64_t)=NULL,
         void (*CrossPtr)(void*, uint64_t)=NULL,
 		void(*ResetPtr)(void*, uint64_t, uint64_t) = NULL);
-    
+
     void UseData(void *IncomingData) {DataPtr = IncomingData;}
     void UseUpdate(void (*LocPtr)(void*, uint64_t, uint64_t)) {AlgUpdate = LocPtr;}
     void UseSelfInit(void (*LocPtr)(void*, uint64_t)) {AlgSelfInit = LocPtr;}
@@ -52,13 +53,14 @@ public:
     uint64_t getCrossInitAddress() {return reinterpret_cast<uint64_t>(*AlgCrossInit);}
     uint64_t getResetAddress() {return reinterpret_cast<uint64_t>(*AlgReset);}
     uint64_t getUpdateAddress() {return reinterpret_cast<uint64_t>(*AlgUpdate);}
-    
+
 public:
     void *DataPtr;
     AlgPtr AlgSelfInit;
     AlgPtr AlgCrossInit;
 	AlgUpdatePtr AlgReset;
     AlgUpdatePtr AlgUpdate;
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 };
 
 /* @} */

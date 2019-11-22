@@ -174,16 +174,7 @@ def test_SCTranslation(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCTransAndRotation(show_plots):
-<<<<<<< HEAD
-<<<<<<< HEAD
     """Module Unit Test"""
-=======
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
->>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
-=======
->>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -366,16 +357,7 @@ def test_SCTransAndRotation(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCRotation(show_plots):
-<<<<<<< HEAD
-<<<<<<< HEAD
     """Module Unit Test"""
-=======
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
->>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
-=======
->>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -600,16 +582,7 @@ def test_SCRotation(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCTransBOE(show_plots):
-<<<<<<< HEAD
-<<<<<<< HEAD
     """Module Unit Test"""
-=======
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
->>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
-=======
->>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -757,16 +730,7 @@ def test_SCTransBOE(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def test_SCPointBVsPointC(show_plots):
-<<<<<<< HEAD
-<<<<<<< HEAD
     """Module Unit Test"""
-=======
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
->>>>>>> Changed syntax of all simulation unit tests to include new bsk_printmethod
-=======
->>>>>>> Revert "Changed syntax of all simulation unit tests to include new bsk_printmethod"
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.

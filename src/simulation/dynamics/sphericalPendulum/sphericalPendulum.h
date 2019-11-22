@@ -25,6 +25,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
+#include "utilities/bskPrint.h"
 
 
 class SphericalPendulum :
@@ -46,6 +47,7 @@ public:
     Eigen::Vector3d pHat_01;      //!<-- first vector of the P0 frame in B frame components
     Eigen::Vector3d pHat_02;       //!<-- second vector of the P0 frame in  B frame components
     Eigen::Vector3d pHat_03;        //!<-- third vector of the P0 frame in B frame components
+		BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     double phiInit;                //!< [rad] Initial value for spherical pendulum pendulum offset
@@ -67,7 +69,7 @@ private:
     double cPhi;                   //!< -- Term needed for back-sub method
     double cTheta;                   //!< -- Term needed for back-sub method
 
-    Eigen::MatrixXd *g_N;      //!< [m/s^2] Gravitational acceleration in N frame components	
+    Eigen::MatrixXd *g_N;      //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::Vector3d l_B;         //!< [m] vector from the center of the tank to the spherical pendulum pendulum in B frame
 	Eigen::Vector3d lPrime_B;    //!< [m/s] derivative of l respect to B frame
     Eigen::Vector3d lPrime_P0;  //!< [m/s] derivative of l in P0 frame

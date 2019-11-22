@@ -24,6 +24,7 @@
 #include "power/_GeneralModuleFiles/powerStorageBase.h"
 #include "../../simMessages/powerStorageStatusSimMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -39,6 +40,7 @@ private:
 
 public:
     double storageCapacity; //!< [W-s] Battery capacity in Watt-seconds (Joules).
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 };
 

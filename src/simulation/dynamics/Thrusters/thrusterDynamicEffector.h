@@ -29,6 +29,7 @@
 #include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "../../simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "utilities/bskPrint.h"
 #include <Eigen/Dense>
 #include <vector>
 
@@ -54,7 +55,7 @@ public:
                              double currentTime);
     void ComputeThrusterShut(THRConfigSimMsg *CurrentThruster,
                              double currentTime);
-    
+
 
 public:
     int stepsInRamp;
@@ -70,7 +71,8 @@ public:
 		std::vector<THRTimePairSimMsg> *thrRamp);
 	StateData *hubSigma;
     StateData *hubOmega;
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 private:
     //    bool bdyFrmReady;                         //!< [-] Flag indicating that the body frame is ready
     std::vector<uint64_t> thrusterOutMsgIds;        //!< -- Message ID of each thruster

@@ -28,6 +28,7 @@
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -35,7 +36,7 @@ class StarTracker: public SysModel {
 public:
     StarTracker();
     ~StarTracker();
-    
+
     bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
@@ -46,9 +47,9 @@ public:
     void applySensorErrors();
     void computeTrueOutput();
     void computeQuaternion(double *sigma, STSensorIntMsg *sensorValue);
-    
+
 public:
-    
+
     uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
     std::string inputStateMessage;    //!< [-] String for the input state message
     std::string outputStateMessage;   //!< [-] String for the output state message
@@ -62,10 +63,11 @@ public:
     STSensorIntMsg sensedValues;//!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
     SCPlusStatesSimMsg scState;      //!< [-] Module variable where the input State Data message is stored
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
-    
-    
-    
+
+
+
 private:
     Eigen::Matrix3d AMatrix;      //!< [-] AMatrix that we use for error propagation
     int64_t inputStateID;             //!< [-] Connection to input state message

@@ -25,6 +25,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"
+#include "utilities/bskPrint.h"
 #include <Eigen/Dense>
 
 
@@ -33,11 +34,11 @@ class PlanetEphemeris: public SysModel {
 public:
     PlanetEphemeris();
     ~PlanetEphemeris();
-    
+
     void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
-    
+
 public:
     uint64_t outputBufferCount;                 //!< -- Number of output buffers to use
     std::vector<std::string>planetNames;        //!< -- Array of planet names
@@ -48,6 +49,8 @@ public:
     std::vector<double> lst0;                   //!< [r] initial planet local sidereal time angle
 
     std::vector<double> rotRate;                //!< [r/s] planet rotation rate
+
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     std::vector<std::uint64_t>planetOutMsgId;   //!< -- array of output message IDs

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/bskPrint.h"
 #include <Eigen/Dense>
 
 
@@ -27,7 +28,7 @@ class SolarFlux: public SysModel {
 public:
     SolarFlux(){};
     ~SolarFlux(){};
-    
+
     void SelfInit() override;
     void CrossInit() override;
     void Reset(uint64_t CurrentSimNanos) override;
@@ -40,6 +41,7 @@ public:
     std::string spacecraftStateInMsgName = "inertial_state_output";
     std::string solarFluxOutMsgName = "solar_flux";
     std::string eclipseInMsgName = "";
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     double fluxAtSpacecraft;  //!< [W/m2]

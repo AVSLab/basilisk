@@ -33,6 +33,7 @@
 #include "simMessages/scStatesSimMsg.h"
 #include "simMessages/scMassPropsSimMsg.h"
 #include "../../simMessages/scEnergyMomentumSimMsg.h"
+#include "utilities/bskPrint.h"
 
 
 struct DockingData {
@@ -53,7 +54,7 @@ struct DockingData {
 
 class Spacecraft {
 public:
-    bool docked; 
+    bool docked;
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
     int64_t scEnergyMomentumOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
@@ -62,7 +63,7 @@ public:
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
     std::string scEnergyMomentumOutMsgName;   //!< -- Name of the state output message
-    
+
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
 
@@ -110,6 +111,8 @@ public:
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 public:
     Spacecraft();
     ~Spacecraft();
@@ -120,7 +123,7 @@ public:
 
     void SelfInitSC(int64_t moduleID);                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInitSC();                    //!< -- Hook to tie s/c plus back into provided msgs
-    
+
     void writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID); //!< -- Method to write all of the class output messages
     void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void initializeDynamicsSC(DynParamManager& statesIn);
@@ -140,8 +143,9 @@ public:
     Spacecraft primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacecraft can attach/detach to/from
     std::vector<Spacecraft*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
     std::vector<Spacecraft*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
-
     int numberOfSCAttachedToPrimary;
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 
 public:
     SpacecraftDynamics();                    //!< -- Constructor
@@ -168,7 +172,7 @@ public:
     void determineAttachedSCStates();
 
 private:
-    
+
 };
 
 

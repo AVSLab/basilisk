@@ -31,6 +31,7 @@
 #include "../_GeneralModuleFiles/atmosphereBase.h"
 #include "simMessages/swDataSimMsg.h"
 #include "simMessages/epochSimMsg.h"
+#include "utilities/bskPrint.h"
 
 extern "C" {
   #include "nrlmsise-00.h"
@@ -55,6 +56,7 @@ private:
 public:
     int epochDoy;                       //!< [day] Day-of-Year at epoch
     std::string epochInMsgName;
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 
 private:

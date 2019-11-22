@@ -21,7 +21,6 @@
 #include "atmosphereBase.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
-#include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/simDefinitions.h"
@@ -267,7 +266,7 @@ bool AtmosphereBase::readMessages()
                 this->scStates.push_back(scMsg);
             }
     } else {
-        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
+        bskPrint.printMessage(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 

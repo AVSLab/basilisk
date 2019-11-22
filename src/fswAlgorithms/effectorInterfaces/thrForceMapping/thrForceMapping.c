@@ -25,7 +25,6 @@
 #include <string.h>
 #include <math.h>
 #include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/bsk_Print.h"
 
 
 /*! This method creates the module output message of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg).

@@ -20,12 +20,11 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "utilities/bsk_Print.h"
 #include <iostream>
 #include <cstring>
 #include "utilities/avsEigenSupport.h"
 
-/*! This is the constructor for the simple nav model.  It sets default variable 
+/*! This is the constructor for the simple nav model.  It sets default variable
     values and initializes the various parts of the model */
 SimpleNav::SimpleNav()
 {
@@ -59,8 +58,8 @@ SimpleNav::~SimpleNav()
     return;
 }
 
-/*! This is the self-init routine for the simple navigation model.  It 
-    initializes the various containers used in the model as well as creates the 
+/*! This is the self-init routine for the simple navigation model.  It
+    initializes the various containers used in the model as well as creates the
     output message.  The error states are allocated as follows:
     Total states: 18
         - Position errors [0-2]
@@ -86,17 +85,17 @@ void SimpleNav::SelfInit()
     this->AMatrix.setIdentity(numStates, numStates);
     this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
     this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
-    
+
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
-        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
+        bskPrint.printMessage(MSG_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
     if (this->walkBounds.size() != numStates) {
-        BSK_PRINT(MSG_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
+        bskPrint.printMessage(MSG_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
 }
@@ -115,7 +114,7 @@ void SimpleNav::CrossInit()
        subscribeToMessage(this->inputStateName, sizeof(SCPlusStatesSimMsg), this->moduleID);
     if(this->inputStateID < 0)
     {
-        BSK_PRINT(MSG_WARNING, "input state message name: %s could not be isolated, message disabled.", this->inputStateName.c_str());
+        bskPrint.printMessage(MSG_WARNING, "input state message name: %s could not be isolated, message disabled.", this->inputStateName.c_str());
     }
     //! - Obtain the ID associated with the optional input Sun name.
     msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->inputSunName);
@@ -127,7 +126,7 @@ void SimpleNav::CrossInit()
     }
 }
 
-/*! This method reads the input messages associated with the vehicle state and 
+/*! This method reads the input messages associated with the vehicle state and
  the sun state
  */
 void SimpleNav::readInputMessages()
@@ -225,7 +224,7 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     localProp(6,9) *= timeStep; //attitude/attitude rate cross correlation terms
     localProp(7,10) *= timeStep; //attitude/attitude rate cross correlation terms
     localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
-    
+
     //! - Set the GaussMarkov propagation matrix and compute errors
     this->errorModel.setPropMatrix(localProp);
     this->errorModel.computeNextState();

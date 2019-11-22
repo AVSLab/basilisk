@@ -14,7 +14,6 @@
 #include "utilities/avsEigenSupport.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
-#include "utilities/bsk_Print.h"
 
 SimpleSolarPanel::SimpleSolarPanel(){
 
@@ -51,7 +50,7 @@ void SimpleSolarPanel::customCrossInit(){
                                                            moduleID);
     }
     else{
-        BSK_PRINT(MSG_ERROR,"SimpleSolarPanel did not have sunInMsgName specified.")
+        bskPrint.printMessage(MSG_ERROR,"SimpleSolarPanel did not have sunInMsgName specified.");
     }
 
     //! - If we have a state in msg name, subscribe to it
@@ -62,7 +61,7 @@ void SimpleSolarPanel::customCrossInit(){
                                                                               moduleID);
     }
     else{
-        BSK_PRINT(MSG_ERROR,"SimpleSolarPanel did not have stateInMsgName specified.")
+        bskPrint.printMessage(MSG_ERROR,"SimpleSolarPanel did not have stateInMsgName specified.");
     }
 
     //! - subscribe to optional sun eclipse message
@@ -81,15 +80,15 @@ void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
     this->shadowFactor = 1.0;
 
     if (this->panelArea < 0.0) {
-        BSK_PRINT(MSG_ERROR, "The panelArea must be a positive value");
+        bskPrint.printMessage(MSG_ERROR, "The panelArea must be a positive value");
     }
     if (this->panelEfficiency < 0.0) {
-        BSK_PRINT(MSG_ERROR, "The panelEfficiency variable must be a positive value");
+        bskPrint.printMessage(MSG_ERROR, "The panelEfficiency variable must be a positive value");
     }
     if (this->nHat_B.norm() > 0.1) {
         this->nHat_B.normalize();
     } else {
-        BSK_PRINT(MSG_ERROR, "The nHat_B must be set to a non-zero vector");
+        bskPrint.printMessage(MSG_ERROR, "The nHat_B must be set to a non-zero vector");
     }
 
     return;

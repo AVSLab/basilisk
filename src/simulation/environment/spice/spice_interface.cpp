@@ -22,7 +22,6 @@
 #include "../libs/cspice/include/SpiceUsr.h"
 #include "architecture/messaging/system_messaging.h"
 #include <string.h>
-#include "utilities/bsk_Print.h"
 #include "utilities/simDefinitions.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
@@ -88,23 +87,23 @@ void SpiceInterface::SelfInit()
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
-        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
+        bskPrint.printMessage(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
         return;
     }
     //!- Load the SPICE kernels if they haven't already been loaded
     if(!this->SPICELoaded)
     {
         if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
+            bskPrint.printMessage(MSG_ERROR, "Unable to load %s", "naif0012.tls");
         }
         if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
+            bskPrint.printMessage(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
         }
         if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
+            bskPrint.printMessage(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
         }
         if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de430.tpc");
+            bskPrint.printMessage(MSG_ERROR, "Unable to load %s", "de430.tpc");
         }
         this->SPICELoaded = true;
     }
@@ -158,7 +157,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
 void SpiceInterface::initTimeData()
 {
     double EpochDelteET;
-    
+
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsgId >= 0) {
         // Read in the epoch message and set the internal time structure
@@ -168,7 +167,7 @@ void SpiceInterface::initTimeData()
         if (!SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
                                                     sizeof(EpochSimMsg),
                                                          reinterpret_cast<uint8_t*> (&epochMsg), moduleID)) {
-            BSK_PRINT(MSG_ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
+            bskPrint.printMessage(MSG_ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
             this->epochInMsgId = -1;
         } else {
             // Set the epoch information from the input message
@@ -195,14 +194,14 @@ void SpiceInterface::initTimeData()
 void SpiceInterface::computeGPSData()
 {
     double JDDifference;
-    
+
     //! - The difference between the epochs in julian date terms is the total
     JDDifference = this->J2000Current - this->JDGPSEpoch;
     //! - Scale the elapsed by a week's worth of seconds to get week
     this->GPSWeek = JDDifference/(7*86400);
     //! - Subtract out the GPS week scaled up to seconds to get time in week
     this->GPSSeconds = JDDifference - this->GPSWeek*7*86400;
-    
+
     //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
     this->GPSRollovers = this->GPSWeek/1024;
     this->GPSWeek -= this->GPSRollovers*1024;
@@ -227,7 +226,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
     OutputData.GPSRollovers = this->GPSRollovers;
     SystemMessaging::GetInstance()->WriteMessage(this->timeOutMsgID, CurrentClock,
                                                  sizeof(SpiceTimeSimMsg), reinterpret_cast<uint8_t*> (&OutputData), this->moduleID);
-    
+
     //! - Iterate through all of the planets that are on and write their outputs
     for(planit = this->planetData.begin(); planit != this->planetData.end(); planit++)
     {
@@ -246,7 +245,7 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
-    
+
     //! - Compute the current Julian Date string and cast it over to the double
     et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>
              (this->spiceBuffer));
@@ -283,7 +282,7 @@ void SpiceInterface::computePlanetData()
             SpicePlanetStateSimMsg newPlanet;
             if(it->size() >= MAX_BODY_NAME_LENGTH)
             {
-                BSK_PRINT(MSG_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
+                bskPrint.printMessage(MSG_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
                 continue;
             }
             //! <pre>       Set the new planet name and zero the other struct elements </pre>
@@ -302,9 +301,9 @@ void SpiceInterface::computePlanetData()
         }
         delete [] name;
     }
-    
+
     /*! - Loop over the PlanetData vector and compute values.
-     
+
      -# Call the Ephemeris file (spkezr)
      -# Copy out the position and velocity values (default in km)
      -# Convert the pos/vel over to meters.
@@ -330,13 +329,13 @@ void SpiceInterface::computePlanetData()
         {
             //pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
             //    planit->second.J20002Pfix);
-            
+
             double aux[6][6];
-            
+
             sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux); //returns attude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF in Spice.
-            
+
             m66Get33Matrix(0, 0, aux, planit->second.J20002Pfix);
-            
+
             m66Get33Matrix(1, 0, aux, planit->second.J20002Pfix_dot);
         }
     }
@@ -354,7 +353,7 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
 {
     char *fileName = new char[this->charBufferSize];
     SpiceChar *name = new SpiceChar[this->charBufferSize];
-    
+
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
     strcpy(name, "REPORT");
@@ -362,7 +361,7 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
     strcpy(fileName, dataPath);
     strcat(fileName, kernelName);
     furnsh_c(fileName);
-    
+
     //! - Check to see if we had trouble loading a kernel and alert user if so
     strcpy(name, "DEFAULT");
     erract_c("SET", this->charBufferSize, name);
@@ -386,7 +385,7 @@ int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
 {
     char *fileName = new char[this->charBufferSize];
     SpiceChar *name = new SpiceChar[this->charBufferSize];
-    
+
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
     strcpy(name, "REPORT");
@@ -409,7 +408,7 @@ std::string SpiceInterface::getCurrentTimeString()
 
 	if (allowedOutputLength < 0)
 	{
-        BSK_PRINT(MSG_ERROR, "The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
+        bskPrint.printMessage(MSG_ERROR, "The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
 		return("");
 	}
 

@@ -25,6 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/boreAngleSimMsg.h"
+#include "utilities/bskPrint.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -41,7 +42,7 @@ class BoreAngCalc: public SysModel {
 public:
     BoreAngCalc();
     ~BoreAngCalc();
-    
+
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
@@ -49,7 +50,7 @@ public:
     void computeOutputData();
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
-    
+
 public:
     std::string StateString;          //!< (-) port to use for conversion
     std::string celBodyString;        //!< (-) celestial body we are pointing at
@@ -60,7 +61,8 @@ public:
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
     AngOffValuesSimMsg boresightAng; //!< (-) Boresigt angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
-    
+    BSKPrint bskPrint;                      //!< -- BSK Logging
+
 private:
     SpicePlanetStateSimMsg localPlanet;//!< (-) planet that we are pointing at
     SCPlusStatesSimMsg localState;   //!< (-) observed state of the spacecraft

@@ -22,6 +22,8 @@
 
 #include <vector>
 #include <stdint.h>
+#include "utilities/bskPrint.h"
+
 #ifdef _WIN32
 class __declspec(dllexport) BlankStorage
 #else
@@ -35,9 +37,10 @@ public:
     void IncreaseStorage(uint64_t NewVolume);  //! -- Copy to new memory of size NewVolume bytes
     void ClearStorage();  //! -- null out the BlankStorage
     uint64_t GetCurrentSize() const {return(this->BufferStorageSize);}  //! -- size in bytes of the StorageBuffer
-    
+
 public:
     uint8_t* StorageBuffer;  //! -- The memory where a process buffer writes messages
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 private:
     uint64_t BufferStorageSize;  //! -- size of StorageBuffer in bytes
 };

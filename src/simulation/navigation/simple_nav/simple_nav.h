@@ -27,22 +27,23 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "utilities/bskPrint.h"
 #include <Eigen/Dense>
 
 class SimpleNav: public SysModel {
 public:
     SimpleNav();
     ~SimpleNav();
-   
+
     void SelfInit();
-    void CrossInit(); 
+    void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void computeTrueOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);
     void applyErrors();
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
-    
+
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
     Eigen::MatrixXd PMatrix;       //!< -- Covariance matrix used to perturb state
@@ -60,6 +61,7 @@ public:
     NavTransIntMsg estTransState;     //!< -- translation nav state including errors
     SCPlusStatesSimMsg inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateSimMsg sunState;  //!< -- input Sun state
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state

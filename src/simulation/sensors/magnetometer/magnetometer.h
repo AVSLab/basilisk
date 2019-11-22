@@ -28,6 +28,7 @@
 #include "simMessages/tamDataSimMsg.h"
 #include "utilities/gauss_markov.h"
 #include "utilities/saturate.h"
+#include "utilities/bskPrint.h"
 #include <Eigen/Dense>
 
 
@@ -62,6 +63,7 @@ public:
     Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states
     double              maxOutput;              //!< [T] Maximum output for saturation application
     double              minOutput;              //!< [T] Minimum output for saturation application
+    BSKPrint bskPrint;                          //!< -- BSK Logging
 
 private:
     int64_t magIntMsgID;                         //!< [-] Connect to input magnetic field message

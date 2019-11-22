@@ -23,7 +23,6 @@
 
 #include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdio.h>

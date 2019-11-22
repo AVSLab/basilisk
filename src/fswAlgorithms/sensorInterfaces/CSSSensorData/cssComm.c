@@ -19,8 +19,8 @@
 
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include "messaging/static_messaging.h"
-#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
+#include <stdio.h> 
 
 /*! This method initializes the configData for theCSS sensor interface.
  It checks to ensure that the inputs are sane and then creates the

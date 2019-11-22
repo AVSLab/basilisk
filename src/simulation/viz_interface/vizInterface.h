@@ -1,10 +1,10 @@
 /*
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -12,7 +12,7 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
+
  */
 
 
@@ -38,6 +38,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
+#include "utilities/bskPrint.h"
 
 
 typedef struct {
@@ -125,7 +126,7 @@ public:
     std::string starTrackerInMsgName;           //! [-] Name of the incoming Star Tracker data
 
     std::string spacecraftName;                 //! [-] Name of the spacecraft being simulated
-    
+
     std::string opnavImageOutMsgName;           //! The name of the Image output message*/
 
     uint64_t numSensors;
@@ -133,12 +134,12 @@ public:
     bool saveFile;                              //! [Bool] Set True if Vizard should save a file of the data.
     bool liveStream;                            //! [Bool] Set True if Vizard should receive a live stream of BSK data.
     void* bskImagePtr;                            //! [RUN] Permanent pointer for the image to be used in BSK without relying on ZMQ because ZMQ will free it (whenever, who knows)
-    
+
     std::string vizOutMsgName;
     std::vector <std::string> planetNames;      //!< -- Names of planets we want to track, read in from python
 
     uint64_t numOutputBuffers;                  //! [-] Number of buffers to request for the output messages
-    
+
     int64_t FrameNumber;                        //! Number of frames that have been updated for TimeStamp message
     std::string protoFilename;                  //! Filename for where to save the protobuff message
     int numRW;                                  //! [-] Number of RW set in python
@@ -146,6 +147,8 @@ public:
     VizSettings settings;                       //! [-] container for the Viz settings that can be specified from BSK
 
     CameraConfigMsg cameraConfigMessage;        //! [-] camera config message copy
+
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 
 private:
@@ -172,9 +175,9 @@ private:
 //    CSSArraySensorIntMsg cssDataMessage;        //! [-] CSS message
     CSSConfigFswMsg cssConfigMessage;           //! [-] CSS config
     std::ofstream *outputStream;                //! [-] Output file stream opened in reset
-    
+
     std::map<uint32_t, SpicePlanetStateSimMsg> planetData; //!< -- Internal vector of planets
-    
+
 };
 
 #endif /* VIZ_INTERFACE_H */

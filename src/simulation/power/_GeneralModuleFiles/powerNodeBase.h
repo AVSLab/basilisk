@@ -29,6 +29,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/powerNodeUsageSimMsg.h"
 #include "simFswInterfaceMessages/powerNodeStatusIntMsg.h"
+#include "utilities/bskPrint.h"
 
 
 class PowerNodeBase: public SysModel  {
@@ -43,7 +44,7 @@ public:
 
 protected:
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages(); 
+    bool readMessages();
     virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
     virtual void customSelfInit(){};//! Custom output input reading method.  This allows a child class to add additional functionality.
     virtual void customCrossInit(){}; //! Custom subscription method, similar to customSelfInit.
@@ -56,6 +57,7 @@ public:
     std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
     double nodePowerOut; //!< [W] Power provided (+) or consumed (-).
     uint64_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 protected:
     int64_t nodePowerOutMsgId;

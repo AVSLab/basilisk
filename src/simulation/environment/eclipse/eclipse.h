@@ -28,6 +28,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 #include "utilities/linearAlgebra.h"
+#include "utilities/bskPrint.h"
 
 
 
@@ -35,17 +36,18 @@ class Eclipse: public SysModel {
 public:
     Eclipse();
     ~Eclipse();
-    
+
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     std::string addPositionMsgName(std::string msgName);
     void addPlanetName(std::string planetName);
-    
+
 public:
     uint64_t outputBufferCount; //!< -- Number of output buffers to use
     std::string sunInMsgName; //!< -- Internal vector of planets
+    BSKPrint bskPrint;                      //!< -- BSK Logging
 
 private:
     std::vector<std::string> planetNames;  //!< -- Names of planets we want to track

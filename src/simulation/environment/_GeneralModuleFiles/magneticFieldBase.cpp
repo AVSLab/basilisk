@@ -20,7 +20,6 @@
 #include "magneticFieldBase.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
-#include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/simDefinitions.h"
@@ -266,7 +265,7 @@ bool MagneticFieldBase::readMessages()
                 this->scStates.push_back(scMsg);
             }
     } else {
-        //BSK_PRINT_placement(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
+        bskPrint.printMessage(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 
