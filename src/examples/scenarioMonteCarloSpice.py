@@ -80,7 +80,7 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller
 
 
 class MyController(Controller):
-    def __init__(self):  # Constructor for EMM Monte Carlo simulations
+    def __init__(self):  # Constructor for Monte Carlo simulations
         Controller.__init__(self)
 
         # Uncomment the following block to cause this MC scenario to fail
