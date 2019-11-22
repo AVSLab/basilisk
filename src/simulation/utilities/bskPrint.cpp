@@ -23,7 +23,12 @@
 
 BSKPrint::BSKPrint()
 {
+<<<<<<< HEAD
   this->_msgLevel = MSG_DEBUG;
+=======
+  //Default print verbosity
+  this->_msgLevel = MSG_LEVEL_DEFAULT;
+>>>>>>> Added bsk print methods for utils
 }
 
 BSKPrint::BSKPrint(msgLevel_t msgLevel)
@@ -55,6 +60,18 @@ void BSKPrint::printMessage(msgLevel_t targetLevel, const char* message, ...)
   }
 }
 
+void BSKPrint::printMessageDefault(msgLevel_t targetLevel, const char* message, ...)
+{
+  if(targetLevel >= MSG_LEVEL_DEFAULT)
+  {
+    char formatMessage[255];
+    va_list args;
+    va_start(args, message);
+    vsnprintf(formatMessage, sizeof(formatMessage), message, args);
+    printf("Message: %s\n", formatMessage);
+  }
+}
+
 EXTERN BSKPrint* _BSKPrint(void)
 {
     return new BSKPrint();
@@ -78,4 +95,9 @@ EXTERN void _setPrintLevel(BSKPrint* bskPrint, msgLevel_t msgLevel)
 EXTERN void _printMessage(BSKPrint* bskPrint, msgLevel_t msgLevel, const char* message)
 {
     bskPrint->printMessage(msgLevel, message);
+}
+
+EXTERN void _printMessageDefault(msgLevel_t msgLevel, const char* message)
+{
+    BSKPrint::printMessageDefault(msgLevel, message);
 }

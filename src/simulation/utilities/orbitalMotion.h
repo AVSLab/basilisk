@@ -19,6 +19,7 @@
 
 #ifndef _ORBITAL_MOTION_0_H_
 #define _ORBITAL_MOTION_0_H_
+#include <utilities/bskPrint.h>
 
 #define N_DEBYE_PARAMETERS 37
 
@@ -44,8 +45,8 @@ typedef enum {
     MAX_CELESTIAL
 } CelestialObject_t;
 
-/*! This structure contains the set of Keplerian orbital elements that define the 
-    spacecraft translational state.  It is operated on by the orbital element 
+/*! This structure contains the set of Keplerian orbital elements that define the
+    spacecraft translational state.  It is operated on by the orbital element
     routines and the OrbElemConvert module.
 */
 typedef struct {
@@ -81,13 +82,13 @@ extern "C" {
     double  N2H(double N, double e);
     void    elem2rv(double mu, classicElements *elements, double *rVec, double *vVec);
     void    rv2elem(double mu, double *rVec, double *vVec, classicElements *elements);
-    
+
     double  atmosphericDensity(double alt);
     double  debyeLength(double alt);
     void    atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec);
     void    jPerturb(double *rvec, int num, double *ajtot, ...);
     void    solarRad(double A, double m, double *sunvec, double *arvec);
-    
+
 #ifdef __cplusplus
 }
 #endif

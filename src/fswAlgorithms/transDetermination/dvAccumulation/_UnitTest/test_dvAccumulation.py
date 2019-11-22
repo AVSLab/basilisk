@@ -5,6 +5,7 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.simulation import bskPrint
 from Basilisk.fswAlgorithms.dvAccumulation import dvAccumulation
 from Basilisk.fswAlgorithms.fswMessages import fswMessages
 from numpy import random
@@ -18,6 +19,7 @@ def generateAccData():
     accPktList = list()
     for _ in range(120):
         accPacketData = fswMessages.AccPktDataFswMsg()
+        accPacketData.bskPrint = bskPrint.BSKPrint()
         accPacketData.measTime = abs(int(random.normal(5e7, 1e7)))
         accPacketData.accel_B = random.normal(0.1, 0.2, 3)  # Acceleration in platform frame [m/s2]
         accPktList.append(accPacketData)

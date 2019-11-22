@@ -28,6 +28,8 @@ typedef enum {
     MSG_SILENT          // the coder should never use this flag when using BSK_PRINT().  It is used to turn off all BSK_PRINT()
 } msgLevel_t;
 
+#define MSG_LEVEL_DEFAULT MSG_DEBUG   //Define level for bsk logging calls outside of BSKPrint objects
+
 #ifdef __cplusplus
 #include <map>
 #include <string>
@@ -41,6 +43,7 @@ class BSKPrint
     void setPrintLevel(msgLevel_t msgLevel);
     void readPrintLevel();
     void printMessage(msgLevel_t targetLevel, const char* message, ...);
+    static void printMessageDefault(msgLevel_t targetLevel, const char* message, ...);
 
   public:
     std::map<int, const char*> msgLevelMap
@@ -69,4 +72,5 @@ EXTERN void _BSKPrint_D(BSKPrint*);
 EXTERN void _readPrintLevel(BSKPrint*);
 EXTERN void _setPrintLevel(BSKPrint*, msgLevel_t);
 EXTERN void _printMessage(BSKPrint*, msgLevel_t, const char*);
+EXTERN void _printMessageDefault(msgLevel_t, const char*);
 #endif

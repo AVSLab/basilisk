@@ -22,6 +22,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <utilities/bskPrint.h>
 
 #define UKF_MAX_DIM 20
 

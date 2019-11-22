@@ -21,6 +21,7 @@
 #define _LINEARALGEBRA_H_
 
 #include <stdio.h>
+#include <utilities/bskPrint.h>
 
 /*! \addtogroup Sim Utility Group
  * @{
@@ -82,7 +83,7 @@ extern "C" {
     void    v3Tilde(double v[3], double result[3][3]);
     void    v3Sort(double v[3], double result[3]);
     void    v3PrintScreen(const char *name, double v[3]);
-    
+
     /* 4 element vectors */
     void    v4Set(double v0, double v1, double v2, double v3, double result[4]);
     void    v4Copy(double v[4], double result[4]);
@@ -91,7 +92,7 @@ extern "C" {
     double  v4Norm(double v[4]);
     int     v4IsEqual(double v1[4], double v2[4], double accuracy);
     int     v4IsZero(double v[4], double accuracy);
-    
+
     /* 6 element vectors */
     void    v6Set(double v0, double v1, double v2, double v3, double v4, double v5, double result[6]);
     void    v6Copy(double v[6], double result[6]);
@@ -99,7 +100,7 @@ extern "C" {
     void    v6Scale(double scaleFactor, double v[6], double result[6]);
     void    v6OuterProduct(double v1[6], double v2[6], double result[6][6]);
     int     v6IsEqual(double v1[6], double v2[6], double accuracy);
-    
+
     /* NxM matrices */
     void    mCopy(void *mx, size_t dim1, size_t dim2, void *result);
     void    mSetZero(void *result, size_t dim1, size_t dim2);
@@ -206,7 +207,7 @@ extern "C" {
     double  m44Determinant(double mx[4][4]);
     int     m44IsEqual(double mx1[4][4], double mx2[4][4], double accuracy);
     int     m44Inverse(double mx[4][4], double result[4][4]);
-    
+
     /* 6x6 matrices */
     void    m66Set(double m00, double m01, double m02, double m03, double m04, double m05,
                    double m10, double m11, double m12, double m13, double m14, double m15,
@@ -231,18 +232,17 @@ extern "C" {
     void    m66tMultV6(double mx[6][6], double v[6], double result[6]);
     int     m66IsEqual(double mx1[6][6], double mx2[6][6], double accuracy);
     int     m66IsZero(double mx[6][6], double accuracy);
-    
+
     /* 9x9 matrices */
     void    m99SetZero(double result[9][9]);
-    
+
     /* additional routines */
     /* Solve cubic formula for x^3 + a[2]*x^2 + a[1]*x + a[0] = 0 */
     void    cubicRoots(double a[3], double result[3]);
-    
+
 #ifdef __cplusplus
 }
 #endif
 
 /*! @} */
 #endif
-

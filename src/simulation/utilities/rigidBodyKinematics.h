@@ -19,6 +19,7 @@
 
 #ifndef _RIGID_BODY_KINEMATICS_0_H_
 #define _RIGID_BODY_KINEMATICS_0_H_
+#include <utilities/bskPrint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -252,7 +253,7 @@ extern "C" {
     void   subMRP(double *q1, double *q2, double *q);
     void   subPRV(double *q10, double *q20, double *q);
     void   Mi(double angle, int axis, double C[3][3]);
-    
+
 #ifdef __cplusplus
 }
 #endif

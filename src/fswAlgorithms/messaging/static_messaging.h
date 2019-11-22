@@ -23,6 +23,7 @@
 #define MAX_STAT_MSG_LENGTH 128
 
 #include <stdint.h>
+#include "simulation/utilities/bskPrint.h"
 
 /*! \defgroup messaging
  * @{
@@ -30,7 +31,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void InitializeStorage(uint32_t StorageBytes);
     int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char * MessageStruct,
         int64_t moduleID);
@@ -41,7 +42,7 @@ extern "C" {
     int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
         int64_t moduleID);
     const char * FindMessageName(int64_t MessageID);
-    
+
 #ifdef __cplusplus
 }
 #endif

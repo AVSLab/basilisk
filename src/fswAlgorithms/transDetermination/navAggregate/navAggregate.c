@@ -42,7 +42,7 @@ void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
     return;
 }
 
-/*! This method performs the second stage of initialization for the nav aggregration 
+/*! This method performs the second stage of initialization for the nav aggregration
     interface.  For each configured input message, it subscribes to the associated target message
     and saves the ID.
  @return void
@@ -54,13 +54,19 @@ void CrossInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 
     /*! - ensure incoming message counters are not larger than MAX_AGG_NAV_MSG */
     if (configData->attMsgCount > MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The attitude message count %d is larger than allowed (%d). Setting count to max value.",
+        char msg[255];
+        sprintf(msg, "The attitude message count %d is larger than allowed (%d). Setting count to max value.",
                   configData->attMsgCount, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->attMsgCount = MAX_AGG_NAV_MSG;
     }
     if (configData->transMsgCount > MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The translation message count %d is larger than allowed (%d). Setting count to max value.",
+        char msg[255];
+        sprintf(msg, "The translation message count %d is larger than allowed (%d). Setting count to max value.",
                   configData->transMsgCount, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->transMsgCount = MAX_AGG_NAV_MSG;
     }
 
@@ -68,7 +74,7 @@ void CrossInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
     for(i=0; i<configData->attMsgCount; i=i+1)
     {
         if (strcmp(configData->attMsgs[i].inputNavName,"")==0) {
-            BSK_PRINT(MSG_ERROR, "An attitude input message name was not specified.  Be sure that attMsgCount is set properly.");
+            _printMessage(configData->bskPrint, MSG_ERROR, "An attitude input message name was not specified.  Be sure that attMsgCount is set properly.");
         } else {
             /*!   - subscribe to attitude navigation message */
             configData->attMsgs[i].inputNavID = subscribeToMessage(
@@ -79,7 +85,7 @@ void CrossInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
     for(i=0; i<configData->transMsgCount; i=i+1)
     {
         if (strcmp(configData->transMsgs[i].inputNavName,"")==0) {
-            BSK_PRINT(MSG_ERROR, "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
+            _printMessage(configData->bskPrint, MSG_ERROR, "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
         } else {
             configData->transMsgs[i].inputNavID = subscribeToMessage(
                 configData->transMsgs[i].inputNavName, sizeof(NavTransIntMsg), moduleID);
@@ -100,49 +106,73 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
 
     /*! - ensure the attitude message index locations are less than MAX_AGG_NAV_MSG */
     if (configData->attTimeIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The attTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  configData->attTimeIdx, MAX_AGG_NAV_MSG);
+        char msg[255];
+        sprintf(msg, "The attTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+              configData->attTimeIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->attTimeIdx = MAX_AGG_NAV_MSG - 1;
     }
     if (configData->attIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The attIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+        char msg[255];
+        sprintf(msg, "The attIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->attIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->attIdx = MAX_AGG_NAV_MSG - 1;
     }
     if (configData->rateIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The rateIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+        char msg[255];
+        sprintf(msg, "The rateIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->rateIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->rateIdx = MAX_AGG_NAV_MSG - 1;
     }
     if (configData->sunIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The sunIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  configData->sunIdx, MAX_AGG_NAV_MSG);
+        char msg[255];
+        sprintf(msg, "The sunIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+                configData->sunIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->sunIdx = MAX_AGG_NAV_MSG - 1;
     }
 
     /*! - ensure the translational message index locations are less than MAX_AGG_NAV_MSG */
     if (configData->transTimeIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The transTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  configData->transTimeIdx, MAX_AGG_NAV_MSG);
+        char msg[255];
+        sprintf(msg, "The transTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+                configData->transTimeIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->transTimeIdx = MAX_AGG_NAV_MSG - 1;
     }
     if (configData->posIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The posIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+        char msg[255];
+        sprintf(msg, "The posIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->posIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->posIdx = MAX_AGG_NAV_MSG - 1;
     }
     if (configData->velIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The velIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+        char msg[255];
+        sprintf(msg, "The velIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->velIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->velIdx = MAX_AGG_NAV_MSG - 1;
     }
     if (configData->dvIdx >= MAX_AGG_NAV_MSG) {
-        BSK_PRINT(MSG_ERROR, "The dvIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  configData->dvIdx, MAX_AGG_NAV_MSG);
+        char msg[255];
+        sprintf(msg, "The dvIdx variable %d is too large. Must be less than %d. Setting index to max value.",
+                configData->dvIdx, MAX_AGG_NAV_MSG);
+        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+
         configData->dvIdx = MAX_AGG_NAV_MSG - 1;
     }
 
-    //! - zero the arrays of input messages 
+    //! - zero the arrays of input messages
     int i;
     for (i=0; i< MAX_AGG_NAV_MSG; i++) {
         memset(&(configData->attMsgs[i].msgStorage), 0x0, sizeof(NavAttIntMsg));
@@ -152,8 +182,8 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
 }
 
 
-/*! This method takes the navigation message snippets created by the various 
-    navigation components in the FSW and aggregates them into a single complete 
+/*! This method takes the navigation message snippets created by the various
+    navigation components in the FSW and aggregates them into a single complete
     navigation message.
  @return void
  @param configData The configuration data associated with the aggregate nav module

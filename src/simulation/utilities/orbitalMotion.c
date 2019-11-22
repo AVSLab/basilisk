@@ -46,7 +46,9 @@ double E2f(double Ecc, double e)
         f = 2 * atan2(sqrt(1 + e) * sin(Ecc / 2), sqrt(1 - e) * cos(Ecc / 2));
     } else {
         f = NAN;
-        BSK_PRINT(MSG_ERROR, "E2f() received e = %g. The value of e should be 0 <= e < 1.", e);
+        char msg[255];
+        sprintf(msg, "E2f() received e = %g. The value of e should be 0 <= e < 1.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return f;
@@ -71,7 +73,9 @@ double E2M(double Ecc, double e)
         M = Ecc - e * sin(Ecc);
     } else {
         M = NAN;
-        BSK_PRINT(MSG_ERROR, "E2M() received e = %g. The value of e should be 0 <= e < 1.", e);
+        char msg[255];
+        sprintf(msg, "E2M() received e = %g. The value of e should be 0 <= e < 1.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return M;
@@ -96,7 +100,9 @@ double f2E(double f, double e)
         Ecc = 2 * atan2(sqrt(1 - e) * sin(f / 2), sqrt(1 + e) * cos(f / 2));
     } else {
         Ecc = NAN;
-        BSK_PRINT(MSG_ERROR, "f2E() received e = %g. The value of e should be 0 <= e < 1.", e);
+        char msg[255];
+        sprintf(msg, "f2E() received e = %g. The value of e should be 0 <= e < 1.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return Ecc;
@@ -120,7 +126,9 @@ double f2H(double f, double e)
         H = 2 * atanh(sqrt((e - 1) / (e + 1)) * tan(f / 2));
     } else {
         H = NAN;
-        BSK_PRINT(MSG_ERROR, "f2H() received e = %g. The value of e should be 1 < e.", e);
+        char msg[255];
+        sprintf(msg, "f2H() received e = %g. The value of e should be 1 < e.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return H;
@@ -144,7 +152,9 @@ double H2f(double H, double e)
         f = 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(H / 2));
     } else {
         f = NAN;
-        BSK_PRINT(MSG_ERROR, "H2f() received e = %g. The value of e should be 1 < e.", e);
+        char msg[255];
+        sprintf(msg, "H2f() received e = %g. The value of e should be 1 < e.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return f;
@@ -168,7 +178,9 @@ double H2N(double H, double e)
         N = e * sinh(H) - H;
     } else {
         N = NAN;
-        BSK_PRINT(MSG_ERROR, "H2N() received e = %g. The value of e should be 1 < e.", e);
+        char msg[255];
+        sprintf(msg, "H2N() received e = %g. The value of e should be 1 < e.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return N;
@@ -198,13 +210,17 @@ double M2E(double M, double e)
             dE = (E1 - e * sin(E1) - M) / (1 - e * cos(E1));
             E1 -= dE;
             if(++count > max) {
-                BSK_PRINT(MSG_ERROR, "iteration error in M2E(%f,%f)", M, e);
+                char msg[255];
+                sprintf(msg, "iteration error in M2E(%f,%f)", M, e);
+                _printMessageDefault(MSG_ERROR, msg);
                 dE = 0.;
             }
         }
     } else {
         E1 = NAN;
-        BSK_PRINT(MSG_ERROR, "M2E() received e = %g. The value of e should be 0 <= e < 1.", e);
+        char msg[255];
+        sprintf(msg, "M2E() received e = %g. The value of e should be 0 <= e < 1.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return E1;
@@ -237,13 +253,17 @@ double N2H(double N, double e)
             dH = (e * sinh(H1) - H1 - N) / (e * cosh(H1) - 1);
             H1 -= dH;
             if(++count > max) {
-                BSK_PRINT(MSG_ERROR, "iteration error in N2H(%f,%f)", N, e);
+                char msg[255];
+                sprintf(msg, "iteration error in N2H(%f,%f)", N, e);
+                _printMessageDefault(MSG_ERROR, msg);
                 dH = 0.;
             }
         }
     } else {
         H1 = NAN;
-        BSK_PRINT(MSG_ERROR, "N2H() received e = %g. The value of e should be e > 1.", e);
+        char msg[255];
+        sprintf(msg, "N2H() received e = %g. The value of e should be e > 1.", e);
+        _printMessageDefault(MSG_ERROR, msg);
     }
 
     return H1;
@@ -551,7 +571,9 @@ double debyeLength(double alt)
         debyedist = 0.1 * alt - 2999.7;
         return debyedist;
     } else if((alt < 200.0) || (alt > 35000.0)) {
-        BSK_PRINT(MSG_ERROR, "debyeLength() received alt = %g\nThe value of alt should be in the range of [200 35000]", alt);
+        char msg[255];
+        sprintf(msg, "debyeLength() received alt = %g\nThe value of alt should be in the range of [200 35000]", alt);
+        _printMessageDefault(MSG_ERROR, msg);
         debyedist = NAN;
         return debyedist;
     }
@@ -601,7 +623,9 @@ void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
 
     /* Checking if user supplied a orbital position is inside the earth */
     if(alt <= 0.) {
-        BSK_PRINT(MSG_ERROR, "atmosphericDrag() received rvec = [%g %g %g]The value of rvec should produce a positive altitude for the Earth.",  rvec[1], rvec[2], rvec[3]);
+        char msg[255];
+        sprintf(msg, "atmosphericDrag() received rvec = [%g %g %g]The value of rvec should produce a positive altitude for the Earth.",  rvec[1], rvec[2], rvec[3]);
+        _printMessageDefault(MSG_ERROR, msg);
         v3Set(NAN, NAN, NAN, advec);
         return;
     }
@@ -745,7 +769,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
 
     /* Error Checking */
     if((num < 2) || (num > 6)) {
-        BSK_PRINT(MSG_ERROR, "jPerturb() received num = %d. The value of num should be 2 <= num <= 6.", num);
+        char msg[255];
+        sprintf(msg, "jPerturb() received num = %d. The value of num should be 2 <= num <= 6.", num);
+        _printMessageDefault(MSG_ERROR, msg);
         v3Set(NAN, NAN, NAN, ajtot);
         return;
     }
