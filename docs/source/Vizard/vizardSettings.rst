@@ -518,3 +518,8 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
     | normalMapPath     | string  |         | No           | Path to the normal map for   |
     |                   |         |         |              | the customTexture            |
     +-------------------+---------+---------+--------------+------------------------------+
+    | shader            | int     |         | No, default  | Value of -1 to use viz       |
+    |                   |         |         | is -1        | default, 0 for Unity Specular|
+    |                   |         |         |              | Standard Shader, 1 for Unity |
+    |                   |         |         |              | Standard Shader              |
+    +-------------------+---------+---------+--------------+------------------------------+

@@ -102,7 +102,8 @@ def createCustomModel(viz, **kwargs):
     vizElement = vizInterface.CustomModel()
 
     unitTestSupport.checkMethodKeyword(
-        ['modelPath', 'simBodiesToModify', 'offset', 'rotation', 'scale', 'customTexturePath', 'normalMapPath'],
+        ['modelPath', 'simBodiesToModify', 'offset', 'rotation', 'scale', 'customTexturePath',
+         'normalMapPath', 'shader'],
         kwargs)
 
     if 'modelPath' in kwargs:
@@ -187,6 +188,19 @@ def createCustomModel(viz, **kwargs):
         vizElement.normalMapPath = normalMapPathName
     else:
         vizElement.normalMapPath = ""
+
+    if 'shader' in kwargs:
+        shaderVariable = kwargs['shader']
+        if not isinstance(shaderVariable, int):
+            print('ERROR: shader must be a an integer.')
+            exit(1)
+        if abs(shaderVariable) > 1:
+            print('ERROR: shader must have a value of -1, 0 or +1.')
+            exit(1)
+
+        vizElement.shader = shaderVariable
+    else:
+        vizElement.shader = -1
 
     customModelList.append(vizElement)
     del viz.settings.customModelList[:] # clear settings list to replace it with updated list
