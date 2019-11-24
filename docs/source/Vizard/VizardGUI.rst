@@ -99,10 +99,7 @@ Vizard Configuration Options
 
 ``View`` Menu Item
 ^^^^^^^^^^^^^^^^^^
-| The ``View`` menu tab contains a range of Vizard options. A range of
-  coordinate frames can be toggled on or off.
-  
-| 
+The ``View`` menu tab contains a range of Vizard options. A range of coordinate frames can be toggled on or off.
 
 .. image:: ../_images/static/vizard-imgAxes.jpg
    :align: center
@@ -199,7 +196,9 @@ Next, select the OBJ file that is to be imported into Vizard.
 The next panel allows the CAD model import to be customized.  The user can modify the origin offset,
 the CAD orientation and the CAD scaling.  The latter is useful to convert the CAD model into meters
 used by Vizard.  The model center and model extrema information is provided as a convenient.  A
-bounding box can also be draw as a convenient to make sure this is correctly configured.  Note that if a model is to be applied for each simulation instance, then see how ``createCustomModel()`` can be configured to script this OBJ import process as illustrated in :ref:`vizardSettings`.
+bounding box can also be draw as a convenient to make sure this is correctly configured.  Note that
+if a model is to be applied for each simulation instance, then see how ``createCustomModel()`` can be
+configured to script this OBJ import process as illustrated in :ref:`vizardSettings`.
 
 
 .. image:: ../_images/static/vizard-ImgCAD-4.jpg
