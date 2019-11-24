@@ -70,21 +70,11 @@ class VizMessage_KeepOutInConeDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_KeepOutInCone>
       _instance;
 } _VizMessage_KeepOutInCone_default_instance_;
-class VizMessage_CameraOneSettingsDefaultTypeInternal {
+class VizMessage_StandardCameraSettingsDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_CameraOneSettings>
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_StandardCameraSettings>
       _instance;
-} _VizMessage_CameraOneSettings_default_instance_;
-class VizMessage_CameraTwoSettingsDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_CameraTwoSettings>
-      _instance;
-} _VizMessage_CameraTwoSettings_default_instance_;
-class VizMessage_PlanetCameraSettingsDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_PlanetCameraSettings>
-      _instance;
-} _VizMessage_PlanetCameraSettings_default_instance_;
+} _VizMessage_StandardCameraSettings_default_instance_;
 class VizMessage_ActuatorSettingsDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_ActuatorSettings>
@@ -321,7 +311,7 @@ void InitDefaultsVizMessage_KeepOutInCone() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_KeepOutInConeImpl);
 }
 
-void InitDefaultsVizMessage_CameraOneSettingsImpl() {
+void InitDefaultsVizMessage_StandardCameraSettingsImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
 #ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
@@ -330,58 +320,16 @@ void InitDefaultsVizMessage_CameraOneSettingsImpl() {
   ::google::protobuf::internal::InitProtobufDefaults();
 #endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
-    void* ptr = &::vizProtobufferMessage::_VizMessage_CameraOneSettings_default_instance_;
-    new (ptr) ::vizProtobufferMessage::VizMessage_CameraOneSettings();
+    void* ptr = &::vizProtobufferMessage::_VizMessage_StandardCameraSettings_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_StandardCameraSettings();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::vizProtobufferMessage::VizMessage_CameraOneSettings::InitAsDefaultInstance();
+  ::vizProtobufferMessage::VizMessage_StandardCameraSettings::InitAsDefaultInstance();
 }
 
-void InitDefaultsVizMessage_CameraOneSettings() {
+void InitDefaultsVizMessage_StandardCameraSettings() {
   static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_CameraOneSettingsImpl);
-}
-
-void InitDefaultsVizMessage_CameraTwoSettingsImpl() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  {
-    void* ptr = &::vizProtobufferMessage::_VizMessage_CameraTwoSettings_default_instance_;
-    new (ptr) ::vizProtobufferMessage::VizMessage_CameraTwoSettings();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::vizProtobufferMessage::VizMessage_CameraTwoSettings::InitAsDefaultInstance();
-}
-
-void InitDefaultsVizMessage_CameraTwoSettings() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_CameraTwoSettingsImpl);
-}
-
-void InitDefaultsVizMessage_PlanetCameraSettingsImpl() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  {
-    void* ptr = &::vizProtobufferMessage::_VizMessage_PlanetCameraSettings_default_instance_;
-    new (ptr) ::vizProtobufferMessage::VizMessage_PlanetCameraSettings();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings::InitAsDefaultInstance();
-}
-
-void InitDefaultsVizMessage_PlanetCameraSettings() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_PlanetCameraSettingsImpl);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_StandardCameraSettingsImpl);
 }
 
 void InitDefaultsVizMessage_ActuatorSettingsImpl() {
@@ -436,9 +384,7 @@ void InitDefaultsVizMessage_VizSettingsPbImpl() {
 #endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PointLine();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_KeepOutInCone();
-  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettings();
-  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettings();
-  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettings();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_StandardCameraSettings();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_ActuatorSettings();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CustomModel();
   {
@@ -480,7 +426,7 @@ void InitDefaultsVizMessage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessageImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[17];
+::google::protobuf::Metadata file_level_metadata[15];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -588,36 +534,18 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, conecolor_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, conename_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, spacecraftname_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, viewpanel_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, setview_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, spacecraftvisible_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, fieldofview_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, spacecraftname_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, viewpanel_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, setview_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, spacecraftvisible_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, fieldofview_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, spacecraftname_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, viewpanel_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, setview_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, spacecraftvisible_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, fieldofview_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, targetbodyname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, spacecraftname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, viewpanel_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, setmode_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, spacecraftvisible_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, fieldofview_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, bodytarget_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, setview_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, pointingvector_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ActuatorSettings, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -640,6 +568,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, scale_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, customtexturepath_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, normalmappath_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CustomModel, shader_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -651,9 +580,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, planetcson_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, pointlines_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, keepoutincones_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, cameraone_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, cameratwo_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, planetcamera_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, standardcamerasettings_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, actuatorsettings_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, skybox_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, custommodels_),
@@ -679,13 +606,11 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 67, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
   { 82, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
   { 90, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
-  { 104, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraOneSettings)},
-  { 114, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraTwoSettings)},
-  { 124, -1, sizeof(::vizProtobufferMessage::VizMessage_PlanetCameraSettings)},
-  { 135, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 145, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
-  { 157, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 174, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 104, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
+  { 117, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
+  { 127, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 140, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 155, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -699,9 +624,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraConfig_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_PointLine_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_KeepOutInCone_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraOneSettings_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraTwoSettings_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_PlanetCameraSettings_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_StandardCameraSettings_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_ActuatorSettings_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CustomModel_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_),
@@ -724,14 +647,14 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 17);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 15);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\300\030\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\361\025\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -776,43 +699,35 @@ void AddDescriptorsImpl() {
       "\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHeight\030\005"
       " \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBodyName"
       "\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010coneName\030\t "
-      "\001(\t\032\177\n\021CameraOneSettings\022\026\n\016spacecraftNa"
-      "me\030\001 \001(\t\022\021\n\tviewPanel\030\002 \001(\010\022\017\n\007setView\030\003"
-      " \001(\005\022\031\n\021spacecraftVisible\030\004 \001(\010\022\023\n\013field"
-      "OfView\030\005 \001(\001\032\177\n\021CameraTwoSettings\022\026\n\016spa"
-      "cecraftName\030\001 \001(\t\022\021\n\tviewPanel\030\002 \001(\010\022\017\n\007"
-      "setView\030\003 \001(\005\022\031\n\021spacecraftVisible\030\004 \001(\010"
-      "\022\023\n\013fieldOfView\030\005 \001(\001\032\232\001\n\024PlanetCameraSe"
-      "ttings\022\026\n\016spacecraftName\030\001 \001(\t\022\021\n\tviewPa"
-      "nel\030\002 \001(\010\022\017\n\007setView\030\003 \001(\005\022\031\n\021spacecraft"
-      "Visible\030\004 \001(\010\022\023\n\013fieldOfView\030\005 \001(\001\022\026\n\016ta"
-      "rgetBodyName\030\006 \001(\t\032\206\001\n\020ActuatorSettings\022"
-      "\026\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrusterP"
-      "anel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013v"
-      "iewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\032\236\001\n\013"
-      "CustomModel\022\021\n\tmodelPath\030\001 \001(\t\022\031\n\021simBod"
-      "iesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rot"
-      "ation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customText"
-      "urePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\032\355\004\n"
-      "\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbit"
-      "LinesOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n"
-      "\nplanetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+."
-      "vizProtobufferMessage.VizMessage.PointLi"
-      "ne\022G\n\016keepOutInCones\030\006 \003(\0132/.vizProtobuf"
-      "ferMessage.VizMessage.KeepOutInCone\022F\n\tc"
-      "ameraOne\030\007 \001(\01323.vizProtobufferMessage.V"
-      "izMessage.CameraOneSettings\022F\n\tcameraTwo"
-      "\030\010 \001(\01323.vizProtobufferMessage.VizMessag"
-      "e.CameraTwoSettings\022L\n\014planetCamera\030\t \001("
-      "\01326.vizProtobufferMessage.VizMessage.Pla"
-      "netCameraSettings\022L\n\020actuatorSettings\030\n "
-      "\003(\01322.vizProtobufferMessage.VizMessage.A"
-      "ctuatorSettings\022\016\n\006skybox\030\013 \001(\t\022C\n\014custo"
-      "mModels\030\014 \003(\0132-.vizProtobufferMessage.Vi"
-      "zMessage.CustomModelb\006proto3"
+      "\001(\t\032\301\001\n\026StandardCameraSettings\022\026\n\016spacec"
+      "raftName\030\001 \001(\t\022\021\n\tviewPanel\030\002 \001(\010\022\017\n\007set"
+      "Mode\030\003 \001(\005\022\031\n\021spacecraftVisible\030\004 \001(\010\022\023\n"
+      "\013fieldOfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017"
+      "\n\007setView\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\032"
+      "\206\001\n\020ActuatorSettings\022\026\n\016spacecraftName\030\001"
+      " \001(\t\022\031\n\021viewThrusterPanel\030\002 \001(\005\022\027\n\017viewT"
+      "hrusterHUD\030\003 \001(\005\022\023\n\013viewRWPanel\030\004 \001(\005\022\021\n"
+      "\tviewRWHUD\030\005 \001(\005\032\256\001\n\013CustomModel\022\021\n\tmode"
+      "lPath\030\001 \001(\t\022\031\n\021simBodiesToModify\030\002 \003(\t\022\016"
+      "\n\006offset\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scal"
+      "e\030\005 \003(\001\022\031\n\021customTexturePath\030\006 \001(\t\022\025\n\rno"
+      "rmalMapPath\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\351\003\n\rVi"
+      "zSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLin"
+      "esOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\npl"
+      "anetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.viz"
+      "ProtobufferMessage.VizMessage.PointLine\022"
+      "G\n\016keepOutInCones\030\006 \003(\0132/.vizProtobuffer"
+      "Message.VizMessage.KeepOutInCone\022X\n\026stan"
+      "dardCameraSettings\030\007 \003(\01328.vizProtobuffe"
+      "rMessage.VizMessage.StandardCameraSettin"
+      "gs\022L\n\020actuatorSettings\030\n \003(\01322.vizProtob"
+      "ufferMessage.VizMessage.ActuatorSettings"
+      "\022\016\n\006skybox\030\013 \001(\t\022C\n\014customModels\030\014 \003(\0132-"
+      ".vizProtobufferMessage.VizMessage.Custom"
+      "Modelb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3188);
+      descriptor, 2853);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -5594,97 +5509,109 @@ void VizMessage_KeepOutInCone::InternalSwap(VizMessage_KeepOutInCone* other) {
 
 // ===================================================================
 
-void VizMessage_CameraOneSettings::InitAsDefaultInstance() {
+void VizMessage_StandardCameraSettings::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int VizMessage_CameraOneSettings::kSpacecraftNameFieldNumber;
-const int VizMessage_CameraOneSettings::kViewPanelFieldNumber;
-const int VizMessage_CameraOneSettings::kSetViewFieldNumber;
-const int VizMessage_CameraOneSettings::kSpacecraftVisibleFieldNumber;
-const int VizMessage_CameraOneSettings::kFieldOfViewFieldNumber;
+const int VizMessage_StandardCameraSettings::kSpacecraftNameFieldNumber;
+const int VizMessage_StandardCameraSettings::kViewPanelFieldNumber;
+const int VizMessage_StandardCameraSettings::kSetModeFieldNumber;
+const int VizMessage_StandardCameraSettings::kSpacecraftVisibleFieldNumber;
+const int VizMessage_StandardCameraSettings::kFieldOfViewFieldNumber;
+const int VizMessage_StandardCameraSettings::kBodyTargetFieldNumber;
+const int VizMessage_StandardCameraSettings::kSetViewFieldNumber;
+const int VizMessage_StandardCameraSettings::kPointingVectorFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-VizMessage_CameraOneSettings::VizMessage_CameraOneSettings()
+VizMessage_StandardCameraSettings::VizMessage_StandardCameraSettings()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettings();
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_StandardCameraSettings();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.StandardCameraSettings)
 }
-VizMessage_CameraOneSettings::VizMessage_CameraOneSettings(const VizMessage_CameraOneSettings& from)
+VizMessage_StandardCameraSettings::VizMessage_StandardCameraSettings(const VizMessage_StandardCameraSettings& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
+      pointingvector_(from.pointingvector_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.spacecraftname().size() > 0) {
     spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
   }
-  ::memcpy(&setview_, &from.setview_,
-    static_cast<size_t>(reinterpret_cast<char*>(&fieldofview_) -
-    reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
-  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  bodytarget_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.bodytarget().size() > 0) {
+    bodytarget_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.bodytarget_);
+  }
+  ::memcpy(&setmode_, &from.setmode_,
+    static_cast<size_t>(reinterpret_cast<char*>(&setview_) -
+    reinterpret_cast<char*>(&setmode_)) + sizeof(setview_));
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.StandardCameraSettings)
 }
 
-void VizMessage_CameraOneSettings::SharedCtor() {
+void VizMessage_StandardCameraSettings::SharedCtor() {
   spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&fieldofview_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
+  bodytarget_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setmode_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&setview_) -
+      reinterpret_cast<char*>(&setmode_)) + sizeof(setview_));
   _cached_size_ = 0;
 }
 
-VizMessage_CameraOneSettings::~VizMessage_CameraOneSettings() {
-  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.CameraOneSettings)
+VizMessage_StandardCameraSettings::~VizMessage_StandardCameraSettings() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   SharedDtor();
 }
 
-void VizMessage_CameraOneSettings::SharedDtor() {
+void VizMessage_StandardCameraSettings::SharedDtor() {
   spacecraftname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  bodytarget_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-void VizMessage_CameraOneSettings::SetCachedSize(int size) const {
+void VizMessage_StandardCameraSettings::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* VizMessage_CameraOneSettings::descriptor() {
+const ::google::protobuf::Descriptor* VizMessage_StandardCameraSettings::descriptor() {
   ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
 }
 
-const VizMessage_CameraOneSettings& VizMessage_CameraOneSettings::default_instance() {
-  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettings();
+const VizMessage_StandardCameraSettings& VizMessage_StandardCameraSettings::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_StandardCameraSettings();
   return *internal_default_instance();
 }
 
-VizMessage_CameraOneSettings* VizMessage_CameraOneSettings::New(::google::protobuf::Arena* arena) const {
-  VizMessage_CameraOneSettings* n = new VizMessage_CameraOneSettings;
+VizMessage_StandardCameraSettings* VizMessage_StandardCameraSettings::New(::google::protobuf::Arena* arena) const {
+  VizMessage_StandardCameraSettings* n = new VizMessage_StandardCameraSettings;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void VizMessage_CameraOneSettings::Clear() {
-// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+void VizMessage_StandardCameraSettings::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  pointingvector_.Clear();
   spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&fieldofview_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
+  bodytarget_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setmode_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&setview_) -
+      reinterpret_cast<char*>(&setmode_)) + sizeof(setview_));
   _internal_metadata_.Clear();
 }
 
-bool VizMessage_CameraOneSettings::MergePartialFromCodedStream(
+bool VizMessage_StandardCameraSettings::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -5699,7 +5626,7 @@ bool VizMessage_CameraOneSettings::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName"));
+            "vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName"));
         } else {
           goto handle_unusual;
         }
@@ -5720,14 +5647,14 @@ bool VizMessage_CameraOneSettings::MergePartialFromCodedStream(
         break;
       }
 
-      // int32 setView = 3;
+      // int32 setMode = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &setview_)));
+                 input, &setmode_)));
         } else {
           goto handle_unusual;
         }
@@ -5762,830 +5689,49 @@ bool VizMessage_CameraOneSettings::MergePartialFromCodedStream(
         break;
       }
 
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  return false;
-#undef DO_
-}
-
-void VizMessage_CameraOneSettings::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string spacecraftName = 1;
-  if (this->spacecraftname().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->spacecraftname(), output);
-  }
-
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
-  }
-
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setview(), output);
-  }
-
-  // bool spacecraftVisible = 4;
-  if (this->spacecraftvisible() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->spacecraftvisible(), output);
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->fieldofview(), output);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
-  }
-  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.CameraOneSettings)
-}
-
-::google::protobuf::uint8* VizMessage_CameraOneSettings::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string spacecraftName = 1;
-  if (this->spacecraftname().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->spacecraftname(), target);
-  }
-
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
-  }
-
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->setview(), target);
-  }
-
-  // bool spacecraftVisible = 4;
-  if (this->spacecraftvisible() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->spacecraftvisible(), target);
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->fieldofview(), target);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  return target;
-}
-
-size_t VizMessage_CameraOneSettings::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  size_t total_size = 0;
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
-  }
-  // string spacecraftName = 1;
-  if (this->spacecraftname().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->spacecraftname());
-  }
-
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->setview());
-  }
-
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    total_size += 1 + 1;
-  }
-
-  // bool spacecraftVisible = 4;
-  if (this->spacecraftvisible() != 0) {
-    total_size += 1 + 1;
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    total_size += 1 + 8;
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void VizMessage_CameraOneSettings::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  GOOGLE_DCHECK_NE(&from, this);
-  const VizMessage_CameraOneSettings* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_CameraOneSettings>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.CameraOneSettings)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.CameraOneSettings)
-    MergeFrom(*source);
-  }
-}
-
-void VizMessage_CameraOneSettings::MergeFrom(const VizMessage_CameraOneSettings& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (from.spacecraftname().size() > 0) {
-
-    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
-  }
-  if (from.setview() != 0) {
-    set_setview(from.setview());
-  }
-  if (from.viewpanel() != 0) {
-    set_viewpanel(from.viewpanel());
-  }
-  if (from.spacecraftvisible() != 0) {
-    set_spacecraftvisible(from.spacecraftvisible());
-  }
-  if (from.fieldofview() != 0) {
-    set_fieldofview(from.fieldofview());
-  }
-}
-
-void VizMessage_CameraOneSettings::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void VizMessage_CameraOneSettings::CopyFrom(const VizMessage_CameraOneSettings& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool VizMessage_CameraOneSettings::IsInitialized() const {
-  return true;
-}
-
-void VizMessage_CameraOneSettings::Swap(VizMessage_CameraOneSettings* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void VizMessage_CameraOneSettings::InternalSwap(VizMessage_CameraOneSettings* other) {
-  using std::swap;
-  spacecraftname_.Swap(&other->spacecraftname_);
-  swap(setview_, other->setview_);
-  swap(viewpanel_, other->viewpanel_);
-  swap(spacecraftvisible_, other->spacecraftvisible_);
-  swap(fieldofview_, other->fieldofview_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata VizMessage_CameraOneSettings::GetMetadata() const {
-  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
-}
-
-
-// ===================================================================
-
-void VizMessage_CameraTwoSettings::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int VizMessage_CameraTwoSettings::kSpacecraftNameFieldNumber;
-const int VizMessage_CameraTwoSettings::kViewPanelFieldNumber;
-const int VizMessage_CameraTwoSettings::kSetViewFieldNumber;
-const int VizMessage_CameraTwoSettings::kSpacecraftVisibleFieldNumber;
-const int VizMessage_CameraTwoSettings::kFieldOfViewFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-VizMessage_CameraTwoSettings::VizMessage_CameraTwoSettings()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettings();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-}
-VizMessage_CameraTwoSettings::VizMessage_CameraTwoSettings(const VizMessage_CameraTwoSettings& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.spacecraftname().size() > 0) {
-    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
-  }
-  ::memcpy(&setview_, &from.setview_,
-    static_cast<size_t>(reinterpret_cast<char*>(&fieldofview_) -
-    reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
-  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-}
-
-void VizMessage_CameraTwoSettings::SharedCtor() {
-  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&fieldofview_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
-  _cached_size_ = 0;
-}
-
-VizMessage_CameraTwoSettings::~VizMessage_CameraTwoSettings() {
-  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  SharedDtor();
-}
-
-void VizMessage_CameraTwoSettings::SharedDtor() {
-  spacecraftname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void VizMessage_CameraTwoSettings::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* VizMessage_CameraTwoSettings::descriptor() {
-  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const VizMessage_CameraTwoSettings& VizMessage_CameraTwoSettings::default_instance() {
-  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettings();
-  return *internal_default_instance();
-}
-
-VizMessage_CameraTwoSettings* VizMessage_CameraTwoSettings::New(::google::protobuf::Arena* arena) const {
-  VizMessage_CameraTwoSettings* n = new VizMessage_CameraTwoSettings;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void VizMessage_CameraTwoSettings::Clear() {
-// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&fieldofview_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
-  _internal_metadata_.Clear();
-}
-
-bool VizMessage_CameraTwoSettings::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string spacecraftName = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_spacecraftname()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bool viewPanel = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &viewpanel_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 setView = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &setview_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bool spacecraftVisible = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &spacecraftvisible_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // double fieldOfView = 5;
-      case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &fieldofview_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  return false;
-#undef DO_
-}
-
-void VizMessage_CameraTwoSettings::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string spacecraftName = 1;
-  if (this->spacecraftname().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->spacecraftname(), output);
-  }
-
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
-  }
-
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setview(), output);
-  }
-
-  // bool spacecraftVisible = 4;
-  if (this->spacecraftvisible() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->spacecraftvisible(), output);
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->fieldofview(), output);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
-  }
-  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-}
-
-::google::protobuf::uint8* VizMessage_CameraTwoSettings::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string spacecraftName = 1;
-  if (this->spacecraftname().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->spacecraftname(), target);
-  }
-
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
-  }
-
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->setview(), target);
-  }
-
-  // bool spacecraftVisible = 4;
-  if (this->spacecraftvisible() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->spacecraftvisible(), target);
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->fieldofview(), target);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  return target;
-}
-
-size_t VizMessage_CameraTwoSettings::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  size_t total_size = 0;
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
-  }
-  // string spacecraftName = 1;
-  if (this->spacecraftname().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->spacecraftname());
-  }
-
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->setview());
-  }
-
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    total_size += 1 + 1;
-  }
-
-  // bool spacecraftVisible = 4;
-  if (this->spacecraftvisible() != 0) {
-    total_size += 1 + 1;
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    total_size += 1 + 8;
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void VizMessage_CameraTwoSettings::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  GOOGLE_DCHECK_NE(&from, this);
-  const VizMessage_CameraTwoSettings* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_CameraTwoSettings>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-    MergeFrom(*source);
-  }
-}
-
-void VizMessage_CameraTwoSettings::MergeFrom(const VizMessage_CameraTwoSettings& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (from.spacecraftname().size() > 0) {
-
-    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
-  }
-  if (from.setview() != 0) {
-    set_setview(from.setview());
-  }
-  if (from.viewpanel() != 0) {
-    set_viewpanel(from.viewpanel());
-  }
-  if (from.spacecraftvisible() != 0) {
-    set_spacecraftvisible(from.spacecraftvisible());
-  }
-  if (from.fieldofview() != 0) {
-    set_fieldofview(from.fieldofview());
-  }
-}
-
-void VizMessage_CameraTwoSettings::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void VizMessage_CameraTwoSettings::CopyFrom(const VizMessage_CameraTwoSettings& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool VizMessage_CameraTwoSettings::IsInitialized() const {
-  return true;
-}
-
-void VizMessage_CameraTwoSettings::Swap(VizMessage_CameraTwoSettings* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void VizMessage_CameraTwoSettings::InternalSwap(VizMessage_CameraTwoSettings* other) {
-  using std::swap;
-  spacecraftname_.Swap(&other->spacecraftname_);
-  swap(setview_, other->setview_);
-  swap(viewpanel_, other->viewpanel_);
-  swap(spacecraftvisible_, other->spacecraftvisible_);
-  swap(fieldofview_, other->fieldofview_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata VizMessage_CameraTwoSettings::GetMetadata() const {
-  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
-}
-
-
-// ===================================================================
-
-void VizMessage_PlanetCameraSettings::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int VizMessage_PlanetCameraSettings::kSpacecraftNameFieldNumber;
-const int VizMessage_PlanetCameraSettings::kViewPanelFieldNumber;
-const int VizMessage_PlanetCameraSettings::kSetViewFieldNumber;
-const int VizMessage_PlanetCameraSettings::kSpacecraftVisibleFieldNumber;
-const int VizMessage_PlanetCameraSettings::kFieldOfViewFieldNumber;
-const int VizMessage_PlanetCameraSettings::kTargetBodyNameFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-VizMessage_PlanetCameraSettings::VizMessage_PlanetCameraSettings()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettings();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
-}
-VizMessage_PlanetCameraSettings::VizMessage_PlanetCameraSettings(const VizMessage_PlanetCameraSettings& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.spacecraftname().size() > 0) {
-    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
-  }
-  targetbodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.targetbodyname().size() > 0) {
-    targetbodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.targetbodyname_);
-  }
-  ::memcpy(&setview_, &from.setview_,
-    static_cast<size_t>(reinterpret_cast<char*>(&fieldofview_) -
-    reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
-  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
-}
-
-void VizMessage_PlanetCameraSettings::SharedCtor() {
-  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  targetbodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&fieldofview_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
-  _cached_size_ = 0;
-}
-
-VizMessage_PlanetCameraSettings::~VizMessage_PlanetCameraSettings() {
-  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
-  SharedDtor();
-}
-
-void VizMessage_PlanetCameraSettings::SharedDtor() {
-  spacecraftname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  targetbodyname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void VizMessage_PlanetCameraSettings::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* VizMessage_PlanetCameraSettings::descriptor() {
-  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const VizMessage_PlanetCameraSettings& VizMessage_PlanetCameraSettings::default_instance() {
-  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettings();
-  return *internal_default_instance();
-}
-
-VizMessage_PlanetCameraSettings* VizMessage_PlanetCameraSettings::New(::google::protobuf::Arena* arena) const {
-  VizMessage_PlanetCameraSettings* n = new VizMessage_PlanetCameraSettings;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void VizMessage_PlanetCameraSettings::Clear() {
-// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  targetbodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&fieldofview_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
-  _internal_metadata_.Clear();
-}
-
-bool VizMessage_PlanetCameraSettings::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string spacecraftName = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_spacecraftname()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bool viewPanel = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &viewpanel_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 setView = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &setview_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bool spacecraftVisible = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &spacecraftvisible_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // double fieldOfView = 5;
-      case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &fieldofview_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string targetBodyName = 6;
+      // string bodyTarget = 6;
       case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_targetbodyname()));
+                input, this->mutable_bodytarget()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->targetbodyname().data(), static_cast<int>(this->targetbodyname().length()),
+            this->bodytarget().data(), static_cast<int>(this->bodytarget().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName"));
+            "vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 setView = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(56u /* 56 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &setview_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated double pointingVector = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, this->mutable_pointingvector())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(65u /* 65 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 66u, input, this->mutable_pointingvector())));
         } else {
           goto handle_unusual;
         }
@@ -6604,17 +5750,17 @@ bool VizMessage_PlanetCameraSettings::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   return false;
 #undef DO_
 }
 
-void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
+void VizMessage_StandardCameraSettings::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -6623,7 +5769,7 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName");
+      "vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->spacecraftname(), output);
   }
@@ -6633,9 +5779,9 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
   }
 
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setview(), output);
+  // int32 setMode = 3;
+  if (this->setmode() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setmode(), output);
   }
 
   // bool spacecraftVisible = 4;
@@ -6648,27 +5794,41 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->fieldofview(), output);
   }
 
-  // string targetBodyName = 6;
-  if (this->targetbodyname().size() > 0) {
+  // string bodyTarget = 6;
+  if (this->bodytarget().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->targetbodyname().data(), static_cast<int>(this->targetbodyname().length()),
+      this->bodytarget().data(), static_cast<int>(this->bodytarget().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName");
+      "vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->targetbodyname(), output);
+      6, this->bodytarget(), output);
+  }
+
+  // int32 setView = 7;
+  if (this->setview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->setview(), output);
+  }
+
+  // repeated double pointingVector = 8;
+  if (this->pointingvector_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(8, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _pointingvector_cached_byte_size_));
+    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
+      this->pointingvector().data(), this->pointingvector_size(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
-  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.StandardCameraSettings)
 }
 
-::google::protobuf::uint8* VizMessage_PlanetCameraSettings::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* VizMessage_StandardCameraSettings::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -6677,7 +5837,7 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName");
+      "vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->spacecraftname(), target);
@@ -6688,9 +5848,9 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
   }
 
-  // int32 setView = 3;
-  if (this->setview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->setview(), target);
+  // int32 setMode = 3;
+  if (this->setmode() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->setmode(), target);
   }
 
   // bool spacecraftVisible = 4;
@@ -6703,27 +5863,45 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->fieldofview(), target);
   }
 
-  // string targetBodyName = 6;
-  if (this->targetbodyname().size() > 0) {
+  // string bodyTarget = 6;
+  if (this->bodytarget().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->targetbodyname().data(), static_cast<int>(this->targetbodyname().length()),
+      this->bodytarget().data(), static_cast<int>(this->bodytarget().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName");
+      "vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->targetbodyname(), target);
+        6, this->bodytarget(), target);
+  }
+
+  // int32 setView = 7;
+  if (this->setview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->setview(), target);
+  }
+
+  // repeated double pointingVector = 8;
+  if (this->pointingvector_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      8,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _pointingvector_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteDoubleNoTagToArray(this->pointingvector_, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   return target;
 }
 
-size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+size_t VizMessage_StandardCameraSettings::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   size_t total_size = 0;
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -6731,6 +5909,22 @@ size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // repeated double pointingVector = 8;
+  {
+    unsigned int count = static_cast<unsigned int>(this->pointingvector_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _pointingvector_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
   // string spacecraftName = 1;
   if (this->spacecraftname().size() > 0) {
     total_size += 1 +
@@ -6738,18 +5932,18 @@ size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
         this->spacecraftname());
   }
 
-  // string targetBodyName = 6;
-  if (this->targetbodyname().size() > 0) {
+  // string bodyTarget = 6;
+  if (this->bodytarget().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->targetbodyname());
+        this->bodytarget());
   }
 
-  // int32 setView = 3;
-  if (this->setview() != 0) {
+  // int32 setMode = 3;
+  if (this->setmode() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->setview());
+        this->setmode());
   }
 
   // bool viewPanel = 2;
@@ -6767,6 +5961,13 @@ size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
     total_size += 1 + 8;
   }
 
+  // int32 setView = 7;
+  if (this->setview() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->setview());
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -6774,38 +5975,39 @@ size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
   return total_size;
 }
 
-void VizMessage_PlanetCameraSettings::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+void VizMessage_StandardCameraSettings::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   GOOGLE_DCHECK_NE(&from, this);
-  const VizMessage_PlanetCameraSettings* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_PlanetCameraSettings>(
+  const VizMessage_StandardCameraSettings* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_StandardCameraSettings>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.StandardCameraSettings)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.StandardCameraSettings)
     MergeFrom(*source);
   }
 }
 
-void VizMessage_PlanetCameraSettings::MergeFrom(const VizMessage_PlanetCameraSettings& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+void VizMessage_StandardCameraSettings::MergeFrom(const VizMessage_StandardCameraSettings& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  pointingvector_.MergeFrom(from.pointingvector_);
   if (from.spacecraftname().size() > 0) {
 
     spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
   }
-  if (from.targetbodyname().size() > 0) {
+  if (from.bodytarget().size() > 0) {
 
-    targetbodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.targetbodyname_);
+    bodytarget_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.bodytarget_);
   }
-  if (from.setview() != 0) {
-    set_setview(from.setview());
+  if (from.setmode() != 0) {
+    set_setmode(from.setmode());
   }
   if (from.viewpanel() != 0) {
     set_viewpanel(from.viewpanel());
@@ -6816,43 +6018,48 @@ void VizMessage_PlanetCameraSettings::MergeFrom(const VizMessage_PlanetCameraSet
   if (from.fieldofview() != 0) {
     set_fieldofview(from.fieldofview());
   }
+  if (from.setview() != 0) {
+    set_setview(from.setview());
+  }
 }
 
-void VizMessage_PlanetCameraSettings::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+void VizMessage_StandardCameraSettings::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void VizMessage_PlanetCameraSettings::CopyFrom(const VizMessage_PlanetCameraSettings& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+void VizMessage_StandardCameraSettings::CopyFrom(const VizMessage_StandardCameraSettings& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.StandardCameraSettings)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool VizMessage_PlanetCameraSettings::IsInitialized() const {
+bool VizMessage_StandardCameraSettings::IsInitialized() const {
   return true;
 }
 
-void VizMessage_PlanetCameraSettings::Swap(VizMessage_PlanetCameraSettings* other) {
+void VizMessage_StandardCameraSettings::Swap(VizMessage_StandardCameraSettings* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void VizMessage_PlanetCameraSettings::InternalSwap(VizMessage_PlanetCameraSettings* other) {
+void VizMessage_StandardCameraSettings::InternalSwap(VizMessage_StandardCameraSettings* other) {
   using std::swap;
+  pointingvector_.InternalSwap(&other->pointingvector_);
   spacecraftname_.Swap(&other->spacecraftname_);
-  targetbodyname_.Swap(&other->targetbodyname_);
-  swap(setview_, other->setview_);
+  bodytarget_.Swap(&other->bodytarget_);
+  swap(setmode_, other->setmode_);
   swap(viewpanel_, other->viewpanel_);
   swap(spacecraftvisible_, other->spacecraftvisible_);
   swap(fieldofview_, other->fieldofview_);
+  swap(setview_, other->setview_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata VizMessage_PlanetCameraSettings::GetMetadata() const {
+::google::protobuf::Metadata VizMessage_StandardCameraSettings::GetMetadata() const {
   protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
 }
@@ -7279,6 +6486,7 @@ const int VizMessage_CustomModel::kRotationFieldNumber;
 const int VizMessage_CustomModel::kScaleFieldNumber;
 const int VizMessage_CustomModel::kCustomTexturePathFieldNumber;
 const int VizMessage_CustomModel::kNormalMapPathFieldNumber;
+const int VizMessage_CustomModel::kShaderFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_CustomModel::VizMessage_CustomModel()
@@ -7310,6 +6518,7 @@ VizMessage_CustomModel::VizMessage_CustomModel(const VizMessage_CustomModel& fro
   if (from.normalmappath().size() > 0) {
     normalmappath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmappath_);
   }
+  shader_ = from.shader_;
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CustomModel)
 }
 
@@ -7317,6 +6526,7 @@ void VizMessage_CustomModel::SharedCtor() {
   modelpath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   customtexturepath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   normalmappath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  shader_ = 0;
   _cached_size_ = 0;
 }
 
@@ -7367,6 +6577,7 @@ void VizMessage_CustomModel::Clear() {
   modelpath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   customtexturepath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   normalmappath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  shader_ = 0;
   _internal_metadata_.Clear();
 }
 
@@ -7502,6 +6713,20 @@ bool VizMessage_CustomModel::MergePartialFromCodedStream(
         break;
       }
 
+      // int32 shader = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(64u /* 64 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &shader_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -7593,6 +6818,11 @@ void VizMessage_CustomModel::SerializeWithCachedSizes(
       "vizProtobufferMessage.VizMessage.CustomModel.normalMapPath");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       7, this->normalmappath(), output);
+  }
+
+  // int32 shader = 8;
+  if (this->shader() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(8, this->shader(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7691,6 +6921,11 @@ void VizMessage_CustomModel::SerializeWithCachedSizes(
         7, this->normalmappath(), target);
   }
 
+  // int32 shader = 8;
+  if (this->shader() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(8, this->shader(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -7785,6 +7020,13 @@ size_t VizMessage_CustomModel::ByteSizeLong() const {
         this->normalmappath());
   }
 
+  // int32 shader = 8;
+  if (this->shader() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->shader());
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -7830,6 +7072,9 @@ void VizMessage_CustomModel::MergeFrom(const VizMessage_CustomModel& from) {
 
     normalmappath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.normalmappath_);
   }
+  if (from.shader() != 0) {
+    set_shader(from.shader());
+  }
 }
 
 void VizMessage_CustomModel::CopyFrom(const ::google::protobuf::Message& from) {
@@ -7863,6 +7108,7 @@ void VizMessage_CustomModel::InternalSwap(VizMessage_CustomModel* other) {
   modelpath_.Swap(&other->modelpath_);
   customtexturepath_.Swap(&other->customtexturepath_);
   normalmappath_.Swap(&other->normalmappath_);
+  swap(shader_, other->shader_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
@@ -7876,12 +7122,6 @@ void VizMessage_CustomModel::InternalSwap(VizMessage_CustomModel* other) {
 // ===================================================================
 
 void VizMessage_VizSettingsPb::InitAsDefaultInstance() {
-  ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->cameraone_ = const_cast< ::vizProtobufferMessage::VizMessage_CameraOneSettings*>(
-      ::vizProtobufferMessage::VizMessage_CameraOneSettings::internal_default_instance());
-  ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->cameratwo_ = const_cast< ::vizProtobufferMessage::VizMessage_CameraTwoSettings*>(
-      ::vizProtobufferMessage::VizMessage_CameraTwoSettings::internal_default_instance());
-  ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->planetcamera_ = const_cast< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings*>(
-      ::vizProtobufferMessage::VizMessage_PlanetCameraSettings::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage_VizSettingsPb::kAmbientFieldNumber;
@@ -7890,9 +7130,7 @@ const int VizMessage_VizSettingsPb::kSpacecraftCSonFieldNumber;
 const int VizMessage_VizSettingsPb::kPlanetCSonFieldNumber;
 const int VizMessage_VizSettingsPb::kPointLinesFieldNumber;
 const int VizMessage_VizSettingsPb::kKeepOutInConesFieldNumber;
-const int VizMessage_VizSettingsPb::kCameraOneFieldNumber;
-const int VizMessage_VizSettingsPb::kCameraTwoFieldNumber;
-const int VizMessage_VizSettingsPb::kPlanetCameraFieldNumber;
+const int VizMessage_VizSettingsPb::kStandardCameraSettingsFieldNumber;
 const int VizMessage_VizSettingsPb::kActuatorSettingsFieldNumber;
 const int VizMessage_VizSettingsPb::kSkyboxFieldNumber;
 const int VizMessage_VizSettingsPb::kCustomModelsFieldNumber;
@@ -7911,6 +7149,7 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
       _internal_metadata_(NULL),
       pointlines_(from.pointlines_),
       keepoutincones_(from.keepoutincones_),
+      standardcamerasettings_(from.standardcamerasettings_),
       actuatorsettings_(from.actuatorsettings_),
       custommodels_(from.custommodels_),
       _cached_size_(0) {
@@ -7918,21 +7157,6 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.skybox().size() > 0) {
     skybox_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.skybox_);
-  }
-  if (from.has_cameraone()) {
-    cameraone_ = new ::vizProtobufferMessage::VizMessage_CameraOneSettings(*from.cameraone_);
-  } else {
-    cameraone_ = NULL;
-  }
-  if (from.has_cameratwo()) {
-    cameratwo_ = new ::vizProtobufferMessage::VizMessage_CameraTwoSettings(*from.cameratwo_);
-  } else {
-    cameratwo_ = NULL;
-  }
-  if (from.has_planetcamera()) {
-    planetcamera_ = new ::vizProtobufferMessage::VizMessage_PlanetCameraSettings(*from.planetcamera_);
-  } else {
-    planetcamera_ = NULL;
   }
   ::memcpy(&ambient_, &from.ambient_,
     static_cast<size_t>(reinterpret_cast<char*>(&planetcson_) -
@@ -7942,9 +7166,9 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
 
 void VizMessage_VizSettingsPb::SharedCtor() {
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&cameraone_, 0, static_cast<size_t>(
+  ::memset(&ambient_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&planetcson_) -
-      reinterpret_cast<char*>(&cameraone_)) + sizeof(planetcson_));
+      reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
   _cached_size_ = 0;
 }
 
@@ -7955,9 +7179,6 @@ VizMessage_VizSettingsPb::~VizMessage_VizSettingsPb() {
 
 void VizMessage_VizSettingsPb::SharedDtor() {
   skybox_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete cameraone_;
-  if (this != internal_default_instance()) delete cameratwo_;
-  if (this != internal_default_instance()) delete planetcamera_;
 }
 
 void VizMessage_VizSettingsPb::SetCachedSize(int size) const {
@@ -7991,21 +7212,10 @@ void VizMessage_VizSettingsPb::Clear() {
 
   pointlines_.Clear();
   keepoutincones_.Clear();
+  standardcamerasettings_.Clear();
   actuatorsettings_.Clear();
   custommodels_.Clear();
   skybox_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (GetArenaNoVirtual() == NULL && cameraone_ != NULL) {
-    delete cameraone_;
-  }
-  cameraone_ = NULL;
-  if (GetArenaNoVirtual() == NULL && cameratwo_ != NULL) {
-    delete cameratwo_;
-  }
-  cameratwo_ = NULL;
-  if (GetArenaNoVirtual() == NULL && planetcamera_ != NULL) {
-    delete planetcamera_;
-  }
-  planetcamera_ = NULL;
   ::memset(&ambient_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&planetcson_) -
       reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
@@ -8100,36 +7310,11 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+      // repeated .vizProtobufferMessage.VizMessage.StandardCameraSettings standardCameraSettings = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_cameraone()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-      case 8: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_cameratwo()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-      case 9: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_planetcamera()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_standardcamerasettings()));
         } else {
           goto handle_unusual;
         }
@@ -8234,22 +7419,11 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
       6, this->keepoutincones(static_cast<int>(i)), output);
   }
 
-  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  if (this->has_cameraone()) {
+  // repeated .vizProtobufferMessage.VizMessage.StandardCameraSettings standardCameraSettings = 7;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->standardcamerasettings_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, *this->cameraone_, output);
-  }
-
-  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  if (this->has_cameratwo()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      8, *this->cameratwo_, output);
-  }
-
-  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  if (this->has_planetcamera()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      9, *this->planetcamera_, output);
+      7, this->standardcamerasettings(static_cast<int>(i)), output);
   }
 
   // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
@@ -8326,25 +7500,12 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
         6, this->keepoutincones(static_cast<int>(i)), deterministic, target);
   }
 
-  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  if (this->has_cameraone()) {
+  // repeated .vizProtobufferMessage.VizMessage.StandardCameraSettings standardCameraSettings = 7;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->standardcamerasettings_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        7, *this->cameraone_, deterministic, target);
-  }
-
-  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  if (this->has_cameratwo()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        8, *this->cameratwo_, deterministic, target);
-  }
-
-  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  if (this->has_planetcamera()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        9, *this->planetcamera_, deterministic, target);
+        7, this->standardcamerasettings(static_cast<int>(i)), deterministic, target);
   }
 
   // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
@@ -8413,6 +7574,17 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
     }
   }
 
+  // repeated .vizProtobufferMessage.VizMessage.StandardCameraSettings standardCameraSettings = 7;
+  {
+    unsigned int count = static_cast<unsigned int>(this->standardcamerasettings_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->standardcamerasettings(static_cast<int>(i)));
+    }
+  }
+
   // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
   {
     unsigned int count = static_cast<unsigned int>(this->actuatorsettings_size());
@@ -8440,27 +7612,6 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->skybox());
-  }
-
-  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  if (this->has_cameraone()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->cameraone_);
-  }
-
-  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  if (this->has_cameratwo()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->cameratwo_);
-  }
-
-  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  if (this->has_planetcamera()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->planetcamera_);
   }
 
   // double ambient = 1;
@@ -8520,20 +7671,12 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
 
   pointlines_.MergeFrom(from.pointlines_);
   keepoutincones_.MergeFrom(from.keepoutincones_);
+  standardcamerasettings_.MergeFrom(from.standardcamerasettings_);
   actuatorsettings_.MergeFrom(from.actuatorsettings_);
   custommodels_.MergeFrom(from.custommodels_);
   if (from.skybox().size() > 0) {
 
     skybox_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.skybox_);
-  }
-  if (from.has_cameraone()) {
-    mutable_cameraone()->::vizProtobufferMessage::VizMessage_CameraOneSettings::MergeFrom(from.cameraone());
-  }
-  if (from.has_cameratwo()) {
-    mutable_cameratwo()->::vizProtobufferMessage::VizMessage_CameraTwoSettings::MergeFrom(from.cameratwo());
-  }
-  if (from.has_planetcamera()) {
-    mutable_planetcamera()->::vizProtobufferMessage::VizMessage_PlanetCameraSettings::MergeFrom(from.planetcamera());
   }
   if (from.ambient() != 0) {
     set_ambient(from.ambient());
@@ -8575,12 +7718,10 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   using std::swap;
   pointlines_.InternalSwap(&other->pointlines_);
   keepoutincones_.InternalSwap(&other->keepoutincones_);
+  standardcamerasettings_.InternalSwap(&other->standardcamerasettings_);
   actuatorsettings_.InternalSwap(&other->actuatorsettings_);
   custommodels_.InternalSwap(&other->custommodels_);
   skybox_.Swap(&other->skybox_);
-  swap(cameraone_, other->cameraone_);
-  swap(cameratwo_, other->cameratwo_);
-  swap(planetcamera_, other->planetcamera_);
   swap(ambient_, other->ambient_);
   swap(orbitlineson_, other->orbitlineson_);
   swap(spacecraftcson_, other->spacecraftcson_);

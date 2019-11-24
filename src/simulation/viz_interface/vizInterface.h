@@ -74,11 +74,13 @@ typedef struct {
 typedef struct {
     std::string spacecraftName; //!< Which spacecraft's camera 1
     bool viewPanel;             //!< Flag indicating if the camera panel is visible on the screen, default is falst
-    int setView;                //!< Specify the view through 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
-    bool spacecraftVisible;     //!< Flag if the spacecraft itself is visible in this camera view. Default is false
+    int setMode;                //!< 0 -> body targeting, 1 -> pointing vector
+    bool spacecraftVisible;     //!< False (default) -> parent spacecraft will not be visible in camera view
     double fieldOfView;         //!< field of view setting, -1 -> use default, values between 0.0001 and 179.9999 valid
-    std::string targetBodyName; //!< for planet centric camera only, name of the planet relative which to point the camera
-}CameraSettings;
+    std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
+    int setView;                //!< Specify the view through 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
+    double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
+}StdCameraSettings;
 
 typedef struct {
     std::string spacecraftName; //!< Which spacecraft's camera 1
@@ -96,6 +98,7 @@ typedef struct {
     double scale[3];                        //!< [] desired model scale in x, y, z in spacecraft CS
     std::string customTexturePath;          //!< (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
     std::string normalMapPath;              //!< (Optional) Path to the normal map for the customTexture
+    int shader;                             //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
 }CustomModel;
 
 typedef struct {
@@ -105,9 +108,7 @@ typedef struct {
     int32_t     planetCSon;     //! toogle for showing planet CS (-1, 0, 1)
     std::vector<PointLine> pointLineList;   //! vector of powerLine structures
     std::vector<KeepOutInCone> coneList;    //! vector of keep in/out cones
-    CameraSettings cameraOne;   //! msg containing camera one settings
-    CameraSettings cameraTwo;   //! msg containing camera one settings
-    CameraSettings cameraPlanet;//! msg containing the planet camera settings
+    std::vector<StdCameraSettings> stdCameraList; //! vector of spacecraft cameras
     std::vector<CustomModel> customModelList;  //! vector of custom object models
     std::vector<ActuatorGuiSettings> actuatorGuiSettingsList; //! msg containing the flags on displaying the actuator GUI elements
     std::string skyBox;         //! string containing the star field options, '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background

@@ -36,7 +36,7 @@ namespace protobuf_vizMessage_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[17];
+  static const ::google::protobuf::internal::ParseTable schema[15];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -62,12 +62,8 @@ void InitDefaultsVizMessage_PointLineImpl();
 void InitDefaultsVizMessage_PointLine();
 void InitDefaultsVizMessage_KeepOutInConeImpl();
 void InitDefaultsVizMessage_KeepOutInCone();
-void InitDefaultsVizMessage_CameraOneSettingsImpl();
-void InitDefaultsVizMessage_CameraOneSettings();
-void InitDefaultsVizMessage_CameraTwoSettingsImpl();
-void InitDefaultsVizMessage_CameraTwoSettings();
-void InitDefaultsVizMessage_PlanetCameraSettingsImpl();
-void InitDefaultsVizMessage_PlanetCameraSettings();
+void InitDefaultsVizMessage_StandardCameraSettingsImpl();
+void InitDefaultsVizMessage_StandardCameraSettings();
 void InitDefaultsVizMessage_ActuatorSettingsImpl();
 void InitDefaultsVizMessage_ActuatorSettings();
 void InitDefaultsVizMessage_CustomModelImpl();
@@ -87,9 +83,7 @@ inline void InitDefaults() {
   InitDefaultsVizMessage_CameraConfig();
   InitDefaultsVizMessage_PointLine();
   InitDefaultsVizMessage_KeepOutInCone();
-  InitDefaultsVizMessage_CameraOneSettings();
-  InitDefaultsVizMessage_CameraTwoSettings();
-  InitDefaultsVizMessage_PlanetCameraSettings();
+  InitDefaultsVizMessage_StandardCameraSettings();
   InitDefaultsVizMessage_ActuatorSettings();
   InitDefaultsVizMessage_CustomModel();
   InitDefaultsVizMessage_VizSettingsPb();
@@ -106,12 +100,6 @@ extern VizMessage_ActuatorSettingsDefaultTypeInternal _VizMessage_ActuatorSettin
 class VizMessage_CameraConfig;
 class VizMessage_CameraConfigDefaultTypeInternal;
 extern VizMessage_CameraConfigDefaultTypeInternal _VizMessage_CameraConfig_default_instance_;
-class VizMessage_CameraOneSettings;
-class VizMessage_CameraOneSettingsDefaultTypeInternal;
-extern VizMessage_CameraOneSettingsDefaultTypeInternal _VizMessage_CameraOneSettings_default_instance_;
-class VizMessage_CameraTwoSettings;
-class VizMessage_CameraTwoSettingsDefaultTypeInternal;
-extern VizMessage_CameraTwoSettingsDefaultTypeInternal _VizMessage_CameraTwoSettings_default_instance_;
 class VizMessage_CelestialBody;
 class VizMessage_CelestialBodyDefaultTypeInternal;
 extern VizMessage_CelestialBodyDefaultTypeInternal _VizMessage_CelestialBody_default_instance_;
@@ -124,9 +112,6 @@ extern VizMessage_CustomModelDefaultTypeInternal _VizMessage_CustomModel_default
 class VizMessage_KeepOutInCone;
 class VizMessage_KeepOutInConeDefaultTypeInternal;
 extern VizMessage_KeepOutInConeDefaultTypeInternal _VizMessage_KeepOutInCone_default_instance_;
-class VizMessage_PlanetCameraSettings;
-class VizMessage_PlanetCameraSettingsDefaultTypeInternal;
-extern VizMessage_PlanetCameraSettingsDefaultTypeInternal _VizMessage_PlanetCameraSettings_default_instance_;
 class VizMessage_PointLine;
 class VizMessage_PointLineDefaultTypeInternal;
 extern VizMessage_PointLineDefaultTypeInternal _VizMessage_PointLine_default_instance_;
@@ -136,6 +121,9 @@ extern VizMessage_ReactionWheelDefaultTypeInternal _VizMessage_ReactionWheel_def
 class VizMessage_Spacecraft;
 class VizMessage_SpacecraftDefaultTypeInternal;
 extern VizMessage_SpacecraftDefaultTypeInternal _VizMessage_Spacecraft_default_instance_;
+class VizMessage_StandardCameraSettings;
+class VizMessage_StandardCameraSettingsDefaultTypeInternal;
+extern VizMessage_StandardCameraSettingsDefaultTypeInternal _VizMessage_StandardCameraSettings_default_instance_;
 class VizMessage_StarTracker;
 class VizMessage_StarTrackerDefaultTypeInternal;
 extern VizMessage_StarTrackerDefaultTypeInternal _VizMessage_StarTracker_default_instance_;
@@ -1701,24 +1689,24 @@ class VizMessage_KeepOutInCone : public ::google::protobuf::Message /* @@protoc_
 };
 // -------------------------------------------------------------------
 
-class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.CameraOneSettings) */ {
+class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.StandardCameraSettings) */ {
  public:
-  VizMessage_CameraOneSettings();
-  virtual ~VizMessage_CameraOneSettings();
+  VizMessage_StandardCameraSettings();
+  virtual ~VizMessage_StandardCameraSettings();
 
-  VizMessage_CameraOneSettings(const VizMessage_CameraOneSettings& from);
+  VizMessage_StandardCameraSettings(const VizMessage_StandardCameraSettings& from);
 
-  inline VizMessage_CameraOneSettings& operator=(const VizMessage_CameraOneSettings& from) {
+  inline VizMessage_StandardCameraSettings& operator=(const VizMessage_StandardCameraSettings& from) {
     CopyFrom(from);
     return *this;
   }
   #if LANG_CXX11
-  VizMessage_CameraOneSettings(VizMessage_CameraOneSettings&& from) noexcept
-    : VizMessage_CameraOneSettings() {
+  VizMessage_StandardCameraSettings(VizMessage_StandardCameraSettings&& from) noexcept
+    : VizMessage_StandardCameraSettings() {
     *this = ::std::move(from);
   }
 
-  inline VizMessage_CameraOneSettings& operator=(VizMessage_CameraOneSettings&& from) noexcept {
+  inline VizMessage_StandardCameraSettings& operator=(VizMessage_StandardCameraSettings&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -1728,30 +1716,30 @@ class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@pro
   }
   #endif
   static const ::google::protobuf::Descriptor* descriptor();
-  static const VizMessage_CameraOneSettings& default_instance();
+  static const VizMessage_StandardCameraSettings& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const VizMessage_CameraOneSettings* internal_default_instance() {
-    return reinterpret_cast<const VizMessage_CameraOneSettings*>(
-               &_VizMessage_CameraOneSettings_default_instance_);
+  static inline const VizMessage_StandardCameraSettings* internal_default_instance() {
+    return reinterpret_cast<const VizMessage_StandardCameraSettings*>(
+               &_VizMessage_StandardCameraSettings_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
     10;
 
-  void Swap(VizMessage_CameraOneSettings* other);
-  friend void swap(VizMessage_CameraOneSettings& a, VizMessage_CameraOneSettings& b) {
+  void Swap(VizMessage_StandardCameraSettings* other);
+  friend void swap(VizMessage_StandardCameraSettings& a, VizMessage_StandardCameraSettings& b) {
     a.Swap(&b);
   }
 
   // implements Message ----------------------------------------------
 
-  inline VizMessage_CameraOneSettings* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline VizMessage_StandardCameraSettings* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  VizMessage_CameraOneSettings* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  VizMessage_StandardCameraSettings* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const VizMessage_CameraOneSettings& from);
-  void MergeFrom(const VizMessage_CameraOneSettings& from);
+  void CopyFrom(const VizMessage_StandardCameraSettings& from);
+  void MergeFrom(const VizMessage_StandardCameraSettings& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -1767,7 +1755,7 @@ class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@pro
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(VizMessage_CameraOneSettings* other);
+  void InternalSwap(VizMessage_StandardCameraSettings* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -1783,6 +1771,18 @@ class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@pro
 
   // accessors -------------------------------------------------------
 
+  // repeated double pointingVector = 8;
+  int pointingvector_size() const;
+  void clear_pointingvector();
+  static const int kPointingVectorFieldNumber = 8;
+  double pointingvector(int index) const;
+  void set_pointingvector(int index, double value);
+  void add_pointingvector(double value);
+  const ::google::protobuf::RepeatedField< double >&
+      pointingvector() const;
+  ::google::protobuf::RepeatedField< double >*
+      mutable_pointingvector();
+
   // string spacecraftName = 1;
   void clear_spacecraftname();
   static const int kSpacecraftNameFieldNumber = 1;
@@ -1797,11 +1797,25 @@ class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@pro
   ::std::string* release_spacecraftname();
   void set_allocated_spacecraftname(::std::string* spacecraftname);
 
-  // int32 setView = 3;
-  void clear_setview();
-  static const int kSetViewFieldNumber = 3;
-  ::google::protobuf::int32 setview() const;
-  void set_setview(::google::protobuf::int32 value);
+  // string bodyTarget = 6;
+  void clear_bodytarget();
+  static const int kBodyTargetFieldNumber = 6;
+  const ::std::string& bodytarget() const;
+  void set_bodytarget(const ::std::string& value);
+  #if LANG_CXX11
+  void set_bodytarget(::std::string&& value);
+  #endif
+  void set_bodytarget(const char* value);
+  void set_bodytarget(const char* value, size_t size);
+  ::std::string* mutable_bodytarget();
+  ::std::string* release_bodytarget();
+  void set_allocated_bodytarget(::std::string* bodytarget);
+
+  // int32 setMode = 3;
+  void clear_setmode();
+  static const int kSetModeFieldNumber = 3;
+  ::google::protobuf::int32 setmode() const;
+  void set_setmode(::google::protobuf::int32 value);
 
   // bool viewPanel = 2;
   void clear_viewpanel();
@@ -1821,303 +1835,28 @@ class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@pro
   double fieldofview() const;
   void set_fieldofview(double value);
 
-  // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.CameraOneSettings)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
-  ::google::protobuf::int32 setview_;
-  bool viewpanel_;
-  bool spacecraftvisible_;
-  double fieldofview_;
-  mutable int _cached_size_;
-  friend struct ::protobuf_vizMessage_2eproto::TableStruct;
-  friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettingsImpl();
-};
-// -------------------------------------------------------------------
-
-class VizMessage_CameraTwoSettings : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.CameraTwoSettings) */ {
- public:
-  VizMessage_CameraTwoSettings();
-  virtual ~VizMessage_CameraTwoSettings();
-
-  VizMessage_CameraTwoSettings(const VizMessage_CameraTwoSettings& from);
-
-  inline VizMessage_CameraTwoSettings& operator=(const VizMessage_CameraTwoSettings& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  VizMessage_CameraTwoSettings(VizMessage_CameraTwoSettings&& from) noexcept
-    : VizMessage_CameraTwoSettings() {
-    *this = ::std::move(from);
-  }
-
-  inline VizMessage_CameraTwoSettings& operator=(VizMessage_CameraTwoSettings&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const VizMessage_CameraTwoSettings& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const VizMessage_CameraTwoSettings* internal_default_instance() {
-    return reinterpret_cast<const VizMessage_CameraTwoSettings*>(
-               &_VizMessage_CameraTwoSettings_default_instance_);
-  }
-  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    11;
-
-  void Swap(VizMessage_CameraTwoSettings* other);
-  friend void swap(VizMessage_CameraTwoSettings& a, VizMessage_CameraTwoSettings& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline VizMessage_CameraTwoSettings* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  VizMessage_CameraTwoSettings* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const VizMessage_CameraTwoSettings& from);
-  void MergeFrom(const VizMessage_CameraTwoSettings& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(VizMessage_CameraTwoSettings* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // string spacecraftName = 1;
-  void clear_spacecraftname();
-  static const int kSpacecraftNameFieldNumber = 1;
-  const ::std::string& spacecraftname() const;
-  void set_spacecraftname(const ::std::string& value);
-  #if LANG_CXX11
-  void set_spacecraftname(::std::string&& value);
-  #endif
-  void set_spacecraftname(const char* value);
-  void set_spacecraftname(const char* value, size_t size);
-  ::std::string* mutable_spacecraftname();
-  ::std::string* release_spacecraftname();
-  void set_allocated_spacecraftname(::std::string* spacecraftname);
-
-  // int32 setView = 3;
+  // int32 setView = 7;
   void clear_setview();
-  static const int kSetViewFieldNumber = 3;
+  static const int kSetViewFieldNumber = 7;
   ::google::protobuf::int32 setview() const;
   void set_setview(::google::protobuf::int32 value);
 
-  // bool viewPanel = 2;
-  void clear_viewpanel();
-  static const int kViewPanelFieldNumber = 2;
-  bool viewpanel() const;
-  void set_viewpanel(bool value);
-
-  // bool spacecraftVisible = 4;
-  void clear_spacecraftvisible();
-  static const int kSpacecraftVisibleFieldNumber = 4;
-  bool spacecraftvisible() const;
-  void set_spacecraftvisible(bool value);
-
-  // double fieldOfView = 5;
-  void clear_fieldofview();
-  static const int kFieldOfViewFieldNumber = 5;
-  double fieldofview() const;
-  void set_fieldofview(double value);
-
-  // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.StandardCameraSettings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedField< double > pointingvector_;
+  mutable int _pointingvector_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
-  ::google::protobuf::int32 setview_;
+  ::google::protobuf::internal::ArenaStringPtr bodytarget_;
+  ::google::protobuf::int32 setmode_;
   bool viewpanel_;
   bool spacecraftvisible_;
   double fieldofview_;
-  mutable int _cached_size_;
-  friend struct ::protobuf_vizMessage_2eproto::TableStruct;
-  friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettingsImpl();
-};
-// -------------------------------------------------------------------
-
-class VizMessage_PlanetCameraSettings : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.PlanetCameraSettings) */ {
- public:
-  VizMessage_PlanetCameraSettings();
-  virtual ~VizMessage_PlanetCameraSettings();
-
-  VizMessage_PlanetCameraSettings(const VizMessage_PlanetCameraSettings& from);
-
-  inline VizMessage_PlanetCameraSettings& operator=(const VizMessage_PlanetCameraSettings& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  VizMessage_PlanetCameraSettings(VizMessage_PlanetCameraSettings&& from) noexcept
-    : VizMessage_PlanetCameraSettings() {
-    *this = ::std::move(from);
-  }
-
-  inline VizMessage_PlanetCameraSettings& operator=(VizMessage_PlanetCameraSettings&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const VizMessage_PlanetCameraSettings& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const VizMessage_PlanetCameraSettings* internal_default_instance() {
-    return reinterpret_cast<const VizMessage_PlanetCameraSettings*>(
-               &_VizMessage_PlanetCameraSettings_default_instance_);
-  }
-  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    12;
-
-  void Swap(VizMessage_PlanetCameraSettings* other);
-  friend void swap(VizMessage_PlanetCameraSettings& a, VizMessage_PlanetCameraSettings& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline VizMessage_PlanetCameraSettings* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  VizMessage_PlanetCameraSettings* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const VizMessage_PlanetCameraSettings& from);
-  void MergeFrom(const VizMessage_PlanetCameraSettings& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(VizMessage_PlanetCameraSettings* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // string spacecraftName = 1;
-  void clear_spacecraftname();
-  static const int kSpacecraftNameFieldNumber = 1;
-  const ::std::string& spacecraftname() const;
-  void set_spacecraftname(const ::std::string& value);
-  #if LANG_CXX11
-  void set_spacecraftname(::std::string&& value);
-  #endif
-  void set_spacecraftname(const char* value);
-  void set_spacecraftname(const char* value, size_t size);
-  ::std::string* mutable_spacecraftname();
-  ::std::string* release_spacecraftname();
-  void set_allocated_spacecraftname(::std::string* spacecraftname);
-
-  // string targetBodyName = 6;
-  void clear_targetbodyname();
-  static const int kTargetBodyNameFieldNumber = 6;
-  const ::std::string& targetbodyname() const;
-  void set_targetbodyname(const ::std::string& value);
-  #if LANG_CXX11
-  void set_targetbodyname(::std::string&& value);
-  #endif
-  void set_targetbodyname(const char* value);
-  void set_targetbodyname(const char* value, size_t size);
-  ::std::string* mutable_targetbodyname();
-  ::std::string* release_targetbodyname();
-  void set_allocated_targetbodyname(::std::string* targetbodyname);
-
-  // int32 setView = 3;
-  void clear_setview();
-  static const int kSetViewFieldNumber = 3;
-  ::google::protobuf::int32 setview() const;
-  void set_setview(::google::protobuf::int32 value);
-
-  // bool viewPanel = 2;
-  void clear_viewpanel();
-  static const int kViewPanelFieldNumber = 2;
-  bool viewpanel() const;
-  void set_viewpanel(bool value);
-
-  // bool spacecraftVisible = 4;
-  void clear_spacecraftvisible();
-  static const int kSpacecraftVisibleFieldNumber = 4;
-  bool spacecraftvisible() const;
-  void set_spacecraftvisible(bool value);
-
-  // double fieldOfView = 5;
-  void clear_fieldofview();
-  static const int kFieldOfViewFieldNumber = 5;
-  double fieldofview() const;
-  void set_fieldofview(double value);
-
-  // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
-  ::google::protobuf::internal::ArenaStringPtr targetbodyname_;
   ::google::protobuf::int32 setview_;
-  bool viewpanel_;
-  bool spacecraftvisible_;
-  double fieldofview_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
-  friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettingsImpl();
+  friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_StandardCameraSettingsImpl();
 };
 // -------------------------------------------------------------------
 
@@ -2156,7 +1895,7 @@ class VizMessage_ActuatorSettings : public ::google::protobuf::Message /* @@prot
                &_VizMessage_ActuatorSettings_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    13;
+    11;
 
   void Swap(VizMessage_ActuatorSettings* other);
   friend void swap(VizMessage_ActuatorSettings& a, VizMessage_ActuatorSettings& b) {
@@ -2291,7 +2030,7 @@ class VizMessage_CustomModel : public ::google::protobuf::Message /* @@protoc_in
                &_VizMessage_CustomModel_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    14;
+    12;
 
   void Swap(VizMessage_CustomModel* other);
   friend void swap(VizMessage_CustomModel& a, VizMessage_CustomModel& b) {
@@ -2438,6 +2177,12 @@ class VizMessage_CustomModel : public ::google::protobuf::Message /* @@protoc_in
   ::std::string* release_normalmappath();
   void set_allocated_normalmappath(::std::string* normalmappath);
 
+  // int32 shader = 8;
+  void clear_shader();
+  static const int kShaderFieldNumber = 8;
+  ::google::protobuf::int32 shader() const;
+  void set_shader(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.CustomModel)
  private:
 
@@ -2452,6 +2197,7 @@ class VizMessage_CustomModel : public ::google::protobuf::Message /* @@protoc_in
   ::google::protobuf::internal::ArenaStringPtr modelpath_;
   ::google::protobuf::internal::ArenaStringPtr customtexturepath_;
   ::google::protobuf::internal::ArenaStringPtr normalmappath_;
+  ::google::protobuf::int32 shader_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CustomModelImpl();
@@ -2493,7 +2239,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
                &_VizMessage_VizSettingsPb_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    15;
+    13;
 
   void Swap(VizMessage_VizSettingsPb* other);
   friend void swap(VizMessage_VizSettingsPb& a, VizMessage_VizSettingsPb& b) {
@@ -2564,6 +2310,18 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_KeepOutInCone >&
       keepoutincones() const;
 
+  // repeated .vizProtobufferMessage.VizMessage.StandardCameraSettings standardCameraSettings = 7;
+  int standardcamerasettings_size() const;
+  void clear_standardcamerasettings();
+  static const int kStandardCameraSettingsFieldNumber = 7;
+  const ::vizProtobufferMessage::VizMessage_StandardCameraSettings& standardcamerasettings(int index) const;
+  ::vizProtobufferMessage::VizMessage_StandardCameraSettings* mutable_standardcamerasettings(int index);
+  ::vizProtobufferMessage::VizMessage_StandardCameraSettings* add_standardcamerasettings();
+  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_StandardCameraSettings >*
+      mutable_standardcamerasettings();
+  const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_StandardCameraSettings >&
+      standardcamerasettings() const;
+
   // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
   int actuatorsettings_size() const;
   void clear_actuatorsettings();
@@ -2602,33 +2360,6 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_skybox();
   void set_allocated_skybox(::std::string* skybox);
 
-  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  bool has_cameraone() const;
-  void clear_cameraone();
-  static const int kCameraOneFieldNumber = 7;
-  const ::vizProtobufferMessage::VizMessage_CameraOneSettings& cameraone() const;
-  ::vizProtobufferMessage::VizMessage_CameraOneSettings* release_cameraone();
-  ::vizProtobufferMessage::VizMessage_CameraOneSettings* mutable_cameraone();
-  void set_allocated_cameraone(::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone);
-
-  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  bool has_cameratwo() const;
-  void clear_cameratwo();
-  static const int kCameraTwoFieldNumber = 8;
-  const ::vizProtobufferMessage::VizMessage_CameraTwoSettings& cameratwo() const;
-  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* release_cameratwo();
-  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* mutable_cameratwo();
-  void set_allocated_cameratwo(::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo);
-
-  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  bool has_planetcamera() const;
-  void clear_planetcamera();
-  static const int kPlanetCameraFieldNumber = 9;
-  const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings& planetcamera() const;
-  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* release_planetcamera();
-  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* mutable_planetcamera();
-  void set_allocated_planetcamera(::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera);
-
   // double ambient = 1;
   void clear_ambient();
   static const int kAmbientFieldNumber = 1;
@@ -2659,12 +2390,10 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PointLine > pointlines_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_KeepOutInCone > keepoutincones_;
+  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_StandardCameraSettings > standardcamerasettings_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings > actuatorsettings_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel > custommodels_;
   ::google::protobuf::internal::ArenaStringPtr skybox_;
-  ::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone_;
-  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo_;
-  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera_;
   double ambient_;
   ::google::protobuf::int32 orbitlineson_;
   ::google::protobuf::int32 spacecraftcson_;
@@ -2710,7 +2439,7 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
                &_VizMessage_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    16;
+    14;
 
   void Swap(VizMessage* other);
   friend void swap(VizMessage& a, VizMessage& b) {
@@ -2765,9 +2494,7 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
   typedef VizMessage_CameraConfig CameraConfig;
   typedef VizMessage_PointLine PointLine;
   typedef VizMessage_KeepOutInCone KeepOutInCone;
-  typedef VizMessage_CameraOneSettings CameraOneSettings;
-  typedef VizMessage_CameraTwoSettings CameraTwoSettings;
-  typedef VizMessage_PlanetCameraSettings PlanetCameraSettings;
+  typedef VizMessage_StandardCameraSettings StandardCameraSettings;
   typedef VizMessage_ActuatorSettings ActuatorSettings;
   typedef VizMessage_CustomModel CustomModel;
   typedef VizMessage_VizSettingsPb VizSettingsPb;
@@ -4413,394 +4140,212 @@ inline void VizMessage_KeepOutInCone::set_allocated_conename(::std::string* cone
 
 // -------------------------------------------------------------------
 
-// VizMessage_CameraOneSettings
+// VizMessage_StandardCameraSettings
 
 // string spacecraftName = 1;
-inline void VizMessage_CameraOneSettings::clear_spacecraftname() {
+inline void VizMessage_StandardCameraSettings::clear_spacecraftname() {
   spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& VizMessage_CameraOneSettings::spacecraftname() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+inline const ::std::string& VizMessage_StandardCameraSettings::spacecraftname() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
   return spacecraftname_.GetNoArena();
 }
-inline void VizMessage_CameraOneSettings::set_spacecraftname(const ::std::string& value) {
+inline void VizMessage_StandardCameraSettings::set_spacecraftname(const ::std::string& value) {
   
   spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
 }
 #if LANG_CXX11
-inline void VizMessage_CameraOneSettings::set_spacecraftname(::std::string&& value) {
+inline void VizMessage_StandardCameraSettings::set_spacecraftname(::std::string&& value) {
   
   spacecraftname_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
 }
 #endif
-inline void VizMessage_CameraOneSettings::set_spacecraftname(const char* value) {
+inline void VizMessage_StandardCameraSettings::set_spacecraftname(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
   spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
 }
-inline void VizMessage_CameraOneSettings::set_spacecraftname(const char* value, size_t size) {
+inline void VizMessage_StandardCameraSettings::set_spacecraftname(const char* value, size_t size) {
   
   spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
 }
-inline ::std::string* VizMessage_CameraOneSettings::mutable_spacecraftname() {
+inline ::std::string* VizMessage_StandardCameraSettings::mutable_spacecraftname() {
   
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
   return spacecraftname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* VizMessage_CameraOneSettings::release_spacecraftname() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+inline ::std::string* VizMessage_StandardCameraSettings::release_spacecraftname() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
   
   return spacecraftname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void VizMessage_CameraOneSettings::set_allocated_spacecraftname(::std::string* spacecraftname) {
+inline void VizMessage_StandardCameraSettings::set_allocated_spacecraftname(::std::string* spacecraftname) {
   if (spacecraftname != NULL) {
     
   } else {
     
   }
   spacecraftname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), spacecraftname);
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName)
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
 }
 
 // bool viewPanel = 2;
-inline void VizMessage_CameraOneSettings::clear_viewpanel() {
+inline void VizMessage_StandardCameraSettings::clear_viewpanel() {
   viewpanel_ = false;
 }
-inline bool VizMessage_CameraOneSettings::viewpanel() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraOneSettings.viewPanel)
+inline bool VizMessage_StandardCameraSettings::viewpanel() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.viewPanel)
   return viewpanel_;
 }
-inline void VizMessage_CameraOneSettings::set_viewpanel(bool value) {
+inline void VizMessage_StandardCameraSettings::set_viewpanel(bool value) {
   
   viewpanel_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraOneSettings.viewPanel)
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.viewPanel)
 }
 
-// int32 setView = 3;
-inline void VizMessage_CameraOneSettings::clear_setview() {
-  setview_ = 0;
+// int32 setMode = 3;
+inline void VizMessage_StandardCameraSettings::clear_setmode() {
+  setmode_ = 0;
 }
-inline ::google::protobuf::int32 VizMessage_CameraOneSettings::setview() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraOneSettings.setView)
-  return setview_;
+inline ::google::protobuf::int32 VizMessage_StandardCameraSettings::setmode() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.setMode)
+  return setmode_;
 }
-inline void VizMessage_CameraOneSettings::set_setview(::google::protobuf::int32 value) {
+inline void VizMessage_StandardCameraSettings::set_setmode(::google::protobuf::int32 value) {
   
-  setview_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraOneSettings.setView)
+  setmode_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.setMode)
 }
 
 // bool spacecraftVisible = 4;
-inline void VizMessage_CameraOneSettings::clear_spacecraftvisible() {
+inline void VizMessage_StandardCameraSettings::clear_spacecraftvisible() {
   spacecraftvisible_ = false;
 }
-inline bool VizMessage_CameraOneSettings::spacecraftvisible() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftVisible)
+inline bool VizMessage_StandardCameraSettings::spacecraftvisible() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftVisible)
   return spacecraftvisible_;
 }
-inline void VizMessage_CameraOneSettings::set_spacecraftvisible(bool value) {
+inline void VizMessage_StandardCameraSettings::set_spacecraftvisible(bool value) {
   
   spacecraftvisible_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftVisible)
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftVisible)
 }
 
 // double fieldOfView = 5;
-inline void VizMessage_CameraOneSettings::clear_fieldofview() {
+inline void VizMessage_StandardCameraSettings::clear_fieldofview() {
   fieldofview_ = 0;
 }
-inline double VizMessage_CameraOneSettings::fieldofview() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraOneSettings.fieldOfView)
+inline double VizMessage_StandardCameraSettings::fieldofview() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.fieldOfView)
   return fieldofview_;
 }
-inline void VizMessage_CameraOneSettings::set_fieldofview(double value) {
+inline void VizMessage_StandardCameraSettings::set_fieldofview(double value) {
   
   fieldofview_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraOneSettings.fieldOfView)
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.fieldOfView)
 }
 
-// -------------------------------------------------------------------
-
-// VizMessage_CameraTwoSettings
-
-// string spacecraftName = 1;
-inline void VizMessage_CameraTwoSettings::clear_spacecraftname() {
-  spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string bodyTarget = 6;
+inline void VizMessage_StandardCameraSettings::clear_bodytarget() {
+  bodytarget_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& VizMessage_CameraTwoSettings::spacecraftname() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
-  return spacecraftname_.GetNoArena();
+inline const ::std::string& VizMessage_StandardCameraSettings::bodytarget() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
+  return bodytarget_.GetNoArena();
 }
-inline void VizMessage_CameraTwoSettings::set_spacecraftname(const ::std::string& value) {
+inline void VizMessage_StandardCameraSettings::set_bodytarget(const ::std::string& value) {
   
-  spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
+  bodytarget_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
 }
 #if LANG_CXX11
-inline void VizMessage_CameraTwoSettings::set_spacecraftname(::std::string&& value) {
+inline void VizMessage_StandardCameraSettings::set_bodytarget(::std::string&& value) {
   
-  spacecraftname_.SetNoArena(
+  bodytarget_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
 }
 #endif
-inline void VizMessage_CameraTwoSettings::set_spacecraftname(const char* value) {
+inline void VizMessage_StandardCameraSettings::set_bodytarget(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
-  spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
+  bodytarget_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
 }
-inline void VizMessage_CameraTwoSettings::set_spacecraftname(const char* value, size_t size) {
+inline void VizMessage_StandardCameraSettings::set_bodytarget(const char* value, size_t size) {
   
-  spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  bodytarget_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
 }
-inline ::std::string* VizMessage_CameraTwoSettings::mutable_spacecraftname() {
+inline ::std::string* VizMessage_StandardCameraSettings::mutable_bodytarget() {
   
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
-  return spacecraftname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
+  return bodytarget_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* VizMessage_CameraTwoSettings::release_spacecraftname() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
+inline ::std::string* VizMessage_StandardCameraSettings::release_bodytarget() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
   
-  return spacecraftname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return bodytarget_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void VizMessage_CameraTwoSettings::set_allocated_spacecraftname(::std::string* spacecraftname) {
-  if (spacecraftname != NULL) {
+inline void VizMessage_StandardCameraSettings::set_allocated_bodytarget(::std::string* bodytarget) {
+  if (bodytarget != NULL) {
     
   } else {
     
   }
-  spacecraftname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), spacecraftname);
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName)
+  bodytarget_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), bodytarget);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.StandardCameraSettings.bodyTarget)
 }
 
-// bool viewPanel = 2;
-inline void VizMessage_CameraTwoSettings::clear_viewpanel() {
-  viewpanel_ = false;
-}
-inline bool VizMessage_CameraTwoSettings::viewpanel() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraTwoSettings.viewPanel)
-  return viewpanel_;
-}
-inline void VizMessage_CameraTwoSettings::set_viewpanel(bool value) {
-  
-  viewpanel_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraTwoSettings.viewPanel)
-}
-
-// int32 setView = 3;
-inline void VizMessage_CameraTwoSettings::clear_setview() {
+// int32 setView = 7;
+inline void VizMessage_StandardCameraSettings::clear_setview() {
   setview_ = 0;
 }
-inline ::google::protobuf::int32 VizMessage_CameraTwoSettings::setview() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraTwoSettings.setView)
+inline ::google::protobuf::int32 VizMessage_StandardCameraSettings::setview() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.setView)
   return setview_;
 }
-inline void VizMessage_CameraTwoSettings::set_setview(::google::protobuf::int32 value) {
+inline void VizMessage_StandardCameraSettings::set_setview(::google::protobuf::int32 value) {
   
   setview_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraTwoSettings.setView)
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.setView)
 }
 
-// bool spacecraftVisible = 4;
-inline void VizMessage_CameraTwoSettings::clear_spacecraftvisible() {
-  spacecraftvisible_ = false;
+// repeated double pointingVector = 8;
+inline int VizMessage_StandardCameraSettings::pointingvector_size() const {
+  return pointingvector_.size();
 }
-inline bool VizMessage_CameraTwoSettings::spacecraftvisible() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftVisible)
-  return spacecraftvisible_;
+inline void VizMessage_StandardCameraSettings::clear_pointingvector() {
+  pointingvector_.Clear();
 }
-inline void VizMessage_CameraTwoSettings::set_spacecraftvisible(bool value) {
-  
-  spacecraftvisible_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftVisible)
+inline double VizMessage_StandardCameraSettings::pointingvector(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.pointingVector)
+  return pointingvector_.Get(index);
 }
-
-// double fieldOfView = 5;
-inline void VizMessage_CameraTwoSettings::clear_fieldofview() {
-  fieldofview_ = 0;
+inline void VizMessage_StandardCameraSettings::set_pointingvector(int index, double value) {
+  pointingvector_.Set(index, value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.pointingVector)
 }
-inline double VizMessage_CameraTwoSettings::fieldofview() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraTwoSettings.fieldOfView)
-  return fieldofview_;
+inline void VizMessage_StandardCameraSettings::add_pointingvector(double value) {
+  pointingvector_.Add(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.StandardCameraSettings.pointingVector)
 }
-inline void VizMessage_CameraTwoSettings::set_fieldofview(double value) {
-  
-  fieldofview_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraTwoSettings.fieldOfView)
+inline const ::google::protobuf::RepeatedField< double >&
+VizMessage_StandardCameraSettings::pointingvector() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.StandardCameraSettings.pointingVector)
+  return pointingvector_;
 }
-
-// -------------------------------------------------------------------
-
-// VizMessage_PlanetCameraSettings
-
-// string spacecraftName = 1;
-inline void VizMessage_PlanetCameraSettings::clear_spacecraftname() {
-  spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& VizMessage_PlanetCameraSettings::spacecraftname() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-  return spacecraftname_.GetNoArena();
-}
-inline void VizMessage_PlanetCameraSettings::set_spacecraftname(const ::std::string& value) {
-  
-  spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-}
-#if LANG_CXX11
-inline void VizMessage_PlanetCameraSettings::set_spacecraftname(::std::string&& value) {
-  
-  spacecraftname_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-}
-#endif
-inline void VizMessage_PlanetCameraSettings::set_spacecraftname(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  
-  spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-}
-inline void VizMessage_PlanetCameraSettings::set_spacecraftname(const char* value, size_t size) {
-  
-  spacecraftname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-}
-inline ::std::string* VizMessage_PlanetCameraSettings::mutable_spacecraftname() {
-  
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-  return spacecraftname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* VizMessage_PlanetCameraSettings::release_spacecraftname() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-  
-  return spacecraftname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void VizMessage_PlanetCameraSettings::set_allocated_spacecraftname(::std::string* spacecraftname) {
-  if (spacecraftname != NULL) {
-    
-  } else {
-    
-  }
-  spacecraftname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), spacecraftname);
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName)
-}
-
-// bool viewPanel = 2;
-inline void VizMessage_PlanetCameraSettings::clear_viewpanel() {
-  viewpanel_ = false;
-}
-inline bool VizMessage_PlanetCameraSettings::viewpanel() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PlanetCameraSettings.viewPanel)
-  return viewpanel_;
-}
-inline void VizMessage_PlanetCameraSettings::set_viewpanel(bool value) {
-  
-  viewpanel_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.viewPanel)
-}
-
-// int32 setView = 3;
-inline void VizMessage_PlanetCameraSettings::clear_setview() {
-  setview_ = 0;
-}
-inline ::google::protobuf::int32 VizMessage_PlanetCameraSettings::setview() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PlanetCameraSettings.setView)
-  return setview_;
-}
-inline void VizMessage_PlanetCameraSettings::set_setview(::google::protobuf::int32 value) {
-  
-  setview_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.setView)
-}
-
-// bool spacecraftVisible = 4;
-inline void VizMessage_PlanetCameraSettings::clear_spacecraftvisible() {
-  spacecraftvisible_ = false;
-}
-inline bool VizMessage_PlanetCameraSettings::spacecraftvisible() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftVisible)
-  return spacecraftvisible_;
-}
-inline void VizMessage_PlanetCameraSettings::set_spacecraftvisible(bool value) {
-  
-  spacecraftvisible_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftVisible)
-}
-
-// double fieldOfView = 5;
-inline void VizMessage_PlanetCameraSettings::clear_fieldofview() {
-  fieldofview_ = 0;
-}
-inline double VizMessage_PlanetCameraSettings::fieldofview() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PlanetCameraSettings.fieldOfView)
-  return fieldofview_;
-}
-inline void VizMessage_PlanetCameraSettings::set_fieldofview(double value) {
-  
-  fieldofview_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.fieldOfView)
-}
-
-// string targetBodyName = 6;
-inline void VizMessage_PlanetCameraSettings::clear_targetbodyname() {
-  targetbodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& VizMessage_PlanetCameraSettings::targetbodyname() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
-  return targetbodyname_.GetNoArena();
-}
-inline void VizMessage_PlanetCameraSettings::set_targetbodyname(const ::std::string& value) {
-  
-  targetbodyname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
-}
-#if LANG_CXX11
-inline void VizMessage_PlanetCameraSettings::set_targetbodyname(::std::string&& value) {
-  
-  targetbodyname_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
-}
-#endif
-inline void VizMessage_PlanetCameraSettings::set_targetbodyname(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  
-  targetbodyname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
-}
-inline void VizMessage_PlanetCameraSettings::set_targetbodyname(const char* value, size_t size) {
-  
-  targetbodyname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
-}
-inline ::std::string* VizMessage_PlanetCameraSettings::mutable_targetbodyname() {
-  
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
-  return targetbodyname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* VizMessage_PlanetCameraSettings::release_targetbodyname() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
-  
-  return targetbodyname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void VizMessage_PlanetCameraSettings::set_allocated_targetbodyname(::std::string* targetbodyname) {
-  if (targetbodyname != NULL) {
-    
-  } else {
-    
-  }
-  targetbodyname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), targetbodyname);
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName)
+inline ::google::protobuf::RepeatedField< double >*
+VizMessage_StandardCameraSettings::mutable_pointingvector() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.StandardCameraSettings.pointingVector)
+  return &pointingvector_;
 }
 
 // -------------------------------------------------------------------
@@ -5238,6 +4783,20 @@ inline void VizMessage_CustomModel::set_allocated_normalmappath(::std::string* n
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CustomModel.normalMapPath)
 }
 
+// int32 shader = 8;
+inline void VizMessage_CustomModel::clear_shader() {
+  shader_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_CustomModel::shader() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CustomModel.shader)
+  return shader_;
+}
+inline void VizMessage_CustomModel::set_shader(::google::protobuf::int32 value) {
+  
+  shader_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CustomModel.shader)
+}
+
 // -------------------------------------------------------------------
 
 // VizMessage_VizSettingsPb
@@ -5358,154 +4917,34 @@ VizMessage_VizSettingsPb::keepoutincones() const {
   return keepoutincones_;
 }
 
-// .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-inline bool VizMessage_VizSettingsPb::has_cameraone() const {
-  return this != internal_default_instance() && cameraone_ != NULL;
+// repeated .vizProtobufferMessage.VizMessage.StandardCameraSettings standardCameraSettings = 7;
+inline int VizMessage_VizSettingsPb::standardcamerasettings_size() const {
+  return standardcamerasettings_.size();
 }
-inline void VizMessage_VizSettingsPb::clear_cameraone() {
-  if (GetArenaNoVirtual() == NULL && cameraone_ != NULL) {
-    delete cameraone_;
-  }
-  cameraone_ = NULL;
+inline void VizMessage_VizSettingsPb::clear_standardcamerasettings() {
+  standardcamerasettings_.Clear();
 }
-inline const ::vizProtobufferMessage::VizMessage_CameraOneSettings& VizMessage_VizSettingsPb::cameraone() const {
-  const ::vizProtobufferMessage::VizMessage_CameraOneSettings* p = cameraone_;
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
-  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_CameraOneSettings*>(
-      &::vizProtobufferMessage::_VizMessage_CameraOneSettings_default_instance_);
+inline const ::vizProtobufferMessage::VizMessage_StandardCameraSettings& VizMessage_VizSettingsPb::standardcamerasettings(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.standardCameraSettings)
+  return standardcamerasettings_.Get(index);
 }
-inline ::vizProtobufferMessage::VizMessage_CameraOneSettings* VizMessage_VizSettingsPb::release_cameraone() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
-  
-  ::vizProtobufferMessage::VizMessage_CameraOneSettings* temp = cameraone_;
-  cameraone_ = NULL;
-  return temp;
+inline ::vizProtobufferMessage::VizMessage_StandardCameraSettings* VizMessage_VizSettingsPb::mutable_standardcamerasettings(int index) {
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.standardCameraSettings)
+  return standardcamerasettings_.Mutable(index);
 }
-inline ::vizProtobufferMessage::VizMessage_CameraOneSettings* VizMessage_VizSettingsPb::mutable_cameraone() {
-  
-  if (cameraone_ == NULL) {
-    cameraone_ = new ::vizProtobufferMessage::VizMessage_CameraOneSettings;
-  }
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
-  return cameraone_;
+inline ::vizProtobufferMessage::VizMessage_StandardCameraSettings* VizMessage_VizSettingsPb::add_standardcamerasettings() {
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.VizSettingsPb.standardCameraSettings)
+  return standardcamerasettings_.Add();
 }
-inline void VizMessage_VizSettingsPb::set_allocated_cameraone(::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone) {
-  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == NULL) {
-    delete cameraone_;
-  }
-  if (cameraone) {
-    ::google::protobuf::Arena* submessage_arena = NULL;
-    if (message_arena != submessage_arena) {
-      cameraone = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, cameraone, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  cameraone_ = cameraone;
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
+inline ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_StandardCameraSettings >*
+VizMessage_VizSettingsPb::mutable_standardcamerasettings() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.standardCameraSettings)
+  return &standardcamerasettings_;
 }
-
-// .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-inline bool VizMessage_VizSettingsPb::has_cameratwo() const {
-  return this != internal_default_instance() && cameratwo_ != NULL;
-}
-inline void VizMessage_VizSettingsPb::clear_cameratwo() {
-  if (GetArenaNoVirtual() == NULL && cameratwo_ != NULL) {
-    delete cameratwo_;
-  }
-  cameratwo_ = NULL;
-}
-inline const ::vizProtobufferMessage::VizMessage_CameraTwoSettings& VizMessage_VizSettingsPb::cameratwo() const {
-  const ::vizProtobufferMessage::VizMessage_CameraTwoSettings* p = cameratwo_;
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_CameraTwoSettings*>(
-      &::vizProtobufferMessage::_VizMessage_CameraTwoSettings_default_instance_);
-}
-inline ::vizProtobufferMessage::VizMessage_CameraTwoSettings* VizMessage_VizSettingsPb::release_cameratwo() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-  
-  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* temp = cameratwo_;
-  cameratwo_ = NULL;
-  return temp;
-}
-inline ::vizProtobufferMessage::VizMessage_CameraTwoSettings* VizMessage_VizSettingsPb::mutable_cameratwo() {
-  
-  if (cameratwo_ == NULL) {
-    cameratwo_ = new ::vizProtobufferMessage::VizMessage_CameraTwoSettings;
-  }
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-  return cameratwo_;
-}
-inline void VizMessage_VizSettingsPb::set_allocated_cameratwo(::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo) {
-  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == NULL) {
-    delete cameratwo_;
-  }
-  if (cameratwo) {
-    ::google::protobuf::Arena* submessage_arena = NULL;
-    if (message_arena != submessage_arena) {
-      cameratwo = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, cameratwo, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  cameratwo_ = cameratwo;
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-}
-
-// .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-inline bool VizMessage_VizSettingsPb::has_planetcamera() const {
-  return this != internal_default_instance() && planetcamera_ != NULL;
-}
-inline void VizMessage_VizSettingsPb::clear_planetcamera() {
-  if (GetArenaNoVirtual() == NULL && planetcamera_ != NULL) {
-    delete planetcamera_;
-  }
-  planetcamera_ = NULL;
-}
-inline const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings& VizMessage_VizSettingsPb::planetcamera() const {
-  const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* p = planetcamera_;
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
-  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings*>(
-      &::vizProtobufferMessage::_VizMessage_PlanetCameraSettings_default_instance_);
-}
-inline ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* VizMessage_VizSettingsPb::release_planetcamera() {
-  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
-  
-  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* temp = planetcamera_;
-  planetcamera_ = NULL;
-  return temp;
-}
-inline ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* VizMessage_VizSettingsPb::mutable_planetcamera() {
-  
-  if (planetcamera_ == NULL) {
-    planetcamera_ = new ::vizProtobufferMessage::VizMessage_PlanetCameraSettings;
-  }
-  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
-  return planetcamera_;
-}
-inline void VizMessage_VizSettingsPb::set_allocated_planetcamera(::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera) {
-  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == NULL) {
-    delete planetcamera_;
-  }
-  if (planetcamera) {
-    ::google::protobuf::Arena* submessage_arena = NULL;
-    if (message_arena != submessage_arena) {
-      planetcamera = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, planetcamera, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  planetcamera_ = planetcamera;
-  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
+inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_StandardCameraSettings >&
+VizMessage_VizSettingsPb::standardcamerasettings() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.standardCameraSettings)
+  return standardcamerasettings_;
 }
 
 // repeated .vizProtobufferMessage.VizMessage.ActuatorSettings actuatorSettings = 10;
@@ -5818,10 +5257,6 @@ inline void VizMessage::set_allocated_settings(::vizProtobufferMessage::VizMessa
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
