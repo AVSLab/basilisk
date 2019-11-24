@@ -235,144 +235,97 @@ arguments for the ``createConeInOut`` method:
 Defining the Vizard Camera View Panels
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Vizard can create two spacecraft relative camera panels (camera One and
-Two) and one planet-pointing camera panel. This functionality can be
-controlled by using the ‘createCameraViewPanel’ helper method.
+Vizard can create a spacecraft relative camera panel. This functionality can be
+controlled by using the ``createStandardCamera`` helper method.  The camera can
+point in a body-fixed direction (``setMode=1``), or be aimed at a celestial target
+(``setMode=0``).  Multiple camera panels can be setup at the same time, and
+they can be attached to different spacecraft through the ``spacecraftName`` argument.
 
-.. code-block::
+.. code-block:: python
 
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
 	gravBodies=gravFactory, saveFile=fileName)
-	vizSupport.createCameraViewPanel(viz, “One”, viewPanel=True, setView=0)
-	vizSupport.createCameraViewPanel(viz, “Two”, viewPanel=True, setView=3,
-	spacecraftVisible=True, fieldOfView=50.\ macros.D2R)
-	vizSupport.createCameraViewPanel(viz, “Planet”, viewPanel=True,
-	setView=2, spacecraftVisible=True, fieldOfView=50.\ macros.D2R,
-	targetBodyName=‘earth’) 
+	vizSupport.createStandardCamera(viz, setMode=0, bodyTarget='earth', setView=0)
+	vizSupport.createStandardCamera(viz, setMode=1, fieldOfView=60.*macros.D2R, pointingVector_B=[0.0, -1.0, 0.0])
+
 
 The following table illustrates
-the arguments for the ``createCameraViewPanel`` method if invoking the
-spacecraft relative camera headings for cameras ``One`` and ``Two``.
+the arguments for the ``createStandardCamera`` method.
 
-.. table:: Camera View Panel Parameter Options
+.. table:: Standard Camera View Panel Parameter Options
     :widths: 15 10 10 15 50
 
-    +-------------------+---------+---------+--------------+-------------+
-    | Variable          | Type    | Units   | Required     | Description |
-    +===================+=========+=========+==============+=============+
-    | spacecraftName    | string  |         | No, sc name  | name of the |
-    |                   |         |         | default      | spacecraft  |
-    |                   |         |         |              | with        |
-    |                   |         |         |              | respect to  |
-    |                   |         |         |              | which the   |
-    |                   |         |         |              | camera is   |
-    |                   |         |         |              | shown       |
-    +-------------------+---------+---------+--------------+-------------+
-    | viewPanel         | bool    |         | No, default  | flag        |
-    |                   |         |         | is false     | indicating  |
-    |                   |         |         |              | if a panel  |
-    |                   |         |         |              | should be   |
-    |                   |         |         |              | shown       |
-    |                   |         |         |              | (true) or   |
-    |                   |         |         |              | not (false) |
-    +-------------------+---------+---------+--------------+-------------+
-    | setView           | int     |         | Yes          | index       |
-    |                   |         |         |              | specifying  |
-    |                   |         |         |              | along which |
-    |                   |         |         |              | axis the    |
-    |                   |         |         |              | camera is   |
-    |                   |         |         |              | pointing (0 |
-    |                   |         |         |              | -> +X, 1 -> |
-    |                   |         |         |              | -X, 2 ->    |
-    |                   |         |         |              | +Y, 3 ->    |
-    |                   |         |         |              | -Y, 4 ->    |
-    |                   |         |         |              | +Z, 5 ->    |
-    |                   |         |         |              | -Z)         |
-    +-------------------+---------+---------+--------------+-------------+
-    | spacecraftVisible | bool    |         | No, default  | flag        |
-    |                   |         |         | is false     | indicating  |
-    |                   |         |         |              | if the      |
-    |                   |         |         |              | spacecraft  |
-    |                   |         |         |              | should be   |
-    |                   |         |         |              | shown in    |
-    |                   |         |         |              | the camera  |
-    |                   |         |         |              | view        |
-    +-------------------+---------+---------+--------------+-------------+
-    | fieldOfView       | float   | rad     | No, default  | camera      |
-    |                   |         |         | -1           | field of    |
-    |                   |         |         |              | view, to    |
-    |                   |         |         |              | use the     |
-    |                   |         |         |              | Vizard      |
-    |                   |         |         |              | default set |
-    |                   |         |         |              | it to -1    |
-    +-------------------+---------+---------+--------------+-------------+
+    +-------------------+---------+---------+--------------+------------------+
+    | Variable          | Type    | Units   | Required     | Description      |
+    +===================+=========+=========+==============+==================+
+    | spacecraftName    | string  |         | No, sc name  | name of the      |
+    |                   |         |         | default      | spacecraft       |
+    |                   |         |         |              | with             |
+    |                   |         |         |              | respect to       |
+    |                   |         |         |              | which the        |
+    |                   |         |         |              | camera is        |
+    |                   |         |         |              | shown            |
+    +-------------------+---------+---------+--------------+------------------+
+    | viewPanel         | bool    |         | No, default  | flag             |
+    |                   |         |         | is true      | indicating       |
+    |                   |         |         |              | if a panel       |
+    |                   |         |         |              | should be        |
+    |                   |         |         |              | shown            |
+    |                   |         |         |              | (true) or        |
+    |                   |         |         |              | not (false)      |
+    +-------------------+---------+---------+--------------+------------------+
+    | setMode           | int     |         | No, default  | 0 -> body        |
+    |                   |         |         | is 1         | targeting, 1     |
+    |                   |         |         |              | -> pointing      |
+    |                   |         |         |              | vector           |
+    +-------------------+---------+---------+--------------+------------------+
+    | setView           | int     |         | No, default  | 0 -> Nadir,      |
+    |                   |         |         | is 0         | 1 -> Orbit       |
+    |                   |         |         |              | Normal, 2 ->     |
+    |                   |         |         |              | Along Track      |
+    |                   |         |         |              | (default to      |
+    |                   |         |         |              | nadir). This     |
+    |                   |         |         |              | is a setting     |
+    |                   |         |         |              | for body         |
+    |                   |         |         |              | targeting        |
+    |                   |         |         |              | mode.            |
+    +-------------------+---------+---------+--------------+------------------+
+    | bodyTarget        | string  |         | No, default  | Name of body     |
+    |                   |         |         | to first     | camera should    |
+    |                   |         |         | celestial    | point to. This   |
+    |                   |         |         | body in      | is a setting for |
+    |                   |         |         | messages     | body targeting   |
+    |                   |         |         |              | mode.            |
+    +-------------------+---------+---------+--------------+------------------+
+    | spacecraftVisible | bool    |         | No, default  | flag             |
+    |                   |         |         | is false     | indicating       |
+    |                   |         |         |              | if the           |
+    |                   |         |         |              | spacecraft       |
+    |                   |         |         |              | should be        |
+    |                   |         |         |              | shown in         |
+    |                   |         |         |              | the camera       |
+    |                   |         |         |              | view             |
+    +-------------------+---------+---------+--------------+------------------+
+    | fieldOfView       | float   | rad     | No, default  | camera           |
+    |                   |         |         | -1           | field of         |
+    |                   |         |         |              | view, to         |
+    |                   |         |         |              | use the          |
+    |                   |         |         |              | Vizard           |
+    |                   |         |         |              | default set      |
+    |                   |         |         |              | it to -1         |
+    +-------------------+---------+---------+--------------+------------------+
+    | pointingVector_B  | float(3)|         | No, default  | Body relative    |
+    |                   |         |         | is           | unit vector.     |
+    |                   |         |         | (1, 0, 0)    | This is a setting|
+    |                   |         |         |              | for pointing     |
+    |                   |         |         |              | vector mode      |
+    +-------------------+---------+---------+--------------+------------------+
 
-The following table illustrates the arguments for the
-``createCameraViewPanel`` method if a planet pointing camera is setup.
-
-.. table:: ``createCameraViewPanel`` Parameter Options
-    :widths: 15 10 10 15 50
-
-    +-------------------+---------+---------+--------------+-------------+
-    | Variable          | Type    | Units   | Required     | Description |
-    +===================+=========+=========+==============+=============+
-    | spacecraftName    | string  |         | No, sc name  | name of the |
-    |                   |         |         | default      | spacecraft  |
-    |                   |         |         |              | with        |
-    |                   |         |         |              | respect to  |
-    |                   |         |         |              | which the   |
-    |                   |         |         |              | camera is   |
-    |                   |         |         |              | shown       |
-    +-------------------+---------+---------+--------------+-------------+
-    | viewPanel         | bool    |         | No, default  | flag        |
-    |                   |         |         | is false     | indicating  |
-    |                   |         |         |              | if a panel  |
-    |                   |         |         |              | should be   |
-    |                   |         |         |              | shown       |
-    |                   |         |         |              | (true) or   |
-    |                   |         |         |              | not (false) |
-    +-------------------+---------+---------+--------------+-------------+
-    | setView           | int     |         | Yes          | index       |
-    |                   |         |         |              | specifying  |
-    |                   |         |         |              | along which |
-    |                   |         |         |              | orbit axis  |
-    |                   |         |         |              | the camera  |
-    |                   |         |         |              | is pointing |
-    |                   |         |         |              | (0 ->       |
-    |                   |         |         |              | Nadir, 1 -> |
-    |                   |         |         |              | Orbit       |
-    |                   |         |         |              | Normal, 2   |
-    |                   |         |         |              | -> Along    |
-    |                   |         |         |              | Track)      |
-    +-------------------+---------+---------+--------------+-------------+
-    | spacecraftVisible | bool    |         | No, default  | flag        |
-    |                   |         |         | is false     | indicating  |
-    |                   |         |         |              | if the      |
-    |                   |         |         |              | spacecraft  |
-    |                   |         |         |              | should be   |
-    |                   |         |         |              | shown in    |
-    |                   |         |         |              | the camera  |
-    |                   |         |         |              | view        |
-    +-------------------+---------+---------+--------------+-------------+
-    | fieldOfView       | float   | rad     | No, default  | camera      |
-    |                   |         |         | -1           | field of    |
-    |                   |         |         |              | view, to    |
-    |                   |         |         |              | use the     |
-    |                   |         |         |              | Vizard      |
-    |                   |         |         |              | default set |
-    |                   |         |         |              | it to -1    |
-    +-------------------+---------+---------+--------------+-------------+
-    | targetBodyName    | string  |         | Yes          | name of the |
-    |                   |         |         |              | planet to   |
-    |                   |         |         |              | point at    |
-    +-------------------+---------+---------+--------------+-------------+
-
-
-.. image:: /_images/static/vizard-ImgCustomCam.png
+.. image:: /_images/static/vizard-ImgCustomCam.jpg
    :align: center
    :width: 90 %
 
-It is also possible to create a custom camera view which points in an
+It is also possible to create a custom camera view for opNav mode which points in an
 arbitrary direction as illustrate in the image above. The following
 helper method is an example of how such a custom camera view can be
 created::
@@ -463,9 +416,9 @@ Defining the Custom Spacecraft Shape model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can specify a custom OBJ model to be used with Vizard spacecraft representation.
-An sample is shown in the followig screen capture.
+An sample is shown in the following screen capture.
 
-.. image:: /_images/static/vizard-ImgCustomCAD.png
+.. image:: /_images/static/vizard-ImgCustomCAD.jpg
    :align: center
    :scale: 80 %
 

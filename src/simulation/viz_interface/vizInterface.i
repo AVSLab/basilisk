@@ -32,6 +32,7 @@ namespace std {
     %template(CustomModelConfig) vector<CustomModel>;
     %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
     %template(KeepOutInConeConfig) vector<KeepOutInCone>;
+    %template(StdCameraConfig) vector<StdCameraSettings>;
 }
 
 %include "vizInterface.h"

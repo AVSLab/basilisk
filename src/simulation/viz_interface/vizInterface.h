@@ -72,13 +72,13 @@ typedef struct {
 }KeepOutInCone;
 
 typedef struct {
-    std::string spacecraftName; //!< Which spacecraft's camera 1
-    bool viewPanel;             //!< Flag indicating if the camera panel is visible on the screen, default is falst
-    int setMode;                //!< 0 -> body targeting, 1 -> pointing vector
+    std::string spacecraftName; //!< name of spacecraft onto which to place a camera
+    bool viewPanel;             //!< Flag indicating if the camera panel is visible on the screen, default is true
+    int setMode;                //!< 0 -> body targeting, 1 -> pointing vector (default)
     bool spacecraftVisible;     //!< False (default) -> parent spacecraft will not be visible in camera view
-    double fieldOfView;         //!< field of view setting, -1 -> use default, values between 0.0001 and 179.9999 valid
+    double fieldOfView;         //!< rad, field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
-    int setView;                //!< Specify the view through 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
+    int setView;                //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
     double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
 }StdCameraSettings;
 
