@@ -155,7 +155,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     Read_STMessages(configData, moduleId);
 
     if (badUpdate <0){
-				_printMessage(configData->bskPrint, MSG_WARNING, "Reset method contained bad update");
+        _printMessage(configData->bskPrint, MSG_WARNING, "Reset method contained bad update");
     }
     return;
 }

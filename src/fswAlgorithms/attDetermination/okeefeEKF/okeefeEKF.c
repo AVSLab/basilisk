@@ -32,14 +32,14 @@
  */
 void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
 {
-  configData->bskPrint = _BSKPrint();
-  mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
+    configData->bskPrint = _BSKPrint();
+    mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
     /*! - Create output message for module */
 	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
-  configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
+    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
         sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
 
 }

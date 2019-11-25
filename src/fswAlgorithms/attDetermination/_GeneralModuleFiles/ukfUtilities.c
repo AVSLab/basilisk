@@ -83,7 +83,7 @@ int32_t ukfLInv(double *sourceMat, int32_t nRow, int32_t nCol, double *destMat)
 	{
         if (sourceMat[i*mat_dim + i] == 0)
         {
-						_printMessageDefault(MSG_WARNING, "Can't invert zero matrix.");
+            _printMessageDefault(MSG_WARNING, "Can't invert zero matrix.");
             return -1;
         }
 		destMat[mat_dim*i + i] = 1.0 / sourceMat[i*mat_dim + i];

@@ -151,7 +151,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     if (badUpdate <0){
-				_printMessage(configData->bskPrint, MSG_WARNING, "Reset method contained bad update");
+        _printMessage(configData->bskPrint, MSG_WARNING, "Reset method contained bad update");
     }
 }
 
