@@ -38,7 +38,7 @@ void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
     memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
     memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
-
+    
 }
 
 /*! This method performs the second stage of initialization for the opNav attitude
@@ -55,7 +55,7 @@ void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
     configData->imuInMsgID = subscribeToMessage(configData->imuInMsgName,
         sizeof(NavAttIntMsg), moduleID);
     configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleID);
-
+    
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -123,7 +123,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
                 sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
     ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CameraConfigMsg), &cameraSpecs, moduleID);
-
+    
     if (configData->lastTime==0){
         configData->lastTime=callTime*1E-9;
         v3SetZero(configData->currentHeading_N);
@@ -196,6 +196,6 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     /* write the Guidance output message */
     WriteMessage(configData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
                  (void*) &(configData->attGuidanceOutBuffer), moduleID);
-
+    
     return;
 }

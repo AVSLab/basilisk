@@ -38,7 +38,7 @@ void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
     memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
     memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
-
+    
 }
 
 /*! This method performs the second stage of initialization for the sun safe attitude
@@ -54,7 +54,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
         sizeof(NavAttIntMsg), moduleID);
     configData->imuInMsgID = subscribeToMessage(configData->imuInMsgName,
         sizeof(NavAttIntMsg), moduleID);
-
+    
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -129,7 +129,7 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
         configData->sunAngleErr = acos(ctSNormalized);
 
         /*
-            Compute the heading error relative to the sun direction vector
+            Compute the heading error relative to the sun direction vector 
          */
         if (configData->sunAngleErr < configData->smallAngle) {
             /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
@@ -165,6 +165,6 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
     /* write the Guidance output message */
     WriteMessage(configData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
                  (void*) &(configData->attGuidanceOutBuffer), moduleID);
-
+    
     return;
 }

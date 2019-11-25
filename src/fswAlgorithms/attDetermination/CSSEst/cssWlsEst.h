@@ -57,7 +57,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID);
     void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID);
     void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
@@ -67,7 +67,7 @@ extern "C" {
                      double *y, double x[3]);
     void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
                              double *wlsEst, double *cssResiduals);
-
+    
 #ifdef __cplusplus
 }
 #endif

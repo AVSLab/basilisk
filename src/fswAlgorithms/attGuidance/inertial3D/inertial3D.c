@@ -18,7 +18,7 @@
  */
 /*
     Inertial 3D Spin Module
-
+ 
  */
 
 /* modify the path to reflect the new module names */
@@ -84,7 +84,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t 
 
     /*! - Compute and store output message */
     computeInertialPointingReference(configData, &attRefOut);
-
+    
     /*! - Write output message */
     WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
                  &attRefOut, moduleID);

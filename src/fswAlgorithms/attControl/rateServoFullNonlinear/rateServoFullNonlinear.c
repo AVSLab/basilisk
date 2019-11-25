@@ -18,7 +18,7 @@
  */
 /*
     rateServoFullNonlinear Module
-
+ 
  */
 
 #include "attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
@@ -69,7 +69,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
     configData->rwParamsInMsgId = -1;
     configData->rwSpeedsInMsgId = -1;
     configData->rwAvailInMsgId = -1;
-
+    
     if(strlen(configData->rwParamsInMsgName) > 0) {
         configData->rwParamsInMsgId = subscribeToMessage(configData->rwParamsInMsgName,
                                                          sizeof(RWArrayConfigFswMsg), moduleID);
@@ -96,23 +96,23 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     /*! - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    int i;
+    int i;    
     VehicleConfigFswMsg sc;
-
+    
     memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
     ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
-
+    
     configData->rwConfigParams.numRW = 0;
     if (configData->rwParamsInMsgId >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
         ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
-
+    
     /* Reset the integral measure of the rate tracking error */
     v3SetZero(configData->z);
 
@@ -140,7 +140,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
     double              dt;                 /* [s] control update period */
-
+    
     double              Lr[3];              /* required control torque vector [Nm] */
     double              omega_BastN_B[3];   /* angular velocity of B^ast relative to inertial N, in body frame components */
     double              omega_BBast_B[3];   /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
@@ -156,10 +156,10 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     double              v3_7[3];
     int                 i;
     double              intLimCheck;
-
+        
     /*! - zero the output message */
     memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
-
+    
     /*! - compute control update time */
     if (configData->priorTime == 0) {
         dt = 0.0;
@@ -187,7 +187,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
-
+    
     /*! - compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 

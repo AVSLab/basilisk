@@ -50,13 +50,13 @@ typedef struct {
 	double dt;                    /*!< [s] seconds since last data epoch */
 	double timeTag;               /*!< [s]  Time tag for statecovar/etc */
     double noiseSF;               /*!< [-]  Scale factor for noise */
-
+    
     double bVec_B[HEAD_N_STATES];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
-
+    
     double stateInit[HEAD_N_STATES_SWITCH];    /*!< [-] State to initialize filter to*/
     double state[HEAD_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
-
+    
 	double wM[2 * HEAD_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 	double wC[2 * HEAD_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 
@@ -68,19 +68,19 @@ typedef struct {
 	double obs[OPNAV_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[OPNAV_MEAS*(2*HEAD_N_STATES_SWITCH+1)];        /*!< [-] Measurement model data */
     double postFits[OPNAV_MEAS];  /*!< [-] PostFit residuals */
-
+    
 	double SP[(2*HEAD_N_STATES_SWITCH+1)*HEAD_N_STATES_SWITCH];     /*!< [-]    sigma point matrix */
 
 	double qNoise[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];       /*!< [-] process noise matrix */
 	double sQnoise[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];      /*!< [-] cholesky of Qnoise */
 
 	double qObs[OPNAV_MEAS*OPNAV_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
-
+    
 
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttIntMsg outputHeading;   /*!< -- Output heading estimate data */
     OpNavFswMsg opnavInBuffer;
-
+    
     int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t opnavDataInMsgId;   /*!< [-] ID for the opNav data in put message */

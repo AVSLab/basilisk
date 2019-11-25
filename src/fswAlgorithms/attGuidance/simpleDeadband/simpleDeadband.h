@@ -37,7 +37,7 @@ typedef struct {
     uint32_t wasControlOff;             /*!< boolean variable to keep track of the last Control status (ON/OFF) */
     double attError;                    /*!< current scalar attitude error */
     double rateError;                   /*!< current scalar rate error */
-
+    
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message*/
     char inputGuidName[MAX_STAT_MSG_LENGTH];         /*!< The name of the guidance reference Input message */
@@ -53,7 +53,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID);
     void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID);
     void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID);

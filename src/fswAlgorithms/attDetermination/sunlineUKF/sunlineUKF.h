@@ -38,7 +38,7 @@ typedef struct {
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
-
+    
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
 	int numObs;                   /*!< [-] Number of measurements this cycle */
@@ -63,14 +63,14 @@ typedef struct {
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES+1)];        /*!< [-] Measurement model data */
     double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
-
+    
 	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];     /*!< [-]    sigma point matrix */
 
 	double qNoise[SKF_N_STATES*SKF_N_STATES];       /*!< [-] process noise matrix */
 	double sQnoise[SKF_N_STATES*SKF_N_STATES];      /*!< [-] cholesky of Qnoise */
 
 	double qObs[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
-
+    
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
     double CBias[MAX_NUM_CSS_SENSORS];       /*!< [-] CSS individual calibration coefficients */
 
@@ -89,7 +89,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID);
     void CrossInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID);
     void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
@@ -100,7 +100,7 @@ extern "C" {
     void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime);
 	void sunlineStateProp(double *stateInOut, double dt);
     void sunlineUKFMeasModel(SunlineUKFConfig *configData);
-
+    
 #ifdef __cplusplus
 }
 #endif

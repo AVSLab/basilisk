@@ -58,7 +58,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID);
     void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID);
     void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,

@@ -55,7 +55,7 @@ typedef struct {
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output filter data message
-
+    
 	char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the mass props message
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the RWConfigParams input message
     char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
@@ -123,7 +123,7 @@ typedef struct {
     int32_t rwParamsInMsgId;      //!< [-] Id for the RWArrayConfigFswMsg ingoing message
     int32_t rwSpeedsInMsgId;      //!< [-] Id for the incoming RW speeds
     int32_t gyrBuffInMsgId;       //!< [-] Id of the input message buffer
-
+    
     STDataParsing STDatasStruct;  //!< [-] Id of the input message buffer
 
     BSKPrint *bskPrint;   //!< BSK Logging
@@ -133,7 +133,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId);
     void CrossInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId);
     void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId);
@@ -148,7 +148,7 @@ extern "C" {
     void inertialUKFCleanUpdate(InertialUKFConfig *configData);
 	void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt);
     void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST);
-
+    
 #ifdef __cplusplus
 }
 #endif

@@ -41,8 +41,8 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
             configData->thrGroups[i].outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
             "THRArrayOnTimeCmdIntMsg", moduleID);
     }
-
-
+ 
+    
 }
 
 /*! This method performs the second stage of initialization for the sun safe ACS
@@ -56,16 +56,16 @@ void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
     /*! - Get the control data message ID*/
     configData->inputMsgID = subscribeToMessage(configData->inputControlName,
         sizeof(CmdTorqueBodyIntMsg), moduleID);
-
+    
 }
 void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
                         int64_t moduleID)
 {
     uint32_t i;
     THRArrayOnTimeCmdIntMsg nullEffect;
-
+    
     memset(&(nullEffect), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
-
+    
     for(i=0; i<configData->numThrGroups; i=i+1)
     {
         memcpy(&(configData->thrGroups[i].cmdRequests), &nullEffect,
@@ -91,17 +91,17 @@ void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
     uint32_t sizeOfMsgWritten;
     uint32_t i;
     CmdTorqueBodyIntMsg cntrRequest;
-
+    
     /*! - Read the input requested torque from the feedback controller*/
     ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
-
+    
     for(i=0; i<configData->numThrGroups; i=i+1)
     {
         computeSingleThrustBlock(&(configData->thrGroups[i]), callTime,
             &cntrRequest, moduleID);
     }
-
+    
     return;
 }
 
@@ -113,16 +113,16 @@ CmdTorqueBodyIntMsg *contrReq, int64_t moduleID)
     effPairs sortPairs[MAX_EFF_CNT];
     uint32_t i;
     double localRequest[3];
-
+    
     v3Copy(contrReq->torqueRequestBody, localRequest);      /* to generate a positive torque onto the spacecraft */
     mMultV(thrData->thrOnMap, thrData->numEffectors, 3,
            localRequest, unSortOnTime);
-
+    
     for(i=0; i<thrData->numEffectors; i=i+1)
     {
         unSortOnTime[i] = unSortOnTime[i] + thrData->nomThrustOn;
     }
-
+    
     for(i=0; i<thrData->numEffectors; i=i+1)
     {
         if(unSortOnTime[i] < thrData->minThrustRequest)
@@ -130,7 +130,7 @@ CmdTorqueBodyIntMsg *contrReq, int64_t moduleID)
             unSortOnTime[i] = 0.0;
         }
     }
-
+    
     for(i=0; i<thrData->numEffectors; i++)
     {
         unSortPairs[i].onTime = unSortOnTime[i];

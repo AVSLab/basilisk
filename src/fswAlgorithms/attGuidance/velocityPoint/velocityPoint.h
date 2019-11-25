@@ -36,10 +36,10 @@
 /*!@brief Data structure for module to compute the orbital velocity spinning pointing navigation solution.
  */
 typedef struct {
-
+    
     /* declare module private variables */
-    double mu;                                      //!< Planet gravitational parameter
-
+    double mu;                                      //!< Planet gravitational parameter 
+   
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       //!<        The name of the output message
     int32_t outputMsgID;                            //!< (-)    ID for the outgoing message
@@ -54,7 +54,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID);
     void CrossInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID);
     void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID);

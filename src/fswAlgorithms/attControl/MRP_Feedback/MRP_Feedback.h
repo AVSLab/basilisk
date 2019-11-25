@@ -41,7 +41,7 @@ typedef struct {
     double z[3];                        //!< [rad]     integral state of delta_omega
     double int_sigma[3];                //!< [s]       integral of the MPR attitude error
     double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
-
+    
     double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
     RWArrayConfigFswMsg rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
 
@@ -52,7 +52,7 @@ typedef struct {
     int32_t vehConfigInMsgId;
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];         //!< [-] The name of the RWs availability message
     int32_t rwAvailInMsgId;                             //!< [-] ID for the incoming  RWs availability data
-
+    
     char outputDataName[MAX_STAT_MSG_LENGTH];           //!< [-] The name of the output message
     char inputGuidName[MAX_STAT_MSG_LENGTH];            //!< [-] The name of the Input message
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];        //!< [-] The name for the reaction wheel speeds message
@@ -65,13 +65,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID);
     void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID);
     void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
 
-
+    
 #ifdef __cplusplus
 }
 #endif

@@ -40,7 +40,7 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
     /*! - Create filter states output message which is mostly for debug*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
         sizeof(HeadingFilterFswMsg), "HeadingFilterFswMsg", moduleID);
-
+    
 }
 
 /*! This method performs the second stage of initialization for the heading filter.  It's primary function is to link the input messages that were
@@ -59,7 +59,7 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
                                                            sizeof(CameraConfigMsg), moduleID);
         configData->putInCameraFrame = 1;
     }
-
+    
 }
 
 /*! This method resets the heading attitude filter to an initial state and
@@ -71,24 +71,24 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
-
+    
     int32_t i;
     double tempMatrix[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
-
+    
     /*! - Zero the local configuration data structures and outputs */
     memset(&(configData->outputHeading), 0x0, sizeof(NavAttIntMsg));
 
-
+    
     /*! - Initialize filter parameters to max values */
     configData->timeTag = callTime*NANO2SEC;
     configData->dt = 0.0;
     configData->numStates = HEAD_N_STATES_SWITCH;
     configData->countHalfSPs = HEAD_N_STATES_SWITCH;
-
+    
     /*! Initalize the filter to use b_1 of the body frame to make frame*/
     v3Set(1, 0, 0, configData->bVec_B);
     configData->switchTresh = 0.866;
-
+    
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(configData->obs, OPNAV_MEAS);
     vSetZero(configData->wM, (size_t) configData->countHalfSPs * 2 + 1);
@@ -97,13 +97,13 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     mSetZero(configData->SP, (size_t) configData->countHalfSPs * 2 + 1,
              (size_t) configData->numStates);
     mSetZero(configData->sQnoise, (size_t) configData->numStates, (size_t) configData->numStates);
-
+    
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
     (configData->numStates + configData->kappa) - configData->numStates;
     configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
-
-
+    
+    
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
     configData->wM[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal);
@@ -115,10 +115,10 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
                                              configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }
-
+    
     vCopy(configData->stateInit, (size_t) configData->numStates, configData->state);
-
-    /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in
+    
+    /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
     mCopy(configData->covarInit, (size_t) configData->numStates, (size_t) configData->numStates,
           configData->covar);
@@ -132,7 +132,7 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
                   configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, (size_t) configData->numStates,
                (size_t) configData->numStates, configData->sQnoise);
-
+    
     return;
 }
 
@@ -156,7 +156,6 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     HeadingFilterFswMsg headingDataOutBuffer;
     OpNavFswMsg opnavOutputBuffer;
     CameraConfigMsg cameraConfig;
-
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
@@ -173,18 +172,17 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
                     sizeof(CameraConfigMsg), (void*) (&cameraConfig), moduleID);
     }
     v3Normalize(&configData->state[0], heading_hat);
-
+    
     /*! - Check for switching frames */
     if (fabs(v3Dot(configData->bVec_B, heading_hat)) > configData->switchTresh)
     {
         headingSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
-
     configData->rNorm = v3Norm(configData->opnavInBuffer.r_BN_B);
     if (configData->rNorm<1){
         configData->rNorm =1;
     }
-
+    
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
@@ -193,7 +191,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
         headingSuKFTimeUpdate(configData, newTimeTag);
         headingSuKFMeasUpdate(configData, newTimeTag);
     }
-
+    
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
@@ -201,7 +199,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     {
         headingSuKFTimeUpdate(configData, newTimeTag);
     }
-
+    
     /*! - Compute the value for the yBar parameter (equation 23)*/
     vSetZero(yBar, OPNAV_MEAS);
     for(i=0; i<configData->countHalfSPs*2+1; i++)
@@ -211,16 +209,16 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
         vScale(configData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
         vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
-
+    
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero,
      do not compute post fit residuals*/
     if(!v3IsZero(configData->obs, 1E-10)){
         mSubtract(configData->obs, OPNAV_MEAS, 1, yBar, configData->postFits);}
-
+    
     /* Switch the rates back to omega_BN instead of oemga_SB */
     vCopy(configData->state, HEAD_N_STATES_SWITCH, states_BN);
     vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
-
+    
     /*! - Populate the filter states output buffer and write the output message*/
     headingDataOutBuffer.timeTag = configData->timeTag;
     mCopy(configData->covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, headingDataOutBuffer.covar);
@@ -228,7 +226,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     v3Copy(configData->postFits, headingDataOutBuffer.postFitRes);
     WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(HeadingFilterFswMsg),
                  &headingDataOutBuffer, moduleID);
-
+    
     /*! - Write the heading estimate into the copy of the OpNav message structure*/
     opnavOutputBuffer.timeTag = configData->timeTag;
     m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar_B);
@@ -246,7 +244,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     opnavOutputBuffer.timeTag = configData->opnavInBuffer.timeTag;
     WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpNavFswMsg),
                  &opnavOutputBuffer, moduleID);
-
+    
     return;
 }
 
@@ -270,20 +268,20 @@ void headingStateProp(double *stateInOut, double *b_Vec, double dt)
     mMultV(dcm_BS, HEAD_N_STATES, HEAD_N_STATES, omega_BN_S, omega_BN_B);
     /* Set local variables to zero*/
     vSetZero(propagatedVel, HEAD_N_STATES);
-
+    
     /*! Begin state update steps */
     /*! Take omega cross d*/
     v3Cross(omega_BN_B, stateInOut, omegaCrossd);
-
+    
     /*! - Multiply omega cross d by dt and add to state to propagate */
     v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
-
+    
 	return;
 }
 
 /*! This method performs the time update for the heading kalman filter.
-     It propagates the sigma points forward in time and then gets the current
+     It propagates the sigma points forward in time and then gets the current 
 	 covariance and state estimates.
 	 @return void
      @param configData The configuration data associated with the heading estimator
@@ -299,7 +297,7 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *configData, double updateTime)
 	double *spPtr;
 
     configData->dt = updateTime - configData->timeTag;
-
+    
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, (size_t) configData->numStates,
 		&(configData->SP[0 * configData->numStates + 0]));
@@ -322,7 +320,7 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *configData, double updateTime)
 		headingStateProp(spPtr, configData->bVec_B, configData->dt);
 		vScale(configData->wM[Index], spPtr, (size_t) configData->numStates, xComp);
 		vAdd(xComp, (size_t) configData->numStates, configData->xBar, configData->xBar);
-
+		
 		Index = i + 1 + configData->countHalfSPs;
         spPtr = &(configData->SP[Index*configData->numStates]);
         vCopy(&sBarT[i*configData->numStates], (size_t) configData->numStates, spPtr);
@@ -335,12 +333,12 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *configData, double updateTime)
     /*! - Zero the AT matrix prior to assembly*/
     mSetZero(AT, (2 * (size_t) configData->countHalfSPs + (size_t) configData->numStates),
         (size_t) configData->countHalfSPs);
-	/*! - Assemble the AT matrix.  Note that this matrix is the internals of
-          the qr decomposition call in the source design documentation.  It is
+	/*! - Assemble the AT matrix.  Note that this matrix is the internals of 
+          the qr decomposition call in the source design documentation.  It is 
           the inside of equation 20 in that document*/
 	for (i = 0; i<2 * configData->countHalfSPs; i++)
 	{
-
+		
         vScale(-1.0, configData->xBar, (size_t) configData->numStates, aRow);
         vAdd(aRow, (size_t) configData->numStates,
              &(configData->SP[(i+1)*configData->numStates]), aRow);
@@ -358,14 +356,14 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *configData, double updateTime)
     mCopy(rAT, (size_t) configData->numStates, (size_t) configData->numStates, sBarT);
     mTranspose(sBarT, (size_t) configData->numStates, (size_t) configData->numStates,
         configData->sBar);
-
-    /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight
+    
+    /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight 
           like in equation 21 in design document.*/
     vScale(-1.0, configData->xBar, (size_t) configData->numStates, xErr);
     vAdd(xErr, (size_t) configData->numStates, &configData->SP[0], xErr);
     ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
         configData->numStates, sBarUp);
-
+    
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, (size_t) configData->numStates, (size_t) configData->numStates, configData->sBar);
     mTranspose(configData->sBar, (size_t) configData->numStates, (size_t) configData->numStates,
@@ -374,12 +372,12 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *configData, double updateTime)
         configData->covar, (size_t) configData->numStates, (size_t) configData->numStates,
            configData->covar);
     vCopy(&(configData->SP[0]), (size_t) configData->numStates, configData->state );
-
+	
 	configData->timeTag = updateTime;
 }
 
 /*! This method computes what the expected measurement vector is for each opnave measurement.  All data is transacted from the main
-    data structure for the model because there are many variables that would
+    data structure for the model because there are many variables that would 
     have to be updated otherwise.
  @return void
  @param configData The configuration data associated with the heading estimator
@@ -399,15 +397,15 @@ void headingSuKFMeasModel(HeadingSuKFConfig *configData)
         configData->yMeas[i*(configData->countHalfSPs*2+1) + j] =
             configData->SP[i + j*HEAD_N_STATES_SWITCH];
     }
-
+    
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
     mTranspose(configData->yMeas, OPNAV_MEAS, (size_t) configData->countHalfSPs*2+1,
         configData->yMeas);
-
+    
 }
 
 /*! This method performs the measurement update for the heading kalman filter.
- It applies the observations in the obs vectors to the current state estimate and
+ It applies the observations in the obs vectors to the current state estimate and 
  updates the state/covariance with that information.
  @return void
  @param configData The configuration data associated with the heading estimator
@@ -423,11 +421,11 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     double rAT[OPNAV_MEAS*OPNAV_MEAS], syT[OPNAV_MEAS*OPNAV_MEAS];
     double sy[OPNAV_MEAS*OPNAV_MEAS];
     double updMat[OPNAV_MEAS*OPNAV_MEAS], pXY[HEAD_N_STATES_SWITCH*OPNAV_MEAS];
-
+        
     /*! - Compute the valid observations and the measurement model for all observations*/
     headingSuKFMeasModel(configData);
-
-    /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
+    
+    /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
     vSetZero(yBar, OPNAV_MEAS);
     for(i=0; i<configData->countHalfSPs*2+1; i++)
@@ -437,9 +435,9 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
         vScale(configData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
         vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
-
-    /*! - Populate the matrix that we perform the QR decomposition on in the measurement
-          update section of the code.  This is based on the differenence between the yBar
+    
+    /*! - Populate the matrix that we perform the QR decomposition on in the measurement 
+          update section of the code.  This is based on the differenence between the yBar 
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
     mSetZero(AT, (size_t) configData->countHalfSPs*2+OPNAV_MEAS,
         OPNAV_MEAS);
@@ -452,9 +450,9 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
         memcpy(&(AT[i*OPNAV_MEAS]), tempYVec,
                OPNAV_MEAS*sizeof(double));
     }
-
+    
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
-        decomposition of the observation variance matrix constructed for our number
+        decomposition of the observation variance matrix constructed for our number 
         of observations*/
     mCopy(configData->opnavInBuffer.covar_B, OPNAV_MEAS, OPNAV_MEAS, configData->qObs);
     mScale(1/(configData->rNorm*configData->rNorm), configData->qObs, OPNAV_MEAS,OPNAV_MEAS, configData->qObs);
@@ -462,13 +460,13 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     memcpy(&(AT[2*configData->countHalfSPs*OPNAV_MEAS]),
            qChol, OPNAV_MEAS*OPNAV_MEAS*sizeof(double));
     mScale(configData->noiseSF , AT, 2*configData->countHalfSPs, OPNAV_MEAS, AT);
-    /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
+    /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
     ukfQRDJustR(AT, 2*configData->countHalfSPs+OPNAV_MEAS,
                 OPNAV_MEAS, rAT);
     mCopy(rAT, OPNAV_MEAS, OPNAV_MEAS, syT);
     mTranspose(syT, OPNAV_MEAS, OPNAV_MEAS, sy);
-    /*! - Shift the matrix over by the difference between the 0th SP-based measurement
+    /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
           model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
     vAdd(tempYVec, OPNAV_MEAS, &(configData->yMeas[0]), tempYVec);
@@ -478,7 +476,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     mCopy(updMat, OPNAV_MEAS, OPNAV_MEAS, sy);
     mTranspose(sy, OPNAV_MEAS, OPNAV_MEAS, syT);
 
-    /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud
+    /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
     mSetZero(pXY, (size_t) configData->numStates, OPNAV_MEAS);
     for(i=0; i<2*configData->countHalfSPs+1; i++)
@@ -495,8 +493,8 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     }
 
     /*! - Then we need to invert the SyT*Sy matrix to get the Kalman gain factor.  Since
-          The Sy matrix is lower triangular, we can do a back-sub inversion instead of
-          a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
+          The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
+          a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
           multiplication is done (equation 27), we have the Kalman Gain.*/
     ukfUInv(syT, OPNAV_MEAS, OPNAV_MEAS, syInv);
     mMultM(pXY, (size_t) configData->numStates, OPNAV_MEAS, syInv,
@@ -504,21 +502,21 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     ukfLInv(sy, OPNAV_MEAS, OPNAV_MEAS, syInv);
     mMultM(kMat, (size_t) configData->numStates, OPNAV_MEAS, syInv,
            OPNAV_MEAS, OPNAV_MEAS, kMat);
-
-
-    /*! - Difference the yBar and the observations to get the observed error and
-          multiply by the Kalman Gain to get the state update.  Add the state update
+    
+    
+    /*! - Difference the yBar and the observations to get the observed error and 
+          multiply by the Kalman Gain to get the state update.  Add the state update 
           to the state to get the updated state value (equation 27).*/
     vSubtract(configData->obs, OPNAV_MEAS, yBar, tempYVec);
     mMultM(kMat, (size_t) configData->numStates, OPNAV_MEAS, tempYVec,
         OPNAV_MEAS, 1, xHat);
     vAdd(configData->state, (size_t) configData->numStates, xHat, configData->state);
-    /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it
+    /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, (size_t) configData->numStates, OPNAV_MEAS, sy,
            OPNAV_MEAS, OPNAV_MEAS, pXY);
     mTranspose(pXY, (size_t) configData->numStates, OPNAV_MEAS, pXY);
-    /*! - For each column in the update matrix, perform a cholesky down-date on it to
+    /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
     for(i=0; i<OPNAV_MEAS; i++)
     {
@@ -553,19 +551,19 @@ void headingSuKFSwitch(double *bVec_B, double *states, double *covar)
     double dcm_SnewSold[HEAD_N_STATES][HEAD_N_STATES];
     double switchMatP[HEAD_N_STATES_SWITCH][HEAD_N_STATES_SWITCH];
     double switchMat[HEAD_N_STATES_SWITCH][HEAD_N_STATES_SWITCH];
-
+    
     double sun_heading_norm[HEAD_N_STATES];
     double b1[HEAD_N_STATES];
     double b2[HEAD_N_STATES];
-
+    
     /*!  Set the body frame vectors*/
     v3Set(1, 0, 0, b1);
     v3Set(0, 1, 0, b2);
     v3Normalize(&(states[0]), sun_heading_norm);
-
+    
     /*! Populate the dcm_BS with the "old" S-frame*/
     headingSuKFComputeDCM_BS(sun_heading_norm, bVec_B, &dcm_BSold[0][0]);
-
+    
     if (v3IsEqual(bVec_B, b1, 1e-10))
     {
         headingSuKFComputeDCM_BS(sun_heading_norm, b2, &dcm_BSnew_T[0][0]);
@@ -576,14 +574,14 @@ void headingSuKFSwitch(double *bVec_B, double *states, double *covar)
         headingSuKFComputeDCM_BS(sun_heading_norm, b1, &dcm_BSnew_T[0][0]);
         v3Copy(b1, bVec_B);
     }
-
+    
     mTranspose(dcm_BSnew_T, HEAD_N_STATES, HEAD_N_STATES, dcm_BSnew_T);
     mMultM(dcm_BSnew_T, 3, 3, dcm_BSold, 3, 3, dcm_SnewSold);
-
+    
     mSetIdentity(switchMat, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH);
     mSetSubMatrix(&dcm_SnewSold[1][1], 1, 2, &switchMat, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, 3, 3);
     mSetSubMatrix(&dcm_SnewSold[2][1], 1, 2, &switchMat, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, 4, 3);
-
+    
     mMultV(switchMat, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, states, states);
     mMultM(switchMat, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, switchMatP);
     mTranspose(switchMat, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, switchMat);
@@ -596,11 +594,11 @@ void headingSuKFComputeDCM_BS(double sunheading[HEAD_N_STATES], double bVec[HEAD
     double s1_B[HEAD_N_STATES];
     double s2_B[HEAD_N_STATES];
     double s3_B[HEAD_N_STATES];
-
+    
     mSetZero(dcm, HEAD_N_STATES, HEAD_N_STATES);
     v3SetZero(s2_B);
     v3SetZero(s3_B);
-
+    
     v3Normalize(sunheading, s1_B);
     v3Cross(sunheading, bVec, s2_B);
     if (v3Norm(s2_B) < 1E-5){
@@ -616,5 +614,5 @@ void headingSuKFComputeDCM_BS(double sunheading[HEAD_N_STATES], double bVec[HEAD
     mSetSubMatrix(&(s3_B), 1, HEAD_N_STATES, dcm, HEAD_N_STATES, HEAD_N_STATES, 2, 0);
     mTranspose(dcm, HEAD_N_STATES, HEAD_N_STATES, dcm);
     }
-
+    
 }

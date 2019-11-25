@@ -40,7 +40,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID);
     void CrossInit_inertial3D(inertial3DConfig *configData, int64_t moduleID);
     void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID);

@@ -542,7 +542,6 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
         fswRWVoltageConfig.VMin = 0.0  # Volts
         fswRWVoltageConfig.VMax = 10.0  # Volts
 
-
     #
     #   Setup data logging before the simulation is initialized
     #

@@ -51,7 +51,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID);
     void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID);
     void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,

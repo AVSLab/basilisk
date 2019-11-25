@@ -18,7 +18,7 @@
  */
 /*
     MRP_PD Module
-
+ 
  */
 
 #include "attControl/MRP_PD/MRP_PD.h"
@@ -104,25 +104,25 @@ void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime,
 
     /*! - Compute angular body rate */
     v3Add(guidInMsg.omega_BR_B, guidInMsg.omega_RN_B, omega_BN_B);
-
+        
     /*! - Evaluate required attitude control torque */
     /* Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
      */
     v3Scale(configData->K, guidInMsg.sigma_BR, v3_temp1); /* + K * sigma_BR */
     v3Scale(configData->P, guidInMsg.omega_BR_B, v3_temp2); /* + P * delta_omega */
     v3Add(v3_temp1, v3_temp2, Lr);
-
+    
     /* omega x [I]omega */
     m33MultV3(RECAST3X3 configData->ISCPntB_B, omega_BN_B, v3_temp3);
     v3Cross(guidInMsg.omega_RN_B, v3_temp3, v3_temp3); /* omega_r x [I]omega */
     v3Subtract(Lr, v3_temp3, Lr);
-
+    
     /* [I](d(omega_r)/dt - omega x omega_r) */
     v3Cross(omega_BN_B, guidInMsg.omega_RN_B, v3_temp4);
     v3Subtract(guidInMsg.domega_RN_B, v3_temp4, v3_temp4);
     m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_temp4, v3_temp4);
     v3Subtract(Lr, v3_temp4, Lr);
-
+    
     v3Add(configData->knownTorquePntB_B, Lr, Lr); /* + L */
     v3Scale(-1.0, Lr, Lr);
 
@@ -130,6 +130,7 @@ void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime,
     v3Copy(Lr, controlOutMsg.torqueRequestBody);
     WriteMessage(configData->controlOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &controlOutMsg, moduleID);
-
+    
     return;
 }
+

@@ -107,18 +107,19 @@ void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg re
     double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
     double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
     double      dcm_BN[3][3];               /* DCM from inertial to body frame */
-
+    
     /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
     v3Scale(-1.0, sigma_R0R, sigma_RR0);
     addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
-
+    
     subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR);               /*! - compute attitude error */
-
+    
     MRP2C(nav.sigma_BN, dcm_BN);                                /* [BN] */
     m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B);              /*! - compute reference omega in body frame components */
-
+    
     v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
-
+    
     m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
-
+    
 }
+

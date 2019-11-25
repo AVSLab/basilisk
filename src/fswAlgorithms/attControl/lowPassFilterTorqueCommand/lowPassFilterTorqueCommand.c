@@ -18,7 +18,7 @@
  */
 /*
     Control Torque Low Pass Filter Module
-
+ 
  */
 
 /* modify the path to reflect the new module names */
@@ -121,7 +121,7 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
         configData->reset = BOOL_FALSE;
 
     }
-
+    
     /*
         regular filter run
      */
@@ -145,10 +145,10 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
     }
 
     /*
-        store the output message
+        store the output message 
      */
     v3Copy(configData->LrF[0], configData->controlOut.torqueRequestBody);
-
+    
     WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(configData->controlOut), moduleID);
 

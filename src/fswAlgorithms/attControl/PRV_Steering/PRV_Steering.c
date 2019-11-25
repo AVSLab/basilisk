@@ -18,7 +18,7 @@
  */
 /*
     PRV_STEERING Module
-
+ 
  */
 
 #include "attControl/PRV_Steering/PRV_Steering.h"
@@ -41,7 +41,7 @@ void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
     configData->bskPrint = _BSKPrint();
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
         sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
-
+    
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -78,18 +78,18 @@ void Update_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime,
     AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-
+        
     /*! - Read the dynamic input messages */
     ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-
+    
     /* evalute MRP kinematic steering law */
     PRVSteeringLaw(configData, guidCmd.sigma_BR, configData->outMsg.omega_BastR_B, configData->outMsg.omegap_BastR_B);
-
+    
     /* Store the output message and pass it to the message bus */
     WriteMessage(configData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
                  (void*) &(configData->outMsg), moduleID);
-
+    
     return;
 }
 
@@ -127,6 +127,6 @@ void PRVSteeringLaw(PRV_SteeringConfig *configData, double sigma_BR[3], double o
     value *= (3*configData->K3*phi*phi + configData->K1)/(pow(M_PI_2/configData->omega_max*(configData->K1*phi + configData->K3*phi*phi*phi),2) + 1);
 
     v3Scale(value, e_hat, omega_ast_p);
-
+    
     return;
 }

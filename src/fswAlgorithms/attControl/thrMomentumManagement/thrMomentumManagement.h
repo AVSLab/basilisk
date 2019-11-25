@@ -40,7 +40,7 @@ typedef struct {
 
     /* declare module public variables */
     double hs_min;                                      //!< [Nms]  minimum RW cluster momentum for dumping
-
+    
     /* declare module IO interfaces */
     char deltaHOutMsgName[MAX_STAT_MSG_LENGTH];         //!< The name of the output message
     int32_t deltaHOutMsgId;                             //!< ID for the outgoing message
@@ -56,12 +56,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID);
     void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID);
     void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif

@@ -54,7 +54,7 @@ typedef struct {
     int32_t vehConfigInMsgId;
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< [-] The name of the RWs availability message
     int32_t rwAvailInMsgId;                         //!< [-] ID for the incoming  RWs availability data
-
+    
     char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the commanded attitude control torque output message
     int32_t cmdTorqueOutMsgId;                      //!< [] ID for the outgoing control torque message
     char inputGuidName[MAX_STAT_MSG_LENGTH];        //!< The name of the guidance input message
@@ -71,13 +71,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID);
     void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID);
     void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
 
-
+    
 #ifdef __cplusplus
 }
 #endif
