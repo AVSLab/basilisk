@@ -93,7 +93,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID);
     void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID);
     void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,

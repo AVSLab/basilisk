@@ -62,12 +62,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID);
     void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID);
     void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif

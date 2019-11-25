@@ -41,12 +41,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID);
     void CrossInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID);
     void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
         int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif

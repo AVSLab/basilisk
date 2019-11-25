@@ -45,7 +45,7 @@ typedef struct {
     /* declare module IO interfaces */
     char voltageOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the voltage output message*/
     int32_t voltageOutMsgID;                        /*!< ID for the outgoing voltage message */
-
+    
     char torqueInMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the Input torque message*/
     int32_t torqueInMsgID;                          /*!< ID for the incoming torque message */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWArrayConfigFswMsg input message*/
@@ -65,12 +65,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
     void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
     void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif

@@ -1,12 +1,12 @@
 /*
  ISC License
-
+ 
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
+ 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
-
+ 
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,11 +14,11 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
+ 
  */
 /*
  Mapping required attitude control torque Lr to RW motor torques
-
+ 
  */
 
 #include "effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
@@ -77,7 +77,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
     uint32_t sizeOfMsgWritten;
     double *pAxis;                 /* pointer to the current control axis */
     int i;
-
+    
     /*!- configure the number of axes that are controlled.
      This is determined by checking for a zero row to determinate search */
     configData->numControlAxes = 0;
@@ -91,12 +91,12 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
     if (configData->numControlAxes == 0) {
         _printMessage(configData->bskPrint, MSG_DEBUG,"rwMotorTorque() is not setup to control any axes!");
     }
-
+    
     /*! - Read static RW config data message and store it in module variables */
     memset(&(configData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
     ReadMessage(configData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
-
+    
     /*! - If no info is provided about RW availability we'll assume that all are available
      and create the [Gs] projection matrix once */
     if (configData->rwAvailInMsgID < 0){
@@ -130,7 +130,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     v3SetZero(Lr_C);
     vSetZero(us, MAX_EFF_CNT);
     memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); // wheelAvailability set to 0 (AVAILABLE) by default
-
+    
     /*! - Read the input messages */
     memset(&LrInputMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
     ReadMessage(configData->controlTorqueInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -157,10 +157,10 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
         /*! - update the number of currently available RWs */
         configData->numAvailRW = numAvailRW;
     }
-
+    
     /*! - Lr is assumed to be a positive torque onto the body, the [Gs]us must generate -Lr */
     v3Scale(-1.0, Lr_B, Lr_B);
-
+    
     /*! - compute [Lr_C] = [C]Lr */
     mMultV(configData->controlAxes_B, configData->numControlAxes, 3, Lr_B, Lr_C);
 
@@ -177,7 +177,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
         double v3_temp[3]; /* inv([M]) [Lr_C] */
         double M33[3][3]; /* [M] = [CGs][CGs].T */
         double us_avail[MAX_EFF_CNT];   /* matrix of available RW motor torques */
-
+        
         v3SetZero(v3_temp);
         mSetIdentity(M33, 3, 3);
         for (i=0; i<configData->numControlAxes; i++) {
@@ -199,7 +199,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
                 us_avail[i] += CGs[j][i] * v3_temp[j];
             }
         }
-
+        
         /*! - map the desired RW motor torques to the available RWs */
         j = 0;
         for (i = 0; i < configData->rwConfigParams.numRW; i++) {
@@ -210,12 +210,12 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
             }
         }
     }
-
+    
     /* store the output message */
     memset(&(rwMotorTorques), 0x0, sizeof(RWArrayTorqueIntMsg));
     vCopy(us, configData->rwConfigParams.numRW, rwMotorTorques.motorTorque);
     WriteMessage(configData->outputMsgID, callTime, sizeof(RWArrayTorqueIntMsg),
                  (void*) &(rwMotorTorques), moduleID);
-
+    
     return;
 }

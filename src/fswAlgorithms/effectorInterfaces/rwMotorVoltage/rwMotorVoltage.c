@@ -18,7 +18,7 @@
  */
 /*
     FSW MODULE: RW motor voltage command
-
+ 
  */
 
 #include "effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
@@ -165,7 +165,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     }
 
     /*
-     store the output message
+     store the output message 
      */
     memcpy(configData->voltageOut.voltage,
            voltage,

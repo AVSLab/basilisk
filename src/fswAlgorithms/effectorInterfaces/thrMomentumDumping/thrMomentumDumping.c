@@ -18,7 +18,7 @@
  */
 /*
     FSW MODULE thrMomentumDumping
-
+ 
  */
 
 #include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"

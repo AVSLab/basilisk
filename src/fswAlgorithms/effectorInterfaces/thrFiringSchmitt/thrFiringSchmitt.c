@@ -18,7 +18,7 @@
  */
 /*
     Thrust Firing Schmitt
-
+ 
  */
 
 #include "effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"

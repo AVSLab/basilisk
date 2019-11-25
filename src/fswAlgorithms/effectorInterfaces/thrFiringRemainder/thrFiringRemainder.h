@@ -41,7 +41,7 @@ typedef struct {
 	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pusling (1)
 
 	uint64_t			prevCallTime;							//!< callTime from previous function call
-
+	
 
 	/* declare module IO interfaces */
 	char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH];        	//!< The name of the Input message
@@ -58,12 +58,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
     void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
     void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif
