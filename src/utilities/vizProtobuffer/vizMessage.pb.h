@@ -1817,12 +1817,6 @@ class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* 
   ::google::protobuf::int32 setmode() const;
   void set_setmode(::google::protobuf::int32 value);
 
-  // bool viewPanel = 2;
-  void clear_viewpanel();
-  static const int kViewPanelFieldNumber = 2;
-  bool viewpanel() const;
-  void set_viewpanel(bool value);
-
   // bool spacecraftVisible = 4;
   void clear_spacecraftvisible();
   static const int kSpacecraftVisibleFieldNumber = 4;
@@ -1850,7 +1844,6 @@ class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* 
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
   ::google::protobuf::internal::ArenaStringPtr bodytarget_;
   ::google::protobuf::int32 setmode_;
-  bool viewpanel_;
   bool spacecraftvisible_;
   double fieldofview_;
   ::google::protobuf::int32 setview_;
@@ -4193,20 +4186,6 @@ inline void VizMessage_StandardCameraSettings::set_allocated_spacecraftname(::st
   }
   spacecraftname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), spacecraftname);
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName)
-}
-
-// bool viewPanel = 2;
-inline void VizMessage_StandardCameraSettings::clear_viewpanel() {
-  viewpanel_ = false;
-}
-inline bool VizMessage_StandardCameraSettings::viewpanel() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.viewPanel)
-  return viewpanel_;
-}
-inline void VizMessage_StandardCameraSettings::set_viewpanel(bool value) {
-  
-  viewpanel_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.viewPanel)
 }
 
 // int32 setMode = 3;

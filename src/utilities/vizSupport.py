@@ -368,7 +368,7 @@ def createStandardCamera(viz, **kwargs):
     cam = vizInterface.StdCameraSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'viewPanel', 'setMode', 'setView', 'spacecraftVisible', 'fieldOfView',
+        ['spacecraftName', 'setMode', 'setView', 'spacecraftVisible', 'fieldOfView',
          'bodyTarget', 'pointingVector_B'],
         kwargs)
 
@@ -380,15 +380,6 @@ def createStandardCamera(viz, **kwargs):
         cam.spacecraftName = scName
     else:
         cam.spacecraftName = viz.spacecraftName
-
-    if 'viewPanel' in kwargs:
-        viewPanel = kwargs['viewPanel']
-        if not isinstance(viewPanel, bool):
-            print('ERROR: viewPanel must be a bool')
-            exit(1)
-        cam.viewPanel = viewPanel
-    else:
-        cam.viewPanel = True
 
     if 'setMode' in kwargs:
         setMode = kwargs['setMode']

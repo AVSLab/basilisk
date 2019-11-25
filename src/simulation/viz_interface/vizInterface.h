@@ -73,7 +73,6 @@ typedef struct {
 
 typedef struct {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
-    bool viewPanel;             //!< Flag indicating if the camera panel is visible on the screen, default is true
     int setMode;                //!< 0 -> body targeting, 1 -> pointing vector (default)
     bool spacecraftVisible;     //!< False (default) -> parent spacecraft will not be visible in camera view
     double fieldOfView;         //!< rad, field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid

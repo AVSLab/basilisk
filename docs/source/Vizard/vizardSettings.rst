@@ -266,14 +266,6 @@ the arguments for the ``createStandardCamera`` method.
     |                   |         |         |              | camera is        |
     |                   |         |         |              | shown            |
     +-------------------+---------+---------+--------------+------------------+
-    | viewPanel         | bool    |         | No, default  | flag             |
-    |                   |         |         | is true      | indicating       |
-    |                   |         |         |              | if a panel       |
-    |                   |         |         |              | should be        |
-    |                   |         |         |              | shown            |
-    |                   |         |         |              | (true) or        |
-    |                   |         |         |              | not (false)      |
-    +-------------------+---------+---------+--------------+------------------+
     | setMode           | int     |         | No, default  | 0 -> body        |
     |                   |         |         | is 1         | targeting, 1     |
     |                   |         |         |              | -> pointing      |

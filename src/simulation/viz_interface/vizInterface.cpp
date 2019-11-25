@@ -479,7 +479,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             vizProtobufferMessage::VizMessage::StandardCameraSettings* sc = vizSettings->add_standardcamerasettings();
             StdCameraSettings *scp = &(this->settings.stdCameraList[idx]);
             sc->set_spacecraftname(scp->spacecraftName);
-            sc->set_viewpanel(scp->viewPanel);
             sc->set_setmode(scp->setMode);
             sc->set_spacecraftvisible(scp->spacecraftVisible);
             if (scp->fieldOfView < 0)

@@ -539,7 +539,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, spacecraftname_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, viewpanel_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, setmode_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, spacecraftvisible_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, fieldofview_),
@@ -607,10 +606,10 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 82, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
   { 90, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
   { 104, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
-  { 117, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 127, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
-  { 140, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 155, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 116, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
+  { 126, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 139, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 154, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -654,7 +653,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\361\025\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\336\025\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -699,35 +698,34 @@ void AddDescriptorsImpl() {
       "\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHeight\030\005"
       " \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBodyName"
       "\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010coneName\030\t "
-      "\001(\t\032\301\001\n\026StandardCameraSettings\022\026\n\016spacec"
-      "raftName\030\001 \001(\t\022\021\n\tviewPanel\030\002 \001(\010\022\017\n\007set"
-      "Mode\030\003 \001(\005\022\031\n\021spacecraftVisible\030\004 \001(\010\022\023\n"
-      "\013fieldOfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017"
-      "\n\007setView\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\032"
-      "\206\001\n\020ActuatorSettings\022\026\n\016spacecraftName\030\001"
-      " \001(\t\022\031\n\021viewThrusterPanel\030\002 \001(\005\022\027\n\017viewT"
-      "hrusterHUD\030\003 \001(\005\022\023\n\013viewRWPanel\030\004 \001(\005\022\021\n"
-      "\tviewRWHUD\030\005 \001(\005\032\256\001\n\013CustomModel\022\021\n\tmode"
-      "lPath\030\001 \001(\t\022\031\n\021simBodiesToModify\030\002 \003(\t\022\016"
-      "\n\006offset\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scal"
-      "e\030\005 \003(\001\022\031\n\021customTexturePath\030\006 \001(\t\022\025\n\rno"
-      "rmalMapPath\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\351\003\n\rVi"
-      "zSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLin"
-      "esOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\npl"
-      "anetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.viz"
-      "ProtobufferMessage.VizMessage.PointLine\022"
-      "G\n\016keepOutInCones\030\006 \003(\0132/.vizProtobuffer"
-      "Message.VizMessage.KeepOutInCone\022X\n\026stan"
-      "dardCameraSettings\030\007 \003(\01328.vizProtobuffe"
-      "rMessage.VizMessage.StandardCameraSettin"
-      "gs\022L\n\020actuatorSettings\030\n \003(\01322.vizProtob"
-      "ufferMessage.VizMessage.ActuatorSettings"
-      "\022\016\n\006skybox\030\013 \001(\t\022C\n\014customModels\030\014 \003(\0132-"
-      ".vizProtobufferMessage.VizMessage.Custom"
-      "Modelb\006proto3"
+      "\001(\t\032\256\001\n\026StandardCameraSettings\022\026\n\016spacec"
+      "raftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\031\n\021space"
+      "craftVisible\030\004 \001(\010\022\023\n\013fieldOfView\030\005 \001(\001\022"
+      "\022\n\nbodyTarget\030\006 \001(\t\022\017\n\007setView\030\007 \001(\005\022\026\n\016"
+      "pointingVector\030\010 \003(\001\032\206\001\n\020ActuatorSetting"
+      "s\022\026\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThruste"
+      "rPanel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n"
+      "\013viewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\032\256\001"
+      "\n\013CustomModel\022\021\n\tmodelPath\030\001 \001(\t\022\031\n\021simB"
+      "odiesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010r"
+      "otation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customTe"
+      "xturePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\022\016"
+      "\n\006shader\030\010 \001(\005\032\351\003\n\rVizSettingsPb\022\017\n\007ambi"
+      "ent\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026\n\016space"
+      "craftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001(\005\022\?\n\np"
+      "ointLines\030\005 \003(\0132+.vizProtobufferMessage."
+      "VizMessage.PointLine\022G\n\016keepOutInCones\030\006"
+      " \003(\0132/.vizProtobufferMessage.VizMessage."
+      "KeepOutInCone\022X\n\026standardCameraSettings\030"
+      "\007 \003(\01328.vizProtobufferMessage.VizMessage"
+      ".StandardCameraSettings\022L\n\020actuatorSetti"
+      "ngs\030\n \003(\01322.vizProtobufferMessage.VizMes"
+      "sage.ActuatorSettings\022\016\n\006skybox\030\013 \001(\t\022C\n"
+      "\014customModels\030\014 \003(\0132-.vizProtobufferMess"
+      "age.VizMessage.CustomModelb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 2853);
+      descriptor, 2834);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -5513,7 +5511,6 @@ void VizMessage_StandardCameraSettings::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage_StandardCameraSettings::kSpacecraftNameFieldNumber;
-const int VizMessage_StandardCameraSettings::kViewPanelFieldNumber;
 const int VizMessage_StandardCameraSettings::kSetModeFieldNumber;
 const int VizMessage_StandardCameraSettings::kSpacecraftVisibleFieldNumber;
 const int VizMessage_StandardCameraSettings::kFieldOfViewFieldNumber;
@@ -5627,20 +5624,6 @@ bool VizMessage_StandardCameraSettings::MergePartialFromCodedStream(
             this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
             "vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftName"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bool viewPanel = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &viewpanel_)));
         } else {
           goto handle_unusual;
         }
@@ -5774,11 +5757,6 @@ void VizMessage_StandardCameraSettings::SerializeWithCachedSizes(
       1, this->spacecraftname(), output);
   }
 
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
-  }
-
   // int32 setMode = 3;
   if (this->setmode() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setmode(), output);
@@ -5841,11 +5819,6 @@ void VizMessage_StandardCameraSettings::SerializeWithCachedSizes(
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->spacecraftname(), target);
-  }
-
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
   }
 
   // int32 setMode = 3;
@@ -5946,11 +5919,6 @@ size_t VizMessage_StandardCameraSettings::ByteSizeLong() const {
         this->setmode());
   }
 
-  // bool viewPanel = 2;
-  if (this->viewpanel() != 0) {
-    total_size += 1 + 1;
-  }
-
   // bool spacecraftVisible = 4;
   if (this->spacecraftvisible() != 0) {
     total_size += 1 + 1;
@@ -6009,9 +5977,6 @@ void VizMessage_StandardCameraSettings::MergeFrom(const VizMessage_StandardCamer
   if (from.setmode() != 0) {
     set_setmode(from.setmode());
   }
-  if (from.viewpanel() != 0) {
-    set_viewpanel(from.viewpanel());
-  }
   if (from.spacecraftvisible() != 0) {
     set_spacecraftvisible(from.spacecraftvisible());
   }
@@ -6051,7 +6016,6 @@ void VizMessage_StandardCameraSettings::InternalSwap(VizMessage_StandardCameraSe
   spacecraftname_.Swap(&other->spacecraftname_);
   bodytarget_.Swap(&other->bodytarget_);
   swap(setmode_, other->setmode_);
-  swap(viewpanel_, other->viewpanel_);
   swap(spacecraftvisible_, other->spacecraftvisible_);
   swap(fieldofview_, other->fieldofview_);
   swap(setview_, other->setview_);
