@@ -26,6 +26,7 @@ Upcoming Version 1.X.X
 - added a new help page on :ref:`makeBskFork`
 - Added a fault detection module for optical navigation
 - Added camera module to own the message and to add corruptions to images
+- Added a new support document :ref:`makingNewBskModule` on getting started writing BSK modules
 
 Version 1.3.2
 -------------
@@ -35,14 +36,14 @@ Version 1.3.2
 - exclude some un-needed files from the html documenation
 - general sphinx documentation related fixed and enhancements
 
-Version 1.3.1
--------------
+**Version 1.3.1**
+
 - small fixes to the new HTML documentation
 - correct the path includes in Monte Carlo Integrated tests
 - updated the ``MRP_Steering`` module documentation to include plots of all test cases
 
-Version 1.3.0
--------------
+**Version 1.3.0**
+
 - Update template illustrating how the validation accuracy can be recording in the ``pytest`` parameters.
 - Created a new method in ``SimulationBaseClass`` called ``pullMultiMessageLogData``  This is much faster in pulling the data log from multiple messages at once.
 - It is no longer necessary to call sim.TotalSim.terminateSimulation() at the beginning of Basilisk scripts. This call has been moved to the SimBaseClass constructor and removed from scripts in the repository.
@@ -50,13 +51,13 @@ Version 1.3.0
 - New module in the navigation directory, PlanetHeading, provides the heading to a planet in the spacecraft body frame. There is a corresponding new message type BodyHeadingSimMsg.
 - New Sphinx/Breathe based BSK documentation system!  All documentation is still stored in the ``basilisk/docs`` folder.  The new system provides much better directory structure to access the BSK modules, and has a cleaner way to list the tutorial examples.
 
-Version 1.2.1
-----------------------
+**Version 1.2.1**
+
 - fixed an issued with the magnetometer module tests not passing on all platforms. The tolerances are now adjusted to pass everywhere.
 - various improvements to the ``OpNav`` modules and ``vizInterface``
 
-Version 1.2.0
-----------------------
+**Version 1.2.0**
+
 - Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the ``cmake`` flag ``-DUSE_PYTHON3`` can still be set to ``OFF``
 - Revised the FSW template module to use the updated in-line module documentation style which adds the description to the module ``*.h`` doxygen description, and adds the validation discussion as a doc-string to the ``test_xxx.py`` test file.
 - make sure ``mrpRotation`` is non-singular for any general referene rotation.
@@ -69,8 +70,8 @@ Version 1.2.0
 - Added a simple solar panel power module
 
 
-Version 1.1.0
-----------------------
+**Version 1.1.0**
+
 - The circle finding module using openCV has been cleaned up and the noise is now dynamically measured given the image
 - A new dispersion was added for Monte Carlo analysis which allows for per-axis control on an initial MRP value
 - Cleaned up opNav messages to be consistent with other messages, and simplified the limbFinding code. Only functionality change is Gaussian Blur.
@@ -83,8 +84,8 @@ Version 1.1.0
 
 
 
-Version 1.0.0 🍾🍾🍾🍾🍾
-------------------------
+**Version 1.0.0 🍾🍾🍾🍾🍾**
+
 
 .. raw:: html
 
@@ -151,8 +152,8 @@ back later on.
 
    </ul>
 
-Version 0.9.1
--------------
+**Version 0.9.1**
+
 
 .. raw:: html
 
@@ -179,8 +180,8 @@ simple and robust solution.
 
    </ul>
 
-Version 0.9.0
--------------
+**Version 0.9.0**
+
 
 .. raw:: html
 
@@ -278,8 +279,8 @@ saving BSK data to Vizard binary files.
 
    </ul>
 
-Version 0.8.1
--------------
+**Version 0.8.1**
+
 
 .. raw:: html
 
@@ -322,8 +323,8 @@ Updated the Doxygen HTML documentation layout
 
    </ul>
 
-Version 0.8.0
--------------
+**Version 0.8.0**
+
 
 .. raw:: html
 
@@ -390,8 +391,8 @@ Python 3.
 
    </ul>
 
-Version 0.7.2
--------------
+**Version 0.7.2**
+
 
 .. raw:: html
 
@@ -532,8 +533,8 @@ Updated BSK installation instructions to warn about not using swig v4
 
    </ul>
 
-Version 0.7.1
--------------
+**Version 0.7.1**
+
 
 .. raw:: html
 
@@ -565,8 +566,8 @@ minimize impact on computer memory.
 
    </ul>
 
-Version 0.7.0
--------------
+**Version 0.7.0**
+
 
 .. raw:: html
 
@@ -718,8 +719,8 @@ to produce the required ADCS control torque.
 
    </ul>
 
-Version 0.6.2
--------------
+**Version 0.6.2**
+
 
 .. raw:: html
 
@@ -765,8 +766,8 @@ scenario that calls it.
 
    </ul>
 
-Version 0.6.1
--------------
+**Version 0.6.1**
+
 
 .. raw:: html
 
@@ -888,8 +889,8 @@ the end of the message
 
    </ul>
 
-Version 0.6.0
--------------
+**Version 0.6.0**
+
 
 .. raw:: html
 
@@ -979,8 +980,8 @@ unit tests and updated PDF documentation
 
    </ul>
 
-Version 0.5.1
--------------
+**Version 0.5.1**
+
 
 .. raw:: html
 
@@ -1068,8 +1069,8 @@ updated ``rateServoFullNonlinear`` module documentation and unit tests.
 
    </ul>
 
-Version 0.5.0
--------------
+**Version 0.5.0**
+
 
 .. raw:: html
 
@@ -1281,8 +1282,8 @@ added a new tutorial on how to use the planetary magnetic field model.
 
    </ul>
 
-Version 0.4.1
--------------
+**Version 0.4.1**
+
 
 .. raw:: html
 
@@ -1357,8 +1358,8 @@ updated documentation and unit tests of ``cssComm()`` module
 
    </ul>
 
-Version 0.4.0
--------------
+**Version 0.4.0**
+
 
 .. raw:: html
 
@@ -1475,8 +1476,8 @@ crossInit(), and includes new documentation and unit tests
 
    </ul>
 
-Version 0.3.3
--------------
+**Version 0.3.3**
+
 
 .. raw:: html
 
@@ -1584,8 +1585,8 @@ Modified CMake to silence the excessive warnings in XCode that
 
    </ul>
 
-Version 0.3.2
--------------
+**Version 0.3.2**
+
 
 .. raw:: html
 
@@ -1629,8 +1630,8 @@ that pytest generates with the newer versions of this program
 
    </ul>
 
-Version 0.3.1
--------------
+**Version 0.3.1**
+
 
 .. raw:: html
 
@@ -1752,8 +1753,8 @@ behaviors with little code.
 
    </ul>
 
-Version 0.3.0
--------------
+**Version 0.3.0**
+
 
 .. raw:: html
 
@@ -1978,8 +1979,8 @@ sun-pointing control while the spacecraft goes through a planets shadow.
 
    </ul>
 
-Version 0.2.3 (June 12, 2018)
------------------------------
+**Version 0.2.3 (June 12, 2018)**
+
 
 .. raw:: html
 
@@ -2104,8 +2105,8 @@ without any arguments instead.
 
    </ul>
 
-Version 0.2.2 (May 14, 2018)
-----------------------------
+**Version 0.2.2 (May 14, 2018)**
+
 
 .. raw:: html
 
@@ -2188,8 +2189,8 @@ fails and ensures they run without error.
 
    </ul>
 
-Version 0.2.1
--------------
+**Version 0.2.1**
+
 
 .. raw:: html
 
@@ -2277,8 +2278,8 @@ to selectively show these print statements.
 
    </ul>
 
-Version 0.2.0 (First public beta)
----------------------------------
+**Version 0.2.0 (First public beta)**
+
 
 .. raw:: html
 
@@ -2432,8 +2433,8 @@ Added O’Keefe CSS sun-heading estimation module
 
    </ul>
 
-Version 0.1.7
--------------
+**Version 0.1.7**
+
 
 .. raw:: html
 
@@ -2512,8 +2513,8 @@ results are automatically included in the module TeX documentation.
 
    </ul>
 
-Version 0.1.6
--------------
+**Version 0.1.6**
+
 
 .. raw:: html
 
@@ -2596,8 +2597,8 @@ added ``boreAngCalc`` documentation
 
    </ul>
 
-Version 0.1.5
--------------
+**Version 0.1.5**
+
 
 .. raw:: html
 
@@ -2805,8 +2806,8 @@ to update your python code to work with the new factory classes.
 
    </ul>
 
-Version 0.1.4
--------------
+**Version 0.1.4**
+
 
 .. raw:: html
 
@@ -2880,8 +2881,8 @@ body-relative sun heading using the CSS signals.
 
    </ul>
 
-Version 0.1.3
--------------
+**Version 0.1.3**
+
 
 .. raw:: html
 
@@ -2976,8 +2977,8 @@ MRP_Steering integrated test test_MRP_steeringInt.py.
 
    </ul>
 
-Version 0.1.2
--------------
+**Version 0.1.2**
+
 
 .. raw:: html
 
@@ -3026,8 +3027,8 @@ the star tracker is not available.
 
    </ul>
 
-Version 0.1.1
--------------
+**Version 0.1.1**
+
 
 .. raw:: html
 
@@ -3098,8 +3099,8 @@ minor fix for Monte Carlo dispersions
 
    </ul>
 
-Version 0.1.0
--------------
+**Version 0.1.0**
+
 
 Simulation modules include:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3112,16 +3113,10 @@ Simulation modules include:
 
    <li>
 
-Flexible integration structure with fixed time step RK1, RK2 and RK4
-included
+    Flexible integration structure with fixed time step RK1, RK2 and RK4
+    included</li>
 
-.. raw:: html
-
-   </li>
-
-::
-
-      <li>Rigid spacecraft simulated through <code>spacecratPlus()</code> module.  The spacecraft object makes it simple to add external disturbances through <code>dynEffectors</code> and state depended actuation through <code>stateEffectors</code>.
+    <li>Rigid spacecraft simulated through <code>spacecratPlus()</code> module.  The spacecraft object makes it simple to add external disturbances through <code>dynEffectors</code> and state depended actuation through <code>stateEffectors</code>.
       <ul>
           <li>Dynamics Effectors (acuation methods which do not have their own states to integrate)</li>
               <ul>
@@ -3150,50 +3145,28 @@ included
 
 The AVS Lab Flight Algorithm folder contains:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- FSW template module
+- CSS based sun heading estimation module
+- UKF filter to determine inertial attitude
+- UKF filter to determine CSS based body-relative sun heading
+- Attitude Guidance modules:
 
-.. raw:: html
+    - Pointing towards two celestial objects
+    - Inertial Pointing
+    - Hill Frame Pointing
+    - Euler rotation sequence to add dynamics capabilities to the attitude reference generation
+    - Spinning about an inertially fixed axis
+    - A raster manager module that can change the guidance module states
+    - Velocity frame pointing
+    - attitude tracking error evaluation module
+    - Deadband module for attitude tracking error
+- DV guidance module
+- Effector Interfaces:
 
-   <ul>
-
-.. raw:: html
-
-   <li>
-
-FSW template module
-
-.. raw:: html
-
-   </li>
-
-::
-
-      <li>CSS based sun heading estimation module</li>
-      <li>UKF filter to determine inertial attitude</li>
-      <li>UKF fitler to determine CSS based body-relative sun heading</li>
-      <li>Attitude Guidance modules:</li>
-          <ul>
-              <li>Pointing towards two celestial objects</li>
-              <li>Inertial Pointing</li>
-              <li>Hill Frame Pointing</li>
-              <li>Euler rotation sequence to add dynamics capabiliteis to the attitude reference generation</li>
-              <li>Spinning about an inertially fixed axis</li>
-              <li>A raster manager module that can change the guidance module states</li>
-              <li>Velocity frame pointing</li>
-              <li>attitude tracking error evaluation module</li>
-              <li>Deadband module for attitude trackign error</li>
-          </ul>
-      <li>DV guidance module</li>
-      <li>Effector Interfaces</li>
-          <ul>
-              <li>mapping of control torque onto RW motor torques</li>
-              <li>Converting RW motor torques to voltages</li>
-              <li>RW null motion module to equalize the wheel speeds continuously</li>
-              <li>Thruster (THR) firing logic using a Schmitt trigger</li>
-              <li>THR firign logic using a remainder calculation</li>
-              <li>mappign of a command torque onto a set of THR devices</li>
-              <li>module to evalute the net momentum to dump with thrusters</li>
-          </ul>
-
-.. raw:: html
-
-   </ul>
+    - mapping of control torque onto RW motor torques
+    - Converting RW motor torques to voltages
+    - RW null motion module to equalize the wheel speeds continuously
+    - Thruster (THR) firing logic using a Schmitt trigger
+    - THR firing logic using a remainder calculation
+    - mapping of a command torque onto a set of THR devices
+    - module to evaluate the net momentum to dump with thrusters

@@ -291,6 +291,11 @@ class fileCrawler():
             lines += docContents + "\n\n"
 
         except: # Auto-generate the index.rst file
+            # add page tag
+            if name.startswith("_"):
+                lines += ".. " + name + "Underscore:\n\n"
+            else:
+                lines += ".. _" + name + ":\n\n"
 
             # Title the page
             lines += name + "\n" + "=" * len(name) + "\n\n"

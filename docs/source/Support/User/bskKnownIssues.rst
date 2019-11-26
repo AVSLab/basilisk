@@ -12,73 +12,30 @@ Version 1.3.2
 -------------
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
 
-Version 1.3.1
--------------
-- WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
-
-Version 1.3.0
--------------
+**Version 1.3.1**
 
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
 
-Upcoming Version 1.2.1
-----------------------
+**Version 1.3.0**
+
+- WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
+
+**Version 1.2.1**
 
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
 
 
-Version 1.2.0
---------------------
+**Version 1.2.0**
 
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
 - The magnetometer unit tests don't pass on all platforms. This is corrected in the next release.
 
-Version 1.1.0
---------------------
+**Version 1.1.0**
 
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
 - the unit tests of the magnetometer module don't pass on all operating systems as the test tolerances are too tight.  This is resolved in the next release.
 
-Version 1.0.0
---------------------
-.. raw:: html
-
-   <ul>
-
-.. raw:: html
-
-   <li>
-
-WINDOWS ONLY: Windows users cannot currently run pytest directly on
-Basilisk ``src/`` directory (there will be non-resolved python path
-issues that will result in erroneous ImportErrors). Instead, to verify
-proper installation of Basilisk, windows users must enter the specific
-subdirectory they are attempting to test, only then to run pytest. This
-should result in appropriate behavior. Right now there is no known
-solution to this issue.
-
-.. raw:: html
-
-   </li>
-
-.. raw:: html
-
-   <li>
-
-Swig version 4 was released over the summer. This version is not
-compatible with our current Basilisk software. Be sure to install swig
-version 3.0.12.
-
-.. raw:: html
-
-   </li>
-
-.. raw:: html
-
-   </ul>
-
-Version 0.9.0
--------------
+**Version 1.0.0**
 
 .. raw:: html
 
@@ -116,8 +73,7 @@ version 3.0.12.
 
    </ul>
 
-Version 0.8.1
--------------
+**Version 0.9.0**
 
 .. raw:: html
 
@@ -155,8 +111,7 @@ version 3.0.12.
 
    </ul>
 
-Version 0.8.0
--------------
+**Version 0.8.1**
 
 .. raw:: html
 
@@ -194,8 +149,45 @@ version 3.0.12.
 
    </ul>
 
-Version 0.7.2
--------------
+**Version 0.8.0**
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk ``src/`` directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Swig version 4 was released over the summer. This version is not
+compatible with our current Basilisk software. Be sure to install swig
+version 3.0.12.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.7.2**
 
 .. raw:: html
 
@@ -244,8 +236,7 @@ version 3.0.12.
 
    </ul>
 
-Version 0.7.1
--------------
+**Version 0.7.1**
 
 .. raw:: html
 
@@ -282,8 +273,7 @@ instructions have been updated to reflect this.
 
    </ul>
 
-Version 0.7.0
--------------
+**Version 0.7.0**
 
 .. raw:: html
 
@@ -320,8 +310,7 @@ instructions have been updated to reflect this.
 
    </ul>
 
-Version 0.6.2
--------------
+**Version 0.6.2**
 
 .. raw:: html
 
@@ -359,8 +348,7 @@ arguments are now provided as optional keywords.
 
    </ul>
 
-Version 0.6.1
--------------
+**Version 0.6.1**
 
 .. raw:: html
 
@@ -410,8 +398,7 @@ determine if a new dumping sequence is requested.
 
    </ul>
 
-Version 0.6.0
--------------
+**Version 0.6.0**
 
 .. raw:: html
 
@@ -437,8 +424,7 @@ solution to this issue.
 
    </ul>
 
-Version 0.5.1
--------------
+**Version 0.5.1**
 
 .. raw:: html
 
@@ -464,8 +450,7 @@ solution to this issue.
 
    </ul>
 
-Version 0.5.0
--------------
+**Version 0.5.0**
 
 .. raw:: html
 
@@ -518,8 +503,7 @@ setting this needs to be updated to not set this parameter anymore.
 
    </ul>
 
-Version 0.4.1
--------------
+**Version 0.4.1**
 
 .. raw:: html
 
@@ -559,8 +543,7 @@ support code. Thus, for now be sure to install version 1.15.14 of
 
    </ul>
 
-Version 0.4.0
--------------
+**Version 0.4.0**
 
 .. raw:: html
 
@@ -625,8 +608,7 @@ support code. Thus, for now be sure to install version 1.15.14 of
 
    </ul>
 
-Version 0.3.3
--------------
+**Version 0.3.3**
 
 .. raw:: html
 

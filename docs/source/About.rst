@@ -1,14 +1,11 @@
-About
-====================================
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
 
 
 .. image:: _images/static/Basilisk-Logo.png
    :align: center
    :scale: 50 %
+
+About
+====================================
 
 **Description:** Modular C/C++ astrodynamics simulation framework with
 Python scripting

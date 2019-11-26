@@ -87,4 +87,4 @@ See the :ref:`FAQ <FAQ>` on how to run generate an html validation report using 
 
 Update Release Notes
 --------------------
-Update the BSK release notes in ``/docs/source/Support/bskReleaseNotes.rst`` to include information about the new features being added.
+Update the :ref:`bskReleaseNotes` at ``/docs/source/Support/User/bskReleaseNotes.rst`` to include information about the new features being added.
