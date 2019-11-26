@@ -3,7 +3,7 @@
 ### Basilisk ###
 
 * [Summary of Basilisk](@ref cover)
-* [Versions](http://hanspeterschaub.info/bskReleaseNotes.html)
+* [Versions](http://hanspeterschaub.info/bskHtml/Documentation/Support/User/bskReleaseNotes.html)
 
 ### How do I get set up? ###
 The following links contain installation instructions for the supported platforms:
