@@ -1,0 +1,10 @@
+diff a/src/fswAlgorithms/attDetermination/sunlineEKF/sunlineEKF.c b/src/fswAlgorithms/attDetermination/sunlineEKF/sunlineEKF.c	(rejected hunks)
+@@ -360,7 +360,7 @@
+ //    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
+     sunlineEKFUpdate(configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->state, configData->x, configData->covar);
+     }
+-    
++
+ }
+ 
+ /*! This method computes the updated with a Classical Kalman Filter

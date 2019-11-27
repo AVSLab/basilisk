@@ -37,7 +37,7 @@ typedef struct {
 //! Class used to group a set of models into one "Task" of execution
 class SysModelTask
 {
-
+    
 public:
     SysModelTask();
     SysModelTask(uint64_t InputPeriod, uint64_t InputDelay=0,
@@ -52,7 +52,7 @@ public:
 	void enableTask() {this->taskActive = true;}
 	void disableTask() {this->taskActive = false;}
     void updatePeriod(uint64_t newPeriod);
-
+    
 public:
     std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
     std::string TaskName;  //!< -- Identifier for Task

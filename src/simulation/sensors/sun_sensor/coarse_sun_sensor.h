@@ -48,7 +48,7 @@ class CoarseSunSensor: public SysModel {
 public:
     CoarseSunSensor();
     ~CoarseSunSensor();
-
+    
     void CrossInit(); //!< @brief method for initializing cross dependencies
     void SelfInit();  //!< @brief method for initializing own messages
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
@@ -61,7 +61,7 @@ public:
     void scaleSensorValues();
     void applySaturation();     //!< apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
-
+    
 public:
     std::string sunInMsgName;                    //!< [-] Message name for sun data
     std::string stateInMsgName;                  //!< [-] Message name for spacecraft state */
@@ -105,8 +105,8 @@ private:
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
-/*! This class is a thin container on top of the above coarse-sun sensor class.
-It is used to aggregate the output messages of the coarse sun-sensors into a
+/*! This class is a thin container on top of the above coarse-sun sensor class.  
+It is used to aggregate the output messages of the coarse sun-sensors into a 
 a single output for use by downstream models.*/
 class CSSConstellation: public SysModel {
  public:
@@ -116,7 +116,7 @@ class CSSConstellation: public SysModel {
     void SelfInit();                            //!< @brief [-] Method for initializing own messages
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation
     void appendCSS(CoarseSunSensor newSensor); //!< @brief [-] Method for adding sensor to list
-
+    
  public:
     uint64_t outputBufferCount;                  //!< [-] Number of messages archived in output data
     std::string outputConstellationMessage;      //!< [-] Message name for the outgoing message

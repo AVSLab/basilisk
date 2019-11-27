@@ -52,8 +52,8 @@ bool StarTracker::LinkMessages()
 {
     this->inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
         this->inputStateMessage, sizeof(SCPlusStatesSimMsg), this->moduleID);
-
-
+    
+    
     return(inputStateID >= 0);
 }
 
@@ -89,12 +89,12 @@ void StarTracker::CrossInit()
 void StarTracker::readInputMessages()
 {
     SingleMessageHeader localHeader;
-
+    
     if(!this->messagesLinked)
     {
         this->messagesLinked = LinkMessages();
     }
-
+    
     memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(this->inputStateID >= 0)
     {

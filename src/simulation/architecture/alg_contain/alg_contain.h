@@ -39,7 +39,7 @@ public:
         void (*SelfPtr)(void*, uint64_t)=NULL,
         void (*CrossPtr)(void*, uint64_t)=NULL,
 		void(*ResetPtr)(void*, uint64_t, uint64_t) = NULL);
-
+    
     void UseData(void *IncomingData) {DataPtr = IncomingData;}
     void UseUpdate(void (*LocPtr)(void*, uint64_t, uint64_t)) {AlgUpdate = LocPtr;}
     void UseSelfInit(void (*LocPtr)(void*, uint64_t)) {AlgSelfInit = LocPtr;}

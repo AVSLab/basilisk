@@ -41,7 +41,7 @@ typedef struct {
 //! Class used to group a set of tasks into one process (task group) of execution
 class SysProcess
 {
-
+    
 public:
     SysProcess();
     SysProcess(std::string messageContainer);
@@ -67,7 +67,7 @@ public:
     void routeInterfaces();
     void disableAllTasks();
     void enableAllTasks();
-
+    
 public:
     std::vector<SysInterface*> intRefs;  //!< -- Interface references to move data to process
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks

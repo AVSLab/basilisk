@@ -419,14 +419,14 @@ void sunlineCKFUpdate(double xBar[SKF_N_STATES_HALF], double kalmanGain[SKF_N_ST
     mTranspose(eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT);
     mMultM(eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHCovarBar);
     mMultM(eyeKalHCovarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covar);
-
+    
     /* Add noise to the covariance*/
     mMultM(kalmanGain, SKF_N_STATES_HALF, numObs, noiseMat, numObs, numObs, kalR);
     mTranspose(kalmanGain, SKF_N_STATES_HALF, numObs, kalT);
     mMultM(kalR, SKF_N_STATES_HALF, numObs, kalT, numObs, SKF_N_STATES_HALF, kalRKalT);
     mAdd(covar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, kalRKalT, covar);
-
-
+    
+    
 }
 
 /*! This method computes the updated with a Extended Kalman Filter
@@ -461,17 +461,17 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double
     mSetZero(kalT, MAX_N_CSS_MEAS, SKF_N_STATES_HALF);
     mSetZero(kalR, SKF_N_STATES_HALF, MAX_N_CSS_MEAS);
     mSetZero(eyeKalHCovarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
-
+    
     /* Set noise matrix given number of observations */
     mSetIdentity(noiseMat, numObs, numObs);
     mScale(qObsVal, noiseMat, numObs, numObs, noiseMat);
-
+    
     /*! - Update the state error*/
     mMultV(kalmanGain, SKF_N_STATES_HALF, numObs, yObs, x);
 
     /*! - Change the reference state*/
     vAdd(states, SKF_N_STATES_HALF, x, states);
-
+    
     /*! - Compute new covariance with Joseph's method*/
     mMultM(kalmanGain, SKF_N_STATES_HALF, numObs, hObs, numObs, SKF_N_STATES_HALF, kH);
     mSetIdentity(eye, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
@@ -479,18 +479,18 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double
     mTranspose(eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT);
     mMultM(eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHCovarBar);
     mMultM(eyeKalHCovarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covar);
-
+    
     /* Add noise to the covariance*/
     mMultM(kalmanGain, SKF_N_STATES_HALF, numObs, noiseMat, (size_t) numObs, (size_t) numObs, kalR);
     mTranspose(kalmanGain, SKF_N_STATES_HALF, (size_t) numObs, kalT);
     mMultM(kalR, SKF_N_STATES_HALF, (size_t) numObs, kalT, (size_t) numObs, SKF_N_STATES_HALF, kalRKalT);
     mAdd(covar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, kalRKalT, covar);
-
+    
 }
 
-/*! This method computes the H matrix, defined by dGdX. As well as computing the
+/*! This method computes the H matrix, defined by dGdX. As well as computing the 
  innovation, difference between the measurements and the expected measurements.
- This methods modifies the numObs, measMat, and yMeas.
+ This methods modifies the numObs, measMat, and yMeas. 
  @return void
  @param states
  @param numCSS The total number of CSS
@@ -507,7 +507,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], size_t numCSS, double
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
-
+    
     v3SetZero(sensorNormal);
 
     obsCounter = 0;
@@ -518,7 +518,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], size_t numCSS, double
         {
             /*! - For each valid measurement, copy observation value and compute expected obs value and fill out H matrix.*/
             v3Scale(CBias[i], &(cssNHat_B[i*3]), sensorNormal); /* scaled sensor normal */
-
+            
             *(obs+obsCounter) = cssSensorCos[i];
             *(yMeas+obsCounter) = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
             mSetSubMatrix(sensorNormal, 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES_HALF, obsCounter, 0);

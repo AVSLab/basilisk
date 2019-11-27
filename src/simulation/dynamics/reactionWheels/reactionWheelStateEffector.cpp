@@ -44,7 +44,7 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 
     this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
     this->nameOfReactionWheelThetasState = "reactionWheelThetas";
-
+    
     return;
 }
 
@@ -81,7 +81,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         omegasForInit(RWIt - this->ReactionWheelData.begin(), 0) = RWIt->Omega;
         this->numRW++;
     }
-
+    
 	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfReactionWheelOmegasState);
 
 	if (numRWJitter > 0) {
@@ -106,7 +106,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPntB_B.setZero();
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
-
+    
     int thetaCount = 0;
     std::vector<RWConfigSimMsg>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
@@ -580,3 +580,4 @@ void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 	WriteOutputMessages(CurrentSimNanos);
 //
 }
+

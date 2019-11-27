@@ -84,13 +84,13 @@ void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                 currRec->velChebyCoeff[k*n+j] *= 1.0/currRec->ephemTimeRad;
             }
         }
-
+        
     }
-
+    
 }
 
 /*! This method takes the current time and computes the state of the object
-    using that time and the stored Chebyshev coefficients.  If the time provided
+    using that time and the stored Chebyshev coefficients.  If the time provided 
     is outside the specified range, the position vectors rail high/low appropriately.
  @return void
  @param configData The configuration data associated with the ephemeris model
@@ -106,15 +106,15 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
     ChebyEphemRecord *currRec;
     int i;
     TDBVehicleClockCorrelationFswMsg localCorr;
-
+    
     ReadMessage(configData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
-
+    
     memset(&configData->outputState, 0x0, sizeof(EphemerisIntMsg));
-
+    
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
-
+    
     configData->coeffSelector = 0;
     for(i=0; i<MAX_CHEB_RECORDS; i++)
     {
@@ -125,7 +125,7 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
             break;
         }
     }
-
+   
     currRec = &(configData->ephArray[configData->coeffSelector]);
     currentScaledValue = (currentEphTime - currRec->ephemTimeMid)
         /currRec->ephemTimeRad;
@@ -133,9 +133,9 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
     {
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
     }
-
+    
     configData->outputState.timeTag = callTime*NANO2SEC;
-
+    
     for(i=0; i<3; i++)
     {
         configData->outputState.r_BdyZero_N[i] = calculateChebyValue(
@@ -144,9 +144,9 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
         configData->outputState.v_BdyZero_N[i] = calculateChebyValue(
             &(currRec->velChebyCoeff[i*currRec->nChebCoeff]),
             currRec->nChebCoeff, currentScaledValue);
-
+        
     }
-
+    
     WriteMessage(configData->posFitOutMsgID, callTime,
                  sizeof(EphemerisIntMsg), &configData->outputState, moduleID);
 

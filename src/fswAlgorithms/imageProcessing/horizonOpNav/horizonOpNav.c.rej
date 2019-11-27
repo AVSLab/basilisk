@@ -1,0 +1,10 @@
+diff a/src/fswAlgorithms/imageProcessing/horizonOpNav/horizonOpNav.c b/src/fswAlgorithms/imageProcessing/horizonOpNav/horizonOpNav.c	(rejected hunks)
+@@ -330,7 +330,7 @@
+ {
+     int32_t i, j;
+     double sum;
+-    
++
+     vSetZero(n, nRow);
+     n[nRow-1] = inVec[nRow-1]/R[nRow*nRow-1];
+     for (i = nRow-2; i>=0; i--)

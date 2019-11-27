@@ -1,0 +1,10 @@
+diff a/src/simulation/sensors/imu/imu_sensor.cpp b/src/simulation/sensors/imu/imu_sensor.cpp	(rejected hunks)
+@@ -222,7 +222,7 @@
+ {
+ 
+     double dt = (CurrentTime - this->PreviousTime)*1.0E-9;
+-    
++
+     if(this->aDisc.LSB.any() > 0.0) //If aLSB has been set.
+     {
+         this->accel_SN_P_out = this->aDisc.discretize(this->accel_SN_P_out);

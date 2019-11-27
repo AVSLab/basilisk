@@ -88,6 +88,6 @@ void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_
     /*! - Write aggregate output into output message */
     WriteMessage(configData->tamOutMsgID, callTime,    sizeof(TAMSensorBodyFswMsg),
                 (void*) & (configData->tamLocalOutput), moduleID);
-
+    
     return;
 }

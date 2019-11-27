@@ -42,7 +42,7 @@ class BoreAngCalc: public SysModel {
 public:
     BoreAngCalc();
     ~BoreAngCalc();
-
+    
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
@@ -50,7 +50,7 @@ public:
     void computeOutputData();
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
-
+    
 public:
     std::string StateString;          //!< (-) port to use for conversion
     std::string celBodyString;        //!< (-) celestial body we are pointing at

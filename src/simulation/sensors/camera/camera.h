@@ -56,7 +56,7 @@ public:
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
-
+    
     /*! Camera parameters */
     char parentName[MAX_MESSAGE_SIZE];  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn; //!< [-] Is the camera currently taking images
@@ -90,3 +90,4 @@ private:
 /* @} */
 
 #endif
+

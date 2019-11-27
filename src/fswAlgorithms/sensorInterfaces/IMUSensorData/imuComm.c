@@ -59,7 +59,7 @@ void CrossInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
         ReadMessage(configData->PropsMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(VehicleConfigFswMsg), (void*) &LocalConfigData, moduleID);
     }
-
+    
 }
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
@@ -70,13 +70,13 @@ void CrossInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
  */
 void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     IMUSensorIntMsg LocalInput;
     ReadMessage(configData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(IMUSensorIntMsg), (void*) &LocalInput, moduleID);
-
+    
     m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.DVFramePlatform,
               configData->LocalOutput.DVFrameBody);
     m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.AccelPlatform,
@@ -85,9 +85,9 @@ void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_
               configData->LocalOutput.DRFrameBody);
     m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.AngVelPlatform,
               configData->LocalOutput.AngVelBody);
-
+    
     WriteMessage(configData->OutputMsgID, callTime, sizeof(IMUSensorBodyFswMsg),
                  (void*) &(configData->LocalOutput), moduleID);
-
+    
     return;
 }

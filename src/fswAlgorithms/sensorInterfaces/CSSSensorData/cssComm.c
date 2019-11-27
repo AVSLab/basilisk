@@ -94,12 +94,12 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
     double InputValues[MAX_NUM_CSS_SENSORS]; /* [-] Current measured CSS value for the constellation of CSS sensor */
     double ChebyDiffFactor, ChebyPrev, ChebyNow, ChebyLocalPrev, ValueMult; /* Parameters used for the Chebyshev Recursion Forumula */
     CSSArraySensorIntMsg OutputBuffer;
-
+    
     memset(&OutputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-
+    
     ReadMessage(configData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(CSSArraySensorIntMsg),
                 (void*) (InputValues), moduleID);
-
+    
     /*! - Loop over the sensors and compute data
          -# Check appropriate range on sensor and calibrate
          -# If Chebyshev polynomials are configured:
@@ -111,7 +111,7 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
     for(i=0; i<configData->NumSensors; i++)
     {
         OutputBuffer.CosValue[i] = (float) InputValues[i]/configData->MaxSensorValue; /* Scale Sensor Data */
-
+        
         /* Seed the polynomial computations */
         ValueMult = 2.0*OutputBuffer.CosValue[i];
         ChebyPrev = 1.0;
@@ -119,7 +119,7 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
         ChebyDiffFactor = 0.0;
         ChebyDiffFactor = configData->ChebyCount > 0 ? ChebyPrev*configData->KellyCheby[0] : ChebyDiffFactor; /* if only first order correction */
         ChebyDiffFactor = configData->ChebyCount > 1 ? ChebyNow*configData->KellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor; /* if higher order (> first) corrections */
-
+        
         /* Loop over remaining polynomials and add in values */
         for(j=2; j<configData->ChebyCount; j = j+1)
         {
@@ -128,9 +128,9 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
             ChebyPrev = ChebyLocalPrev;
             ChebyDiffFactor += configData->KellyCheby[j]*ChebyNow;
         }
-
+        
         OutputBuffer.CosValue[i] = OutputBuffer.CosValue[i] + ChebyDiffFactor;
-
+        
         if(OutputBuffer.CosValue[i] > 1.0)
         {
             OutputBuffer.CosValue[i] = 1.0;
@@ -140,11 +140,11 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
             OutputBuffer.CosValue[i] = 0.0;
         }
     }
-
+    
     /*! - Write aggregate output into output message */
     WriteMessage(configData->OutputMsgID, callTime,
                  sizeof(CSSArraySensorIntMsg), (void*) &OutputBuffer,
                  moduleID);
-
+    
     return;
 }

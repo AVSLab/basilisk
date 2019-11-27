@@ -56,7 +56,7 @@ public:
     Eigen::MatrixXd* getPropertyReference(std::string propName);
     void setPropertyValue(const std::string propName,
                           const Eigen::MatrixXd & propValue);
-
+    
 };
 
 

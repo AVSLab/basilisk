@@ -28,7 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-/*! This method creates the output navigation message (translation only) for
+/*! This method creates the output navigation message (translation only) for 
     the ephemeris model
  @return void
  @param configData The configuration data associated with the ephemeris model
@@ -65,7 +65,7 @@ void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
 }
 
 /*! This method takes the current time and computes the state of the object
-    using that time and the stored Chebyshev coefficients.  If the time provided
+    using that time and the stored Chebyshev coefficients.  If the time provided 
     is outside the specified range, the position vectors rail high/low appropriately.
  @return void
  @param configData The configuration data associated with the ephemeris model

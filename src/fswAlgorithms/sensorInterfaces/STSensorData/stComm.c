@@ -60,7 +60,7 @@ void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
         ReadMessage(configData->PropsMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(VehicleConfigFswMsg), (void*) &LocalConfigData, moduleID);
     }
-
+    
 }
 
 /*! This method takes the raw sensor data from the star tracker and
@@ -71,7 +71,7 @@ void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
  */
 void Update_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double dcm_CN[3][3];            /* dcm, inertial to case frame */
@@ -85,6 +85,6 @@ void Update_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t 
     configData->LocalOutput.timeTag = LocalInput.timeTag;
     WriteMessage(configData->OutputMsgID, callTime, sizeof(STAttFswMsg),
                  (void*) &(configData->LocalOutput), moduleID);
-
+    
     return;
 }

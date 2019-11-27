@@ -58,7 +58,7 @@ extern "C" {
     void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_t moduleID);
     void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R);
     void BackSub(double *R, double *inVec, int32_t nRow, double *n);
-
+    
 #ifdef __cplusplus
 }
 #endif

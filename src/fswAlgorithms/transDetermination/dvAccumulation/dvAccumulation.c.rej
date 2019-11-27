@@ -1,0 +1,10 @@
+diff a/src/fswAlgorithms/transDetermination/dvAccumulation/dvAccumulation.c b/src/fswAlgorithms/transDetermination/dvAccumulation/dvAccumulation.c	(rejected hunks)
+@@ -212,7 +212,7 @@
+     }
+ 
+     /*! - Create output message */
+-    
++
+     outputData.timeTag = configData->previousTime;
+     v3Copy(configData->vehAccumDV_B, outputData.vehAccumDV);
+ 

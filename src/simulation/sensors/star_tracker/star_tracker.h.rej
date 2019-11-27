@@ -1,0 +1,10 @@
+diff a/src/simulation/sensors/star_tracker/star_tracker.h b/src/simulation/sensors/star_tracker/star_tracker.h	(rejected hunks)
+@@ -36,7 +36,7 @@
+ public:
+     StarTracker();
+     ~StarTracker();
+-    
++
+     bool LinkMessages();
+     void UpdateState(uint64_t CurrentSimNanos);
+     void SelfInit();

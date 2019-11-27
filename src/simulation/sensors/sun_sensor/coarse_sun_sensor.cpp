@@ -86,17 +86,17 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 {
     double tempPhi = this->phi + cssPhiPerturb;
     double tempTheta = this->theta + cssThetaPerturb;
-
+    
     //! - Rotation from individual photo diode sensor frame (S) to css platform frame (P)
     Eigen::Vector3d sensorV3_P; // sensor diode normal in platform frame
     sensorV3_P.fill(0.0);
-
+    
     /*! azimuth and elevation rotations of vec transpose(1,0,0) where vec is the unit normal
      of the photo diode*/
     sensorV3_P[0] = cos(tempPhi) * cos(tempTheta);
     sensorV3_P[1] = cos(tempPhi) * sin(tempTheta);
     sensorV3_P[2] = sin(tempPhi);
-
+    
     //! Rotation from P frame to body frame (B)
     this->nHat_B = this->dcm_PB * sensorV3_P;
 }
@@ -117,7 +117,7 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
     this->dcm_PB = cArray2EigenMatrix3d(dcm_PBcArray);
 }
 
-/*! This method performs all of the internal initialization for the model itself.
+/*! This method performs all of the internal initialization for the model itself. 
  Primarily that involves initializing the random number generator and creates
  the output message*/
 void CoarseSunSensor::SelfInit()
@@ -135,13 +135,13 @@ void CoarseSunSensor::SelfInit()
     pMatrix.resize(1, 1);
     pMatrix(0,0) = 1.;
     this->noiseModel.setPropMatrix(pMatrix);
-
+    
     Eigen::MatrixXd satBounds;
     satBounds.resize(1, 2);
     satBounds(0,0) = this->minOutput;
     satBounds(0,1) = this->maxOutput;
     this->saturateUtility.setBounds(satBounds);
-
+    
     //! - Create the output message sized to the output message size if the name is valid
     if(this->cssDataOutMsgName != "")
     {
@@ -151,7 +151,7 @@ void CoarseSunSensor::SelfInit()
     }
 }
 
-/*! This method simply calls the LinkMessages method to ensure that input messages
+/*! This method simply calls the LinkMessages method to ensure that input messages 
  are matched correctly.*/
 void CoarseSunSensor::CrossInit()
 {
@@ -208,38 +208,38 @@ void CoarseSunSensor::readInputMessages()
     }
 }
 
-/*! This method computes the sun-vector heading information in the vehicle
+/*! This method computes the sun-vector heading information in the vehicle 
  body frame.*/
 void CoarseSunSensor::computeSunData()
 {
     Eigen::Vector3d Sc2Sun_Inrtl;
     Eigen::Vector3d sHat_N;
     Eigen::Matrix3d dcm_BN;
-
+    
     Eigen::Vector3d r_BN_N_eigen;
     Eigen::Vector3d sunPos;
     Eigen::MRPd sigma_BN_eigen;
-
+    
     //! - Get the position from spacecraft to Sun
-
+    
     //! - Read Message data to eigen
     r_BN_N_eigen = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
     sunPos = cArray2EigenVector3d(this->sunData.PositionVector);
     sigma_BN_eigen = cArray2EigenVector3d(this->stateCurrent.sigma_BN);
-
-
+    
+    
     //! - Find sun heading unit vector
     Sc2Sun_Inrtl = sunPos -  r_BN_N_eigen;
     sHat_N = Sc2Sun_Inrtl / Sc2Sun_Inrtl.norm();
-
+    
     //! - Get the inertial to body frame transformation information and convert sHat to body frame
     dcm_BN = sigma_BN_eigen.toRotationMatrix().transpose();
     this->sHat_B = dcm_BN * sHat_N;
-
+    
     //! - compute sun distance factor
     double r_Sun_Sc = Sc2Sun_Inrtl.norm();
     this->sunDistanceFactor = pow(AU*1000., 2.)/pow(r_Sun_Sc, 2.);
-
+    
 }
 
 /*! This method computes the tru sensed values for the sensor */
@@ -254,12 +254,12 @@ void CoarseSunSensor::computeTrueOutput()
         kellyFit -= exp(-pow(this->directValue, this->kPower) / this->kellyFactor);
     }
     this->directValue = this->directValue*kellyFit;
-
+    
     // apply sun distance factor (adjust based on flux at current distance from sun)
     // Also apply shadow factor. Basically, correct the intensity of the light.
     this->directValue = this->directValue*this->sunDistanceFactor*this->sunVisibilityFactor.shadowFactor;
     this->trueValue = this->directValue;
-
+    
     //! - Albedo is forced to zero for now. Note that "albedo value" must be the cosine response due to albedo intensity and direction. It can then be stacked on top of the
     //! - sun cosine curve
     //this->albedoValue = 0.0;
@@ -267,7 +267,7 @@ void CoarseSunSensor::computeTrueOutput()
     //this->trueValue = this->directValue
 }
 
-/*! This method takes the true observed cosine value (directValue) and converts
+/*! This method takes the true observed cosine value (directValue) and converts 
  it over to an errored value.  It applies noise to the truth. */
 void CoarseSunSensor::applySensorErrors()
 {
@@ -280,9 +280,9 @@ void CoarseSunSensor::applySensorErrors()
     this->noiseModel.computeNextState();
     Eigen::VectorXd currentErrorEigen =  this->noiseModel.getCurrentState();
     double currentError = currentErrorEigen.coeff(0,0);
-
+    
     //Apply saturation values here.
-
+    
     //! - Sensed value is total illuminance with a kelly fit + noise
     this->sensedValue = this->directValue + currentError + this->senBias;
 }
@@ -301,7 +301,7 @@ void CoarseSunSensor::applySaturation()
     eigenMatrixXd2CArray(sensedEigen, &this->sensedValue);
 }
 
-/*! This method writes the output message.  The output message contains the
+/*! This method writes the output message.  The output message contains the 
  current output of the CSS converted over to some discrete "counts" to
  emulate ADC conversion of S/C.
  @param Clock The current simulation time*/
@@ -319,7 +319,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
                                                  this->moduleID);
 }
 
-/*! This method is called at a specified rate by the architecture.  It makes the
+/*! This method is called at a specified rate by the architecture.  It makes the 
  calls to compute the current sun information and write the output message for
  the rest of the model.
  @param CurrentSimNanos The current simulation time from the architecture*/
@@ -341,7 +341,7 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-/*! The default constructor for the constellation really just clears the
+/*! The default constructor for the constellation really just clears the 
  sensor list.*/
 CSSConstellation::CSSConstellation()
 {
@@ -355,7 +355,7 @@ CSSConstellation::~CSSConstellation()
     this->sensorList.clear();
 }
 
-/*! This method loops through the sensor list and calls the self init method for
+/*! This method loops through the sensor list and calls the self init method for 
  all of them.*/
 void CSSConstellation::SelfInit()
 {
@@ -366,7 +366,7 @@ void CSSConstellation::SelfInit()
     {
         it->SelfInit();
     }
-
+    
     memset(&this->outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->CreateNewMessage(outputConstellationMessage,
@@ -374,7 +374,7 @@ void CSSConstellation::SelfInit()
                      "CSSArraySensorIntMsg", this->moduleID);
 }
 
-/*! This method loops through the sensor list and calls the CrossInit method for
+/*! This method loops through the sensor list and calls the CrossInit method for 
  all of those sensors.*/
 void CSSConstellation::CrossInit()
 {

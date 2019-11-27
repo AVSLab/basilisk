@@ -33,7 +33,7 @@ class EphemerisConverter: public SysModel {
 public:
     EphemerisConverter();
     ~EphemerisConverter();
-
+    
     bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();

@@ -253,7 +253,7 @@ extern "C" {
     void   subMRP(double *q1, double *q2, double *q);
     void   subPRV(double *q10, double *q20, double *q);
     void   Mi(double angle, int axis, double C[3][3]);
-
+    
 #ifdef __cplusplus
 }
 #endif

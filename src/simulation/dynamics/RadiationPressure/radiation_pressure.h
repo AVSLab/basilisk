@@ -57,7 +57,7 @@ public:
     void addForceLookupBEntry(Eigen::Vector3d vec);
     void addTorqueLookupBEntry(Eigen::Vector3d vec);
     void addSHatLookupBEntry(Eigen::Vector3d vec);
-
+    
 private:
     void computeCannonballModel(Eigen::Vector3d rSunB_B);
     void computeLookupModel(Eigen::Vector3d rSunB_B);

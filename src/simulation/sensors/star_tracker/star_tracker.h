@@ -36,7 +36,7 @@ class StarTracker: public SysModel {
 public:
     StarTracker();
     ~StarTracker();
-
+    
     bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
@@ -47,9 +47,9 @@ public:
     void applySensorErrors();
     void computeTrueOutput();
     void computeQuaternion(double *sigma, STSensorIntMsg *sensorValue);
-
+    
 public:
-
+    
     uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
     std::string inputStateMessage;    //!< [-] String for the input state message
     std::string outputStateMessage;   //!< [-] String for the output state message

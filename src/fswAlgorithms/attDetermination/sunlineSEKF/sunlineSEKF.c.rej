@@ -1,0 +1,14 @@
+diff a/src/fswAlgorithms/attDetermination/sunlineSEKF/sunlineSEKF.c b/src/fswAlgorithms/attDetermination/sunlineSEKF/sunlineSEKF.c	(rejected hunks)
+@@ -322,10 +322,10 @@
+     v3Tilde(states, skewStates);
+     m33Scale(-1, &skewStates[0], &skewStates[0]); // bring to omega_SB with negative sign
+     mMultM(skewStates, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, skewStates);
+-    
++
+     /* - omega_tilde in dynamics */
+     mSetSubMatrix(skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, 0, 0);
+-    
++
+     /* Populate the first 3x3 matrix of the dynamics matrix*/
+     mTranspose(dynMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, dynMat);
+     mTranspose(skewStates, SKF_N_STATES_HALF, SKF_N_STATES_HALF, skewStates);

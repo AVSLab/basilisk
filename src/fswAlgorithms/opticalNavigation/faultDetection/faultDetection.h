@@ -37,9 +37,9 @@ typedef struct {
     char navMeasSecondaryMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the second meas message
     char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-    double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar.
+    double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar. 
     double sigmaFault; //!< What is the sigma multiplication factor when comparing measurements
-
+    
     int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t navMeas1MsgID;    //!< [-] The ID associated with the first incoming measurements
     int32_t navMeas2MsgID;    //!< [-] The ID associated with the second incoming measurements
@@ -50,13 +50,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID);
     void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID);
     void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif

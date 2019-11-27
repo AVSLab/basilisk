@@ -1,0 +1,10 @@
+diff a/src/simulation/environment/eclipse/eclipse.cpp b/src/simulation/environment/eclipse/eclipse.cpp	(rejected hunks)
+@@ -234,7 +234,7 @@
+     double a = asin(REQ_SUN*1000/normR_HB_N); // apparent radius of sun
+     double b = asin(planetRadius/normS_BP_N); // apparent radius of occulting body
+     double c = acos((-s_BP_N.dot(r_HB_N))/(normS_BP_N*normR_HB_N));
+-    
++
+     // The order of these conditionals is important.
+     // In particular (c < a + b) must check last to avoid testing
+     // with implausible a, b and c values

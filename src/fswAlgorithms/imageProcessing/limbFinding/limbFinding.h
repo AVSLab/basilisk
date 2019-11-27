@@ -40,12 +40,12 @@ class LimbFinding: public SysModel {
 public:
     LimbFinding();
     ~LimbFinding();
-
+    
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-
+    
 public:
     std::string filename;                //!< Filename for module to read an image directly
     std::string opnavLimbOutMsgName;  //!< The name of the Limb output message
@@ -69,3 +69,4 @@ private:
 
 
 #endif
+

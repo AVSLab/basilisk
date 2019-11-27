@@ -1,0 +1,10 @@
+diff a/src/fswAlgorithms/opticalNavigation/relativeODuKF/relativeODuKF.c b/src/fswAlgorithms/opticalNavigation/relativeODuKF/relativeODuKF.c	(rejected hunks)
+@@ -48,7 +48,7 @@
+     /*! Read in the treated position measurement from pixelLineConverter */
+     configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
+                                                       sizeof(OpNavFswMsg), moduleId);
+-    
++
+ }
+ 
+ /*! This method resets the relative OD filter to an initial state and

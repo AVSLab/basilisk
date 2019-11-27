@@ -98,7 +98,7 @@ struct FuelTankModelEmptying_t :
 	double thetaStar;								   //!< [rad] angle from vertical to top of fuel
 	double thetaDotStar;                               //!< [rad/s] derivative of angle from vertical to top of fuel
 	double thetaDDotStar;							   //!< [rad/s^2] second derivative of angle from vertical to top of fuel
-	Eigen::Vector3d k3;								   //!< -- Direction of fuel depletion
+	Eigen::Vector3d k3;								   //!< -- Direction of fuel depletion 
 
 	void computeTankProps(double mFuel) {
 		rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*radiusTankInit);
@@ -135,10 +135,10 @@ struct FuelTankModelEmptying_t :
 		ITankPntT_T(2, 2) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
 			(2.0 / 3.0 + 1.0 / 4.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4) - 1 / 12.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)));
 		ITankPntT_T(0, 0) = ITankPntT_T(1, 1) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
-			(2.0 / 3.0 - 1.0 / 4.0*std::pow(std::cos(thetaStar), 5) + 1 / 24.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)) +
+			(2.0 / 3.0 - 1.0 / 4.0*std::pow(std::cos(thetaStar), 5) + 1 / 24.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)) + 
 				5.0 / 4.0*cos(thetaStar) + 1 / 8.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4));
 
-
+		
 	}
 	void computeTankPropDerivs(double mFuel, double mDotFuel) {
 		if (mFuel != propMassInit) {
@@ -177,7 +177,7 @@ struct FuelTankModelUniformBurn_t :
 {
 	double radiusTankInit;                             //!< [m] Initial radius of the cylindrical tank
 	double lengthTank;								   //!< [m] Length of the tank
-
+	
 	void computeTankProps(double mFuel) {
 		r_TcT_T = r_TcT_TInit;
 		ITankPntT_T.setZero();

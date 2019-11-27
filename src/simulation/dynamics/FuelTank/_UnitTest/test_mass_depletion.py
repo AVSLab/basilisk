@@ -52,17 +52,17 @@ def test_massDepletionTest(show_plots):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-
+    
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-
+    
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
     thrusterCommandName = "acs_thruster_cmds"
-
+    
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-
+    
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -105,7 +105,7 @@ def test_massDepletionTest(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
-
+    
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
@@ -249,14 +249,14 @@ def test_massDepletionTest(show_plots):
 def axisChangeHelper(r_BcB_B):
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-
+    
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
     thrusterCommandName = "acs_thruster_cmds"
-
+    
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-
+    
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -299,7 +299,7 @@ def axisChangeHelper(r_BcB_B):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
-
+    
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
@@ -353,7 +353,7 @@ def axisChangeHelper(r_BcB_B):
     dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
     return (dataPos, dataSigma)
-
+    
 
 def test_axisChange(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -363,7 +363,7 @@ def test_axisChange(show_plots):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-
+    
     dataPos1, dataSigma1 = axisChangeHelper([[0.0], [0.0], [0.0]])
     dataPos2, dataSigma2 = axisChangeHelper([[0.5], [0.0], [0.0]])
 

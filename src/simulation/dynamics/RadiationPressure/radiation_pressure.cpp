@@ -42,7 +42,7 @@ RadiationPressure::RadiationPressure()
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-
+    
     CallCounts = 0;
     return;
 }
@@ -99,7 +99,7 @@ void RadiationPressure::linkInStates(DynParamManager& statesIn)
 {
 }
 
-/*! This method is used to read the incoming ephmeris and
+/*! This method is used to read the incoming ephmeris and 
  spacecraft state messages. The data is stored in the associated
  buffer structure.
  @return void
@@ -111,13 +111,13 @@ void RadiationPressure::readInputMessages()
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader localHeader;
     memset(&localHeader, 0x0, sizeof(localHeader));
-
+    
     if(this->sunEphmInMsgId >= 0)
     {
         memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetStateSimMsg));
         succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
     }
-
+    
     memset(&localHeader, 0x0, sizeof(localHeader));
     this->stateRead = false;
     if(this->stateInMsgId >= 0)
@@ -134,7 +134,7 @@ void RadiationPressure::readInputMessages()
 }
 
 /*! This method computes the dynamic effect due to solar raidation pressure.
- It is an inherited method from the DynamicEffector class and
+ It is an inherited method from the DynamicEffector class and 
  is designed to be called by the simulation dynamics engine.
  @return void
  @param integTime Current simulation integration time
@@ -147,7 +147,7 @@ void RadiationPressure::computeForceTorque(double integTime)
     Eigen::Vector3d r_N(this->stateInBuffer.r_BN_N);
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
     Eigen::Vector3d s_N = sun_r_N - r_N;
-
+    
     if (this->srpModel == SRP_CANNONBALL_MODEL) {
         this->computeCannonballModel(s_N);
         this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.shadowFactor;
@@ -230,13 +230,13 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     double sunDist = s_B.norm();
     Eigen::Vector3d sHat_B = s_B/sunDist;
     Eigen::Vector3d tmpLookupSHat_B(0,0,0);
-
+    
     if (!this->stateRead) {
         this->forceExternal_B.setZero();
         this->torqueExternalPntB_B.setZero();
         return;
     }
-
+    
     // Find the lookup entry that most closely aligns with the current sHat_B direction
     // Look up force is expected to be evaluated at 1AU.
     // Therefore, we must scale the force by its distance from the sun squared.
@@ -252,7 +252,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
             currentDotProduct = tmpDotProduct;
         }
     }
-
+    
     this->forceExternal_B = this->lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
     this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
 }

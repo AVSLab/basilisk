@@ -1,0 +1,15 @@
+diff a/src/simulation/dynamics/_GeneralModuleFiles/gravityEffector.h b/src/simulation/dynamics/_GeneralModuleFiles/gravityEffector.h	(rejected hunks)
+@@ -118,11 +118,11 @@
+     void setGravBodies(std::vector<GravBodyData *> gravBodies);
+     void addGravBody(GravBodyData* gravBody);
+     void prependSpacecraftNameToStates();
+-    
++
+ private:
+     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);
+     void writeOutputMessages(uint64_t currentSimNanos);
+-    
++
+ public:
+     std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
+     std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times

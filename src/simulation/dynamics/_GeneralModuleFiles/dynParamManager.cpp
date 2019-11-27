@@ -61,7 +61,7 @@ StateData* DynParamManager::getStateObject(std::string stateName)
 {
     StateData *statePtr;
     std::map<std::string, StateData>::iterator it;
-
+    
     statePtr = nullptr;
     it = stateContainer.stateMap.find(stateName);
     if(it != stateContainer.stateMap.end())

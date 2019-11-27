@@ -75,7 +75,7 @@ private:
  */
 class SysInterface
 {
-
+    
 public:
     SysInterface();
     virtual ~SysInterface();

@@ -44,7 +44,7 @@ public:
 
 protected:
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages();
+    bool readMessages(); 
     virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
     virtual void customSelfInit(){};//! Custom output input reading method.  This allows a child class to add additional functionality.
     virtual void customCrossInit(){}; //! Custom subscription method, similar to customSelfInit.

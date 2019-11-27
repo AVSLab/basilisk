@@ -54,7 +54,7 @@ struct DockingData {
 
 class Spacecraft {
 public:
-    bool docked;
+    bool docked; 
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
     int64_t scEnergyMomentumOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
@@ -63,7 +63,7 @@ public:
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
     std::string scEnergyMomentumOutMsgName;   //!< -- Name of the state output message
-
+    
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
 
@@ -123,7 +123,7 @@ public:
 
     void SelfInitSC(int64_t moduleID);                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInitSC();                    //!< -- Hook to tie s/c plus back into provided msgs
-
+    
     void writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID); //!< -- Method to write all of the class output messages
     void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void initializeDynamicsSC(DynParamManager& statesIn);
@@ -172,7 +172,7 @@ public:
     void determineAttachedSCStates();
 
 private:
-
+    
 };
 
 

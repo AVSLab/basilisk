@@ -158,12 +158,12 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
     SysModelTask *localTask = it->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
-
+    
     //! - Erase the current call from the stack and schedule the next call
     localPriority = it->taskPriority;
     this->processTasks.erase(it);
     this->addNewTask(localTask, localPriority);
-
+    
     //! - Figure out when we are going to be called next for scheduling purposes
     it = this->processTasks.begin();
     this->nextTaskTime = it->NextTaskStart;
@@ -212,7 +212,7 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     this->processTasks.push_back(taskCall);
 }
 
-/*! This method is used to ensure that all necessary input messages are routed
+/*! This method is used to ensure that all necessary input messages are routed 
     from their source buffer to this process' message buffer.
     It needs to be executed prior to dispatching the process' models
     @return void
@@ -226,7 +226,7 @@ void SysProcess::routeInterfaces()
     }
 }
 
-/*! The name kind of says it all right?  It is a shotgun used to disable all of
+/*! The name kind of says it all right?  It is a shotgun used to disable all of 
     a process' tasks.  It is handy for a FSW scheme where you have tons of tasks
     and you are really only turning one on at a time.
     @return void
@@ -241,7 +241,7 @@ void SysProcess::disableAllTasks()
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
- a processes tasks.  It is handy for a process that starts out almost entirely
+ a processes tasks.  It is handy for a process that starts out almost entirely 
  inhibited but you want to turn it all on at once.
  @return void
  */
@@ -255,7 +255,7 @@ void SysProcess::enableAllTasks()
     }
 }
 
-/*! This method updates a specified task's period once it locates that task
+/*! This method updates a specified task's period once it locates that task 
     in the list.  It will warn the user if a task is not found.
     @return void
 	@param std::string taskName The name of the task you want to change period of
@@ -303,3 +303,4 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 //        }
 //    }
 //}
+

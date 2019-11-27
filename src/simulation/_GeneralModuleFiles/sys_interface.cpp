@@ -277,7 +277,7 @@ void SysInterface::connectInterfaces()
 void SysInterface::routeInputs(int64_t processBuffer)
 {
     std::vector<InterfaceDataExchange*>::iterator it;
-
+    
     if(!this->interfaceActive)
     {
         return;
@@ -305,3 +305,4 @@ void SysInterface::discoverAllMessages()
         (*it)->discoverMessages();
     }
 }
+

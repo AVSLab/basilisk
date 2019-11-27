@@ -52,7 +52,7 @@ public:
 
     StateData operator+ (const StateData & operand);
     StateData operator* (double scaleFactor);
-
+    
 };
 
 

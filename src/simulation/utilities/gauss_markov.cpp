@@ -50,9 +50,9 @@ GaussMarkov::~GaussMarkov()
 {
 }
 
-/*! This method performs almost all of the work for the Gauss Markov random
-    walk.  It uses the current random walk configuration, propagates the current
-    state, and then applies appropriate errors to the states to set the current
+/*! This method performs almost all of the work for the Gauss Markov random 
+    walk.  It uses the current random walk configuration, propagates the current 
+    state, and then applies appropriate errors to the states to set the current 
     error level.
     @return void
 */
@@ -86,9 +86,9 @@ void GaussMarkov::computeNextState()
     {
         ranNums[i] = this->rNum(rGen);
         if (this->stateBounds[i] > 0.0){
-
+            
             double stateCalc = fabs(this->currentState[i]) > this->stateBounds[i]*1E-10 ? fabs(this->currentState[i]) : this->stateBounds[i];
-
+            
             double boundCheck = (this->stateBounds[i]*2.0 - stateCalc)/stateCalc;
             boundCheck = boundCheck > this->stateBounds[i]*1E-10 ? boundCheck : this->stateBounds[i]*1E-10;
             boundCheck = 1.0/exp(boundCheck*boundCheck*boundCheck);
@@ -104,3 +104,4 @@ void GaussMarkov::computeNextState()
     this->currentState += errorVector;
 
 }
+

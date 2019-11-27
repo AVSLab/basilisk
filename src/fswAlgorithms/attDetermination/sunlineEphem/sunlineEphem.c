@@ -50,11 +50,11 @@ void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
     /*! - Find the message ID for the sun direction */
     configData->sunPositionInMsgId = subscribeToMessage(configData->sunPositionInMsgName,
                                                         sizeof(EphemerisIntMsg), moduleID);
-
+    
     /*! - Find the messgae ID for the spacecraft direction */
     configData->scPositionInMsgId = subscribeToMessage(configData->scPositionInMsgName,
                                                        sizeof(NavTransIntMsg), moduleID);
-
+    
     /*! - Find the messgae ID for the spacecraft attitude */
     configData->scAttitudeInMsgId = subscribeToMessage(configData->scAttitudeInMsgName,
                                                        sizeof(NavAttIntMsg), moduleID);
@@ -67,7 +67,7 @@ void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  */
 void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    
 }
 
 /*! Updates the sun heading based on ephemeris data. Returns the heading as a unit vector in the body frame.
@@ -87,7 +87,7 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int6
     EphemerisIntMsg sunEphemBuffer; /* [-] Input sun ephemeris data */
     NavTransIntMsg scTransBuffer;   /* [-] Input spacecraft position data */
     NavAttIntMsg scAttBuffer;       /* [-] Input spacecraft attitude data */
-
+    
     /*! - Read the input messages */
     memset(&outputSunline, 0x0, sizeof(NavAttIntMsg));
     memset(&sunEphemBuffer, 0x0, sizeof(EphemerisIntMsg));
@@ -106,7 +106,7 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int6
     MRP2C(scAttBuffer.sigma_BN, BN);
     m33MultV3(BN, r_SB_N_hat, r_SB_B_hat);
     v3Normalize(r_SB_B_hat, r_SB_B_hat);
-
+    
     /*! - store the output message*/
     v3Copy(r_SB_B_hat, outputSunline.vehSunPntBdy);
     WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),

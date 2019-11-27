@@ -36,7 +36,7 @@ class SpiceInterface: public SysModel {
 public:
     SpiceInterface();
     ~SpiceInterface();
-
+    
     void UpdateState(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
@@ -49,7 +49,7 @@ public:
     void computePlanetData();
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();
-
+    
 public:
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use
@@ -62,7 +62,7 @@ public:
     std::string outputTimePort; //!< -- Output time sampling port name to use
     uint64_t outputBufferCount; //!< -- Number of output buffers to use
     std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
-
+    
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
     double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
     double J2000Current;        //!< s Current J2000 elapsed time

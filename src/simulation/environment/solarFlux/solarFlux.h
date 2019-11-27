@@ -28,7 +28,7 @@ class SolarFlux: public SysModel {
 public:
     SolarFlux(){};
     ~SolarFlux(){};
-
+    
     void SelfInit() override;
     void CrossInit() override;
     void Reset(uint64_t CurrentSimNanos) override;

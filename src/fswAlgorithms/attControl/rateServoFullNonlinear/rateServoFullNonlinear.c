@@ -228,24 +228,25 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     }
     v3Cross(omega_BastN_B, v3_3, v3_4);
     v3Subtract(Lr, v3_4, Lr);
-
+    
     /* Lr +=  - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_5);
     v3Subtract(guidCmd.domega_RN_B, v3_5, v3_6);
     v3Add(v3_6, rateGuid.omegap_BastR_B, v3_6);
     m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_6, v3_7);
     v3Subtract(Lr, v3_7, Lr);
-
+    
     /* Add external torque: Lr += L */
     v3Add(configData->knownTorquePntB_B, Lr, Lr);
-
+    
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
-
+    
     /*! - Set output message and pass it to the message bus */
     v3Copy(Lr, controlOut.torqueRequestBody);
     WriteMessage(configData->cmdTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(controlOut), moduleID);
-
+    
     return;
 }
+

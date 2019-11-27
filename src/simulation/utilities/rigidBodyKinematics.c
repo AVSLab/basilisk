@@ -367,7 +367,7 @@ void addPRV(double *qq1, double *qq2, double *result)
     double compSum[3];
     double q1[4];
     double q2[4];
-
+    
     v3Add(qq1, qq2, compSum);
 
     if((v3Norm(qq1) < 1.0E-7 || v3Norm(qq2) < 1.0E-7))
@@ -1238,7 +1238,7 @@ void BmatEuler323(double *q, double B[3][3])
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-
+    
     B[0][0] = -c3;
     B[0][1] = s3;
     B[0][2] = 0;
@@ -1544,7 +1544,7 @@ void C2Gibbs(double C[3][3], double *q)
 void C2MRP(double C[3][3], double *q)
 {
     double b[4];
-
+    
     v4SetZero(b);
     b[0] = 1.0;
     C2EP(C, b);
@@ -3732,7 +3732,7 @@ void MRPswitch(double *q, double s2, double *s)
 void MRPshadow(double *qIn, double *qOut)
 {
     double q2;
-
+    
     q2 = v3Dot(qIn, qIn);
     v3Scale(-1. / q2, qIn, qOut);
     return;
@@ -3772,13 +3772,13 @@ void PRV2C(double *q, double C[3][3])
     double cp;
     double sp;
     double d1;
-
+    
     if(v3Norm(q) == 0.0)
     {
         m33SetIdentity(C);
         return;
     }
-
+    
     q0 = sqrt(v3Dot(q, q));
     q1 = q[0] / q0;
     q2 = q[1] / q0;

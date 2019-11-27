@@ -61,7 +61,7 @@ public:
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
-
+    
 public:
 	std::vector<RWConfigSimMsg> ReactionWheelData;  //!< -- RW information2
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components

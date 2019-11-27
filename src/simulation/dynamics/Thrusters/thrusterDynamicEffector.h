@@ -55,7 +55,7 @@ public:
                              double currentTime);
     void ComputeThrusterShut(THRConfigSimMsg *CurrentThruster,
                              double currentTime);
-
+    
 
 public:
     int stepsInRamp;

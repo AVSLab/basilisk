@@ -338,7 +338,7 @@ int64_t SystemMessaging::subscribeToMessage(std::string messageName,
 bool SystemMessaging::obtainWriteRights(int64_t messageID, int64_t moduleID)
 {
     bool rightsObtained = false;
-
+    
     if(moduleID >= 0 && messageID < this->GetMessageCount())
     {
         std::vector<AllowAccessData>::iterator it;
@@ -347,7 +347,7 @@ bool SystemMessaging::obtainWriteRights(int64_t messageID, int64_t moduleID)
         it->accessList.insert(moduleID);
         rightsObtained = true;
     }
-
+    
     return(rightsObtained);
 }
 
@@ -359,9 +359,9 @@ bool SystemMessaging::obtainWriteRights(int64_t messageID, int64_t moduleID)
  */
 bool SystemMessaging::obtainReadRights(int64_t messageID, int64_t moduleID)
 {
-
+ 
     bool rightsObtained = false;
-
+    
     if(moduleID >= 0 && messageID < this->GetMessageCount()) {
         std::vector<AllowAccessData>::iterator it;
         it = this->messageStorage->subData.begin();
@@ -380,7 +380,7 @@ bool SystemMessaging::obtainReadRights(int64_t messageID, int64_t moduleID)
 MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
 {
     int64_t messageID;
-
+    
     MessageIdentData dataFound;
     dataFound.itemFound = false;
     dataFound.itemID = -1;
@@ -715,7 +715,7 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
         for(int64_t i=0; i<this->GetMessageCount(it - this->dataBuffers.begin()); i++)
         {
             outputNames.insert(this->FindMessageName(i, it - this->dataBuffers.begin()));
-
+            
         }
     }
     return(outputNames);

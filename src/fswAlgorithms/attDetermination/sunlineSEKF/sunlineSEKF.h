@@ -39,7 +39,7 @@ typedef struct {
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
-
+    
     double qObsVal;               /*!< [-] CSS instrument noise parameter*/
     double qProcVal;               /*!< [-] Process noise parameter*/
 
@@ -60,14 +60,14 @@ typedef struct {
     double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix, A */
     double measMat[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix, H*/
     double W_BS[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] Switch Matrix to bring states and covariance to new S-frame when switch occurs*/
-
+    
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Linearized measurement model data */
     double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
 
 	double procNoise[(EKF_N_STATES_SWITCH-3)*(EKF_N_STATES_SWITCH-3)];       /*!< [-] process noise matrix */
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
-
+    
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
     uint32_t numStates;                /*!< [-] Number of states for this filter*/
     size_t numObs;                   /*!< [-] Number of measurements this cycle */
@@ -98,21 +98,21 @@ extern "C" {
 	void sunlineTimeUpdate(sunlineSEKFConfig *configData, double updateTime);
     void sunlineMeasUpdate(sunlineSEKFConfig *configData, double updateTime);
 	void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
-
+    
     void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], size_t numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
-
+    
     void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double qObsVal, size_t numObs, double *kalmanGain);
-
+    
     void sunlineDynMatrix(double stateInOut[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *dynMat);
-
+    
     void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH], double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, size_t numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *x, double *covar);
-
+    
     void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, size_t numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *states, double *x, double *covar);
-
+    
     void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar);
-
+    
     void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
-
+    
 #ifdef __cplusplus
 }
 #endif

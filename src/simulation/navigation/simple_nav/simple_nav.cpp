@@ -126,7 +126,7 @@ void SimpleNav::CrossInit()
     }
 }
 
-/*! This method reads the input messages associated with the vehicle state and
+/*! This method reads the input messages associated with the vehicle state and 
  the sun state
  */
 void SimpleNav::readInputMessages()
@@ -224,7 +224,7 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     localProp(6,9) *= timeStep; //attitude/attitude rate cross correlation terms
     localProp(7,10) *= timeStep; //attitude/attitude rate cross correlation terms
     localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
-
+    
     //! - Set the GaussMarkov propagation matrix and compute errors
     this->errorModel.setPropMatrix(localProp);
     this->errorModel.computeNextState();

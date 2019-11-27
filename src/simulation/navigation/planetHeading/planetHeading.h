@@ -30,7 +30,7 @@ class PlanetHeading: public SysModel {
 public:
     PlanetHeading();
     ~PlanetHeading(){};
-
+    
     void SelfInit() override;
     void CrossInit() override;
     void UpdateState(uint64_t CurrentSimNanos) override;

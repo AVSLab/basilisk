@@ -117,7 +117,7 @@ bool SimpleSolarPanel::customReadMessages()
                                                     reinterpret_cast<uint8_t*> (&this->stateCurrent),
                                                     this->moduleID);
     }
-    //! - Read in optional sun eclipse input message
+    //! - Read in optional sun eclipse input message 
     if(this->sunEclipseInMsgID >= 0) {
         EclipseSimMsg sunVisibilityFactor;          // sun visiblity input message
         SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgID, &localHeader,
