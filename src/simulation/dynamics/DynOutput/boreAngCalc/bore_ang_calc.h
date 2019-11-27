@@ -25,7 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/boreAngleSimMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -61,7 +61,7 @@ public:
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
     AngOffValuesSimMsg boresightAng; //!< (-) Boresigt angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     SpicePlanetStateSimMsg localPlanet;//!< (-) planet that we are pointing at

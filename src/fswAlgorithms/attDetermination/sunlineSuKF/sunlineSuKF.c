@@ -31,7 +31,7 @@
  */
 void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
 {
-	configData->bskPrint = _BSKPrint();
+	configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
 	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
@@ -151,7 +151,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     if (badUpdate <0){
-        _printMessage(configData->bskPrint, MSG_WARNING, "Reset method contained bad update");
+        _bskLog(configData->bskLogger, WARNING, "Reset method contained bad update");
     }
 }
 

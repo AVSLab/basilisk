@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -55,7 +55,7 @@ typedef struct {
     /* Output attitude reference data to send */
     AttRefFswMsg attRefOut;
 
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }celestialTwoBodyPointConfig;
 
 #ifdef __cplusplus

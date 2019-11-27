@@ -24,7 +24,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 class HubEffector : public StateEffector {
 public:
@@ -41,7 +41,7 @@ public:
     Eigen::Vector3d v_CN_NInit;          //!< [m/s Initial velocity of the spacecraft wrt base
     Eigen::Vector3d sigma_BNInit;        //!< -- Initial attitude of the spacecraft wrt base
     Eigen::Vector3d omega_BN_BInit;      //!< [r/s] Initial attitude rate of the spacecraf wrt base
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
     HubEffector();                       //!< -- Contructor

@@ -32,7 +32,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/scPlusMassPropsSimMsg.h"
 #include "hubEffector.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -73,7 +73,7 @@ public:
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
     SpacecraftPlus();                    //!< -- Constructor

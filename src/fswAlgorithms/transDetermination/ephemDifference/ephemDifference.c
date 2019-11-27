@@ -32,7 +32,7 @@
 void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
     uint32_t i;
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->ephBdyCount = 0;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
@@ -46,7 +46,7 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
     }
 
     if (configData->ephBdyCount == 0) {
-        _printMessage(configData->bskPrint, MSG_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
+        _bskLog(configData->bskLogger, WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
     }
 }
 

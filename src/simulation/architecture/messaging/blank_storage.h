@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <stdint.h>
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 #ifdef _WIN32
 class __declspec(dllexport) BlankStorage
@@ -40,7 +40,7 @@ public:
 
 public:
     uint8_t* StorageBuffer;  //! -- The memory where a process buffer writes messages
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     uint64_t BufferStorageSize;  //! -- size of StorageBuffer in bytes
 };

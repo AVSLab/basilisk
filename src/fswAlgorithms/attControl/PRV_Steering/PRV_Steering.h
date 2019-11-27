@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/rateCmdFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include <stdint.h>
 
 
@@ -43,7 +43,7 @@ typedef struct {
 
     RateCmdFswMsg outMsg;               /*!< -- copy of output message */
 
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }PRV_SteeringConfig;
 
 #ifdef __cplusplus

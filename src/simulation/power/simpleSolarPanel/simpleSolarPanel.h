@@ -26,7 +26,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -51,7 +51,7 @@ public:
     double panelArea;                           //!< [m^2] Panel area in meters squared.
     double panelEfficiency;                     //!< [W/W] Panel efficiency in converting solar energy to electrical energy.
     Eigen::Vector3d nHat_B;                     //!< [-] Panel normal unit vector relative to the spacecraft body frame.
-    BSKPrint bskPrint;                          //!< -- BSK Logging
+    BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
     Eigen::Vector3d sHat_B;                     //!< [-] Sun direction unit vector relative to the spacecraft body frame.

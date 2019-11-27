@@ -25,7 +25,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 class SphericalPendulum :
@@ -47,7 +47,7 @@ public:
     Eigen::Vector3d pHat_01;      //!<-- first vector of the P0 frame in B frame components
     Eigen::Vector3d pHat_02;       //!<-- second vector of the P0 frame in  B frame components
     Eigen::Vector3d pHat_03;        //!<-- third vector of the P0 frame in B frame components
-		BSKPrint bskPrint;                      //!< -- BSK Logging
+		BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     double phiInit;                //!< [rad] Initial value for spherical pendulum pendulum offset

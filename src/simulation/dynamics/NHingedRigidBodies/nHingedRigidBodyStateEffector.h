@@ -25,7 +25,7 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -66,7 +66,7 @@ public:
     Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
     void addHingedPanel(HingedPanel NewPanel) {PanelVec.push_back(NewPanel);}
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     double totalMass;                //!< [kg] Total mass of effector

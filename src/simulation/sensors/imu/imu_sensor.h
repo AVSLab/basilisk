@@ -30,7 +30,7 @@
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 #include <Eigen/Dense>
 #include "utilities/avsEigenMRP.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -89,7 +89,7 @@ public:
     Saturate aSat;                     //!  (-) instance of saturate utility for linear acceleration
     Saturate oSat;                     //!  (-) instance of saturate utility for angular rate
 
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     int64_t InputStateID;               /// -- Connect to input time message

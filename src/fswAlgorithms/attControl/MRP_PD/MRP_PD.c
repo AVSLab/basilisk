@@ -35,7 +35,7 @@
 void SelfInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
 {
         /*! - Create output message for module */
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->controlOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 

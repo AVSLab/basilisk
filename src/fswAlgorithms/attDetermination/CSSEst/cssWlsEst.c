@@ -30,7 +30,7 @@
 void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     if(strlen(configData->cssWLSFiltResOutMsgName) > 0) {
         configData->cssWlsFiltResOutMsgId = CreateNewMessage(configData->cssWLSFiltResOutMsgName,

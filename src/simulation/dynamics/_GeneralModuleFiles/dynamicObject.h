@@ -27,14 +27,14 @@
 #include "dynamicEffector.h"
 #include "stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors
     StateVecIntegrator *integrator;                   //!< -- Integrator used to propagate state forward
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
     DynamicObject();                                  //!< -- Constructor

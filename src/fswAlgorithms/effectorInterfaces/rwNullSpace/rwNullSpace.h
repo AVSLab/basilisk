@@ -26,7 +26,7 @@
 #include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "fswMessages/rwConstellationFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -44,7 +44,7 @@ typedef struct {
 	int32_t inputSpeedsID;                          //!< [-] ID for the incoming RW speed measure
     int32_t inputRWConfID;                          //!< [-] ID for the incoming RWA configuration data
 	int32_t outputMsgID;                            //!< [-] ID for the outgoing RW commands
-  BSKPrint *bskPrint;                             //!< BSK Logging
+  BSKLogger *bskLogger;                             //!< BSK Logging
 }rwNullSpaceConfig;
 
 #ifdef __cplusplus

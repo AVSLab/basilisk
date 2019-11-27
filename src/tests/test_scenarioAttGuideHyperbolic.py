@@ -125,5 +125,3 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-
-

@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/opNavFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include <stdint.h>
 
 /*! @brief module configuratino message definition
@@ -52,7 +52,7 @@ typedef struct {
     int32_t imuInMsgID;        /*!< -- ID for the incoming IMU sensor message*/
     int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
     AttGuidFswMsg attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }OpNavPointConfig;
 
 #ifdef __cplusplus

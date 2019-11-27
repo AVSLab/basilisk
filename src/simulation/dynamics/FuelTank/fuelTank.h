@@ -30,7 +30,7 @@
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "simMessages/fuelTankSimMsg.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 #include <math.h>
 
 
@@ -247,7 +247,7 @@ public:
 	bool updateOnly;								   //!< -- Sets whether to use update only mass depletion
     std::string FuelTankOutMsgName;                    //!< -- fuel tank output message name
     FuelTankSimMsg FuelTankMassPropMsg;                //!< instance of messaging system message struct
-		BSKPrint bskPrint;                      //!< -- BSK Logging
+		BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub

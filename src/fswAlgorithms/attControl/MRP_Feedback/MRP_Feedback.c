@@ -40,7 +40,7 @@
 void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->attControlTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
     
@@ -75,7 +75,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
         configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                          sizeof(RWSpeedIntMsg), moduleID);
         } else {
-            _printMessage(configData->bskPrint, MSG_ERROR, "Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
+            _bskLog(configData->bskLogger, ERROR, "Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
             configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,

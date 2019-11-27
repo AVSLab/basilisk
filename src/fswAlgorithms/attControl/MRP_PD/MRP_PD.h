@@ -24,7 +24,7 @@
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include <stdint.h>
 
 
@@ -46,7 +46,7 @@ typedef struct {
     int32_t guidInMsgId;                                    //!< [] ID for the incoming guidance errors
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the Input message
     int32_t vehicleConfigDataInMsgId;                       //!< [] ID for the incoming static vehicle data
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }MRP_PDConfig;
 

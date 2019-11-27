@@ -33,7 +33,7 @@
  */
 void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create commanded control torque output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(RWArrayTorqueIntMsg),
@@ -89,7 +89,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
         }
     }
     if (configData->numControlAxes == 0) {
-        _printMessage(configData->bskPrint, MSG_DEBUG,"rwMotorTorque() is not setup to control any axes!");
+        _bskLog(configData->bskLogger, DEBUG,"rwMotorTorque() is not setup to control any axes!");
     }
     
     /*! - Read static RW config data message and store it in module variables */

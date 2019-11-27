@@ -40,7 +40,7 @@
 
 void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->AttStateOutMsgID = CreateNewMessage(configData->AttStateOutMsgName,
                                                  sizeof(AttStateFswMsg),
@@ -89,7 +89,7 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
                configData->attOutSet.rate[0],
                configData->attOutSet.rate[1],
                configData->attOutSet.rate[2]);
-        _printMessage(configData->bskPrint, MSG_INFORMATION, msg);
+        _bskLog(configData->bskLogger, INFORMATION, msg);
     }
     
     

@@ -26,7 +26,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "simMessages/hingedRigidBodySimMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
@@ -46,7 +46,7 @@ public:
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
     std::string HingedRigidBodyOutMsgName; //!< -- state output message name
     HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     double theta;                    //!< [rad] hinged rigid body angle

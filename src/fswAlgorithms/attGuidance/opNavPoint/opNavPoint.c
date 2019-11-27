@@ -32,7 +32,7 @@
  */
 void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
@@ -72,7 +72,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
         char msg[255];
         sprintf(msg, "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
           configData->alignAxis_C[0], configData->alignAxis_C[1], configData->alignAxis_C[2]);
-        _printMessage(configData->bskPrint, MSG_ERROR, msg);
+        _bskLog(configData->bskLogger, ERROR, msg);
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->alignAxis_C, configData->alignAxis_C);    /* ensure that this vector is a unit vector */

@@ -28,7 +28,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -71,7 +71,7 @@ public:
     std::vector<Eigen::Vector3d> lookupForce_B;     //!< -- Force on S/C at 1 AU from sun
     std::vector<Eigen::Vector3d> lookupTorque_B;    //!< -- Torque on S/C
     std::vector<Eigen::Vector3d> lookupSHat_B;      //!< -- S/C to sun unit vector defined in the body frame.
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     srpModel_t  srpModel; //!< -- specifies which SRP model to use

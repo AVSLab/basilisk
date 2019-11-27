@@ -28,7 +28,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/magneticFieldSimMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 class MagneticFieldBase: public SysModel  {
@@ -61,7 +61,7 @@ public:
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
     double planetRadius;                     //!< [m]      Radius of the planet
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 protected:
     Eigen::Vector3d r_BP_N;                 //!< [m] sc position vector relative to planet in inertial N frame components

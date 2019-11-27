@@ -33,7 +33,7 @@
 #include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/bskPrint.h"
+#include "../simulation/utilities/bskLog.h"
 
 
 
@@ -64,7 +64,7 @@ public:
     double noiseSF;                      //!< [-] Scale Factor for noise control
     int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
-    BSKPrint bskPrint;                //!< -- BSK Logging
+    BSKLogger bskLogger;                //!< -- BSK Logging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message

@@ -27,7 +27,7 @@
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -55,7 +55,7 @@ typedef struct {
     int32_t  thrusterConfInMsgId;                       //!< [-] ID for the incoming Thruster configuration data
     char deltaHInMsgName[MAX_STAT_MSG_LENGTH];          //!< The name of the requested momentum change input message
     int32_t  deltaHInMsgId;                             //!< [-] ID for the incoming Thruster configuration data
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }thrMomentumDumpingConfig;
 
 #ifdef __cplusplus

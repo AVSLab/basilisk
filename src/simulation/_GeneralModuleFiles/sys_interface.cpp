@@ -56,7 +56,7 @@ bool InterfaceDataExchange::linkProcesses()
     findMessageBuffer(this->processData.messageDest);
     if(this->processData.destination < 0)
     {
-        bskPrint.printMessage(MSG_ERROR, "Failed to find a messaging buffer with name: "
+        bskLogger.bskLog(ERROR, "Failed to find a messaging buffer with name: "
                                    "%s", this->processData.messageDest.c_str());
         buffersFound = false;
     }
@@ -64,7 +64,7 @@ bool InterfaceDataExchange::linkProcesses()
     findMessageBuffer(this->processData.messageSource);
     if(this->processData.source < 0)
     {
-        bskPrint.printMessage(MSG_ERROR, "Failed to find a messaging buffer with name: %s", this->processData.messageSource.c_str());
+        bskLogger.bskLog(ERROR, "Failed to find a messaging buffer with name: %s", this->processData.messageSource.c_str());
         buffersFound = false;
     }
     return(buffersFound);
@@ -259,7 +259,7 @@ void SysInterface::connectInterfaces()
         std::vector<MessageInterfaceMatch>::iterator messIt;
         if(!((*it)->linkProcesses()))
         {
-            bskPrint.printMessage(MSG_ERROR, "Interface failed to link.  Disabling.");
+            bskLogger.bskLog(ERROR, "Interface failed to link.  Disabling.");
             (*it)->exchangeActive = false;
             continue;
         }

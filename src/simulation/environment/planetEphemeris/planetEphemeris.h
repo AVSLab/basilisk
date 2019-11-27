@@ -25,7 +25,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 #include <Eigen/Dense>
 
 
@@ -50,7 +50,7 @@ public:
 
     std::vector<double> rotRate;                //!< [r/s] planet rotation rate
 
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::vector<std::uint64_t>planetOutMsgId;   //!< -- array of output message IDs

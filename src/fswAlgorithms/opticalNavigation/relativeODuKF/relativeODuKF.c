@@ -29,7 +29,7 @@
  */
 void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create a navigation message to be used for control */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
                                                     sizeof(NavTransIntMsg), "NavTransIntMsg", moduleId);
@@ -126,7 +126,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     configData->timeTagOut = configData->timeTag;
 
     if (badUpdate <0){
-        _printMessage(configData->bskPrint, MSG_WARNING, "Reset method contained bad update");
+        _bskLog(configData->bskLogger, WARNING, "Reset method contained bad update");
     }
     return;
 }
@@ -313,7 +313,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {
-      _printMessage(configData->bskPrint, MSG_ERROR, "Need a planet to navigate");
+      _bskLog(configData->bskLogger, ERROR, "Need a planet to navigate");
     }
 
     mCopy(configData->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);

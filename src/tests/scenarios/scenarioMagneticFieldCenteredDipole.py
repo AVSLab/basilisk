@@ -219,15 +219,12 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 def run(show_plots, orbitCase, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
-    # Define BSKPrint message level
-    msgLevel = SimulationBaseClass.sim_model.MSG_DEBUG
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
 
     #  Create a sim module as an empty container
-    scSim = SimulationBaseClass.SimBaseClass(msgLevel)
+    scSim = SimulationBaseClass.SimBaseClass()
 
     #
     #  create the simulation process

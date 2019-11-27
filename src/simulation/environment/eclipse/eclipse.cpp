@@ -298,7 +298,7 @@ void Eclipse::addPlanetName(std::string planetName)
         this->planetNames.push_back(planetName);
         this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else {
-        bskPrint.printMessage(MSG_WARNING, "Planet name %s not found. %s will not be used to compute eclipse conditions.", planetName.c_str(), planetName.c_str());
+        bskLogger.bskLog(WARNING, "Planet name %s not found. %s will not be used to compute eclipse conditions.", planetName.c_str(), planetName.c_str());
     }
 
     return;

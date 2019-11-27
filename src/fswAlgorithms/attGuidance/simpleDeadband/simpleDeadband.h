@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswMessages/attGuidFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -46,7 +46,7 @@ typedef struct {
 
     AttGuidFswMsg attGuidOut;                       /*!< copy of the output message */
 
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }simpleDeadbandConfig;
 

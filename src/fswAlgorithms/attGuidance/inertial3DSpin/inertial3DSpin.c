@@ -48,7 +48,7 @@
  */
 void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),

@@ -25,7 +25,7 @@
 #include "../../simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 #include <Eigen/Dense>
 
 
@@ -52,7 +52,7 @@ public:
     Eigen::VectorXd voltage2TorqueGain;          //!< Nm/V   gain to convert voltage to motor torque
     Eigen::VectorXd scaleFactor;                 //!<        scale the output - like a constant gain error
     Eigen::VectorXd bias;                        //!< Nm     A bias to add to the torque output
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     int64_t rwVoltageInMsgID;           //!< -- Message ID associated with RW voltage input state

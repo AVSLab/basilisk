@@ -32,7 +32,7 @@
  */
 void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->posFitOutMsgID = CreateNewMessage(configData->posFitOutMsgName,
         sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
 }

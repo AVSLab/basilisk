@@ -31,7 +31,7 @@
  */
 void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
-	configData->bskPrint = _BSKPrint();
+	configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
 	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleId);
@@ -155,7 +155,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     Read_STMessages(configData, moduleId);
 
     if (badUpdate <0){
-        _printMessage(configData->bskPrint, MSG_WARNING, "Reset method contained bad update");
+        _bskLog(configData->bskLogger, WARNING, "Reset method contained bad update");
     }
     return;
 }
@@ -289,7 +289,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                 && configData->maxTimeJump > 0)
             {
                 configData->timeTag = newTimeTag - configData->maxTimeJump;
-                _printMessage(configData->bskPrint, MSG_WARNING, "Large jump in state time that was set to max.");
+                _bskLog(configData->bskLogger, WARNING, "Large jump in state time that was set to max.");
             }
             trackerValid += inertialUKFTimeUpdate(configData, newTimeTag);
             trackerValid += inertialUKFMeasUpdate(configData, configData->stSensorOrder[i]);

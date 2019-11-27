@@ -28,7 +28,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 #include "utilities/linearAlgebra.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -47,7 +47,7 @@ public:
 public:
     uint64_t outputBufferCount; //!< -- Number of output buffers to use
     std::string sunInMsgName; //!< -- Internal vector of planets
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::vector<std::string> planetNames;  //!< -- Names of planets we want to track

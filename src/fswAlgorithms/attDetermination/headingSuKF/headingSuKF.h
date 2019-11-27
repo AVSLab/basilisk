@@ -27,7 +27,7 @@
 #include "fswMessages/headingFilterFswMsg.h"
 #include "fswMessages/opNavFswMsg.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 typedef struct {
@@ -86,7 +86,7 @@ typedef struct {
     int32_t opnavDataInMsgId;   /*!< [-] ID for the opNav data in put message */
     int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
 
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }HeadingSuKFConfig;
 

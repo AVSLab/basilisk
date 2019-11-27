@@ -29,7 +29,7 @@
  */
 void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create the output message for the mass properties of the spacecraft*/
     configData->outputPropsID = CreateNewMessage(
         configData->outputPropsName, sizeof(VehicleConfigFswMsg),

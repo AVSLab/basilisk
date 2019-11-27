@@ -39,7 +39,7 @@
  */
 void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->navRateOutMsgID = CreateNewMessage(configData->navRateOutMsgName,
                                                    sizeof(NavAttIntMsg),
                                                    "NavAttIntMsg",

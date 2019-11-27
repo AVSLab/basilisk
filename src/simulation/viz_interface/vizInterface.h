@@ -38,7 +38,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 typedef struct {
@@ -148,7 +148,7 @@ public:
 
     CameraConfigMsg cameraConfigMessage;        //! [-] camera config message copy
 
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 
 private:

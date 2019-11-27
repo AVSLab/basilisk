@@ -37,7 +37,7 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
 {
     
     /*! - Create output message for module */
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->deltaHOutMsgId = CreateNewMessage(configData->deltaHOutMsgName,
                                                sizeof(CmdTorqueBodyIntMsg),
                                                "CmdTorqueBodyIntMsg",          /* add the output structure name */

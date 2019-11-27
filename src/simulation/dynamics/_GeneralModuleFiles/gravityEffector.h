@@ -27,7 +27,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "simMessages/spicePlanetStateSimMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 class SphericalHarmonics
 {
@@ -44,7 +44,7 @@ public:
     std::vector<std::vector<double>> nQuot1;//! [-] What am I
     std::vector<std::vector<double>> nQuot2;//! [-] What am I
 
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
 
@@ -97,7 +97,7 @@ public:
     int64_t outputMsgID;            //!<          ID for output message data
     int64_t bodyMsgID;              //!<          ID for ephemeris data message
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 };
 
@@ -131,7 +131,7 @@ public:
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //! [-] Name of the s/c this gravity model is attached to
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output

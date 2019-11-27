@@ -226,7 +226,7 @@ void VizInterface::CrossInit()
                 this->rwInMsgID.push_back(rwStatus);
             } else {
                 rwStatus.msgID = -1;
-                bskPrint.printMessage(MSG_WARNING, "RW(%zu) msg requested but not found.", idx);
+                bskLogger.bskLog(WARNING, "RW(%zu) msg requested but not found.", idx);
             }
         }
         this->rwInMessage.resize(this->rwInMsgID.size());
@@ -250,7 +250,7 @@ void VizInterface::CrossInit()
                 this->numThr++;
             } else {
                 thrStatus.msgID = -1;
-                bskPrint.printMessage(MSG_WARNING, "TH(%d) msg of tag %s requested but not found.", idx, it->thrTag.c_str());
+                bskLogger.bskLog(WARNING, "TH(%d) msg of tag %s requested but not found.", idx, it->thrTag.c_str());
             }
         }
     }
@@ -411,25 +411,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_ambient(this->settings.ambient);
         if (this->settings.ambient > 8.0 ||
             (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
-            bskPrint.printMessage(MSG_WARNING, "The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
+            bskLogger.bskLog(WARNING, "The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
         }
 
         // define if orbit lines should be shown
         vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
         if (abs(this->settings.orbitLinesOn)>1) {
-            bskPrint.printMessage(MSG_WARNING, "The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
+            bskLogger.bskLog(WARNING, "The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
         }
 
         // define if spacecraft axes should be shown
         vizSettings->set_spacecraftcson(this->settings.spacecraftCSon);
         if (abs(this->settings.spacecraftCSon)>1) {
-            bskPrint.printMessage(MSG_WARNING, "The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
+            bskLogger.bskLog(WARNING, "The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
         }
 
         // define if planet axes should be shown
         vizSettings->set_planetcson(this->settings.planetCSon);
         if (abs(this->settings.planetCSon)>1) {
-            bskPrint.printMessage(MSG_WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
+            bskLogger.bskLog(WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
         }
 
         // define the skyBox variable

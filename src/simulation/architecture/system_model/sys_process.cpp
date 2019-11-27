@@ -140,7 +140,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     it = this->processTasks.begin();
     if(it == this->processTasks.end())
     {
-        bskPrint.printMessage(MSG_WARNING, "Received a step command on sim that has no active Tasks.");
+        bskLogger.bskLog(WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
     //! - If the requested time does not meet our next start time, just return
@@ -280,7 +280,7 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 			return;
 		}
 	}
-    bskPrint.printMessage(MSG_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
+    bskLogger.bskLog(WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
 }
 
 //void SysProcess::getAllMessageDefinitions()

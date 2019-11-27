@@ -24,7 +24,7 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include <stdint.h>
 
 
@@ -43,7 +43,7 @@ typedef struct {
     int32_t scPositionInMsgId;  //!<  [-]  ID for the incoming spacecraft position message
     int32_t scAttitudeInMsgId;  //!<  [-]  ID for the incoming spacecraft attitude message
 
-    BSKPrint *bskPrint; //!< BSK Logging
+    BSKLogger *bskLogger; //!< BSK Logging
 
 }sunlineEphemConfig;
 

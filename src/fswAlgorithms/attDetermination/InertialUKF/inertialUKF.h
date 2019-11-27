@@ -29,7 +29,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
 #include "simulation/utilities/signalCondition.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -126,7 +126,7 @@ typedef struct {
     
     STDataParsing STDatasStruct;  //!< [-] Id of the input message buffer
 
-    BSKPrint *bskPrint;   //!< BSK Logging
+    BSKLogger *bskLogger;   //!< BSK Logging
 }InertialUKFConfig;
 
 

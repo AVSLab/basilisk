@@ -25,7 +25,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -49,7 +49,7 @@ typedef struct {
     char rwConfigDataInMsgName[MAX_STAT_MSG_LENGTH];    //!< [-] The name of the RWA configuration message
     int32_t rwConfInMsgId;                              //!< [-] ID for the incoming RWA configuration data
 
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }thrMomentumManagementConfig;
 

@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -53,7 +53,7 @@ typedef struct {
 
     CmdTorqueBodyIntMsg controlOut;                /*!< -- Control output message */
 
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }lowPassFilterTorqueCommandConfig;
 

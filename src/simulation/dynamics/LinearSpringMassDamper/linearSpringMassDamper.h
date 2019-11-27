@@ -25,7 +25,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 class LinearSpringMassDamper :
@@ -43,7 +43,7 @@ public:
 	Eigen::Vector3d r_PB_B;        //!< [m] position vector from B point to particle equilibrium, P, in body frame
 	Eigen::Vector3d pHat_B;        //!< [-] particle direction unit vector, in body frame
 	StateData *massState;		   //!< -- state data for the particles mass
-	BSKPrint bskPrint;                      //!< -- BSK Logging
+	BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     double cRho;                   //!< -- Term needed for back-sub method

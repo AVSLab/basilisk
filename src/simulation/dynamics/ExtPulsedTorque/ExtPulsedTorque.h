@@ -22,7 +22,7 @@
 
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -46,7 +46,7 @@ public:
     Eigen::Vector3d pulsedTorqueExternalPntB_B; //!< pulsed torque vector about point B, in B frame components
     int countOnPulse;                           //!< number of integration time steps to simulate a pulse
     int countOff;                               //!< number of integration time steps to have no pulses
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 };
 

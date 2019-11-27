@@ -26,7 +26,7 @@
 #include <set>
 #include <mutex>
 #include "architecture/messaging/blank_storage.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 /*! \addtogroup SimArchGroup
  * @{
@@ -140,7 +140,7 @@ public:
     bool obtainWriteRights(int64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
     bool obtainReadRights(int64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
     uint64_t getFailureCount() {return (this->CreateFails + this->ReadFails + this->WriteFails);}
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     SystemMessaging();

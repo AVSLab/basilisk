@@ -25,7 +25,7 @@
 #include "architecture/system_model/sys_process.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/message_logger.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 /*! \addtogroup SimArchGroup Simulation Architecture Classes
  *  This architecture group contains the source used to drive/schedule/interface
@@ -71,7 +71,7 @@ public:
     std::set<std::pair<long int, long int>> getMessageExchangeData(std::string messageName,
         std::set<unsigned long> procList  = std::set<unsigned long>());
     void terminateSimulation();
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created

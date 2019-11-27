@@ -38,7 +38,7 @@
 void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
         sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
     

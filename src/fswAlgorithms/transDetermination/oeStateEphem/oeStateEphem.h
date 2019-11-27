@@ -24,7 +24,7 @@
 #include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20
@@ -61,7 +61,7 @@ typedef struct {
     int32_t stateFitOutMsgId;                     //!< [-] The ID associated with the outgoing message
     int32_t clockCorrInMsgId;                     //!< [-] The ID associated with the incoming clock correlation
     uint32_t coeffSelector;                       //!< [-] Index in the ephArray that we are currently using
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }OEStateEphemData;
 
 #ifdef __cplusplus

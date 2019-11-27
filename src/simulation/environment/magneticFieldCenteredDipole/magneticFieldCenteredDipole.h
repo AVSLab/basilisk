@@ -29,7 +29,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/magneticFieldSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 class MagneticFieldCenteredDipole:  public MagneticFieldBase {
@@ -47,7 +47,7 @@ public:
     double g11;                 //!< [T] IGRF coefficient g_1^1
     double h11;                 //!< [T] IGRF coefficient h_1^1
 
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 };
 

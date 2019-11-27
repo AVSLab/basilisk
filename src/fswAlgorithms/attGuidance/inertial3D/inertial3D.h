@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswMessages/attRefFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -34,7 +34,7 @@ typedef struct {
     double sigma_R0N[3];                            //!<        MRP from inertial frame N to corrected reference frame R
     char outputDataName[MAX_STAT_MSG_LENGTH];       //!<        The name of the output message
     int32_t outputMsgID;                            //!< (-)    ID for the outgoing message
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DConfig;
 
 #ifdef __cplusplus

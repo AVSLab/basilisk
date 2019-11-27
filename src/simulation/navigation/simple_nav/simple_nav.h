@@ -27,7 +27,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 #include <Eigen/Dense>
 
 class SimpleNav: public SysModel {
@@ -61,7 +61,7 @@ public:
     NavTransIntMsg estTransState;     //!< -- translation nav state including errors
     SCPlusStatesSimMsg inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateSimMsg sunState;  //!< -- input Sun state
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state

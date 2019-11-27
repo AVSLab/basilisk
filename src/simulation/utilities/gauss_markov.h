@@ -25,7 +25,7 @@
 #include <vector>
 #include <random>
 #include <Eigen/Dense>
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 /*! \addtogroup Sim Utility Group
  *  This group contains the simulation utilities that are used globally on the
@@ -70,7 +70,7 @@ public:
     Eigen::VectorXd currentState;  //!< -- State of the markov model
     Eigen::MatrixXd propMatrix;    //!< -- Matrix to propagate error state with
     Eigen::MatrixXd noiseMatrix;   //!< -- covariance matrix to apply errors with
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     uint64_t RNGSeed;                 //!< -- Seed for random number generator

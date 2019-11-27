@@ -34,7 +34,7 @@
  */
 void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Loop over number of thruster blocks and create output messages */
     configData->outputThrID = CreateNewMessage(
         configData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),

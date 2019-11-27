@@ -31,7 +31,7 @@
 #include "fswMessages/pixelLineFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include "utilities/astroConstants.h"
 
 
@@ -102,7 +102,7 @@ typedef struct {
     int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config
 
-    BSKPrint *bskPrint;  //!< BSK Logging
+    BSKLogger *bskLogger;  //!< BSK Logging
 
 }PixelLineBiasUKFConfig;
 

@@ -29,7 +29,7 @@
 #include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "../../simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 #include <Eigen/Dense>
 #include <vector>
 
@@ -71,7 +71,7 @@ public:
 		std::vector<THRTimePairSimMsg> *thrRamp);
 	StateData *hubSigma;
     StateData *hubOmega;
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     //    bool bdyFrmReady;                         //!< [-] Flag indicating that the body frame is ready

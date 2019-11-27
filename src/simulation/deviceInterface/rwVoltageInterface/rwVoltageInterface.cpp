@@ -74,7 +74,7 @@ void RWVoltageInterface::CrossInit()
                            moduleID);
     if(this->rwVoltageInMsgID < 0)
     {
-        bskPrint.printMessage(MSG_WARNING, "RWVoltageInterface() did not find a valid message with name: %s ", this->rwVoltageInMsgName.c_str());
+        bskLogger.bskLog(WARNING, "RWVoltageInterface() did not find a valid message with name: %s ", this->rwVoltageInMsgName.c_str());
     }
     return;
 }
@@ -85,7 +85,7 @@ void RWVoltageInterface::readInputMessages()
 {
     if(this->rwVoltageInMsgID < 0)
     {
-        bskPrint.printMessage(MSG_WARNING, "rwVoltageInMsgName message ID not set.");
+        bskLogger.bskLog(WARNING, "rwVoltageInMsgName message ID not set.");
         return;
     }
 

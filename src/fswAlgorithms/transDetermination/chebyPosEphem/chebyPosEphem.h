@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4
@@ -55,7 +55,7 @@ typedef struct {
 
     EphemerisIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
 
-    BSKPrint *bskPrint;   //!< BSK Logging
+    BSKLogger *bskLogger;   //!< BSK Logging
 }ChebyPosEphemData;
 
 #ifdef __cplusplus

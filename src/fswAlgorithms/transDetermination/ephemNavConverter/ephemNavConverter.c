@@ -34,7 +34,7 @@
  */
 void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->stateOutMsgID = CreateNewMessage(configData->stateOutMsgName,
                                                  sizeof(NavTransIntMsg),
                                                  "NavTransIntMsg",

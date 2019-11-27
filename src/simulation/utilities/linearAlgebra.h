@@ -21,7 +21,7 @@
 #define _LINEARALGEBRA_H_
 
 #include <stdio.h>
-#include <utilities/bskPrint.h>
+#include <utilities/bskLog.h>
 
 /*! \addtogroup Sim Utility Group
  * @{

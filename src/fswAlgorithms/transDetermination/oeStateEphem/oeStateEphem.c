@@ -36,7 +36,7 @@
  */
 void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->stateFitOutMsgId = CreateNewMessage(configData->stateFitOutMsgName,
         sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
 }

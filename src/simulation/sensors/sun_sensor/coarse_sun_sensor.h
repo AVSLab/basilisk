@@ -29,7 +29,7 @@
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "utilities/gauss_markov.h"
 #include "utilities/saturate.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 #include <Eigen/Dense>
 
 typedef enum {
@@ -89,7 +89,7 @@ public:
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
     double              walkBounds;             //!< [-] Gauss Markov walk bounds
     double              kPower;                 //!< [-] Power factor for kelly curve
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     int64_t sunInMsgID;                         //!< [-] Connect to input time message

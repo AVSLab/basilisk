@@ -30,7 +30,7 @@
  */
 void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->OutputMsgID = CreateNewMessage(configData->OutputDataName,
         sizeof(IMUSensorBodyFswMsg), "IMUSensorBodyFswMsg", moduleID);

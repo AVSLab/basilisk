@@ -29,7 +29,7 @@
 #include "fswMessages/opNavFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include "utilities/astroConstants.h"
 
 
@@ -106,7 +106,7 @@ typedef struct {
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
     int32_t opNavInMsgId;     //!< [-] Id for the incoming mass properties message
 
-    BSKPrint *bskPrint;   //!< BSK Logging
+    BSKLogger *bskLogger;   //!< BSK Logging
 
 }RelODuKFConfig;
 

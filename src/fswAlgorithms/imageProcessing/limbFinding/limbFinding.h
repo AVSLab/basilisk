@@ -31,7 +31,7 @@
 #include "../simulation/simFswInterfaceMessages/limbOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/bskPrint.h"
+#include "../simulation/utilities/bskLog.h"
 
 
 
@@ -60,7 +60,7 @@ public:
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     int32_t limbNumThresh;                  //!< [-] Threshold for when a limb is detected
     
-    BSKPrint bskPrint;                //!< -- BSK Logging
+    BSKLogger bskLogger;                //!< -- BSK Logging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavLimbOutMsgID;        //!< ID for the outgoing message

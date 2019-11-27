@@ -29,7 +29,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 /*! @brief The configuration structure for the horizon OpNav module.*/
@@ -44,7 +44,7 @@ typedef struct {
     int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t limbInMsgID;    //!< [-] The ID associated with the incoming circle message
     int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }HorizonOpNavData;
 
 #ifdef __cplusplus

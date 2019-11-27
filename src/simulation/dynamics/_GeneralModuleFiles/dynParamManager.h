@@ -26,7 +26,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "stateData.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -42,7 +42,7 @@ class DynParamManager {
 public:
     std::map<std::string, Eigen::MatrixXd> dynProperties;
     StateVector stateContainer;
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 public:
     DynParamManager();
     ~DynParamManager();

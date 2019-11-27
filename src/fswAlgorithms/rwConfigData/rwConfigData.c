@@ -41,7 +41,7 @@
  */
 void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->rwParamsOutMsgID = CreateNewMessage(configData->rwParamsOutMsgName,
                                                     sizeof(RWArrayConfigFswMsg), "RWArrayConfigFswMsg", moduleID);

@@ -23,7 +23,7 @@
 #include <string>
 #include <stdint.h>
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 /*! \addtogroup SimArchGroup
  * @{
@@ -72,7 +72,7 @@ public:
 public:
     uint64_t initBufferSize; //!< Default buffer size fo message log storage
     std::vector<messageLogContainer> logData; //!< Vector of log elements
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     bool allLogsLinked; //!< Indicator of whether or not messages are all linked
 };

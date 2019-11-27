@@ -31,7 +31,7 @@
 #include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 class Camera: public SysModel {
@@ -77,7 +77,7 @@ public:
     double cosmicRays;        //!< Random cosmic rays (number)
     double blurParam;        //!< Blur over image in pixels
 
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t imageInMsgID;                //!< ID for the outgoing message

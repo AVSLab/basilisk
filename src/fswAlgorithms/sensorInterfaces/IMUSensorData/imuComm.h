@@ -24,7 +24,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/imuSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -38,7 +38,7 @@ typedef struct {
     int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
     IMUSensorBodyFswMsg LocalOutput; /*!< Output data structure*/
-    BSKPrint *bskPrint;   //!< BSK Logging
+    BSKLogger *bskLogger;   //!< BSK Logging
 }IMUConfigData;
 
 #ifdef __cplusplus

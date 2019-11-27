@@ -144,6 +144,6 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 
 	if (this->displayTime)
 	{
-        bskPrint.printMessage(MSG_INFORMATION, "Seconds Elapsed: %f", currentSimNanos*NANO2SEC);
+        bskLogger.bskLog(INFORMATION, "Seconds Elapsed: %f", currentSimNanos*NANO2SEC);
 	}
 }

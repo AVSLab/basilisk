@@ -25,7 +25,7 @@
 #include "../../simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "../../simFswInterfaceMessages/cmdForceBodyIntMsg.h"
 #include "../../simFswInterfaceMessages/cmdForceInertialIntMsg.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -62,7 +62,7 @@ public:
     std::string cmdTorqueInMsgName;     //!< -- message used to read torque command inputs
     std::string cmdForceInertialInMsgName; //!< -- message used to read force command inputs
     std::string cmdForceBodyInMsgName;  //!< -- message used to read force command inputs
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 };
 

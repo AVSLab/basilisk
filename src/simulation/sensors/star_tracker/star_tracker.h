@@ -28,7 +28,7 @@
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bskLog.h"
 
 
 
@@ -63,7 +63,7 @@ public:
     STSensorIntMsg sensedValues;//!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
     SCPlusStatesSimMsg scState;      //!< [-] Module variable where the input State Data message is stored
-    BSKPrint bskPrint;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 
 

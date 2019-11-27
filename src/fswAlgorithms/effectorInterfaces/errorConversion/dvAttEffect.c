@@ -33,7 +33,7 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 {
     uint32_t i;
 
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Loop over number of thruster blocks and create output messages */
     for(i=0; i<configData->numThrGroups; i=i+1)
     {

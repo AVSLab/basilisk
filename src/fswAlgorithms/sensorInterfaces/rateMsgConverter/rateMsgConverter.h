@@ -24,7 +24,7 @@
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswAlgorithms/fswMessages/imuSensorBodyFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -36,7 +36,7 @@ typedef struct {
     int32_t navRateOutMsgID;                           //!< ID for the outgoing message */
     char imuRateInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the imuSensorBody Input message*/
     int32_t imuRateInMsgID;                            //!< ID for the incoming message */
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }rateMsgConverterConfig;
 
 #ifdef __cplusplus

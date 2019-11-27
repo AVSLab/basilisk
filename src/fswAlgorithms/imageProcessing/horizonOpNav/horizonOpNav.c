@@ -31,7 +31,7 @@
  */
 void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
                                                  sizeof(OpNavFswMsg),
                                                  "OpNavFswMsg",

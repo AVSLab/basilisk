@@ -24,7 +24,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "fswMessages/rwConstellationFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 #include <stdint.h>
 
 
@@ -47,7 +47,7 @@ typedef struct {
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the vehicle config data input message*/
     int32_t vehConfigInMsgID;                            /*!< [-] ID for the vehicle config data incoming message */
 
-    BSKPrint *bskPrint;   //!< BSK Logging
+    BSKLogger *bskLogger;   //!< BSK Logging
 
 }rwConfigData_Config;
 

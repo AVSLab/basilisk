@@ -40,7 +40,7 @@
 void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     configData->cmdTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 
@@ -77,7 +77,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
             configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                              sizeof(RWSpeedIntMsg), moduleID);
         } else {
-            _printMessage(configData->bskPrint, MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
+            _bskLog(configData->bskLogger, ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
             configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,

@@ -27,7 +27,7 @@
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 
@@ -43,7 +43,7 @@ typedef struct {
     int32_t inputNavID;                             //!< (-)    ID for the incoming IMU data message
     char inputCelMessName[MAX_STAT_MSG_LENGTH];     //!<        The name of the celestial body message
     int32_t inputCelID;                             //!< (-)    ID for the planet input message
-    BSKPrint *bskPrint;                             //!< BSK Logging
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }hillPointConfig;
 

@@ -396,7 +396,7 @@ void ReactionWheelStateEffector::CrossInit()
 																	 moduleID);
 	if(CmdsInMsgID < 0)
 	{
-        bskPrint.printMessage(MSG_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
+        bskLogger.bskLog(WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
 	}
 
 	std::vector<RWConfigSimMsg>::iterator it;
@@ -404,7 +404,7 @@ void ReactionWheelStateEffector::CrossInit()
 	{
         if (it->betaStatic == 0.0)
         {
-            bskPrint.printMessage(MSG_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!");
+            bskLogger.bskLog(WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!");
         }
 		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
 		if (it->RWModel == JitterFullyCoupled) {

@@ -39,7 +39,7 @@
  */
 void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
 {
-    configData->bskPrint = _BSKPrint();
+    configData->bskLogger = _BSKLogger();
     /*! - Create output message with sigma_RN etc. for module */
     configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
                                                   sizeof(AttRefFswMsg),

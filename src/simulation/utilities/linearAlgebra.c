@@ -18,6 +18,7 @@
  */
 
 #include "linearAlgebra.h"
+#include "utilities/bskPrint.h"
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -132,7 +133,7 @@ void vtMultM(double *v,
     double *m_mx2 = (double *)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
@@ -160,7 +161,7 @@ void vtMultMt(double *v,
     double *m_mx2 = (double *)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
@@ -831,7 +832,7 @@ void mTranspose(void *mx, size_t dim1, size_t dim2,
     double *m_mx = (double *)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim1*dim2 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
@@ -902,13 +903,13 @@ void mMultM(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim12 != dim21) {
-        _printMessageDefault(MSG_ERROR, "Error: mMultM dimensions don't match.");
+        BSK_PRINT(MSG_ERROR, "Error: mMultM dimensions don't match.");
         return;
     }
     for(i = 0; i < dim11; i++) {
@@ -931,13 +932,13 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim12*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim11 != dim21) {
-        _printMessageDefault(MSG_ERROR, "Error: mtMultM dimensions don't match.");
+        BSK_PRINT(MSG_ERROR, "Error: mtMultM dimensions don't match.");
         return;
     }
     for(i = 0; i < dim12; i++) {
@@ -960,13 +961,13 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim12 != dim22) {
-        _printMessageDefault(MSG_ERROR, "Error: mMultMt dimensions don't match.");
+        BSK_PRINT(MSG_ERROR, "Error: mMultMt dimensions don't match.");
         return;
     }
     for(i = 0; i < dim11; i++) {
@@ -989,13 +990,13 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim12*dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim11 != dim22) {
-        _printMessageDefault(MSG_ERROR, "Error: mtMultMt dimensions don't match.");
+        BSK_PRINT(MSG_ERROR, "Error: mtMultMt dimensions don't match.");
         return;
     }
     for(i = 0; i < dim12; i++) {
@@ -1021,7 +1022,7 @@ void mMultV(void *mx, size_t dim1, size_t dim2,
     double *m_mx2 = (double *)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
@@ -1049,7 +1050,7 @@ void mtMultV(void *mx, size_t dim1, size_t dim2,
     double *m_mx2 = (double *)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim12*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     size_t i;
     size_t j;
@@ -1090,7 +1091,7 @@ double mDeterminant(void *mx, size_t dim)
     double result = 0;
     double mxTemp[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if ((dim-1)*(dim-1) > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     if(dim < 1) {
         return 0;
@@ -1132,7 +1133,7 @@ void mCofactor(void *mx, size_t dim, void *result)
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double  det;
     if (dim*dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
@@ -1175,7 +1176,7 @@ int mInverse(void *mx, size_t dim, void *result)
     double  det = mDeterminant(mx, dim);
     double  m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim*dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
-        _printMessageDefault(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
 
     if(fabs(det) > DB0_EPS) {
         /* Find adjoint matrix */
@@ -1185,7 +1186,7 @@ int mInverse(void *mx, size_t dim, void *result)
         /* Find inverse */
         mScale(1.0 / det, m_adjoint, dim, dim, m_result);
     } else {
-        _printMessageDefault(MSG_ERROR, "Error: cannot invert singular matrix");
+        BSK_PRINT(MSG_ERROR, "Error: cannot invert singular matrix");
         for(i = 0; i < dim; i++) {
             for(j = 0; j < dim; j++) {
                 m_result[MXINDEX(dim, i, j)] = 0.0;
@@ -1619,7 +1620,7 @@ int m22Inverse(double mx[2][2], double result[2][2])
         m_result[1][0] = -mx[1][0] * detInv;
         m_result[1][1] =  mx[0][0] * detInv;
     } else {
-        _printMessageDefault(MSG_ERROR, "Error: singular 2x2 matrix inverse");
+        BSK_PRINT(MSG_ERROR, "Error: singular 2x2 matrix inverse");
         m22Set(0.0, 0.0,
                0.0, 0.0,
                m_result);
@@ -1963,7 +1964,7 @@ int m33Inverse(double mx[3][3], double result[3][3])
         m_result[2][1] = -(mx[0][0] * mx[2][1] - mx[0][1] * mx[2][0]) * detInv;
         m_result[2][2] = (mx[0][0] * mx[1][1] - mx[0][1] * mx[1][0]) * detInv;
     } else {
-        _printMessageDefault(MSG_ERROR, "Error: singular 3x3 matrix inverse");
+        BSK_PRINT(MSG_ERROR, "Error: singular 3x3 matrix inverse");
         m33Set(0.0, 0.0, 0.0,
                0.0, 0.0, 0.0,
                0.0, 0.0, 0.0,
@@ -2184,7 +2185,7 @@ int m44Inverse(double mx[4][4], double result[4][4])
         m_result[3][2] = (mx[0][2] * mx[1][1] * mx[3][0] - mx[0][1] * mx[1][2] * mx[3][0] - mx[0][2] * mx[1][0] * mx[3][1] + mx[0][0] * mx[1][2] * mx[3][1] + mx[0][1] * mx[1][0] * mx[3][2] - mx[0][0] * mx[1][1] * mx[3][2]) * detInv;
         m_result[3][3] = (mx[0][1] * mx[1][2] * mx[2][0] - mx[0][2] * mx[1][1] * mx[2][0] + mx[0][2] * mx[1][0] * mx[2][1] - mx[0][0] * mx[1][2] * mx[2][1] - mx[0][1] * mx[1][0] * mx[2][2] + mx[0][0] * mx[1][1] * mx[2][2]) * detInv;
     } else {
-        _printMessageDefault(MSG_ERROR, "Error: singular 4x4 matrix inverse");
+        BSK_PRINT(MSG_ERROR, "Error: singular 4x4 matrix inverse");
         m44Set(0.0, 0.0, 0.0, 0.0,
                0.0, 0.0, 0.0, 0.0,
                0.0, 0.0, 0.0, 0.0,

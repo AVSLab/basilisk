@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include "fswMessages/stAttFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
-#include "simulation/utilities/bskPrint.h"
+#include "simulation/utilities/bskLog.h"
 
 
 /*! @brief Module configuration message.  */
@@ -38,7 +38,7 @@ typedef struct {
     int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
     STAttFswMsg LocalOutput; /*!< Output data structure*/
-    BSKPrint *bskPrint;   //!< BSK Logging
+    BSKLogger *bskLogger;   //!< BSK Logging
 }STConfigData;
 
 #ifdef __cplusplus
