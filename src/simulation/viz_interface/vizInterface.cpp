@@ -1,10 +1,10 @@
 /*
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
-
+ 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
-
+ 
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -12,7 +12,7 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
+ 
  */
 
 #include <fstream>
@@ -107,16 +107,16 @@ void VizInterface::SelfInit()
         void* message = malloc(4 * sizeof(char));
         memcpy(message, "PING", 4);
         zmq_msg_t request;
-
+        
         std::cout << "Waiting for Vizard at tcp://localhost:5556" << std::endl;
-
+        
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, this->requester_socket, 0);
         char buffer[4];
         zmq_recv (this->requester_socket, buffer, 4, 0);
         zmq_send (this->requester_socket, "PING", 4, 0);
         std::cout << "Basilisk-Vizard connection made" << std::endl;
-
+        
         /*! - Create output message for module in opNav mode */
         if (this->opNavMode > 0) {
             uint64_t imageBufferCount = 2;
@@ -199,7 +199,7 @@ void VizInterface::CrossInit()
         }
         this->spiceMessage.resize(this->spiceInMsgID.size());
     }
-
+    
     /*! Define StarTracker input message */
     msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->starTrackerInMsgName);
     if (msgInfo.itemFound) {
@@ -326,7 +326,7 @@ void VizInterface::ReadBSKMessages()
         }
     }
     }
-
+    
      /*! Read incoming Thruster constellation msg */
     {
     for (size_t idx=0;idx< this->numThr; idx++){
@@ -342,8 +342,8 @@ void VizInterface::ReadBSKMessages()
         }
     }
     }
-
-
+    
+    
     /*! Read CSS data msg */
     if (this->cssDataInMsgId.msgID != -1){
         CSSArraySensorIntMsg localCSSDataArray;
@@ -354,7 +354,7 @@ void VizInterface::ReadBSKMessages()
             cssDataInMsgId.dataFresh = true;
         }
     }
-
+    
     /*! Read incoming CSS config msg */
     if (this->cssConfInMsgId.msgID != -1){
         CSSConfigFswMsg localCSSConfigArray;
@@ -366,8 +366,8 @@ void VizInterface::ReadBSKMessages()
         }
         this->cssConfigMessage = localCSSConfigArray;
     }
-
-
+    
+    
     /*! Read incoming camera config msg */
     if (this->cameraConfMsgId.msgID != -1){
         CameraConfigMsg localCameraConfigArray;
@@ -379,8 +379,8 @@ void VizInterface::ReadBSKMessages()
         }
         this->cameraConfigMessage = localCameraConfigArray;
     }
-
-
+    
+    
     /*! Read incoming ST constellation msg */
     if (this->starTrackerInMsgID.msgID != -1){
         STSensorIntMsg localSTArray;
@@ -555,7 +555,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 //thrMsgID[idx].dataFresh = false;
             }
         }
-
+        
         /*! Write camera output msg */
         if ((this->cameraConfMsgId.msgID != -1 && this->cameraConfMsgId.dataFresh)
             || this->cameraConfigMessage.cameraID >= 0){
@@ -653,7 +653,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_t receive_buffer;
             zmq_msg_init(&receive_buffer);
             zmq_msg_recv (&receive_buffer, requester_socket, 0);
-
+            
             /*! - send protobuffer raw over zmq_socket */
             void* serialized_message = malloc(byteCount);
             message->SerializeToArray(serialized_message, (int) byteCount);
@@ -666,7 +666,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
             void* header_message = malloc(10 * sizeof(char));
             memcpy(header_message, "SIM_UPDATE", 10);
-
+            
             zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
             zmq_msg_init(&empty_frame1);
             zmq_msg_init(&empty_frame2);
@@ -676,7 +676,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&empty_frame1, requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&empty_frame2, requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&request_buffer, requester_socket, 0);
-
+            
             /*! - If the camera is requesting periodic images, request them */
             if (this->opNavMode > 0 &&  CurrentSimNanos%this->cameraConfigMessage.renderRate == 0 && this->cameraConfigMessage.isOn == 1){
                 char buffer[10];
@@ -687,7 +687,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_t img_request;
                 zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
                 zmq_msg_send(&img_request, requester_socket, 0);
-
+                
                 zmq_msg_t length;
                 zmq_msg_t image;
                 zmq_msg_init(&length);
@@ -699,7 +699,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
                 zmq_msg_recv(&length, requester_socket, 0);
                 zmq_msg_recv(&image, requester_socket, 0);
-
+                
                 int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
                 void *imagePoint= zmq_msg_data(&image);
                 int32_t length_unswapped = *lengthPoint;
@@ -708,11 +708,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
                 ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
                 ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
-
+                
                 /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
                 this->bskImagePtr = malloc(imageBufferLength*sizeof(char));
                 memcpy(this->bskImagePtr, imagePoint, imageBufferLength*sizeof(char));
-
+                
                 /*! -- Write out the image information to the Image message */
                 CameraImageMsg imageData;
                 imageData.timeTag = CurrentSimNanos;
@@ -727,7 +727,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 /*! -- Clean the messages to avoid memory leaks */
                 zmq_msg_close(&length);
                 zmq_msg_close(&image);
-
+                
                 /*! -- Ping the Viz back to continue the lock-step */
                 void* keep_alive = malloc(4 * sizeof(char));
                 memcpy(keep_alive, "PING", 4);
@@ -735,9 +735,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
                 zmq_msg_send(&request_life, this->requester_socket, 0);
                 return;
-
+                
             }
-
+            
         }
         /*!  Write protobuffer to file */
         if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {

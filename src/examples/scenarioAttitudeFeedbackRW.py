@@ -276,7 +276,7 @@ import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)
-from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus, bskPrint
+from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
