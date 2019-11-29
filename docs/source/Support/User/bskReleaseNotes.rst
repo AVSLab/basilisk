@@ -27,6 +27,7 @@ Upcoming Version 1.X.X
 - Added a fault detection module for optical navigation
 - Added camera module to own the message and to add corruptions to images
 - Added a new support document :ref:`makingNewBskModule` on getting started writing BSK modules
+- Added a new support document :ref:`addSphinxDoc`
 
 Version 1.3.2
 -------------
