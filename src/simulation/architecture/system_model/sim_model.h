@@ -25,7 +25,7 @@
 #include "architecture/system_model/sys_process.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/message_logger.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup SimArchGroup Simulation Architecture Classes
  *  This architecture group contains the source used to drive/schedule/interface

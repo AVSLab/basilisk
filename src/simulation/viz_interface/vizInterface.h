@@ -38,7 +38,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 typedef struct {

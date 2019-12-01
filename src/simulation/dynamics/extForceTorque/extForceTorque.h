@@ -25,7 +25,7 @@
 #include "../../simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "../../simFswInterfaceMessages/cmdForceBodyIntMsg.h"
 #include "../../simFswInterfaceMessages/cmdForceInertialIntMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

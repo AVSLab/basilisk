@@ -24,7 +24,7 @@
 #include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20

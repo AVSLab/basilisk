@@ -29,7 +29,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/atmoPropsSimMsg.h"
 #include "../_GeneralModuleFiles/atmosphereBase.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class ExponentialAtmosphere:  public AtmosphereBase {

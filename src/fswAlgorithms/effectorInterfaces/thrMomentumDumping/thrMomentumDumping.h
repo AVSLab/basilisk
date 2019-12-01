@@ -27,7 +27,7 @@
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 

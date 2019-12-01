@@ -24,7 +24,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/imuSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 

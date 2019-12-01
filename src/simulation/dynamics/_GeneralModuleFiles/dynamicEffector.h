@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 #include "dynParamManager.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class DynamicEffector {

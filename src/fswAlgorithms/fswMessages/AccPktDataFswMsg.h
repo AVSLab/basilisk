@@ -17,7 +17,7 @@
 
  */
 #include <stdint.h>
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 #ifndef _ACC_DATA_MESSAGE_H
 #define _ACC_DATA_MESSAGE_H

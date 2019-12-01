@@ -29,7 +29,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
 #include "simulation/utilities/signalCondition.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 #include <string.h>
 

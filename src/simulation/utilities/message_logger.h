@@ -23,7 +23,7 @@
 #include <string>
 #include <stdint.h>
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup SimArchGroup
  * @{

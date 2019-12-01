@@ -25,7 +25,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 

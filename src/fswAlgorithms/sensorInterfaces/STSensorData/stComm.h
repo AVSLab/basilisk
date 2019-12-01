@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include "fswMessages/stAttFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Module configuration message.  */

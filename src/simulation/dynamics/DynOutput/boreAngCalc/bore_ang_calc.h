@@ -25,7 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/boreAngleSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup SimModelGroup
  * @{

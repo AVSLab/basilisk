@@ -26,7 +26,7 @@
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 #include <string.h>
 
 

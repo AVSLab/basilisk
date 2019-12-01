@@ -32,7 +32,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/scPlusMassPropsSimMsg.h"
 #include "hubEffector.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

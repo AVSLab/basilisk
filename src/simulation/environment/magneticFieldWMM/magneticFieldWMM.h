@@ -31,7 +31,7 @@
 #include "simMessages/epochSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 #include "GeomagnetismHeader.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include <time.h>
 
 

@@ -29,7 +29,7 @@
 #include "fswMessages/opNavFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 #include "utilities/astroConstants.h"
 
 

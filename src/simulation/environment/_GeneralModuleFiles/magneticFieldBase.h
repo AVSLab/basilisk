@@ -28,7 +28,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/magneticFieldSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class MagneticFieldBase: public SysModel  {

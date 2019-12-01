@@ -27,7 +27,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "simMessages/spicePlanetStateSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 class SphericalHarmonics
 {

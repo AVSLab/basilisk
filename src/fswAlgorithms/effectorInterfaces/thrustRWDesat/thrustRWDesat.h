@@ -27,7 +27,7 @@
 #include "fswMessages/rwConstellationFswMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 #include <stdlib.h>
 

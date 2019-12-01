@@ -24,7 +24,7 @@
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
 

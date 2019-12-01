@@ -31,7 +31,7 @@
 #include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class Camera: public SysModel {

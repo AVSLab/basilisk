@@ -25,7 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/orbitalMotion.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

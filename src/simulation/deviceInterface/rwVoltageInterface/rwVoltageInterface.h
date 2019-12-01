@@ -25,7 +25,7 @@
 #include "../../simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 

@@ -24,7 +24,7 @@
 
 #include "messaging/static_messaging.h"
 #include "./simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Container with paired input/output message names and IDs */

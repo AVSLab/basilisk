@@ -23,7 +23,7 @@
 #include <Eigen/Dense>
 #include "../../utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup SimModelGroup
  * @{

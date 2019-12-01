@@ -27,7 +27,7 @@
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*!@brief Data structure for module to map a command torque onto thruster forces. */

@@ -22,7 +22,7 @@
 #define ALG_CONTAIN_H
 
 #include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup SimArchGroup
  * @{

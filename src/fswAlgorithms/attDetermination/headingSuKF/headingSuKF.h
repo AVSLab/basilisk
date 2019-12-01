@@ -27,7 +27,7 @@
 #include "fswMessages/headingFilterFswMsg.h"
 #include "fswMessages/opNavFswMsg.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 typedef struct {

@@ -24,7 +24,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "../_GeneralModuleFiles/thrustGroupData.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 #include <stdlib.h>
 

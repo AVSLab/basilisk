@@ -25,7 +25,7 @@
 #include <vector>
 #include <random>
 #include <Eigen/Dense>
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup Sim Utility Group
  *  This group contains the simulation utilities that are used globally on the

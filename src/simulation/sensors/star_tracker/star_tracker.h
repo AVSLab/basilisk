@@ -28,7 +28,7 @@
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

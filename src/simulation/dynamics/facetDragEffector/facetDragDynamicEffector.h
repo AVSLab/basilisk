@@ -29,7 +29,7 @@
 #include "../../simMessages/atmoPropsSimMsg.h"
 #include "../dragEffector/dragDynamicEffector.h"
 #include "../../utilities/rigidBodyKinematics.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

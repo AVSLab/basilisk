@@ -26,7 +26,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/atmoPropsSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class AtmosphereBase: public SysModel  {

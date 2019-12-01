@@ -32,7 +32,7 @@
 #include "simMessages/vscmgConfigSimMsg.h"
 #include "simFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 

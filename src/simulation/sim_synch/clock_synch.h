@@ -25,7 +25,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <chrono>
 #include "simMessages/syncClockSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class ClockSynch: public SysModel {

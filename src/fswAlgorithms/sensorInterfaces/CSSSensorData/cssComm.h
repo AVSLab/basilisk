@@ -25,7 +25,7 @@
 
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 

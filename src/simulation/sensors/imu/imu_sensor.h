@@ -30,7 +30,7 @@
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 #include <Eigen/Dense>
 #include "utilities/avsEigenMRP.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

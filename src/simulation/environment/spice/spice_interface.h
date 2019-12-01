@@ -28,7 +28,7 @@
 #include "simMessages/spiceTimeSimMsg.h"
 #include "utilities/avsEigenSupport.h"
 #include "simMessages/epochSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

@@ -26,7 +26,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "stateData.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

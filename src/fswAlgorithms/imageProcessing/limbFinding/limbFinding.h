@@ -31,7 +31,7 @@
 #include "../simulation/simFswInterfaceMessages/limbOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/bskLog.h"
+#include "../simulation/utilities/bskLogging.h"
 
 
 

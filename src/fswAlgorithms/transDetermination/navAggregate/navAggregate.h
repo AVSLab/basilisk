@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 #define MAX_AGG_NAV_MSG 10
 

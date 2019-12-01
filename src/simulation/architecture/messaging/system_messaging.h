@@ -26,7 +26,7 @@
 #include <set>
 #include <mutex>
 #include "architecture/messaging/blank_storage.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup SimArchGroup
  * @{

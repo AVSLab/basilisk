@@ -23,7 +23,7 @@
 #define MAX_STAT_MSG_LENGTH 128
 
 #include <stdint.h>
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 /*! \defgroup messaging
  * @{

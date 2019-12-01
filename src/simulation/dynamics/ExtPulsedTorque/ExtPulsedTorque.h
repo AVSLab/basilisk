@@ -22,7 +22,7 @@
 
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

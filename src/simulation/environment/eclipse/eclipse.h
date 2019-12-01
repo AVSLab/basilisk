@@ -28,7 +28,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 #include "utilities/linearAlgebra.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

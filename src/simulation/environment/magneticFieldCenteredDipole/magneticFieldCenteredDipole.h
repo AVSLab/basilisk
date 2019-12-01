@@ -29,7 +29,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/magneticFieldSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class MagneticFieldCenteredDipole:  public MagneticFieldBase {

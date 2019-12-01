@@ -27,7 +27,7 @@
 #include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*!@brief module configuration message

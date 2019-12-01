@@ -29,7 +29,7 @@
 #include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "../../simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
 

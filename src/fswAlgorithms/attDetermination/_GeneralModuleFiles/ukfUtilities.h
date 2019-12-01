@@ -21,7 +21,7 @@
 #define _UKF_UTILITIES_H_
 
 #include <stdint.h>
-#include <utilities/bskLog.h>
+#include <utilities/bskLogging.h>
 
 #define UKF_MAX_DIM 20
 

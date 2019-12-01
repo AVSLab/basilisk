@@ -30,7 +30,7 @@
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "simMessages/fuelTankSimMsg.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include <math.h>
 
 

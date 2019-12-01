@@ -25,7 +25,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class SphericalPendulum :

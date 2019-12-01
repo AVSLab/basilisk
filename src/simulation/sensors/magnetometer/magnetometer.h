@@ -28,7 +28,7 @@
 #include "simMessages/tamDataSimMsg.h"
 #include "utilities/gauss_markov.h"
 #include "utilities/saturate.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 

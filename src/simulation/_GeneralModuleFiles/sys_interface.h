@@ -23,7 +23,7 @@
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 /*! \addtogroup SimArchGroup Simulation Architecture Classes
  * @{
  */

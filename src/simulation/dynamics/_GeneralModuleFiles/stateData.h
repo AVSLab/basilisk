@@ -21,7 +21,7 @@
 #define STATE_DATA_H
 #include <Eigen/Dense>
 #include <stdint.h>
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class StateData {

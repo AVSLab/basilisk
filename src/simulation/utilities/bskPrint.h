@@ -21,7 +21,7 @@
 #define _BSK_PRINT_
 
 #include <stdio.h>
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 typedef enum {
     MSG_DEBUG,

@@ -27,7 +27,7 @@
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/avsEigenSupport.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

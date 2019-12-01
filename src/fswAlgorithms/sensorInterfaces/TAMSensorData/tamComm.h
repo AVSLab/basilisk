@@ -24,7 +24,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/tamSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/tamSensorIntMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! module configuration message definition */

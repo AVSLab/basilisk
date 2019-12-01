@@ -81,7 +81,7 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
         configData->mnvrActive = 0.0;
         configData->scanSelector += 1;
 
-        char msg[255];
+        char msg[MAX_LOGGING_LENGTH];
         sprintf(msg, "Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ", configData->scanSelector,
                configData->attOutSet.state[0],
                configData->attOutSet.state[1],

@@ -31,7 +31,7 @@
 #include "../_GeneralModuleFiles/atmosphereBase.h"
 #include "simMessages/swDataSimMsg.h"
 #include "simMessages/epochSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 extern "C" {
   #include "nrlmsise-00.h"

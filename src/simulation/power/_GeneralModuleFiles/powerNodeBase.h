@@ -29,7 +29,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/powerNodeUsageSimMsg.h"
 #include "simFswInterfaceMessages/powerNodeStatusIntMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class PowerNodeBase: public SysModel  {

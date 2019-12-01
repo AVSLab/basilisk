@@ -27,7 +27,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 class SimpleNav: public SysModel {

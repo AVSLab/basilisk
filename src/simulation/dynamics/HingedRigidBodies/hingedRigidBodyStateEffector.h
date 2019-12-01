@@ -26,7 +26,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "simMessages/hingedRigidBodySimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 class HingedRigidBodyStateEffector : public StateEffector, public SysModel {

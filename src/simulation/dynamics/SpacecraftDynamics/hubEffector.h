@@ -24,7 +24,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 class HubEffector : public StateEffector {
 public:

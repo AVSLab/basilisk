@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/opNavFswMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
 /*! @brief module configuratino message definition

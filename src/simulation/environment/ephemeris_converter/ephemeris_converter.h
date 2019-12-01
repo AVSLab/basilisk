@@ -25,7 +25,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/idEphemerisSimMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

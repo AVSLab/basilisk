@@ -25,7 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/powerStorageStatusSimMsg.h"
 #include "simMessages/powerNodeUsageSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 #ifndef BASILISK_SIMPOWERSTORAGEBASE_H
 #define BASILISK_SIMPOWERSTORAGEBASE_H

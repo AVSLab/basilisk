@@ -33,7 +33,7 @@
 #include "simMessages/scStatesSimMsg.h"
 #include "simMessages/scMassPropsSimMsg.h"
 #include "../../simMessages/scEnergyMomentumSimMsg.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 struct DockingData {

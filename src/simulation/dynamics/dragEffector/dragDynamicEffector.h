@@ -30,7 +30,7 @@
 #include "../../simFswInterfaceMessages/navAttIntMsg.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 
 

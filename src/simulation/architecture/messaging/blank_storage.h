@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <stdint.h>
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 #ifdef _WIN32
 class __declspec(dllexport) BlankStorage

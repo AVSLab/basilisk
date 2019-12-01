@@ -24,7 +24,7 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/AccDataFswMsg.h"
 #include "fswMessages/AccPktDataFswMsg.h"
-#include "simulation/utilities/bskLog.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the

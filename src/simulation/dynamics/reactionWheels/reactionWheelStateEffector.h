@@ -34,7 +34,7 @@
 #include "../../simMessages/rwConfigLogSimMsg.h"
 #include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bskLog.h"
+#include "utilities/bskLogging.h"
 
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
