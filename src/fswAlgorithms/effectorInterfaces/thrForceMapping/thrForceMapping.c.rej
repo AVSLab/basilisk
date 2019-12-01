@@ -1,0 +1,8 @@
+diff a/src/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.c b/src/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.c	(rejected hunks)
+@@ -377,5 +377,5 @@
+         }
+     }
+     return(returnAngle);
+-    
++
+ }

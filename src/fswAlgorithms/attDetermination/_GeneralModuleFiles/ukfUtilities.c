@@ -353,7 +353,7 @@ int32_t ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates
 	int i, j;
 	double wVec[UKF_MAX_DIM];
     double rEl2, bParam, gamma;
-
+	
     vCopy(xVec, (size_t) nStates, wVec);
     mSetZero(rOut, (size_t) nStates, (size_t) nStates);
 
@@ -375,7 +375,7 @@ int32_t ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates
         }
         bParam += beta * wVec[i]*wVec[i]/rEl2;
 	}
-
+	
 
 	return 0;
 }
