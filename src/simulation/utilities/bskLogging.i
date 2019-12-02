@@ -22,3 +22,9 @@
 %}
 
 %include "bskLogging.h"
+%include "swig_common_model.i"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
