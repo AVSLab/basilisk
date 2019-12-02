@@ -21,7 +21,7 @@
 #define _BSK_LOG_
 
 //maximum length of info to log in a reference to BSKLogging in C, not relevant in C++
-#define MAX_LOGGING_LENGTH = 255;
+#define MAX_LOGGING_LENGTH 255
 
 typedef enum {
     DEBUG,
@@ -76,7 +76,7 @@ typedef struct BSKLogger BSKLogger;
 
 EXTERN BSKLogger* _BSKLogger(void);
 EXTERN void _BSKLogger_d(BSKLogger*);
-EXTERN void _readLogLevel(BSKLogger*);
+EXTERN void _printLogLevel(BSKLogger*);
 EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
 EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
 #endif

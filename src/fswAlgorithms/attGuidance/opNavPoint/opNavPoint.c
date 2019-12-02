@@ -69,10 +69,10 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
 
     /* compute an Eigen axis orthogonal to alignAxis_C */
     if (v3Norm(configData->alignAxis_C)  < 0.1) {
-        char msg[MAX_LOGGING_LENGTH];
-        sprintf(msg, "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
+        char info[MAX_LOGGING_LENGTH];
+        sprintf(info, "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
           configData->alignAxis_C[0], configData->alignAxis_C[1], configData->alignAxis_C[2]);
-        _bskLog(configData->bskLogger, ERROR, msg);
+        _bskLog(configData->bskLogger, ERROR, info);
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->alignAxis_C, configData->alignAxis_C);    /* ensure that this vector is a unit vector */

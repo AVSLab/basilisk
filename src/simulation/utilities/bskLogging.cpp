@@ -81,9 +81,9 @@ EXTERN void _BSKLogger_d(BSKLogger* bskLogger)
     delete bskLogger;
 }
 
-EXTERN void _readLogLevel(BSKLogger* bskLogger)
+EXTERN void _printLogLevel(BSKLogger* bskLogger)
 {
-    bskLogger->readLogLevel();
+    bskLogger->printLogLevel();
 }
 
 EXTERN void _setLogLevel(BSKLogger* bskLogger, logLevel_t logLevel)
