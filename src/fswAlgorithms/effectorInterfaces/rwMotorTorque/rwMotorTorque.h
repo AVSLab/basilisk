@@ -45,7 +45,7 @@ typedef struct {
     int32_t  outputMsgID;                           //!< ID for the outgoing message
     char inputVehControlName[MAX_STAT_MSG_LENGTH];  //!< The name of the vehicle control (Lr) Input message
     int32_t  controlTorqueInMsgID;                     //!< ID for the incoming Lr control message
-
+    
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the RWArrayConfigFswMsg input message
     int32_t rwParamsInMsgID;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< The name of the RWs availability message
@@ -58,12 +58,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
     void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
     void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif

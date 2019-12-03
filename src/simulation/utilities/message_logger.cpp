@@ -183,14 +183,14 @@ bool messageLogger::readLog(MessageIdentData & messageID, SingleMessageHeader *d
         memcpy(msgPayload, dataPtr, bytesUse);
         return(true);
     }
-
+    
     return false;
 }
 
 uint64_t messageLogger::getLogCount(int64_t processID, int64_t messageID)
 {
     std::vector<messageLogContainer>::iterator it;
-
+    
     uint64_t messageCount = 0;
 
     for(it=logData.begin(); it != logData.end(); it++)
@@ -222,7 +222,7 @@ void messageLogger::clearLogs()
     {
         addMessageLog(mapIt->first, mapIt->second);
     }
-
+    
 }
 
 void messageLogger::archiveLogsToDisk(std::string outFileName)

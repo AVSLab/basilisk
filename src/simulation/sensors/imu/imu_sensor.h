@@ -80,7 +80,7 @@ public:
 
     IMUSensorIntMsg trueValues;         //!< [-] total measurement without perturbations
     IMUSensorIntMsg sensedValues;       //!< [-] total measurement including perturbations
-
+    
     Eigen::Vector3d accelScale;         //! (-) scale factor for acceleration axes
     Eigen::Vector3d gyroScale;          //! (-) scale factors for acceleration axes
 

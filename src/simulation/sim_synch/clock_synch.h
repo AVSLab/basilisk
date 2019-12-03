@@ -32,12 +32,12 @@ class ClockSynch: public SysModel {
 public:
     ClockSynch();
     ~ClockSynch();
-
+   
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t currentSimNanos);
     void UpdateState(uint64_t currentSimNanos);
-
+    
 public:
 	double accelFactor;          //!< [-] Factor used to accelerate sim-time relative to clock
     SynchClockSimMsg outputData; //!< [-] Output data for the synch module

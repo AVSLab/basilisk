@@ -41,7 +41,7 @@
 */
 class GaussMarkov
 {
-
+    
 public:
     GaussMarkov();
     GaussMarkov(uint64_t size, uint64_t newSeed = 0x1badcad1);

@@ -68,7 +68,7 @@ public:
     void clearLogs();
 	void archiveLogsToDisk(std::string outFileName);
 	void loadArchiveFromDisk(std::string inFileName);
-
+    
 public:
     uint64_t initBufferSize; //!< Default buffer size fo message log storage
     std::vector<messageLogContainer> logData; //!< Vector of log elements

@@ -36,7 +36,7 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
     /*! - Create filter states output message for filter states, covariance, postfits, and debugging*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
                                                     sizeof(OpNavFilterFswMsg), "OpNavFilterFswMsg", moduleId);
-
+    
 }
 
 /*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
@@ -110,11 +110,11 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
     vScale(1E-6, configData->covar, ODUKF_N_STATES*ODUKF_N_STATES, configData->covar); // Convert to km
-
+    
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
                                configData->numStates, tempMatrix);
-
+    
     badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
                                configData->numStates, configData->sQnoise);
 
@@ -122,7 +122,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
           configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
-
+    
     configData->timeTagOut = configData->timeTag;
 
     if (badUpdate <0){
@@ -304,12 +304,12 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     double *spPtr; //sigma point intermediate varaible
     double procNoise[ODUKF_N_STATES*ODUKF_N_STATES]; //process noise
     int32_t badUpdate=0;
-
+    
     configData->dt = updateTime - configData->timeTag;
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
-
+    
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {

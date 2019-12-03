@@ -44,7 +44,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
     void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
     void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,

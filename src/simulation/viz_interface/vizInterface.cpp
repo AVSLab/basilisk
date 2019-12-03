@@ -231,7 +231,7 @@ void VizInterface::CrossInit()
         }
         this->rwInMessage.resize(this->rwInMsgID.size());
     }
-
+    
     /*! Define Thr input message */
     {
         MsgCurrStatus thrStatus;

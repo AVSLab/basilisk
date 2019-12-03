@@ -35,14 +35,14 @@ void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 {
     configData->bskLogger = _BSKLogger(); 
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-
+    
     /*! - Create output message for module */
 	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
         sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
-
+    
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor

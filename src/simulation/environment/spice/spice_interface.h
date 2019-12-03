@@ -80,7 +80,7 @@ private:
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
     int64_t timeOutMsgID;       //!< -- Output time message ID
     std::map<uint32_t, SpicePlanetStateSimMsg> planetData; //!< -- Internal vector of planets
-
+    
 };
 
 

@@ -35,7 +35,7 @@ void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
     /*! - Create output message for module */
     configData->OutputMsgID = CreateNewMessage(configData->OutputDataName,
         sizeof(STAttFswMsg), "STAttFswMsg", moduleID);
-
+    
 }
 
 /*! This method performs the second stage of initialization for the ST sensor

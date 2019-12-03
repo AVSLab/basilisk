@@ -38,7 +38,7 @@ public:
     void IncreaseStorage(uint64_t NewVolume);  //! -- Copy to new memory of size NewVolume bytes
     void ClearStorage();  //! -- null out the BlankStorage
     uint64_t GetCurrentSize() const {return(this->BufferStorageSize);}  //! -- size in bytes of the StorageBuffer
-
+    
 public:
     uint8_t* StorageBuffer;  //! -- The memory where a process buffer writes messages
 private:

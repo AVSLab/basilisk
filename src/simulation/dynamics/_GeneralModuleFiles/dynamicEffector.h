@@ -32,7 +32,7 @@ public:
     virtual void computeStateContribution(double integTime);
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method to get access to other states/stateEffectors
     virtual void computeForceTorque(double integTime) = 0;  //!< -- Method to computeForce and torque on the body
-
+    
 public:
     Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector
     Eigen::Vector3d forceExternal_N;        //!< [N] External force applied by this effector in inertial components

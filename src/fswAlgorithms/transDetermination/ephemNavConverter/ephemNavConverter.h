@@ -36,14 +36,14 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID);
     void CrossInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID);
     void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
                               int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif

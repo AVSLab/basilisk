@@ -34,7 +34,7 @@ void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
     /*! - Create output message for module */
     configData->OutputMsgID = CreateNewMessage(configData->OutputDataName,
         sizeof(IMUSensorBodyFswMsg), "IMUSensorBodyFswMsg", moduleID);
-
+    
 }
 
 /*! This method performs the second stage of initialization for the IMU sensor

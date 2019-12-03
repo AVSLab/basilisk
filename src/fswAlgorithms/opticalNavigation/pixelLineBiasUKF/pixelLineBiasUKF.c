@@ -36,7 +36,7 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t modul
     /*! - Create filter states output message for filter states, covariance, postfits, and debugging*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
                                                     sizeof(PixelLineFilterFswMsg), "PixelLineFilterFswMsg", moduleId);
-
+    
 }
 
 /*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
@@ -111,11 +111,11 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
     vScale(1E-6, configData->covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES + PIXLINE_DYN_STATES, configData->covar); // Convert to km
-
+    
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
                                configData->numStates, tempMatrix);
-
+    
     badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
                                configData->numStates, configData->sQnoise);
 
@@ -123,7 +123,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
           configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
-
+    
     configData->timeTagOut = configData->timeTag;
 
     if (badUpdate <0){
@@ -312,12 +312,12 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
     double *spPtr; //sigma point intermediate varaible
     double procNoise[PIXLINE_N_STATES*PIXLINE_N_STATES]; //process noise
     int32_t badUpdate=0;
-
+    
     configData->dt = updateTime - configData->timeTag;
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
-
+    
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {

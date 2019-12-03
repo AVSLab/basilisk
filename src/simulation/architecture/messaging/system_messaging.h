@@ -104,7 +104,7 @@ class SystemMessaging
 #endif
 
 {
-
+    
 public:
     static SystemMessaging* GetInstance();  //! -- returns a pointer to the sim instance of SystemMessaging
     int64_t AttachStorageBucket(std::string bufferName = "");  //! -- adds a new buffer to the messaging system
@@ -147,7 +147,7 @@ private:
     ~SystemMessaging();
     SystemMessaging(SystemMessaging const &) {};
     SystemMessaging& operator =(SystemMessaging const &){return(*this);};
-
+    
 private:
     static SystemMessaging *TheInstance;
     std::vector<MessageStorageContainer *> dataBuffers;

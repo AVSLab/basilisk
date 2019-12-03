@@ -39,7 +39,7 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t m
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
-
+    
 }
 
 /*! This method performs the second stage of initialization for the spacecraft pointing

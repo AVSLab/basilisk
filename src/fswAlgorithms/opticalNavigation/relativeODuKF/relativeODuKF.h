@@ -100,7 +100,7 @@ typedef struct {
     double postFits[3];      //!< [-] PostFit residuals
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
-
+    
     OpNavFswMsg opNavInMsg; //!< [-] ST sensor data read in from message bus
     int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
@@ -114,7 +114,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId);
     void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId);
     void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,

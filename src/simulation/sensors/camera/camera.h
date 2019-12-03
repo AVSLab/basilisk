@@ -38,7 +38,7 @@ class Camera: public SysModel {
 public:
     Camera();
     ~Camera();
-
+    
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
@@ -69,7 +69,7 @@ public:
     double cameraPos_B[3];     //!< [m] Camera position in body frame
     double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame
     char skyBox[MAX_MESSAGE_SIZE]; //!< [-] name of skyboz in use
-
+    
     /*! Noise paramters */
     double gaussian;        //!< Gaussian noise level
     double darkCurrent;    //!< Dark current intensity

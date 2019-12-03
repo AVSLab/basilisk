@@ -73,7 +73,7 @@ public:
 private:
     uint64_t densInMsgId;                            //!< -- Message ID for incoming data
     AtmoPropsSimMsg atmoInData;
-
+    
 };
 
 

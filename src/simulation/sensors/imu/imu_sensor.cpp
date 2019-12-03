@@ -126,7 +126,7 @@ void ImuSensor::SelfInit()
 	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
 	this->errorModelGyro.setRNGSeed(this->RNGSeed);
 	this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
-
+    
     Eigen::MatrixXd oSatBounds;
     oSatBounds.resize(this->numStates, 2);
     oSatBounds(0,0) = -this->senRotMax;

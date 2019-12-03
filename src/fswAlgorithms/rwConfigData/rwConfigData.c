@@ -45,7 +45,7 @@ void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
     /*! - Create output message for module */
     configData->rwParamsOutMsgID = CreateNewMessage(configData->rwParamsOutMsgName,
                                                     sizeof(RWArrayConfigFswMsg), "RWArrayConfigFswMsg", moduleID);
-
+    
 }
 
 /*! This method performs the second stage of initialization for this module.

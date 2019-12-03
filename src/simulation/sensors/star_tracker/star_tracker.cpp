@@ -63,7 +63,7 @@ void StarTracker::SelfInit()
     this->outputStateID = SystemMessaging::GetInstance()->
         CreateNewMessage(this->outputStateMessage, sizeof(STSensorIntMsg),
         OutputBufferCount, "STSensorIntMsg", this->moduleID);
-
+    
     this->AMatrix.setIdentity(numStates, numStates);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.

@@ -61,7 +61,7 @@ void GaussMarkov::computeNextState()
     Eigen::VectorXd errorVector;
     Eigen::VectorXd ranNums;
     size_t i;
-
+    
     //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
        (this->propMatrix.size() != (size_t) (this->numStates*this->numStates)))
@@ -78,7 +78,7 @@ void GaussMarkov::computeNextState()
     //! - Propagate the state forward in time using the propMatrix and the currentState
     errorVector = this->currentState;
     this->currentState = this->propMatrix * errorVector;
-
+    
     //! - Compute the random numbers used for each state.  Note that the same generator is used for all
     ranNums.resize((int64_t) this->numStates);
 

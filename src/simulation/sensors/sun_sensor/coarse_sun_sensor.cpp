@@ -162,14 +162,14 @@ void CoarseSunSensor::CrossInit()
     this->stateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName,
                                                                             sizeof(SCPlusStatesSimMsg),
                                                                             this->moduleID);
-
+    
     /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
     if (this->sunEclipseInMsgName.length() > 0) {
         this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
                                                                                      sizeof(EclipseSimMsg),
                                                                                      moduleID);
     }
-
+    
     //! - If either messages is not valid, send a warning message
     if(this->sunInMsgID < 0 || this->stateInMsgID < 0) {
         bskLogger.bskLog(WARNING, "Failed to link a sun sensor input message: Sun: %" PRId64, this->sunInMsgID);

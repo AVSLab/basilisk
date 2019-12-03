@@ -85,7 +85,7 @@ void SimpleNav::SelfInit()
     this->AMatrix.setIdentity(numStates, numStates);
     this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
     this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
-
+    
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
         bskLogger.bskLog(ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());

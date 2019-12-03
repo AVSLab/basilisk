@@ -70,12 +70,12 @@ void RadiationPressure::CrossInit()
     //! - Find the message ID associated with the ephmInMsgID string.
     //! - Warn the user if the message is not successfully linked.
     this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
-
+ 
     if(sunEphmInMsgId < 0)
     {
         bskLogger.bskLog(WARNING, "Did not find a valid sun ephemeris message with name: %s", this->sunEphmInMsgName.c_str());
     }
-
+    
     this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), this->moduleID);
 
     if(this->stateInMsgId < 0)

@@ -64,7 +64,7 @@ void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t
 
     return;
 }
-
+    
 /*! This method takes the sensor data from the magnetometers and
  converts that information to the format used by the TAM nav.
  @return void

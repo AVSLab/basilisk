@@ -41,7 +41,7 @@ public:
     void readInputMessages();
     void convertEphemData(uint64_t clockNow);
     void writeOutputMessages(uint64_t Clock);
-
+    
 public:
     bool messagesLinked;        //!< [-] Flag used to determine if messages are cross-linked
     std::map<std::string, std::string> messageNameMap;   //!< [-] Map between input/output message names

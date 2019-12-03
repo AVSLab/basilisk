@@ -50,7 +50,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID);
     void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID);
     void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,

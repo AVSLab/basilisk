@@ -34,7 +34,7 @@ class SimpleNav: public SysModel {
 public:
     SimpleNav();
     ~SimpleNav();
-
+   
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
@@ -43,7 +43,7 @@ public:
     void applyErrors();
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
-
+    
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
     Eigen::MatrixXd PMatrix;       //!< -- Covariance matrix used to perturb state

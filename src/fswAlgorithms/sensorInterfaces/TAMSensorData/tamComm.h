@@ -41,12 +41,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID);
     void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID);
     void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_t moduleID);
     void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID);
-
+    
 #ifdef __cplusplus
 }
 #endif
