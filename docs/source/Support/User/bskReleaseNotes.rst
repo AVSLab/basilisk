@@ -28,6 +28,7 @@ Upcoming Version 1.X.X
 - Added camera module to own the message and to add corruptions to images
 - Added a new support document :ref:`makingNewBskModule` on getting started writing BSK modules
 - Added a new support document :ref:`addSphinxDoc`
+- Updated the :ref:`aboutBSK` page to include Basilisk highlights
 
 Version 1.3.2
 -------------
