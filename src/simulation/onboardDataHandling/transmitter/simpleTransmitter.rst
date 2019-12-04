@@ -14,11 +14,12 @@ This module uses the input and output messages of the :ref:'DataNodeBase' base c
 
 User Guide
 ----------
-This module inherits the user guide from the :ref:'DataNodeBase' base class.  Module specific instructions include:
-- Unlike other child classes of :ref:'DataNodeBase', this module does not require a user to set a :ref:'nodeDataName'.
+This module inherits the user guide from the :ref:`DataNodeBase` base class.  Module specific instructions include:
+
+- Unlike other child classes of :ref:`DataNodeBase`, this module does not require a user to set a :ref:`nodeDataName`
 - The 'nodeBaudRate' variable should be set to a negative value in order to remove data from the storage unit.
-- The user must specify a 'packetSize' variable (negative value) in addition to the 'nodeBaudRate' variable
-- The user must specify the number of buffers 'numBuffers' variable so the transmitter knows how many buffers to search through
-- The user must specify the storage unit the transmitter should subscribe to using the 'addStorageUnitToTransmitter()' method
+- The user must specify a `packetSize` variable (negative value) in addition to the `nodeBaudRate` variable
+- The user must specify the number of buffers `numBuffers` variable so the transmitter knows how many buffers to search through
+- The user must specify the storage unit the transmitter should subscribe to using the `addStorageUnitToTransmitter()`` method
 
 For more information on how to set up and use this module, see the simple data system example: :ref:`scenarioDataDemo`
