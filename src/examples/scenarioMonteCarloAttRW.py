@@ -220,11 +220,10 @@ except ImportError:
     print("Datashader library not found. Will use matplotlib")
     DATASHADER_FOUND = False
 
-# @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
-# @endcond
+
 
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -443,30 +442,14 @@ def run(saveFigures, case, show_plots, useDatashader):
         # or execute the plot on all runs
         monteCarloLoaded.executeCallbacks()
 
-        # Now we clean up data from this test
-        shutil.rmtree(dirName)
-        assert not os.path.exists(dirName), "No leftover data should exist after the test"
-
-        # And possibly show the plots
-        if show_plots:
-            if useDatashader and DATASHADER_FOUND:
-                print("Test concluded, showing plots now via datashader")
-                datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
-            else:
-                print("Test concluded, showing plots now via matplot...")
-                plt.show()
-                # close the plots being saved off to avoid over-writing old and new figures
-                plt.close("all")
-
     #########################################################
-    if case ==2:
+    if case == 2:
         # Now run initial conditions
-        icName = bskPath + "/../../src/tests/Support/run_MC_IC"
+        icName = path + "/Support/run_MC_IC"
         monteCarlo.setICDir(icName)
         monteCarlo.setICRunFlag(True)
         numberICs = 3
         monteCarlo.setExecutionCount(numberICs)
-
 
         # Rerunning the case shouldn't fail
         runsList = list(range(numberICs))
@@ -480,20 +463,35 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader and DATASHADER_FOUND:
-                print("Test conclused, showing plots now via datashader")
+                print("Test concluded, showing plots now via datashader")
                 datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
             else:
                 plt.show()
-                # close the plots being savfed off to avoid over-writing old and new figures
+                # close the plots being saved off to avoid over-writing old and new figures
                 plt.close("all")
 
         # Now we clean up data from this test
-        os.remove(icName + '/' + 'MonteCarlo.data' )
+        os.remove(icName + '/' + 'MonteCarlo.data')
         for i in range(numberICs):
             os.remove(icName + '/' + 'run' + str(i) + '.data')
         assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
 
-## This function creates the simulation to be executed in parallel.
+    # Now we clean up data from this test
+    shutil.rmtree(dirName)
+    assert not os.path.exists(dirName), "No leftover data should exist after the test"
+
+    # And possibly show the plots
+    if show_plots:
+        if useDatashader and DATASHADER_FOUND:
+            print("Test concluded, showing plots now via datashader")
+            datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
+        else:
+            print("Test concluded, showing plots now via matplot...")
+            plt.show()
+            # close the plots being saved off to avoid over-writing old and new figures
+            plt.close("all")
+
+# This function creates the simulation to be executed in parallel.
 # It is copied directly from src/tests/scenarios.
 def createScenarioAttitudeFeedbackRW():
 
@@ -837,7 +835,7 @@ def configureDatashader():
     # datashaderDirectories = ["/mc1_data_files/", "/mc1_assets_images/"]
 
     # Set which graphing techniques the library uses. Options: 'holoviews_datashader', 'only_datashader', 'both'.
-    # The holoviews_datashader option allows the graph to have dyanmically generated axis
+    # The holoviews_datashader option allows the graph to have dynamically generated axis
     # values, whereas the datashaer option provides a higher resolution image, but without any axes information or labeling.
     # If you want to plot just with datashader instead of holoviews, configure this variable and pass it in
     # the configure() methods as 'graphingTechnique = datashaderGraphType'. By default it will use the
@@ -876,8 +874,8 @@ def configureDatashader():
               title="RW Motor Torque History", color="GnBu", dimension=(800, 400)),
         Graph(dataIndex=mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel="RW Speed (RPM)", xaxislabel = "Time [minutes]", macro = macros.NANO2MIN,
               title="RW Wheel speeds history"),
-        Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", title= "RW Voltage", yaxislabel="RW Voltage (V)",
-              xaxislabel="Time [minutes]", dpi=350, macro = macros.NANO2MIN)]
+        Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", title="RW Voltage", yaxislabel="RW Voltage (V)",
+              xaxislabel="Time [minutes]", dpi=350, macro=macros.NANO2MIN)]
 
     # Set whether or not the datashading library will save data to CSV files
     # This is set to false by default in the library
@@ -893,7 +891,7 @@ def configureDatashader():
 
     if ONLY_GRAPH_DATA:
         print("Datashading from existing csv files")
-        datashaderLibrary.graph(fromCSV = True)
+        datashaderLibrary.graph(fromCSV=True)
         return
 
 # END DATASHADER CODE

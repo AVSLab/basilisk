@@ -56,7 +56,7 @@ import scenarioMonteCarloAttRW
 @pytest.mark.scenarioTest
 
 def test_MonteCarloSimulationDatashader(show_plots):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     scenarioMonteCarloAttRW.run(True, 1, show_plots, True)
 
@@ -68,7 +68,7 @@ def test_MonteCarloSimulationDatashader(show_plots):
                          [1,2])
 @pytest.mark.slowtest
 def test_MonteCarloSimulation(show_plots, MCCases):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     scenarioMonteCarloAttRW.run(True, MCCases , show_plots, False)
     return
