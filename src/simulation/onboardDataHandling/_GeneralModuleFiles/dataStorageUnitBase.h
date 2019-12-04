@@ -29,11 +29,6 @@
 #ifndef BASILISK_DATASTORAGEUNITBASE_H
 #define BASILISK_DATASTORAGEUNITBASE_H
 
-//struct dataInstance{
-//    std::string dataInstanceName;
-//    double dataInstanceSum;
-//}; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
-
 class DataStorageUnitBase: public SysModel {
 public:
     DataStorageUnitBase();
@@ -41,32 +36,30 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void addDataNodeToModel(std::string tmpNodeMsgName);
+    void addDataNodeToModel(std::string tmpNodeMsgName); //!< Adds dataNode to the storageUnit
     void UpdateState(uint64_t CurrentSimNanos);
-    std::vector<dataInstance> getStoredDataAll();
-    double getStoredDataSum();
-    DataStorageStatusSimMsg getStoredDataMsg();
+    std::vector<dataInstance> getStoredDataAll(); //!< Getter function for the storedData vector.
+    double getStoredDataSum(); //!< Getter function for the storedDataSum
 
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
-    virtual void integrateDataStatus(double currentTime);
-    virtual void customSelfInit(){};
-    virtual void customCrossInit(){};
-    virtual void customReset(uint64_t CurrentClock){};
-    virtual void customWriteMessages(uint64_t CurrentClock){};
-    virtual bool customReadMessages(){return true;};
-    int messageInStoredData(DataNodeUsageSimMsg *tmpNodeMsg);
-    double sumAllData();
+    virtual void integrateDataStatus(double currentTime); //!< Integrates the dataStatus over all of the dataNodes
+    virtual void customSelfInit(){}; //!< Custom output input reading method.  This allows a child class to add additional functionality.
+    virtual void customCrossInit(){}; //!< Custom subscription method, similar to customSelfInit.
+    virtual void customReset(uint64_t CurrentClock){}; //!< Custom Reset method, similar to customSelfInit.
+    virtual void customWriteMessages(uint64_t CurrentClock){}; //!< custom Write method, similar to customSelfInit.
+    virtual bool customReadMessages(){return true;}; //!< Custom read method, similar to customSelfInit; returns `true' by default.
+    int messageInStoredData(DataNodeUsageSimMsg *tmpNodeMsg); //!< Returns index of the dataName if it's already in storedData
+    double sumAllData(); //!< Sums all of the data in the storedData vector
 
 public:
     std::vector<std::string> nodeDataUseMsgNames; //!< Vector of data node input message names
     std::string storageUnitDataOutMsgName; //!< Vector of message names to be written out by the storage unit
-    double storedDataSum_Init;//!< [bits] Initial stored data set by the user. Defaults to 0.
     double storageCapacity; //! Storage capacity of the storage unit
 
 protected:
-    std::vector<std::int64_t> nodeDataUseMsgIds;
+    std::vector<std::int64_t> nodeDataUseMsgIds; //!< Vector of all the data node messages IDs the storage unit is subscribed to
     int64_t storageUnitDataOutMsgId; //!< Message ID of storage Unit output message
     DataStorageStatusSimMsg storageStatusMsg;
     std::vector<DataNodeUsageSimMsg> nodeBaudMsgs;

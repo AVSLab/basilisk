@@ -18,25 +18,22 @@
  */
 
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/astroConstants.h"
-#include "utilities/bsk_Print.h"
-#include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "dataNodeBase.h"
-#include <string.h>
+#include "string.h"
 
-/*! This method initializes the messaging parameters to either empty strings for message names or -1 for message IDs.
+/*! Constructor.
  @return void
  */
 DataNodeBase::DataNodeBase()
 {
     this->outputBufferCount = 2;
     this->nodeDataOutMsgName = "dataNodeOutputMessage";
-    this->nodeStatusInMsgName = ""; //By default, no node status message name is used.
+    this->nodeStatusInMsgName = ""; //!<By default, no node status message name is used.
     this->nodeDataOutMsgId = -1;
     this->nodeStatusInMsgId = -1;
-    this->dataStatus = 1; //! Node defaults to on unless overwritten.
-    memset(&(this->nodeDataMsg), 0x0, sizeof(DataNodeUsageSimMsg)); //! Data node message is zero by default.
+    this->dataStatus = 1; //!< Node defaults to on unless overwritten.
+    memset(&(this->nodeDataMsg), 0x0, sizeof(DataNodeUsageSimMsg)); //!< Data node message is zero by default.
 
     return;
 }
@@ -49,12 +46,11 @@ DataNodeBase::~DataNodeBase()
     return;
 }
 
-/*! SelfInit creates a PowerNodeUsageSimMsg using the provided message output name.
+/*! SelfInit creates a DataNodeUsageSimMsg using the provided message output name.
  @return void
 */
 void DataNodeBase::SelfInit()
 {
-
     this->nodeDataOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->nodeDataOutMsgName, sizeof(DataNodeUsageSimMsg),this->outputBufferCount, "DataNodeUsageSimMsg",this->moduleID);
     //! - call the custom SelfInit() method to add additional self initialization steps
     customSelfInit();
@@ -62,12 +58,12 @@ void DataNodeBase::SelfInit()
     return;
 }
 
-/*! This method subscribes to anything that would tell the power node to turn on/off.
+/*! This method subscribes to anything that would tell the data node to turn on/off.
  @return void
  */
 void DataNodeBase::CrossInit()
 {
-    //! - subscribe to the spacecraft messages and create associated output message buffer
+    //! - subscribe to the deviceStatus messages and create associated output message buffer
     if(this->nodeStatusInMsgName.length() > 0) {
         this->nodeStatusInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
                                                                                      sizeof(DeviceStatusIntMsg),
@@ -78,6 +74,10 @@ void DataNodeBase::CrossInit()
     return;
 }
 
+/*! This method is used to reset the module. In general, no functionality is reset.
+ @param CurrentSimNanos
+ @return void
+ */
 void DataNodeBase::Reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
@@ -86,6 +86,10 @@ void DataNodeBase::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
+/*! This method writes out the data node messages (dataName, baudRate)
+ @param CurrentClock
+ @return void
+ */
 void DataNodeBase::writeMessages(uint64_t CurrentClock)
 {
     //! - write dataNode output messages - baud rate and name
@@ -97,15 +101,19 @@ void DataNodeBase::writeMessages(uint64_t CurrentClock)
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
+
     return;
 }
 
+/*! This method reads the device status messages and calls a customReadMessages method
+ @return bool
+ */
 bool DataNodeBase::readMessages()
 {
     DeviceStatusIntMsg statusMsg;
     SingleMessageHeader localHeader;
 
-    //! - read in the power node use/supply messages
+    //! - read in the data node use/supply messages
     bool dataRead = true;
     bool tmpStatusRead = true;
     if(this->nodeStatusInMsgId >= 0)
@@ -127,11 +135,15 @@ bool DataNodeBase::readMessages()
     return(dataRead && customRead);
 }
 
+/*! This method evaluates the implementation-specific data model if the device is set to on.
+ @param CurrentTime
+ @return void
+ */
 void DataNodeBase::computeDataStatus(double CurrentTime)
 {
     if(this->dataStatus > 0)
     {
-        this->evaluateDataModel(&this->nodeDataMsg);
+        this->evaluateDataModel(&this->nodeDataMsg, CurrentTime);
     }
     else
     {
@@ -140,14 +152,18 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
     return;
 }
 
+/*! This method updates the state by reading messages, calling computeDataStatus, and writing messages
+ @param CurrentSimNanos
+ @return void
+ */
 void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! - Only update the power status if we were able to read in messages.
+    //! - Only update the data status if we were able to read in messages.
     if(this->readMessages())
     {
         this->computeDataStatus(CurrentSimNanos*NANO2SEC);
     } else {
-        /* if the read was not successful then zero the output message */
+        //! - If the read was not successful then zero the output message
         memset(&(this->nodeDataMsg), 0x0, sizeof(DataNodeUsageSimMsg));
     }
 

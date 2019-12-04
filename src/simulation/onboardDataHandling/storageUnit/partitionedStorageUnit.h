@@ -30,10 +30,8 @@ public:
     ~PartitionedStorageUnit();
 
 private:
-    void customReset(uint64_t CurrentClock);
+    void customReset(uint64_t CurrentClock) override;
 
-public:
-    double storageCapacity; //!< [bits] Storage capacity in bits.
 
 };
 

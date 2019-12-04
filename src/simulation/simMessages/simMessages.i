@@ -127,7 +127,7 @@ GEN_SIZEOF(PowerStorageStatusSimMsg)
 GEN_SIZEOF(BodyHeadingSimMsg)
 %include "dataStorageStatusSimMsg.h"
 GEN_SIZEOF(DataStorageStatusSimMsg)
-#include "dataNodeUsageSimMsg.h"
+%include "dataNodeUsageSimMsg.h"
 GEN_SIZEOF(DataNodeUsageSimMsg)
 
 #ifndef CSHARP_ROX

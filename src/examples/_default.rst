@@ -132,6 +132,14 @@ Power Sub-System
 
    Basic Power Usage and Tracking  <scenarioPowerDemo>
 
+Data Sub-System
+^^^^^^^^^^^^^^^^
+
+.. toctree::
+  :maxdepth: 1
+
+  Basic Data Generation and Transmission  <scenarioDataDemo>
+
 
 
 bskSim()-Based Simulation

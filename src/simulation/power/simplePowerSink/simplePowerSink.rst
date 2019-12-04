@@ -3,7 +3,7 @@ Executive Summary
 This module is intended to serve as a basic power node with a constant power load or draw. Specifically, it:
 
 1. Writes out a :ref:`PowerNodeUsageSimMsg` describing its power consumption at each sim update based on its power consumption attribute;
-2. Can be switched on or off using an optional message of type :ref:`PowerNodeStatusIntMsg`.
+2. Can be switched on or off using an optional message of type :ref:`DeviceStatusIntMsg`.
 
 Module Assumptions and Limitations
 ----------------------------------

@@ -29,7 +29,8 @@ public:
     ~SimpleInstrument();
 
 private:
-    void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg);
+    void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg, double currentTime); //!< Sets the name and baud rate for the data in the output message.
+
 };
 
 

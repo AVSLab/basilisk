@@ -29,10 +29,10 @@
 %include "simplePowerSink.h"
 
 %include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/powerNodeStatusIntMsg.h"
+%include "../../simFswInterfaceMessages/DeviceStatusIntMsg.h"
 
 GEN_SIZEOF(PowerNodeUsageSimMsg)
-GEN_SIZEOF(PowerNodeStatusIntMsg)
+GEN_SIZEOF(DeviceStatusIntMsg)
 
 %pythoncode %{
 import sys

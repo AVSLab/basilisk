@@ -17,28 +17,23 @@
 
  */
 
-
-%module simpleSolarPanel
+%module simpleTransmitter
 %{
-    #include "simpleSolarPanel.h"
+#include "simpleTransmitter.h"
 %}
 
 %include "swig_common_model.i"
+%include "carrays.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/powerNodeBase.h"
-%include "simpleSolarPanel.h"
+%include "../_GeneralModuleFiles/dataNodeBase.h"
+%include "simpleTransmitter.h"
 
-%include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/DeviceStatusIntMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/eclipseSimMsg.h"
+%include "../../simMessages/dataNodeUsageSimMsg.h"
+%include "../../simFSWInterfaceMessages/deviceStatusIntMsg.h"
 
-GEN_SIZEOF(PowerNodeUsageSimMsg)
+GEN_SIZEOF(DataNodeUsageSimMsg)
 GEN_SIZEOF(DeviceStatusIntMsg)
-GEN_SIZEOF(EclipseSimMsg);
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
+GEN_SIZEOF(DataStorageStatusSimMsg)
 
 %pythoncode %{
 import sys

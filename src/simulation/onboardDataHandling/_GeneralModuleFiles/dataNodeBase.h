@@ -17,8 +17,6 @@
 
  */
 
-//#pragma once
-
 #ifndef BASILISK_DATANODEBASE_H
 #define BASILISK_DATANODEBASE_H
 
@@ -28,6 +26,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <simMessages/dataNodeUsageSimMsg.h>
 #include "simFswInterfaceMessages/deviceStatusIntMsg.h"
+#include "simMessages/dataStorageStatusSimMsg.h"
 
 class DataNodeBase: public SysModel {
 public:
@@ -42,7 +41,7 @@ public:
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
-    virtual void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg)=0; //!< Virtual void method used to compute module-wise data usage/generation.
+    virtual void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg, double currentTime)=0; //!< Virtual void method used to compute module-wise data usage/generation.
     virtual void customSelfInit(){};//! Custom output input reading method.  This allows a child class to add additional functionality.
     virtual void customCrossInit(){}; //! Custom subscription method, similar to customSelfInit.
     virtual void customReset(uint64_t CurrentClock){}; //! Custom Reset method, similar to customSelfInit.
@@ -53,8 +52,7 @@ public:
     std::string nodeDataOutMsgName; //!< Message name for the node's output message
     std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
     double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
-    //std::string nodeDataName; //!< Name of the data (Instrument 1, Instrument 2, etc)
-    char nodeDataName[128];
+    char nodeDataName[128]; //! Name of the data node consuming or generating data.
     uint64_t dataStatus; //!< Device data mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
 protected:
@@ -62,8 +60,6 @@ protected:
     int64_t nodeStatusInMsgId;
     DataNodeUsageSimMsg nodeDataMsg;
     DeviceStatusIntMsg nodeStatusMsg;
-    double currentDataConsumption;
-    double previousTime; //! Previous time used for integration
 
 private:
     uint64_t outputBufferCount;

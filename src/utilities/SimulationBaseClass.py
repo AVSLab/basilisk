@@ -534,7 +534,7 @@ class SimBaseClass:
                     headerData.messageStruct].printElem()
         return searchComplete
 
-    def pullMessageLogData(self, varName, indices=[], numRecords=-1):
+    def pullMessageLogData(self, varName, indices=[], numRecords=-1, varType='double'):
         """
         Retrieves logged message data from TotalSim by querying over message and variable names.
 
@@ -584,7 +584,7 @@ class SimBaseClass:
 
         dataUse = MessagingAccess.obtainMessageVector(splitName[0], moduleFound,
                                                       headerData.messageStruct, messageCount, self.TotalSim, resplit[1],
-                                                      'double',
+                                                      varType,
                                                       indices_use[0], indices_use[-1], bufferUse)
 
         indicesLocal = [0]

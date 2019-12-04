@@ -20,19 +20,24 @@
 #include "simpleStorageUnit.h"
 #include "utilities/bsk_Print.h"
 
-/*! The constructor creates a SimpleBattery instance with zero stored data */
+/*! The constructor creates a SimpleStorageUnit instance with zero stored data
+ @return void
+ */
 SimpleStorageUnit::SimpleStorageUnit(){
     this->storageCapacity = -1.0;
     this->storedDataSum = 0.0;
     return;
 }
 
+/*! Destructor
+ @return void
+ */
 SimpleStorageUnit::~SimpleStorageUnit(){
     return;
 }
 
-/*! Custom reset function/
- * @param CurrentClock
+/*! Custom reset function
+ @param CurrentClock
  */
 void SimpleStorageUnit::customReset(__uint64_t CurrentClock){
     if (this->storageCapacity <= 0.0) {
@@ -41,24 +46,30 @@ void SimpleStorageUnit::customReset(__uint64_t CurrentClock){
     return;
 }
 
+/*! Overwrites the integrateDataStatus method to create a single partition in the storage unit ("STORED DATA")
+ @param currentTime
+ @return void
+ */
 void SimpleStorageUnit::integrateDataStatus(double currentTime){
     this->currentTimestep = currentTime - this->previousTime;
+    this->netBaud = 0;
 
-    //! - loop over all the data nodes
+    //! - loop over all the data nodes and add them to the single partition.
     std::vector<DataNodeUsageSimMsg>::iterator it;
     for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
         if (storedData.size() == 0){
             this->storedData.push_back({{'S','T','O','R','E','D',' ','D','A','T','A'}, 0});
         }
-        else{
+        else if ((this->storedDataSum < this->storageCapacity) || (it->baudRate <= 0)){
             this->storedData[0].dataInstanceSum += it->baudRate * (this->currentTimestep);
         }
+        this->netBaud += it->baudRate;
     }
 
-    // Sum all data in storedData vector
+    //!- Sum all data in storedData vector
     this->storedDataSum = this->storedData[0].dataInstanceSum;
 
-    // Update previousTime
+    //!- Update previousTime
     this->previousTime = currentTime;
     return;
 }

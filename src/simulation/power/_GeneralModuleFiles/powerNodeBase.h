@@ -63,7 +63,7 @@ protected:
     int64_t nodePowerOutMsgId;
     int64_t nodeStatusInMsgId;
     PowerNodeUsageSimMsg nodePowerMsg;
-    PowerNodeStatusIntMsg nodeStatusMsg;
+    DeviceStatusIntMsg nodeStatusMsg;
     double currentPowerConsumption;
     double previousTime; //! Previous time used for integration
 

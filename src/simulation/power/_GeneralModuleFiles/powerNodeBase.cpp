@@ -68,7 +68,7 @@ void PowerNodeBase::CrossInit()
     //! - subscribe to the spacecraft messages and create associated output message buffer
     if(this->nodeStatusInMsgName.length() > 0) {
         this->nodeStatusInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
-                                                                                     sizeof(PowerNodeStatusIntMsg),
+                                                                                     sizeof(DeviceStatusIntMsg),
                                                                                      moduleID);
     }
     //!- call the custom CrossInit() method to all additional cross initialization steps
@@ -113,7 +113,7 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
  */
 bool PowerNodeBase::readMessages()
 {
-    PowerNodeStatusIntMsg statusMsg;
+    DeviceStatusIntMsg statusMsg;
     SingleMessageHeader localHeader;
 
     //! - read in the power node use/supply messages
@@ -121,14 +121,14 @@ bool PowerNodeBase::readMessages()
     bool tmpStatusRead = true;
     if(this->nodeStatusInMsgId >= 0)
     {
-        memset(&statusMsg, 0x0, sizeof(PowerNodeStatusIntMsg));
+        memset(&statusMsg, 0x0, sizeof(DeviceStatusIntMsg));
         tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->nodeStatusInMsgId, &localHeader,
-                                                                       sizeof(PowerNodeStatusIntMsg),
+                                                                       sizeof(DeviceStatusIntMsg),
                                                                        reinterpret_cast<uint8_t*>(&statusMsg),
                                                                        moduleID);
 
         this->nodeStatusMsg = statusMsg;
-        this->powerStatus = this->nodeStatusMsg.powerStatus;
+        this->powerStatus = this->nodeStatusMsg.deviceStatus;
         powerRead = powerRead && tmpStatusRead;
     }
 

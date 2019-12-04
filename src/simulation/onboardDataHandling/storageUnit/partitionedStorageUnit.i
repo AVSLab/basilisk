@@ -24,6 +24,7 @@
 
 
 %include "swig_common_model.i"
+%include "carrays.i"
 %include "sys_model.h"
 %template(storedDataVector) std::vector<dataInstance>;
 %include "../_GeneralModuleFiles/dataStorageUnitBase.h"

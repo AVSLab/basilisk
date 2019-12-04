@@ -81,8 +81,6 @@ GEN_SIZEOF(STSensorIntMsg)
 GEN_SIZEOF(TAMSensorIntMsg)
 %include "thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
-%include "powerNodeStatusIntMsg.h"
-GEN_SIZEOF(PowerNodeStatusIntMsg)
 %include "deviceStatusIntMsg.h"
 GEN_SIZEOF(DeviceStatusIntMsg)
 

@@ -18,9 +18,7 @@
  */
 
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/astroConstants.h"
 #include "utilities/bsk_Print.h"
-#include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "dataStorageUnitBase.h"
 
@@ -29,11 +27,10 @@
  */
 DataStorageUnitBase::DataStorageUnitBase(){
     this->outputBufferCount = 2;
-    this->previousTime = 0;
-    this->nodeDataUseMsgNames.clear();
-    this->storedDataSum = 0.0;
-    this->storedDataSum_Init = 0.0;
-    this->netBaud = 0.0;
+    this->previousTime = 0; //! - previousTime initialized to 0.
+    this->nodeDataUseMsgNames.clear(); //! - Clear the MsgNames.
+    this->storedDataSum = 0.0; //! - Initialize the dataSum to 0.
+    this->netBaud = 0.0; //! - Initialize the netBaudRate to 0.
     return;
 }
 
@@ -45,12 +42,10 @@ DataStorageUnitBase::~DataStorageUnitBase(){
 }
 
 
-/*! SelfInit for this class...
+/*! SelfInit for this class.
  @return void
  */
 void DataStorageUnitBase::SelfInit(){
-    //string MessageName, MaxSize, NumMessageBuffers, string messageStruct="",
-    // How do we determine number of message buffers?
     this->storageUnitDataOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->storageUnitDataOutMsgName, sizeof(DataStorageStatusSimMsg),this->outputBufferCount, "DataStorageStatusSimMsg",this->moduleID);
 
     //! - call the custom SelfInit() method to add additional self initialization steps
@@ -59,35 +54,30 @@ void DataStorageUnitBase::SelfInit(){
     return;
 }
 
-/*! CrossInit for this class...
+/*! CrossInit for this class. Subscribes to dataNodes that will send data to storage unit.
  @return void
  */
 void DataStorageUnitBase::CrossInit(){
-    //! - subscribe to the spacecraft messages and create associated output message buffer
+    //! - Subscribe to the data node messages and create associated output message buffer by iterating through the vector of messages to subscribe to.
     std::vector<std::string>::iterator it;
     for(it = this->nodeDataUseMsgNames.begin(); it != this->nodeDataUseMsgNames.end(); it++){
         this->nodeDataUseMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(DataNodeUsageSimMsg), moduleID));
     }
 
-    //for (auto it : this->nodeDataUseMsgNames)
-    //{
-    //}
+    //!- call the custom CrossInit() method to all additional cross initialization steps
+    customCrossInit();
+
     return;
 }
 
 /*! This method is used to reset the module.
+ @param CurrentSimNanos
  @return void
  */
 void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousTime = 0;
     this->storedData.clear();
-
-    if (this->storedDataSum_Init >= 0.0) {
-        this->storedDataSum = this->storedDataSum_Init;
-    } else {
-        BSK_PRINT(MSG_ERROR, "The storedDataSum_Init variable must be set to a non-negative value.");
-    }
 
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
@@ -96,17 +86,18 @@ void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
 }
 
 
-/*! Adds a simDataNodeMsg name to be iterated over.
+/*! Adds a simDataNodeMsg name to be iterated over. Called in Python.
+ @param tmpNodeMsgName
  @return void
- @param tmpScMsgName A spacecraft state message name.
  */
 void DataStorageUnitBase::addDataNodeToModel(std::string tmpNodeMsgName){
     this->nodeDataUseMsgNames.push_back(tmpNodeMsgName);
     return;
 }
 
-/*!
- * @param CurrentSimNanos The current simulation time in nanoseconds
+/*! Reads messages, adds new data to the storage unit, and writes out the storage unit status
+ @param CurrentSimNanos The current simulation time in nanoseconds
+ @return void
  */
 void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -115,11 +106,11 @@ void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
     {
         this->integrateDataStatus(CurrentSimNanos*NANO2SEC);
     } else {
-        /* zero the output message if no input messages were received. */
+        //! - Zero the output message if no input messages were received.
         memset(&(this->storageStatusMsg),  0x0, sizeof(DataStorageStatusSimMsg));
     }
 
-    //! - write out neutral density message
+    //! - write out the storage unit's data status
     this->writeMessages(CurrentSimNanos);
 
     return;
@@ -164,20 +155,21 @@ bool DataStorageUnitBase::readMessages()
     return(dataRead && customRead);
 }
 
-/*!
- * @param CurrentClock The current time used for time-stamping the message
+/*! Loops through the storedData vector and assigns values to output message.
+ @param CurrentClock The current time used for time-stamping the message
+ @return void
  */
 void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
 
-
+    //! - Set first three message parameters
     this->storageStatusMsg.currentNetBaud = this->netBaud;
     this->storageStatusMsg.storageCapacity = this->storageCapacity;
     this->storageStatusMsg.storageLevel = this->storedDataSum;
 
+    //! - Loop through stored data and copy over to the output message
     for(int i = 0; i < this->storedData.size(); i++){
-        //this->storageStatusMsg.storedData[i] = this->storedData[i];
-        strncpy(this->storageStatusMsg.storedData[i].dataInstanceName, this->storedData[i].dataInstanceName, sizeof(this->storageStatusMsg.storedData[i].dataInstanceName));
-        this->storageStatusMsg.storedData[i].dataInstanceSum = this->storedData[i].dataInstanceSum;
+        strncpy(this->storageStatusMsg.storedDataName[i], this->storedData[i].dataInstanceName, sizeof(this->storageStatusMsg.storedDataName[i]));
+        this->storageStatusMsg.storedData[i] = this->storedData[i].dataInstanceSum;
     }
 
     SystemMessaging::GetInstance()->WriteMessage(this->storageUnitDataOutMsgId,
@@ -192,7 +184,10 @@ void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
     return;
 }
 
-
+/*! Loops through all of the input messages, integrates the baud rates, and adds the new data to the storedData vector
+ @param currentTime
+ @return void
+ */
 void DataStorageUnitBase::integrateDataStatus(double currentTime){
     int index = -1;
     this->currentTimestep = currentTime - this->previousTime;
@@ -203,30 +198,36 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
     std::vector<DataNodeUsageSimMsg>::iterator it;
     for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
         index = messageInStoredData(&(*it));
-        //! - if a dataNode exists in storedData vector, integrate and add to current amount
-        if(index != -1){
-            this->storedData[index].dataInstanceSum += it->baudRate * (this->currentTimestep);
-            //this->storedData[index] = {this->storedData[index].dataInstanceName, this->storedData[index].dataInstanceSum + it->baudRate * (this->currentTimestep)};
-        //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
-        } else {
-            //tmpDataInstance.dataInstanceName = it->dataName;
-            strncpy (tmpDataInstance.dataInstanceName, it->dataName, sizeof(tmpDataInstance.dataInstanceName) );
-            tmpDataInstance.dataInstanceSum = it->baudRate * (this->currentTimestep);
-            //this->storedData.push_back({it->dataName, it->baudRate * (this->currentTimestep)});
-            this->storedData.push_back(tmpDataInstance);
-        }
+
+        //! - If the storage capacity has not been reached or the baudRate is less than 0, then add the data
+       if ((this->storedDataSum < this->storageCapacity) || (it->baudRate < 0)) {
+           //! - if a dataNode exists in storedData vector, integrate and add to current amount
+           if (index != -1) {
+               this->storedData[index].dataInstanceSum += it->baudRate * (this->currentTimestep);
+               //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
+           }
+           else {
+               strncpy(tmpDataInstance.dataInstanceName, it->dataName, sizeof(tmpDataInstance.dataInstanceName));
+               tmpDataInstance.dataInstanceSum = it->baudRate * (this->currentTimestep);
+               this->storedData.push_back(tmpDataInstance);
+           }
+       }
         this->netBaud += it->baudRate;
+
+        //! - Sum all data in storedData vector
+        this->storedDataSum = this->sumAllData();
     }
 
-    // Sum all data in storedData vector
-    this->storedDataSum = this->sumAllData();
-
-    // Update previousTime
+    //! - Update previousTime
     this->previousTime = currentTime;
 
     return;
 }
 
+/*! Checks to see if a data node is in the storedData vector or not, returns the index.
+ * @param tmpNodeMsg
+ * @return index
+ */
 int DataStorageUnitBase::messageInStoredData(DataNodeUsageSimMsg *tmpNodeMsg){
     // Initialize index as -1 (indicates data is not in storedData)
     int index = -1;
@@ -241,18 +242,23 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageSimMsg *tmpNodeMsg){
     return index;
 }
 
+/*! Getter function for all of the stored data
+ @return std::vector<dataInstance>
+ */
 std::vector<dataInstance> DataStorageUnitBase::getStoredDataAll(){
     return this->storedData;
 }
 
-DataStorageStatusSimMsg DataStorageUnitBase::getStoredDataMsg(){
-    return this->storageStatusMsg;
-}
-
+/*! Getter function for sum of the stored data
+ @return double
+ */
 double DataStorageUnitBase::getStoredDataSum(){
     return this->storedDataSum;
 }
 
+/*! Sums all of the data in the storedData vector
+ @return double
+ */
 double DataStorageUnitBase::sumAllData(){
     double dataSum = 0.0;
 

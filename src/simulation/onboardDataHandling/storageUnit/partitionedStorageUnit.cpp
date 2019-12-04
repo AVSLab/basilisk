@@ -20,19 +20,25 @@
 #include "partitionedStorageUnit.h"
 #include "utilities/bsk_Print.h"
 
-/*! The constructor creates a SimpleBattery instance with zero stored data */
+/*! The constructor creates a partitionedStorageUnit instance with zero stored data
+ @return void;
+ */
 PartitionedStorageUnit::PartitionedStorageUnit(){
     this->storageCapacity = -1.0;
     this->storedDataSum = 0.0;
     return;
 }
 
+/*! Destructor.
+ @return void
+ */
 PartitionedStorageUnit::~PartitionedStorageUnit(){
     return;
 }
 
-/*! Custom reset function/
- * @param CurrentClock
+/*! Custom reset function.
+ @param CurrentClock
+ @return void
  */
 void PartitionedStorageUnit::customReset(__uint64_t CurrentClock){
     if (this->storageCapacity <= 0.0) {

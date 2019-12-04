@@ -35,7 +35,9 @@ typedef struct{
     double storageLevel; //!< [b] Storage unit stored data in bits.
     double storageCapacity; //!< [b] Maximum data storage unit capacity.
     double currentNetBaud; //!< [baud] Current data written to or removed from the storage unit net power.
-    dataInstance storedData[32]; //! Data stored in the storage unit.
+    //dataInstance storedData[32]; //! Data stored in the storage unit.
+    double storedData[32];
+    char storedDataName[32][128];
 }DataStorageStatusSimMsg;
 
 #endif //BASILISK_DATASTORAGESTATUSSIMMSG_H

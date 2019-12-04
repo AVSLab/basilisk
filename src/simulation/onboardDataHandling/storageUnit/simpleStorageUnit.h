@@ -31,8 +31,8 @@ public:
     ~SimpleStorageUnit();
 
 private:
-    void customReset(uint64_t CurrentClock);
-    void integrateDataStatus(double currentTime);
+    void customReset(uint64_t CurrentClock); //!< Custom Reset method
+    void integrateDataStatus(double currentTime); //!< Overwrites the integrateDataStatus method to create a single partition in the storage unit ("STORED DATA")
 
 };
 
