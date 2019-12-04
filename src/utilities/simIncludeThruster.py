@@ -202,19 +202,22 @@ class thrusterFactory(object):
     def getConfigMessage(self):
         """
             Returns a THRArrayConfigFswMsg reflecting the current thruster setup.
-        :return:
+        :return: thrMessage: THRArrayConfigFswMsg instance
         """
 
         thrMessage = fswMessages.THRArrayConfigFswMsg()
 
         i = 0
-        for item in thrList:
-            fswMessages.ThrustConfigArray_setitem(thrMessage.thrusters, i, item)
+        for simThruster in self.thrusterList.values():
+            #   Converts from THRConfigSimMsg to THRConfigFswMsg
+            fswThruster = fswMessages.THRConfigFswMsg()
+            fswThruster.maxThrust = simThruster.MaxThrust
+            fswThruster.rThrust_B = [val for sublist in simThruster.thrLoc_B for val in sublist]
+            fswThruster.tHatThrust_B = [val for sublist in simThruster.thrDir_B for val in sublist]
+            fswMessages.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
             i += 1
 
-        messageSize = thrClass.getStructSize()
-
-        thrClass.numThrusters = len(thrList)
+        thrMessage.numThrusters = len(self.thrusterList.values())
 
         return thrMessage
 
