@@ -29,6 +29,7 @@ Upcoming Version 1.X.X
 - Added a new support document :ref:`makingNewBskModule` on getting started writing BSK modules
 - Added a new support document :ref:`addSphinxDoc`
 - Updated the :ref:`aboutBSK` page to include Basilisk highlights
+- Made sure the Monte Carlo unit tests didn't leave any temporary data files behind
 
 Version 1.3.2
 -------------
