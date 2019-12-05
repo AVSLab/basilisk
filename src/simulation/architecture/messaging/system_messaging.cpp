@@ -450,7 +450,7 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
     // Check the message size
     if(MsgSize != MsgHdr->MaxMessageSize)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %d that was incorrect size for: %s. ( %d instead of %d.)sYou get nothing.",
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %d that was incorrect size for: %s. ( %d instead of %d.) You get nothing.",
                   moduleID, MsgHdr->MessageName, MsgSize, MsgHdr->MaxMessageSize);
         this->WriteFails++;
         return(false);
