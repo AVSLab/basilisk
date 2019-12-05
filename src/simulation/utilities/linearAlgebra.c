@@ -18,7 +18,7 @@
  */
 
 #include "linearAlgebra.h"
-#include "utilities/bskPrint.h"
+#include "utilities/bsk_Print.h"
 
 #include <stddef.h>
 #include <stdlib.h>
