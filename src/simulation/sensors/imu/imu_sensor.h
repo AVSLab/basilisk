@@ -83,7 +83,7 @@ public:
     
     Eigen::Vector3d accelScale;         //! (-) scale factor for acceleration axes
     Eigen::Vector3d gyroScale;          //! (-) scale factors for acceleration axes
-
+    
     Discretize aDisc;                  //!  (-) instance of discretization utility for linear acceleration
     Discretize oDisc;                  //!  (-) instance of idscretization utility for angular rate
     Saturate aSat;                     //!  (-) instance of saturate utility for linear acceleration

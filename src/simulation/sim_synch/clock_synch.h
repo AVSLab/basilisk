@@ -51,7 +51,7 @@ private:
 	std::chrono::high_resolution_clock::time_point startTime; //! [-] first time stamp of pass through data
     uint64_t startSimTimeNano;   //!< [ns] Previous simulation time observed
     int64_t clockOutputID;       //!< [-] Output ID for clock module
-
+    
 };
 
 

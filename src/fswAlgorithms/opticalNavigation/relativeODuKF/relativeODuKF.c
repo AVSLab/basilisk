@@ -117,14 +117,14 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     
     badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
                                configData->numStates, configData->sQnoise);
-
+    
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
     
     configData->timeTagOut = configData->timeTag;
-
+    
     if (badUpdate <0){
         _bskLog(configData->bskLogger, WARNING, "Reset method contained bad update");
     }

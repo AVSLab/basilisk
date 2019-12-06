@@ -77,7 +77,7 @@ StateData* DynParamManager::getStateObject(std::string stateName)
             hub attitude in a translation only simulation setup */
         bskLogger.bskLog(WARNING, "You requested this non-existent state name: %s You either miss-typed the stateName, or you asked for a state that doesn't exist in your simulation setup.", stateName.c_str());
     }
-
+    
     return(statePtr);
 }
 

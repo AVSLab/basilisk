@@ -87,7 +87,7 @@ public:
     virtual void routeInputs(int64_t processBuffer);
     void discoverAllMessages();
     void connectInterfaces();
-
+    
 public:
     std::vector<InterfaceDataExchange *> interfaceDef; //!< List of interfaces
     bool interfaceActive;                           //!< -- Flag indicate whether interface has been disabled

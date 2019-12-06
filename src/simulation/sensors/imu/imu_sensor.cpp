@@ -158,7 +158,7 @@ void ImuSensor::CrossInit()
     {
         bskLogger.bskLog(WARNING, "Failed to link an imu input message. State: %" PRId64, this->InputStateID);
     }
-    
+
     return;
 }
 

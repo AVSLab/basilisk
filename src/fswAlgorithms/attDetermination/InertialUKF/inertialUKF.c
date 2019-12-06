@@ -640,7 +640,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
           as that is our filter representation*/
     configData->numUsedGyros = (uint32_t) i;
     EP2MRP(ep_BpropB0, configData->aggSigma_b2b1);
-
+    
     return;
 }
 

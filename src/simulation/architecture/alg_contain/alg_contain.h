@@ -53,7 +53,7 @@ public:
     uint64_t getCrossInitAddress() {return reinterpret_cast<uint64_t>(*AlgCrossInit);}
     uint64_t getResetAddress() {return reinterpret_cast<uint64_t>(*AlgReset);}
     uint64_t getUpdateAddress() {return reinterpret_cast<uint64_t>(*AlgUpdate);}
-
+    
 public:
     void *DataPtr;
     AlgPtr AlgSelfInit;
