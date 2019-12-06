@@ -29,7 +29,7 @@ Configuring Python
 
 Python is installed using the Windows installer found on the Python website. Make sure to choose the correct installer for your architecture. The Additional required Python packages
 
-- ``numpy==1.15.4``
+- ``numpy``
 - ``matplotlib``
 - ``pytest``
 - ``conan``

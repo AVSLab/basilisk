@@ -152,7 +152,7 @@ Installing required python support packages
 -  From the terminal window, install the required general Python
    packages using either pip3 (for Python 3) or pip (for Python 2)::
 
-       $ pip3 install --user numpy==1.15.4
+       $ pip3 install --user numpy
        $ pip3 install --user matplotlib
        $ pip3 install --user pandas
 
