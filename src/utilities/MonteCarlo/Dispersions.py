@@ -130,7 +130,7 @@ class VectorVariableDispersion(object):
         for i in range(len(vector)):
             dispValues[i] = random.gauss(self.mean, self.stdDeviation)
             if self.stdDeviation != 0 :
-                self.magnitude.append(str(round((dispValues[i] - self.mean)/self.stdDeviation,2)) + " $\sigma$")
+                self.magnitude.append(str(round((dispValues[i] - self.mean)/self.stdDeviation,2)) + r" $\sigma$")
         return dispValues
 
     def cart2Spherical(self, cartVector):
@@ -310,8 +310,8 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         newVec = self.spherical2Cart([1.0, phiRnd, thetaRnd])
         dispVec = newVec/np.linalg.norm(newVec) # Shouldn't technically need the normalization but doing it for completeness
 
-        self.magnitude.append(str(round((phiRnd - meanPhi) / self.phiStd, 2)) + " $\sigma$")
-        self.magnitude.append(str(round((thetaRnd - meanTheta) / self.thetaStd, 2)) + " $\sigma$")
+        self.magnitude.append(str(round((phiRnd - meanPhi) / self.phiStd, 2)) + r" $\sigma$")
+        self.magnitude.append(str(round((thetaRnd - meanTheta) / self.thetaStd, 2)) + r" $\sigma$")
 
         return dispVec
 
@@ -399,7 +399,7 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
             dirVec = np.array(dirVec).reshape(3).tolist()
             dispVec = self.perturbVectorByAngle(dirVec, angle)
             angleDisp = np.arccos(np.dot(dirVec, dispVec)/np.linalg.norm(dirVec)/np.linalg.norm(dispVec))
-            self.magnitude.append(str(round(angleDisp / self.phiStd,2))+ " sigma")
+            self.magnitude.append(str(round(angleDisp / self.phiStd,2)) + " sigma")
         return dispVec
 
 
@@ -436,11 +436,11 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
             if isinstance(self.stdDeviation, collections.Sequence):
                 rnd = random.gauss(self.mean[i], self.stdDeviation[i])
                 if self.stdDeviation[i] != 0:
-                    self.magnitude.append(str(round((rnd - self.mean[i])/self.stdDeviation[i],2))+ " sigma")
+                    self.magnitude.append(str(round((rnd - self.mean[i])/self.stdDeviation[i],2)) + " sigma")
             else:
                 rnd = random.gauss(self.mean, self.stdDeviation)
                 if self.stdDeviation != 0:
-                    self.magnitude.append(str(round((rnd - self.mean) / self.stdDeviation,2))+ " sigma")
+                    self.magnitude.append(str(round((rnd - self.mean) / self.stdDeviation,2)) + " sigma")
             if self.bounds is not None:
                 rnd = self.checkBounds(rnd, self.bounds)
             dispVec.append(rnd)
@@ -486,13 +486,13 @@ class InertiaTensorDispersion:
                 rnd = self.checkBounds(rnd)
                 temp.append(rnd)
                 if self.stdDiag != 0:
-                    self.magnitude.append(str(round(rnd/self.stdDiag,2))+ " sigma")
+                    self.magnitude.append(str(round(rnd/self.stdDiag,2)) + " sigma")
             dispIdentityMatrix = np.identity(3) * temp
             # generate random values for the similarity transform to produce off-diagonal terms
             angles = np.random.normal(0, self.stdAngle, 3)
             for i in range(3):
                 if self.stdAngle != 0:
-                    self.magnitude.append(str(round(angles[i] / self.stdAngle,2))+ " sigma")
+                    self.magnitude.append(str(round(angles[i] / self.stdAngle,2)) + " sigma")
             disp321Matrix = rbk.euler3212C(angles)
 
             # disperse the diagonal elements
