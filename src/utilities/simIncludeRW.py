@@ -287,7 +287,7 @@ class rwFactory(object):
 
     def getConfigMessage(self):
         """
-        Returns a rwConfigMsg instance based on the current setup.
+        Returns a RWArrayConfigFswMsg instance based on the current setup.
 
         :return: rwConfigParams
         """
