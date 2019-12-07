@@ -73,9 +73,9 @@ class CleanCommand(Command):
 
     def run(self):
         to_delete = [
-            "dist/",
-            "docs/html",
-            "docs/Images/Scenarios"
+            "dist3/",
+            "docs/build",
+            "docs/source/_images/Scenarios"
         ]
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
         runCommand('rm -rf ' + " ".join(to_delete))
@@ -150,7 +150,7 @@ class BuildDocsCommand(Command):
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
         print("Building documentation")
-        runCommand("doxygen DoxyData", "docs/")
+        runCommand("make html", "docs/source")
 
 if six.PY3:
     package_dir = "dist3"
@@ -159,13 +159,13 @@ else:
 
 setup(
     name='Basilisk',
-    version='1.3.2',
+    version='1.4.0',
     description="Astrodynamic Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),
     long_description=open('./README.md').read(),
     author_email='basilisk-info@colorado.edu',
-    url='http://hanspeterschaub.info/bskMain.html',
+    url='http://hanspeterschaub.info/bskHtml/index.html',
     package_dir={'': package_dir},
     install_requires=[
         'matplotlib',
