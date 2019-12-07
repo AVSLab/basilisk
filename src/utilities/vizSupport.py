@@ -368,7 +368,7 @@ def createStandardCamera(viz, **kwargs):
     cam = vizInterface.StdCameraSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'setMode', 'setView', 'spacecraftVisible', 'fieldOfView',
+        ['spacecraftName', 'setMode', 'setView', 'fieldOfView',
          'bodyTarget', 'pointingVector_B'],
         kwargs)
 
@@ -409,15 +409,6 @@ def createStandardCamera(viz, **kwargs):
         cam.setView = setView
     else:
         cam.setView = 0  # nadir mode
-
-    if 'spacecraftVisible' in kwargs:
-        spacecraftVisible = kwargs['spacecraftVisible']
-        if not isinstance(spacecraftVisible, bool):
-            print('ERROR: spacecraftVisible must be a bool')
-            exit(1)
-        cam.spacecraftVisible = spacecraftVisible
-    else:
-        cam.spacecraftVisible = False
 
     if 'fieldOfView' in kwargs:
         fieldOfView = kwargs['fieldOfView']

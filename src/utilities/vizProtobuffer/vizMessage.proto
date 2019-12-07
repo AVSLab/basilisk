@@ -103,7 +103,7 @@ message VizMessage{
         string spacecraftName = 1; //Body to attach camera to (default is the first spacecraft in messages)
 //        bool viewPanel = 2; //False (default) -> panel is not visible on screen
         int32 setMode = 3; // 0 -> body targeting, 1 -> pointing vector
-        bool spacecraftVisible = 4; //False (default) -> parent spacecraft will not be visible in camera view
+//        bool spacecraftVisible = 4; //False (default) -> parent spacecraft will not be visible in camera view
         double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
         string bodyTarget = 6; // Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
         int32 setView = 7; //0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.

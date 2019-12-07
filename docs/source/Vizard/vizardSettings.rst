@@ -289,15 +289,6 @@ the arguments for the ``createStandardCamera`` method.
     |                   |         |         | messages     | body targeting   |
     |                   |         |         |              | mode.            |
     +-------------------+---------+---------+--------------+------------------+
-    | spacecraftVisible | bool    |         | No, default  | flag             |
-    |                   |         |         | is false     | indicating       |
-    |                   |         |         |              | if the           |
-    |                   |         |         |              | spacecraft       |
-    |                   |         |         |              | should be        |
-    |                   |         |         |              | shown in         |
-    |                   |         |         |              | the camera       |
-    |                   |         |         |              | view             |
-    +-------------------+---------+---------+--------------+------------------+
     | fieldOfView       | float   | rad     | No, default  | camera           |
     |                   |         |         | -1           | field of         |
     |                   |         |         |              | view, to         |

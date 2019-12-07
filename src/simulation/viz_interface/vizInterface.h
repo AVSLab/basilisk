@@ -67,14 +67,13 @@ typedef struct {
     double coneHeight;          //!< [m] sets height of visible cone (asthetic only, does not impact function)
     std::string fromBodyName;   //!< name of body to attach cone onto
     std::string toBodyName;     //!< [-] detect changes if this body has impingement on cone
-    int coneColor[4];              //!< [-] desired RGBA as values between 0 and 255
+    int coneColor[4];           //!< [-] desired RGBA as values between 0 and 255
     std::string coneName;       //!< [-] cone name, if unspecified, viz will autogenerate name
 }KeepOutInCone;
 
 typedef struct {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
     int setMode;                //!< 0 -> body targeting, 1 -> pointing vector (default)
-    bool spacecraftVisible;     //!< False (default) -> parent spacecraft will not be visible in camera view
     double fieldOfView;         //!< rad, field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
     int setView;                //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.

@@ -149,30 +149,28 @@ following image:
 ``Camera`` Menu Item
 --------------------
 The Camera menu item allows for custom camera views to be created into
-the visualization.
+the visualization. The first item called *Changed Main Camera Target* brings up a list of simulation objects that
+can be made the focus of the simulation camera window.  This makes it easy to switch between an Earth-centric and a
+spacecraft centric simulation point of view.
 
-Inertial Planet Camera
-^^^^^^^^^^^^^^^^^^^^^^
-
-This is a camera whose view always points relative to a particular
-celestial body. The user can set the field of view value, as well as
-grab a screen shot if needed. The user can select relative to which
-planet the camera should point, and if the camera should point along
-orbit axis, along track or orbit normal. 
+Note that the ``Camera`` menu list contains 2 default camera options that can be turned on.  Selecting either camera
+1 or camera 2 will open a stand-alone camera view as shown below.  Finally, if more camera views are required,
+these can be added with the *Add Camera* menu option. Within a camera panel the user can
+select from which object the camera is
+simulated, and where this camera is pointing.  Below the camera is selected to point camera along a body fixed vector.
 
 .. image:: ../_images/static/vizard-imgCamera1.jpg
    :align: center
 	
-Inertial Camera
-^^^^^^^^^^^^^^^
-
-Up to two custom views can be generated that look out of the spacecraft
-+/- x-, y- and z-axis. Again the field of view can be configured, and a
-screen grab button is present. 
+In this second illustration the camera is chosen to point toward another simulation object such as the Earth.
+Here the user can select to point the camera at the target (nadir), along the velocity direction (along-track)
+or orbit-normal,.
 
 .. image:: ../_images/static/vizard-imgCamera2.jpg
    :align: center
 
+If you press the snap shot icon on the lower right of the camera panel, then the camera view is captured and stored
+as a PNG image within the user's home directory.
 
 Import a Custom Shape Model
 ---------------------------

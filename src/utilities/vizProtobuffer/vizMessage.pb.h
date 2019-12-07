@@ -1811,23 +1811,17 @@ class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* 
   ::std::string* release_bodytarget();
   void set_allocated_bodytarget(::std::string* bodytarget);
 
-  // int32 setMode = 3;
-  void clear_setmode();
-  static const int kSetModeFieldNumber = 3;
-  ::google::protobuf::int32 setmode() const;
-  void set_setmode(::google::protobuf::int32 value);
-
-  // bool spacecraftVisible = 4;
-  void clear_spacecraftvisible();
-  static const int kSpacecraftVisibleFieldNumber = 4;
-  bool spacecraftvisible() const;
-  void set_spacecraftvisible(bool value);
-
   // double fieldOfView = 5;
   void clear_fieldofview();
   static const int kFieldOfViewFieldNumber = 5;
   double fieldofview() const;
   void set_fieldofview(double value);
+
+  // int32 setMode = 3;
+  void clear_setmode();
+  static const int kSetModeFieldNumber = 3;
+  ::google::protobuf::int32 setmode() const;
+  void set_setmode(::google::protobuf::int32 value);
 
   // int32 setView = 7;
   void clear_setview();
@@ -1843,9 +1837,8 @@ class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* 
   mutable int _pointingvector_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
   ::google::protobuf::internal::ArenaStringPtr bodytarget_;
-  ::google::protobuf::int32 setmode_;
-  bool spacecraftvisible_;
   double fieldofview_;
+  ::google::protobuf::int32 setmode_;
   ::google::protobuf::int32 setview_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
@@ -4200,20 +4193,6 @@ inline void VizMessage_StandardCameraSettings::set_setmode(::google::protobuf::i
   
   setmode_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.setMode)
-}
-
-// bool spacecraftVisible = 4;
-inline void VizMessage_StandardCameraSettings::clear_spacecraftvisible() {
-  spacecraftvisible_ = false;
-}
-inline bool VizMessage_StandardCameraSettings::spacecraftvisible() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftVisible)
-  return spacecraftvisible_;
-}
-inline void VizMessage_StandardCameraSettings::set_spacecraftvisible(bool value) {
-  
-  spacecraftvisible_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.spacecraftVisible)
 }
 
 // double fieldOfView = 5;
