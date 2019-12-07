@@ -28,7 +28,7 @@ typedef enum {
     INFORMATION,
     WARNING,
     ERROR,
-    SILENT          // the coder should never use this flag when using BSK_PRINT().  It is used to turn off all BSK_PRINT()
+    SILENT          // the coder should never use this flag when using bskLog().  It is used to turn off all output
 } logLevel_t;
 
 extern logLevel_t LogLevel;
@@ -42,27 +42,27 @@ logLevel_t getDefaultLogLevel();
 
 class BSKLogger
 {
-  public:
-    BSKLogger();
-    BSKLogger(logLevel_t logLevel);
-    virtual ~BSKLogger() = default;
-    void setLogLevel(logLevel_t logLevel);
-    void printLogLevel();
-    void bskLog(logLevel_t targetLevel, const char* info, ...);
+    public:
+        BSKLogger();
+        BSKLogger(logLevel_t logLevel);
+        virtual ~BSKLogger() = default;
+        void setLogLevel(logLevel_t logLevel);
+        void printLogLevel();
+        void bskLog(logLevel_t targetLevel, const char* info, ...);
 
-  //Provides a mapping from log level enum to str
-  public:
-    std::map<int, const char*> logLevelMap
-    {
-      {0, "DEBUG"},
-      {1, "INFORMATION"},
-      {2, "WARNING"},
-      {3, "ERROR"},
-      {4, "SILENT"}
-    };
+    //Provides a mapping from log level enum to str
+    public:
+        std::map<int, const char*> logLevelMap
+        {
+            {0, "DEBUG"},
+            {1, "INFORMATION"},
+            {2, "WARNING"},
+            {3, "ERROR"},
+            {4, "SILENT"}
+        };
 
-  private:
-    logLevel_t _logLevel;
+    private:
+        logLevel_t _logLevel;
 };
 
 #else

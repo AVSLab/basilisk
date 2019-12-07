@@ -25,38 +25,38 @@ logLevel_t LogLevel = DEBUG;
 
 void setDefaultLogLevel(logLevel_t logLevel)
 {
-  LogLevel = logLevel;
+    LogLevel = logLevel;
 }
 
 logLevel_t getDefaultLogLevel()
 {
-  return LogLevel;
+    return LogLevel;
 }
 
 /*! The constructor initialies the logger for a module and uses default verbostiy level for logging */
 BSKLogger::BSKLogger()
 {
-  //Default print verbosity
-  this->_logLevel = getDefaultLogLevel();
+    //Default print verbosity
+    this->_logLevel = getDefaultLogLevel();
 }
 
 /*! The constructor initialies the logger for a module and uses a user defined verbostiy level for logging */
 BSKLogger::BSKLogger(logLevel_t logLevel)
 {
-  this->_logLevel = logLevel;
+    this->_logLevel = logLevel;
 }
 
 /*! This method changes the logging verbosity after construction */
 void BSKLogger::setLogLevel(logLevel_t logLevel)
 {
-  this->_logLevel = logLevel;
+    this->_logLevel = logLevel;
 }
 
 /*! This method reads the current logging verbosity */
 void BSKLogger::printLogLevel()
 {
-  const char* currLevelStr = this->logLevelMap[this->_logLevel];
-  printf("Current Message Level: %s\n", currLevelStr);
+    const char* currLevelStr = this->logLevelMap[this->_logLevel];
+    printf("Current Message Level: %s\n", currLevelStr);
 }
 
 /*! This method logs information. The current behavior is to simply print out the message and the targeted logging level.
@@ -64,15 +64,15 @@ void BSKLogger::printLogLevel()
 */
 void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
 {
-  if(targetLevel >= this->_logLevel)
-  {
-    const char* targetLevelStr = this->logLevelMap[targetLevel];
-    char formatMessage[MAX_LOGGING_LENGTH];
-    va_list args;
-    va_start (args, info);
-    vsnprintf(formatMessage, sizeof(formatMessage), info, args);
-    printf("Message Level: %s, Message: %s\n", targetLevelStr, formatMessage);
-  }
+    if(targetLevel >= this->_logLevel)
+    {
+        const char* targetLevelStr = this->logLevelMap[targetLevel];
+        char formatMessage[MAX_LOGGING_LENGTH];
+        va_list args;
+        va_start (args, info);
+        vsnprintf(formatMessage, sizeof(formatMessage), info, args);
+        printf("Message Level: %s, Message: %s\n", targetLevelStr, formatMessage);
+    }
 }
 
 /*! Section contains C interfacing to C++ object */
