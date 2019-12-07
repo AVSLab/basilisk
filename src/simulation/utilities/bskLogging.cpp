@@ -21,7 +21,7 @@
 #include <stdarg.h>
 #include "utilities/bskLogging.h"
 
-logLevel_t LogLevel = ERROR;
+logLevel_t LogLevel = DEBUG;
 
 void setDefaultLogLevel(logLevel_t logLevel)
 {
