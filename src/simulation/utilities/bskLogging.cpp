@@ -21,9 +21,14 @@
 #include <stdarg.h>
 #include "utilities/bskLogging.h"
 
-logLevel_t LogLevel = DEBUG;
+logLevel_t LogLevel = ERROR;
 
-logLevel_t getLogLevel()
+void setDefaultLogLevel(logLevel_t logLevel)
+{
+  LogLevel = logLevel;
+}
+
+logLevel_t getDefaultLogLevel()
 {
   return LogLevel;
 }
@@ -32,7 +37,7 @@ logLevel_t getLogLevel()
 BSKLogger::BSKLogger()
 {
   //Default print verbosity
-  this->_logLevel = getLogLevel();
+  this->_logLevel = getDefaultLogLevel();
 }
 
 /*! The constructor initialies the logger for a module and uses a user defined verbostiy level for logging */

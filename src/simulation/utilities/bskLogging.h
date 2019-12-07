@@ -37,7 +37,8 @@ extern logLevel_t LogLevel;
 #include <map>
 #include <string>
 
-logLevel_t getLogLevel();
+void setDefaultLogLevel(logLevel_t logLevel);
+logLevel_t getDefaultLogLevel();
 
 class BSKLogger
 {
