@@ -25,6 +25,7 @@ import numpy
 
 from . import macros
 from Basilisk.simulation import simMessages
+from Basilisk.fswAlgorithms import fswMessages
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -284,10 +285,31 @@ class rwFactory(object):
         """
         return len(self.rwList)
 
+    def getConfigMessage(self):
+        """
+        Returns a RWArrayConfigFswMsg instance based on the current setup.
 
+        :return: rwConfigParams
+        """
 
+        GsMatrix_B = []
+        JsList = []
+        uMaxList = []
+        for rw in self.rwList.values():
+            
+            flatGsHat = [element for sublist in rw.gsHat_B for element in sublist]
+            
+            GsMatrix_B.extend(flatGsHat)
+            JsList.extend([rw.Js])
+            uMaxList.extend([rw.u_max])
 
+        rwConfigParams = fswMessages.RWArrayConfigFswMsg()
+        rwConfigParams.GsMatrix_B = GsMatrix_B
+        rwConfigParams.JsList = JsList
+        rwConfigParams.uMax = uMaxList
+        rwConfigParams.numRW = len(self.rwList)
 
+        return rwConfigParams
 
     #
     #   Honeywell HR16 (100Nm, 75Nm, 50Nm)

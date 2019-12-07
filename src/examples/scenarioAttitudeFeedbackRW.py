@@ -166,15 +166,20 @@ mapped onto motor torques.
 
 The flight algorithm needs to know how many RW devices are on the spacecraft and what their
 spin axis :math:`\hat{\mathbf g}_B` are.  This is set through a flight software message that is read
-in by flight algorithm modules that need this info.  To write the required flight RW configuration message
-a separate support macros called ``fswSetupRW.py``  is used.
+in by flight algorithm modules that need this info.  Two options are shown in the code how to achieve this.
 
+First, the required flight RW configuration message can be written using
+a separate support macros called ``fswSetupRW.py``.
 The a ``clearSetup()`` should be called first to clear out any pre-existing RW devices from an
 earlier simulation run.  Next, the script above uses the same RW information as what the simulation
 uses.  In this configuration we are simulating perfect RW device knowledge.  If imperfect RW knowledge
 is to be simulated, then the user would input the desired flight states rather than the true
 simulation states.  The support macro ``writeConfigMessage()`` creates the required RW flight configuration
 message.
+
+Second, the ``rwFactory`` class method ``getConfigMessage()`` can be used to extract the desired
+:ref:`RWArrayConfigFswMsg` message.  Using this approach an exact copy is ensured between the FSW and
+simulation RW configuration states, but it is less convenient in introduce differences.
 
 Setting up an Analog RW Interface Module
 ----------------------------------------
@@ -569,12 +574,26 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
                                mrpControlConfig.vehConfigInMsgName,
                                vehicleConfigOut)
 
-    # FSW RW configuration message
-    # use the same RW states in the FSW algorithm as in the simulation
-    fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.items():
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
+    # Two options are shown to setup the FSW RW configuration message.
+    # First caseL: The FSW RW configuration message
+    # uses the same RW states in the FSW algorithm as in the simulation.  In the following code
+    # the fswSetupRW helper functions are used to individually add the RW states.  The benefit of this
+    # method of the second method below is that it is easy to vary the FSW parameters slightly from the
+    # simulation parameters.  In this script the second method is used, while the fist method is included
+    # in a commented form to both options.
+    # fswSetupRW.clearSetup()
+    # for key, rw in rwFactory.rwList.items():
+    #     fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+    # fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
+
+    # Second case: If the exact same RW configuration states are to be used by the simulation and fsw, then the
+    # following helper function is convenient to extract the fsw RW configuration message from the
+    # rwFactory setup earlier.
+    fswRwMsg = rwFactory.getConfigMessage()
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               mrpControlConfig.rwParamsInMsgName,
+                               fswRwMsg)
 
     #
     #   set initial Spacecraft States

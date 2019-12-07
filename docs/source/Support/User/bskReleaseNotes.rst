@@ -30,6 +30,7 @@ Upcoming Version 1.X.X
 - Added a new support document :ref:`addSphinxDoc`
 - Updated the :ref:`aboutBSK` page to include Basilisk highlights
 - Made sure the Monte Carlo unit tests didn't leave any temporary data files behind
+- Added new helper functions to the RW and Thruster factory classes to return the equivalent FSW configuration message.  Updated :ref:`scenarioAttitudeFeedbackRW` simulation script to illustrate how to use such a helper function.
 
 Version 1.3.2
 -------------

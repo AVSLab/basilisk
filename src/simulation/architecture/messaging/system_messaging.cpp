@@ -222,7 +222,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     if(MessageName == "")
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %" PRId64 " tried to create a message without a name.  Please try again.", moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %" PRId64 " tried to create a message of type: %s without a name.  Please try again.", moduleID, messageStruct.c_str());
         this->CreateFails++;
         return(-1);
     }
@@ -441,8 +441,8 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
         }
         else
         {
-            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from a module that doesn't publish for %s . You get nothing.",
-                            this->FindMessageName(MessageID).c_str());
+            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %" PRId64 "that doesn't publish for %s . You get nothing.",
+                            moduleID, this->FindMessageName(MessageID).c_str());
             this->WriteFails++;
             return(false);
         }
@@ -450,8 +450,8 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
     // Check the message size
     if(MsgSize != MsgHdr->MaxMessageSize)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request that was incorrect size for: %s . You get nothing.",
-                  MsgHdr->MessageName);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %" PRId64 "that was incorrect size for: %s. ( %" PRIu64 "instead of %" PRIu64 ".) You get nothing.",
+                  moduleID, MsgHdr->MessageName, MsgSize, MsgHdr->MaxMessageSize);
         this->WriteFails++;
         return(false);
     }

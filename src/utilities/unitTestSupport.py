@@ -405,7 +405,7 @@ def setMessage(simObject, processName, msgName, inputMessageData, msgStrName = "
     :param processName: str : the name of a process in which to write the message.
     :param msgName: str : the name of the message, used for publish/subscribe
     :param inputMessageData: the structure containing the message information
-    :param msgStrName: ???
+    :param msgStrName: string : Message type as a string.
     :return:
     """
     inputMessageSize = inputMessageData.getStructSize()
