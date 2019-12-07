@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../_GeneralModuleFiles/fswModuleTemplateFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 
@@ -40,6 +41,7 @@ typedef struct {
     int32_t dataInMsgID;                            //!< ID for the incoming message
 
     double  inputVector[3];                         //!< [units]  vector description
+    BSKLogger *bskLogger;                           //!< BSK Logging
 }fswModuleTemplateConfig;
 
 #ifdef __cplusplus
