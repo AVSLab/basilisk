@@ -16,7 +16,7 @@ Architecture
     **Description:** Basilisk is a fast, open source, spacecraft-centric mission simulation framework
 
     **License:** `ISC Open Source
-    License <https://en.wikipedia.org/wiki/ISC_license>`__
+    License  <https://en.wikipedia.org/wiki/ISC_license>`__
 
     **Status:** Version 1.3.2 (Released Nov. 17, 2019)
 
@@ -141,13 +141,33 @@ several different (often competing) requirements.
 
 -  **3D Visualization:** Basilisk has an accompanying stand-alone
    visualization called
-   `Vizard <https://hanspeterschaub.info/bskHtml/vizard.html>`__ that
-   uses `Unity <https://unity.com>`__ to visualize the spacecraft, its
+   `Vizard  <https://hanspeterschaub.info/bskHtml/vizard.html>`__ that
+   uses `Unity  <https://unity.com>`__ to visualize the spacecraft, its
    orientation and orbits, the local planets, and various qualitative
    data and indicators for sensors and actuators. Simulation events and
    device faults may be triggered directly from the visualization.
 
+Related Publications
+--------------------
 
-
+- J. Alcorn, H. Schaub, S. Piggott, "`Attitude Control Performance Analysis Using Discretized Thruster With Residual Tracking  <https://hanspeterschaub.info/Papers/Alcorn2016.pdf>`_", AAS GN&C Conference, Breckenridge, Colorado, February 5--10, 2016.
+- C. Allard, H. Schaub, and S. Piggott, "`General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing  <https://hanspeterschaub.info/Papers/Allard2016.pdf>`_,";  AAS GN&C Conference, Breckenridge, Colorado, February 5--10, 2016.
+- P. Kenneally  and H. Schaub, "`High Geometric Fidelity Modeling Of Solar Radiation Pressure Using Graphics Processing Unit  <https://hanspeterschaub.info/Papers/Kenneally2016.pdf>`_,"&rdquo";  AAS Spaceflight Mechanics Meeting, Napa Valley, California, February 14--18, 2016. Paper No. 16-500.
+- M. Cols Margenet, H. Schaub and S. Piggott, "`Modular Attitude Guidance Development using the Basilisk Software Framework  <https://hanspeterschaub.info/Papers/ColsMargenet2016.pdf>`_," AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12--15, 2016.
+- J. Alcorn, C. Allard and H. Schaub, "`Fully-Coupled Dynamical Modeling of a Rigid Spacecraft with Imbalanced Reaction Wheels  <https://hanspeterschaub.info/Papers/Alcorn2016a.pdf>`_," AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12--15, 2016.
+- C. Allard, M. Diaz Ramos and H. Schaub, "`Spacecraft Dynamics Integrating Hinged Solar Panels and Lumped-Mass Fuel Slosh Model  <https://hanspeterschaub.info/Papers/Allard2016a.pdf>`_," AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12--15, 2016.
+- J. Alcorn, H. Schaub, S. Piggott and D. Kubitschek, "`Simulating Attitude Actuation Options Using the Basilisk Astrodynamics Software Architecture  <https://hanspeterschaub.info/Papers/Alcorn2016b.pdf>`_," 67 :sup:`th` International Astronautical Congress, Guadalajara, Mexico, September 26--30, 2016.
+- S. Piggott, J. Alcorn, M. Cols Margenet, P. Kenneally and H. Schaub,  "`Flight Software Development Through Python  <https://hanspeterschaub.info/Papers/Piggott2016FSWConference.pdf>`_," 2016 Workshop on Spacecraft Flight Software , JPL, California,  Dec. 13--15 2016.
+- P. Kenneally and H. Schaub,  "`Modeling Of Solar Radiation Pressure and Self-Shadowing Using Graphics Processing Unit  <https://hanspeterschaub.info/Papers/AAS-17-127.pdf>`_," AAS Guidance, Navigation and Control Conference, Breckenridge, Feb. 2--8, 2017.
+- P. Panicucci, C. Allard and H. Schaub,  "`Spacecraft Dynamics Employing a General Multi-tank and Multi-thruster Mass Depletion Formulation  <https://hanspeterschaub.info/Papers/AAS-17-011.pdf>`_," AAS Guidance, Navigation and Control Conference, Breckenridge, Feb. 2--8, 2017.
+- M. Cols Margenet, H. Schaub, and S. Piggott,   "`Modular Platform for Hardware-in-the-Loop Testing of Autonomous Flight Algorithms  <https://hanspeterschaub.info/Papers/ColsMargenet2017.pdf>`_,"  International Symposium on Space Flight Dynamics, Himegin Hall, Matsuyama-Ehime, Japan, June 3--9, 2017.
+- J. Alcorn, C. Allard and H. Schaub,  "`Fully-Coupled Dynamical Jitter Modeling Of Variable-Speed Control Moment Gyroscopes <https://hanspeterschaub.info/Papers/Alcorn2017.pdf>`_,"  AAS/AIAA Astrodynamics Specialist Conference, Stevenson, WA, August 20--24, 2017.
+- C. Allard, M. Diaz Ramos, P. Kenneally, H. Schaub and S. Piggott,  "`Modular Software Architecture for Fully-Coupled Spacecraft Simulations <https://hanspeterschaub.info/Papers/Allard2018.pdf>`_,"  AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
+- T. Teil, H. Schaub and S. Piggott,  "`Comparing Coarse Sun Sensor Based Sequential Sun-Heading Filters <https://hanspeterschaub.info/Papers/Teil2018.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
+- J. Wood, M. Cols Margenet, P. Kenneally,  H. Schaub and S. Piggott,  "`Flexible Basilisk Astrodynamics Visualization Software Using the Unity Rendering Engine <https://hanspeterschaub.info/Papers/Wood2018.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
+- M. Cols Margenet, P. Kenneally and  H. Schaub,  "`Software Simulator for Heterogeneous Spacecraft and Mission Components <https://hanspeterschaub.info/Papers/ColsMargenet2018.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
+- P. Kenneally and  H. Schaub,  "`Fast Spacecraft Solar Radiation Pressure Modeling By Ray-Tracing On Graphic Processing Unit <https://hanspeterschaub.info/Papers/Kenneally2018a.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
+- C. Allard and  H. Schaub,  "`Stability Analysis of Spacecraft with Flexible Solar Arrays Using Classical Techniques <https://hanspeterschaub.info/Papers/Allard2018b.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
+- P. Kenneally,  H. Schaub and S. Piggott,  "`Basilisk: A Flexible, Scalable and Modular Astrodynamics Simulation Framework <https://hanspeterschaub.info/Papers/Kenneally2018c.pdf>`_," 7th International Conference on Astrodynamics Tools and Techniques (ICATT), DLR Oberpfaffenhofen, Germany, November 6--9, 2018.
 
 

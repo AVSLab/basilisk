@@ -4,8 +4,8 @@
 
 .. _vizard:
 
-About
-=====
+About Vizard
+============
 
 
 .. raw:: html
