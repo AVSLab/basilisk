@@ -18,7 +18,7 @@ About Vizard
 
     .. image:: /_images/static/basiliskVizardLogo.png
        :align: center
-       :scale: 50 %
+       :width: 100 %
 
     **Description:** Unity-Based 3D Visualization of Basilisk Simulation Data
 

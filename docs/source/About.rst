@@ -11,7 +11,7 @@ Architecture
 
     .. image:: _images/static/Basilisk-Logo.png
        :align: center
-       :scale: 50 %
+       :width: 100 %
 
     **Description:** Basilisk is a fast, open source, spacecraft-centric mission simulation framework
 
