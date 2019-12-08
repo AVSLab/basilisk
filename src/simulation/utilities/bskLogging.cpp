@@ -23,14 +23,31 @@
 
 logLevel_t LogLevel = DEBUG;
 
+/*! This method sets the default logging verbosity */
 void setDefaultLogLevel(logLevel_t logLevel)
 {
     LogLevel = logLevel;
 }
 
+/*! This method gets the default logging verbosity */
 logLevel_t getDefaultLogLevel()
 {
     return LogLevel;
+}
+
+/*! This method prints the default logging verbosity */
+void printDefaultLogLevel()
+{
+    std::map<int, const char*> logLevelMap
+    {
+        {0, "DEBUG"},
+        {1, "INFORMATION"},
+        {2, "WARNING"},
+        {3, "ERROR"},
+        {4, "SILENT"}
+    };
+    const char* defaultLevelStr = logLevelMap[LogLevel];
+    printf("Default Logging Level: %s\n", defaultLevelStr);
 }
 
 /*! The constructor initialises the logger for a module and uses default verbostiy level for logging */
@@ -56,7 +73,7 @@ void BSKLogger::setLogLevel(logLevel_t logLevel)
 void BSKLogger::printLogLevel()
 {
     const char* currLevelStr = this->logLevelMap[this->_logLevel];
-    printf("Current Message Level: %s\n", currLevelStr);
+    printf("Current Logging Level: %s\n", currLevelStr);
 }
 
 /*! This method logs information. The current behavior is to simply print out the message and the targeted logging level.

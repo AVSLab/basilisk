@@ -32,6 +32,7 @@ typedef enum {
 } logLevel_t;
 
 extern logLevel_t LogLevel;
+void printDefaultLogLevel();
 
 #ifdef __cplusplus
 #include <map>

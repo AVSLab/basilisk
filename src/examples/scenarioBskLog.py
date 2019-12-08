@@ -45,6 +45,10 @@ from Basilisk.simulation import bskLogging
 
 def run(case):
 
+    if case == 1:
+        # here the verbosity is set globally to WARNING or higher.
+        bskLogging.setDefaultLogLevel(bskLogging.WARNING)
+
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -81,11 +85,10 @@ def run(case):
     # setup the bskLog verbosity
     if case == 0:
         # default case = 0 does not set the bskLog verbosity within Python, but uses the default verbosity
-        print("The default verbosity is set to: " + str(bskLogging.getDefaultLogLevel()))
+        bskLogging.printDefaultLogLevel()
     elif case == 1:
-        # here the verbosity is set globally to WARNING or higher.
-        bskLogging.setDefaultLogLevel(bskLogging.WARNING)
-        print("The global verbosity is set to: " + str(bskLogging.getDefaultLogLevel()))
+        # here the verbosity was set globally to WARNING or higher at the beginning of the script
+        bskLogging.printDefaultLogLevel()
 
     elif case == 2:
         # here the bskLog verbosity is only changed for this module

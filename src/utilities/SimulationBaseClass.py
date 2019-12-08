@@ -215,6 +215,10 @@ class SimBaseClass:
                 TaskReplaceTag += '.TaskModels[' + str(len(Task.TaskModels)) + ']'
                 self.NameReplace[TaskReplaceTag] = NewModel.ModelTag
                 if (ModelData != None):
+                    try:
+                        ModelData.bskLogger = self.bskLogger
+                    except:
+                        pass
                     Task.TaskModels.append(ModelData)
                     self.simModules.add(inspect.getmodule(ModelData))
                 else:
