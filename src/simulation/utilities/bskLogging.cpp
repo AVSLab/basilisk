@@ -33,14 +33,14 @@ logLevel_t getDefaultLogLevel()
     return LogLevel;
 }
 
-/*! The constructor initialies the logger for a module and uses default verbostiy level for logging */
+/*! The constructor initialises the logger for a module and uses default verbostiy level for logging */
 BSKLogger::BSKLogger()
 {
     //Default print verbosity
     this->_logLevel = getDefaultLogLevel();
 }
 
-/*! The constructor initialies the logger for a module and uses a user defined verbostiy level for logging */
+/*! The constructor initialises the logger for a module and uses a user defined verbostiy level for logging */
 BSKLogger::BSKLogger(logLevel_t logLevel)
 {
     this->_logLevel = logLevel;
@@ -86,16 +86,21 @@ EXTERN void _BSKLogger_d(BSKLogger* bskLogger)
     delete bskLogger;
 }
 
+/*! This method reads the current logging verbosity */
 EXTERN void _printLogLevel(BSKLogger* bskLogger)
 {
     bskLogger->printLogLevel();
 }
 
+/*! This method changes the logging verbosity after construction */
 EXTERN void _setLogLevel(BSKLogger* bskLogger, logLevel_t logLevel)
 {
     bskLogger->setLogLevel(logLevel);
 }
 
+/*! This method logs information. The current behavior is to simply print out the message and the targeted logging level.
+    This should be the main method called in user code.
+*/
 EXTERN void _bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
 {
     bskLogger->bskLog(logLevel, info);
