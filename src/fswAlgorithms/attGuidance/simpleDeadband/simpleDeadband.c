@@ -47,7 +47,6 @@
  */
 void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->outputGuidID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttGuidFswMsg),

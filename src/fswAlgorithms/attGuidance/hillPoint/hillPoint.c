@@ -40,7 +40,6 @@
  */
 void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),

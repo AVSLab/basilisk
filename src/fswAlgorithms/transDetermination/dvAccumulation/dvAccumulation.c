@@ -30,7 +30,6 @@
  */
 void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     configData->outputNavMsgID = CreateNewMessage(configData->outputNavName,
         sizeof(NavTransIntMsg), "NavTransIntMsg", moduleID);
 }

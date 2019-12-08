@@ -35,7 +35,6 @@
  */
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->thrusterOnTimeOutMsgId = CreateNewMessage(configData->thrusterOnTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),

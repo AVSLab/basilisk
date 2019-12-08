@@ -32,7 +32,6 @@
 void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
     uint32_t i;
-    configData->bskLogger = _BSKLogger();
     configData->ephBdyCount = 0;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {

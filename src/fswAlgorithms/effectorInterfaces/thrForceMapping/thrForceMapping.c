@@ -34,7 +34,6 @@
  */
 void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->thrusterForceOutMsgId = CreateNewMessage(configData->outputDataName,
                                                sizeof(THRArrayCmdForceFswMsg),

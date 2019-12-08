@@ -34,7 +34,6 @@
  */
 void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->voltageOutMsgID = CreateNewMessage(configData->voltageOutMsgName,
                                                sizeof(RWArrayVoltageIntMsg),

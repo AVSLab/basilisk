@@ -31,7 +31,6 @@
  */
 void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
                                                  sizeof(OpNavFswMsg),
                                                  "OpNavFswMsg",

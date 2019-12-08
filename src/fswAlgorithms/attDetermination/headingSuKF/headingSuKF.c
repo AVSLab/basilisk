@@ -33,7 +33,6 @@
  */
 void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
-	configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
 	configData->opnavDataOutMsgId = CreateNewMessage(configData->opnavOutMsgName,
 		sizeof(OpNavFswMsg), "OpNavFswMsg", moduleID);

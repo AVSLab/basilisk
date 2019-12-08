@@ -32,7 +32,6 @@
  */
 void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(
         configData->outputDataName, sizeof(dvExecutionData), "dvExecutionData", moduleID);

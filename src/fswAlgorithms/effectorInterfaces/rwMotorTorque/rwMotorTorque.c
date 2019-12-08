@@ -33,7 +33,6 @@
  */
 void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create commanded control torque output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(RWArrayTorqueIntMsg),

@@ -36,7 +36,6 @@
 void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->bskLogger = _BSKLogger();
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
         sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
 

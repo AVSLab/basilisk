@@ -29,7 +29,6 @@
  */
 void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create a navigation message to be used for control */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
                                                     sizeof(NavTransIntMsg), "NavTransIntMsg", moduleId);

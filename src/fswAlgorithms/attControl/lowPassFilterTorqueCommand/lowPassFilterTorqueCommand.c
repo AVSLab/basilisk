@@ -39,7 +39,6 @@
 void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->bskLogger = _BSKLogger();
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(CmdTorqueBodyIntMsg),
                                                 "CmdTorqueBodyIntMsg",

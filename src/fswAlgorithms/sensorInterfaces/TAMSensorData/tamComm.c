@@ -32,7 +32,6 @@
  */
 void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->tamOutMsgID = CreateNewMessage(configData->tamOutMsgName,
         sizeof(TAMSensorBodyFswMsg), "TAMSensorBodyFswMsg", moduleID);

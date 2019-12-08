@@ -31,7 +31,6 @@
  */
 void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
-	configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
 	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleId);

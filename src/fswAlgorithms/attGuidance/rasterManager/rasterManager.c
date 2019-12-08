@@ -40,7 +40,6 @@
 
 void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->AttStateOutMsgID = CreateNewMessage(configData->AttStateOutMsgName,
                                                  sizeof(AttStateFswMsg),

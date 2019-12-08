@@ -29,7 +29,6 @@
  */
 void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
                                                     sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);

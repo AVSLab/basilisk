@@ -36,7 +36,6 @@
  */
 void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->onTimeOutMsgId = CreateNewMessage(configData->onTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),

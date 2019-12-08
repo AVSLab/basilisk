@@ -29,7 +29,6 @@
  */
 void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - create the attitude navigation output message */
     configData->navAttOutMsgID = CreateNewMessage(configData->outputAttName,
         sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);

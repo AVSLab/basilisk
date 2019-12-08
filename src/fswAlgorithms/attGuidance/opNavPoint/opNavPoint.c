@@ -32,7 +32,6 @@
  */
 void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);

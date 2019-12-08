@@ -33,7 +33,6 @@
  */
 void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /*! - Create output message for module */
     configData->attReferenceOutMsgID = CreateNewMessage(configData->attReferenceOutMsgName,
                                                sizeof(AttRefFswMsg),

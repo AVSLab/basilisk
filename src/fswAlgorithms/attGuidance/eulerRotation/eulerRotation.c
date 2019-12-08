@@ -45,7 +45,6 @@
  */
 void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     /* - Create output message for module */
     configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
                                                sizeof(AttRefFswMsg),

@@ -43,7 +43,6 @@
  */
 void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
 {
-    configData->bskLogger = _BSKLogger();
     
     /*! - Create output message for module */
     configData->dataOutMsgID = CreateNewMessage(configData->dataOutMsgName,

@@ -40,7 +40,6 @@
 void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->bskLogger = _BSKLogger();
     configData->attControlTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
     
