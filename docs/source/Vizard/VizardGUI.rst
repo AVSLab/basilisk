@@ -21,7 +21,7 @@ Next Vizard presents a panel where the user can select which simulation to visua
 
 .. image:: ../_images/static/vizard-img2.jpg
    :align: center
-   :scale: 50 %
+   :width: 90 %
 
 To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream`) the socket address, such as ``tcp://localhost:5556``, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
 
@@ -74,7 +74,8 @@ motor torques are shown.
 
 .. image:: ../_images/static/vizard-ImgRW.jpg
    :align: center
-	
+   :width: 90 %
+
 Thruster States
 ^^^^^^^^^^^^^^^
 If thrusters are being simulated then a range of visualizations can be
@@ -91,6 +92,7 @@ axes being modeled.
 
 .. image:: ../_images/static/vizard-ImgTHR.jpg
    :align: center
+   :width: 90 %
 
 
 
@@ -103,6 +105,7 @@ The ``View`` menu tab contains a range of Vizard options. A range of coordinate 
 
 .. image:: ../_images/static/vizard-imgAxes.jpg
    :align: center
+   :width: 90 %
 
 
 Add Pointing Vector
@@ -117,6 +120,7 @@ heading, etc. However, each line color can be customized as needed.
 
 .. image:: ../_images/static/vizard-ImgPointing.jpg
    :align: center
+   :width: 90 %
 
 Add Keep Out/In Cone
 ^^^^^^^^^^^^^^^^^^^^
@@ -131,6 +135,7 @@ becomes solid.
 
 .. image:: ../_images/static/vizard-ImgCones.jpg
    :align: center
+   :width: 90 %
 
 Adjust Brightness
 ^^^^^^^^^^^^^^^^^
@@ -143,6 +148,7 @@ following image:
 
 .. image:: ../_images/static/vizard-ImgCAD-6.jpg
    :align: center
+   :width: 90 %
 
 
 	
@@ -161,13 +167,15 @@ simulated, and where this camera is pointing.  Below the camera is selected to p
 
 .. image:: ../_images/static/vizard-imgCamera1.jpg
    :align: center
-	
+   :width: 90 %
+
 In this second illustration the camera is chosen to point toward another simulation object such as the Earth.
 Here the user can select to point the camera at the target (nadir), along the velocity direction (along-track)
 or orbit-normal,.
 
 .. image:: ../_images/static/vizard-imgCamera2.jpg
    :align: center
+   :width: 90 %
 
 If you press the snap shot icon on the lower right of the camera panel, then the camera view is captured and stored
 as a PNG image within the user's home directory.
@@ -178,18 +186,21 @@ When Vizard starts up it represents the spacecraft using a default CAD model cal
 
 .. image:: ../_images/static/vizard-ImgCAD-1.jpg
    :align: center
+   :width: 90 %
 
 Vizard starts up showing a default spacecraft shape.  To select a different shape, a custom CAD model can be imported using the OBJ file format.  Go to the ``File`` menu and select ``Import OBJ Model``:
 
 
 .. image:: ../_images/static/vizard-ImgCAD-2.jpg
    :align: center
+   :width: 90 %
 
 Next, select the OBJ file that is to be imported into Vizard.
 
 
 .. image:: ../_images/static/vizard-ImgCAD-3.jpg
    :align: center
+   :width: 90 %
 
 The next panel allows the CAD model import to be customized.  The user can modify the origin offset,
 the CAD orientation and the CAD scaling.  The latter is useful to convert the CAD model into meters
@@ -201,6 +212,7 @@ configured to script this OBJ import process as illustrated in :ref:`vizardSetti
 
 .. image:: ../_images/static/vizard-ImgCAD-4.jpg
    :align: center
+   :width: 90 %
 
 At this point a panel appears that allows you select the object for which you want to apply a new
 shape, and what shape you want to apply.  When ready, press `Apply Models to Selected Objects` to
@@ -209,4 +221,5 @@ selected such as a sphere, cylinder or cube.
 
 .. image:: ../_images/static/vizard-ImgCAD-5.jpg
    :align: center
+   :width: 90 %
 
