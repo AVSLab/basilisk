@@ -16,6 +16,16 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+r"""
+Overview
+--------
+
+This scenario demonstrates how to set up run a Basilisk simulation and change the default verbosity
+of ``bskLog`` methods.  The default verbosity is set to DEBUG, which means all ``bskLog`` call print
+the associated information.  More information about using ``bskLog`` and changing its verbosity
+can be found in :ref:`bskLogging`.
+
+"""
 
 #
 #   Unit Test Script
@@ -44,9 +54,25 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import bskLogging
 
 def run(case):
+    """
+        At the end of the python script you can specify the following example parameters.
 
+        Args:
+            case (int):
+
+                ======  ========================================
+                 Int    Definition
+                ======  ========================================
+                  0     Uses the BSK default verbosity of DEBUG
+                  1     Sets the verbosity globally to WARNING
+                  2     Sets the verbosity the a module to ERROR
+                ======  ========================================
+
+        """
     if case == 1:
         # here the verbosity is set globally to WARNING or higher.
+        # This call must be made at the beginning of the script, certainly before
+        # SimulationBaseClass.SimBaseClass() is called.
         bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -90,10 +116,11 @@ def run(case):
     elif case == 1:
         # here the verbosity was set globally to WARNING or higher at the beginning of the script
         bskLogging.printDefaultLogLevel()
+        print("The verbosity was globally changed.")
         level = bskLogging.getDefaultLogLevel()
 
     elif case == 2:
-        # here the bskLog verbosity is only changed for this module
+        # here the bskLog verbosity is only changed for this module by setting a custom bskLog instance
         logger = bskLogging.BSKLogger()
         logger.setLogLevel(bskLogging.ERROR)
         print("The verbosity is only changed for this module.")

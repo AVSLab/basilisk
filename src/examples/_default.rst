@@ -193,6 +193,7 @@ Advanced Simulation Options
 
    Setting Type of Integrator <scenarioIntegrators>
    Using a Python BSK Module <scenarioAttitudePythonPD>
+   Changing the bskLog Verbosity from Python <scenarioBskLog>
 
 
 
