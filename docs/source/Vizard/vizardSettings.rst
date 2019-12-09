@@ -1,7 +1,3 @@
-.. toctree::
-.. role:: raw-latex(raw)
-   :format: latex
-..
 
 .. _vizardSettings:
 
@@ -374,7 +370,7 @@ The following table illustrates the arguments for the
 
 .. image:: /_images/static/vizard-ImgCustomCam.png
    :align: center
-   :scale: 80 %
+   :width: 90 %
 
 It is also possible to create a custom camera view which points in an
 arbitrary direction as illustrate in the image above. The following

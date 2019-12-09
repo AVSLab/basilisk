@@ -73,22 +73,22 @@ def plotFixture(show_plots):
 # provide a unique test method name, starting with test_
 def test_module(plotFixture, show_plots):     # update "module" in this function name to reflect the module name
     """
-    Validation Test Description
-    ---------------------------
+    **Validation Test Description**
+
     Compose a general description of what is being tested in this unit test script.  Add enough information so
     the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only
     one version of this script will run.
 
-    Description of Variables Being Tested
-    -------------------------------------
+    **Description of Variables Being Tested**
+
     Here discuss what parameters are being checked.  For example, in this file we are checking the values of the
     variables
 
     - ``dummy``
     - ``outputVector[3]``
 
-    General Documentation Comments
-    ------------------------------
+    **General Documentation Comments**
+    
     If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below.
     Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content
     should be understood by just looking at the figure.

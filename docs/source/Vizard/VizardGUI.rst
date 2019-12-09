@@ -15,13 +15,13 @@ hen starting up the Vizard software the user is presented with a resolution and 
 
 .. image:: ../_images/static/vizard-img0.png
    :align: center
-   :scale: 50 %
+   :width: 50 %
 	
 Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
 
 .. image:: ../_images/static/vizard-img2.png
    :align: center
-   :scale: 50 %
+   :width: 90 %
 
 To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream`) the socket address, such as ``tcp://localhost:5556``, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
 
@@ -73,7 +73,8 @@ from within the ``Actuator`` menu bar item. Here the RW wheel speeds and
 motor torques are shown. 
 
 .. image:: ../_images/static/vizard-ImgRW.png
-	:align: center
+   :align: center
+   :width: 90 %
 	
 Thruster States
 ----------------
@@ -90,7 +91,8 @@ Thruster States
 | 
 
 .. image:: ../_images/static/vizard-ImgTHR.png
-	:align: center
+   :align: center
+   :width: 90 %
 
 Vizard Configuration Options
 ----------------------------
@@ -103,7 +105,8 @@ Vizard Configuration Options
 | 
 
 .. image:: ../_images/static/vizard-imgAxes.png
-	:align: center
+   :align: center
+   :width: 90 %
 
 
 Add Pointing Vector
@@ -117,7 +120,8 @@ with default colors such as yellow for sun heading, or red for Mars
 heading, etc. However, each line color can be customized as needed.
 
 .. image:: ../_images/static/vizard-ImgPointing.png
-	:align: center
+   :align: center
+   :width: 90 %
 
 Add Keep Out/In Cone
 --------------------------
@@ -131,7 +135,8 @@ the cone is opaque. If the in/out condition is triggered, then the cone
 becomes solid. 
 
 .. image:: ../_images/static/vizard-ImgCones.png
-	:align: center
+   :align: center
+   :width: 90 %
 	
 ``Camera`` Menu Item
 ---------------------------------------
@@ -148,7 +153,8 @@ planet the camera should point, and if the camera should point along
 orbit axis, along track or orbit normal. 
 
 .. image:: ../_images/static/vizard-imgCamera1.png
-	:align: center
+   :align: center
+   :width: 90 %
 	
 Inertial Camera
 ---------------
@@ -158,7 +164,8 @@ Up to two custom views can be generated that look out of the spacecraft
 screen grab button is present. 
 
 .. image:: ../_images/static/vizard-imgCamera2.png
-	:align: center
+   :align: center
+   :width: 90 %
 	
 ``Skybox`` Menu Item
 --------------------------
@@ -167,5 +174,6 @@ option is an ESO Milky Way star field that is more visually pleasing,
 but less realistic.
 
 .. image:: ../_images/static/vizard-img3.png
-	:align: center
+   :align: center
+   :width: 90 %
     
