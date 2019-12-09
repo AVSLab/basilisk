@@ -17,8 +17,8 @@ In Progress Features
 - create data tracking capabilities within BSK where devices can store or communicate data
 - create modules to determine if a satellite can see a ground point such as a communication station
 
-Upcoming Version 1.X.X
-----------------------
+Version 1.4.0
+-------------
 - updates to the Monte Carlo controller and plotting algorithms to make use of better use of Pandas and Datashader
 - Added a message to the heading estimator in order to perform OpNav pointing
 - added a general message to the Sphinx HTML documentation landing page
@@ -34,8 +34,7 @@ Upcoming Version 1.X.X
 - Added a new Basilisk logging system called :ref:`bskLogging`.  This allows modules to print information with a variable verbosity level
 - Include a new example scenario :ref:`scenarioBskLog` to illustrate how to use variable verbosity BSK notices
 
-Version 1.3.2
--------------
+**Version 1.3.2**
 - added the ability to include the unit test python files, along with their documentation, within the sphinx html documentation
 - updated Vizard live streaming documentation
 - updated unit test templates to have better formatting of the html validation report obtained with ``pytest --report``
