@@ -24,7 +24,6 @@
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simulation/utilities/astroConstants.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method initializes the configData for the spacecraft pointing module
  It checks to ensure that the inputs are sane and then creates the

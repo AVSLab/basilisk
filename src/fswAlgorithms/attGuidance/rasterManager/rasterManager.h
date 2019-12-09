@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswMessages/attStateFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 
@@ -49,6 +50,7 @@ typedef struct {
     int32_t     AttStateOutMsgID;                           /*!< [-] ID for the outgoing attitude state message */
     /* Output attitude reference data to send */
     AttStateFswMsg attOutSet;
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }rasterManagerConfig;
 
 #ifdef __cplusplus

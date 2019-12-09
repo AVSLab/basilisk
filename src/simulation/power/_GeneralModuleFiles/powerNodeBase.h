@@ -29,6 +29,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/powerNodeUsageSimMsg.h"
 #include "simFswInterfaceMessages/powerNodeStatusIntMsg.h"
+#include "utilities/bskLogging.h"
 
 
 class PowerNodeBase: public SysModel  {
@@ -56,6 +57,7 @@ public:
     std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
     double nodePowerOut; //!< [W] Power provided (+) or consumed (-).
     uint64_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 protected:
     int64_t nodePowerOutMsgId;

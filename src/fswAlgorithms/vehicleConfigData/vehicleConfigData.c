@@ -29,7 +29,6 @@
  */
 void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
-
     /*! - Create the output message for the mass properties of the spacecraft*/
     configData->outputPropsID = CreateNewMessage(
         configData->outputPropsName, sizeof(VehicleConfigFswMsg),
@@ -37,7 +36,7 @@ void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID
 
 }
 
-/*! This method performs the second stage of initialization for the vehicle config 
+/*! This method performs the second stage of initialization for the vehicle config
     data interface.  No operations are performed here currently.
  @return void
  @param configData The configuration data associated with the veh config interface
@@ -66,7 +65,7 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
                  &localConfigData, moduleID);
 }
 
-/*! There are no runtime operations performed by the vehicle configuration 
+/*! There are no runtime operations performed by the vehicle configuration
     module.
  @return void
  @param configData The configuration data associated with the veh config module

@@ -27,6 +27,7 @@
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the sub-module routines. */
@@ -49,6 +50,8 @@ typedef struct {
     int32_t rwParamsInMsgID;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< The name of the RWs availability message
     int32_t rwAvailInMsgID;                         //!< [-] ID for the incoming  RWs availability data
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }rwMotorTorqueConfig;
 

@@ -22,6 +22,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "utilities/bskLogging.h"
 
 
 
@@ -41,6 +42,7 @@ public:
     std::string planetPositionInMsgName;
     std::string spacecraftStateInMsgName;
     std::string planetHeadingOutMsgName;
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     Eigen::Vector3d r_PN_N;  //!< [m] planet position

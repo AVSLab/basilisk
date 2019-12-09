@@ -19,6 +19,7 @@
 
 #ifndef _ORBITAL_MOTION_0_H_
 #define _ORBITAL_MOTION_0_H_
+#include <utilities/bskLogging.h>
 
 #define N_DEBYE_PARAMETERS 37
 

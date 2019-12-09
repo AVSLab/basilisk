@@ -22,6 +22,7 @@
 #define ALG_CONTAIN_H
 
 #include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/bskLogging.h"
 
 /*! \addtogroup SimArchGroup
  * @{
@@ -59,6 +60,7 @@ public:
     AlgPtr AlgCrossInit;
 	AlgUpdatePtr AlgReset;
     AlgUpdatePtr AlgUpdate;
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
 /* @} */

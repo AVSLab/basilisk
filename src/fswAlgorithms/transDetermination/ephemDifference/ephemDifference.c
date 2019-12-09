@@ -23,7 +23,6 @@
 #include "transDetermination/ephemDifference/ephemDifference.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
-#include "utilities/bsk_Print.h"
 
 /*! @brief This method creates the output ephemeris messages for each body.
  @return void
@@ -46,7 +45,7 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
     }
 
     if (configData->ephBdyCount == 0) {
-        BSK_PRINT(MSG_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
+        _bskLog(configData->bskLogger, WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
     }
 }
 

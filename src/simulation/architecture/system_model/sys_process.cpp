@@ -20,7 +20,6 @@
 #include "architecture/system_model/sys_process.h"
 #include <cstring>
 #include <iostream>
-#include "utilities/bsk_Print.h"
 
 /*! The task constructor.  */
 SysProcess :: SysProcess()
@@ -86,7 +85,7 @@ void SysProcess::crossInitProcess()
     return;
 }
 
-/*! This method resets each task and associated model-set inside the process 
+/*! This method resets each task and associated model-set inside the process
     ensuring that all parameters go back to their default state.
     @return void
     @param uint64_t currentTime Current simulation time in ns that reset is occurring at
@@ -141,7 +140,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     it = this->processTasks.begin();
     if(it == this->processTasks.end())
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "Received a step command on sim that has no active Tasks.");
+        bskLogger.bskLog(WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
     //! - If the requested time does not meet our next start time, just return
@@ -281,7 +280,7 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 			return;
 		}
 	}
-    BSK_PRINT_BRIEF(MSG_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
+    bskLogger.bskLog(WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
 }
 
 //void SysProcess::getAllMessageDefinitions()

@@ -32,7 +32,7 @@
  */
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
-        /*! Create output message for module */
+    /*! Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttGuidFswMsg),
                                                "AttGuidFswMsg",

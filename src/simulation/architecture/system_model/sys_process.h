@@ -25,6 +25,7 @@
 #include "architecture/system_model/sys_model_task.h"
 #include "_GeneralModuleFiles/sys_interface.h"
 #include "architecture/messaging/system_messaging.h"
+#include "utilities/bskLogging.h"
 /*! \addtogroup SimArchGroup
  * @{
  */
@@ -76,6 +77,7 @@ public:
     std::string processName;  //!< -- Identifier for process
 	bool processActive;  //!< -- Flag indicating whether the Process is active
     int64_t processPriority;  //!< [-] Priority level for process (higher first)
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
 /*! @} */

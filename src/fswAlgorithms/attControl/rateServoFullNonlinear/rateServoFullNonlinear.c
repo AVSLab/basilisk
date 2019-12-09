@@ -27,7 +27,6 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "simulation/utilities/astroConstants.h"
-#include "simulation/utilities/bsk_Print.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include <string.h>
 #include <math.h>
@@ -77,7 +76,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
             configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                              sizeof(RWSpeedIntMsg), moduleID);
         } else {
-            BSK_PRINT(MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
+            _bskLog(configData->bskLogger, ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
             configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,

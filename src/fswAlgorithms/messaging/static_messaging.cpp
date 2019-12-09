@@ -19,6 +19,7 @@
 
 #include "messaging/static_messaging.h"
 #include "simulation/architecture/messaging/system_messaging.h"
+#include "utilities/bsk_Print.h"
 #include <stdio.h>
 #include <iostream>
 #include <cstring>
@@ -94,7 +95,6 @@ int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
     if(localMsgID < 0)
     {
         BSK_PRINT_BRIEF(MSG_WARNING, "Module %" PRId64 "failed to find a message to link for: %s", moduleID, MessageName);
-        
     }
     return(localMsgID);
 }

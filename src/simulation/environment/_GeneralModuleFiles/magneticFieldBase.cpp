@@ -20,7 +20,6 @@
 #include "magneticFieldBase.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
-#include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/simDefinitions.h"
@@ -35,7 +34,7 @@ MagneticFieldBase::MagneticFieldBase()
     this->OutputBufferCount = 2;
 
     //! - zero class variables
-    this->planetRadius = 0.0; 
+    this->planetRadius = 0.0;
     this->r_BP_N.fill(0.0);
     this->r_BP_P.fill(0.0);
     this->scStateInMsgNames.clear();
@@ -266,7 +265,7 @@ bool MagneticFieldBase::readMessages()
                 this->scStates.push_back(scMsg);
             }
     } else {
-        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
+        bskLogger.bskLog(ERROR, "Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 

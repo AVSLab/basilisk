@@ -28,7 +28,7 @@ typedef enum {
     MSG_WARNING,
     MSG_ERROR,
     MSG_SILENT          // the coder should never use this flag when using BSK_PRINT().  It is used to turn off all BSK_PRINT()
-} msgLevel_t;
+} msgLevel_t_;
 
 /* specify the BSK printing verbosity level.
  */
@@ -56,4 +56,4 @@ typedef enum {
 
 #endif
 
-#endif /* _BSK_PRINT_ */
+#endif /* BSK_PRINT_ */

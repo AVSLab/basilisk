@@ -20,6 +20,7 @@
 #pragma once
 
 #include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 
@@ -40,6 +41,7 @@ public:
     std::string spacecraftStateInMsgName = "inertial_state_output";
     std::string solarFluxOutMsgName = "solar_flux";
     std::string eclipseInMsgName = "";
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     double fluxAtSpacecraft;  //!< [W/m2]

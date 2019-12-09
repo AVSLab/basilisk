@@ -27,6 +27,7 @@
 #include "../_GeneralModuleFiles/thrustGroupData.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief module configuration message */
@@ -34,6 +35,7 @@ typedef struct {
     ThrustGroupData thrData;  /*!< Collection of thruster configuration data*/
     char inputControlName[MAX_STAT_MSG_LENGTH]; /*!< -- The name of the Input message*/
     int32_t inputMsgID;      /*!< -- ID for the incoming guidance errors*/
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }sunSafeACSConfig;
 
 #ifdef __cplusplus

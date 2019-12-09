@@ -26,6 +26,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
+#include "utilities/bskLogging.h"
 
 
 
@@ -45,11 +46,12 @@ private:
     void computeSunData();
 public:
     std::string sunInMsgName;                    //!< [-] Message name for sun data
-    std::string stateInMsgName;                  //!< [-] Message name for spacecraft state 
+    std::string stateInMsgName;                  //!< [-] Message name for spacecraft state
     std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
     double panelArea;                           //!< [m^2] Panel area in meters squared.
     double panelEfficiency;                     //!< [W/W] Panel efficiency in converting solar energy to electrical energy.
     Eigen::Vector3d nHat_B;                     //!< [-] Panel normal unit vector relative to the spacecraft body frame.
+    BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
     Eigen::Vector3d sHat_B;                     //!< [-] Sun direction unit vector relative to the spacecraft body frame.

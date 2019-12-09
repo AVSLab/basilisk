@@ -24,6 +24,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "../_GeneralModuleFiles/thrustGroupData.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -45,6 +46,7 @@ typedef struct {
     int32_t inputMsgID;      /*!< - ID for the incoming guidance errors*/
     uint32_t numThrGroups;   /*!< - Count on the number of thrusters groups available*/
     ThrustGroupData thrGroups[MAX_NUM_THR_GROUPS]; /*!< - Thruster grouping container*/
+    BSKLogger *bskLogger;   //!< BSK Logging
 }dvAttEffectConfig;
 
 #ifdef __cplusplus

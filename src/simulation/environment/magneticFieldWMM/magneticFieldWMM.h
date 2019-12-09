@@ -31,6 +31,7 @@
 #include "simMessages/epochSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 #include "GeomagnetismHeader.h"
+#include "utilities/bskLogging.h"
 #include <time.h>
 
 
@@ -53,6 +54,7 @@ public:
     std::string epochInMsgName;             //!< -- Message name of the epoch message
     std::string dataPath;                   //!< -- String with the path to the WMM coefficient file
     double      epochDateFractionalYear;    //!< Specified epoch date as a fractional year
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 
 private:

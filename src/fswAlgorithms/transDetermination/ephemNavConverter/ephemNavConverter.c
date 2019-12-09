@@ -26,7 +26,7 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 
-/*! This method creates the output navigation message (translation only) for 
+/*! This method creates the output navigation message (translation only) for
     the ephemeris model
  @return void
  @param configData The configuration data associated with the ephemeris model

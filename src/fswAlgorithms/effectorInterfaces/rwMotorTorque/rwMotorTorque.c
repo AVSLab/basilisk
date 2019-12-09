@@ -25,7 +25,6 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 #include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method creates the module output message.
  @return void
@@ -89,7 +88,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
         }
     }
     if (configData->numControlAxes == 0) {
-        BSK_PRINT(MSG_WARNING,"rwMotorTorque() is not setup to control any axes!");
+        _bskLog(configData->bskLogger, DEBUG,"rwMotorTorque() is not setup to control any axes!");
     }
     
     /*! - Read static RW config data message and store it in module variables */

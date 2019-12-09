@@ -25,7 +25,7 @@
 
 #include "linearAlgebra.h"
 #include "astroConstants.h"
-#include "bsk_Print.h"
+#include "utilities/bsk_Print.h"
 
 /*
  * Function: E2f

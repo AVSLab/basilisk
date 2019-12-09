@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/attStateFswMsg.h"
 #include "fswMessages/attRefFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 
@@ -48,6 +49,8 @@ typedef struct {
     
     char        desiredAttInMsgName[MAX_STAT_MSG_LENGTH];   //!< The name of the incoming message containing the desired EA set
     int32_t     desiredAttInMsgID;                          //!< [-] ID for the incoming EA set message
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }eulerRotationConfig;
 
 #ifdef __cplusplus

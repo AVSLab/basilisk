@@ -25,6 +25,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/idEphemerisSimMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "utilities/bskLogging.h"
 
 
 
@@ -45,6 +46,7 @@ public:
     bool messagesLinked;        //!< [-] Flag used to determine if messages are cross-linked
     std::map<std::string, std::string> messageNameMap;   //!< [-] Map between input/output message names
     uint64_t numOutputBuffers;  //!< [-] Number of output buffers created for messages
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     std::map<int64_t, IDEphemerisSimMsg> messageIDMap; //!< [-] Map between input/output message IDs
 };

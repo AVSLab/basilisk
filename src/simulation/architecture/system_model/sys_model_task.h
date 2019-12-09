@@ -23,6 +23,7 @@
 #include <vector>
 #include <stdint.h>
 #include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/bskLogging.h"
 /*! \addtogroup SimArchGroup
  * @{
  */
@@ -61,6 +62,7 @@ public:
     uint64_t PickupDelay;  //!< [ns] Time between dispatches
     uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time
 	bool taskActive;  //!< -- Flag indicating whether the Task has been disabled
+  BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
 /*! @} */

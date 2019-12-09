@@ -20,7 +20,6 @@
 #include "sensorInterfaces/TAMSensorData/tamComm.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <math.h>
@@ -33,7 +32,6 @@
  */
 void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
-    
     /*! - Create output message for module */
     configData->tamOutMsgID = CreateNewMessage(configData->tamOutMsgName,
         sizeof(TAMSensorBodyFswMsg), "TAMSensorBodyFswMsg", moduleID);
@@ -60,7 +58,7 @@ void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) > 1e-10) {
-        BSK_PRINT(MSG_WARNING, "dcm_BS is set to zero values.");
+        _bskLog(configData->bskLogger, WARNING, "dcm_BS is set to zero values.");
     }
 
     return;

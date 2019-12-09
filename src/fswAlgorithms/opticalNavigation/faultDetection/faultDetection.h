@@ -28,7 +28,6 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "utilities/bsk_Print.h"
 
 
 typedef struct {

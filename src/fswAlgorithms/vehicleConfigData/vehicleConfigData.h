@@ -24,6 +24,7 @@
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 /*! \defgroup vehicleConfigData
  * @{
@@ -42,6 +43,7 @@ typedef struct {
     double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
     char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
     int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }VehConfigInputData;
 
 #ifdef __cplusplus

@@ -28,6 +28,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 
@@ -102,6 +103,8 @@ typedef struct {
     int32_t cssDataInMsgId;                     //!< -- ID for the incoming CSS sensor message
     int32_t cssConfigInMsgId;                   //!< [-] ID associated with the CSS configuration data
     uint32_t filterInitialized;                 //!< [-] Flag indicating if filter has been init or not
+
+    BSKLogger *bskLogger;                         //!< BSK Logging
 }SunlineSuKFConfig;
 
 #ifdef __cplusplus

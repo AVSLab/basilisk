@@ -33,6 +33,7 @@
 #include "simMessages/scStatesSimMsg.h"
 #include "simMessages/scMassPropsSimMsg.h"
 #include "../../simMessages/scEnergyMomentumSimMsg.h"
+#include "utilities/bskLogging.h"
 
 
 struct DockingData {
@@ -110,6 +111,8 @@ public:
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
+    BSKLogger bskLogger;                      //!< -- BSK Logging
+
 public:
     Spacecraft();
     ~Spacecraft();
@@ -140,8 +143,9 @@ public:
     Spacecraft primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacecraft can attach/detach to/from
     std::vector<Spacecraft*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
     std::vector<Spacecraft*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
-
     int numberOfSCAttachedToPrimary;
+    BSKLogger bskLogger;                      //!< -- BSK Logging
+
 
 public:
     SpacecraftDynamics();                    //!< -- Constructor

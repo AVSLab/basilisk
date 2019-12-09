@@ -24,6 +24,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/tamSensorBodyFswMsg.h"
 #include "simFswInterfaceMessages/tamSensorIntMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! module configuration message definition */
@@ -34,6 +35,7 @@ typedef struct {
     int32_t tamSensorMsgID;                   //!< [-] TAM sensor IDs tied to the input name
     int32_t tamOutMsgID;                      //!< [-] TAM message ID for the output port
     TAMSensorBodyFswMsg tamLocalOutput;       //!< [-] TAM output data structure
+    BSKLogger *bskLogger;                       //!< BSK Logging
 }tamConfigData;
 
 #ifdef __cplusplus

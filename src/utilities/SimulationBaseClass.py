@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 # Import some architectural stuff that we will probably always use
 import sys, os, ast
@@ -41,6 +40,7 @@ except NameError:
 
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.simulation import simMessages
+from Basilisk.simulation import bskLogging
 
 import warnings
 
@@ -192,12 +192,14 @@ class SimBaseClass:
         self.indexParsed = False
         self.simulationInitialized = False
         self.simulationFinished = False
+        self.bskLogger = bskLogging.BSKLogger()
 
         self.allModules = set()
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
         '''
-        This function is responsible for adding a module instance (model) to a particular task and defining
+        This function is responsible for passing on the logger to a module instance (model), adding the
+        model to a particular task, and defining
         the order/priority that the model gets updated within the task.
         :param TaskName (str): Name of the task
         :param NewModel (obj): Model to add to the task
@@ -213,9 +215,17 @@ class SimBaseClass:
                 TaskReplaceTag += '.TaskModels[' + str(len(Task.TaskModels)) + ']'
                 self.NameReplace[TaskReplaceTag] = NewModel.ModelTag
                 if (ModelData != None):
+                    try:
+                        ModelData.bskLogger = self.bskLogger
+                    except:
+                        pass
                     Task.TaskModels.append(ModelData)
                     self.simModules.add(inspect.getmodule(ModelData))
                 else:
+                    try:
+                        NewModel.bskLogger = self.bskLogger
+                    except:
+                        pass
                     Task.TaskModels.append(NewModel)
                     self.simModules.add(inspect.getmodule(NewModel))
                 return

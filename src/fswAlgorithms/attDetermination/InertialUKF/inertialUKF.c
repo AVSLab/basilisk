@@ -24,7 +24,6 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method creates the two moduel output messages.
  @return void
@@ -155,7 +154,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     Read_STMessages(configData, moduleId);
 
     if (badUpdate <0){
-        BSK_PRINT(MSG_WARNING, "Reset method contained bad update");
+        _bskLog(configData->bskLogger, WARNING, "Reset method contained bad update");
     }
     return;
 }
@@ -289,7 +288,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                 && configData->maxTimeJump > 0)
             {
                 configData->timeTag = newTimeTag - configData->maxTimeJump;
-                BSK_PRINT(MSG_WARNING, "Large jump in state time that was set to max.");
+                _bskLog(configData->bskLogger, WARNING, "Large jump in state time that was set to max.");
             }
             trackerValid += inertialUKFTimeUpdate(configData, newTimeTag);
             trackerValid += inertialUKFMeasUpdate(configData, configData->stSensorOrder[i]);
@@ -636,7 +635,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
             lowPassFilterSignal(omeg_BN_B[j], &(configData->gyroFilt[j]));
         }
     }
-    /*! - Saved the measurement count and convert the euler parameters to MRP 
+    /*! - Saved the measurement count and convert the euler parameters to MRP
           as that is our filter representation*/
     configData->numUsedGyros = (uint32_t) i;
     EP2MRP(ep_BpropB0, configData->aggSigma_b2b1);
@@ -645,7 +644,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
 }
 
 /*! This method performs the measurement update for the inertial kalman filter.
- It applies the observations in the obs vectors to the current state estimate and 
+ It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
  @return void
  @param configData The configuration data associated with the CSS estimator

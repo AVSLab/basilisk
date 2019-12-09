@@ -19,8 +19,8 @@
 
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include "messaging/static_messaging.h"
-#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
+#include <stdio.h> 
 
 /*! This method initializes the configData for theCSS sensor interface.
  It checks to ensure that the inputs are sane and then creates the
@@ -30,7 +30,6 @@
  */
 void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
 {
-    
     /*! - Create output message for module */
     configData->OutputMsgID = CreateNewMessage(configData->OutputDataName,
         sizeof(CSSArraySensorIntMsg), "CSSArraySensorIntMsg", moduleID);
@@ -58,21 +57,23 @@ void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t
     /*! - Check to make sure that number of sensors is less than the max and warn if none are set*/
     if(configData->NumSensors > MAX_NUM_CSS_SENSORS)
     {
-        BSK_PRINT(MSG_WARNING, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", configData->NumSensors, MAX_NUM_CSS_SENSORS);
+        char info[MAX_LOGGING_LENGTH];
+        sprintf(info, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", configData->NumSensors, MAX_NUM_CSS_SENSORS);
+        _bskLog(configData->bskLogger, WARNING, info);
         configData->NumSensors = MAX_NUM_CSS_SENSORS;
     }
     else if (configData->NumSensors == 0)
     {
-        BSK_PRINT(MSG_WARNING, "There are zero CSS configured!");
+        _bskLog(configData->bskLogger, WARNING, "There are zero CSS configured!");
     }
     
     if (configData->MaxSensorValue == 0)
     {
-        BSK_PRINT(MSG_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!");
+        _bskLog(configData->bskLogger, WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!");
     }
     
     memset(configData->InputValues.CosValue, 0x0, configData->NumSensors*sizeof(double));
-    
+
     return;
 }
 

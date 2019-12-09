@@ -38,6 +38,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
+#include "utilities/bskLogging.h"
 
 
 typedef struct {
@@ -146,6 +147,8 @@ public:
     VizSettings settings;                       //! [-] container for the Viz settings that can be specified from BSK
 
     CameraConfigMsg cameraConfigMessage;        //! [-] camera config message copy
+
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 
 private:

@@ -28,6 +28,7 @@
 #include "simMessages/spiceTimeSimMsg.h"
 #include "utilities/avsEigenSupport.h"
 #include "simMessages/epochSimMsg.h"
+#include "utilities/bskLogging.h"
 
 
 
@@ -72,6 +73,7 @@ public:
 
     std::string epochInMsgName; //!< -- Message name of the epoch message (optional)
     int64_t epochInMsgId;       //!< ID of the epoch message
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch

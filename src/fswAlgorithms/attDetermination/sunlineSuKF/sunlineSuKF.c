@@ -22,7 +22,6 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <math.h>
 
@@ -151,7 +150,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     if (badUpdate <0){
-        BSK_PRINT(MSG_WARNING, "Reset method contained bad update");
+        _bskLog(configData->bskLogger, WARNING, "Reset method contained bad update");
     }
 }
 
@@ -441,7 +440,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
     {
         if(configData->cssSensorInBuffer.CosValue[i] > configData->sensorUseThresh)
         {
-            /*! - For each valid measurement, copy observation value and compute expected obs value 
+            /*! - For each valid measurement, copy observation value and compute expected obs value
                   on a per sigma-point basis.*/
             v3Scale(configData->CBias[i], &(configData->cssNHat_B[i*3]), sensorNormal);
             configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];

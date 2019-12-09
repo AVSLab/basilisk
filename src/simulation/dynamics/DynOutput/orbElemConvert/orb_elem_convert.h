@@ -25,6 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/orbitalMotion.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
+#include "utilities/bskLogging.h"
 
 
 
@@ -57,7 +58,8 @@ public:
     bool Elements2Cart;               //!< -- Flag saying which direction to go
 	bool useEphemFormat;              //!< -- Flag indicating whether to use state or ephem
     bool inputsGood;                  //!< -- flag indicating that inputs are good
-    
+    BSKLogger bskLogger;                      //!< -- BSK Logging
+
 private:
     int64_t StateInMsgID;              // -- MEssage ID for incoming data
     int64_t StateOutMsgID;             // -- Message ID for outgoing data

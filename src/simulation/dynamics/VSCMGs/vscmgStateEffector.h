@@ -32,7 +32,7 @@
 #include "simMessages/vscmgConfigSimMsg.h"
 #include "simFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-
+#include "utilities/bskLogging.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 
@@ -72,6 +72,7 @@ public:
 	std::string nameOfVSCMGGammaDotsState;
 	int numVSCMG;
 	int numVSCMGJitter;
+  BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
 	std::vector<std::string> vscmgOutMsgNames;		//!< -- vector with the message names of each VSCMG

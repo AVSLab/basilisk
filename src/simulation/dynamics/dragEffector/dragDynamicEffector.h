@@ -30,6 +30,7 @@
 #include "../../simFswInterfaceMessages/navAttIntMsg.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
+#include "utilities/bskLogging.h"
 
 
 
@@ -67,6 +68,7 @@ public:
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                          //!< -- Drag force direction in the inertial frame
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     uint64_t densInMsgId;                            //!< -- Message ID for incoming data

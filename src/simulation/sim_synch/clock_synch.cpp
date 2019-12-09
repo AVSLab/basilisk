@@ -21,10 +21,9 @@
 #include <iostream>
 #include <cstring>
 #include <thread>
-#include "utilities/bsk_Print.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
-/*! This is the constructor for the clock synch model.  It sets default variable 
+/*! This is the constructor for the clock synch model.  It sets default variable
     values and initializes the various parts of the model */
 ClockSynch::ClockSynch()
 {
@@ -145,6 +144,6 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 
 	if (this->displayTime)
 	{
-        BSK_PRINT_BRIEF(MSG_INFORMATION, "Seconds Elapsed: %f", currentSimNanos*NANO2SEC);
+        bskLogger.bskLog(INFORMATION, "Seconds Elapsed: %f", currentSimNanos*NANO2SEC);
 	}
 }

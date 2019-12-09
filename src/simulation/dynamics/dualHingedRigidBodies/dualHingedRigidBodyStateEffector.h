@@ -27,6 +27,7 @@
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/avsEigenSupport.h"
+#include "utilities/bskLogging.h"
 
 
 
@@ -69,6 +70,7 @@ public:
     std::string nameOfTheta2State;    //!< [-] Identifier for the theta state data container
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     Eigen::Matrix3d rTildeH1B_B;      //!< [-] Tilde matrix of rHB_B

@@ -22,7 +22,6 @@
 #include "../libs/cspice/include/SpiceUsr.h"
 #include "architecture/messaging/system_messaging.h"
 #include <string.h>
-#include "utilities/bsk_Print.h"
 #include "utilities/simDefinitions.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
@@ -88,23 +87,23 @@ void SpiceInterface::SelfInit()
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
-        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
+        bskLogger.bskLog(ERROR, "SPICE data path was not set.  No SPICE.");
         return;
     }
     //!- Load the SPICE kernels if they haven't already been loaded
     if(!this->SPICELoaded)
     {
         if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
+            bskLogger.bskLog(ERROR, "Unable to load %s", "naif0012.tls");
         }
         if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
+            bskLogger.bskLog(ERROR, "Unable to load %s", "pck00010.tpc");
         }
         if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
+            bskLogger.bskLog(ERROR, "Unable to load %s", "de-403-masses.tpc");
         }
         if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de430.tpc");
+            bskLogger.bskLog(ERROR, "Unable to load %s", "de430.tpc");
         }
         this->SPICELoaded = true;
     }
@@ -168,7 +167,7 @@ void SpiceInterface::initTimeData()
         if (!SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
                                                     sizeof(EpochSimMsg),
                                                          reinterpret_cast<uint8_t*> (&epochMsg), moduleID)) {
-            BSK_PRINT(MSG_ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
+            bskLogger.bskLog(ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
             this->epochInMsgId = -1;
         } else {
             // Set the epoch information from the input message
@@ -283,7 +282,7 @@ void SpiceInterface::computePlanetData()
             SpicePlanetStateSimMsg newPlanet;
             if(it->size() >= MAX_BODY_NAME_LENGTH)
             {
-                BSK_PRINT(MSG_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
+                bskLogger.bskLog(WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
                 continue;
             }
             //! <pre>       Set the new planet name and zero the other struct elements </pre>
@@ -409,7 +408,7 @@ std::string SpiceInterface::getCurrentTimeString()
 
 	if (allowedOutputLength < 0)
 	{
-        BSK_PRINT(MSG_ERROR, "The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
+        bskLogger.bskLog(ERROR, "The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
 		return("");
 	}
 

@@ -24,6 +24,7 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/AccDataFswMsg.h"
 #include "fswMessages/AccPktDataFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
@@ -37,6 +38,7 @@ typedef struct {
     int32_t outputNavMsgID;    //!< [-] The ID associated with the outgoing message
     int32_t accPktInMsgID;     //!< [-] The ID associated with the incoming accelerometer buffer
     double vehAccumDV_B[3];    //!< [m/s] The accumulated Delta_V in body frame components
+    BSKLogger *bskLogger;   //!< BSK Logging
 }DVAccumulationData;
 
 #ifdef __cplusplus

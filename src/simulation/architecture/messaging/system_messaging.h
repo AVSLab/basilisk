@@ -26,6 +26,7 @@
 #include <set>
 #include <mutex>
 #include "architecture/messaging/blank_storage.h"
+#include "utilities/bsk_Print.h"
 
 /*! \addtogroup SimArchGroup
  * @{

@@ -31,6 +31,7 @@
 #include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "utilities/bskLogging.h"
 
 
 class Camera: public SysModel {
@@ -74,7 +75,9 @@ public:
     double darkCurrent;    //!< Dark current intensity
     double saltPepper;    //!< Stuck and Dark pixels probability
     double cosmicRays;        //!< Random cosmic rays (number)
-    double blurParam;        //!< Blur over image in pixels 
+    double blurParam;        //!< Blur over image in pixels
+
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t imageInMsgID;                //!< ID for the outgoing message

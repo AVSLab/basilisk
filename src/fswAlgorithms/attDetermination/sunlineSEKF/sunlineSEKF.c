@@ -33,7 +33,6 @@
  */
 void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 {
-    
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
     /*! - Create output message for module */

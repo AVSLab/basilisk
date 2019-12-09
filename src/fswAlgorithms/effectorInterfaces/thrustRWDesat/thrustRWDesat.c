@@ -117,7 +117,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 	THRArrayOnTimeCmdIntMsg outputData;    /* Local output firings */
   
     /*! - If we haven't met the cooldown threshold, do nothing */
-	if ((callTime - configData->previousFiring)*1.0E-9 < 
+	if ((callTime - configData->previousFiring)*1.0E-9 <
 		configData->thrFiringPeriod)
 	{
 		return;

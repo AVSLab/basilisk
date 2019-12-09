@@ -29,6 +29,7 @@
 #include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "../../simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
 
@@ -70,7 +71,8 @@ public:
 		std::vector<THRTimePairSimMsg> *thrRamp);
 	StateData *hubSigma;
     StateData *hubOmega;
-    
+    BSKLogger bskLogger;                      //!< -- BSK Logging
+
 private:
     //    bool bdyFrmReady;                         //!< [-] Flag indicating that the body frame is ready
     std::vector<uint64_t> thrusterOutMsgIds;        //!< -- Message ID of each thruster

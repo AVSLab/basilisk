@@ -27,6 +27,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 #include <string.h>
 
 
@@ -81,6 +82,7 @@ typedef struct {
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
     int32_t cssConfInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
+    BSKLogger *bskLogger;   //!< BSK Logging
 }sunlineSEKFConfig;
 
 #ifdef __cplusplus

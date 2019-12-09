@@ -76,7 +76,9 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
 {
     /*! - reset any required variables */
     configData->dummy = 0.0;
-
+    char info[MAX_LOGGING_LENGTH];
+    sprintf(info, "Variable dummy set to %f in reset.",configData->dummy);
+    _bskLog(configData->bskLogger, INFORMATION, info);
 }
 
 /*! Add a description of what this main Update() routine does for this module

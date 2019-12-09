@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/attStateFswMsg.h"
 #include "fswMessages/attRefFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the sub-module routines. */
@@ -47,6 +48,8 @@ typedef struct {
     
     char        desiredAttInMsgName[MAX_STAT_MSG_LENGTH];   //!< The name of the incoming message containing the desired EA set
     int32_t     desiredAttInMsgID;                          //!< [-] ID for the incoming EA set message
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }mrpRotationConfig;
 
 #ifdef __cplusplus

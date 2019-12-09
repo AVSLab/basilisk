@@ -27,6 +27,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
 
@@ -58,6 +59,7 @@ typedef struct {
     int32_t rwSpeedsInMsgId;                            //!< [-] ID for the reaction wheel speeds message
     int32_t attControlTorqueOutMsgId;                   //!< [-] ID for the outgoing attitude control torque message
     int32_t attGuidInMsgId;                             //!< [-] ID for the incoming attitude guidance errors
+    BSKLogger *bskLogger;                                 //!< BSK Logging
 }MRP_FeedbackConfig;
 
 #ifdef __cplusplus

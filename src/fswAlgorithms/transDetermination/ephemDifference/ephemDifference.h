@@ -24,6 +24,7 @@
 
 #include "messaging/static_messaging.h"
 #include "./simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Container with paired input/output message names and IDs */
@@ -40,6 +41,7 @@ typedef struct {
     EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; //!< [-] The list of bodies to change out
     uint32_t ephBdyCount; //!< [-] The number of ephemeris bodies we are changing
     int32_t ephBaseInMsgId; //!< [-] The ID associated with the incoming clock correlation
+    BSKLogger *bskLogger; //!< BSK Logging
 }EphemDifferenceData;
 
 #ifdef __cplusplus

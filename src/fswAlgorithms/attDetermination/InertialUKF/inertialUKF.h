@@ -29,6 +29,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
 #include "simulation/utilities/signalCondition.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -124,6 +125,8 @@ typedef struct {
     int32_t gyrBuffInMsgId;       //!< [-] Id of the input message buffer
     
     STDataParsing STDatasStruct;  //!< [-] Id of the input message buffer
+
+    BSKLogger *bskLogger;   //!< BSK Logging
 }InertialUKFConfig;
 
 

@@ -27,6 +27,7 @@
 #include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 /*!@brief module configuration message
@@ -56,6 +57,8 @@ typedef struct {
 
     RWArrayConfigFswMsg rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWArrayVoltageIntMsg voltageOut;                /*!< -- copy of the output message */
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }rwMotorVoltageConfig;
 

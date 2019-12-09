@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/rateCmdFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
 
@@ -41,6 +42,8 @@ typedef struct {
     int32_t inputGuidID;                                    /*!< [-] ID for the input guidance message*/
 
     RateCmdFswMsg outMsg;               /*!< -- copy of output message */
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }PRV_SteeringConfig;
 
 #ifdef __cplusplus

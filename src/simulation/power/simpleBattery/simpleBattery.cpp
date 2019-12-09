@@ -17,7 +17,6 @@
 
  */
 #include "simpleBattery.h"
-#include "utilities/bsk_Print.h"
 
 /*! The constructor creates a SimpleBattery instance with zero stored charge */
 SimpleBattery::SimpleBattery(){
@@ -37,7 +36,7 @@ SimpleBattery::~SimpleBattery(){
 void SimpleBattery::customReset(uint64_t CurrentClock) {
 
     if (this->storageCapacity <= 0.0) {
-        BSK_PRINT(MSG_ERROR, "The storageCapacity variable must be set to a positive value.");
+        bskLogger.bskLog(ERROR, "The storageCapacity variable must be set to a positive value.");
     }
     return;
 }

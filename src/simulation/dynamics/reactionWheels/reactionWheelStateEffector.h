@@ -34,6 +34,7 @@
 #include "../../simMessages/rwConfigLogSimMsg.h"
 #include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/bskLogging.h"
 
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
@@ -73,6 +74,7 @@ public:
     std::string nameOfReactionWheelThetasState;
 	size_t numRW;
 	size_t numRWJitter;
+  BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
 	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW

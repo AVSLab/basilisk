@@ -20,7 +20,6 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
-#include "utilities/bsk_Print.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <iostream>
 #include <cstring>
@@ -70,11 +69,11 @@ void StarTracker::SelfInit()
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(this->PMatrix.size() != numStates*numStates)
     {
-        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
+        bskLogger.bskLog(ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
         return;
     }
     if(this->walkBounds.size() != numStates){
-        BSK_PRINT(MSG_ERROR, "Your walkbounds is not size 3. Quitting");
+        bskLogger.bskLog(ERROR, "Your walkbounds is not size 3. Quitting");
         return;
     }
     this->errorModel.setNoiseMatrix(this->PMatrix);

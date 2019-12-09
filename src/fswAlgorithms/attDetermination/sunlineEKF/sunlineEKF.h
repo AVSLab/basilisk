@@ -27,6 +27,7 @@
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 
@@ -80,6 +81,7 @@ typedef struct {
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t cssConfigInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
+    BSKLogger *bskLogger;   //!< BSK Logging
 }sunlineEKFConfig;
 
 #ifdef __cplusplus

@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/rateCmdFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
 
@@ -41,6 +42,7 @@ typedef struct {
     int32_t outputMsgID;                        //!< [] ID for the outgoing body accel requests
     char inputGuidName[MAX_STAT_MSG_LENGTH];    //!< The name of the Input message
     int32_t inputGuidID;                        //!< [] ID for the incoming guidance errors
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus

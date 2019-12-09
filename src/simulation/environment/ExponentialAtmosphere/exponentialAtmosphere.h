@@ -29,6 +29,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/atmoPropsSimMsg.h"
 #include "../_GeneralModuleFiles/atmosphereBase.h"
+#include "utilities/bskLogging.h"
 
 
 class ExponentialAtmosphere:  public AtmosphereBase {
@@ -44,6 +45,7 @@ public:
     double baseDensity;             //!< [kg/m^3] Density at h=0
     double scaleHeight;             //!< [m] Exponential characteristic height
     double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
 

@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-/*! This method creates the output navigation message (translation only) for 
+/*! This method creates the output navigation message (translation only) for
     the ephemeris model
  @return void
  @param configData The configuration data associated with the ephemeris model
@@ -48,8 +48,8 @@ void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 
 }
 
-/*! This method takes the chebyshev coefficients loaded for the position 
-    estimator and computes the coefficients needed to estimate the time 
+/*! This method takes the chebyshev coefficients loaded for the position
+    estimator and computes the coefficients needed to estimate the time
     derivative of that position vector (velocity).
  @return void
  @param configData The configuration data associated with the ephemeris model

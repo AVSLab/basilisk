@@ -29,7 +29,7 @@
 #include "fswMessages/opNavFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bsk_Print.h"
+#include "simulation/utilities/bskLogging.h"
 #include "utilities/astroConstants.h"
 
 
@@ -105,7 +105,9 @@ typedef struct {
     int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
     int32_t opNavInMsgId;     //!< [-] Id for the incoming mass properties message
-    
+
+    BSKLogger *bskLogger;   //!< BSK Logging
+
 }RelODuKFConfig;
 
 

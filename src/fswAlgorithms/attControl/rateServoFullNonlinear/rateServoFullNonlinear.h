@@ -28,6 +28,7 @@
 #include "fswMessages/rateCmdFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
 
@@ -62,7 +63,9 @@ typedef struct {
     int32_t rwSpeedsInMsgId;                        //!< [] The ID for the reaction wheel speeds message
     char inputRateSteeringName[MAX_STAT_MSG_LENGTH];//!< [] the name of the steering law message
     int32_t rateSteeringInMsgId;                    //!< [] ID for the incoming steering law message
-    
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
+
 }rateServoFullNonlinearConfig;
 
 #ifdef __cplusplus

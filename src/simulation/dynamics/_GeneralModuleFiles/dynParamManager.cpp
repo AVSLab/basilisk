@@ -20,7 +20,6 @@
 
 #include "dynParamManager.h"
 #include <iostream>
-#include "utilities/bsk_Print.h"
 
 DynParamManager::DynParamManager()
 {
@@ -39,10 +38,10 @@ StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol,
     it = stateContainer.stateMap.find(stateName);
     if(it != stateContainer.stateMap.end())
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "You created a state with the name: %s more than once.  Go ahead and don't do this.", stateName.c_str());
+        bskLogger.bskLog(WARNING, "You created a state with the name: %s more than once.  Go ahead and don't do this.", stateName.c_str());
         if(it->second.getRowSize() != nRow || it->second.getColumnSize() != nCol)
         {
-            BSK_PRINT_BRIEF(MSG_ERROR, "In addition to that, you tried to change the size of the state in question.  Come on.  You get null.");
+            bskLogger.bskLog(ERROR, "In addition to that, you tried to change the size of the state in question.  Come on.  You get null.");
             return nullptr;
         }
     }
@@ -73,10 +72,10 @@ StateData* DynParamManager::getStateObject(std::string stateName)
     if (statePtr == nullptr)
     {
         /*  The requested state could not be found.
-            Either the state name was miss-spelled, or the state simply 
-            doesn't exit in the current simulaiton setup (i.e. asking for the 
+            Either the state name was miss-spelled, or the state simply
+            doesn't exit in the current simulaiton setup (i.e. asking for the
             hub attitude in a translation only simulation setup */
-        BSK_PRINT_BRIEF(MSG_WARNING, "You requested this non-existent state name: %s You either miss-typed the stateName, or you asked for a state that doesn't exist in your simulation setup.", stateName.c_str());
+        bskLogger.bskLog(WARNING, "You requested this non-existent state name: %s You either miss-typed the stateName, or you asked for a state that doesn't exist in your simulation setup.", stateName.c_str());
     }
     
     return(statePtr);
@@ -152,7 +151,7 @@ Eigen::MatrixXd* DynParamManager::createProperty(std::string propName,
                              (propName, propValue));
     }
     else{
-        BSK_PRINT(MSG_WARNING, "You created the dynamic property: %s more than once.  You shouldn't be doing that.", propName.c_str());
+        bskLogger.bskLog(WARNING, "You created the dynamic property: %s more than once.  You shouldn't be doing that.", propName.c_str());
         it->second = propValue;
     }
     return(&(dynProperties.find(propName)->second));
@@ -164,7 +163,7 @@ Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName)
     it = dynProperties.find(propName);
     if(it == dynProperties.end())
     {
-        BSK_PRINT(MSG_ERROR, "You requested the property: %s which doesn't exist.  Null returned.", propName.c_str());
+        bskLogger.bskLog(ERROR, "You requested the property: %s which doesn't exist.  Null returned.", propName.c_str());
         return nullptr;
     }
     else
@@ -180,7 +179,7 @@ void DynParamManager::setPropertyValue(const std::string propName,
     it = dynProperties.find(propName);
     if(it == dynProperties.end())
     {
-        BSK_PRINT(MSG_ERROR, "You tried to set the property value for: %s which has not been created yet. I can't do that.", propName.c_str());
+        bskLogger.bskLog(ERROR, "You tried to set the property value for: %s which has not been created yet. I can't do that.", propName.c_str());
     }
     else
     {

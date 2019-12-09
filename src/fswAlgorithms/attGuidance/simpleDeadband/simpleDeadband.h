@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswMessages/attGuidFswMsg.h"
+#include "simulation/utilities/bskLogging.h"
 
 
 
@@ -44,6 +45,8 @@ typedef struct {
     int32_t inputGuidID;                             /*!< ID for the incoming guidance reference message */
 
     AttGuidFswMsg attGuidOut;                       /*!< copy of the output message */
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
 
 }simpleDeadbandConfig;
 

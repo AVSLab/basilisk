@@ -27,7 +27,6 @@
 #include "utilities/gauss_markov.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
-#include "utilities/bsk_Print.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <inttypes.h>
 
@@ -109,7 +108,7 @@ void ImuSensor::SelfInit()
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
 	if(this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates)
 	{
-        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrixAccel) is not 3*3. Quitting.");
+        bskLogger.bskLog(ERROR, "Your process noise matrix (PMatrixAccel) is not 3*3. Quitting.");
         return;
 	}
 	this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
@@ -121,7 +120,7 @@ void ImuSensor::SelfInit()
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
 	if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
 	{
-        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
+        bskLogger.bskLog(ERROR, "Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
         return;
 	}
 	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
@@ -157,7 +156,7 @@ void ImuSensor::CrossInit()
         sizeof(SCPlusStatesSimMsg), this->moduleID);
     if(this->InputStateID < 0 )
     {
-        BSK_PRINT(MSG_WARNING, "Failed to link an imu input message. State: %" PRId64, this->InputStateID);
+        bskLogger.bskLog(WARNING, "Failed to link an imu input message. State: %" PRId64, this->InputStateID);
     }
 
     return;
