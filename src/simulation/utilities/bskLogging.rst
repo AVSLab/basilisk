@@ -44,7 +44,8 @@ The ``bskLog`` verbosity can be modified for all Basilisk modules by using::
 
     bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
-The verbosity options are listed in the table above.
+The verbosity options are listed in the table above.  Note that this command must be included at the very beginning of
+the Basilisk simulation script, certainly before the call for ``SimulationBaseClass.SimBaseClass()``.
 
 Changing Verbosity for a Particular BSK Module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -61,6 +62,8 @@ Another option is to use the ``BSKLogger()`` constructor to provide the verbosit
     sNavObject = simple_nav.SimpleNav()
     sNavObject.bskLogger = bskLogging.BSKLogger(bskLogging.INFORMATION)
 
+Unlike change the global verbosity level, the module specific verbosity can be changed later on in the Basilisk
+python script as the corresponding module is created and configured.
 
 Using ``bskLog`` in C++ Basilisk Modules
 ----------------------------------------
