@@ -32,6 +32,7 @@ For utility libraries such as ``linearAlgebra.c/h`` etc., this logging capabilit
 
 Using ``bskLogger`` From Python
 -------------------------------
+For an example of how to set the verbosity from Python, see :ref:`scenarioBskLog`.
 The default verbosity is set to the lowest level ``DEBUG`` such that any ``bskLog`` method print out the associated message string.  If this is the desired behavior, then no further actions are required.
 
 If the verbosity level is to be changed for a particular Basilisk script, then the following instructions explain how this can be done.  At the top of the Basilisk python scrip be sure to include the ``bskLogging`` support package::
