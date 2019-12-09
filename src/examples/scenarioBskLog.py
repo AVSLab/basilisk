@@ -86,17 +86,20 @@ def run(case):
     if case == 0:
         # default case = 0 does not set the bskLog verbosity within Python, but uses the default verbosity
         bskLogging.printDefaultLogLevel()
+        level = bskLogging.getDefaultLogLevel()
     elif case == 1:
         # here the verbosity was set globally to WARNING or higher at the beginning of the script
         bskLogging.printDefaultLogLevel()
+        level = bskLogging.getDefaultLogLevel()
 
     elif case == 2:
         # here the bskLog verbosity is only changed for this module
         logger = bskLogging.BSKLogger()
-        logger.setLogLevel(bskLogging.WARNING)
+        logger.setLogLevel(bskLogging.ERROR)
         print("The verbosity is only changed for this module.")
         logger.printLogLevel()
         moduleConfig.bskLogger = logger
+        level = logger.getLogLevel()
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -107,7 +110,7 @@ def run(case):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    return
+    return level
 
 
 #

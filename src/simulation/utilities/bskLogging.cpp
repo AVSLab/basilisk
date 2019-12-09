@@ -76,6 +76,12 @@ void BSKLogger::printLogLevel()
     printf("Current Logging Level: %s\n", currLevelStr);
 }
 
+/*! Get the current log level value */
+int BSKLogger::getLogLevel()
+{
+    return this->_logLevel;
+}
+
 /*! This method logs information. The current behavior is to simply print out the message and the targeted logging level.
     This should be the main method called in user code.
 */

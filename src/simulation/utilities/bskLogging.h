@@ -49,6 +49,7 @@ class BSKLogger
         virtual ~BSKLogger() = default;
         void setLogLevel(logLevel_t logLevel);
         void printLogLevel();
+        int getLogLevel();
         void bskLog(logLevel_t targetLevel, const char* info, ...);
 
     //Provides a mapping from log level enum to str
