@@ -31,6 +31,8 @@ Upcoming Version 1.X.X
 - Updated the :ref:`aboutBSK` page to include Basilisk highlights
 - Made sure the Monte Carlo unit tests didn't leave any temporary data files behind
 - Added new helper functions to the RW and Thruster factory classes to return the equivalent FSW configuration message.  Updated :ref:`scenarioAttitudeFeedbackRW` simulation script to illustrate how to use such a helper function.
+- Added a new Basilisk logging system called :ref:`bskLogging`.  This allows modules to print information with a variable verbosity level
+- Include a new example scenario :ref:`scenarioBskLog` to illustrate how to use variable verbosity BSK notices
 
 Version 1.3.2
 -------------
