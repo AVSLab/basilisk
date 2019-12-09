@@ -23,11 +23,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <cstring>
-<<<<<<< HEAD
 #include "utilities/bsk_Print.h"
 #include <inttypes.h>
-=======
->>>>>>> Added bsk print methods for utils
 
 /*! This algorithm initializes the messaging storage for the flight system
  @return void
