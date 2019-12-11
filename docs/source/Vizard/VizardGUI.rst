@@ -11,7 +11,7 @@ User Guide
 Startup Panel
 -------------
 
-hen starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above. There is an option on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key. Note that the Vizard screen size can be dynamically changed after startup as well.
+When starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above. There is an option on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key. Note that the Vizard screen size can be dynamically changed after startup as well.
 
 .. image:: ../_images/static/vizard-img0.jpg
    :align: center
