@@ -97,6 +97,115 @@ def createPointLine(viz, **kwargs):
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
 
+customModelList = []
+def createCustomModel(viz, **kwargs):
+    vizElement = vizInterface.CustomModel()
+
+    unitTestSupport.checkMethodKeyword(
+        ['modelPath', 'simBodiesToModify', 'offset', 'rotation', 'scale', 'customTexturePath',
+         'normalMapPath', 'shader'],
+        kwargs)
+
+    if 'modelPath' in kwargs:
+        modelPathName = kwargs['modelPath']
+        if not isinstance(modelPathName, basestring):
+            print('ERROR: modelPath must be a string')
+            exit(1)
+        if len(modelPathName) == 0:
+            print('ERROR: modelPath is required and must be specified.')
+            exit(1)
+        vizElement.modelPath = modelPathName
+    else:
+        print('ERROR: modelPath is required and must be specified.')
+        exit(1)
+
+    if 'simBodiesToModify' in kwargs:
+        simBodiesList = kwargs['simBodiesToModify']
+        if not isinstance(simBodiesList, list):
+            print('ERROR: simBodiesToModify must be a list of strings')
+            exit(1)
+        if len(simBodiesList) == 0:
+            print('ERROR: simBodiesToModify must be a non-empty list of strings')
+            exit(1)
+        for item in simBodiesList:
+            if not isinstance(item, basestring):
+                print('ERROR: the simBody name must be a string, not ' + str(item))
+                exit(1)
+        vizElement.simBodiesToModify = vizInterface.StringVector(simBodiesList)
+    else:
+        vizElement.simBodiesToModify = vizInterface.StringVector([viz.spacecraftName])
+
+    if 'offset' in kwargs:
+        offsetVariable = kwargs['offset']
+        if not isinstance(offsetVariable, list):
+            print('ERROR: offset must be a list of three floats')
+            exit(1)
+        if len(offsetVariable) is not 3:
+            print('ERROR: offset must be list of three floats')
+            exit(1)
+        vizElement.offset = offsetVariable
+    else:
+        vizElement.offset = [0.0, 0.0, 0.0]
+
+    if 'rotation' in kwargs:
+        rotationVariable = kwargs['rotation']
+        if not isinstance(rotationVariable, list):
+            print('ERROR: rotation must be a list of three floats')
+            exit(1)
+        if len(rotationVariable) is not 3:
+            print('ERROR: rotation must be list of three floats')
+            exit(1)
+        vizElement.rotation = rotationVariable
+    else:
+        vizElement.rotation = [0.0, 0.0, 0.0]
+
+    if 'scale' in kwargs:
+        scaleVariable = kwargs['scale']
+        if not isinstance(scaleVariable, list):
+            print('ERROR: scale must be a list of three floats')
+            exit(1)
+        if len(scaleVariable) is not 3:
+            print('ERROR: scale must be list of three floats')
+            exit(1)
+        vizElement.scale = scaleVariable
+    else:
+        vizElement.scale = [1.0, 1.0, 1.0]
+
+    if 'customTexturePath' in kwargs:
+        customTexturePathName = kwargs['customTexturePath']
+        if not isinstance(customTexturePathName, basestring):
+            print('ERROR: customTexturePath must be a string')
+            exit(1)
+        vizElement.customTexturePath = customTexturePathName
+    else:
+        vizElement.customTexturePath = ""
+
+    if 'normalMapPath' in kwargs:
+        normalMapPathName = kwargs['normalMapPath']
+        if not isinstance(normalMapPathName, basestring):
+            print('ERROR: normalMapPath must be a string')
+            exit(1)
+        vizElement.normalMapPath = normalMapPathName
+    else:
+        vizElement.normalMapPath = ""
+
+    if 'shader' in kwargs:
+        shaderVariable = kwargs['shader']
+        if not isinstance(shaderVariable, int):
+            print('ERROR: shader must be a an integer.')
+            exit(1)
+        if abs(shaderVariable) > 1:
+            print('ERROR: shader must have a value of -1, 0 or +1.')
+            exit(1)
+
+        vizElement.shader = shaderVariable
+    else:
+        vizElement.shader = -1
+
+    customModelList.append(vizElement)
+    del viz.settings.customModelList[:] # clear settings list to replace it with updated list
+    viz.settings.customModelList = vizInterface.CustomModelConfig(customModelList)
+    return
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
@@ -254,89 +363,92 @@ def createConeInOut(viz, **kwargs):
     viz.settings.coneList = vizInterface.KeepOutInConeConfig(coneInOutList)
     return
 
-def createCameraViewPanel(viz, camName, **kwargs):
-    if camName == "One":
-        cam = viz.settings.cameraOne
-    elif camName == "Two":
-        cam = viz.settings.cameraTwo
-    elif camName == "Planet":
-        cam = viz.settings.cameraPlanet
-    else:
-        print('ERROR: camera name ' + camName + ' is not know.  Supported camera names are One, Two and Planet')
-        exit(1)
+stdCameraList = []
+def createStandardCamera(viz, **kwargs):
+    cam = vizInterface.StdCameraSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'viewPanel', 'setView', 'spacecraftVisible', 'fieldOfView', 'targetBodyName'],
+        ['spacecraftName', 'setMode', 'setView', 'fieldOfView',
+         'bodyTarget', 'pointingVector_B'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
         if not isinstance(scName, basestring):
-            print('ERROR: ' + camName + ' spacecraftName must be a string')
+            print('ERROR: spacecraftName must be a string, you provided ' + str(scName))
             exit(1)
         cam.spacecraftName = scName
     else:
         cam.spacecraftName = viz.spacecraftName
 
-    if 'viewPanel' in kwargs:
-        viewPanel = kwargs['viewPanel']
-        if not isinstance(viewPanel, bool):
-            print('ERROR: ' + camName + ' viewPanel must be a bool')
+    if 'setMode' in kwargs:
+        setMode = kwargs['setMode']
+        if not isinstance(setMode, int):
+            print('ERROR: setMode must be an integer')
             exit(1)
-        cam.viewPanel = viewPanel
+        if setMode < 0 or setMode > 2:
+            print('ERROR: setMode must be a 0 (body targeting) or 1 (pointing vector)')
+            exit(1)
+        cam.setMode = setMode
+    else:
+        cam.setMode = 1
 
     if 'setView' in kwargs:
         setView = kwargs['setView']
-        if not isinstance(setView, int):
-            print('ERROR: ' + camName + ' setView must be an integer')
+        if cam.setMode == 1:
+            print('ERROR: setView does not apply to pointing vector mode.')
             exit(1)
-        if camName=="Planet":
-            if setView < 0 or setView > 2:
-                print('ERROR: ' + camName + ' setView must be a number of [0,5]')
-                print('0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track')
-                exit(1)
-        else:
-            if setView < 0 or setView > 5:
-                print('ERROR: ' + camName + ' setView must be a number of [0,5]')
-                print('0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z')
-                exit(1)
+        if not isinstance(setView, int):
+            print('ERROR: setView must be an integer')
+            exit(1)
+        if setView < 0 or setView > 5:
+            print('ERROR: setView must be a number of [0,2]')
+            print('0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). '
+                  'This is a setting for body targeting mode.')
+            exit(1)
         cam.setView = setView
     else:
-        print('ERROR: ' + camName + ' setView must be a specified')
-        exit(1)
-
-    if 'spacecraftVisible' in kwargs:
-        spacecraftVisible = kwargs['spacecraftVisible']
-        if not isinstance(spacecraftVisible, bool):
-            print('ERROR: ' + camName + ' spacecraftVisible must be a bool')
-            exit(1)
-        cam.spacecraftVisible = spacecraftVisible
-    else:
-        cam.spacecraftVisible = False
+        cam.setView = 0  # nadir mode
 
     if 'fieldOfView' in kwargs:
         fieldOfView = kwargs['fieldOfView']
         if not isinstance(fieldOfView, float):
-            print('ERROR: ' + camName + ' spacecraftVisible must be a float in radians')
+            print('ERROR: spacecraftVisible must be a float in radians')
             exit(1)
         cam.fieldOfView = fieldOfView
     else:
         cam.fieldOfView = -1.0
 
-    if 'targetBodyName' in kwargs:
-        if camName=="Planet":
-            targetBodyName = kwargs['targetBodyName']
-            if not isinstance(targetBodyName, basestring):
-                print('ERROR: ' + camName + ' targetBodyName must be a string')
-                exit(1)
-            cam.targetBodyName = targetBodyName
-        else:
-            print('WARNING: targetBodyName is not used for camera view One and Two')
-    else:
-        if camName=="Planet":
-            print('ERROR: targetBodyName must be a specified')
+    if 'bodyTarget' in kwargs:
+        if cam.setMode == 1:
+            print('ERROR: bodyTarget does not apply in pointing vector mode')
             exit(1)
+        bodyTargetName = kwargs['bodyTarget']
+        if not isinstance(bodyTargetName, basestring):
+            print('ERROR: targetBodyName must be a string')
+            exit(1)
+        cam.bodyTarget = bodyTargetName
+    else:
+        cam.bodyTarget = ""
 
+    if 'pointingVector_B' in kwargs:
+        if cam.setMode == 0:
+            print('ERROR: pointingVector_B does not apply in body pointing mode')
+            exit(1)
+        pointingVector_B = kwargs['pointingVector_B']
+        if not isinstance(pointingVector_B, list):
+            print('ERROR: pointingVector_B must be a 3D array of doubles')
+            exit(1)
+        if len(pointingVector_B) != 3:
+            print('ERROR: pointingVector_B must be 3D list')
+            exit(1)
+        cam.pointingVector_B = pointingVector_B
+    else:
+        cam.pointingVector_B = [1.0, 0.0, 0.0]
+
+    stdCameraList.append(cam)
+    del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list
+    viz.settings.stdCameraList = vizInterface.StdCameraConfig(stdCameraList)
     return
 
 

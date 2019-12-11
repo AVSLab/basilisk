@@ -59,25 +59,6 @@ VizInterface::VizInterface()
     this->settings.planetCSon = -1;
     this->settings.skyBox = "";
 
-    this->settings.cameraOne.spacecraftName = "";
-    this->settings.cameraOne.viewPanel = false;
-    this->settings.cameraOne.setView = 0;
-    this->settings.cameraOne.spacecraftVisible = false;
-    this->settings.cameraOne.fieldOfView = -1.0;
-
-    this->settings.cameraTwo.spacecraftName = "";
-    this->settings.cameraTwo.viewPanel = false;
-    this->settings.cameraTwo.setView = 0;
-    this->settings.cameraTwo.spacecraftVisible = false;
-    this->settings.cameraTwo.fieldOfView = -1.0;
-
-    this->settings.cameraPlanet.spacecraftName = "";
-    this->settings.cameraPlanet.viewPanel = false;
-    this->settings.cameraPlanet.setView = 0;
-    this->settings.cameraPlanet.spacecraftVisible = false;
-    this->settings.cameraPlanet.fieldOfView = -1.0;
-    this->settings.cameraPlanet.targetBodyName = "";
-
     memset(&this->cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
     this->cameraConfigMessage.cameraID = -1;
     strcpy(this->cameraConfigMessage.skyBox, "");
@@ -475,33 +456,41 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             al->set_viewrwhud(this->settings.actuatorGuiSettingsList[idx].viewRWHUD);
         }
 
-        // define camera one settings
-        vizProtobufferMessage::VizMessage::CameraOneSettings* camOne = new vizProtobufferMessage::VizMessage::CameraOneSettings;
-        camOne->set_spacecraftname(this->settings.cameraOne.spacecraftName);
-        camOne->set_viewpanel(this->settings.cameraOne.viewPanel);
-        camOne->set_setview(this->settings.cameraOne.setView);
-        camOne->set_spacecraftvisible(this->settings.cameraOne.spacecraftVisible);
-        camOne->set_fieldofview(this->settings.cameraOne.fieldOfView*R2D);  // Unity expects degrees
-        vizSettings->set_allocated_cameraone(camOne);
+        // define scene object custom object shapes
+        for (size_t idx = 0; idx < this->settings.customModelList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::CustomModel* cm = vizSettings->add_custommodels();
+            CustomModel *cmp = &(this->settings.customModelList[idx]);
+            cm->set_modelpath(cmp->modelPath);
+            for (size_t i=0; i<cmp->simBodiesToModify.size(); i++) {
+                cm->add_simbodiestomodify(cmp->simBodiesToModify[i]);
+            }
+            for (size_t i=0; i<3;i++) {
+                cm->add_offset(cmp->offset[i]);
+                cm->add_rotation(cmp->rotation[i]*R2D);  // Unity expects degrees
+                cm->add_scale(cmp->scale[i]);
+            }
+            cm->set_customtexturepath(cmp->customTexturePath);
+            cm->set_normalmappath(cmp->normalMapPath);
+            cm->set_shader(cmp->shader);
+        }
 
-        // define camera two settings
-        vizProtobufferMessage::VizMessage::CameraTwoSettings* camTwo = new vizProtobufferMessage::VizMessage::CameraTwoSettings;
-        camTwo->set_spacecraftname(this->settings.cameraTwo.spacecraftName);
-        camTwo->set_viewpanel(this->settings.cameraTwo.viewPanel);
-        camTwo->set_setview(this->settings.cameraTwo.setView);
-        camTwo->set_spacecraftvisible(this->settings.cameraTwo.spacecraftVisible);
-        camTwo->set_fieldofview(this->settings.cameraTwo.fieldOfView*R2D);  // Unity expects degrees
-        vizSettings->set_allocated_cameratwo(camTwo);
-
-        // define planet camera settings
-        vizProtobufferMessage::VizMessage::PlanetCameraSettings* camPlanet = new vizProtobufferMessage::VizMessage::PlanetCameraSettings;
-        camPlanet->set_spacecraftname(this->settings.cameraPlanet.spacecraftName);
-        camPlanet->set_viewpanel(this->settings.cameraPlanet.viewPanel);
-        camPlanet->set_setview(this->settings.cameraPlanet.setView);
-        camPlanet->set_spacecraftvisible(this->settings.cameraPlanet.spacecraftVisible);
-        camPlanet->set_fieldofview(this->settings.cameraPlanet.fieldOfView*R2D);  // Unity expects degrees
-        camPlanet->set_targetbodyname(this->settings.cameraPlanet.targetBodyName);
-        vizSettings->set_allocated_planetcamera(camPlanet);
+        // define camera settings
+        for (size_t idx = 0; idx < this->settings.stdCameraList.size(); idx++){
+            vizProtobufferMessage::VizMessage::StandardCameraSettings* sc = vizSettings->add_standardcamerasettings();
+            StdCameraSettings *scp = &(this->settings.stdCameraList[idx]);
+            sc->set_spacecraftname(scp->spacecraftName);
+            sc->set_setmode(scp->setMode);
+            if (scp->fieldOfView < 0)
+                sc->set_fieldofview(-1.0);
+            else {
+                sc->set_fieldofview(scp->fieldOfView*R2D); // Unity expects degrees
+            }
+            sc->set_bodytarget(scp->bodyTarget);
+            sc->set_setview(scp->setView);
+            for (size_t i=0; i<3; i++){
+                sc->add_pointingvector(scp->pointingVector_B[i]);
+            }
+        }
 
         message->set_allocated_settings(vizSettings);
 

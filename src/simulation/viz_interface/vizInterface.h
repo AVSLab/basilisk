@@ -67,18 +67,18 @@ typedef struct {
     double coneHeight;          //!< [m] sets height of visible cone (asthetic only, does not impact function)
     std::string fromBodyName;   //!< name of body to attach cone onto
     std::string toBodyName;     //!< [-] detect changes if this body has impingement on cone
-    int coneColor[4];              //!< [-] desired RGBA as values between 0 and 255
+    int coneColor[4];           //!< [-] desired RGBA as values between 0 and 255
     std::string coneName;       //!< [-] cone name, if unspecified, viz will autogenerate name
 }KeepOutInCone;
 
 typedef struct {
-    std::string spacecraftName; //!< Which spacecraft's camera 1
-    bool viewPanel;             //!< Flag indicating if the camera panel is visible on the screen, default is falst
-    int setView;                //!< Specify the view through 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
-    bool spacecraftVisible;     //!< Flag if the spacecraft itself is visible in this camera view. Default is false
-    double fieldOfView;         //!< field of view setting, -1 -> use default, values between 0.0001 and 179.9999 valid
-    std::string targetBodyName; //!< for planet centric camera only, name of the planet relative which to point the camera
-}CameraSettings;
+    std::string spacecraftName; //!< name of spacecraft onto which to place a camera
+    int setMode;                //!< 0 -> body targeting, 1 -> pointing vector (default)
+    double fieldOfView;         //!< rad, field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
+    std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
+    int setView;                //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
+    double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
+}StdCameraSettings;
 
 typedef struct {
     std::string spacecraftName; //!< Which spacecraft's camera 1
@@ -89,15 +89,25 @@ typedef struct {
 }ActuatorGuiSettings;
 
 typedef struct {
+    std::string modelPath;                  //!< Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+    std::vector<std::string> simBodiesToModify; //!< Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" to apply custom model to all spacecraft in simulation
+    double offset[3];                       //!< [m] offset to use to draw the model
+    double rotation[3];                     //!< [rad] 3-2-1 Euler angles to rotate CAD about z, y, x axes
+    double scale[3];                        //!< [] desired model scale in x, y, z in spacecraft CS
+    std::string customTexturePath;          //!< (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
+    std::string normalMapPath;              //!< (Optional) Path to the normal map for the customTexture
+    int shader;                             //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
+}CustomModel;
+
+typedef struct {
     double      ambient;        //!< [-] Ambient background lighting. Should be a value between 0 and 8.  A value of -1 means it is not set.
     int32_t     orbitLinesOn;   //! toogle for showing orbit lines (-1, 0, 1)
     int32_t     spacecraftCSon; //! toogle for showing spacecraft CS (-1, 0, 1)
     int32_t     planetCSon;     //! toogle for showing planet CS (-1, 0, 1)
     std::vector<PointLine> pointLineList;   //! vector of powerLine structures
     std::vector<KeepOutInCone> coneList;    //! vector of keep in/out cones
-    CameraSettings cameraOne;   //! msg containing camera one settings
-    CameraSettings cameraTwo;   //! msg containing camera one settings
-    CameraSettings cameraPlanet;//! msg containing the planet camera settings
+    std::vector<StdCameraSettings> stdCameraList; //! vector of spacecraft cameras
+    std::vector<CustomModel> customModelList;  //! vector of custom object models
     std::vector<ActuatorGuiSettings> actuatorGuiSettingsList; //! msg containing the flags on displaying the actuator GUI elements
     std::string skyBox;         //! string containing the star field options, '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
     bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,

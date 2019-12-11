@@ -99,29 +99,15 @@ message VizMessage{
         string coneName = 9; //If unspecified, viz will autogenerate name
     }
     
-    message CameraOneSettings{
-        string spacecraftName = 1; //Which spacecraft's camera 1
-        bool viewPanel = 2; //False (default) -> panel is not visible on screen
-        int32 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
-        bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
+    message StandardCameraSettings{
+        string spacecraftName = 1; //Body to attach camera to (default is the first spacecraft in messages)
+//        bool viewPanel = 2; //False (default) -> panel is not visible on screen
+        int32 setMode = 3; // 0 -> body targeting, 1 -> pointing vector
+//        bool spacecraftVisible = 4; //False (default) -> parent spacecraft will not be visible in camera view
         double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
-    }
-    
-    message CameraTwoSettings{
-        string spacecraftName = 1; //Which spacecraft's camera 2
-        bool viewPanel = 2; //False (default) -> panel is not visible on screen
-        int32 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
-        bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
-        double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
-    }
-    
-    message PlanetCameraSettings{
-        string spacecraftName = 1; //Which spacecraft's planet Camera
-        bool viewPanel = 2; //False (default) -> panel is not visible on screen
-        int32 setView = 3; // 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track
-        bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
-        double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
-        string targetBodyName = 6; //What body should this camera point at?
+        string bodyTarget = 6; // Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
+        int32 setView = 7; //0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
+        repeated double pointingVector = 8; //x,y,z, vector (default to 1, 0, 0). This is a setting for pointing vector mode.
     }
 
     message ActuatorSettings{
@@ -130,6 +116,17 @@ message VizMessage{
         int32 viewThrusterHUD = 3; //Value of -1 to use viz default, 0 for false, 1 for true
         int32 viewRWPanel = 4; // Value of -1 to use viz default, 0 for false, 1 for true
         int32 viewRWHUD = 5; //Value of -1 to use viz default, 0 for false, 1 for true
+    }
+    
+    message CustomModel{
+        string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+        repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" in the first string to apply custom model to all spacecraft in simulation
+        repeated double offset = 3; //meters
+        repeated double rotation = 4; // degrees, euler rotation about x, y, z axes in spacecraft CS
+        repeated double scale = 5; //desired model scale in x, y, z in spacecraft CS
+        string customTexturePath = 6; //(Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
+        string normalMapPath = 7; //(Optional) Path to the normal map for the customTexture
+        int32 shader = 8; //(Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
     }
 
 
@@ -140,11 +137,12 @@ message VizMessage{
         int32 planetCSon = 4; // Value of -1 to use viz default, 0 for false, 1 for true
         repeated PointLine pointLines = 5;
         repeated KeepOutInCone keepOutInCones = 6;
-        CameraOneSettings cameraOne = 7;
-        CameraTwoSettings cameraTwo = 8;
-        PlanetCameraSettings planetCamera = 9;
+        repeated StandardCameraSettings standardCameraSettings = 7;
+//        CameraTwoSettings cameraTwo = 8;
+//        PlanetCameraSettings planetCamera = 9;
         repeated ActuatorSettings actuatorSettings = 10;
         string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
+        repeated CustomModel customModels = 12;
 
     }
 
@@ -152,7 +150,7 @@ message VizMessage{
     repeated CelestialBody celestialBodies = 2;
     repeated Spacecraft spacecraft = 3;
     repeated CameraConfig cameras = 4;
-    //repeated cameraImage cameraImages = 5;  // unused field, not re-using the number
-    //repeated ImageRequest imageRequests = 6;  // unused field, not re-using the number
+    //repeated cameraImage cameraImages = 5;
+    //repeated ImageRequest imageRequests = 6;
     VizSettingsPb settings = 7;
 }
