@@ -5,21 +5,20 @@ Basilisk Release Notes
 
 .. Note::
 
-    We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/tests/scenarios`` folder.  More documentation and tutorial scripts are in development.
+    We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Sphinix generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples`` folder.  More documentation and tutorial scripts are in development.
 
-In Progress Features
---------------------
+.. sidebar:: In Progress Features
 
-- ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
-- GPU based methods to evaluate solar radiation pressure forces and torques
-- atmospheric drag evaluation using multi-faceted spacecraft model
-- Updates to the Vizard Unity-based Basilisk visualization tool
-- create data tracking capabilities within BSK where devices can store or communicate data
-- create modules to determine if a satellite can see a ground point such as a communication station
+    - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
+    - GPU based methods to evaluate solar radiation pressure forces and torques
+    - atmospheric drag evaluation using multi-faceted spacecraft model
+    - create data tracking capabilities within BSK where devices can store or communicate data
+    - create modules to determine if a satellite can see a ground point such as a communication station
 
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- added :ref:`Vizard scripting <vizardSettings>` abilities to control the new spacecraft camera view panel behaviors
+- added :ref:`Vizard scripting <vizardSettings>` abilities to specify custom CAD OBJ models to replace the default satellite shape
 
 Version 1.4.0
 -------------

@@ -24,6 +24,7 @@ Note that the file structure in the Documentation section mirrors that of the Ba
 
    Vizard/Vizard
    Vizard/VizardDownload
+   Vizard/VizardReleaseNotes
    Vizard/VizardGUI
    Vizard/vizardSettings
 
