@@ -223,3 +223,17 @@ selected such as a sphere, cylinder or cube.
    :align: center
    :width: 90 %
 
+
+Advanced Options
+----------------
+
+``File/Compress Messages`` Option
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This option will compress the number of stored vizMessages from the current run. This feature is especially useful during multi-day live streaming simulation runs when the number of saved vizMessages can grow too large for the app to continue running.
+
+Selecting this option brings up a settings panel that allows the user to specify how many messages should be retained. For example, if the user opts to retain 1/2  stored messages, Vizard will delete every other message in the vizMessage dictionary, reducing the Vizard memory footprint.
+
+.. warning::
+
+   Compression can be applied when running the Vizard from a vizMessage archive file *or* when live streaming. Please note that the compression cannot be reversed, but that the archive file, if in use, will not be changed.
