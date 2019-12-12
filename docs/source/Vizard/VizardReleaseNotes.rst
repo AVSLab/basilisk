@@ -22,14 +22,31 @@ Release Notes
 
 **Version 0.8.0**
 
-- added ability to load in a custom CAD obj file to replace the default spacecraft model
-- added the ability to replace any simulation object with a custom object or a default shape like sphere, cone, cylinder, etc.
 - The camera view panel screen shot button now stores the PNG image in the user's home folder
 - Changed how standard cameras work.  The user can invoke readily 2 standard cameras and specify for which spacecraft these are attached.  This scales much better with lots of spacecraft where before we attached 3 standard cameras to each spacecraft by default
-- made it possible to launch Black Lion from command line
+- made it possible to launch vizard in Black Lion live streaming mode from command line
 - Added option under File menu to compress simulation data
+- usability improvements to custom CAD model inventory and tuning GUI panels
 
+**Version 0.7.0**
 
+- added ability to load in a custom CAD obj file to replace the default spacecraft model
+- added the ability to replace any simulation object with a custom object or a default shape like sphere, cone, cylinder, etc.
+- added vizMessage user settings support for custom models to allow automatic import at runtime
+
+**Version 0.6.0**
+
+- scriptable vizMessage user settings allow users to customize the start-up configuration of vizard. Users can now toggle spacecraft and planet coordinate systems, orbit lines, actuator Heads Up Displays, actuator panels.
+- users can specify a custom skybox by providing a file path to the desired texture, one of the default skybox textures, or a plain black background with the skybox user setting
+- Spacecraft camera vizMessages can be configured to user specified headings or targets and panels can be automatically visible on start-up.
+- configuration messages specifying multiple pointing vectors and/or Keep Out or Keep In cones can be added to generate these items automatically during Vizard initialization
+
+**Version 0.5.0**
+
+- added a lightweight opNav mode that can livestream camera images to the Basilisk simulation over the Direct Comm connection on demand
+- improved main camera panning
+- added support for reaction wheel spin sub message
+- scriptable user setting message for Ambient Brightness
 
 **Version 0.4.0**
 
