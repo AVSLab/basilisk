@@ -25,6 +25,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/dataStorageStatusSimMsg.h"
 #include "simMessages/dataNodeUsageSimMsg.h"
+#include "utilities/bskLogging.h"
 
 #ifndef BASILISK_DATASTORAGEUNITBASE_H
 #define BASILISK_DATASTORAGEUNITBASE_H

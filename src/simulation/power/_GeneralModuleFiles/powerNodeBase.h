@@ -28,7 +28,7 @@
 #include <string>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/powerNodeUsageSimMsg.h"
-#include "simFswInterfaceMessages/powerNodeStatusIntMsg.h"
+#include "simFswInterfaceMessages/deviceStatusIntMsg.h"
 #include "utilities/bskLogging.h"
 
 

@@ -18,9 +18,8 @@
  */
 
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/bskLogging.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
 #include "dataStorageUnitBase.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -145,7 +144,7 @@ bool DataStorageUnitBase::readMessages()
         }
     }
     else {
-        bskLogger.bskLog(MSG_WARNING, "Data storage has no data node messages to read.");
+        bskLogger.bskLog(INFORMATION, "Data storage has no data node messages to read.");
         dataRead = false;
     }
 
