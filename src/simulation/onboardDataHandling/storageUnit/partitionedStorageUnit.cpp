@@ -18,7 +18,7 @@
  */
 
 #include "partitionedStorageUnit.h"
-#include "utilities/bsk_Print.h"
+#include "utilities/bskLogging.h"
 
 /*! The constructor creates a partitionedStorageUnit instance with zero stored data
  @return void;
@@ -42,7 +42,7 @@ PartitionedStorageUnit::~PartitionedStorageUnit(){
  */
 void PartitionedStorageUnit::customReset(__uint64_t CurrentClock){
     if (this->storageCapacity <= 0.0) {
-        BSK_PRINT(MSG_ERROR, "The storageCapacity variable must be set to a positive value.");
+        bskLogger.bskLog(MSG_ERROR, "The storageCapacity variable must be set to a positive value.");
     }
     return;
 }

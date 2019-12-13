@@ -20,7 +20,7 @@
 #include "simpleTransmitter.h"
 //#include "../../simMessages/dataStorageStatusSimMsg.h"
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/bsk_Print.h"
+#include "utilities/bskLogging.h"
 #include <array>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
@@ -85,7 +85,7 @@ bool SimpleTransmitter::customReadMessages(){
         }
     }
     else {
-        BSK_PRINT(MSG_WARNING, "Data storage has no data node messages to read.");
+        bskLogger.bskLog(MSG_WARNING, "Data storage has no data node messages to read.");
         dataRead = false;
     }
 

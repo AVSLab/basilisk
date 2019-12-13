@@ -39,6 +39,7 @@ public:
     std::vector<std::string> storageUnitMsgNames; //!< Vector of data node input message names
     std::vector<std::int64_t> storageUnitMsgIds;
     std::vector<DataStorageStatusSimMsg> storageUnitMsgs;
+    BSKLogger bskLogger;
 
 private:
     double packetTransmitted; //!< Amount of packet downlinked (bytes)

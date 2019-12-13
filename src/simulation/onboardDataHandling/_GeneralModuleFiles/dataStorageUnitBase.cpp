@@ -18,7 +18,7 @@
  */
 
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/bsk_Print.h"
+#include "utilities/bskLogging.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "dataStorageUnitBase.h"
 
@@ -145,7 +145,7 @@ bool DataStorageUnitBase::readMessages()
         }
     }
     else {
-        BSK_PRINT(MSG_WARNING, "Data storage has no data node messages to read.");
+        bskLogger.bskLog(MSG_WARNING, "Data storage has no data node messages to read.");
         dataRead = false;
     }
 

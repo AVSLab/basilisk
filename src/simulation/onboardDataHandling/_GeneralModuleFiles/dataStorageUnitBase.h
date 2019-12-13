@@ -57,6 +57,7 @@ public:
     std::vector<std::string> nodeDataUseMsgNames; //!< Vector of data node input message names
     std::string storageUnitDataOutMsgName; //!< Vector of message names to be written out by the storage unit
     double storageCapacity; //! Storage capacity of the storage unit
+    BSKLogger bskLogger;
 
 protected:
     std::vector<std::int64_t> nodeDataUseMsgIds; //!< Vector of all the data node messages IDs the storage unit is subscribed to
