@@ -1,4 +1,4 @@
-''' '''
+
 '''
  ISC License
 
@@ -39,11 +39,11 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-@pytest.mark.parameterize("multiSc",[1,2])
-@pytest.mark.parametrize("elevation", [])
-@pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
+#@pytest.mark.parameterize("multiSc",[1,2])
+#@pytest.mark.parametrize("elevation", [])
+#@pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
 # provide a unique test method name, starting with test_
-def test_groundLocation(show_plots, multiSc, elevation, range, ground_prop):
+def test_groundLocation(show_plots):
     """
     Tests the groundLocation() class. In the reference case, a spacecraft is placed directly above the groundLocation. Multiple
     variants are used to test branches in the code:
@@ -58,9 +58,78 @@ def test_groundLocation(show_plots, multiSc, elevation, range, ground_prop):
 
     showVal = False
 
-    [testResults, testMessage] = run(showVal, satelliteLocation)
+    [testResults, testMessage] = test_range()
 
     assert testResults < 1, testMessage
+
+def test_range():
+    '''
+    Tests whether groundLocation:
+        1. Computes range correctly by evaluating slantRange;
+        2. Tests whether elevation is correctly evaluated;
+        3. Tests whether range limits impact access.
+        4. Tests whether multiple spacecraft are supported in parallel
+    :return:
+    '''
+    testFailCount = 0
+    testMessages = []
+
+    simTaskName = "simTask"
+    simProcessName = "simProcess"
+    scSim = SimulationBaseClass.SimBaseClass()
+    scSim.TotalSim.terminateSimulation()
+    dynProcess = scSim.CreateNewProcess(simProcessName)
+    simulationTime = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(1.)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+
+    #   Initialize new atmosphere and drag model, add them to task
+    groundTarget = groundLocation.GroundLocation()
+    groundTarget.ModelTag = "groundTarget"
+    groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
+    groundTarget.maximumRange = 90e3 # meters
+    groundTarget.specifyLocation(np.radians(0.), np.radians(0.), 0.)
+    scSim.AddModelToTask(simTaskName, groundTarget)
+
+    #   Write out mock planet rotation, spacecraft position messages
+    sc1_message = simMessages.SCPlusStatesSimMsg()
+    sc1_message.r_BN_N = [orbitalMotion.REQ_EARTH*1e3 + 100e3, 0, 0]  # SC1 is in range
+    sc1_message_name = "sc1_msg"
+
+    sc2_message = simMessages.SCPlusStatesSimMsg()
+    #   SC2 is placed inside/outside the visibility cone for the ground station
+    sc2_message.r_BN_N = [orbitalMotion.REQ_EARTH*1e3 + 101e3,0, 0]
+    sc2_message_name = "sc2_msg"
+
+    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc1_message_name, sc1_message)
+    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc2_message_name, sc2_message)
+
+    groundTarget.addSpacecraftToModel(sc1_message_name)
+    groundTarget.addSpacecraftToModel(sc2_message_name)
+
+    # Log the access indicator
+    numDataPoints = 2
+    samplingTime = int(simulationTime / (numDataPoints - 1))
+    scSim.TotalSim.logThisMessage(groundTarget.accessOutMsgNames[-1], samplingTime)
+    # Run the sim
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(simulationTime)
+    scSim.ExecuteSimulation()
+    # Get the logged data
+    #sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
+    #sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
+
+    sc2_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.hasAccess',range(1))
+    sc2_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.slantRange',range(1))
+    sc2_elevation = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.elevation',range(1))
+    #   Compare to expected values
+    accuracy = 1e-8
+    ref_ranges = [100e3, 101e3]
+    ref_elevation = [np.radians(90.),np.radians(90.)]
+    ref_access = [1, 0]
+
+    return testFailCount, testMessages
+
 
 def run(show_plots, satelliteLocation):
     '''Call this routine directly to run the script.'''

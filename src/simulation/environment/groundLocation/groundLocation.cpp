@@ -205,16 +205,16 @@ void GroundLocation::computeAccess()
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
         Eigen::Vector3d r_BL_N = (cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N) - this->r_LP_N;
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_N.norm();
-        double viewAngle = 90.-R2D*acos(this->rhat_LP_N.dot(relativeHeading_N));
+        double viewAngle = D2R*(90.-R2D*acos(this->rhat_LP_N.dot(relativeHeading_N)));
 
-        if(viewAngle > this->minimumElevation){
-            accessMsgIt->hasAccess = true;
+        if(viewAngle > this->minimumElevation && r_BL_N.norm() < this->maximumRange){
+            accessMsgIt->hasAccess = 1;
             accessMsgIt->slantRange = r_BL_N.norm();
             accessMsgIt->elevation= viewAngle;
         }
         else
         {
-            accessMsgIt->hasAccess = false;
+            accessMsgIt->hasAccess = 0;
             accessMsgIt->slantRange = 0.0;
             accessMsgIt->elevation = 0.0;
         }

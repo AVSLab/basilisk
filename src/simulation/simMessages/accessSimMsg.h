@@ -26,7 +26,7 @@
 
 /*! @brief Structure used to define the the epoch date and time message */
 typedef struct {
-    bool hasAccess;//! [-] True when the writer has access to a spacecraft; false otherwise.
+    uint64_t hasAccess;//! [-] True when the writer has access to a spacecraft; false otherwise.
     double slantRange;//![m] Range from a location to the spacecraft.
     double elevation;//![deg] Elevation angle for a given spacecraft.
 }AccessSimMsg;
