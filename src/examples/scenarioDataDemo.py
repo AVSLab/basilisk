@@ -54,11 +54,15 @@ One version of this process is demonstrated here using methods that are describe
 a :ref:`partitionedStorageUnit`, a :ref:`simpleInstrument`,
 and a :ref:`simpleTransmitter`.
 
-When the simulation completes, the following single plot is shown to
+When the simulation completes, the following plots are shown to
 demonstrate the data stored, generated, and downlinked.
 
-.. image:: /_images/Scenarios/scenario_dataDemo.svg
+.. image:: /_images/Scenarios/scenario_dataDemoBits.svg
    :align: center
+
+.. image:: /_images/Scenarios/scenario_dataDemoBaud.svg
+   :align: center
+
 
 """
 import os, inspect
