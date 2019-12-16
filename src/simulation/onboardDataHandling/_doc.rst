@@ -1,4 +1,1 @@
-
-.. _onboardDataManagement:
-
 This folder contains modules related to the generation and consumption of data onboard the spacecraft.  Base classes are provided to related generate data nodes.  Another base class is provided to create data storage devices such as a simple storage unit.
