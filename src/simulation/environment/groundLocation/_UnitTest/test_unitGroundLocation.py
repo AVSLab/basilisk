@@ -39,27 +39,7 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-
-#@pytest.mark.parameterize("multiSc",[1,2])
-#@pytest.mark.parametrize("elevation", [])
-#@pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
-# provide a unique test method name, starting with test_
-def test_groundLocation(show_plots):
-    """
-    Tests the groundLocation() class. In the reference case, a spacecraft is placed directly above the groundLocation. Multiple
-    variants are used to test branches in the code:
-        1. Support for multiple spacecraft. Adds another spacecraft on the opposite side of the Earth.
-        2. Support for lat/long/altitude and ECEF position specification. 1st case is Boulder; the second is nega-Boulder.
-        3. Elevation limitations:
-        4. Range limitations: In case 1, the range is unlimited. In case 2, the range is set to 1km less than the s/c altitude.
-        5. Ground propagation: This tests whether groundLocations are correctly propagated through inertial space using SPICEPlanetSimMsgs.
-
-    These tests are handled parametrically to ensure full coverage.
-    """
-
-    test_range()
-
-def test_range():
+def test_range(show_plots):
     '''
     Tests whether groundLocation:
         1. Computes range correctly by evaluating slantRange;
@@ -152,7 +132,7 @@ def test_range():
     assert (range_worked and elevation_worked and access_worked)
 
 
-def test_rotation():
+def test_rotation(show_plots):
     '''
     Tests whether groundLocation:
         1. Computes the current location based on the initial position and the rotation rate of the planet
