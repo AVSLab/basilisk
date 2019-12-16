@@ -208,7 +208,7 @@ Illustration of Simulation Results
     show_plots = True, useJitterSimple = False, useRWVoltageIO = False
 
 Note that in the RW motor torque plot both the required control torque :math:`\hat u_B` and the true
-motor torque :math:`u_B\f` are shown.  This illustrates that with this maneuver the RW devices are being
+motor torque :math:`u_B` are shown.  This illustrates that with this maneuver the RW devices are being
 saturated, and the attitude still eventually stabilizes.
 
 .. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW100.svg
