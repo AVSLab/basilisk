@@ -19,6 +19,7 @@
 
 %module simMessages
 %{
+#include "accessSimMsg.h"
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
 #include "eclipseSimMsg.h"
@@ -64,6 +65,8 @@ namespace std {
     %template(ThrusterConfigVector) vector<THRConfigSimMsg>;
 }
 
+%include "accessSimMsg.h"
+GEN_SIZEOF(AccessSimMsg)
 %include "boreAngleSimMsg.h"
 GEN_SIZEOF(AngOffValuesSimMsg)
 %include "cssRawDataSimMsg.h"

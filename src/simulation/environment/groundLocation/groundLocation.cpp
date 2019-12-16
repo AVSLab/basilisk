@@ -204,10 +204,11 @@ void GroundLocation::computeAccess()
     for(scStatesMsgIt = scStates.begin(), accessMsgIt = accessMsgBuffer.begin(); scStatesMsgIt != scStates.end(); scStatesMsgIt++, accessMsgIt++){
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
         Eigen::Vector3d r_BL_N = (cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N) - this->r_LP_N;
-        Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_N.norm();
+        auto r_BL_mag = r_BL_N.norm();
+        Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
         double viewAngle = D2R*(90.-R2D*acos(this->rhat_LP_N.dot(relativeHeading_N)));
 
-        if(viewAngle > this->minimumElevation && r_BL_N.norm() < this->maximumRange){
+        if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange)){
             accessMsgIt->hasAccess = 1;
             accessMsgIt->slantRange = r_BL_N.norm();
             accessMsgIt->elevation= viewAngle;
@@ -219,7 +220,6 @@ void GroundLocation::computeAccess()
             accessMsgIt->elevation = 0.0;
         }
     }
-    return;
 }
 
 void GroundLocation::UpdateState(uint64_t CurrentSimNanos)
@@ -228,5 +228,4 @@ void GroundLocation::UpdateState(uint64_t CurrentSimNanos)
     this->computeAccess();
     this->WriteMessages(CurrentSimNanos);
 
-    return;
 }

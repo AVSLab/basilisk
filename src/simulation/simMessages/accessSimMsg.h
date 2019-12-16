@@ -24,13 +24,15 @@
  *  @{
  */
 
-/*! @brief Structure used to define the the epoch date and time message */
+/*! @brief Message that defines access to spacecraft from a groundLocation, providing access, range, and elevation with
+ * repect to a ground location.
+ */
 typedef struct {
-    uint64_t hasAccess;//! [-] True when the writer has access to a spacecraft; false otherwise.
+    uint64_t hasAccess;//! [-] 1 when the writer has access to a spacecraft; 0 otherwise.
     double slantRange;//![m] Range from a location to the spacecraft.
     double elevation;//![deg] Elevation angle for a given spacecraft.
 }AccessSimMsg;
 
 /* @} */
 
-#endif /* epochSimMsg_h */
+#endif /* accessSimMsg.h */
