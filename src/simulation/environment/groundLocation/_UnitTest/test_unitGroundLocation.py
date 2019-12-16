@@ -116,8 +116,9 @@ def test_range():
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
     # Get the logged data
-    #sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
-    #sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
+    sc1_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.hasAccess',range(1))
+    sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
+    sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
 
     sc2_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.hasAccess',range(1))
     sc2_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.slantRange',range(1))
