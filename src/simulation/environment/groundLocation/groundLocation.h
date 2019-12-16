@@ -48,6 +48,66 @@ output messages are named "ModelTag_#_access", where "ModelTag" is the ModelTag 
 message as they were added to the class; the first spacecraft is "0", the second is "1", and so on.
 
  */
+
+/*! \defgroup groundInteractionSystem
+  @brief This module simulates the existence of a locatio[n on a fixed point of a planet's surface, such as a science target,
+ or communications array, and computes the access of a set of spacecraft relative to that target.
+
+ ## Module Purpose
+
+ ### Module Assumptions and Limitations
+   This module assumes that it is affixed to a spherical body with a constant radius. Elevation constraints are computed assuming
+   a conical field of view around the normal vector fom the body's surface at the location.
+
+ ## Message Connection Descriptions
+    The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+    Msg Variable Name | Msg Type | Description
+    ------------------|----------|-------------
+    scStateInMsgNames | SCPlusStatesSimMsg |Provides inertial position of spacecraft. Set using the addSpacecraftToModel method.
+    planetInMsgName   |  SPICEPlanetStateSimMsg | Provides inertial planet location and orientation.
+    accessOutMsgNames | AccessSimMsg | List of access message names; defaults to `modelTag_scNumber_access`; created during addSpacecraftToModel calls.
+
+ ## Detailed Module Description
+
+ groundLocation handles the following behvaior:
+ 1. Body-fixed location representation: a single groundLocation instance represents one body-fixed location on a body, including
+ translation and rotation due to the motion of that body as computed by a module that writes a SPICEPlanetStateSimMsg.
+ 2. Conversion of latitude, longitude, altitude coordinates to planet-centered, planet-fixed coordinates
+ 3. Computation of spacecraft visibility ("access") considering range and ground location field-of-view constraints
+ 4. Support for multiple spacecraft given one groundLocation instance
+
+ ## User Guide
+ A new instance of groundLocation, alongside necessary user-supplied parameters, can be created by calling:
+~~~~~~~{.py}
+    groundTarget = groundLocation.GroundLocation()
+    groundTarget.ModelTag = "groundTarget"
+    groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
+    groundTarget.maximumRange = 100e3 # Sets maximum range for visibility in meters
+    groundTarget.minimumElevation = np.radians(10.) #   Sets necessary minimum elevation for visibility to 10 deg in radians
+    groundTarget.specifyLocation(np.radians(0.), np.radians(0.), 0.) #  Sets location in latitude, longitude, altitude coordinates
+    scSim.AddModelToTask(simTaskName, groundTarget)
+~~~~~~~
+
+ A groundLocation can be affixed to a specific planet by setting its planetInMsgName attribute:
+~~~~~~~{.py}
+    groundTarget.planetInMsgName = planet_message_name
+~~~~~~~
+
+Spacecraft can be added to the model by calling:
+ ~~~~~~~{.py}
+    groundTarget.addSpacecraftToModel(sc1_message_name)
+    groundTarget.addSpacecraftToModel(sc2_message_name)
+    groundTarget.addSpacecraftToModel(sc3_message_name)
+
+    #   Sim code
+    sc1_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.hasAccess',range(1))
+    sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
+    sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
+~~~~~~~
+
+
+ */
+
 class GroundLocation:  public SysModel {
 public:
     GroundLocation();
@@ -67,7 +127,7 @@ private:
 
 public:
     double planetRadius; //! [m] Planet radius in meters.
-    double minimumElevation; //! [deg] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
+    double minimumElevation; //! [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
     double maximumRange; //! [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
     std::string planetInMsgName;
     std::vector<std::string> accessOutMsgNames;
