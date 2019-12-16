@@ -151,6 +151,79 @@ def test_range():
 
     assert (range_worked and elevation_worked and access_worked)
 
+
+def test_rotation():
+    '''
+    Tests whether groundLocation:
+        1. Computes the current location based on the initial position and the rotation rate of the planet
+        it is attached to.
+    :return:
+    '''
+    testFailCount = 0
+    testMessages = []
+
+    simTaskName = "simTask"
+    simProcessName = "simProcess"
+    scSim = SimulationBaseClass.SimBaseClass()
+    scSim.TotalSim.terminateSimulation()
+    dynProcess = scSim.CreateNewProcess(simProcessName)
+    simulationTime = macros.sec2nano(10. * 60.)
+    simulationTimeStep = macros.sec2nano(1.)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+
+    #   Initialize new atmosphere and drag model, add them to task
+    groundTarget = groundLocation.GroundLocation()
+    groundTarget.ModelTag = "groundTarget"
+    groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
+    groundTarget.maximumRange = 100e3 # meters
+    groundTarget.minimumElevation = np.radians(89.)
+    groundTarget.specifyLocation(np.radians(0.), np.radians(-10), 0.)
+    scSim.AddModelToTask(simTaskName, groundTarget)
+
+    #   Write out mock planet rotation, spacecraft position messages
+    sc1_message = simMessages.SCPlusStatesSimMsg()
+    sc1_message.r_BN_N = np.array([orbitalMotion.REQ_EARTH*1e3 + 90e3, 0, 0])  # SC1 is in range
+    sc1_message_name = "sc1_msg"
+
+    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc1_message_name, sc1_message)
+    groundTarget.addSpacecraftToModel(sc1_message_name)
+
+    planet_message = simMessages.SpicePlanetStateSimMsg()
+    planet_message_name = "test_planet"
+    planet_message.J20002Pfix = rbk.euler3(np.radians(10.)).tolist()
+
+    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, planet_message_name, planet_message)
+    groundTarget.planetInMsgName = planet_message_name
+
+    # Log the access indicator
+    numDataPoints = 2
+    samplingTime = int(simulationTime / (numDataPoints - 1))
+    scSim.TotalSim.logThisMessage(groundTarget.accessOutMsgNames[0], samplingTime)
+    # Run the sim
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(simulationTime)
+    scSim.ExecuteSimulation()
+    # Get the logged data
+    sc1_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.hasAccess',range(1))
+    sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
+    sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
+
+    #   Compare to expected values
+    accuracy = 1e-8
+    ref_ranges = [90e3]
+    ref_elevation = [np.radians(90.)]
+    ref_access = [1]
+
+    test_ranges = [sc1_slant[0,1]]
+    test_elevation = [sc1_elevation[0,1]]
+    test_access = [sc1_access[0,1]]
+
+    range_worked = test_ranges == pytest.approx(ref_ranges, accuracy)
+    elevation_worked = test_elevation == pytest.approx(ref_elevation, test_elevation)
+    access_worked = test_access == pytest.approx(ref_access, abs=1e-16)
+
+    assert (range_worked and elevation_worked and access_worked)
+
 def plot_geometry(groundLocation, scLocations, minimumElevation):
     """
     Plots the location of a ground station, its field of view,  and the positions of two spacecraft to verify whether
@@ -188,4 +261,4 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
     plt.show()
 
 if __name__ == '__main__':
-    test_range()
+    test_rotation()
