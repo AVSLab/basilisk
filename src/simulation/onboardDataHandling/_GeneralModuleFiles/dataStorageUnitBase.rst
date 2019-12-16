@@ -22,17 +22,17 @@ Message Connection Descriptions
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
 .. table:: Module I/O Messages
-        :widths: 25 25 100
+   :widths: 25 25 100
 
-        +------------------------------+---------------------------------+-------------------------------------------------------+
-        | Msg Variable Name            | Msg Type                        | Description                                           |
-        +==============================+=================================+=======================================================+
-        | nodeDataUseMsgNames          | :ref:`dataNodeUsageSimMsg`      | Input messages. Vector of data node usage             |
-        |                              |                                 | usage messages. Set using ``addDataNodeToModel``      |
-        +------------------------------+---------------------------------+-------------------------------------------------------+
-        | storageUnitDataOutMsgName    | :ref:`DataStorageStatusSimMsg`  | Output message. Describes storage unit                |
-        |                              |                                 | capacity, storage level, net data rate, and contents. |                |
-        +------------------------------+---------------------------------+-------------------------------------------------------+
+   +------------------------------+---------------------------------+-------------------------------------------------------+
+   | Msg Variable Name            | Msg Type                        | Description                                           |
+   +==============================+=================================+=======================================================+
+   | nodeDataUseMsgNames          | :ref:`dataNodeUsageSimMsg`      | Input messages. Vector of data node usage             |
+   |                              |                                 | usage messages. Set using ``addDataNodeToModel``      |
+   +------------------------------+---------------------------------+-------------------------------------------------------+
+   | storageUnitDataOutMsgName    | :ref:`DataStorageStatusSimMsg`  | Output message. Describes storage unit                |
+   |                              |                                 | capacity, storage level, net data rate, and contents. |
+   +------------------------------+---------------------------------+-------------------------------------------------------+
 
 User Guide
 ----------
