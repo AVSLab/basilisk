@@ -88,7 +88,7 @@ message as they were added to the class; the first spacecraft is "0", the second
     scSim.AddModelToTask(simTaskName, groundTarget)
 ~~~~~~~
 
- A groundLocation can be affixed to a specific planet by setting its planetInMsgName attribute:
+ A groundLocation can be affixed to a specaific planet by setting its planetInMsgName attribute:
 ~~~~~~~{.py}
     groundTarget.planetInMsgName = planet_message_name
 ~~~~~~~
