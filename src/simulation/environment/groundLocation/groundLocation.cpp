@@ -20,7 +20,7 @@
 #include "groundLocation.h"
 #include "architecture/messaging/system_messaging.h"
 #include "../utilities/avsEigenSupport.h"
-#include "../../../../../../../../../usr/include/c++/7/string"
+
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
  @return void

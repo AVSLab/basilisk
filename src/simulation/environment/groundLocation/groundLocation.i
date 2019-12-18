@@ -23,7 +23,6 @@
     #include "groundLocation.h"
 %}
 
-%include "stdint.i"
 %include "swig_common_model.i"
 %include "sys_model.h"
 %include "groundLocation.h"

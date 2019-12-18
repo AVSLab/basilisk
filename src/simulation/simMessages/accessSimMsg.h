@@ -17,9 +17,8 @@
 
  */
 
-#ifndef accessSimMsg_h
-#define accessSimMsg_h
-
+#ifndef ACCESSSIMMSG_H
+#define ACCESSSIMMSG_H
 /*! \defgroup simMessages
  *  @{
  */
