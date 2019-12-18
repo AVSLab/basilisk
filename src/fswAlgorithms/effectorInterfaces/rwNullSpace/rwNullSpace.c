@@ -76,6 +76,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
 
+    memset(&localRWData, 0x0, sizeof(RWConstellationFswMsg));
     /*! -# read in the RW spin axis headings */
     ReadMessage(configData->inputRWConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWConstellationFswMsg), (void *) &localRWData, moduleID);
