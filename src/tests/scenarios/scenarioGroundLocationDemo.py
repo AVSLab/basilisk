@@ -209,8 +209,9 @@ def run():
 
     locationData = scenarioSim.pullMultiMessageLogData([boulder.accessOutMsgNames[0]+'.hasAccess',
                                                       boulder.accessOutMsgNames[0] + '.slantRange',
-                                                      boulder.accessOutMsgNames[0] + '.elevation'],
-                                                      [range(1),range(1),range(1)], ['int','double','double'])
+                                                      boulder.accessOutMsgNames[0] + '.elevation',
+                                                        boulder.accessOutMsgNames[0] + '.azimuth'],
+                                                      [range(1),range(1),range(1),range(1)], ['int','double','double','double'])
 
     accessHist = locationData[boulder.accessOutMsgNames[0]+'.hasAccess']
     rangeHist = locationData[boulder.accessOutMsgNames[0]+'.slantRange']
@@ -226,14 +227,16 @@ def run():
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    plt.plot(tvec,accessHist[:,1],label='Access')
+
     plt.plot(tvec,rangeHist[:,1]/1000.,label='Range from Boulder (m)')
     plt.plot(tvec,np.degrees(elevationHist[:,1]),label='Elevation (deg)')
     plt.xlabel('Time (Hr)')
     plt.grid(True)
     plt.legend()
 
-    pltName = "scenario_powerDemo"
+    plt.plot(tvec, accessHist[:, 1], label='Access')
+
+    pltName = "scenarioGroundLocation"
     figureList[pltName] = plt.figure(1)
 
     return figureList

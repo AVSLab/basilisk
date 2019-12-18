@@ -41,7 +41,8 @@ GroundLocation::GroundLocation()
     this->planetState.J20002Pfix[0][0] = 1;
     this->planetState.J20002Pfix[1][1] = 1;
     this->planetState.J20002Pfix[2][2] = 1;
-    return;
+
+    this->r_North_N << 0, 0, 1;
 }
 
 /*! Empty destructor method.
@@ -69,6 +70,7 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt)
 {
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
     this->r_LP_P_Init = LLA2PCPF(tmpLLAPosition, this->planetRadius);
+
     return;
 }
 
@@ -189,6 +191,7 @@ void GroundLocation::updateInertialPositions()
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
 
+
     return;
 }
 
@@ -196,7 +199,6 @@ void GroundLocation::computeAccess()
 {
     // Update the groundLocation's inertial position
     this->updateInertialPositions();
-
 
     // Iterate over spacecraft position messages and compute the access for each one
     std::vector<AccessSimMsg>::iterator accessMsgIt;
@@ -211,7 +213,8 @@ void GroundLocation::computeAccess()
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange)){
             accessMsgIt->hasAccess = 1;
             accessMsgIt->slantRange = r_BL_N.norm();
-            accessMsgIt->elevation= viewAngle;
+            accessMsgIt->elevation = viewAngle;
+            accessMsgIt->azimuth = acos(this->r_North_N.dot(relativeHeading_N));
         }
         else
         {

@@ -29,8 +29,9 @@
  */
 typedef struct {
     uint64_t hasAccess;//! [-] 1 when the writer has access to a spacecraft; 0 otherwise.
-    double slantRange;//![m] Range from a location to the spacecraft.
-    double elevation;//![deg] Elevation angle for a given spacecraft.
+    double slantRange;//! [m] Range from a location to the spacecraft.
+    double elevation;//! [rad] Elevation angle for a given spacecraft.
+    double azimuth; //! [rad] Azimuth angle for a spacecraft.
 }AccessSimMsg;
 
 /* @} */

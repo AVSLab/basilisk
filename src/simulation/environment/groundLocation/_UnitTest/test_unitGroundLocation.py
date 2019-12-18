@@ -155,9 +155,9 @@ def test_rotation(show_plots):
     groundTarget = groundLocation.GroundLocation()
     groundTarget.ModelTag = "groundTarget"
     groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
-    groundTarget.maximumRange = 100e3 # meters
-    groundTarget.minimumElevation = np.radians(89.)
-    groundTarget.specifyLocation(np.radians(0.), np.radians(-10), 0.)
+    groundTarget.maximumRange = 200e3 # meters
+    groundTarget.minimumElevation = np.radians(10.)
+    groundTarget.specifyLocation(np.radians(1.), np.radians(-10), 0.)
     scSim.AddModelToTask(simTaskName, groundTarget)
 
     #   Write out mock planet rotation, spacecraft position messages
@@ -187,6 +187,7 @@ def test_rotation(show_plots):
     sc1_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.hasAccess',range(1))
     sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
     sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
+    sc1_azimuth = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.azimuth',range(1))
 
     #   Compare to expected values
     accuracy = 1e-8
@@ -241,4 +242,4 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
     plt.show()
 
 if __name__ == '__main__':
-    test_rotation()
+    test_rotation(False)
