@@ -1,8 +1,8 @@
 Executive Summary
 -----------------
-The dataNodeBase class is used generate a standard interface and list of features for modules that consume or provide data. Specifically, each DataNodeBase:
+The dataNodeBase class is used to generate a standard interface and list of features for modules that generate or downlink simulated onboard data (ie. science or telemetry data). Specifically, each DataNodeBase:
 
-1. Writes out a :ref:`DataNodeUsageSimMsg` describing its data name and consumption/generation at each sim update
+1. Writes out a :ref:`DataNodeUsageSimMsg` describing its data name and the amount of data it has generated or downlinked (using baud rates) at each sim update.
 2. Can be switched on or off using an optional :ref:`DeviceStatusIntMsg`
 3. Can also be switched on or off using the public variable ``dataStatus``
 
@@ -37,8 +37,8 @@ The following table lists all the module input and output messages.  The module 
 
 User Guide
 ----------
-- To specify the modules simulated data consumption (neg. value) or generation (pos. value), set the variable ``nodeBaudRate`` to the desired value in units of bps (baud) in Python.
-- To specify the name of the data so it can be partitioned in a storage unit, set the variable 'nodeDataName' in Python.
-- Specify the module output message name using the variable ``nodeDataOutMsgName``
+- To specify the module's simulated data consumption (neg. value) or generation (pos. value), set the variable ``nodeBaudRate`` to the desired value in units of bps (baud) in Python.
+- To specify the name of the data so that it may be partitioned in a storage unit, set the variable 'nodeDataName' in Python.
+- Specify the module output message name using the variable ``nodeDataOutMsgName`` in Python.
 - The module data status can be set using the public variable ``dataStatus``.  The default value is 1 meaning the device is on.  If set to 0 the device is off and the data value returns to 0.
 - The module data status can be set also through an optional input message.  By specifying a non-empty string from ``nodeStatusInMsgName`` the status message is read in at every time step.

@@ -32,12 +32,34 @@ This module uses the input and output messages of the :ref:`DataNodeBase` base c
 
 User Guide
 ----------
-This module inherits the user guide from the :ref:`DataNodeBase` base class.  Module specific instructions include:
+This module inherits the user guide from the :ref:`DataNodeBase` base class, but there are several key differences from other :ref:`DataNodeBase` child classes:
 
 - Unlike other child classes of :ref:`DataNodeBase`, this module does not require a user to set a `nodeDataName`
 - The `nodeBaudRate` variable should be set to a negative value in order to remove data from the storage unit.
 - The user must specify a `packetSize` variable (negative value) in addition to the `nodeBaudRate` variable
 - The user must specify the number of buffers `numBuffers` variable so the transmitter knows how many buffers to search through
 - The user must specify the storage unit the transmitter should subscribe to using the `addStorageUnitToTransmitter()`` method
+
+To set up this module users must create a SimpleTransmitter instance::
+
+   transmitter = simpleTransmitter.SimpleTransmitter()
+   transmitter.ModelTag = "transmitter"
+
+Set the `nodeBaudRate`, `packetSize`, and numBuffers variables::
+
+   transmitter.nodeBaudRate = -16000. # baud
+   transmitter.packetSize = -1E6 # bits
+   transmitter.numBuffers = 2
+
+The next step is to attach one or more :ref:`DataStorageStatusSimMsg` instances to it using the ``addStorageUnitToTransmitter()`` method::
+
+   transmitter.addStorageUnitToTransmitter("msg name")
+
+The final step is to specify the output message name and add the model to task::
+
+    transmitter.nodeDataOutMsgName = "TransmitterMsg"
+    scenarioSim.AddModelToTask(taskName, transmitter)
+
+Follow the :ref:`partitionedStorageUnit` or :ref:`simpleStorageUnit` instructions to add the transmitter to a storage unit.
 
 For more information on how to set up and use this module, see the simple data system example: :ref:`scenarioDataDemo`

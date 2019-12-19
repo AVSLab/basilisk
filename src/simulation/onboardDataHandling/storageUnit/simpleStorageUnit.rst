@@ -21,7 +21,7 @@ This module only uses the input and output messages of the :ref:`DataStorageUnit
 User Guide
 ----------
 
-To set up this module users must create a SimpleBattery instance::
+To set up this module users must create a SimpleStorageUnit instance::
 
    storageUnit = simpleStorageUnit.SimpleStorageUnit()
    storageUnit.ModelTag = "storageUnit"
