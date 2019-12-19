@@ -38,6 +38,7 @@ GroundLocation::GroundLocation()
     this->r_LP_P.fill(0.0);
     this->r_LP_P_Init.fill(0.0);
 
+    memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
     this->planetState.J20002Pfix[0][0] = 1;
     this->planetState.J20002Pfix[1][1] = 1;
     this->planetState.J20002Pfix[2][2] = 1;
