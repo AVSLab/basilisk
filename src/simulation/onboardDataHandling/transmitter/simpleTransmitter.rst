@@ -12,6 +12,24 @@ Message Connection Descriptions
 -------------------------------
 This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional :ref:`DataStorageStatusSimMsg` input message subscribed to and read in `customCrossInit()` and `customRead()` methods, respectively.
 
+.. table:: Module I/O Messages
+    :widths: 25 25 100
+
+    +-----------------------+---------------------------------+---------------------------------------------------+
+    | Msg Variable Name     | Msg Type                        | Description                                       |
+    +=======================+=================================+===================================================+
+    | nodeDataOutMsgName    | :ref:`DataNodeUsageSimMsg`      | Writes out the data name and amount used/generated|
+    |                       |                                 | by a DataNodeBase instance.                       |
+    +-----------------------+---------------------------------+---------------------------------------------------+
+    | deviceStatusInMsgName | :ref:`DeviceStatusIntMsg`       | (optional). If dataStatus is 0,                   |
+    |                       |                                 | the node is disabled; other values indicate       |
+    |                       |                                 | various data modes depending on the module.       |
+    +-----------------------+---------------------------------+---------------------------------------------------+
+    | storageUnitMsgNames   | :ref:`DataStorageStatusSimMsg`  | Vector of storage units that are connected        |
+    |                       |                                 | to the transmitter. Add storage unit with the     |
+    |                       |                                 | ``addStorageUnitToTransmitter`` method.           |
+    +-----------------------+---------------------------------+---------------------------------------------------+
+
 User Guide
 ----------
 This module inherits the user guide from the :ref:`DataNodeBase` base class.  Module specific instructions include:

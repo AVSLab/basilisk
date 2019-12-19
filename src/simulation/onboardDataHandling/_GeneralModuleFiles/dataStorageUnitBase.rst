@@ -27,8 +27,8 @@ The following table lists all the module input and output messages.  The module 
    +------------------------------+---------------------------------+-------------------------------------------------------+
    | Msg Variable Name            | Msg Type                        | Description                                           |
    +==============================+=================================+=======================================================+
-   | nodeDataUseMsgNames          | :ref:`dataNodeUsageSimMsg`      | Input messages. Vector of data node usage             |
-   |                              |                                 | usage messages. Set using ``addDataNodeToModel``      |
+   | nodeDataUseMsgNames          | :ref:`dataNodeUsageSimMsg`      | Input messages. Vector of data node usage messages.   |
+   |                              |                                 | Set using ``addDataNodeToModel``                      |
    +------------------------------+---------------------------------+-------------------------------------------------------+
    | storageUnitDataOutMsgName    | :ref:`DataStorageStatusSimMsg`  | Output message. Describes storage unit                |
    |                              |                                 | capacity, storage level, net data rate, and contents. |

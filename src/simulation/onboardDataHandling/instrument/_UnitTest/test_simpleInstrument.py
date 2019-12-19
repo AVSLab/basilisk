@@ -38,6 +38,7 @@ from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name
 def test_module():
+    """Module Unit Test"""
     # each test method requires a single assert method to be called
 
     default_results, default_message = test_default()
