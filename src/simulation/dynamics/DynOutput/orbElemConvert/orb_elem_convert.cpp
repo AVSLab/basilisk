@@ -77,7 +77,7 @@ void OrbElemConvert::CrossInit()
                                                                       StateString, inputSize, moduleID);
     if(StateInMsgID < 0)
     {
-        bskLogger.bskLog(WARNING, "Did not find a valid message with name: %s", StateString.c_str());
+        bskLogger.bskLog(BSK_WARNING, "Did not find a valid message with name: %s", StateString.c_str());
     }
 }
 

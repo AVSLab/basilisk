@@ -88,7 +88,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
         }
     }
     if (configData->numControlAxes == 0) {
-        _bskLog(configData->bskLogger, DEBUG,"rwMotorTorque() is not setup to control any axes!");
+        _bskLog(configData->bskLogger, BSK_INFORMATION,"rwMotorTorque() is not setup to control any axes!");
     }
     
     /*! - Read static RW config data message and store it in module variables */

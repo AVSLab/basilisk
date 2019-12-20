@@ -85,7 +85,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
     //! - If we got an invalid message ID back, alert the user and quit
     if(!MessageID.itemFound)
     {
-        bskLogger.bskLog(ERROR, "You requested a message name: %s that message does not exist.", MessageName.c_str());
+        bskLogger.bskLog(BSK_ERROR, "You requested a message name: %s that message does not exist.", MessageName.c_str());
         return(0);
     }
     //! - For valid message names, get the data buffer associated with message
@@ -101,7 +101,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
                                 MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
             break;
         default:
-            bskLogger.bskLog(ERROR, "I don't know how to access the log type: %u", logType);
+            bskLogger.bskLog(BSK_ERROR, "I don't know how to access the log type: %u", logType);
             break;
     }
     return(DataHeader.WriteClockNanos);
@@ -295,7 +295,7 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
     }
     else
     {
-        bskLogger.bskLog(ERROR, "You tried to create a message in a process that doesn't exist. No dice.");
+        bskLogger.bskLog(BSK_ERROR, "You tried to create a message in a process that doesn't exist. No dice.");
         throw std::range_error("Message creation failed.  Please examine output.\n");
     }
 
@@ -319,7 +319,7 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
     //! - If we got an invalid message ID back, alert the user and quit
     if(!MessageID.itemFound)
     {
-        bskLogger.bskLog(ERROR, "You tried to write to message name: %s that message does not exist.",
+        bskLogger.bskLog(BSK_ERROR, "You tried to write to message name: %s that message does not exist.",
                 MessageName.c_str());
         return;
     }
@@ -445,7 +445,7 @@ std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::st
 
     if(!messageFound)
     {
-        bskLogger.bskLog(WARNING, "I couldn't find a message with the name:"
+        bskLogger.bskLog(BSK_WARNING, "I couldn't find a message with the name:"
                                      " %s Can't give you exchange pairs for it.", messageName.c_str());
     }
     return(returnPairs);

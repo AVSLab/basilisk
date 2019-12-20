@@ -59,17 +59,17 @@ void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t
     {
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", configData->NumSensors, MAX_NUM_CSS_SENSORS);
-        _bskLog(configData->bskLogger, WARNING, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
         configData->NumSensors = MAX_NUM_CSS_SENSORS;
     }
     else if (configData->NumSensors == 0)
     {
-        _bskLog(configData->bskLogger, WARNING, "There are zero CSS configured!");
+        _bskLog(configData->bskLogger, BSK_WARNING, "There are zero CSS configured!");
     }
     
     if (configData->MaxSensorValue == 0)
     {
-        _bskLog(configData->bskLogger, WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!");
+        _bskLog(configData->bskLogger, BSK_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!");
     }
     
     memset(configData->InputValues.CosValue, 0x0, configData->NumSensors*sizeof(double));

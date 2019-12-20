@@ -71,7 +71,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
           configData->alignAxis_C[0], configData->alignAxis_C[1], configData->alignAxis_C[2]);
-        _bskLog(configData->bskLogger, ERROR, info);
+        _bskLog(configData->bskLogger, BSK_ERROR, info);
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->alignAxis_C, configData->alignAxis_C);    /* ensure that this vector is a unit vector */

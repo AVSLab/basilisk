@@ -99,7 +99,7 @@ void messageLogger::linkMessages()
         //! - Warn the user if linking failed and note that logging won't work for that message
         else
         {
-            bskLogger.bskLog(WARNING, "failed to find message: %s Disabling logging for it.", it->messageName.c_str());
+            bskLogger.bskLog(BSK_WARNING, "failed to find message: %s Disabling logging for it.", it->messageName.c_str());
         }
     }
 }

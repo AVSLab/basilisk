@@ -85,7 +85,7 @@ bool SimpleTransmitter::customReadMessages(){
         }
     }
     else {
-        bskLogger.bskLog(INFORMATION, "Data storage has no data node messages to read.");
+        bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
         dataRead = false;
     }
 

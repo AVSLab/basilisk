@@ -70,7 +70,7 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
       char info[MAX_LOGGING_LENGTH];
       sprintf(info, "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
                 configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
-      _bskLog(configData->bskLogger, ERROR, info);
+      _bskLog(configData->bskLogger, BSK_ERROR, info);
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->sHatBdyCmd, configData->sHatBdyCmd);    /* ensure that this vector is a unit vector */

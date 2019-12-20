@@ -542,7 +542,7 @@ void VSCMGStateEffector::CrossInit()
 																	 moduleID);
 	if(CmdsInMsgID < 0)
 	{
-        bskLogger.bskLog(WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
+        bskLogger.bskLog(BSK_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
 	}
 
 	std::vector<VSCMGConfigSimMsg>::iterator it;

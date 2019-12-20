@@ -82,7 +82,7 @@ void MagneticFieldWMM::customReset(uint64_t CurrentClock)
 
     //! - Check that required module variables are set
     if(this->dataPath == "") {
-        bskLogger.bskLog(ERROR, "WMM data path was not set.  No WMM.");
+        bskLogger.bskLog(BSK_ERROR, "WMM data path was not set.  No WMM.");
         return;
     }
 
@@ -166,7 +166,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
     calendar.Month = localDateTime.tm_mon + 1;
     calendar.Day = localDateTime.tm_mday;
     if (!MAG_DateToYear(&calendar, Error_Message)){
-        bskLogger.bskLog(ERROR, "Could not convert date to decimal year. \nError message: %s", Error_Message);
+        bskLogger.bskLog(BSK_ERROR, "Could not convert date to decimal year. \nError message: %s", Error_Message);
     }
 
     //! - determine number of days in this year
@@ -285,7 +285,7 @@ void MagneticFieldWMM::initializeWmm(const char *dataPath)
     strcpy(fileName, dataPath);
     strcat(fileName, "WMM.COF");
     if (!MAG_robustReadMagModels(fileName, &(this->magneticModels), 1)) {
-        bskLogger.bskLog(ERROR, "WMM unable to load file %s", fileName);
+        bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName);
         return;
     }
 
