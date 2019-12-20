@@ -20,15 +20,16 @@
 #ifndef _BSK_LOG_
 #define _BSK_LOG_
 
+
 //maximum length of info to log in a reference to BSKLogging in C, not relevant in C++
 #define MAX_LOGGING_LENGTH 255
 
 typedef enum {
-    DEBUG,
-    INFORMATION,
-    WARNING,
-    ERROR,
-    SILENT          // the coder should never use this flag when using bskLog().  It is used to turn off all output
+    BSK_DEBUG,
+    BSK_INFORMATION,
+    BSK_WARNING,
+    BSK_ERROR,
+    BSK_SILENT          // the coder should never use this flag when using bskLog().  It is used to turn off all output
 } logLevel_t;
 
 extern logLevel_t LogLevel;
@@ -56,11 +57,11 @@ class BSKLogger
     public:
         std::map<int, const char*> logLevelMap
         {
-            {0, "DEBUG"},
-            {1, "INFORMATION"},
-            {2, "WARNING"},
-            {3, "ERROR"},
-            {4, "SILENT"}
+            {0, "BSK_DEBUG"},
+            {1, "BSK_INFORMATION"},
+            {2, "BSK_WARNING"},
+            {3, "BSK_ERROR"},
+            {4, "BSK_SILENT"}
         };
 
     private:
