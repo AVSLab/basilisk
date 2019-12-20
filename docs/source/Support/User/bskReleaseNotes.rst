@@ -19,7 +19,7 @@ Upcoming Version 1.X.X
 ----------------------
 - added :ref:`Vizard scripting <vizardSettings>` abilities to control the new spacecraft camera view panel behaviors
 - added :ref:`Vizard scripting <vizardSettings>` abilities to specify custom CAD OBJ models to replace the default satellite shape
-- added an onboard data management module for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
+- added  :ref:`onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
 
 Version 1.4.0
 -------------
