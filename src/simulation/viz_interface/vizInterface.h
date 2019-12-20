@@ -177,7 +177,6 @@ public:
     bool liveStream;                            //! [Bool] Set True if Vizard should receive a live stream of BSK data.
     void* bskImagePtr;                            //! [RUN] Permanent pointer for the image to be used in BSK without relying on ZMQ because ZMQ will free it (whenever, who knows)
     
-    std::string vizOutMsgName;
     std::vector <std::string> planetNames;      //!< -- Names of planets we want to track, read in from python
 
     uint64_t numOutputBuffers;                  //! [-] Number of buffers to request for the output messages
