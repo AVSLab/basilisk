@@ -573,6 +573,15 @@ def createCameraConfigMsg(viz, **kwargs):
 
 
 def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
+    """
+    This methods creates an instance of the vizInterface() modules and setups up associated Vizard
+    configuration setting messages.
+
+    Args:
+        scSim:          variable with the simulationBaseClass copy
+        simTaskName:    task to which to add the vizInterface module
+        processName:    process to which to write a default zero planetary ephemeris message if this message does not exist
+    """
     if not vizFound:
         print('Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.')
         return
@@ -583,15 +592,40 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     del coneInOutList[:]
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream'],
+        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName'],
         kwargs)
 
     # setup the Vizard interface module
     vizMessenger = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessenger)
 
+    # create spacecraft information container
+    scData = vizInterface.VizSpacecraftData()
+
     # set spacecraft name
-    vizMessenger.spacecraftName = "bsk-Sat"
+    if 'scName' in kwargs:
+        val = kwargs['scName']
+        if not isinstance(val, str):
+            print('ERROR: scName must be a string')
+            exit(1)
+            scData.spacecraftName = val
+
+    # set number of RWs
+    if 'numRW' in kwargs:
+        scData.numRW = kwargs['numRW']
+
+    # set thruster device info
+    if 'thrDevices' in kwargs:
+        thrDevices = kwargs['thrDevices']
+        thList = []
+        for thClusterInfo in thrDevices:
+            thSet = vizInterface.ThrClusterMap()
+            thSet.thrCount = thClusterInfo[0]
+            thSet.thrTag = thClusterInfo[1]
+            thList.append(thSet)
+        scData.thrMsgData = vizInterface.VizThrConfig(thList)
+
+    vizMessenger.scData = vizInterface.VizSCVector([scData])
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
@@ -666,19 +700,5 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
                     # setting the msg structure name is required below to all the planet msg to be logged
                     unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
                                                ephemData, "SpicePlanetStateSimMsg")
-
-    if 'numRW' in kwargs:
-        vizMessenger.numRW = kwargs['numRW']
-
-    if 'thrDevices' in kwargs:
-        thrDevices = kwargs['thrDevices']
-        thList = []
-        for thClusterInfo in thrDevices:
-            thSet = vizInterface.ThrClusterMap()
-            thSet.thrCount = thClusterInfo[0]
-            thSet.thrTag = thClusterInfo[1]
-            thList.append(thSet)
-        vizMessenger.thrMsgData = vizInterface.VizThrConfig(thList)
-
 
     return vizMessenger
