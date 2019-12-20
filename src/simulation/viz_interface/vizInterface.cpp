@@ -37,24 +37,18 @@ void message_buffer_deallocate(void *data, void *hint);
  */
 VizInterface::VizInterface()
 {
-    VizSpacecraftData sc0Data;
     this->opNavMode = 0;
     this->saveFile = false;
     this->liveStream = false;
     this->FrameNumber= -1;
     this->numOutputBuffers = 2;
-    sc0Data.scPlusInMsgName = "inertial_state_output";
-    sc0Data.cssDataInMsgName = "css_sensors_data";
-    sc0Data.cssConfInMsgName = "css_config_data";
-    sc0Data.starTrackerInMsgName = "star_tracker_state";
-    sc0Data.cameraConfInMsgName = "camera_config_data";
-    sc0Data.numRW = 0;
-    sc0Data.numThr = 0;
-    sc0Data.spacecraftName = "spacecraft";
+
+    VizSpacecraftData sc0Data;
     memset(&sc0Data.cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
     sc0Data.cameraConfigMessage.cameraID = -1;
     strcpy(sc0Data.cameraConfigMessage.skyBox, "");
     this->scData.push_back(sc0Data);
+    
     this->planetNames = {};
 
     // turn off all Viz settings by default
@@ -79,8 +73,6 @@ VizInterface::~VizInterface()
  */
 void VizInterface::SelfInit()
 {
-    std::vector<VizSpacecraftData>::iterator it;
-
     if (this->opNavMode > 0 || this->liveStream){
         /* setup zeroMQ */
         this->bskImagePtr = NULL;
@@ -255,11 +247,11 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
     this->FrameNumber=-1;
     if (this->saveFile) {
-        if(this->outputStream && this->outputStream->is_open())
-        {
-            this->outputStream->close();
-            delete this->outputStream;
-        }
+//        if(this->outputStream && this->outputStream->is_open())
+//        {
+//            this->outputStream->close();
+//            delete this->outputStream;
+//        }
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
     }
 

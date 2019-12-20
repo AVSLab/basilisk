@@ -102,30 +102,30 @@ typedef struct {
 
 //! defines a data structure for the spacecraft components
 typedef struct {
-    std::string spacecraftName;
-    std::string cssDataInMsgName;                   //! [-] Name of the incoming css data
-    std::string cssConfInMsgName;                   //! [-] Name of the incoming css constellation data
-    std::string cameraConfInMsgName;                //! [-] Name of the incoming camera data
-    std::string scPlusInMsgName;                    //! [-] Name of the incoming SCPlus data
-    std::vector <std::string> rwInMsgName;          //! [-] Name of the incoming rw data
-    std::vector <ThrClusterMap> thrMsgData;         //! [-] Name of the incoming thruster data
-    std::string starTrackerInMsgName;               //! [-] Name of the incoming Star Tracker data
-    std::vector<MsgCurrStatus> rwInMsgID;           //! [-] ID of the incoming rw data
-    std::vector<MsgCurrStatus> thrMsgID;            //! [-] ID of the incoming thruster data
-    MsgCurrStatus starTrackerInMsgID;               //! [-] ID of the incoming Star Tracker data
-    MsgCurrStatus scPlusInMsgID;                    //! [-] ID of the incoming SCPlus data
-    MsgCurrStatus cssDataInMsgId;                   //! [-] ID of the incoming css data
-    MsgCurrStatus cssConfInMsgId;                   //! [-] ID of the incoming css constellation data
-    MsgCurrStatus cameraConfMsgId;                  //! [-] ID of the incoming camera  data
-    std::vector <RWConfigLogSimMsg> rwInMessage;    //! [-] RW data message
-    STSensorIntMsg STMessage;                       //! [-] ST data message
-    std::vector <THROutputSimMsg> thrOutputMessage; //! [-] Thr data message
-    SCPlusStatesSimMsg scPlusMessage;               //! [-] s/c plus message
-//    CSSArraySensorIntMsg cssDataMessage;          //! [-] CSS message
-    CSSConfigFswMsg cssConfigMessage;               //! [-] CSS config
-    CameraConfigMsg cameraConfigMessage;            //! [-] CSS config
-    int numRW;                                      //! [-] Number of RW set in python
-    int numThr;                                     //! [-] Number of Thrusters set in python
+    std::string spacecraftName = "bsk-Sat";
+    std::string cssDataInMsgName = "css_sensors_data";          //! [-] Name of the incoming css data
+    std::string cssConfInMsgName = "css_config_data";           //! [-] Name of the incoming css constellation data
+    std::string cameraConfInMsgName = "camera_config_data";     //! [-] Name of the incoming camera data
+    std::string scPlusInMsgName = "inertial_state_output";      //! [-] Name of the incoming SCPlus data
+    std::vector <std::string> rwInMsgName;                      //! [-] Name of the incoming rw data
+    std::vector <ThrClusterMap> thrMsgData;                     //! [-] Name of the incoming thruster data
+    std::string starTrackerInMsgName = "star_tracker_state";    //! [-] Name of the incoming Star Tracker data
+    std::vector<MsgCurrStatus> rwInMsgID;                       //! [-] ID of the incoming rw data
+    std::vector<MsgCurrStatus> thrMsgID;                        //! [-] ID of the incoming thruster data
+    MsgCurrStatus starTrackerInMsgID;                           //! [-] ID of the incoming Star Tracker data
+    MsgCurrStatus scPlusInMsgID;                                //! [-] ID of the incoming SCPlus data
+    MsgCurrStatus cssDataInMsgId;                               //! [-] ID of the incoming css data
+    MsgCurrStatus cssConfInMsgId;                               //! [-] ID of the incoming css constellation data
+    MsgCurrStatus cameraConfMsgId;                              //! [-] ID of the incoming camera  data
+    std::vector <RWConfigLogSimMsg> rwInMessage;                //! [-] RW data message
+    STSensorIntMsg STMessage;                                   //! [-] ST data message
+    std::vector <THROutputSimMsg> thrOutputMessage;             //! [-] Thr data message
+    SCPlusStatesSimMsg scPlusMessage;                           //! [-] s/c plus message
+//    CSSArraySensorIntMsg cssDataMessage;                      //! [-] CSS message
+    CSSConfigFswMsg cssConfigMessage;                           //! [-] CSS config
+    CameraConfigMsg cameraConfigMessage;                        //! [-] CSS config
+    int numRW = 0;                                              //! [-] Number of RW set in python
+    int numThr = 0;                                             //! [-] Number of Thrusters set in python
 }VizSpacecraftData;
 
 typedef struct {
