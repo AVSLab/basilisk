@@ -20,6 +20,12 @@ Release Notes
     - add labels to spacecraft and sensor visualization
 
 
+**Version 0.8.1**
+
+- trigger colliders now resize to fit the spacecraft mesh being used (improves the user experience when double-clicking to change camera targets)
+- fixed a bug that prevented multiple custom models being loaded back-to-back
+- rebased on Unity2019.2.16f1
+
 **Version 0.8.0**
 
 - The camera view panel screen shot button now stores the PNG image in the user's home folder
