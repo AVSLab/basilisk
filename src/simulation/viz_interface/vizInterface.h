@@ -110,7 +110,6 @@ typedef struct {
     std::vector <std::string> rwInMsgName;          //! [-] Name of the incoming rw data
     std::vector <ThrClusterMap> thrMsgData;         //! [-] Name of the incoming thruster data
     std::string starTrackerInMsgName;               //! [-] Name of the incoming Star Tracker data
-    std::string opnavImageOutMsgName;               //! The name of the Image output message*/
     std::vector<MsgCurrStatus> rwInMsgID;           //! [-] ID of the incoming rw data
     std::vector<MsgCurrStatus> thrMsgID;            //! [-] ID of the incoming thruster data
     MsgCurrStatus starTrackerInMsgID;               //! [-] ID of the incoming Star Tracker data
@@ -125,7 +124,6 @@ typedef struct {
 //    CSSArraySensorIntMsg cssDataMessage;          //! [-] CSS message
     CSSConfigFswMsg cssConfigMessage;               //! [-] CSS config
     CameraConfigMsg cameraConfigMessage;            //! [-] CSS config
-    int32_t imageOutMsgID;                          //! ID for the outgoing Image message */
     int numRW;                                      //! [-] Number of RW set in python
     int numThr;                                     //! [-] Number of Thrusters set in python
 }VizSpacecraftData;
@@ -157,24 +155,13 @@ public:
     void WriteProtobuffer(uint64_t CurrentSimNanos);
 
 public:
-    std::vector<VizSpacecraftData> scData;      //! vector of spacecraft data sets
-    std::string cssDataInMsgName;               //! [-] Name of the incoming css data
-    std::string cssConfInMsgName;               //! [-] Name of the incoming css constellation data
-    std::string cameraConfInMsgName;            //! [-] Name of the incoming camera data
-    std::string scPlusInMsgName;                //! [-] Name of the incoming SCPlus data
+    std::vector<VizSpacecraftData> scData;      //! [-] vector of spacecraft data containers
     std::vector <std::string> spiceInMsgName;   //! [-] Name of the incoming Spice data
-    std::vector <std::string> rwInMsgName;      //! [-] Name of the incoming rw data
-    std::vector <ThrClusterMap> thrMsgData;     //! [-] Name of the incoming thruster data
-    std::string starTrackerInMsgName;           //! [-] Name of the incoming Star Tracker data
-
-    std::string spacecraftName;                 //! [-] Name of the spacecraft being simulated
-    
     std::string opnavImageOutMsgName;           //! The name of the Image output message*/
-
     int opNavMode;                              //! [int] Set non-zero positive value  if Unity/Viz couple in direct communication. (1 - regular opNav, 2 - performance opNav)
     bool saveFile;                              //! [Bool] Set True if Vizard should save a file of the data.
     bool liveStream;                            //! [Bool] Set True if Vizard should receive a live stream of BSK data.
-    void* bskImagePtr;                            //! [RUN] Permanent pointer for the image to be used in BSK without relying on ZMQ because ZMQ will free it (whenever, who knows)
+    void* bskImagePtr;                          //! [RUN] Permanent pointer for the image to be used in BSK without relying on ZMQ because ZMQ will free it (whenever, who knows)
     
     std::vector <std::string> planetNames;      //!< -- Names of planets we want to track, read in from python
 
@@ -182,11 +169,7 @@ public:
     
     int64_t FrameNumber;                        //! Number of frames that have been updated for TimeStamp message
     std::string protoFilename;                  //! Filename for where to save the protobuff message
-    int numRW;                                  //! [-] Number of RW set in python
-    int numThr;                                 //! [-] Number of Thrusters set in python
     VizSettings settings;                       //! [-] container for the Viz settings that can be specified from BSK
-
-    CameraConfigMsg cameraConfigMessage;        //! [-] camera config message copy
 
     BSKLogger bskLogger;                        //!< -- BSK Logging
 
@@ -195,25 +178,11 @@ private:
     // ZeroMQ State
     void* context;
     void* requester_socket;
-
-    std::vector<MsgCurrStatus> rwInMsgID;       //! [-] ID of the incoming rw data
-    std::vector<MsgCurrStatus> thrMsgID;        //! [-] ID of the incoming thruster data
-    MsgCurrStatus starTrackerInMsgID;           //! [-] ID of the incoming Star Tracker data
-    MsgCurrStatus scPlusInMsgID;                //! [-] ID of the incoming SCPlus data
-    std::vector<MsgCurrStatus>spiceInMsgID;     //! [-] IDs of the incoming planets' spice data
-    MsgCurrStatus cssDataInMsgId;               //! [-] ID of the incoming css data
-    MsgCurrStatus cssConfInMsgId;               //! [-] ID of the incoming css constellation data
-    MsgCurrStatus cameraConfMsgId;              //! [-] ID of the incoming camera  data
-    int32_t imageOutMsgID;                      //! ID for the outgoing Image message */
     int firstPass;                              //! Flag to intialize the viz at first timestep */
 
-    std::vector <RWConfigLogSimMsg> rwInMessage;//! [-] RW data message
-    STSensorIntMsg STMessage;                   //! [-] ST data message
-    std::vector <THROutputSimMsg> thrOutputMessage;//! [-] Thr data message
+    int32_t imageOutMsgID;                      //! ID for the outgoing Image message */
+    std::vector<MsgCurrStatus>spiceInMsgID;     //! [-] IDs of the incoming planets' spice data
     std::vector <SpicePlanetStateSimMsg> spiceMessage;//! [-] Spice messages
-    SCPlusStatesSimMsg scPlusMessage;           //! [-] s/c plus message
-//    CSSArraySensorIntMsg cssDataMessage;        //! [-] CSS message
-    CSSConfigFswMsg cssConfigMessage;           //! [-] CSS config
     std::ofstream *outputStream;                //! [-] Output file stream opened in reset
     
     std::map<uint32_t, SpicePlanetStateSimMsg> planetData; //!< -- Internal vector of planets
