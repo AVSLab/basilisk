@@ -7,6 +7,10 @@ Basilisk Module Checkout List
 This documents contains a series of action items that should be checked
 before a Basilisk (BSK) module is approved.
 
+Branch Must Be Up to Date
+-------------------------
+Make sure the branch is up to date and rebased on the latest develop code before a pull request is made.
+
 Building Basilisk and Testing
 -----------------------------
 
@@ -40,11 +44,13 @@ Module Programming
       messages
    -  The ``Reset()`` in the FSW modules should reset all the default
       module configuration parameters.
+- Is the module using the :ref:`bskLogging` Basilisk logging function?
+  A general support library, i.e. non-Basilisk module, should use ``BSK_PRINT()`` instead.
 
 Module Documentation
 --------------------
 
-Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` should be the same name as the module c or c++ file name.  The :ref:`fswModuleTemplate` module contains a sample documentation set for a Basilisk module.   The required sections include:
+Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` should be the same name as the module C or C++ file name.  The :ref:`fswModuleTemplate` module contains a sample documentation set for a Basilisk module.   The required sections include:
 
 -   Executive Summary
 -   Module Assumptions and Limitations
