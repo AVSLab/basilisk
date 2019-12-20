@@ -20,6 +20,8 @@ Upcoming Version 1.X.X
 - added :ref:`Vizard scripting <vizardSettings>` abilities to control the new spacecraft camera view panel behaviors
 - added :ref:`Vizard scripting <vizardSettings>` abilities to specify custom CAD OBJ models to replace the default satellite shape
 - added  :ref:`onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
+- updated :ref:`sunlineSuKF` with some general improvements
+- tweak to ``cmake`` file to make BSK be portable across Linux systems
 
 Version 1.4.0
 -------------
