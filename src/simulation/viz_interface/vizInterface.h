@@ -40,6 +40,7 @@
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
 #include "utilities/bskLogging.h"
 
+#define VIZ_MAX_SIZE 100000
 
 typedef struct {
     int64_t msgID;        //!< [-] message ID associated with source
@@ -99,6 +100,36 @@ typedef struct {
     int shader;                             //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
 }CustomModel;
 
+//! defines a data structure for the spacecraft components
+typedef struct {
+    std::string spacecraftName;
+    std::string cssDataInMsgName;                   //! [-] Name of the incoming css data
+    std::string cssConfInMsgName;                   //! [-] Name of the incoming css constellation data
+    std::string cameraConfInMsgName;                //! [-] Name of the incoming camera data
+    std::string scPlusInMsgName;                    //! [-] Name of the incoming SCPlus data
+    std::vector <std::string> rwInMsgName;          //! [-] Name of the incoming rw data
+    std::vector <ThrClusterMap> thrMsgData;         //! [-] Name of the incoming thruster data
+    std::string starTrackerInMsgName;               //! [-] Name of the incoming Star Tracker data
+    std::string opnavImageOutMsgName;               //! The name of the Image output message*/
+    std::vector<MsgCurrStatus> rwInMsgID;           //! [-] ID of the incoming rw data
+    std::vector<MsgCurrStatus> thrMsgID;            //! [-] ID of the incoming thruster data
+    MsgCurrStatus starTrackerInMsgID;               //! [-] ID of the incoming Star Tracker data
+    MsgCurrStatus scPlusInMsgID;                    //! [-] ID of the incoming SCPlus data
+    MsgCurrStatus cssDataInMsgId;                   //! [-] ID of the incoming css data
+    MsgCurrStatus cssConfInMsgId;                   //! [-] ID of the incoming css constellation data
+    MsgCurrStatus cameraConfMsgId;                  //! [-] ID of the incoming camera  data
+    std::vector <RWConfigLogSimMsg> rwInMessage;    //! [-] RW data message
+    STSensorIntMsg STMessage;                       //! [-] ST data message
+    std::vector <THROutputSimMsg> thrOutputMessage; //! [-] Thr data message
+    SCPlusStatesSimMsg scPlusMessage;               //! [-] s/c plus message
+//    CSSArraySensorIntMsg cssDataMessage;          //! [-] CSS message
+    CSSConfigFswMsg cssConfigMessage;               //! [-] CSS config
+    CameraConfigMsg cameraConfigMessage;            //! [-] CSS config
+    int32_t imageOutMsgID;                          //! ID for the outgoing Image message */
+    int numRW;                                      //! [-] Number of RW set in python
+    int numThr;                                     //! [-] Number of Thrusters set in python
+}VizSpacecraftData;
+
 typedef struct {
     double      ambient;        //!< [-] Ambient background lighting. Should be a value between 0 and 8.  A value of -1 means it is not set.
     int32_t     orbitLinesOn;   //! toogle for showing orbit lines (-1, 0, 1)
@@ -126,6 +157,7 @@ public:
     void WriteProtobuffer(uint64_t CurrentSimNanos);
 
 public:
+    std::vector<VizSpacecraftData> scData;      //! vector of spacecraft data sets
     std::string cssDataInMsgName;               //! [-] Name of the incoming css data
     std::string cssConfInMsgName;               //! [-] Name of the incoming css constellation data
     std::string cameraConfInMsgName;            //! [-] Name of the incoming camera data
@@ -158,7 +190,7 @@ public:
 
     CameraConfigMsg cameraConfigMessage;        //! [-] camera config message copy
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                        //!< -- BSK Logging
 
 
 private:
