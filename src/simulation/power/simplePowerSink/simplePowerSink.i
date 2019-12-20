@@ -29,7 +29,7 @@
 %include "simplePowerSink.h"
 
 %include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/DeviceStatusIntMsg.h"
+%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
 
 GEN_SIZEOF(PowerNodeUsageSimMsg)
 GEN_SIZEOF(DeviceStatusIntMsg)
