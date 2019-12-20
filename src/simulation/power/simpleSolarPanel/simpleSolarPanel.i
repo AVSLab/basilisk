@@ -29,7 +29,7 @@
 %include "simpleSolarPanel.h"
 
 %include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/DeviceStatusIntMsg.h"
+%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/eclipseSimMsg.h"
