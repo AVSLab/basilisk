@@ -29,7 +29,7 @@
 %include "simpleTransmitter.h"
 
 %include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simFSWInterfaceMessages/deviceStatusIntMsg.h"
+%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
 
 GEN_SIZEOF(DataNodeUsageSimMsg)
 GEN_SIZEOF(DeviceStatusIntMsg)
