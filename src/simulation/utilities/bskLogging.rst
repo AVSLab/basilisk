@@ -8,16 +8,16 @@ This support class ``bskLogger`` enables C++ ``bskLog()`` and ANSI-C ``_bskLog()
         +-----------------------+---------------------------------+---------------------------------------------------+
         | Level                 | Description                                                                         |
         +=======================+=================================+===================================================+
-        | DEBUG                 | Can be used for debug information logging.  Such ``bskLog`` statement should not be |
+        | BSK_DEBUG             | Can be used for debug information logging.  Such ``bskLog`` statement should not be |
         |                       | left in the final Basilisk code.                                                    |
         +-----------------------+---------------------------------+---------------------------------------------------+
-        | INFORMATION           | General information messages                                                        |
+        | BSK_INFORMATION       | General information messages                                                        |
         +-----------------------+---------------------------------+---------------------------------------------------+
-        | WARNING               | Warnings about unexpected behavior, but not outright errors.                        |
+        | BSK_WARNING           | Warnings about unexpected behavior, but not outright errors.                        |
         +-----------------------+---------------------------------+---------------------------------------------------+
-        | ERROR                 | Erroneous behavior that needs to be fixed.                                          |
+        | BSK_ERROR             | Erroneous behavior that needs to be fixed.                                          |
         +-----------------------+---------------------------------+---------------------------------------------------+
-        | SILENT                | This level is used to silence all `bskLog` statements.  This should never be used   |
+        | BSK_SILENT            | This level is used to silence all `bskLog` statements.  This should never be used   |
         |                       | with the `bskLog` method within the C++ or C code.                                  |
         +-----------------------+---------------------------------+---------------------------------------------------+
 
@@ -55,13 +55,13 @@ It is possible to override the global verbosity setting and specify a different 
     sNavObject = simple_nav.SimpleNav()
     scSim.AddModelToTask(simTaskName, sNavObject)
     logger = bskLogging.BSKLogger()
-    logger.setLogLevel(bskLogging.INFORMATION)
+    logger.setLogLevel(bskLogging.BSK_INFORMATION)
     sNavObject.bskLogger = logger
 
 Another option is to use the ``BSKLogger()`` constructor to provide the verbosity directly through::
 
     sNavObject = simple_nav.SimpleNav()
-    sNavObject.bskLogger = bskLogging.BSKLogger(bskLogging.INFORMATION)
+    sNavObject.bskLogger = bskLogging.BSKLogger(bskLogging.BSK_INFORMATION)
 
 Unlike change the global verbosity level, the module specific verbosity can be changed later on in the Basilisk
 python script as the corresponding module is created and configured.
@@ -84,7 +84,7 @@ Within the ``*.cpp`` file, the ``bskLog()`` method can be called with:
 
 .. code-block:: cpp
 
-    bskLogger.bskLog(INFORMATION, "%d %d", arg1, arg2);
+    bskLogger.bskLog(BSK_INFORMATION, "%d %d", arg1, arg2);
 
 
 Using ``_bskLog`` in C Basilisk Modules
@@ -105,7 +105,7 @@ The ``_bskLog`` only accepts char*/string, so the formatting must be done before
 
 .. code-block:: c
 
-    _bskLog(configData->bskLogger, INFORMATION, "Fixed String");
+    _bskLog(configData->bskLogger, BSK_INFORMATION, "Fixed String");
 
 If you want to print variables to the logging string, this must be done before calling ``_bskLog``, such as in this example:
 
