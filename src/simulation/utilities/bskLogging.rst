@@ -33,7 +33,7 @@ For utility libraries such as ``linearAlgebra.c/h`` etc., this logging capabilit
 Using ``bskLogger`` From Python
 -------------------------------
 For an example of how to set the verbosity from Python, see :ref:`scenarioBskLog`.
-The default verbosity is set to the lowest level ``DEBUG`` such that any ``bskLog`` method print out the associated message string.  If this is the desired behavior, then no further actions are required.
+The default verbosity is set to the lowest level ``BSK_DEBUG`` such that any ``bskLog`` method print out the associated message string.  If this is the desired behavior, then no further actions are required.
 
 If the verbosity level is to be changed for a particular Basilisk script, then the following instructions explain how this can be done.  At the top of the Basilisk python scrip be sure to include the ``bskLogging`` support package::
 
@@ -43,7 +43,7 @@ Setting Verbosity Globally for all BSK Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The ``bskLog`` verbosity can be modified for all Basilisk modules by using::
 
-    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
 The verbosity options are listed in the table above.  Note that this command must be included at the very beginning of
 the Basilisk simulation script, certainly before the call for ``SimulationBaseClass.SimBaseClass()``.
@@ -113,4 +113,4 @@ If you want to print variables to the logging string, this must be done before c
 
    char info[MAX_LOGGING_LENGTH];
    sprintf(info, "Variable is too large (%d). Setting to max value.", variable);
-   _bskLog(configData->bskLogger, ERROR, info);
+   _bskLog(configData->bskLogger, BSK_ERROR, info);
