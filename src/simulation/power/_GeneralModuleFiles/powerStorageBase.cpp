@@ -97,7 +97,7 @@ void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
     if (this->storedCharge_Init >= 0.0) {
     this->storedCharge = this->storedCharge_Init;
     } else {
-        bskLogger.bskLog(ERROR, "The storedCharge_Init variable must be set to a non-negative value.");
+        bskLogger.bskLog(BSK_ERROR, "The storedCharge_Init variable must be set to a non-negative value.");
     }
 
     //! - call the custom environment module reset method
@@ -153,7 +153,7 @@ bool PowerStorageBase::readMessages()
         }
     }
     else {
-        bskLogger.bskLog(WARNING, "Power storage has no power node messages to read.");
+        bskLogger.bskLog(BSK_WARNING, "Power storage has no power node messages to read.");
         powerRead = false;
     }
 

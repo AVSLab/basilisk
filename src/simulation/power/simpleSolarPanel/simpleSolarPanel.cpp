@@ -50,7 +50,7 @@ void SimpleSolarPanel::customCrossInit(){
                                                            moduleID);
     }
     else{
-        bskLogger.bskLog(ERROR,"SimpleSolarPanel did not have sunInMsgName specified.");
+        bskLogger.bskLog(BSK_ERROR,"SimpleSolarPanel did not have sunInMsgName specified.");
     }
 
     //! - If we have a state in msg name, subscribe to it
@@ -61,7 +61,7 @@ void SimpleSolarPanel::customCrossInit(){
                                                                               moduleID);
     }
     else{
-        bskLogger.bskLog(ERROR,"SimpleSolarPanel did not have stateInMsgName specified.");
+        bskLogger.bskLog(BSK_ERROR,"SimpleSolarPanel did not have stateInMsgName specified.");
     }
 
     //! - subscribe to optional sun eclipse message
@@ -80,15 +80,15 @@ void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
     this->shadowFactor = 1.0;
 
     if (this->panelArea < 0.0) {
-        bskLogger.bskLog(ERROR, "The panelArea must be a positive value");
+        bskLogger.bskLog(BSK_ERROR, "The panelArea must be a positive value");
     }
     if (this->panelEfficiency < 0.0) {
-        bskLogger.bskLog(ERROR, "The panelEfficiency variable must be a positive value");
+        bskLogger.bskLog(BSK_ERROR, "The panelEfficiency variable must be a positive value");
     }
     if (this->nHat_B.norm() > 0.1) {
         this->nHat_B.normalize();
     } else {
-        bskLogger.bskLog(ERROR, "The nHat_B must be set to a non-zero vector");
+        bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
     }
 
     return;

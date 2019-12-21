@@ -41,7 +41,7 @@ SimpleStorageUnit::~SimpleStorageUnit(){
  */
 void SimpleStorageUnit::customReset(__uint64_t CurrentClock){
     if (this->storageCapacity <= 0.0) {
-        bskLogger.bskLog(INFORMATION, "The storageCapacity variable must be set to a positive value.");
+        bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
     }
     return;
 }

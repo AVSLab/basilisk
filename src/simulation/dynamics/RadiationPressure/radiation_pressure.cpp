@@ -73,14 +73,14 @@ void RadiationPressure::CrossInit()
  
     if(sunEphmInMsgId < 0)
     {
-        bskLogger.bskLog(WARNING, "Did not find a valid sun ephemeris message with name: %s", this->sunEphmInMsgName.c_str());
+        bskLogger.bskLog(BSK_WARNING, "Did not find a valid sun ephemeris message with name: %s", this->sunEphmInMsgName.c_str());
     }
     
     this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), this->moduleID);
 
     if(this->stateInMsgId < 0)
     {
-        bskLogger.bskLog(WARNING, "Did not find a valid state input message with name: %" PRId64, this->stateInMsgId);
+        bskLogger.bskLog(BSK_WARNING, "Did not find a valid state input message with name: %" PRId64, this->stateInMsgId);
     }
 
     /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
@@ -160,7 +160,7 @@ void RadiationPressure::computeForceTorque(double integTime)
         this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
         this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
     } else {
-        bskLogger.bskLog(ERROR,"Requested SRF Model not implemented.\n");
+        bskLogger.bskLog(BSK_ERROR,"Requested SRF Model not implemented.\n");
     }
 }
 

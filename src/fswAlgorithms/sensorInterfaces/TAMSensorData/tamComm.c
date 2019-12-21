@@ -58,7 +58,7 @@ void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) > 1e-10) {
-        _bskLog(configData->bskLogger, WARNING, "dcm_BS is set to zero values.");
+        _bskLog(configData->bskLogger, BSK_WARNING, "dcm_BS is set to zero values.");
     }
 
     return;

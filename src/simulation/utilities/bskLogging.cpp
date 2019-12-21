@@ -21,7 +21,7 @@
 #include <stdarg.h>
 #include "utilities/bskLogging.h"
 
-logLevel_t LogLevel = DEBUG;
+logLevel_t LogLevel = BSK_DEBUG;
 
 /*! This method sets the default logging verbosity */
 void setDefaultLogLevel(logLevel_t logLevel)
@@ -40,11 +40,11 @@ void printDefaultLogLevel()
 {
     std::map<int, const char*> logLevelMap
     {
-        {0, "DEBUG"},
-        {1, "INFORMATION"},
-        {2, "WARNING"},
-        {3, "ERROR"},
-        {4, "SILENT"}
+        {0, "BSK_DEBUG"},
+        {1, "BSK_INFORMATION"},
+        {2, "BSK_WARNING"},
+        {3, "BSK_ERROR"},
+        {4, "BSK_SILENT"}
     };
     const char* defaultLevelStr = logLevelMap[LogLevel];
     printf("Default Logging Level: %s\n", defaultLevelStr);

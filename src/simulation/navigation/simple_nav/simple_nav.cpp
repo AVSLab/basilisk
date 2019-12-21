@@ -88,14 +88,14 @@ void SimpleNav::SelfInit()
     
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
-        bskLogger.bskLog(ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
+        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
     if (this->walkBounds.size() != numStates) {
-        bskLogger.bskLog(ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
+        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
 }
@@ -114,7 +114,7 @@ void SimpleNav::CrossInit()
        subscribeToMessage(this->inputStateName, sizeof(SCPlusStatesSimMsg), this->moduleID);
     if(this->inputStateID < 0)
     {
-        bskLogger.bskLog(WARNING, "input state message name: %s could not be isolated, message disabled.", this->inputStateName.c_str());
+        bskLogger.bskLog(BSK_WARNING, "input state message name: %s could not be isolated, message disabled.", this->inputStateName.c_str());
     }
     //! - Obtain the ID associated with the optional input Sun name.
     msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->inputSunName);

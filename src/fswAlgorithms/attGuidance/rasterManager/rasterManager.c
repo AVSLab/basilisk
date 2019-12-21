@@ -88,7 +88,7 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
                configData->attOutSet.rate[0],
                configData->attOutSet.rate[1],
                configData->attOutSet.rate[2]);
-        _bskLog(configData->bskLogger, INFORMATION, info);
+        _bskLog(configData->bskLogger, BSK_INFORMATION, info);
     }
     
     

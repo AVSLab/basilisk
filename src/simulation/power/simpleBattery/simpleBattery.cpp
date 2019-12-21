@@ -36,7 +36,7 @@ SimpleBattery::~SimpleBattery(){
 void SimpleBattery::customReset(uint64_t CurrentClock) {
 
     if (this->storageCapacity <= 0.0) {
-        bskLogger.bskLog(ERROR, "The storageCapacity variable must be set to a positive value.");
+        bskLogger.bskLog(BSK_ERROR, "The storageCapacity variable must be set to a positive value.");
     }
     return;
 }

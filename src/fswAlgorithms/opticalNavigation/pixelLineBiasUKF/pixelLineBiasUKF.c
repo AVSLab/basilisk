@@ -126,7 +126,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     configData->timeTagOut = configData->timeTag;
     
     if (badUpdate <0){
-        _bskLog(configData->bskLogger, WARNING, "Reset method contained bad update");
+        _bskLog(configData->bskLogger, BSK_WARNING, "Reset method contained bad update");
     }
     return;
 }
@@ -320,7 +320,7 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {
-      _bskLog(configData->bskLogger, ERROR, "Need a planet to navigate");
+      _bskLog(configData->bskLogger, BSK_ERROR, "Need a planet to navigate");
     }
 
     mCopy(configData->sQnoise, PIXLINE_N_STATES, PIXLINE_N_STATES, procNoise);

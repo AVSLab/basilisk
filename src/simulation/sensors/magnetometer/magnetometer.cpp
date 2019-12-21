@@ -79,7 +79,7 @@ void Magnetometer::SelfInit()
                 this->outputBufferCount, "TAMDataSimMsg", this->moduleID);
     }
     else {
-        bskLogger.bskLog(ERROR, "Magnetometer message name (tamDataOutMsgName) is empty.");
+        bskLogger.bskLog(BSK_ERROR, "Magnetometer message name (tamDataOutMsgName) is empty.");
     }
 
     return;
@@ -96,7 +96,7 @@ void Magnetometer::CrossInit()
             this->moduleID);
     }
     else {
-        bskLogger.bskLog(ERROR, "Magnetic field interface message name (magIntMsgName) is empty.");
+        bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magIntMsgName) is empty.");
     }
 
     if (this->stateIntMsgName != "") {
@@ -104,7 +104,7 @@ void Magnetometer::CrossInit()
             sizeof(SCPlusStatesSimMsg),
             this->moduleID);
     } else {
-        bskLogger.bskLog(ERROR, "Spacecraft state message name (stateIntMsgName) is empty.");
+        bskLogger.bskLog(BSK_ERROR, "Spacecraft state message name (stateIntMsgName) is empty.");
     }
 
     return;

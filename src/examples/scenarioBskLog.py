@@ -73,7 +73,7 @@ def run(case):
         # here the verbosity is set globally to WARNING or higher.
         # This call must be made at the beginning of the script, certainly before
         # SimulationBaseClass.SimBaseClass() is called.
-        bskLogging.setDefaultLogLevel(bskLogging.WARNING)
+        bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
@@ -122,7 +122,7 @@ def run(case):
     elif case == 2:
         # here the bskLog verbosity is only changed for this module by setting a custom bskLog instance
         logger = bskLogging.BSKLogger()
-        logger.setLogLevel(bskLogging.ERROR)
+        logger.setLogLevel(bskLogging.BSK_ERROR)
         print("The verbosity is only changed for this module.")
         logger.printLogLevel()
         moduleConfig.bskLogger = logger

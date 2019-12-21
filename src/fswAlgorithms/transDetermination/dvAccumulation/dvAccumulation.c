@@ -116,7 +116,7 @@ void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
     int stack[MAX_ACC_BUF_PKT];
     if((end-start + 1) > MAX_ACC_BUF_PKT)
     {
-        _bskLog(A->bskLogger, ERROR, "Stack insufficiently sized for quick-sort somehow");
+        _bskLog(A->bskLogger, BSK_ERROR, "Stack insufficiently sized for quick-sort somehow");
     }
 
     /*! - initialize the index of the top of the stack */
