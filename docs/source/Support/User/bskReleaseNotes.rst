@@ -22,6 +22,7 @@ Upcoming Version 1.X.X
 - added  :ref:`onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
 - updated :ref:`sunlineSuKF` with some general improvements
 - tweak to ``cmake`` file to make BSK be portable across Linux systems
+- changed the :ref:`bskLogging` level names to make them unique.  This avoids potential variable name conflicts, especially on Windows.
 
 Version 1.4.0
 -------------
