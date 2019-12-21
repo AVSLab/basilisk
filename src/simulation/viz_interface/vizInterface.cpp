@@ -43,12 +43,10 @@ VizInterface::VizInterface()
     this->FrameNumber= -1;
     this->numOutputBuffers = 2;
 
-    VizSpacecraftData sc0Data;
-    memset(&sc0Data.cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
-    sc0Data.cameraConfigMessage.cameraID = -1;
-    strcpy(sc0Data.cameraConfigMessage.skyBox, "");
-    this->scData.push_back(sc0Data);
-    
+    memset(&this->cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
+    this->cameraConfigMessage.cameraID = -1;
+    strcpy(this->cameraConfigMessage.skyBox, "");
+
     this->planetNames = {};
 
     // turn off all Viz settings by default
@@ -134,17 +132,6 @@ void VizInterface::CrossInit()
             scIt->cssConfInMsgId.msgID = -1;
         }
 
-        /* Define Camera input messages */
-        msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->cameraConfInMsgName);
-        if (msgInfo.itemFound) {
-            scIt->cameraConfMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->cameraConfInMsgName,
-                                                                                        sizeof(CameraConfigMsg), moduleID);
-            scIt->cameraConfMsgId.dataFresh = false;
-            scIt->cameraConfMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        } else {
-            scIt->cameraConfMsgId.msgID = -1;
-        }
-
         /* Define SCPlus input message */
         msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->scPlusInMsgName);
         if (msgInfo.itemFound) {
@@ -212,6 +199,17 @@ void VizInterface::CrossInit()
             }
             scIt->thrOutputMessage.resize(scIt->thrMsgID.size());
         }
+    }
+
+    /* Define Camera input messages */
+    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cameraConfInMsgName);
+    if (msgInfo.itemFound) {
+        this->cameraConfMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cameraConfInMsgName,
+                                                                                    sizeof(CameraConfigMsg), moduleID);
+        this->cameraConfMsgId.dataFresh = false;
+        this->cameraConfMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    } else {
+        this->cameraConfMsgId.msgID = -1;
     }
 
     /* Define Spice input message */
@@ -336,19 +334,6 @@ void VizInterface::ReadBSKMessages()
             scIt->cssConfigMessage = localCSSConfigArray;
         }
 
-        /*! Read incoming camera config msg */
-        if (scIt->cameraConfMsgId.msgID != -1){
-            CameraConfigMsg localCameraConfigArray;
-            SingleMessageHeader localCameraConfigHeader;
-            SystemMessaging::GetInstance()->ReadMessage(scIt->cameraConfMsgId.msgID, &localCameraConfigHeader, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t*>(&localCameraConfigArray));
-            if(localCameraConfigHeader.WriteSize > 0 && localCameraConfigHeader.WriteClockNanos != scIt->cameraConfMsgId.lastTimeTag){
-                scIt->cameraConfMsgId.lastTimeTag = localCameraConfigHeader.WriteClockNanos;
-                scIt->cameraConfMsgId.dataFresh = true;
-            }
-            scIt->cameraConfigMessage = localCameraConfigArray;
-        }
-
-
         /*! Read incoming ST constellation msg */
         if (scIt->starTrackerInMsgID.msgID != -1){
             STSensorIntMsg localSTArray;
@@ -361,6 +346,19 @@ void VizInterface::ReadBSKMessages()
             scIt->STMessage = localSTArray;
         }
     }
+
+    /*! Read incoming camera config msg */
+    if (this->cameraConfMsgId.msgID != -1){
+        CameraConfigMsg localCameraConfigArray;
+        SingleMessageHeader localCameraConfigHeader;
+        SystemMessaging::GetInstance()->ReadMessage(this->cameraConfMsgId.msgID, &localCameraConfigHeader, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t*>(&localCameraConfigArray));
+        if(localCameraConfigHeader.WriteSize > 0 && localCameraConfigHeader.WriteClockNanos != this->cameraConfMsgId.lastTimeTag){
+            this->cameraConfMsgId.lastTimeTag = localCameraConfigHeader.WriteClockNanos;
+            this->cameraConfMsgId.dataFresh = true;
+        }
+        this->cameraConfigMessage = localCameraConfigArray;
+    }
+
 
     /*! Read BSK Spice constellation msg */
     {
@@ -559,31 +557,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
             }
 
-            /*! Write camera output msg */
-            if ((scIt->cameraConfMsgId.msgID != -1 && scIt->cameraConfMsgId.dataFresh)
-                || scIt->cameraConfigMessage.cameraID >= 0){
-                /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
-                double sigma_CuC[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
-                v3Set(1./3, 1./3, -1./3, sigma_CuC);
-                addMRP(scIt->cameraConfigMessage.sigma_CB, sigma_CuC, unityCameraMRP);
-                vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
-                for (int j=0; j<3; j++){
-                    if (j < 2){
-                    camera->add_resolution(scIt->cameraConfigMessage.resolution[j]);
-                    camera->add_sensorsize(scIt->cameraConfigMessage.sensorSize[j]*1000.);  // Unity expects millimeter
-                    }
-                    camera->add_cameradir_b(unityCameraMRP[j]);
-                    camera->add_camerapos_b(scIt->cameraConfigMessage.cameraPos_B[j]);            }
-                camera->set_renderrate(scIt->cameraConfigMessage.renderRate);
-                camera->set_cameraid(scIt->cameraConfigMessage.cameraID);
-                camera->set_fieldofview(scIt->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees
-                camera->set_skybox(scIt->cameraConfigMessage.skyBox);
-                camera->set_focallength(scIt->cameraConfigMessage.sensorSize[0]/2./tan(scIt->cameraConfigMessage.fieldOfView));
-                camera->set_parentname(scIt->cameraConfigMessage.parentName);
-            }
-
-
-
             // Write CSS output msg
             //if (cssConfInMsgId != -1 and cssConfInMsgId != -1){
             //for (int i=0; i< this->cssConfigMessage.nCSS; i++){
@@ -610,6 +583,29 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             //}
 
         }
+    }
+
+    /*! Write camera output msg */
+    if ((this->cameraConfMsgId.msgID != -1 && this->cameraConfMsgId.dataFresh)
+        || this->cameraConfigMessage.cameraID >= 0){
+        /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
+        double sigma_CuC[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
+        v3Set(1./3, 1./3, -1./3, sigma_CuC);
+        addMRP(this->cameraConfigMessage.sigma_CB, sigma_CuC, unityCameraMRP);
+        vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
+        for (int j=0; j<3; j++){
+            if (j < 2){
+            camera->add_resolution(this->cameraConfigMessage.resolution[j]);
+            camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]*1000.);  // Unity expects millimeter
+            }
+            camera->add_cameradir_b(unityCameraMRP[j]);
+            camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
+        camera->set_renderrate(this->cameraConfigMessage.renderRate);
+        camera->set_cameraid(this->cameraConfigMessage.cameraID);
+        camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees
+        camera->set_skybox(this->cameraConfigMessage.skyBox);
+        camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2./tan(this->cameraConfigMessage.fieldOfView));
+        camera->set_parentname(this->cameraConfigMessage.parentName);
     }
 
     /*! Write spice output msgs */
@@ -645,7 +641,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
         if (this->opNavMode == 1
-            ||(this->opNavMode == 2 && ((CurrentSimNanos%this->scData[0].cameraConfigMessage.renderRate == 0 && this->scData[0].cameraConfigMessage.isOn == 1) ||this->firstPass < 11))
+            ||(this->opNavMode == 2 && ((CurrentSimNanos%this->cameraConfigMessage.renderRate == 0 && this->cameraConfigMessage.isOn == 1) ||this->firstPass < 11))
             || this->liveStream
             ){
             // Receive pong
@@ -682,8 +678,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             
             /*! - If the camera is requesting periodic images, request them */
             if (this->opNavMode > 0 &&
-                CurrentSimNanos%this->scData[0].cameraConfigMessage.renderRate == 0 &&
-                this->scData[0].cameraConfigMessage.isOn == 1)
+                CurrentSimNanos%this->cameraConfigMessage.renderRate == 0 &&
+                this->cameraConfigMessage.isOn == 1)
             {
                 char buffer[10];
                 zmq_recv(requester_socket, buffer, 10, 0);
@@ -725,7 +721,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 imageData.valid = 0;
                 imageData.imagePointer = this->bskImagePtr;
                 imageData.imageBufferLength = imageBufferLength;
-                imageData.cameraID = this->scData[0].cameraConfigMessage.cameraID;
+                imageData.cameraID = this->cameraConfigMessage.cameraID;
                 imageData.imageType = 4;
                 if (imageBufferLength>0){imageData.valid = 1;}
                 SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageData), this->moduleID);

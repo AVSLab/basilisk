@@ -105,7 +105,6 @@ typedef struct {
     std::string spacecraftName = "bsk-Sat";
     std::string cssDataInMsgName = "css_sensors_data";          //! [-] Name of the incoming css data
     std::string cssConfInMsgName = "css_config_data";           //! [-] Name of the incoming css constellation data
-    std::string cameraConfInMsgName = "camera_config_data";     //! [-] Name of the incoming camera data
     std::string scPlusInMsgName = "inertial_state_output";      //! [-] Name of the incoming SCPlus data
     std::vector <std::string> rwInMsgName;                      //! [-] Name of the incoming rw data
     std::vector <ThrClusterMap> thrMsgData;                     //! [-] Name of the incoming thruster data
@@ -116,14 +115,12 @@ typedef struct {
     MsgCurrStatus scPlusInMsgID;                                //! [-] ID of the incoming SCPlus data
     MsgCurrStatus cssDataInMsgId;                               //! [-] ID of the incoming css data
     MsgCurrStatus cssConfInMsgId;                               //! [-] ID of the incoming css constellation data
-    MsgCurrStatus cameraConfMsgId;                              //! [-] ID of the incoming camera  data
     std::vector <RWConfigLogSimMsg> rwInMessage;                //! [-] RW data message
     STSensorIntMsg STMessage;                                   //! [-] ST data message
     std::vector <THROutputSimMsg> thrOutputMessage;             //! [-] Thr data message
     SCPlusStatesSimMsg scPlusMessage;                           //! [-] s/c plus message
 //    CSSArraySensorIntMsg cssDataMessage;                      //! [-] CSS message
     CSSConfigFswMsg cssConfigMessage;                           //! [-] CSS config
-    CameraConfigMsg cameraConfigMessage;                        //! [-] CSS config
     int numRW = 0;                                              //! [-] Number of RW set in python
     int numThr = 0;                                             //! [-] Number of Thrusters set in python
 }VizSpacecraftData;
@@ -162,6 +159,10 @@ public:
     bool saveFile;                              //! [Bool] Set True if Vizard should save a file of the data.
     bool liveStream;                            //! [Bool] Set True if Vizard should receive a live stream of BSK data.
     void* bskImagePtr;                          //! [RUN] Permanent pointer for the image to be used in BSK without relying on ZMQ because ZMQ will free it (whenever, who knows)
+
+    std::string cameraConfInMsgName = "camera_config_data";     //! [-] Name of the incoming camera data
+    MsgCurrStatus cameraConfMsgId;                              //! [-] ID of the incoming camera  data
+    CameraConfigMsg cameraConfigMessage;                        //! [-] Camera config
     
     std::vector <std::string> planetNames;      //!< -- Names of planets we want to track, read in from python
 
