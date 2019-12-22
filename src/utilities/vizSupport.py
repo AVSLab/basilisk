@@ -615,11 +615,22 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     # set spacecraft name
     if 'scName' in kwargs:
         val = kwargs['scName']
-        if not isinstance(val, str):
-            print('ERROR: scName must be a string')
+        if isinstance(val, str):
+            scNames = [val]
+        elif isinstance(val, list):
+            scNames = val
+            for name in scNames:
+                if not isinstance(name, str):
+                    print('ERROR: scName list must only contain spacecraft name strings')
+                    exit(1)
+        else:
+            print('ERROR: scName must be a string or list of strings')
             exit(1)
-            scData.spacecraftName = val
-    firstSpacecraftName = scData.spacecraftName
+        scData.spacecraftName = scNames[0]
+    else:
+        scNames = [scData.spacecraftName]
+
+    firstSpacecraftName = scNames[0]
 
     # set number of RWs
     if 'numRW' in kwargs:
@@ -636,7 +647,11 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
             thList.append(thSet)
         scData.thrMsgData = vizInterface.VizThrConfig(thList)
 
-    vizMessenger.scData = vizInterface.VizSCVector([scData])
+    # create list of spacecraft data with equal I/O msg names, numRW and thrDevices info, but unique names
+    vizMessenger.scData.clear()
+    for name in scNames:
+        scData.spacecraftName = name
+        vizMessenger.scData.push_back(scData)
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
