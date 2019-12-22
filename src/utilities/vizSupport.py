@@ -45,6 +45,8 @@ try:
 except ImportError:
     vizFound = False
 
+firstSpacecraftName = ''
+
 def toRGBA255(color):
     if isinstance(color, basestring):
         # convert color name to 4D array of values with 0-255
@@ -61,6 +63,7 @@ def toRGBA255(color):
 
 pointLineList = []
 def createPointLine(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.PointLine()
 
     unitTestSupport.checkMethodKeyword(
@@ -74,7 +77,7 @@ def createPointLine(viz, **kwargs):
             exit(1)
         vizElement.fromBodyName = fromName
     else:
-        vizElement.fromBodyName = viz.spacecraftName
+        vizElement.fromBodyName = firstSpacecraftName
 
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
@@ -99,6 +102,7 @@ def createPointLine(viz, **kwargs):
 
 customModelList = []
 def createCustomModel(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.CustomModel()
 
     unitTestSupport.checkMethodKeyword(
@@ -133,7 +137,7 @@ def createCustomModel(viz, **kwargs):
                 exit(1)
         vizElement.simBodiesToModify = vizInterface.StringVector(simBodiesList)
     else:
-        vizElement.simBodiesToModify = vizInterface.StringVector([viz.spacecraftName])
+        vizElement.simBodiesToModify = vizInterface.StringVector([firstSpacecraftName])
 
     if 'offset' in kwargs:
         offsetVariable = kwargs['offset']
@@ -209,6 +213,7 @@ def createCustomModel(viz, **kwargs):
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.ActuatorGuiSettings()
 
     unitTestSupport.checkMethodKeyword(
@@ -222,7 +227,9 @@ def setActuatorGuiSetting(viz, **kwargs):
             exit(1)
         vizElement.spacecraftName = scName
     else:
-        vizElement.spacecraftName = viz.spacecraftName
+        vizElement.spacecraftName = firstSpacecraftName
+    print("HPS: 0")
+    print(vizElement.spacecraftName)
 
     if 'viewThrusterPanel' in kwargs:
         setting = kwargs['viewThrusterPanel']
@@ -268,6 +275,7 @@ def setActuatorGuiSetting(viz, **kwargs):
 
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.KeepOutInCone()
 
     unitTestSupport.checkMethodKeyword(
@@ -282,7 +290,7 @@ def createConeInOut(viz, **kwargs):
             exit(1)
         vizElement.fromBodyName = fromName
     else:
-        vizElement.fromBodyName = viz.spacecraftName
+        vizElement.fromBodyName = firstSpacecraftName
 
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
@@ -379,7 +387,7 @@ def createStandardCamera(viz, **kwargs):
             exit(1)
         cam.spacecraftName = scName
     else:
-        cam.spacecraftName = viz.spacecraftName
+        cam.spacecraftName = firstSpacecraftName
 
     if 'setMode' in kwargs:
         setMode = kwargs['setMode']
@@ -453,6 +461,7 @@ def createStandardCamera(viz, **kwargs):
 
 
 def createCameraConfigMsg(viz, **kwargs):
+    global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
         ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'focalLength', 'sensorSize', 'cameraPos_B', 'sigma_CB', 'skyBox'],
         kwargs)
@@ -474,7 +483,7 @@ def createCameraConfigMsg(viz, **kwargs):
             exit(1)
         viz.cameraConfigMessage.parentName = val
     else:
-        viz.cameraConfigMessage.parentName = viz.spacecraftName
+        viz.cameraConfigMessage.parentName = firstSpacecraftName
 
     if 'fieldOfView' in kwargs:
         val = kwargs['fieldOfView']
@@ -590,6 +599,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     del pointLineList[:]
     del actuatorGuiSettingList[:]
     del coneInOutList[:]
+    global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName'],
@@ -609,6 +619,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
             print('ERROR: scName must be a string')
             exit(1)
             scData.spacecraftName = val
+    firstSpacecraftName = scData.spacecraftName
 
     # set number of RWs
     if 'numRW' in kwargs:
