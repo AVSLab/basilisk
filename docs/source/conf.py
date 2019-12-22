@@ -26,9 +26,9 @@ copyright = u'2019, Autonomous Vehicle Systems (AVS) Laboratory'
 author = u'AVS Lab'
 
 # The short X.Y version
-version = u'version 1.4.0'
+version = u'version 1.4.1'
 # The full version, including alpha/beta/rc tags
-release = u'1.4.0'
+release = u'1.4.1'
 
 
 # -- General configuration ---------------------------------------------------

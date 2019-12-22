@@ -15,8 +15,8 @@ Basilisk Release Notes
     - create data tracking capabilities within BSK where devices can store or communicate data
     - create modules to determine if a satellite can see a ground point such as a communication station
 
-Upcoming Version 1.X.X
-----------------------
+Version 1.4.1
+-------------
 - added :ref:`Vizard scripting <vizardSettings>` abilities to control the new spacecraft camera view panel behaviors
 - added :ref:`Vizard scripting <vizardSettings>` abilities to specify custom CAD OBJ models to replace the default satellite shape
 - added  :ref:`onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
@@ -24,8 +24,8 @@ Upcoming Version 1.X.X
 - tweak to ``cmake`` file to make BSK be portable across Linux systems
 - changed the :ref:`bskLogging` level names to make them unique.  This avoids potential variable name conflicts, especially on Windows.
 
-Version 1.4.0
--------------
+**Version 1.4.0**
+
 - updates to the Monte Carlo controller and plotting algorithms to make use of better use of Pandas and Datashader
 - Added a message to the heading estimator in order to perform OpNav pointing
 - added a general message to the Sphinx HTML documentation landing page
