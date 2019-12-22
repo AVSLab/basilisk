@@ -442,7 +442,7 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
     |                   |         |         | is (0,0,0)   | CAD about z, y, x axes       |
     +-------------------+---------+---------+--------------+------------------------------+
     | scale             | float(3)|         | No, default  | desired model scale in       |
-    |                   |         |         | is (0,0,0)   | x, y, z in spacecraft CS     |
+    |                   |         |         | is (1,1,1)   | x, y, z in spacecraft CS     |
     +-------------------+---------+---------+--------------+------------------------------+
     | customTexturePath | string  |         | No           | Path to texture to apply to  |
     |                   |         |         |              | model (note that a custom    |
