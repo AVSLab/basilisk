@@ -617,16 +617,9 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         val = kwargs['scName']
         if isinstance(val, str):
             scNames = [val]
-        elif isinstance(val, list):
-            scNames = val
-            for name in scNames:
-                if not isinstance(name, str):
-                    print('ERROR: scName list must only contain spacecraft name strings')
-                    exit(1)
         else:
-            print('ERROR: scName must be a string or list of strings')
+            print('ERROR: scName must be a string')
             exit(1)
-        scData.spacecraftName = scNames[0]
     else:
         scNames = [scData.spacecraftName]
 
