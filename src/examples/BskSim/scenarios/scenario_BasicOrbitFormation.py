@@ -123,7 +123,12 @@ Illustration of Simulation Results
 """
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros, unitTestSupport, vizSupport
+try:
+    from Basilisk.simulation import vizInterface
+    vizFound = True
+except ImportError:
+    vizFound = False
 
 # Get current file path
 import sys, os, inspect
@@ -155,6 +160,21 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
 
         self.configure_initial_conditions()
         self.log_outputs()
+
+        # if this scenario is to interface with the BSK Viz, uncomment the following line
+        if vizFound:
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
+                                                      gravBodies=self.DynModels.gravFactory,
+                                                      saveFile=filename)
+            scData = vizInterface.VizSpacecraftData()
+            viz.scData.clear()
+            # first spacecraft uses all the default msg names
+            scData.spacecraftName = "chief"
+            viz.scData.push_back(scData)
+            # must provide unique message name to second spacecraft
+            scData.spacecraftName = "deputy"
+            scData.scPlusInMsgName = "inertial_state_output2"
+            viz.scData.push_back(scData)
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
