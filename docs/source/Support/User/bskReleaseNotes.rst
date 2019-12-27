@@ -18,6 +18,7 @@ Basilisk Release Notes
 Upcoming Version 1.X.X
 ----------------------
 - added link to Basilisk facebook page to Sphinx-based documentation
+- made the html documentation compatible with dark mode on macOS, iOS and iPad OS browsers.  If the user sets the system interface to dark mode, then the dark version of the web site is shown automatically.
 
 Version 1.4.1
 -------------
