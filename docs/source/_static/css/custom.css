@@ -21,7 +21,7 @@ a.el, a.el:visited {
     max-width: none;
 }
 
-code span.pre {
+code span.pre, code {
 	color: #cb7ccf;
 }
 
@@ -41,4 +41,96 @@ tr td p, th.head p {
 /* override table no-wrap */
 .wy-table-responsive table td, .wy-table-responsive table th {
     white-space: normal;
+}
+
+:root {
+	color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
+		background-color: black;
+		color:  #ccc;
+	}
+	
+	
+	
+	.rst-content code {
+		background: #0004;
+	}
+	.rst-content .note {
+		background: #2D4151;
+	}
+	
+	.rst-content .warning, .rst-content .caution, .rst-content .attention {
+		background: #51402F;
+	}
+	
+	.rst-content .important, .rst-content .hint, .rst-content .tip {
+		background: #275145;
+	}
+	
+	.rst-content .danger, .rst-content .error {
+		background: #523A37;
+	}
+
+	/* sidebar formatting */
+	.sidebar {
+		border-color: #666;
+	}
+	.rst-content .sidebar {
+		background: #222;
+	}
+	.rst-content .sidebar .sidebar-title {
+		background: #666;
+	}
+	
+	
+	.btn-neutral, .btn-neutral:hover, .btn:visited {
+		background: #333 !important;
+		color: #ccc !important;
+	}
+	
+	.highlight {
+		background: #4448;
+	}
+	
+	.rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
+		background-color: #222;
+	}
+	
+	.rst-content pre.literal-block, .rst-content div[class^='highlight'], .rst-content code, .rst-content table.docutils, .wy-table thead th, .rst-content table.docutils thead th, .rst-content table.field-list thead th, .wy-table-bordered-all td, .rst-content table.docutils td {
+		border-color: gray;
+	}
+		
+	img[src$="svg"] {
+		background-color: white;
+		filter: invert(100%) hue-rotate(180deg);
+	}
+	
+	img[src$="jpg"], img[src$="png"] {
+		border-radius: 5px;
+	}
+		
+	.rst-content dl:not(.docutils) dt {
+		background-color: #2D4151;
+	}
+	
+	.rst-content dl:not(.docutils) {
+		padding-top: 1em;;
+	}
+	
+	.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) code.descname {
+		color:  #ccc;
+	}
+	
+	.rst-content dl:not(.docutils) dl dt {
+		background-color: #333;
+		color: #ccc;
+	}
+	
+	.wy-table caption, .rst-content table.docutils caption, .rst-content table.field-list caption {
+		color: inherit;
+	}
+	
 }

@@ -75,7 +75,7 @@ to generate the following image.
 .. image:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
      :align: center
 
-Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resultion that you need, then provide ``:scale: 50 %`` to shrink it to the normal size.  This way the image has enough resolution to look good on high-resolution displays.
+Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution that you need, then provide ``:scale: 50 %`` to shrink it to the normal size.  This way the image has enough resolution to look good on high-resolution displays.
 
 More information on how to include images or figures using sphinx can be found `here <http://docutils.sourceforge.net/docs/ref/rst/directives.html#images>`__.  In particular, it is also possible to include an image as a figure which has a caption.
 
@@ -119,6 +119,49 @@ will generate the following table:
 
 
 .. note:: Doing tables with spinx is not simple.  The table outline must abide by tedious spacing rules.
+
+HTML Highlight Options
+----------------------
+With Sphinx you can easily create HTML highlight blocks called admonitions such as
+attention, caution, danger, error, hint, important, note, tip, warning.  Here are samples of what these blocks look like.
+
+.. danger::
+
+    text goes here
+
+.. error::
+
+    text goes here
+
+.. attention::
+
+    text goes here
+
+.. caution::
+
+    text goes here
+
+.. warning::
+
+    text goes here
+
+.. hint::
+
+    text goes here
+
+.. important::
+
+    text goes here
+
+.. tip::
+
+    text goes here
+
+.. note::
+
+    text goes here
+
+
 
 User Guide
 ----------
