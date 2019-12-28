@@ -16,9 +16,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+#include <cstdint>
+
 
 #include "simpleStorageUnit.h"
 #include "utilities/bskLogging.h"
+
 
 /*! The constructor creates a SimpleStorageUnit instance with zero stored data
  @return void
@@ -39,7 +42,7 @@ SimpleStorageUnit::~SimpleStorageUnit(){
 /*! Custom reset function
  @param CurrentClock
  */
-void SimpleStorageUnit::customReset(__uint64_t CurrentClock){
+void SimpleStorageUnit::customReset(uint64_t CurrentClock){
     if (this->storageCapacity <= 0.0) {
         bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
     }
