@@ -391,13 +391,13 @@ void ReactionWheelStateEffector::CrossInit()
 {
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
-	CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     sizeof(RWArrayTorqueIntMsg),
-																	 moduleID);
-	if(CmdsInMsgID < 0)
-	{
-        bskLogger.bskLog(BSK_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
-	}
+    if (this->InputCmds.length() == 0) {
+        this->CmdsInMsgID = -1;
+    } else {
+        this->CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputCmds,
+                                                                         sizeof(RWArrayTorqueIntMsg),
+                                                                         moduleID);
+    }
 
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
