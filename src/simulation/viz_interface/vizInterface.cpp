@@ -166,11 +166,11 @@ void VizInterface::CrossInit()
                 msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpWheelMsgName);
                 if (msgInfo.itemFound) {
                     rwStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->rwInMsgName[idx],sizeof(RWConfigLogSimMsg), moduleID);
-                    scIt->rwInMsgID.push_back(rwStatus);
                 } else {
                     rwStatus.msgID = -1;
                     bskLogger.bskLog(BSK_WARNING, "vizInterface: RW(%zu) msg requested but not found.", idx);
                 }
+                scIt->rwInMsgID.push_back(rwStatus);
             }
             scIt->rwInMessage.resize(scIt->rwInMsgID.size());
         }
