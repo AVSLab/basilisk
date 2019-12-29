@@ -343,7 +343,7 @@ def run(show_plots, simCase):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
@@ -455,7 +455,8 @@ def run(show_plots, simCase):
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
     scSim.TotalSim.logThisMessage(rwStateEffector.OutputDataString, samplingTime)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
+    rwOutName = [scObject.ModelTag + "_rw_config_0_data", scObject.ModelTag + "_rw_config_1_data",
+                 scObject.ModelTag + "_rw_config_2_data"]
     for item in rwOutName:
         scSim.TotalSim.logThisMessage(item, samplingTime)
 

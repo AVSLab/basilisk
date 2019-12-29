@@ -277,7 +277,7 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 # method at the bottom of the file
 ONLY_GRAPH_DATA = 0
 
-rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
+rwOutName = ["spacecraftBody_rw_config_0_data", "spacecraftBody_rw_config_1_data", "spacecraftBody_rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 500
@@ -584,7 +584,7 @@ def createScenarioAttitudeFeedbackRW():
     numRW = rwFactory.getNumOfDevices()
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     #Add RWs to sim for dispersion
     scSim.RW1 = RW1

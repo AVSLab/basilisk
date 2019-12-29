@@ -450,7 +450,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwStateEffector.InputCmds = "reactionwheel_cmds"
-    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
@@ -552,7 +552,9 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
     # To log the RW information, the following code is used:
     scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-    rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
+    rwOutName = [scObject.ModelTag + "_rw_config_0_data",
+                 scObject.ModelTag + "_rw_config_1_data",
+                 scObject.ModelTag + "_rw_config_2_data"]
     # A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
     # here to be plotted later on.  However, RW specific messages are also being created which
     # contain a wealth of information.  Their default naming is automated and shown above.  This

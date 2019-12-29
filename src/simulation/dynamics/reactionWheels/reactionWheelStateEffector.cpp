@@ -370,7 +370,7 @@ void ReactionWheelStateEffector::SelfInit()
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
-		tmpWheelMsgName = "rw_config_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
+		tmpWheelMsgName = this->ModelTag + "_rw_config_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
 		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(RWConfigLogSimMsg), OutputBufferCount, "RWConfigLogSimMsg", moduleID);
 		this->rwOutMsgNames.push_back(tmpWheelMsgName);
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
