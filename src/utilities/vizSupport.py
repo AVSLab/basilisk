@@ -586,10 +586,42 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     This methods creates an instance of the vizInterface() modules and setups up associated Vizard
     configuration setting messages.
 
-    Args:
-        scSim:          variable with the simulationBaseClass copy
-        simTaskName:    task to which to add the vizInterface module
-        processName:    process to which to write a default zero planetary ephemeris message if this message does not exist
+    Parameters
+    ----------
+    scSim:
+        variable with the simulationBaseClass copy
+    simTaskName:
+        task to which to add the vizInterface module
+    processName:
+        process to which to write a default zero planetary ephemeris message if this message does not exist
+
+    Keyword Args
+    ------------
+    saveFile: str
+        can be a single file name, or a full path + file name. In both cases a local results are stored in a local sub-folder.
+        Default: empty string resulting in the data not being saved to a file
+    gravBodies:
+        gravity Factory object.
+        Default: no gravity bodies are included
+    scName: str or list(str)
+        can be a single spacecraft name string, or a list of strings.
+        Default: assumes a single craft  with a default name.
+    numRW: int or list(int)
+        number of RWs on spacecraft.  If scName is a list and numRW is an integer, then the same number RW is added
+        to each spacecraft.  If numRW is a list then it must be of the same dimension as scName.
+        Default value is zero RWs for each spacecraft.
+    thrDevices:
+        list of thruster devices states for the first spacecraft
+    opNavMode: bool
+        flag if opNaveMode should be used
+    liveStream: bool
+        flag if live data streaming to Vizard should be used
+
+    Returns
+    -------
+    :ref:`vizInterface` object
+        copy of the vizInterface instance
+
     """
     if not vizFound:
         print('Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.')
@@ -617,8 +649,14 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         val = kwargs['scName']
         if isinstance(val, str):
             scNames = [val]
+        elif isinstance(val, list):
+            scNames = val
+            for name in scNames:
+                if not isinstance(name, str):
+                    print('ERROR: scName list must only contain spacecraft name strings')
+                    exit(1)
         else:
-            print('ERROR: scName must be a string')
+            print('ERROR: scName must be a string or list of strings')
             exit(1)
     else:
         scNames = [scData.spacecraftName]
@@ -627,7 +665,20 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
     # set number of RWs
     if 'numRW' in kwargs:
-        scData.numRW = kwargs['numRW']
+        val = kwargs['numRW']
+        if isinstance(val, int):
+            numRWList = [val] * len(scNames)
+        elif isinstance(val, list):
+            numRWList = val
+            if len(scNames) != len(numRWList):
+                print('ERROR: numRW and scName list lengths must be the same')
+                exit(1)
+            for val in numRWList:
+                if not isinstance(val, int):
+                    print('ERROR: numRW must be an integer or a list of integers')
+                    exit(1)
+    else:
+        numRWList = [0] * len(scNames)
 
     # set thruster device info
     if 'thrDevices' in kwargs:
@@ -640,11 +691,17 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
             thList.append(thSet)
         scData.thrMsgData = vizInterface.VizThrConfig(thList)
 
-    # create list of spacecraft data with equal I/O msg names, numRW and thrDevices info, but unique names
+    # create list of spacecraft data with incremented I/O msg names, unique numRW values but equal thrDevices info
     vizMessenger.scData.clear()
+    i = 0
+    scPlusInMsgName = scData.scPlusInMsgName
     for name in scNames:
         scData.spacecraftName = name
+        scData.numRW = numRWList[i]
+        if i != 0:
+            scData.scPlusInMsgName = scPlusInMsgName + str(i+1)
         vizMessenger.scData.push_back(scData)
+        i = i + 1
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
