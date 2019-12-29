@@ -161,7 +161,7 @@ void VizInterface::CrossInit()
             rwStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
             for (size_t idx = 0; idx < scIt->numRW; idx++)
             {
-                std::string tmpWheelMsgName = "rw_config_" + std::to_string(idx) + "_data";
+                std::string tmpWheelMsgName = scIt->spacecraftName + "_rw_config_" + std::to_string(idx) + "_data";
                 scIt->rwInMsgName.push_back(tmpWheelMsgName);
                 msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpWheelMsgName);
                 if (msgInfo.itemFound) {
@@ -169,7 +169,7 @@ void VizInterface::CrossInit()
                     scIt->rwInMsgID.push_back(rwStatus);
                 } else {
                     rwStatus.msgID = -1;
-                    bskLogger.bskLog(BSK_WARNING, "RW(%zu) msg requested but not found.", idx);
+                    bskLogger.bskLog(BSK_WARNING, "vizInterface: RW(%zu) msg requested but not found.", idx);
                 }
             }
             scIt->rwInMessage.resize(scIt->rwInMsgID.size());
