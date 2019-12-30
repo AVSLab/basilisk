@@ -159,16 +159,22 @@ void VizInterface::CrossInit()
             MsgCurrStatus rwStatus;
             rwStatus.dataFresh = false;
             rwStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+            bool rwMsgNameSet = scIt->rwInMsgName.size();
             for (size_t idx = 0; idx < scIt->numRW; idx++)
             {
-                std::string tmpWheelMsgName = scIt->spacecraftName + "_rw_config_" + std::to_string(idx) + "_data";
-                scIt->rwInMsgName.push_back(tmpWheelMsgName);
+                std::string tmpWheelMsgName;
+                if (rwMsgNameSet == false) {
+                    tmpWheelMsgName= scIt->spacecraftName + "_rw_config_" + std::to_string(idx) + "_data";
+                    scIt->rwInMsgName.push_back(tmpWheelMsgName);
+                } else {
+                    tmpWheelMsgName = scIt->rwInMsgName[idx];
+                }
                 msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpWheelMsgName);
                 if (msgInfo.itemFound) {
                     rwStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->rwInMsgName[idx],sizeof(RWConfigLogSimMsg), moduleID);
                 } else {
                     rwStatus.msgID = -1;
-                    bskLogger.bskLog(BSK_WARNING, "vizInterface: RW(%zu) msg requested but not found.", idx);
+                    bskLogger.bskLog(BSK_WARNING, "vizInterface: RW(%zu) msg %s requested but not found.", idx, scIt->rwInMsgName[idx].c_str());
                 }
                 scIt->rwInMsgID.push_back(rwStatus);
             }
@@ -193,7 +199,7 @@ void VizInterface::CrossInit()
                         scIt->numThr++;
                     } else {
                         thrStatus.msgID = -1;
-                        bskLogger.bskLog(BSK_WARNING, "TH(%d) msg of tag %s requested but not found.", idx, thrIt->thrTag.c_str());
+                        bskLogger.bskLog(BSK_WARNING, "TH(%d) msg %s of tag %s requested but not found.", idx, tmpThrustMsgName.c_str(), thrIt->thrTag.c_str());
                     }
                 }
             }
