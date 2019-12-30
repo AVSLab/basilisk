@@ -15,14 +15,14 @@ Basilisk Release Notes
     - create data tracking capabilities within BSK where devices can store or communicate data
     - create modules to determine if a satellite can see a ground point such as a communication station
 
-Upcoming Version 1.X.X
-----------------------
+Version 1.4.2
+-------------
 - added link to Basilisk facebook page to Sphinx-based documentation
 - made the html documentation compatible with dark mode on macOS, iOS and iPad OS browsers.  If the user sets the system interface to dark mode, then the dark version of the web site is shown automatically.
 - added a fix to cmake to get around a ``lipsodium`` and ``conan`` issue we are seeing on a Linux system
 
-Version 1.4.1
--------------
+**Version 1.4.1**
+
 - added :ref:`Vizard scripting <vizardSettings>` abilities to control the new spacecraft camera view panel behaviors
 - added :ref:`Vizard scripting <vizardSettings>` abilities to specify custom CAD OBJ models to replace the default satellite shape
 - added  :ref:`onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
