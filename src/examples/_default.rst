@@ -180,7 +180,8 @@ Formation Flying Dynamics
 .. toctree::
    :maxdepth: 1
 
-   Two-Spacecraft Formation  <BskSim/scenarios/scenario_BasicOrbitFormation>
+   Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
+   Basic Servicer/Debris Simulation <scenarioFormationBasic>
 
 
 Formation Flying Control
