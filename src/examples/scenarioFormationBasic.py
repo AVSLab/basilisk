@@ -181,7 +181,7 @@ def run(show_plots, useMsgNameDefaults):
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        useMsgNameDefaults (bool): Specify if default message naming is used for the 2nd space object
+        useMsgNameDefaults (bool): Specify if default message naming is used for the additional space objects
 
     """
 
