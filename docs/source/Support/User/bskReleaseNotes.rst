@@ -19,6 +19,7 @@ Upcoming Version 1.X.X
 ----------------------
 - added link to Basilisk facebook page to Sphinx-based documentation
 - made the html documentation compatible with dark mode on macOS, iOS and iPad OS browsers.  If the user sets the system interface to dark mode, then the dark version of the web site is shown automatically.
+- added a fix to cmake to get around a ``lipsodium`` and ``conan`` issue we are seeing on a Linux system
 
 Version 1.4.1
 -------------
