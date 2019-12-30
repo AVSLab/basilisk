@@ -52,6 +52,7 @@ Version 1.4.2
 - Include a new example scenario :ref:`scenarioBskLog` to illustrate how to use variable verbosity BSK notices
 
 **Version 1.3.2**
+
 - added the ability to include the unit test python files, along with their documentation, within the sphinx html documentation
 - updated Vizard live streaming documentation
 - updated unit test templates to have better formatting of the html validation report obtained with ``pytest --report``
