@@ -15,6 +15,10 @@ Basilisk Release Notes
     - create data tracking capabilities within BSK where devices can store or communicate data
     - create modules to determine if a satellite can see a ground point such as a communication station
 
+Upcoming Version 1.X.X
+----------------------
+- text here
+
 Version 1.4.2
 -------------
 - added link to Basilisk facebook page to Sphinx-based documentation
