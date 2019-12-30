@@ -35,6 +35,9 @@ conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/
 
 set(required_conan_libraries eigen/3.3.7@conan/stable)
 
+# This appears to be temporarily nessesary until the new conan center libsodium is ready
+list(APPEND required_conan_libraries libsodium/1.0.18@bincrafters/stable)
+
 
 option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
