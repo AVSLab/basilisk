@@ -1,35 +1,37 @@
 Executive Summary
 -----------------
-Provide a brief introduction to purpose and intent of this module.  This should be a short description.  If this requires lots explanation, images, equations, etc., then used the `Detailed Module Description`_  section below.
-
-Module Assumptions and Limitations
-----------------------------------
-This section should describe the assumptions used in formulating the mathematical model and how those assumptions limit the usefulness of the module.
+Provide a brief introduction to purpose and intent of this module.  This should be a short description.
+If this requires lots explanation, images, equations, etc., then used the `Detailed Module Description`_
+section below.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
 
 
 
 
 .. table:: Module I/O Messages
-        :widths: 25 25 100
+    :widths: 25 25 100
 
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name     | Msg Type                        | Description                                       |
-        +=======================+=================================+===================================================+
-        | dataInMsgName         | :ref:`FswModuleTemplateFswMsg`  | Input message description.  Note here if this     |
-        |                       |                                 | message is optional, and what the default behavior|
-        |                       |                                 | is if this message is not provided.               |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | dataOutMsgName        | :ref:`FswModuleTemplateFswMsg`  | Output message description.                       |
-        +-----------------------+---------------------------------+---------------------------------------------------+
+    +-----------------------+-----------------------------------+---------------------------------------------------+
+    | Msg Variable Name     | Msg Type                          | Description                                       |
+    +=======================+===================================+===================================================+
+    | dataInMsgName         | :ref:`FswModuleTemplateFswMsg`    | Input message description.  Note here if this     |
+    |                       |                                   | message is optional, and what the default behavior|
+    |                       |                                   | is if this message is not provided.               |
+    +-----------------------+-----------------------------------+---------------------------------------------------+
+    | dataOutMsgName        | :ref:`FswModuleTemplateFswMsg`    | Output message description.                       |
+    +-----------------------+-----------------------------------+---------------------------------------------------+
 
 
 Detailed Module Description
 ---------------------------
-Provide a brief introduction to the material being discussed in this report.  For example, include what the motivation is, maybe provide a supportive figure such as shown below, reference earlier work if needed in a literature review web links. Describe the module including mathematics, implementation, etc.
+Provide a brief introduction to the material being discussed in this report.  For example, include what the
+motivation is, maybe provide a supportive figure such as shown below, reference earlier work if needed in a
+literature review web links. Describe the module including mathematics, implementation, etc.
 
 Equations
 ^^^^^^^^^
@@ -42,18 +44,53 @@ produces this equation inline :math:`a = b^{2}` equation.  In contrast, this cod
     .. math::
         a = b^2
 
+or this compact version for 1 liners::
+
+    .. math:: a = b^2
+
 creates this block of math.
 
 .. math::
     a = b^2
 
+To create a numbered equation you need to add a label::
+
+    .. math::
+        :label: eq-firstLaw
+
+        a = b^2
+
+which creates this
+
+.. math::
+    :label: eq-firstLaw
+
+    a = b^2
+
+This label can be referenced using ``:eq:`eq-firstLaw``` to cite Eq. :eq:`eq-firstLaw`.
+
+To do bold math, we can't use the popular ``\bm`` command.  Instead, we can use ``{\bf u}`` (regular letters) or
+``\pmb \omega`` (greek letters).  The following math is an example of this showing both bold and un-bold letters
+next to each other:
+
+.. math:: {\bf u} u = 3 \hat{\bf e}_3
+    :label: eq-2
+
+.. math::  \pmb \omega \omega = 2 \hat{\imath}_{\theta}
+    :label: eq-3
+
 More details on how to typeset TeX math in Sphinx can be found `here <https://documentation.help/Sphinx/math.html>`__.
 
-If the module description requires extensive math discussion, this can be TeX'd up using the technical note template inside the ``_Documentation`` folder. A link should be included in the HTML documentation to the :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`  using the code::
+If the module description requires extensive math discussion, this can be TeX'd up using the technical note
+template inside the ``_Documentation`` folder. A link should be included in the HTML documentation to
+the :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
+using the code::
 
     :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
 
-The PDF technical should only be used as a last resort effort if the math is simply too complex and long to include in the `spinx` documentation.  Another option is to link to a web site, conference paper, journal paper, book or thesis document that discussed the mathematical developments used.
+The PDF technical should only be used as a last resort effort if the math is simply too complex and long to
+include in the `spinx` documentation.  Another option is to link to a web site, conference paper, journal
+paper, book or thesis document that discussed the mathematical developments used.
 
 Citations
 ^^^^^^^^^
@@ -63,9 +100,16 @@ If you want to cite other papers or text, provide a web link to a paper.  For ex
 
 creates `The link text <http://example.net/>`__.
 
-Figures
-^^^^^^^
-To include static, non-``pytest`` generated figures, you must copy the web compatible image (svg, jpg, png) to a local sub-folder ``fswModuleTemplate/_Documentation/Images/``.  This keeps the modules images grouped within this sub-folder and contained within the main module folder. For example, you can use code such as::
+Images and Figures
+^^^^^^^^^^^^^^^^^^
+To include static, non-``pytest`` generated images and figures, you must copy the web compatible image (svg, jpg, png)
+to a local sub-folder ``fswModuleTemplate/_Documentation/Images/``.   This keeps the modules images grouped
+within this sub-folder and contained within the main module folder.  The SVG image format is preferred as it is
+a vectorized format that renders in a higher quality.  Further, when viewed in dark mode the svg will
+automatically convert to a dark image (preserving colors).  Pixelated formats such as jpg and png remain the same
+in light and dark mode of the documentation web page.
+
+For example, to include an image (has no caption) you can use code such as::
 
     .. image:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
         :align: center
@@ -75,14 +119,39 @@ to generate the following image.
 .. image:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
      :align: center
 
-Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution that you need, then provide ``:scale: 50 %`` to shrink it to the normal size.  This way the image has enough resolution to look good on high-resolution displays.
+Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution
+that you need, then provide ``:scale: 50 %`` to shrink it to the normal size.  This way the image has
+enough resolution to look good on high-resolution displays.
 
-More information on how to include images or figures using sphinx can be found `here <http://docutils.sourceforge.net/docs/ref/rst/directives.html#images>`__.  In particular, it is also possible to include an image as a figure which has a caption.
+To include a figure (has a caption and you can add label), use the following code::
+
+    .. _figLabel:
+    .. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+        :align: center
+
+        Figure 1: Concept Illustration of the Math used in this Module
+
+This yields
+
+.. _figLabel:
+.. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+    :align: center
+
+    Figure 1: Concept Illustration of the Math used in this Module
+
+You can cite the figure using ``:ref:`figLabel```. For example, as seen in :ref:`figLabel`, the figure can
+now be referenced.
+
+More information on how to include images or figures using sphinx can be found
+`here <http://docutils.sourceforge.net/docs/ref/rst/directives.html#images>`__.  In particular, it is
+also possible to include an image as a figure which has a caption.
 
 
 Tables
 ^^^^^^
-The standard sphinx table formatting can be used to generate tables.  More information on spinx table formatting can be found `here <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#grid-tables>`__.  For example, the code::
+The standard sphinx table formatting can be used to generate tables.  More information on spinx table formatting
+can be found `here <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#grid-tables>`__.
+For example, the code::
 
     .. table:: Module I/O Messages
 
@@ -123,7 +192,8 @@ will generate the following table:
 HTML Highlight Options
 ----------------------
 With Sphinx you can easily create HTML highlight blocks called admonitions such as
-attention, caution, danger, error, hint, important, note, tip, warning.  Here are samples of what these blocks look like.
+attention, caution, danger, error, hint, important, note, tip, warning.  Here are samples of what these
+blocks look like.
 
 .. danger::
 
@@ -162,12 +232,19 @@ attention, caution, danger, error, hint, important, note, tip, warning.  Here ar
     text goes here
 
 
+Module Assumptions and Limitations
+----------------------------------
+This section should describe the assumptions used in formulating the mathematical model and how those assumptions
+limit the usefulness of the module.
+
 
 User Guide
 ----------
-This section contains information directed specifically to users. It contains clear descriptions of what inputs are needed and what effect they have. It should also help the user be able to use the model for the first time.
+This section contains information directed specifically to users. It contains clear descriptions of what inputs
+are needed and what effect they have. It should also help the user be able to use the model for the first time.
 
-Add sample code as needed.  For example, to specify that the module variables ``dummy`` and ``dumVector`` must be setup first, you can include python formatted code block using::
+Add sample code as needed.  For example, to specify that the module variables ``dummy`` and ``dumVector`` must
+be setup first, you can include python formatted code block using::
 
     .. code-block:: python
         :linenos:
@@ -185,4 +262,5 @@ to show:
 
 More information of including code blocks can be found `here <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block>`_.
 
-In the user guide, provide sub-sections as need to help explain how to use this module, list what variables must be set, discuss variables that might have default values if not specified by the user, etc.
+In the user guide, provide sub-sections as need to help explain how to use this module, list what variables
+must be set, discuss variables that might have default values if not specified by the user, etc.
