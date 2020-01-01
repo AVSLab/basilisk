@@ -175,8 +175,9 @@ Module Assumptions and Limitations
   overlapping disks.
 - **No Eclipse:** If the spacecraft is closer to the sun than the planet, an eclipse is not possible.
 - **Planets:** The allowed Spice planet names for use as occulting bodies are:
+
   - ``mercury``, ``venus``, ``earth``, ``mars``, ``mars barycenter``, ``jupiter barycenter``, ``saturn``,
-    ``neptune``, ``uranus``.
+    ``neptune``, ``uranus``
 - **Sun and Planet States:** The data defining the sun and planet states is obtained through an external Spice package.
   Errors may be derived from this package but will be small.
 - **Spacecraft States:** Spacecraft states must be input as Cartesian vectors. In the test, a conversion from orbital
