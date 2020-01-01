@@ -378,6 +378,7 @@ class fileCrawler():
                     with open(docFileName, 'r') as docFile:
                         docContents = docFile.read()
                     lines += docContents + "\n\n"
+                    lines += "----\n\n"
 
                 # Link the path with the modules for Breathe
                 module_files.extend([s for s in c_file_local_paths if c_file_basename in s])
