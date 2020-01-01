@@ -43,6 +43,14 @@ tr td p, th.head p {
     white-space: normal;
 }
 
+.math {
+    text-align: left;
+}
+.eqno {
+    float: right;
+}
+
+
 :root {
 	color-scheme: light dark;
 }

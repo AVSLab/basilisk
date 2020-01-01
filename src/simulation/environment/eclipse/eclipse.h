@@ -45,22 +45,22 @@ public:
     void addPlanetName(std::string planetName);
     
 public:
-    uint64_t outputBufferCount; //!< -- Number of output buffers to use
-    std::string sunInMsgName; //!< -- Internal vector of planets
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    uint64_t outputBufferCount;                 //!< Number of output buffers to use.  Default is 2.
+    std::string sunInMsgName;                   //!< sun ephemeris message name
+    BSKLogger bskLogger;                        //!< BSK Logging
 
 private:
-    std::vector<std::string> planetNames;  //!< -- Names of planets we want to track
-    std::vector<std::string> planetInMsgNames; //!< -- A vector of planet incoming message names ordered by the sequence in which planet names are added to the module
-    std::map<int64_t, SpicePlanetStateSimMsg> planetInMsgIdAndStates; //!< -- A map of incoming planet message Ids and planet state ordered by the sequence in which planet names are added to the module
+    std::vector<std::string> planetNames;       //!< Names of planets we want to track
+    std::vector<std::string> planetInMsgNames;  //!< A vector of planet incoming message names ordered by the sequence in which planet names are added to the module
+    std::map<int64_t, SpicePlanetStateSimMsg> planetInMsgIdAndStates; //!< A map of incoming planet message Ids and planet state ordered by the sequence in which planet names are added to the module
     std::vector<float> planetRadii; //!< [m] A vector of planet radii ordered by the sequence in which planet names are added to the module
-    int64_t sunInMsgId; //!< -- Internal
-    SpicePlanetStateSimMsg sunInMsgState;
-    std::vector<std::string> positionMsgNames;  //!< -- vector of msg names for each position state for which to evaluate eclipse conditions.
-    std::map<int64_t, SCPlusStatesSimMsg> positionInMsgIdAndState;
-    std::vector<int64_t> eclipseOutMsgId;
-    std::vector<std::string> eclipseOutMsgNames;
-    std::vector<double> eclipseShadowFactors;
+    int64_t sunInMsgId;                         //!< sun msg input ID
+    SpicePlanetStateSimMsg sunInMsgState;       //!< copy of sun input msg
+    std::vector<std::string> positionInMsgNames;  //!< vector of msg names for each position state for which to evaluate eclipse conditions.
+    std::map<int64_t, SCPlusStatesSimMsg> positionInMsgIdAndState; //!< A map of incoming spacecraft message IDs and msg states
+    std::vector<int64_t> eclipseOutMsgId;       //!< output msg ID
+    std::vector<std::string> eclipseOutMsgNames;//!< vector of eclispe output msg names
+    std::vector<double> eclipseShadowFactors;   //!< vector of shadow factor output values
 
 private:
     void readInputMessages();

@@ -370,7 +370,7 @@ class fileCrawler():
                 module_files_temp = []
                 lines = ""
                 lines += ".. _" + c_file_basename + ":\n\n"
-                lines += c_file_basename + "\n" + "=" * len(c_file_basename) + "\n\n"
+                lines += "Module: " + c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
 
                 # pull in the module documentation file if it exists
                 docFileName = os.path.join(src_path, c_file_basename + '.rst')
@@ -378,6 +378,7 @@ class fileCrawler():
                     with open(docFileName, 'r') as docFile:
                         docContents = docFile.read()
                     lines += docContents + "\n\n"
+                    lines += "----\n\n"
 
                 # Link the path with the modules for Breathe
                 module_files.extend([s for s in c_file_local_paths if c_file_basename in s])

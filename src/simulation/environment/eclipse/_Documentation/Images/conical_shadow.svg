@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-33 174 730 328" width="730" height="328">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 5 0 L -3 -3 L 0 0 L 0 0 L -3 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-6 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M -5 0 L 3 3 L 0 0 L 0 0 L 3 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 5 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="-857.1429" x-height="517" cap-height="714" ascent="957.0007" descent="-212.99744" font-style="italic" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Italic"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="9" panose-1="2 0 5 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="-1333.3333" x-height="517" cap-height="714" ascent="957.0007" descent="-212.99744" font-style="italic" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Italic"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.12 
+    <dc:date>2019-12-31 22:49:28 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" fill="none" stroke-opacity="1" stroke-dasharray="none" stroke="none" fill-opacity="1">
+    <title>Canvas 1</title>
+    <g id="Canvas_1: Layer 2">
+      <title>Layer 2</title>
+      <g id="Graphic_37">
+        <path d="M 549.70493 501.76157 L 214.20493 338.26568 L 549.70493 174.76979 Z" fill="#ccc"/>
+      </g>
+      <g id="Graphic_52">
+        <path d="M 280.1653 370.8261 L 213.74887 338.16423 L 280.1653 305.50233 Z" fill="white"/>
+      </g>
+      <g id="Graphic_36">
+        <path d="M 303.6 302 L 555.8851 337.8 L 303.6 373.6 Z" fill="#999"/>
+      </g>
+      <g id="Graphic_20">
+        <ellipse cx="297.59003" cy="338.12466" rx="37.0504188271981" ry="35.1247095803846" fill="white"/>
+        <ellipse cx="297.59003" cy="338.12466" rx="37.0504188271981" ry="35.1247095803846" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      </g>
+      <g id="Graphic_8">
+        <ellipse cx="44.075" cy="338.28827" rx="74.7647531696414" ry="71.3042036135605" stroke="#ff7f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      </g>
+      <g id="Line_9">
+        <line x1="-.40625" y1="235.12658" x2="509.0625" y2="481.25" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_10">
+        <line x1="-.40625" y1="442.0886" x2="510.46875" y2="194.375" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_11">
+        <line x1="47.5" y1="337.75" x2="96" y2="288" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_12">
+        <line x1="382" y1="478" x2="382" y2="192" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_13">
+        <line x1="45.886076" y1="264.87342" x2="695" y2="358" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_14">
+        <line x1="48.41772" y1="411.07595" x2="694" y2="317" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_17">
+        <line x1="48" y1="338" x2="687" y2="338" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_18">
+        <line x1="297.3545" y1="337.8307" x2="272.48677" y2="312.96296" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_19">
+        <line x1="297.4645" y1="337.9407" x2="382.80423" y2="285.97884" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Graphic_21">
+        <ellipse cx="382.5" cy="286.5" rx="3.66986854864154" ry="3.50000559265661" fill="#3382be"/>
+        <ellipse cx="382.5" cy="286.5" rx="3.66986854864154" ry="3.50000559265661" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_22">
+        <line x1="225.89983" y1="432.50986" x2="375.3753" y2="433.5499" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_23">
+        <line x1="388.89965" y1="433.58976" x2="539.92575" y2="435.1155" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_24">
+        <line x1="303.98995" y1="338" x2="375.90423" y2="338" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_61">
+        <path d="M 236.72884 326.97274 C 238.21583 330.6902 239.0244 334.00287 239 337.6772" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+      <g id="Line_60">
+        <path d="M 471.11243 338 C 471.1621 334.0746 471.1621 329.77044 472.02296 325.8967" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width=".5"/>
+      </g>
+    </g>
+    <g id="Canvas_1: Layer 3">
+      <title>Layer 3</title>
+      <g id="Graphic_32">
+        <text transform="translate(281.78257 345.1)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">Planet</tspan>
+        </text>
+      </g>
+      <g id="Graphic_31">
+        <text transform="translate(34.503736 352.9871)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">Sun</tspan>
+        </text>
+      </g>
+      <g id="Graphic_30">
+        <text transform="translate(472.6455 263.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">Penumbra</tspan>
+        </text>
+      </g>
+      <g id="Graphic_33">
+        <text transform="translate(472.6455 382.5998)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">Penumbra</tspan>
+        </text>
+      </g>
+      <g id="Graphic_34">
+        <text transform="translate(277.48677 193.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="17.803004" y="13">Fundamental </tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="64.507" y="29.392">Plane</tspan>
+        </text>
+      </g>
+      <g id="Graphic_35">
+        <text transform="translate(338.7644 345.1)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="white" x="0" y="13">Umbra</tspan>
+        </text>
+      </g>
+      <g id="Graphic_50">
+        <text transform="translate(380.867 263.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="5.4599994" y="13">s/c</tspan>
+        </text>
+      </g>
+      <g id="Graphic_63">
+        <text transform="translate(53.5 299)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="0" y="13">r</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">H</tspan>
+        </text>
+      </g>
+      <g id="Graphic_64">
+        <text transform="translate(204.5 316.374)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="45119464e-20" y="13">V</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_65">
+        <text transform="translate(541.5 316.374)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="45119464e-20" y="13">V</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_66">
+        <text transform="translate(457.8962 323.03833)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="white" x="52402527e-20" y="13">f</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="white" y="17">2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_67">
+        <text transform="translate(243.1984 322)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="52402527e-20" y="13">f</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_68">
+        <text transform="translate(281.78257 309)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="0" y="13">r</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">P</tspan>
+        </text>
+      </g>
+      <g id="Graphic_69">
+        <text transform="translate(389.131 289.892)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="4947154e-19" y="13">l</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_70">
+        <text transform="translate(389.131 316.72556)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="white" x="4947154e-19" y="13">l</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="white" y="17">2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_71">
+        <text transform="translate(338.7644 319.144)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="white" x="5968559e-19" y="13">s</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="white" y="17">0</tspan>
+        </text>
+      </g>
+      <g id="Graphic_72">
+        <text transform="translate(289.813 414)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="42188475e-20" y="13">c</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_73">
+        <text transform="translate(456.5 414)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="400" fill="black" x="42188475e-20" y="13">c</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-style="italic" font-weight="400" fill="black" y="17">2</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
