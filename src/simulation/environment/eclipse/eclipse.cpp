@@ -294,7 +294,22 @@ void Eclipse::addPlanetName(std::string planetName)
     } else if (planetName == "earth") {
         this->planetNames.push_back(planetName);
         this->planetInMsgNames.push_back(planetName + "_planet_data");
+    } else if (planetName == "mars") {
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else if (planetName == "mars barycenter") {
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
+    } else if (planetName == "jupiter barycenter") {
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
+    } else if (planetName == "saturn") {
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
+    } else if (planetName == "uranus") {
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
+    } else if (planetName == "neptune") {
         this->planetNames.push_back(planetName);
         this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else {
@@ -305,21 +320,32 @@ void Eclipse::addPlanetName(std::string planetName)
 }
 
 /*! This method return planet radii.
- methods.
- @return double  The equatorial radius in metres
- associated with the given planet name.
  @param std::string planetSpiceName The planet name according
  to the spice NAIF Integer ID codes.
+ @return double  The equatorial radius in metres
+ associated with the given planet name.
  */
 double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
 {
     if (planetSpiceName == "mercury") {
-        return REQ_MERCURY*1000.0; // [metres]
+        return REQ_MERCURY*1000.0; // [meters]
     } else if (planetSpiceName == "venus") {
         return REQ_VENUS*1000.0;
     } else if (planetSpiceName == "earth") {
         return REQ_EARTH*1000.0;
+    } else if (planetSpiceName == "moon") {
+        return REQ_MOON*1000.0;
     } else if (planetSpiceName == "mars barycenter") {
+        return REQ_MARS*1000.0;
+    } else if (planetSpiceName == "mars") {
+        return REQ_MARS*1000.0;
+    } else if (planetSpiceName == "jupiter barycenter") {
+        return REQ_MARS*1000.0;
+    } else if (planetSpiceName == "saturn") {
+        return REQ_MARS*1000.0;
+    } else if (planetSpiceName == "uranus") {
+        return REQ_MARS*1000.0;
+    } else if (planetSpiceName == "neptune") {
         return REQ_MARS*1000.0;
     } else {
         return 0.0;
