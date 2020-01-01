@@ -44,10 +44,40 @@ produces this equation inline :math:`a = b^{2}` equation.  In contrast, this cod
     .. math::
         a = b^2
 
+or this compact version for 1 liners::
+
+    .. math:: a = b^2
+
 creates this block of math.
 
 .. math::
     a = b^2
+
+To create a numbered equation you need to add a label::
+
+    .. math::
+        :label: eq-firstLaw
+
+        a = b^2
+
+which creates this
+
+.. math::
+    :label: eq-firstLaw
+
+    a = b^2
+
+This label can be referenced using ``:eq:`eq-firstLaw``` to cite Eq. :eq:`eq-firstLaw`.
+
+To do bold math, we can't use the popular ``\bm`` command.  Instead, we can use ``{\bf u}`` (regular letters) or
+``\pmb \omega`` (greek letters).  The following math is an example of this showing both bold and un-bold letters
+next to each other:
+
+.. math:: {\bf u} u = 3 \hat{\bf e}_3
+    :label: eq-2
+
+.. math::  \pmb \omega \omega = 2 \hat{\imath}_{\theta}
+    :label: eq-3
 
 More details on how to typeset TeX math in Sphinx can be found `here <https://documentation.help/Sphinx/math.html>`__.
 
