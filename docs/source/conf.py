@@ -370,7 +370,7 @@ class fileCrawler():
                 module_files_temp = []
                 lines = ""
                 lines += ".. _" + c_file_basename + ":\n\n"
-                lines += c_file_basename + "\n" + "=" * len(c_file_basename) + "\n\n"
+                lines += "Module: " + c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
 
                 # pull in the module documentation file if it exists
                 docFileName = os.path.join(src_path, c_file_basename + '.rst')
