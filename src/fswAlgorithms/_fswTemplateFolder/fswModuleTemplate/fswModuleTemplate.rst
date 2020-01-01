@@ -100,9 +100,16 @@ If you want to cite other papers or text, provide a web link to a paper.  For ex
 
 creates `The link text <http://example.net/>`__.
 
-Figures
-^^^^^^^
-To include static, non-``pytest`` generated figures, you must copy the web compatible image (svg, jpg, png) to a local sub-folder ``fswModuleTemplate/_Documentation/Images/``.  This keeps the modules images grouped within this sub-folder and contained within the main module folder. For example, you can use code such as::
+Images and Figures
+^^^^^^^^^^^^^^^^^^
+To include static, non-``pytest`` generated images and figures, you must copy the web compatible image (svg, jpg, png)
+to a local sub-folder ``fswModuleTemplate/_Documentation/Images/``.   This keeps the modules images grouped
+within this sub-folder and contained within the main module folder.  The SVG image format is preferred as it is
+a vectorized format that renders in a higher quality.  Further, when viewed in dark mode the svg will
+automatically convert to a dark image (preserving colors).  Pixelated formats such as jpg and png remain the same
+in light and dark mode of the documentation web page.
+
+For example, to include an image (has no caption) you can use code such as::
 
     .. image:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
         :align: center
@@ -112,9 +119,32 @@ to generate the following image.
 .. image:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
      :align: center
 
-Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution that you need, then provide ``:scale: 50 %`` to shrink it to the normal size.  This way the image has enough resolution to look good on high-resolution displays.
+Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution
+that you need, then provide ``:scale: 50 %`` to shrink it to the normal size.  This way the image has
+enough resolution to look good on high-resolution displays.
 
-More information on how to include images or figures using sphinx can be found `here <http://docutils.sourceforge.net/docs/ref/rst/directives.html#images>`__.  In particular, it is also possible to include an image as a figure which has a caption.
+To include a figure (has a caption and you can add label), use the following code::
+
+    .. _figLabel:
+    .. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+        :align: center
+
+        Figure 1: Concept Illustration of the Math used in this Module
+
+This yields
+
+.. _figLabel:
+.. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+    :align: center
+
+    Figure 1: Concept Illustration of the Math used in this Module
+
+You can cite the figure using ``:ref:`figLabel```. For example, as seen in :ref:`figLabel`, the figure can
+now be referenced.
+
+More information on how to include images or figures using sphinx can be found
+`here <http://docutils.sourceforge.net/docs/ref/rst/directives.html#images>`__.  In particular, it is
+also possible to include an image as a figure which has a caption.
 
 
 Tables
