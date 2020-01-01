@@ -20,7 +20,8 @@ Basilisk Release Notes
 
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- Updated documentation for :ref:`eclipse` module with new RST format
+- Updated :ref:`fswModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
 
 Version 1.4.2
 -------------
