@@ -35,8 +35,7 @@ Eclipse::~Eclipse()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output
- messages.
+/*! This method initializes the object. It creates the module's output messages auto-named ``eclipse_data_0`` etc.
  @return void*/
 void Eclipse::SelfInit()
 {
@@ -52,7 +51,7 @@ void Eclipse::SelfInit()
     this->eclipseShadowFactors.resize(this->eclipseOutMsgId.size());
 }
 
-/*! This method subscribes to the spice planet states and spaceccraft state messages.
+/*! This method subscribes to the spice planet states, the spacecraft state messages and the sun state message.
  @return void*/
 void Eclipse::CrossInit()
 {
@@ -63,7 +62,7 @@ void Eclipse::CrossInit()
         this->planetInMsgIdAndStates[msgID] = SpicePlanetStateSimMsg();
     }
     
-    // If the user didn't b set a custom sun meesage name then use
+    // If the user didn't set a custom sun meesage name then use
     // the default system name of sun_planet_data
     if (this->sunInMsgName.empty()) {
         this->sunInMsgName = "sun_planet_data";
@@ -71,16 +70,15 @@ void Eclipse::CrossInit()
     this->sunInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunInMsgName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
     
     std::vector<std::string>::iterator posIt;
-    for(posIt = this->positionMsgNames.begin(); posIt != this->positionMsgNames.end(); posIt++)
+    for(posIt = this->positionInMsgNames.begin(); posIt != this->positionInMsgNames.end(); posIt++)
     {
         int64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*posIt), sizeof(SCPlusStatesSimMsg), this->moduleID);
         this->positionInMsgIdAndState[msgID] = SCPlusStatesSimMsg();
     }
 }
 
-/*! This method reads the spacecraft state and spice planet states from the messaging system.
+/*! This method reads the spacecraft state, spice planet states and the sun position from the messaging system.
  @return void
- @param CurrentClock The current simulation time (used for time stamping)
  */
 void Eclipse::readInputMessages()
 {
@@ -108,10 +106,10 @@ void Eclipse::readInputMessages()
     }
 }
 
-/*! This method takes the computed shadow factors and outputs them to the m
+/*! This method takes the computed shadow factors and outputs them to the
  messaging system.
- @return void
  @param CurrentClock The current simulation time (used for time stamping)
+ @return void
  */
 void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 {
@@ -128,8 +126,8 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method governs the calculation and checking for eclipse
  conditions.
- @return void
  @param CurrentSimNanos The current clock time for the simulation
+ @return void
  */
 void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -222,8 +220,8 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method computes the fraction of sunlight given an eclipse.
+ @param std::string msgName
  @return double fractionShadow The eclipse shadow fraction.
- @param std::string msgName .
  */
 double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N)
 {
@@ -258,30 +256,23 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
  a new unique output message name for the eclipse data message and returns
  this to the user so that they may assign the eclipse message name to other 
  modules requiring eclipse data.
- methods.
- @return std::string newEclipseMsgName The unique eclipse data msg name 
- associated with the given input state message name.
  @param std::string msgName The message name for the spacecraft state data
  for which to compute the eclipse data.
+ @return std::string newEclipseMsgName The unique eclipse data msg name
+ associated with the given input state message name.
  */
 std::string Eclipse::addPositionMsgName(std::string msgName)
 {
-    this->positionMsgNames.push_back(msgName);
+    this->positionInMsgNames.push_back(msgName);
     
-    std::string newEclipseMsgName = "eclipse_data_" + std::to_string(this->positionMsgNames.size()-1);
+    std::string newEclipseMsgName = "eclipse_data_" + std::to_string(this->positionInMsgNames.size()-1);
     this->eclipseOutMsgNames.push_back(newEclipseMsgName);
     return newEclipseMsgName;
 }
 
-/*! This method adds spacecraft state data message names to a vector, creates
- a new unique output message name for the eclipse data message and returns
- this to the user so that they may assign the eclipse message name to other
- modules requiring eclipse data.
- methods.
- @return std::string newEclipseMsgName The unique eclipse data msg name
- associated with the given input state message name.
- @param std::string msgName The message name for the spacecraft state data
- for which to compute the eclipse data.
+/*! This method adds planet state data message names to a vector.
+ @param std::string planetName The planet name
+ @return void
  */
 void Eclipse::addPlanetName(std::string planetName)
 {
