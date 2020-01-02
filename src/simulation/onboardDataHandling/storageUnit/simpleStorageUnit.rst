@@ -26,7 +26,7 @@ To set up this module users must create a SimpleStorageUnit instance::
    storageUnit = simpleStorageUnit.SimpleStorageUnit()
    storageUnit.ModelTag = "storageUnit"
 
-In addition to the variables that must be set for the :ref:`DataStorageBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total data stored in the storageUnit will be limited to not exceed this capacity value::
+In addition to the variables that must be set for the :ref:`DataStorageUnitBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total data stored in the storageUnit will be limited to not exceed this capacity value::
 
    storageUnit.storageCapacity = 1E5 # Given in bits
 

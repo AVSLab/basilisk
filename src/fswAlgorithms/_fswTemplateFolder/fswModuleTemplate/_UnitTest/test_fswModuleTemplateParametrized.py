@@ -65,7 +65,7 @@ from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, param1, param2, accuracy):
-    """
+    r"""
     **Validation Test Description**
 
     Compose a general description of what is being tested in this unit test script.  Add enough information so the

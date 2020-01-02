@@ -39,4 +39,4 @@ The final step is to specify the output message name::
    battery.batPowerOutMsgName= "outMsgName"
 
 
-For more information on how to set up and use this module, see the simple power system example :ref:`scenarioSimplePowerDemo`.
+For more information on how to set up and use this module, see the simple power system example :ref:`scenarioPowerDemo`.

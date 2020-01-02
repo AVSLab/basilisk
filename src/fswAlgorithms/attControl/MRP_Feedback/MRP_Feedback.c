@@ -32,7 +32,7 @@
 #include <string.h>
 #include <math.h>
 
-/*! @brief This method sets up the module output message of type [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg)
+/*! @brief This method sets up the module output message of type `CmdTorqueBodyIntMsg`
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
@@ -47,11 +47,11 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 
 /*! @brief This method performs the second stage of initialization for this module.
  Its primary function is to link the input messages that were created elsewhere.  The required
- input messages are the attitude tracking error message of type [AttGuidFswMsg](\ref AttGuidFswMsg)
- and the vehicle configuration message of type [VehicleConfigFswMsg](\ref VehicleConfigFswMsg).
- Optional messages are the RW configuration message of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg),
- the RW speed message of type [RWSpeedIntMsg](\ref RWSpeedIntMsg)
- and the RW availability message of type [RWAvailabilityFswMsg](\ref RWAvailabilityFswMsg).
+ input messages are the attitude tracking error message of type ``AttGuidFswMsg``
+ and the vehicle configuration message of type ``VehicleConfigFswMsg``.
+ Optional messages are the RW configuration message of type ``RWArrayConfigFswMsg``,
+ the RW speed message of type `RWSpeedIntMsg`
+ and the RW availability message of type :`RWAvailabilityFswMsg`.
  @return void
  @param configData The configuration data associated with this module
  */
@@ -86,6 +86,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
+ @param callTime The clock time at which the function was called (nanoseconds)
  @param configData The configuration data associated with the MRP steering control
  */
 void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID)

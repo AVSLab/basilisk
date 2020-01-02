@@ -51,7 +51,7 @@ Unlike hill pointing, this module provides a pointing model relative to the velo
 The advantage of the BSK_Sim architecture becomes apparent here. All modules and setup required for the MRP Feedback task
 were already defined from an earlier scenario. The user simply adds the preconfigured task to the event without
 having to manually reconfigure the messages. Now there is an additional FSW mode available for all current and
-future :ref:`BSK_scenario` files.
+future :ref:`BskSim` files.
 
 Illustration of Simulation Results
 ----------------------------------

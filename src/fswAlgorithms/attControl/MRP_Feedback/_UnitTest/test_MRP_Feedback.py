@@ -56,7 +56,38 @@ from Basilisk.fswAlgorithms.fswMessages import fswMessages
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
 def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
-    """Module Unit Test"""
+    r"""
+        **Validation Test Description**
+
+        The unit test for this module tests a set of gains :math:`K`, :math:`K_i`, :math:`P` on a rigid body
+        with no external torques, and with a fixed input reference attitude message. The torque requested
+        by the controller is evaluated against python computed torques at 0s, 0.5s, 1s, 1.5s and 2s to
+        within a tolerance of :math:`10^{-8}`. After 1s the simulation is stopped and the ``Reset()``
+        function is called to check that integral feedback related variables are properly reset.
+        The following permutations are run:
+
+        - The test is run for a case with error integration feedback (:math:`k_i`=0.01) and one case
+          where :math:`k_i` is set to a negative value, resulting in a case with no integrator.
+        - The RW array number is configured either to 4 or 0
+        - The integral limit term is set to either 0 or 20
+        - The RW availability message is tested in 3 manners.  Either the availability  message is not
+          written where all wheels should default to being available.  If the availability message is
+          written, then the RWs are either zero to available or not available.
+        - The control parameter :math:`\delta\omega_{0}` is set to either a zero or non-zero vector
+
+        All permutations of these test cases are expected to pass.
+
+
+        **Test Parameters**
+
+        Args:
+            intGain (float): value of the integral gain :math:`K_i`
+            rwNum (int): number of RW devices to simulate
+            integralLimit (float): value of the integral limit
+            useRwAvailability (string): Flag to not use RW availabillity (``NO``), use the availability
+               message and turn on the RW devices (``ON``) and use the message and turn off the devices (``OFF``)
+        """
+
     # each test method requires a single assert method to be called
 
     [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, useRwAvailability)

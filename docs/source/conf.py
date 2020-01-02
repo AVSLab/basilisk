@@ -22,7 +22,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = u'Basilisk'
-copyright = u'2019, Autonomous Vehicle Systems (AVS) Laboratory'
+copyright = u'2020, Autonomous Vehicle Systems (AVS) Laboratory'
 author = u'AVS Lab'
 
 # The short X.Y version
@@ -370,7 +370,13 @@ class fileCrawler():
                 module_files_temp = []
                 lines = ""
                 lines += ".. _" + c_file_basename + ":\n\n"
-                lines += "Module: " + c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
+                if "fswMessages" in src_path \
+                        or "simFswInterfaceMessages" in src_path \
+                        or "simMessages" in src_path\
+                        or "utilities" in src_path:
+                    lines += c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
+                else:
+                    lines += "Module: " + c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
 
                 # pull in the module documentation file if it exists
                 docFileName = os.path.join(src_path, c_file_basename + '.rst')

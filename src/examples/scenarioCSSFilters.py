@@ -30,7 +30,7 @@ The script is found in the folder ``src/examples`` and executed by using::
 
 When the simulation completes several plots are written summarizing the filter performances.
 
-The simulation reads the Sun's position from :ref:`SpiceInterface`. By creating this
+The simulation reads the Sun's position from `SpiceInterface`. By creating this
 spice object and adding it to the task, the spice object automatically writes out
 the ephemeris messages.
 

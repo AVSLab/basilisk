@@ -66,7 +66,7 @@ a wheel with a simple jitter model, or a wheel with a fully coupled model.
 
 
 The next step in this simulation setup is to use create() to include a particular RW devices.
-The :ref:`rwFactory` class contains several
+The `rwFactory` class in :ref:`simIncludeRW` contains several
 public specifications of RW devices which can be accessed by specifying the wheel name, ``Honeywell_HR16``
 in this case.  The  2nd required argument is the spin axis :math:`\hat{\mathbf g}_B`.  It is a unit
 vector expressed in the :math:`\cal B`-frame.  The remaining arguments are all optional.  In this simulation

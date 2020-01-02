@@ -30,7 +30,7 @@ The script is found in the folder ``src/examples/BskSim/scenarios`` and executed
 
       python3 scenario_BasicOrbit_LivePlot.py
 
-# To enable live plotting with a ``bskSim`` Basilisk simulation additional
+To enable live plotting with a ``bskSim`` Basilisk simulation additional
 python packages ``Pipe``, ``Process``, ``Lock`` must be imported.
 
 

@@ -61,7 +61,7 @@ that tracks the error of the spacecraft's MRP parameters against the vector poin
 body, and uses a module that takes that information to provide a torque to correct for the error.
 
 This event is triggered when a user calls `self.masterSim.modeRequest = 'hillPoint'` in any
-current or future :ref:`BSK_scenario` file.
+current or future :ref:`BskSim` file.
 
 Illustration of Simulation Results
 ----------------------------------

@@ -42,7 +42,7 @@ Copy ``tcp://localhost:5556`` and open the Vizard application.  Enter this addre
 "Direct Communication" mode as well as "Live Streaming".  After this the Basilisk simulation resumes and
 will live stream the data to Vizard.
 
-.. figure:: /_images/static/vizard-ImgStream.png
+.. figure:: /_images/static/vizard-ImgStream.jpg
    :align: center
    :scale: 50 %
 

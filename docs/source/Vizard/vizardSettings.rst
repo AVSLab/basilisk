@@ -119,10 +119,10 @@ towards the sun direction, or from the spacecraft towards Earth to know
 how the antennas should point. These pointing lines can be scripted from
 Basilisk as well using using a helper function ``createPointLine()``:
 
-.. code-block:: python
+.. code-block::
 
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-	vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
 
 The ``createPointLine`` support macro requires the parameters ``toBodyName`` and ``lineColor`` to be
 defined. The parameter ``fromBodyName`` is optional. If it is not
@@ -164,7 +164,7 @@ sensor axis is outside some angle to the sun (i.e. keep out cone). These
 cones can be setup in Vizard, but can also be scripted from Basilisk
 using the helper function ``createConeInOut``:
 
-.. code-block:: python
+.. code-block::
 	
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal', normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True, coneHeight=5.0, coneName=‘sensorCone’)

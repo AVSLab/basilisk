@@ -121,7 +121,7 @@ Datashader and Monte Carlo
 To install the ``datashader`` capability, see the :ref:`installOptionalPackages`.
 Using ``datashader`` and ``holoviews`` together can rasterize and visualize large amounts of data very quickly.
 We have provided a generalized ``datashader`` interface for Monte Carlo runs in the ``utilities`` folder called
-:ref:`datashaderGraphingInterface`.
+`datashaderGraphingInterface`.
 After installing ``datashader`` and importing it in your monte carlo, you can
 incorporate into a Monte Carlo very easily. First you need a method that you can easily call to configure the ``datashader``
 library. In this Monte Carlo, this method is called ``configureDatashader()``. It is referenced at the top of the ``run(...)`` function.

@@ -544,8 +544,8 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
 class PythonMRPPD(simulationArchTypes.PythonModelClass):
     """
-    This class inherits from the :ref:`PythonModelClass` available in the ``simulationArchTypes`` module.
-    The :ref:`PythonModelClass` is the parent class which your Python BSK modules must inherit.
+    This class inherits from the `PythonModelClass` available in the ``simulationArchTypes`` module.
+    The `PythonModelClass` is the parent class which your Python BSK modules must inherit.
     The class uses the following
     virtual functions:
 
