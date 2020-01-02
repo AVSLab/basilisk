@@ -42,24 +42,24 @@ typedef struct {
     double int_sigma[3];                //!< [s]       integral of the MPR attitude error
     double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
     
-    double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
+    double ISCPntB_B[9];                //!< [kg m^2]  Spacecraft Inertia
     RWArrayConfigFswMsg rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module IO interfaces */
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the RWArrayConfigFswMsg input message
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the RW array configuration input message
     int32_t rwParamsInMsgId;                            //!< [-] ID for the RWArrayConfigFswMsg ingoing message
-    char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t vehConfigInMsgId;
+    char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];       //!< [-] Name of the vehicle configuration input message
+    int32_t vehConfigInMsgId;                           //!< [-] Msg ID of vehicle configuration message
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];         //!< [-] The name of the RWs availability message
     int32_t rwAvailInMsgId;                             //!< [-] ID for the incoming  RWs availability data
     
     char outputDataName[MAX_STAT_MSG_LENGTH];           //!< [-] The name of the output message
-    char inputGuidName[MAX_STAT_MSG_LENGTH];            //!< [-] The name of the Input message
+    char inputGuidName[MAX_STAT_MSG_LENGTH];            //!< [-] The name of the attitude guidance input message
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];        //!< [-] The name for the reaction wheel speeds message
     int32_t rwSpeedsInMsgId;                            //!< [-] ID for the reaction wheel speeds message
     int32_t attControlTorqueOutMsgId;                   //!< [-] ID for the outgoing attitude control torque message
     int32_t attGuidInMsgId;                             //!< [-] ID for the incoming attitude guidance errors
-    BSKLogger *bskLogger;                                 //!< BSK Logging
+    BSKLogger *bskLogger;                               //!< BSK Logging
 }MRP_FeedbackConfig;
 
 #ifdef __cplusplus
