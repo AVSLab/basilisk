@@ -57,8 +57,8 @@ For Basilisk Python 2 and Python 3 inter-compatability, build using both followi
 
 #. First step is to create the destination directory.  This is ``dist3`` for Python 3 and ``dist`` for Python 2::
 
-       $ mkdir dist
-       $ cd
+       $ mkdir dist3
+       $ cd dist3
 
 #. Setup Conan Repositories. These can be consolidated into a private conan server `conan getting started docs <https://docs.conan.io/en/latest/introduction.html>`__::
 
