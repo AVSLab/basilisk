@@ -17,7 +17,7 @@ provides information on what this message is used for.
     +------------------------+-----------------------------------+---------------------------------------------------+
     | Msg Variable Name      | Msg Type                          | Description                                       |
     +========================+===================================+===================================================+
-    | sunInMsgName           | :ref:`sunInMsgState`              | (Optional) sun state input message name.  If not  |
+    | sunInMsgName           | :ref:`SpicePlanetStateSimMsg`     | (Optional) sun state input message name.  If not  |
     |                        |                                   | set, then this is set to ``sun_planet_data``.     |
     |                        |                                   | If this message does not exist, then the sun      |
     |                        |                                   | location is set to (0,0,0).                       |

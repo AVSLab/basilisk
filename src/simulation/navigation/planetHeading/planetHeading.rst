@@ -60,7 +60,7 @@ Then, it is converted to the body frame and normalized
 User Guide
 ^^^^^^^^^^
 The user can only instantiate this module, change the i/o names, and add it to a task.
-The names below are only special in that they are useful defaults.  Only the :ref:`spacecraftStateInMsgName` is actually a default.
+The names below are only special in that they are useful defaults.  Only the `spacecraftStateInMsgName` is actually a default.
 
 .. code-block:: python
 

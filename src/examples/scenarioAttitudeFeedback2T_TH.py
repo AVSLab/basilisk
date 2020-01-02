@@ -130,7 +130,7 @@ long a thruster should be on. Four values are specified: `thrMinFireTime`` (mini
 and set to 1 for DV thrusters). As expected, the thrusters force
 input is directly the output of `thrForceMapping`, and also in this case we will need the thrusters configuration
 message. It can be noted how the output of this module ends up to be the input commands for the
-:ref:`thrustersDynamicEffector`, by using the default message name "acs_thruster_cmds".
+:ref:`thrusterDynamicEffector`, by using the default message name "acs_thruster_cmds".
 
 The flight algorithm needs to know how many thruster devices are on the spacecraft and what their
 location and direction are.  This is set through a flight software message that is read
