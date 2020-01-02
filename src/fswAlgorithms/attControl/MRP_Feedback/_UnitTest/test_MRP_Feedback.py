@@ -56,7 +56,7 @@ from Basilisk.fswAlgorithms.fswMessages import fswMessages
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
 def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
-    """
+    r"""
         **Validation Test Description**
 
         The unit test for this module tests a set of gains :math:`K`, :math:`K_i`, :math:`P` on a rigid body
@@ -66,14 +66,14 @@ def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailabili
         function is called to check that integral feedback related variables are properly reset.
         The following permutations are run:
 
-	    - The test is run for a case with error integration feedback (:math:`k_i`=0.01) and one case
-	      where :math:`k_i` is set to a negative value, resulting in a case with no integrator.
-	    - The RW array number is configured either to 4 or 0
-	    - The integral limit term is set to either 0 or 20
-	    - The RW availability message is tested in 3 manners.  Either the availability  message is not
-	      written where all wheels should default to being available.  If the availability message is
-	      written, then the RWs are either zero to available or not available.
-	    - The control parameter :math:`\delta\omega_{0}` is set to either a zero or non-zero vector
+        - The test is run for a case with error integration feedback (:math:`k_i`=0.01) and one case
+          where :math:`k_i` is set to a negative value, resulting in a case with no integrator.
+        - The RW array number is configured either to 4 or 0
+        - The integral limit term is set to either 0 or 20
+        - The RW availability message is tested in 3 manners.  Either the availability  message is not
+          written where all wheels should default to being available.  If the availability message is
+          written, then the RWs are either zero to available or not available.
+        - The control parameter :math:`\delta\omega_{0}` is set to either a zero or non-zero vector
 
         All permutations of these test cases are expected to pass.
 
