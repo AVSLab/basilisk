@@ -72,7 +72,7 @@ def plotFixture(show_plots):
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_module(plotFixture, show_plots):     # update "module" in this function name to reflect the module name
-    """
+    r"""
     **Validation Test Description**
 
     Compose a general description of what is being tested in this unit test script.  Add enough information so
