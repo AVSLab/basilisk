@@ -90,6 +90,7 @@ typedef struct {
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
     int setView;                //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
     double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
+    double position_B[3];       //!< (default to 0, 0, 0). If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside of the spacecraft along the pointing vector direction.
 }StdCameraSettings;
 
 /*! Vizard User Interface structure specifying what actuator visualizations to show.

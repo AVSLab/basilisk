@@ -377,7 +377,7 @@ def createStandardCamera(viz, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['spacecraftName', 'setMode', 'setView', 'fieldOfView',
-         'bodyTarget', 'pointingVector_B'],
+         'bodyTarget', 'pointingVector_B', 'position_B'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -453,6 +453,13 @@ def createStandardCamera(viz, **kwargs):
         cam.pointingVector_B = pointingVector_B
     else:
         cam.pointingVector_B = [1.0, 0.0, 0.0]
+
+    if 'position_B' in kwargs:
+        position_B = kwargs['position_B']
+        if len(position_B) != 3:
+            print('ERROR: position_B must be 3D list of float values')
+            exit(1)
+        cam.position_B = position_B
 
     stdCameraList.append(cam)
     del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list

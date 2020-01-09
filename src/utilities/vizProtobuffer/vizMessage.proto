@@ -110,7 +110,7 @@ message VizMessage{
         string bodyTarget = 6; // Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
         int32 setView = 7; //0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
         repeated double pointingVector = 8; //x,y,z, vector (default to 1, 0, 0). This is a setting for pointing vector mode.
-        repeated double position = 9; // [m] (Optional) If populated, sets camera position relative to parent body coordinate frame in meters. If unpopulated, camera is positioned automatically along camera view direction outside of parent body's mesh to prevent obstruction of view.
+        repeated double position = 9; // [m] (Optional) If populated, sets camera position relative to parent body coordinate frame in meters using B frame components. If unpopulated, camera is positioned automatically along camera view direction outside of parent body's mesh to prevent obstruction of view.
     }
 
     message ActuatorSettings{

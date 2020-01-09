@@ -504,6 +504,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (size_t i=0; i<3; i++){
                 sc->add_pointingvector(scp->pointingVector_B[i]);
             }
+            if (v3Norm(scp->position_B) > 0.00001) {
+                for (size_t i=0; i<3; i++) {
+                    sc->add_position(scp->position_B[i]);
+                }
+            }
         }
 
         message->set_allocated_settings(vizSettings);
