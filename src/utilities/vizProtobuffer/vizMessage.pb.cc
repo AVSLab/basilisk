@@ -467,6 +467,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ReactionWheel, spinaxisvector_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ReactionWheel, wheelspeed_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ReactionWheel, wheeltorque_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ReactionWheel, maxspeed_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ReactionWheel, maxtorque_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_Thruster, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -544,6 +546,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, bodytarget_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, setview_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, pointingvector_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StandardCameraSettings, position_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ActuatorSettings, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -598,17 +601,17 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 7, -1, sizeof(::vizProtobufferMessage::VizMessage_CelestialBody)},
   { 16, -1, sizeof(::vizProtobufferMessage::VizMessage_Spacecraft)},
   { 29, -1, sizeof(::vizProtobufferMessage::VizMessage_ReactionWheel)},
-  { 38, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
-  { 48, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
-  { 57, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
-  { 67, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
-  { 82, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
-  { 90, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
-  { 104, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
-  { 115, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 125, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
-  { 138, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 153, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 40, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
+  { 50, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
+  { 59, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
+  { 69, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
+  { 84, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
+  { 92, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
+  { 106, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
+  { 118, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
+  { 128, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 141, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 156, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -652,7 +655,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\303\025\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\373\025\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -673,58 +676,59 @@ void AddDescriptorsImpl() {
       "e.Thruster\022>\n\003CSS\030\007 \003(\01321.vizProtobuffer"
       "Message.VizMessage.CoarseSunSensor\022C\n\014st"
       "arTrackers\030\010 \003(\0132-.vizProtobufferMessage"
-      ".VizMessage.StarTracker\032b\n\rReactionWheel"
-      "\022\020\n\010position\030\002 \003(\001\022\026\n\016spinAxisVector\030\004 \003"
-      "(\001\022\022\n\nwheelSpeed\030\005 \001(\001\022\023\n\013wheelTorque\030\006 "
-      "\001(\001\032u\n\010Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thr"
-      "ustVector\030\004 \003(\001\022\025\n\rcurrentThrust\030\005 \001(\001\022\021"
-      "\n\tmaxThrust\030\006 \001(\001\022\027\n\017thrusterGroupID\030\007 \001"
-      "(\005\032b\n\017CoarseSunSensor\022\020\n\010position\030\002 \003(\001\022"
-      "\024\n\014normalVector\030\004 \003(\001\022\023\n\013currentMsmt\030\005 \001"
-      "(\001\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarTracker\022\020"
-      "\n\010position\030\002 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\031\n\021fi"
-      "eldOfViewHeight\030\005 \001(\001\022\030\n\020fieldOfViewWidt"
-      "h\030\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 \001(\005\032\324\001\n\014"
-      "CameraConfig\022\020\n\010cameraID\030\001 \001(\003\022\022\n\nparent"
-      "Name\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022\022\n\nresol"
-      "ution\030\004 \003(\003\022\023\n\013focalLength\030\005 \001(\001\022\022\n\nsens"
-      "orSize\030\006 \003(\001\022\023\n\013cameraPos_B\030\007 \003(\001\022\023\n\013cam"
-      "eraDir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004\022\016\n\006sk"
-      "ybox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBodyName\030"
-      "\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tlineColor\030\003"
-      " \003(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepIn\030\001 \001(\010"
-      "\022\020\n\010position\030\002 \003(\001\022\024\n\014normalVector\030\003 \003(\001"
-      "\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHeight\030\005"
-      " \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBodyName"
-      "\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010coneName\030\t "
-      "\001(\t\032\223\001\n\026StandardCameraSettings\022\026\n\016spacec"
-      "raftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023\n\013field"
-      "OfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017\n\007setV"
-      "iew\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\032\206\001\n\020Ac"
-      "tuatorSettings\022\026\n\016spacecraftName\030\001 \001(\t\022\031"
-      "\n\021viewThrusterPanel\030\002 \001(\005\022\027\n\017viewThruste"
-      "rHUD\030\003 \001(\005\022\023\n\013viewRWPanel\030\004 \001(\005\022\021\n\tviewR"
-      "WHUD\030\005 \001(\005\032\256\001\n\013CustomModel\022\021\n\tmodelPath\030"
-      "\001 \001(\t\022\031\n\021simBodiesToModify\030\002 \003(\t\022\016\n\006offs"
-      "et\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scale\030\005 \003("
-      "\001\022\031\n\021customTexturePath\030\006 \001(\t\022\025\n\rnormalMa"
-      "pPath\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\351\003\n\rVizSetti"
-      "ngsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002"
-      " \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanetCS"
-      "on\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProtob"
-      "ufferMessage.VizMessage.PointLine\022G\n\016kee"
-      "pOutInCones\030\006 \003(\0132/.vizProtobufferMessag"
-      "e.VizMessage.KeepOutInCone\022X\n\026standardCa"
-      "meraSettings\030\007 \003(\01328.vizProtobufferMessa"
-      "ge.VizMessage.StandardCameraSettings\022L\n\020"
-      "actuatorSettings\030\n \003(\01322.vizProtobufferM"
-      "essage.VizMessage.ActuatorSettings\022\016\n\006sk"
-      "ybox\030\013 \001(\t\022C\n\014customModels\030\014 \003(\0132-.vizPr"
-      "otobufferMessage.VizMessage.CustomModelb"
-      "\006proto3"
+      ".VizMessage.StarTracker\032\207\001\n\rReactionWhee"
+      "l\022\020\n\010position\030\002 \003(\001\022\026\n\016spinAxisVector\030\004 "
+      "\003(\001\022\022\n\nwheelSpeed\030\005 \001(\001\022\023\n\013wheelTorque\030\006"
+      " \001(\001\022\020\n\010maxSpeed\030\007 \001(\001\022\021\n\tmaxTorque\030\010 \001("
+      "\001\032u\n\010Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thrus"
+      "tVector\030\004 \003(\001\022\025\n\rcurrentThrust\030\005 \001(\001\022\021\n\t"
+      "maxThrust\030\006 \001(\001\022\027\n\017thrusterGroupID\030\007 \001(\005"
+      "\032b\n\017CoarseSunSensor\022\020\n\010position\030\002 \003(\001\022\024\n"
+      "\014normalVector\030\004 \003(\001\022\023\n\013currentMsmt\030\005 \001(\001"
+      "\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarTracker\022\020\n\010"
+      "position\030\002 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\031\n\021fiel"
+      "dOfViewHeight\030\005 \001(\001\022\030\n\020fieldOfViewWidth\030"
+      "\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 \001(\005\032\324\001\n\014Ca"
+      "meraConfig\022\020\n\010cameraID\030\001 \001(\003\022\022\n\nparentNa"
+      "me\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022\022\n\nresolut"
+      "ion\030\004 \003(\003\022\023\n\013focalLength\030\005 \001(\001\022\022\n\nsensor"
+      "Size\030\006 \003(\001\022\023\n\013cameraPos_B\030\007 \003(\001\022\023\n\013camer"
+      "aDir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004\022\016\n\006skyb"
+      "ox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBodyName\030\001 "
+      "\001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tlineColor\030\003 \003"
+      "(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepIn\030\001 \001(\010\022\020"
+      "\n\010position\030\002 \003(\001\022\024\n\014normalVector\030\003 \003(\001\022\026"
+      "\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHeight\030\005 \001"
+      "(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBodyName\030\007"
+      " \001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010coneName\030\t \001("
+      "\t\032\245\001\n\026StandardCameraSettings\022\026\n\016spacecra"
+      "ftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023\n\013fieldOf"
+      "View\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017\n\007setVie"
+      "w\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\022\020\n\010posit"
+      "ion\030\t \003(\001\032\206\001\n\020ActuatorSettings\022\026\n\016spacec"
+      "raftName\030\001 \001(\t\022\031\n\021viewThrusterPanel\030\002 \001("
+      "\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013viewRWPane"
+      "l\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\032\256\001\n\013CustomMod"
+      "el\022\021\n\tmodelPath\030\001 \001(\t\022\031\n\021simBodiesToModi"
+      "fy\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rotation\030\004 \003"
+      "(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customTexturePath\030\006"
+      " \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006shader\030\010 "
+      "\001(\005\032\351\003\n\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024"
+      "\n\014orbitLinesOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003"
+      " \001(\005\022\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npointLines\030\005"
+      " \003(\0132+.vizProtobufferMessage.VizMessage."
+      "PointLine\022G\n\016keepOutInCones\030\006 \003(\0132/.vizP"
+      "rotobufferMessage.VizMessage.KeepOutInCo"
+      "ne\022X\n\026standardCameraSettings\030\007 \003(\01328.viz"
+      "ProtobufferMessage.VizMessage.StandardCa"
+      "meraSettings\022L\n\020actuatorSettings\030\n \003(\01322"
+      ".vizProtobufferMessage.VizMessage.Actuat"
+      "orSettings\022\016\n\006skybox\030\013 \001(\t\022C\n\014customMode"
+      "ls\030\014 \003(\0132-.vizProtobufferMessage.VizMess"
+      "age.CustomModelb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 2807);
+      descriptor, 2863);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -2081,6 +2085,8 @@ const int VizMessage_ReactionWheel::kPositionFieldNumber;
 const int VizMessage_ReactionWheel::kSpinAxisVectorFieldNumber;
 const int VizMessage_ReactionWheel::kWheelSpeedFieldNumber;
 const int VizMessage_ReactionWheel::kWheelTorqueFieldNumber;
+const int VizMessage_ReactionWheel::kMaxSpeedFieldNumber;
+const int VizMessage_ReactionWheel::kMaxTorqueFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_ReactionWheel::VizMessage_ReactionWheel()
@@ -2099,15 +2105,15 @@ VizMessage_ReactionWheel::VizMessage_ReactionWheel(const VizMessage_ReactionWhee
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::memcpy(&wheelspeed_, &from.wheelspeed_,
-    static_cast<size_t>(reinterpret_cast<char*>(&wheeltorque_) -
-    reinterpret_cast<char*>(&wheelspeed_)) + sizeof(wheeltorque_));
+    static_cast<size_t>(reinterpret_cast<char*>(&maxtorque_) -
+    reinterpret_cast<char*>(&wheelspeed_)) + sizeof(maxtorque_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.ReactionWheel)
 }
 
 void VizMessage_ReactionWheel::SharedCtor() {
   ::memset(&wheelspeed_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&wheeltorque_) -
-      reinterpret_cast<char*>(&wheelspeed_)) + sizeof(wheeltorque_));
+      reinterpret_cast<char*>(&maxtorque_) -
+      reinterpret_cast<char*>(&wheelspeed_)) + sizeof(maxtorque_));
   _cached_size_ = 0;
 }
 
@@ -2151,8 +2157,8 @@ void VizMessage_ReactionWheel::Clear() {
   position_.Clear();
   spinaxisvector_.Clear();
   ::memset(&wheelspeed_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&wheeltorque_) -
-      reinterpret_cast<char*>(&wheelspeed_)) + sizeof(wheeltorque_));
+      reinterpret_cast<char*>(&maxtorque_) -
+      reinterpret_cast<char*>(&wheelspeed_)) + sizeof(maxtorque_));
   _internal_metadata_.Clear();
 }
 
@@ -2232,6 +2238,34 @@ bool VizMessage_ReactionWheel::MergePartialFromCodedStream(
         break;
       }
 
+      // double maxSpeed = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(57u /* 57 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &maxspeed_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double maxTorque = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(65u /* 65 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &maxtorque_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -2286,6 +2320,16 @@ void VizMessage_ReactionWheel::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->wheeltorque(), output);
   }
 
+  // double maxSpeed = 7;
+  if (this->maxspeed() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->maxspeed(), output);
+  }
+
+  // double maxTorque = 8;
+  if (this->maxtorque() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->maxtorque(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -2334,6 +2378,16 @@ void VizMessage_ReactionWheel::SerializeWithCachedSizes(
   // double wheelTorque = 6;
   if (this->wheeltorque() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->wheeltorque(), target);
+  }
+
+  // double maxSpeed = 7;
+  if (this->maxspeed() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->maxspeed(), target);
+  }
+
+  // double maxTorque = 8;
+  if (this->maxtorque() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->maxtorque(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2395,6 +2449,16 @@ size_t VizMessage_ReactionWheel::ByteSizeLong() const {
     total_size += 1 + 8;
   }
 
+  // double maxSpeed = 7;
+  if (this->maxspeed() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double maxTorque = 8;
+  if (this->maxtorque() != 0) {
+    total_size += 1 + 8;
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -2432,6 +2496,12 @@ void VizMessage_ReactionWheel::MergeFrom(const VizMessage_ReactionWheel& from) {
   if (from.wheeltorque() != 0) {
     set_wheeltorque(from.wheeltorque());
   }
+  if (from.maxspeed() != 0) {
+    set_maxspeed(from.maxspeed());
+  }
+  if (from.maxtorque() != 0) {
+    set_maxtorque(from.maxtorque());
+  }
 }
 
 void VizMessage_ReactionWheel::CopyFrom(const ::google::protobuf::Message& from) {
@@ -2462,6 +2532,8 @@ void VizMessage_ReactionWheel::InternalSwap(VizMessage_ReactionWheel* other) {
   spinaxisvector_.InternalSwap(&other->spinaxisvector_);
   swap(wheelspeed_, other->wheelspeed_);
   swap(wheeltorque_, other->wheeltorque_);
+  swap(maxspeed_, other->maxspeed_);
+  swap(maxtorque_, other->maxtorque_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
@@ -5515,6 +5587,7 @@ const int VizMessage_StandardCameraSettings::kFieldOfViewFieldNumber;
 const int VizMessage_StandardCameraSettings::kBodyTargetFieldNumber;
 const int VizMessage_StandardCameraSettings::kSetViewFieldNumber;
 const int VizMessage_StandardCameraSettings::kPointingVectorFieldNumber;
+const int VizMessage_StandardCameraSettings::kPositionFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_StandardCameraSettings::VizMessage_StandardCameraSettings()
@@ -5529,6 +5602,7 @@ VizMessage_StandardCameraSettings::VizMessage_StandardCameraSettings(const VizMe
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       pointingvector_(from.pointingvector_),
+      position_(from.position_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -5594,6 +5668,7 @@ void VizMessage_StandardCameraSettings::Clear() {
   (void) cached_has_bits;
 
   pointingvector_.Clear();
+  position_.Clear();
   spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   bodytarget_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&fieldofview_, 0, static_cast<size_t>(
@@ -5705,6 +5780,25 @@ bool VizMessage_StandardCameraSettings::MergePartialFromCodedStream(
         break;
       }
 
+      // repeated double position = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, this->mutable_position())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(73u /* 73 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 74u, input, this->mutable_position())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -5775,6 +5869,15 @@ void VizMessage_StandardCameraSettings::SerializeWithCachedSizes(
       this->pointingvector().data(), this->pointingvector_size(), output);
   }
 
+  // repeated double position = 9;
+  if (this->position_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(9, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _position_cached_byte_size_));
+    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
+      this->position().data(), this->position_size(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -5839,6 +5942,19 @@ void VizMessage_StandardCameraSettings::SerializeWithCachedSizes(
       WriteDoubleNoTagToArray(this->pointingvector_, target);
   }
 
+  // repeated double position = 9;
+  if (this->position_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      9,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _position_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteDoubleNoTagToArray(this->position_, target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -5868,6 +5984,22 @@ size_t VizMessage_StandardCameraSettings::ByteSizeLong() const {
     int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
     GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
     _pointingvector_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated double position = 9;
+  {
+    unsigned int count = static_cast<unsigned int>(this->position_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _position_cached_byte_size_ = cached_size;
     GOOGLE_SAFE_CONCURRENT_WRITES_END();
     total_size += data_size;
   }
@@ -5935,6 +6067,7 @@ void VizMessage_StandardCameraSettings::MergeFrom(const VizMessage_StandardCamer
   (void) cached_has_bits;
 
   pointingvector_.MergeFrom(from.pointingvector_);
+  position_.MergeFrom(from.position_);
   if (from.spacecraftname().size() > 0) {
 
     spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
@@ -5979,6 +6112,7 @@ void VizMessage_StandardCameraSettings::Swap(VizMessage_StandardCameraSettings* 
 void VizMessage_StandardCameraSettings::InternalSwap(VizMessage_StandardCameraSettings* other) {
   using std::swap;
   pointingvector_.InternalSwap(&other->pointingvector_);
+  position_.InternalSwap(&other->position_);
   spacecraftname_.Swap(&other->spacecraftname_);
   bodytarget_.Swap(&other->bodytarget_);
   swap(fieldofview_, other->fieldofview_);
