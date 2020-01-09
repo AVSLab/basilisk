@@ -574,7 +574,7 @@ def run(show_plots, useMsgNameDefaults):
     for idx in range(1, 3):
         plt.plot(timeData, omegaRW2[idx - 1][:, 1]*60/(2*3.14159),
                  color=unitTestSupport.getLineColor(idx, numRW2),
-                 label='r$\Omega_{s,' + str(idx) + '}$')
+                 label=r'$\Omega_{s,' + str(idx) + '}$')
     plt.xlabel('Time [min]')
     plt.ylabel('RW2 Omega (rpm)')
 
