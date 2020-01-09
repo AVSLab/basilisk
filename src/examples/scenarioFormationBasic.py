@@ -402,6 +402,8 @@ def run(show_plots, useMsgNameDefaults):
     rwOutName = [rwPrefix + "_rw_config_0_data",
                  rwPrefix + "_rw_config_1_data",
                  rwPrefix + "_rw_config_2_data"]
+    rw2OutName = [rw2Prefix + "_rw_config_0_data",
+                  rw2Prefix + "_rw_config_1_data"]
 
     # A message is created that stores an array of the \Omega wheel speeds.  This is logged
     # here to be plotted later on.  However, RW specific messages are also being created which
@@ -409,6 +411,9 @@ def run(show_plots, useMsgNameDefaults):
     # allows us to log RW specific information such as the actual RW motor torque being applied.
     for item in rwOutName:
         scSim.TotalSim.logThisMessage(item, samplingTime)
+    for item in rw2OutName:
+        scSim.TotalSim.logThisMessage(item, samplingTime)
+
 
     #
     # create simulation messages
@@ -541,6 +546,9 @@ def run(show_plots, useMsgNameDefaults):
     for i in range(0, numRW):
         dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
     np.set_printoptions(precision=16)
+    omegaRW2 = []
+    for i in range(0, numRW2):
+        omegaRW2.append(scSim.pullMessageLogData(rw2OutName[i] + ".Omega", list(range(1))))
 
     #
     #   plot the results
@@ -561,6 +569,15 @@ def run(show_plots, useMsgNameDefaults):
     plot_rw_speeds(timeData, dataOmegaRW, numRW)
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(4)
+
+    plt.figure(5)
+    for idx in range(1, 3):
+        plt.plot(timeData, omegaRW2[idx - 1][:, 1]*60/(2*3.14159),
+                 color=unitTestSupport.getLineColor(idx, numRW2),
+                 label='r$\Omega_{s,' + str(idx) + '}$')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW2 Omega (rpm)')
+
 
     if show_plots:
         plt.show()
