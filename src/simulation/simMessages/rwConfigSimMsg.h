@@ -57,7 +57,7 @@ typedef struct {
     double frictionTorque = 0.0; //!< [N-m] friction torque, this is a computed value, don't set it directly
     double omegaBefore = 0.0;   //!< [rad/s], wheel speed one time step before
     bool frictionStribeck = 0;  //!< [-] Boolenian to determine if stribeck friction model is used or not, 0 is non-stribeck, 1 is stribeck; Parameter is set internally.
-    double Omega_max = 1000000000.0; //!< [rad/s], max wheel speed
+    double Omega_max = -1.0;    //!< [rad/s], max wheel speed, negative values turn off wheel saturation
     RWModels RWModel = BalancedWheels;       //!< [-], Type of imbalance model to use
     Eigen::Vector3d aOmega;     //!< [-], parameter used in coupled jitter back substitution
     Eigen::Vector3d bOmega;     //!< [-], parameter used in coupled jitter back substitution

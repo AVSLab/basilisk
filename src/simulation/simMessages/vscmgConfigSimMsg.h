@@ -73,13 +73,13 @@ typedef struct {
 	double l;
 	double L;
     double u_s_current;         //!< [N-m], current motor torque
-    double u_s_max;             //!< [N-m], Max torque
+    double u_s_max = -1.0;      //!< [N-m], Max torque
     double u_s_min;             //!< [N-m], Min torque
     double u_s_f;               //!< [N-m], Coulomb friction torque magnitude
-    double Omega_max;           //!< [rad/s], max wheel speed
+    double Omega_max = -1.0;    //!< [rad/s], max wheel speed
 	double wheelLinearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
 	double u_g_current;         //!< [N-m], current motor torque
-	double u_g_max;             //!< [N-m], Max torque
+	double u_g_max = -1.0;      //!< [N-m], Max torque
 	double u_g_min;             //!< [N-m], Min torque
 	double u_g_f;               //!< [N-m], Coulomb friction torque magnitude
 	double gammaDot_max;        //!< [rad/s], max wheel speed

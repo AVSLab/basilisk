@@ -734,7 +734,9 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 		}
 
         // Speed saturation
-        if (std::abs(this->VSCMGData[it].Omega)>= this->VSCMGData[it].Omega_max) {
+        if (std::abs(this->VSCMGData[it].Omega)>= this->VSCMGData[it].Omega_max
+            && this->VSCMGData[it].Omega_max > 0.0 /* negative Omega_max turns of wheel saturation modeling */
+            ) {
             CmdIt->u_s_cmd = 0.0;
 //            printf("Omega_max = %f\n", this->VSCMGData[it].Omega_max);
         }
@@ -743,6 +745,9 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 		//! set wheelLinearFrictionRatio to less than zero to disable linear friction
 		//! set u_s_f to zero to disable all friction
 		if (this->VSCMGData[it].wheelLinearFrictionRatio > 0.0) {
+            if (this->VSCMGData[it].Omega_max < 0.0) {
+                bskLogger.bskLog(BSK_ERROR, "VSCMGStateEffector: Omega_max must be set to a positive value to use wheelLinearFrictionRatio.");
+            }
 			omegaCritical = this->VSCMGData[it].Omega_max * this->VSCMGData[it].wheelLinearFrictionRatio;
 		} else {
 			omegaCritical = 0.0;
