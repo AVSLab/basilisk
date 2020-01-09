@@ -539,7 +539,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 if (scIt->rwInMsgID[idx].msgID != -1 && scIt->rwInMsgID[idx].dataFresh){
                     vizProtobufferMessage::VizMessage::ReactionWheel* rwheel = scp->add_reactionwheels();
                     rwheel->set_wheelspeed(scIt->rwInMessage[idx].Omega);
+                    rwheel->set_maxspeed(scIt->rwInMessage[idx].Omega_max);
                     rwheel->set_wheeltorque(scIt->rwInMessage[idx].u_current);
+                    rwheel->set_maxtorque(scIt->rwInMessage[idx].u_max);
                     for (int i=0; i<3; i++){
                         rwheel->add_position(scIt->rwInMessage[idx].rWB_B[i]);
                         rwheel->add_spinaxisvector(scIt->rwInMessage[idx].gsHat_B[i]);
