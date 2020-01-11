@@ -14,7 +14,7 @@ Basilisk Release Notes
     - atmospheric drag evaluation using multi-faceted spacecraft model
     - create modules to determine if a satellite can see a ground point such as a communication station
     - make a gravity gradient torque effector
-    - upgrading :ref:`vizInterface` to support capturing information from multiple satellites
+    - upgrading :ref:`vizInterface` to support showing info panels and HUD multiple spacecraft with thruster
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
@@ -22,6 +22,10 @@ Upcoming Version 1.X.X
 ----------------------
 - Updated documentation for :ref:`eclipse` module with new RST format
 - Updated :ref:`fswModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
+- Updated :ref:`reactionWheelStateEffector` and :ref:`vscmgStateEffector` such that max speed and max torque are consistently initialized to -1.  A negative value was supposed to turn of speed and torque saturation, but this wasn't consistenly applied.
+- Updated :ref:`reactionWheelStateEffector` such that the RW state output message was not hard-coded and un-changeable.  Otherwise a BSK process could never have multiple spacecraft being simulated.  Now, the rw effector ``ModelTag`` is added to the beginning of the output message.  This auto-generate method of message output names is avoided if the user sets the vector of output names from Python during the simulation setup.  **Note:** Any prior BSK script that was logging the old auto-generated RW state messages will need to update the msg name now to work again.  See :ref:`bskKnownIssues` for more information.
+- Major enhancement to :ref:`vizInterface` where now multiple spacecraft can be added.  You can create a list of spacecraft where :ref:`vizInterface` relies on common naming rules to find the right messages, or specify the messages for each spacecraft directly.  This is demonstrated in :ref:`scenarioFormationBasic`.  For now multiple craft with RW actuators are supported.  Multi craft with thrusters will need to be added later.
+- New spacecraft formation flying scenario :ref:`scenarioFormationBasic` where 3 satellites are flying 10m apart in a lead-follower configuration.  Each has a different number of RWs.  This scenario is a nice script to demonstrate the new multi-spacecraft support in :ref:`vizard`.
 
 Version 1.4.2
 -------------
