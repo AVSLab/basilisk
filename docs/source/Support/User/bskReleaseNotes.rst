@@ -20,7 +20,8 @@ Basilisk Release Notes
 
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- Fixed an issue running :ref:`test_reactionWheelStateEffector_integrated` using Python 2
+- fixed a ``cmake`` issue where the module renaming from ``viz_interface`` to ``vizInterface`` was applied
 
 Version 1.5.0
 -------------
