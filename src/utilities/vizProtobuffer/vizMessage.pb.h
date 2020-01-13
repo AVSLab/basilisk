@@ -715,6 +715,18 @@ class VizMessage_ReactionWheel : public ::google::protobuf::Message /* @@protoc_
   double wheeltorque() const;
   void set_wheeltorque(double value);
 
+  // double maxSpeed = 7;
+  void clear_maxspeed();
+  static const int kMaxSpeedFieldNumber = 7;
+  double maxspeed() const;
+  void set_maxspeed(double value);
+
+  // double maxTorque = 8;
+  void clear_maxtorque();
+  static const int kMaxTorqueFieldNumber = 8;
+  double maxtorque() const;
+  void set_maxtorque(double value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.ReactionWheel)
  private:
 
@@ -725,6 +737,8 @@ class VizMessage_ReactionWheel : public ::google::protobuf::Message /* @@protoc_
   mutable int _spinaxisvector_cached_byte_size_;
   double wheelspeed_;
   double wheeltorque_;
+  double maxspeed_;
+  double maxtorque_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_ReactionWheelImpl();
@@ -1783,6 +1797,18 @@ class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* 
   ::google::protobuf::RepeatedField< double >*
       mutable_pointingvector();
 
+  // repeated double position = 9;
+  int position_size() const;
+  void clear_position();
+  static const int kPositionFieldNumber = 9;
+  double position(int index) const;
+  void set_position(int index, double value);
+  void add_position(double value);
+  const ::google::protobuf::RepeatedField< double >&
+      position() const;
+  ::google::protobuf::RepeatedField< double >*
+      mutable_position();
+
   // string spacecraftName = 1;
   void clear_spacecraftname();
   static const int kSpacecraftNameFieldNumber = 1;
@@ -1835,6 +1861,8 @@ class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedField< double > pointingvector_;
   mutable int _pointingvector_cached_byte_size_;
+  ::google::protobuf::RepeatedField< double > position_;
+  mutable int _position_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
   ::google::protobuf::internal::ArenaStringPtr bodytarget_;
   double fieldofview_;
@@ -3099,6 +3127,34 @@ inline void VizMessage_ReactionWheel::set_wheeltorque(double value) {
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.ReactionWheel.wheelTorque)
 }
 
+// double maxSpeed = 7;
+inline void VizMessage_ReactionWheel::clear_maxspeed() {
+  maxspeed_ = 0;
+}
+inline double VizMessage_ReactionWheel::maxspeed() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.ReactionWheel.maxSpeed)
+  return maxspeed_;
+}
+inline void VizMessage_ReactionWheel::set_maxspeed(double value) {
+  
+  maxspeed_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.ReactionWheel.maxSpeed)
+}
+
+// double maxTorque = 8;
+inline void VizMessage_ReactionWheel::clear_maxtorque() {
+  maxtorque_ = 0;
+}
+inline double VizMessage_ReactionWheel::maxtorque() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.ReactionWheel.maxTorque)
+  return maxtorque_;
+}
+inline void VizMessage_ReactionWheel::set_maxtorque(double value) {
+  
+  maxtorque_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.ReactionWheel.maxTorque)
+}
+
 // -------------------------------------------------------------------
 
 // VizMessage_Thruster
@@ -4304,6 +4360,36 @@ inline ::google::protobuf::RepeatedField< double >*
 VizMessage_StandardCameraSettings::mutable_pointingvector() {
   // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.StandardCameraSettings.pointingVector)
   return &pointingvector_;
+}
+
+// repeated double position = 9;
+inline int VizMessage_StandardCameraSettings::position_size() const {
+  return position_.size();
+}
+inline void VizMessage_StandardCameraSettings::clear_position() {
+  position_.Clear();
+}
+inline double VizMessage_StandardCameraSettings::position(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.StandardCameraSettings.position)
+  return position_.Get(index);
+}
+inline void VizMessage_StandardCameraSettings::set_position(int index, double value) {
+  position_.Set(index, value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.StandardCameraSettings.position)
+}
+inline void VizMessage_StandardCameraSettings::add_position(double value) {
+  position_.Add(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.StandardCameraSettings.position)
+}
+inline const ::google::protobuf::RepeatedField< double >&
+VizMessage_StandardCameraSettings::position() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.StandardCameraSettings.position)
+  return position_;
+}
+inline ::google::protobuf::RepeatedField< double >*
+VizMessage_StandardCameraSettings::mutable_position() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.StandardCameraSettings.position)
+  return &position_;
 }
 
 // -------------------------------------------------------------------

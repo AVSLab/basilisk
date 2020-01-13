@@ -171,7 +171,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     # set RW torque command
     cmdArray = reactionWheelStateEffector.RWArrayTorqueIntMsg()
@@ -223,8 +223,8 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.35]]
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
             scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
-            unitTestSim.TotalSim.logThisMessage("rw_config_0_data", testProcessRate)
-            unitTestSim.TotalSim.logThisMessage("rw_config_1_data", testProcessRate)
+            unitTestSim.TotalSim.logThisMessage(scObject.ModelTag + "_rw_config_0_data", testProcessRate)
+            unitTestSim.TotalSim.logThisMessage(scObject.ModelTag + "_rw_config_1_data", testProcessRate)
         scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
         scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
 
@@ -286,10 +286,10 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                     wheelSpeedBOE[i] = initialWheelSpeed*macros.RPM
                     thetaBOE[i] = scObject.hub.omega_BN_BInit[2][0]*(timeBOE[i])
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-            wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData("rw_config_0_data.Omega", list(range(1)))
-            wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData("rw_config_1_data.Omega", list(range(1)))
-            frictionTorque1 = unitTestSim.pullMessageLogData("rw_config_0_data.frictionTorque", list(range(1)))
-            frictionTorque2 = unitTestSim.pullMessageLogData("rw_config_1_data.frictionTorque", list(range(1)))
+            wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData(scObject.ModelTag + "_rw_config_0_data.Omega", list(range(1)))
+            wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData(scObject.ModelTag + "_rw_config_1_data.Omega", list(range(1)))
+            frictionTorque1 = unitTestSim.pullMessageLogData(scObject.ModelTag + "_rw_config_0_data.frictionTorque", list(range(1)))
+            frictionTorque2 = unitTestSim.pullMessageLogData(scObject.ModelTag + "_rw_config_1_data.frictionTorque", list(range(1)))
 
 
     dataPos = posData[-1]

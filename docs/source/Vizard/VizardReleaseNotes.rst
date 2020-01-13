@@ -19,6 +19,14 @@ Release Notes
     - better support for visualizing multiple spacecraft
     - add labels to spacecraft and sensor visualization
 
+**Version 0.9.0**
+
+- added an option to Standard Camera GUI panel and vizMessage to supply a custom camera position
+- eliminated camera jitter in body view when pointing at a nearby spacecraft
+- improved reaction wheel panels and HUD to better support multiple spacecraft by tracking the max speed and torque for each spacecraft’s reaction wheels
+- added fields to the vizMessage reaction wheel sub message to allow user to set the max torque and max speed
+- fixed broken link between Main scene manager and direct comm controller to restore direct comm ``liveStream`` as illustrated in :ref:`scenarioBasicOrbitStream`
+- improved support for Unity’s physical camera properties, focal length and sensor size, when setting up Custom Cameras
 
 **Version 0.8.1**
 

@@ -45,6 +45,8 @@ try:
 except ImportError:
     vizFound = False
 
+firstSpacecraftName = ''
+
 def toRGBA255(color):
     if isinstance(color, basestring):
         # convert color name to 4D array of values with 0-255
@@ -61,6 +63,7 @@ def toRGBA255(color):
 
 pointLineList = []
 def createPointLine(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.PointLine()
 
     unitTestSupport.checkMethodKeyword(
@@ -74,7 +77,7 @@ def createPointLine(viz, **kwargs):
             exit(1)
         vizElement.fromBodyName = fromName
     else:
-        vizElement.fromBodyName = viz.spacecraftName
+        vizElement.fromBodyName = firstSpacecraftName
 
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
@@ -99,6 +102,7 @@ def createPointLine(viz, **kwargs):
 
 customModelList = []
 def createCustomModel(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.CustomModel()
 
     unitTestSupport.checkMethodKeyword(
@@ -133,7 +137,7 @@ def createCustomModel(viz, **kwargs):
                 exit(1)
         vizElement.simBodiesToModify = vizInterface.StringVector(simBodiesList)
     else:
-        vizElement.simBodiesToModify = vizInterface.StringVector([viz.spacecraftName])
+        vizElement.simBodiesToModify = vizInterface.StringVector([firstSpacecraftName])
 
     if 'offset' in kwargs:
         offsetVariable = kwargs['offset']
@@ -209,6 +213,7 @@ def createCustomModel(viz, **kwargs):
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.ActuatorGuiSettings()
 
     unitTestSupport.checkMethodKeyword(
@@ -222,7 +227,9 @@ def setActuatorGuiSetting(viz, **kwargs):
             exit(1)
         vizElement.spacecraftName = scName
     else:
-        vizElement.spacecraftName = viz.spacecraftName
+        vizElement.spacecraftName = firstSpacecraftName
+    print("HPS: 0")
+    print(vizElement.spacecraftName)
 
     if 'viewThrusterPanel' in kwargs:
         setting = kwargs['viewThrusterPanel']
@@ -268,6 +275,7 @@ def setActuatorGuiSetting(viz, **kwargs):
 
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
+    global firstSpacecraftName
     vizElement = vizInterface.KeepOutInCone()
 
     unitTestSupport.checkMethodKeyword(
@@ -282,7 +290,7 @@ def createConeInOut(viz, **kwargs):
             exit(1)
         vizElement.fromBodyName = fromName
     else:
-        vizElement.fromBodyName = viz.spacecraftName
+        vizElement.fromBodyName = firstSpacecraftName
 
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
@@ -369,7 +377,7 @@ def createStandardCamera(viz, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['spacecraftName', 'setMode', 'setView', 'fieldOfView',
-         'bodyTarget', 'pointingVector_B'],
+         'bodyTarget', 'pointingVector_B', 'position_B'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -379,7 +387,7 @@ def createStandardCamera(viz, **kwargs):
             exit(1)
         cam.spacecraftName = scName
     else:
-        cam.spacecraftName = viz.spacecraftName
+        cam.spacecraftName = firstSpacecraftName
 
     if 'setMode' in kwargs:
         setMode = kwargs['setMode']
@@ -446,6 +454,13 @@ def createStandardCamera(viz, **kwargs):
     else:
         cam.pointingVector_B = [1.0, 0.0, 0.0]
 
+    if 'position_B' in kwargs:
+        position_B = kwargs['position_B']
+        if len(position_B) != 3:
+            print('ERROR: position_B must be 3D list of float values')
+            exit(1)
+        cam.position_B = position_B
+
     stdCameraList.append(cam)
     del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list
     viz.settings.stdCameraList = vizInterface.StdCameraConfig(stdCameraList)
@@ -453,6 +468,7 @@ def createStandardCamera(viz, **kwargs):
 
 
 def createCameraConfigMsg(viz, **kwargs):
+    global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
         ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'focalLength', 'sensorSize', 'cameraPos_B', 'sigma_CB', 'skyBox'],
         kwargs)
@@ -474,7 +490,7 @@ def createCameraConfigMsg(viz, **kwargs):
             exit(1)
         viz.cameraConfigMessage.parentName = val
     else:
-        viz.cameraConfigMessage.parentName = viz.spacecraftName
+        viz.cameraConfigMessage.parentName = firstSpacecraftName
 
     if 'fieldOfView' in kwargs:
         val = kwargs['fieldOfView']
@@ -573,6 +589,47 @@ def createCameraConfigMsg(viz, **kwargs):
 
 
 def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
+    """
+    This methods creates an instance of the vizInterface() modules and setups up associated Vizard
+    configuration setting messages.
+
+    Parameters
+    ----------
+    scSim:
+        variable with the simulationBaseClass copy
+    simTaskName:
+        task to which to add the vizInterface module
+    processName:
+        process to which to write a default zero planetary ephemeris message if this message does not exist
+
+    Keyword Args
+    ------------
+    saveFile: str
+        can be a single file name, or a full path + file name. In both cases a local results are stored in a local sub-folder.
+        Default: empty string resulting in the data not being saved to a file
+    gravBodies:
+        gravity Factory object.
+        Default: no gravity bodies are included
+    scName: str or list(str)
+        can be a single spacecraft name string, or a list of strings.
+        Default: assumes a single craft  with a default name.
+    numRW: int or list(int)
+        number of RWs on spacecraft.  If scName is a list and numRW is an integer, then the same number RW is added
+        to each spacecraft.  If numRW is a list then it must be of the same dimension as scName.
+        Default value is zero RWs for each spacecraft.
+    thrDevices:
+        list of thruster devices states for the first spacecraft
+    opNavMode: bool
+        flag if opNaveMode should be used
+    liveStream: bool
+        flag if live data streaming to Vizard should be used
+
+    Returns
+    -------
+    :ref:`vizInterface` object
+        copy of the vizInterface instance
+
+    """
     if not vizFound:
         print('Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.')
         return
@@ -581,17 +638,77 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     del pointLineList[:]
     del actuatorGuiSettingList[:]
     del coneInOutList[:]
+    global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream'],
+        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName'],
         kwargs)
 
     # setup the Vizard interface module
     vizMessenger = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessenger)
 
+    # create spacecraft information container
+    scData = vizInterface.VizSpacecraftData()
+
     # set spacecraft name
-    vizMessenger.spacecraftName = "bsk-Sat"
+    if 'scName' in kwargs:
+        val = kwargs['scName']
+        if isinstance(val, str):
+            scNames = [val]
+        elif isinstance(val, list):
+            scNames = val
+            for name in scNames:
+                if not isinstance(name, str):
+                    print('ERROR: scName list must only contain spacecraft name strings')
+                    exit(1)
+        else:
+            print('ERROR: scName must be a string or list of strings')
+            exit(1)
+    else:
+        scNames = [scData.spacecraftName]
+
+    firstSpacecraftName = scNames[0]
+
+    # set number of RWs
+    if 'numRW' in kwargs:
+        val = kwargs['numRW']
+        if isinstance(val, int):
+            numRWList = [val] * len(scNames)
+        elif isinstance(val, list):
+            numRWList = val
+            if len(scNames) != len(numRWList):
+                print('ERROR: numRW and scName list lengths must be the same')
+                exit(1)
+            for val in numRWList:
+                if not isinstance(val, int):
+                    print('ERROR: numRW must be an integer or a list of integers')
+                    exit(1)
+    else:
+        numRWList = [0] * len(scNames)
+
+    # set thruster device info
+    if 'thrDevices' in kwargs:
+        thrDevices = kwargs['thrDevices']
+        thList = []
+        for thClusterInfo in thrDevices:
+            thSet = vizInterface.ThrClusterMap()
+            thSet.thrCount = thClusterInfo[0]
+            thSet.thrTag = thClusterInfo[1]
+            thList.append(thSet)
+        scData.thrMsgData = vizInterface.VizThrConfig(thList)
+
+    # create list of spacecraft data with incremented I/O msg names, unique numRW values but equal thrDevices info
+    vizMessenger.scData.clear()
+    i = 0
+    scPlusInMsgName = scData.scPlusInMsgName
+    for name in scNames:
+        scData.spacecraftName = name
+        scData.numRW = numRWList[i]
+        if i != 0:
+            scData.scPlusInMsgName = scPlusInMsgName + str(i+1)
+        vizMessenger.scData.push_back(scData)
+        i = i + 1
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
@@ -666,19 +783,5 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
                     # setting the msg structure name is required below to all the planet msg to be logged
                     unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
                                                ephemData, "SpicePlanetStateSimMsg")
-
-    if 'numRW' in kwargs:
-        vizMessenger.numRW = kwargs['numRW']
-
-    if 'thrDevices' in kwargs:
-        thrDevices = kwargs['thrDevices']
-        thList = []
-        for thClusterInfo in thrDevices:
-            thSet = vizInterface.ThrClusterMap()
-            thSet.thrCount = thClusterInfo[0]
-            thSet.thrTag = thClusterInfo[1]
-            thList.append(thSet)
-        vizMessenger.thrMsgData = vizInterface.VizThrConfig(thList)
-
 
     return vizMessenger

@@ -370,7 +370,7 @@ void ReactionWheelStateEffector::SelfInit()
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
-		tmpWheelMsgName = "rw_config_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
+		tmpWheelMsgName = this->ModelTag + "_rw_config_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
 		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(RWConfigLogSimMsg), OutputBufferCount, "RWConfigLogSimMsg", moduleID);
 		this->rwOutMsgNames.push_back(tmpWheelMsgName);
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
@@ -391,13 +391,13 @@ void ReactionWheelStateEffector::CrossInit()
 {
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
-	CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     sizeof(RWArrayTorqueIntMsg),
-																	 moduleID);
-	if(CmdsInMsgID < 0)
-	{
-        bskLogger.bskLog(BSK_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
-	}
+    if (this->InputCmds.length() == 0) {
+        this->CmdsInMsgID = -1;
+    } else {
+        this->CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputCmds,
+                                                                         sizeof(RWArrayTorqueIntMsg),
+                                                                         moduleID);
+    }
 
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
@@ -550,7 +550,9 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 		}
 
         // Speed saturation
-        if (std::abs(this->ReactionWheelData[RWIter].Omega) >= this->ReactionWheelData[RWIter].Omega_max) {
+        if (std::abs(this->ReactionWheelData[RWIter].Omega) >= this->ReactionWheelData[RWIter].Omega_max
+            && this->ReactionWheelData[RWIter].Omega_max > 0.0 /* negative Omega_max turns of wheel saturation modeling */
+            ) {
             CmdIt->u_cmd = 0.0;
         }
 

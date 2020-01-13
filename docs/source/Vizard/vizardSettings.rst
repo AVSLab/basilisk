@@ -255,54 +255,41 @@ the arguments for the ``createStandardCamera`` method.
 .. table:: Standard Camera View Panel Parameter Options
     :widths: 15 10 10 15 50
 
-    +-------------------+---------+---------+--------------+------------------+
-    | Variable          | Type    | Units   | Required     | Description      |
-    +===================+=========+=========+==============+==================+
-    | spacecraftName    | string  |         | No, sc name  | name of the      |
-    |                   |         |         | default      | spacecraft       |
-    |                   |         |         |              | with             |
-    |                   |         |         |              | respect to       |
-    |                   |         |         |              | which the        |
-    |                   |         |         |              | camera is        |
-    |                   |         |         |              | shown            |
-    +-------------------+---------+---------+--------------+------------------+
-    | setMode           | int     |         | No, default  | 0 -> body        |
-    |                   |         |         | is 1         | targeting, 1     |
-    |                   |         |         |              | -> pointing      |
-    |                   |         |         |              | vector           |
-    +-------------------+---------+---------+--------------+------------------+
-    | setView           | int     |         | No, default  | 0 -> Nadir,      |
-    |                   |         |         | is 0         | 1 -> Orbit       |
-    |                   |         |         |              | Normal, 2 ->     |
-    |                   |         |         |              | Along Track      |
-    |                   |         |         |              | (default to      |
-    |                   |         |         |              | nadir). This     |
-    |                   |         |         |              | is a setting     |
-    |                   |         |         |              | for body         |
-    |                   |         |         |              | targeting        |
-    |                   |         |         |              | mode.            |
-    +-------------------+---------+---------+--------------+------------------+
-    | bodyTarget        | string  |         | No, default  | Name of body     |
-    |                   |         |         | to first     | camera should    |
-    |                   |         |         | celestial    | point to. This   |
-    |                   |         |         | body in      | is a setting for |
-    |                   |         |         | messages     | body targeting   |
-    |                   |         |         |              | mode.            |
-    +-------------------+---------+---------+--------------+------------------+
-    | fieldOfView       | float   | rad     | No, default  | camera           |
-    |                   |         |         | -1           | field of         |
-    |                   |         |         |              | view, to         |
-    |                   |         |         |              | use the          |
-    |                   |         |         |              | Vizard           |
-    |                   |         |         |              | default set      |
-    |                   |         |         |              | it to -1         |
-    +-------------------+---------+---------+--------------+------------------+
-    | pointingVector_B  | float(3)|         | No, default  | Body relative    |
-    |                   |         |         | is           | unit vector.     |
-    |                   |         |         | (1, 0, 0)    | This is a setting|
-    |                   |         |         |              | for pointing     |
-    |                   |         |         |              | vector mode      |
-    +-------------------+---------+---------+--------------+------------------+
+    +-------------------+---------+---------+--------------+--------------------------------------------+
+    | Variable          | Type    | Units   | Required     | Description                                |
+    +===================+=========+=========+==============+============================================+
+    | spacecraftName    | string  |         | No, sc name  | name of the spacecraft                     |
+    |                   |         |         | default      | with respect to which the camera is shown  |
+    +-------------------+---------+---------+--------------+--------------------------------------------+
+    | setMode           | int     |         | No, default  | 0 -> body targeting, 1 -> pointing vector  |
+    |                   |         |         | is 1         |                                            |
+    +-------------------+---------+---------+--------------+--------------------------------------------+
+    | setView           | int     |         | No, default  | 0 -> Nadir, 1 -> Orbit Normal, 2 ->        |
+    |                   |         |         | is 0         | Along Track (default to nadir). This       |
+    |                   |         |         |              | is a setting for body targeting mode.      |
+    +-------------------+---------+---------+--------------+--------------------------------------------+
+    | bodyTarget        | string  |         | No, default  | Name of body camera should point to. This  |
+    |                   |         |         | to first     | is a setting for body targeting mode.      |
+    |                   |         |         | celestial    |                                            |
+    |                   |         |         | body in      |                                            |
+    |                   |         |         | messages     |                                            |
+    +-------------------+---------+---------+--------------+--------------------------------------------+
+    | fieldOfView       | float   | rad     | No, default  | camera field of view, to use the Vizard    |
+    |                   |         |         | -1           | default set it to -1                       |
+    +-------------------+---------+---------+--------------+--------------------------------------------+
+    | pointingVector_B  | float(3)|         | No, default  | Body relative unit vector. This is a       |
+    |                   |         |         | is           | setting for pointing vector mode           |
+    |                   |         |         | (1, 0, 0)    |                                            |
+    +-------------------+---------+---------+--------------+--------------------------------------------+
+    | position_B        | float(3)|         | No, default  | If populated,                              |
+    |                   |         |         | is           | sets camera  position relative             |
+    |                   |         |         | (0, 0, 0)    | to parent body coordinate frame            |
+    |                   |         |         | for auto     | in meters using B frame components.        |
+    |                   |         |         | placement    | If unpopulated camera is positioned        |
+    |                   |         |         |              | automatically along camera view direction  |
+    |                   |         |         |              | outside of parent body's mesh to prevent   |
+    |                   |         |         |              | obstruction of view.                       |
+    +-------------------+---------+---------+--------------+--------------------------------------------+
 
 .. image:: /_images/static/vizard-ImgCustomCam.jpg
    :align: center
@@ -349,7 +336,7 @@ The following tale illustrates the arguments for the
     |                   |         |         |              | between     |
     |                   |         |         |              | image grabs |
     +-------------------+---------+---------+--------------+-------------+
-    | sensorSize        | Float(2)| m       | Yes          | sensor      |
+    | sensorSize        | Float(2)| mm      | Yes          | sensor      |
     |                   |         |         |              | dimensions  |
     +-------------------+---------+---------+--------------+-------------+
     | cameraPos_B       | Float(3)| m       | Yes          | camera      |

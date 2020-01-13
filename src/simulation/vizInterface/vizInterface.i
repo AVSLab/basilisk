@@ -33,6 +33,7 @@ namespace std {
     %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
     %template(KeepOutInConeConfig) vector<KeepOutInCone>;
     %template(StdCameraConfig) vector<StdCameraSettings>;
+    %template(VizSCVector) vector<VizSpacecraftData>;
 }
 
 %include "vizInterface.h"

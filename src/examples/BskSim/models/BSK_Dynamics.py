@@ -79,7 +79,7 @@ class BSKDynamicModels():
         """
         Specify the spacecraft hub parameters.
         """
-        self.scObject.ModelTag = "spacecraftBody"
+        self.scObject.ModelTag = "bskSat"
         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
         self.I_sc = [900., 0., 0.,
                      0., 800., 0.,
@@ -153,7 +153,7 @@ class BSKDynamicModels():
                              maxMomentum=maxRWMomentum,
                              rWB_B=posVector)
 
-        self.rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
+        self.rwFactory.addToSpacecraft(self.scObject.ModelTag, self.rwStateEffector, self.scObject)
 
     def SetThrusterStateEffector(self):
         """Set the 8 ACS thrusters."""

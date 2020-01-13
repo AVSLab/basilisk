@@ -127,7 +127,12 @@ the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with 
 
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros, unitTestSupport, vizSupport
+try:
+    from Basilisk.simulation import vizInterface
+    vizFound = True
+except ImportError:
+    vizFound = False
 
 # Get current file path
 import sys, os, inspect
@@ -159,6 +164,23 @@ class scenario_RelativePointingFormation(BSKSim, BSKScenario):
         self.configure_initial_conditions()
         self.log_outputs()
 
+        # if this scenario is to interface with the BSK Viz, uncomment the following line
+        if vizFound:
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
+                                                gravBodies=self.DynModels.gravFactory,
+                                                saveFile=filename)
+            scData = vizInterface.VizSpacecraftData()
+            viz.scData.clear()
+            # first spacecraft uses all the default msg names
+            scData.spacecraftName = "chief"
+            viz.scData.push_back(scData)
+            # must provide unique message name to second spacecraft
+            scData.spacecraftName = "deputy"
+            scData.scPlusInMsgName = "inertial_state_output2"
+            viz.scData.push_back(scData)
+
+
+
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
@@ -168,12 +190,12 @@ class scenario_RelativePointingFormation(BSKSim, BSKScenario):
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
-        oe.a = 7000000.0  # meters
+        oe.a = 8000000.0  # meters
         oe.e = 0.1
         oe.i = 33.3 * macros.D2R
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
-        oe.f = 0.1 * macros.D2R
+        oe.f = 0.0 * macros.D2R
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
@@ -182,13 +204,8 @@ class scenario_RelativePointingFormation(BSKSim, BSKScenario):
         self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
         # Configure Dynamics initial conditions
-        oe2 = orbitalMotion.ClassicElements()
-        oe2.a = 7000000.0  # meters
-        oe2.e = 0.1
-        oe2.i = 33.3 * macros.D2R
-        oe2.Omega = 48.2 * macros.D2R
-        oe2.omega = 347.8 * macros.D2R
-        oe2.f = 0.0 * macros.D2R
+        oe2 = oe
+        oe2.f -= 10 * macros.D2R
         rN2, vN2 = orbitalMotion.elem2rv(mu, oe2)
         orbitalMotion.rv2elem(mu, rN2, vN2)
         self.get_DynModel().scObject2.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN2)  # m   - r_CN_N

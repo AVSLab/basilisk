@@ -47,7 +47,7 @@ typedef struct {
     double d = 0.0;             //!< [m], wheel center of mass offset from wheel frame origin
     double J13 = 0.0;           //!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
     double u_current = 0.0;     //!< [N-m], current motor torque
-    double u_max = 1000000000;  //!< [N-m], Max torque
+    double u_max = -1;          //!< [N-m], Max torque, negative value turns off saturating the wheel
     double u_min = 0.0;         //!< [N-m], Min torque
     double fCoulomb = 0.0;      //!< [N-m], Coulomb friction torque magnitude
     double fStatic = 0.0;       //!< [N-m], Static friction torque magnitude
@@ -57,7 +57,7 @@ typedef struct {
     double frictionTorque = 0.0; //!< [N-m] friction torque, this is a computed value, don't set it directly
     double omegaBefore = 0.0;   //!< [rad/s], wheel speed one time step before
     bool frictionStribeck = 0;  //!< [-] Boolenian to determine if stribeck friction model is used or not, 0 is non-stribeck, 1 is stribeck; Parameter is set internally.
-    double Omega_max = 1000000000.0; //!< [rad/s], max wheel speed
+    double Omega_max = -1.0;    //!< [rad/s], max wheel speed, negative values turn off wheel saturation
     RWModels RWModel = BalancedWheels;       //!< [-], Type of imbalance model to use
     Eigen::Vector3d aOmega;     //!< [-], parameter used in coupled jitter back substitution
     Eigen::Vector3d bOmega;     //!< [-], parameter used in coupled jitter back substitution

@@ -97,6 +97,7 @@ class BSKDynamicModels():
         self.scObject2.hub.mHub = 750.0  # kg - spacecraft mass
         self.scObject2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
         self.scObject2.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc2)
+        self.scObject2.scStateOutMsgName = "inertial_state_output2"
 
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation_chief"
@@ -106,6 +107,7 @@ class BSKDynamicModels():
         self.simpleNavObject2.ModelTag = "SimpleNavigation_deputy"
         self.simpleNavObject2.outputTransName = "simple_trans_nav_output_deputy"
         self.simpleNavObject2.outputAttName = "simple_att_nav_output_deputy"
+        self.simpleNavObject2.inputStateName = "inertial_state_output2"
 
     def SetReactionWheelDynEffector(self):
         # Make a fresh RW factory instance, this is critical to run multiple times
