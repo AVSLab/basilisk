@@ -18,8 +18,8 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
-Upcoming Version 1.X.X
-----------------------
+Version 1.5.0
+-------------
 - Updated documentation for :ref:`eclipse` module with new RST format
 - Updated :ref:`fswModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
 - Updated :ref:`reactionWheelStateEffector` and :ref:`vscmgStateEffector` such that max speed and max torque are consistently initialized to -1.  A negative value was supposed to turn of speed and torque saturation, but this wasn't consistenly applied.

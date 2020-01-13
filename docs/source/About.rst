@@ -18,7 +18,7 @@ Architecture
     **License:** `ISC Open Source
     License  <https://en.wikipedia.org/wiki/ISC_license>`__
 
-    **Status:** Version 1.4.2 (Released Dec. 30, 2019)
+    **Status:** Version 1.5.0 (Released Jan. 12, 2020)
 
 The Basilisk astrodynamics software architecture is being designed to be
 capable of both faster-than realtime simulations, including repeatable
