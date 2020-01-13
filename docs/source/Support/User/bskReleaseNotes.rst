@@ -18,6 +18,10 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
+Upcoming Version 1.X.X
+----------------------
+- text goes here
+
 Version 1.5.1
 -------------
 - Fixed an issue running :ref:`test_reactionWheelStateEffector_integrated` using Python 2

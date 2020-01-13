@@ -4,6 +4,10 @@
 Basilisk Known Issues
 =====================
 
+Upcoming Version 1.X.X
+----------------------
+- WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
+
 Version 1.5.1
 -------------
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
@@ -15,8 +19,8 @@ Version 1.5.0
 - There was an issue doing a clean compile using Python 2 which is addressed in the next version
 - :ref:`test_reactionWheelStateEffector_integrated` didn't run on Python 2, this is fixed in the next version.
 
-Version 1.4.2
--------------
+**Version 1.4.2**
+
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
 
 **Version 1.4.1**
