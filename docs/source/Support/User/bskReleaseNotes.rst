@@ -18,6 +18,10 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
+Upcoming Version 1.X.X
+----------------------
+- text here
+
 Version 1.5.0
 -------------
 - Updated documentation for :ref:`eclipse` module with new RST format
@@ -27,8 +31,8 @@ Version 1.5.0
 - Major enhancement to :ref:`vizInterface` where now multiple spacecraft can be added.  You can create a list of spacecraft where :ref:`vizInterface` relies on common naming rules to find the right messages, or specify the messages for each spacecraft directly.  This is demonstrated in :ref:`scenarioFormationBasic`.  For now multiple craft with RW actuators are supported.  Multi craft with thrusters will need to be added later.
 - New spacecraft formation flying scenario :ref:`scenarioFormationBasic` where 3 satellites are flying 10m apart in a lead-follower configuration.  Each has a different number of RWs.  This scenario is a nice script to demonstrate the new multi-spacecraft support in :ref:`vizard`.
 
-Version 1.4.2
--------------
+**Version 1.4.2**
+
 - added link to Basilisk facebook page to Sphinx-based documentation
 - made the html documentation compatible with dark mode on macOS, iOS and iPad OS browsers.  If the user sets the system interface to dark mode, then the dark version of the web site is shown automatically.
 - added a fix to cmake to get around a ``lipsodium`` and ``conan`` issue we are seeing on a Linux system
