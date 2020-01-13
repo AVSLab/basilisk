@@ -27,7 +27,11 @@ GravityGradientEffector::GravityGradientEffector()
 {
 	this->forceExternal_B.fill(0.0);
 	this->torqueExternalPntB_B.fill(0.0);
+    this->forceExternal_N.fill(0.0);
+    
 	this->gravityGradientOutMsgId = -1;
+    this->OutputBufferCount = 2;
+
 	return;
 }
 
@@ -42,7 +46,22 @@ GravityGradientEffector::~GravityGradientEffector()
  */
 void GravityGradientEffector::SelfInit()
 {
-  return;
+    std::string outMsgName;         /* output msg name */
+
+    if (this->gravityGradientOutMsgName.length() > 0) {
+        /* use the user specified msg name */
+        outMsgName = this->gravityGradientOutMsgName;
+    } else {
+        /* auto-generate a default output msg name */
+        outMsgName = this->ModelTag + "_gravityGradient";
+    }
+    this->gravityGradientOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(outMsgName,
+                                                                sizeof(GravityGradientSimMsg),
+                                                                this->OutputBufferCount,
+                                                                "GravityGradientSimMsg",
+                                                                moduleID);
+    
+    return;
 }
 
 /*! This method is used to connect to incoming message.  For this module there are none.
@@ -58,19 +77,23 @@ void GravityGradientEffector::CrossInit()
  */
 void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    GravityGradientSimMsg outMsg;
+    eigenVector3d2CArray(this->torqueExternalPntB_B, outMsg.gravityGradientTorque_B);
+    SystemMessaging::GetInstance()->WriteMessage(this->gravityGradientOutMsgId, CurrentClock,
+                                                 sizeof(GravityGradientSimMsg), reinterpret_cast<uint8_t*>(&outMsg), this->moduleID);
+
 	return;
 }
 
-/*! This method is used to link the dragEffector to the hub attitude and velocity,
-which are required for calculating drag forces and torques.
+/*! This method is used to link the gravity gradient effector to the hub position, inertia tensor and center of mass vector.
  @return void
- @param currentTime The current simulation time converted to a double
  */
 
 void GravityGradientEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
-	this->ISCPntB_B = states.getStateObject("inertiaSC");
-    this->c_B = states.getStateObject("centerOfMassSC");
+    this->r_BN_N = states.getStateObject("hubPosition");
+	this->ISCPntB_B = states.getPropertyReference("inertiaSC");
+    this->c_B = states.getPropertyReference("centerOfMassSC");
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
@@ -87,27 +110,52 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
 //}
 
 
-/*! This method computes the body forces and torques for the dragEffector in a simulation loop,
-selecting the model type based on the settable attribute "modelType."
+/*! This method computes the body forces and torques for the gravity gradient effector.
 */
 void GravityGradientEffector::computeForceTorque(double integTime){
-	//! - Zero out the structure force/torque for the drag set
+	// Zero out the force/torque values to begin with
     this->forceExternal_B.setZero();
+    this->forceExternal_N.setZero();
     this->torqueExternalPntB_B.setZero();
 
+    double mu = MU_EARTH * pow(10,9);  /* in m^3/s^2 */
+
+    /* find orbit radius */
+    double rMag = this->r_BN_N->getState().norm();
+//    std::cout << "r_BN_N \n" << this->r_BN_N->getState() << "\n" << std::endl;
+
+    /* compute DCN [BN] */
+    Eigen::MRPd sigmaBN;
+    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
+//    std::cout << "dcm_BN\n" << dcm_BN << "\n" << std::endl;
+
+    /* compute normalized position vector in B frame */
+    Eigen::Vector3d rHat_B = dcm_BN * this->r_BN_N->getState().normalized();
+//    std::cout << "rHat_B\n" << rHat_B << "\n" << std::endl;
+
+    /* evaluate inertia tensor about center of mass */
+    Eigen::MatrixXd ISCPntC_B;
+    ISCPntC_B = *this->ISCPntB_B;
+//    std::cout << "ISCPntC_B\n" << ISCPntC_B << "\n" << std::endl;
+
+    /* compute gravity gradient torque */
+    this->torqueExternalPntB_B = 3.0*mu/rMag/rMag/rMag * (ISCPntC_B * rHat_B);
+    this->torqueExternalPntB_B = rHat_B.cross(this->torqueExternalPntB_B);
+//    std::cout << "torqueExternalPntB_B\n" << this->torqueExternalPntB_B << "\n" << std::endl;
+
+    /* */
 
   	return;
 }
 
-/*! This method is called to update the local atmospheric conditions at each timestep.
-Naturally, this means that conditions are held piecewise-constant over an integration step.
+/*! This method is called once per BSK update cycle.  It writes out a msg of the
+    evaluated gravity gradient torque.
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void GravityGradientEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-
-
 	this->WriteOutputMessages(CurrentSimNanos);
 	return;
 }

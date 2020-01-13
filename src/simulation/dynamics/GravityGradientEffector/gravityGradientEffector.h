@@ -29,6 +29,7 @@
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/bskLogging.h"
+#include "simMessages/gravityGradientSimMsg.h"
 
 
 
@@ -47,13 +48,14 @@ public:
 public:
     std::string gravityGradientOutMsgName;          //!< message used to read command inputs
     StateData *hubSigma;                            //!< Hub/Inertial attitude represented by MRP
-    StateData *ISCPntB_B;                           //!< [kg m^2] current spacecraft inertia about point B, B-frame components
-    StateData *c_B;                                 //!< [m] Vector from point B to CoM of s/c in B frame components
+    StateData *r_BN_N;                              //!< Hub/Inertial position vector in inertial frame components
+    Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components
+    Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
+    uint64_t OutputBufferCount;                     //!< number of output buffers for messaging system
     BSKLogger bskLogger;                            //!< BSK Logging
 
 private:
     int64_t gravityGradientOutMsgId;                //!< Message ID for outgoing data
-
 };
 
 
