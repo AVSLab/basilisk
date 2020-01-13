@@ -50,6 +50,7 @@
 #include "powerNodeUsageSimMsg.h"
 #include "powerStorageStatusSimMsg.h"
 #include "bodyHeadingSimMsg.h"
+#include "gravityGradientSimMsg.h"
 
 #include "dataStorageStatusSimMsg.h"
 #include "dataNodeUsageSimMsg.h"
@@ -129,6 +130,8 @@ GEN_SIZEOF(BodyHeadingSimMsg)
 GEN_SIZEOF(DataStorageStatusSimMsg)
 %include "dataNodeUsageSimMsg.h"
 GEN_SIZEOF(DataNodeUsageSimMsg)
+%include "gravityGradientSimMsg.h"
+GEN_SIZEOF(GravityGradientSimMsg)
 
 #ifndef CSHARP_ROX
 %pythoncode %{
