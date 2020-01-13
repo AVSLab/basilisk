@@ -44,8 +44,8 @@ option(USE_OPENCV "Include modules which use OpenCV" OFF)
 option(USE_ZMQ "Include modules which use ZMQ" ON)
 option(USE_PYTHON3 "Build For Python 3" ON)
 
-set(requires_protobuff_modules "viz_interface/vizInterface.i")
-set(requires_zmq_modules "viz_interface/vizInterface.i")
+set(requires_protobuff_modules "vizInterface/vizInterface.i")
+set(requires_zmq_modules "vizInterface/vizInterface.i")
 
 
 set(requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")

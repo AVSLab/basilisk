@@ -390,7 +390,7 @@ void VizInterface::ReadBSKMessages()
     return;
 }
 
-/*! The method in which the viz_interface writes a protobuffer with the information from the simulation.
+/*! The method in which the vizInterface writes a protobuffer with the information from the simulation.
  @param CurrentSimNanos The current sim time in nanoseconds
  */
 void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
