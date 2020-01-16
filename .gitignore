@@ -30,3 +30,5 @@ src/cmake-build-debug/*
 *.fls
 
 **/tests/report/
+
+*~
