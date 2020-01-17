@@ -21,6 +21,7 @@ Basilisk Release Notes
 Upcoming Version 1.X.X
 ----------------------
 - Fixed the long-standing issue of not being able to run ``pytest`` on Windows from ``src``, but it only ran from withing sub-folders of ``src``.  Still recommended to run on Windows multi-threaded ``pytest -n XXX`` using ``pytest-xdist``.
+- temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion at `<https://github.com/conan-community/community/issues/210>`_
 
 Version 1.5.1
 -------------
