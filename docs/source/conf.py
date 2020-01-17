@@ -292,8 +292,9 @@ class fileCrawler():
 
         except: # Auto-generate the index.rst file
             # add page tag
-            if name.startswith("_"):
-                lines += ".. " + name + "Underscore:\n\n"
+            if name.startswith("_UnitTest"):
+                pathToFolder = index_path.split("/_UnitTest")[0]
+                lines += ".. _UnitTest" + pathToFolder.split("/")[-1] + ":\n\n"
             else:
                 lines += ".. _" + name + ":\n\n"
 
