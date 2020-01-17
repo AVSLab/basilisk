@@ -46,11 +46,11 @@ and the rest of Basilisk is shown in the figure below.
 
 In general, this system can be configured using the following process:
 
-#. Create and configure a set of powerNodeBase modules to represent power system sources and sinks, \
-including their ``nodePowerOutMsgName`` attributes;
+#. Create and configure a set of powerNodeBase modules to represent power system sources and sinks,
+   including their ``nodePowerOutMsgName`` attributes;
 #. Create and configure a :ref:`powerStorageBase` instance;
-#. Use the ``addPowerNodeToModel()`` method from the :ref:`powerStorageBase` on the ``nodePowerOutMsgNames`` \
-you configured in step 1 to link the power nodes to the :ref:`powerStorageBase` instance
+#. Use the ``addPowerNodeToModel()`` method from the :ref:`powerStorageBase` on the ``nodePowerOutMsgNames``
+   you configured in step 1 to link the power nodes to the :ref:`powerStorageBase` instance
 #. Run the simulation.
 
 One version of this process is demonstrated here. A spacecraft representing a tumbling 6U cubesat
