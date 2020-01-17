@@ -459,7 +459,7 @@ if(WIN32)
 	)
 
         # fix for opencv not finding conan gflags for opencv sfm lib on windows
-        # when the floowing is fixed, the following line should be removed
+        # when the finding is fixed, the following line should be removed
         # https://github.com/conan-community/community/issues/210 
         list(REMOVE_ITEM CONAN_LIBS opencv_sfm411d multiview)
 
