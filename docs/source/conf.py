@@ -292,11 +292,11 @@ class fileCrawler():
 
         except: # Auto-generate the index.rst file
             # add page tag
-            if name.startswith("_UnitTest"):
-                pathToFolder = index_path.split("/_UnitTest")[0]
-                lines += ".. _UnitTest" + pathToFolder.split("/")[-1] + ":\n\n"
+            if name.startswith("_"):
+                pathToFolder = index_path.split("/"+name)[0]
+                lines += ".. " + name + pathToFolder.split("/")[-1] + ":\n\n"
             else:
-                lines += ".. _" + name + ":\n\n"
+                lines += ".. _Folder_" + name + ":\n\n"
 
             # Title the page
             lines += name + "\n" + "=" * len(name) + "\n\n"
