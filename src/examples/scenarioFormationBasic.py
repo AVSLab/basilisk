@@ -43,7 +43,7 @@ When the simulation completes several plots are shown for the servicer MRP attit
 tracking errors, the RW motor torque components, as well as the RW wheel speeds.
 
 The simulation setups the spacecraft with 3 RW devices similar to :ref:`scenarioAttitudeFeedbackRW`.  One difference
-is that here :ref:`hillPointing` is used to align the spacecraft with the Hill frame.  The two debris objects are
+is that here :ref:`hillPoint` is used to align the spacecraft with the Hill frame.  The two debris objects are
 in a lead-follower configuration with the servicer and are 20m and 40m ahead respectively.
 
 This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
