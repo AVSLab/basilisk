@@ -15,7 +15,7 @@ is calling ``vizInterface``.
 Message Connection Descriptions
 -------------------------------
 The following messages are set directly within ``vizInterface``.  Additional messages are set within the
-:ref:`VizSpacecraftData` data structures for each spacecraft.
+``VizSpacecraftData`` data structures for each spacecraft.
 
 
 
