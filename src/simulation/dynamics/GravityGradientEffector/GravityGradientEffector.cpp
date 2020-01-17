@@ -18,7 +18,7 @@
  */
 
 #include <iostream>
-#include "gravityGradientEffector.h"
+#include "GravityGradientEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"

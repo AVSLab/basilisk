@@ -20,7 +20,7 @@
 
 %module gravityGradientEffector
 %{
-   #include "gravityGradientEffector.h"
+   #include "GravityGradientEffector.h"
 %}
 
 %include "swig_common_model.i"
@@ -31,7 +31,7 @@
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "simMessages/gravityGradientSimMsg.h"
-%include "gravityGradientEffector.h"
+%include "GravityGradientEffector.h"
 
 GEN_SIZEOF(GravityGradientSimMsg)
 
