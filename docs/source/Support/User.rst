@@ -13,6 +13,7 @@ The following support documents are for the Basilisk user who is seeking general
    User/bskKnownIssues
    User/FAQ
    User/FAQmacOS
+   User/FAQwindows
    User/createHtmlDocumentation
    User/usingLivePlotting
 
