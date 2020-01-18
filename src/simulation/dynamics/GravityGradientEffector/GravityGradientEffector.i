@@ -18,7 +18,7 @@
  */
 
 
-%module gravityGradientEffector
+%module GravityGradientEffector
 %{
    #include "GravityGradientEffector.h"
 %}

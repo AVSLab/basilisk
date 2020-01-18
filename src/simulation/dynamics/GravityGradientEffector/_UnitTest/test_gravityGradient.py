@@ -36,7 +36,7 @@ from Basilisk.utilities import macros
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody, orbitalMotion, RigidBodyKinematics
-from Basilisk.simulation import gravityGradientEffector
+from Basilisk.simulation import GravityGradientEffector
 from Basilisk.utilities import unitTestSupport
 #print dir(exponentialAtmosphere)
 from Basilisk.simulation import dragDynamicEffector
@@ -131,7 +131,7 @@ def run(show_plots, outMsgType, simTime):
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # add gravity gradient effector
-    ggEff = gravityGradientEffector.GravityGradientEffector()
+    ggEff = GravityGradientEffector.GravityGradientEffector()
     ggEff.ModelTag = scObject.ModelTag
     if outMsgType == "default":
         logMsgName = ggEff.ModelTag + "_gravityGradient"
@@ -140,8 +140,6 @@ def run(show_plots, outMsgType, simTime):
         ggEff.gravityGradientOutMsgName = logMsgName
     scObject.addDynamicEffector(ggEff)
     scSim.AddModelToTask(simTaskName, ggEff)
-
-    truthGravityGradient(mu, rN, [0.1, 0.2, -0.3], scObject.hub.IHubPntBc_B)
 
     #
     #   Setup data logging before the simulation is initialized
