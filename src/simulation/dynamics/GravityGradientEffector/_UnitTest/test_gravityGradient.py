@@ -53,18 +53,20 @@ path = os.path.dirname(os.path.abspath(filename))
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("outMsgType", ["default", "custom"])
+@pytest.mark.parametrize("cmOffset", [[[0.1], [0.15], [-0.1]], [[0.0], [0.0], [0.0]]])
 
 
 # provide a unique test method name, starting with test_
-def test_gravityGradientModule(show_plots, outMsgType):
+def test_gravityGradientModule(show_plots, outMsgType, cmOffset):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(
-            show_plots, outMsgType, 2.0)
+            show_plots, outMsgType, cmOffset, 2.0)
     assert testResults < 1, testMessage
 
 
-def truthGravityGradient(mu, rN, sigmaBN, I):
+def truthGravityGradient(mu, rN, sigmaBN, hub):
+    I = hub.IHubPntBc_B
     r = np.linalg.norm(rN)
     BN = RigidBodyKinematics.MRP2C(sigmaBN)
     rHatB = np.matmul(BN, rN) / r
@@ -73,7 +75,7 @@ def truthGravityGradient(mu, rN, sigmaBN, I):
 
     return ggTorque
 
-def run(show_plots, outMsgType, simTime):
+def run(show_plots, outMsgType, cmOffset, simTime):
     """Call this routine directly to run the unit test."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -116,11 +118,12 @@ def run(show_plots, outMsgType, simTime):
     # setup basic spacecraftPlus module
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "bskTestSat"
-    I = [500., 0., 0.,
-         0., 800., 0.,
-         0., 0., 350.]
+    IIC = [[500., 0., 0.]
+           , [0., 800., 0.]
+           , [0., 0., 350.]]
+    scObject.hub.r_BcB_B = cmOffset
     scObject.hub.mHub = 100.0  # kg - spacecraft mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = IIC
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
@@ -210,7 +213,7 @@ def run(show_plots, outMsgType, simTime):
     # compare gravity gradient torque vector to the truth
     accuracy = 1e-10
     for rV, sV, ggV in zip(posData, attData, ggData):
-        ggTruth = truthGravityGradient(mu, rV[1:4], sV[1:4], scObject.hub.IHubPntBc_B)
+        ggTruth = truthGravityGradient(mu, rV[1:4], sV[1:4], scObject.hub)
         testFailCount, testMessages = unitTestSupport.compareVector(ggV[1:4],
                                                                     ggTruth,
                                                                     accuracy,
@@ -229,4 +232,5 @@ def run(show_plots, outMsgType, simTime):
 if __name__ == '__main__':
     run(True,           # show_plots
         "default",      # msgOutType (default, custom)
+        [[0.0], [0.0], [0.0]], # cmOffset
         3600)            # simTime (seconds)

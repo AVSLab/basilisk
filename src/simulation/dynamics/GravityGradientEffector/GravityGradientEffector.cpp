@@ -94,6 +94,7 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
     this->r_BN_N = states.getStateObject("hubPosition");
 	this->ISCPntB_B = states.getPropertyReference("inertiaSC");
     this->c_B = states.getPropertyReference("centerOfMassSC");
+    this->m_SC = states.getPropertyReference("m_SC");
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
@@ -136,7 +137,9 @@ void GravityGradientEffector::computeForceTorque(double integTime){
 
     /* evaluate inertia tensor about center of mass */
     Eigen::MatrixXd ISCPntC_B;
-    ISCPntC_B = *this->ISCPntB_B;
+    Eigen::Matrix3d cTilde;
+    cTilde = eigenTilde(*this->c_B);
+    ISCPntC_B = *this->ISCPntB_B - (*this->m_SC)(0,0)*cTilde*cTilde.transpose();
 //    std::cout << "ISCPntC_B\n" << ISCPntC_B << "\n" << std::endl;
 
     /* compute gravity gradient torque */

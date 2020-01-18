@@ -51,6 +51,7 @@ public:
     StateData *r_BN_N;                              //!< Hub/Inertial position vector in inertial frame components
     Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components
     Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *m_SC;                          //!< [kg] mass of spacecraft
     uint64_t OutputBufferCount;                     //!< number of output buffers for messaging system
     BSKLogger bskLogger;                            //!< BSK Logging
 
