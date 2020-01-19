@@ -99,9 +99,11 @@ public:
     int64_t bodyMsgID;              //!<          ID for ephemeris data message
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
     BSKLogger bskLogger;            //!< -- BSK Logging
-    Eigen::MatrixXd *r_PN_N;        //!< [m]      planet inertial position vector
-    Eigen::MatrixXd *v_PN_N;        //!< [m/s]    planet inertial velocity vector
-    Eigen::MatrixXd *muPlanet;      //!< [m/s]    planet inertial velocity vector
+    Eigen::MatrixXd *r_PN_N;        //!< [m]      (state engine property) planet inertial position vector
+    Eigen::MatrixXd *v_PN_N;        //!< [m/s]    (state engine property) planet inertial velocity vector
+    Eigen::MatrixXd *muPlanet;      //!< [m/s]    (state engine property) planet inertial velocity vector
+    Eigen::MatrixXd *J20002Pfix;    //!< [m/s]    (state engine property) planet attitude [PN]
+    Eigen::MatrixXd *J20002Pfix_dot;//!< [m/s]    (state engine property) planet attitude rate [PN_dot]
 
 };
 

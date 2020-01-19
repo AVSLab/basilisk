@@ -341,6 +341,8 @@ def singleGravityBody(show_plots):
     SpiceObject.UTCCalInit = stringCurrent
     TotalSim.InitializeSimulation()
     gravBody1.initBody(0)
+    newManager = stateArchitecture.DynParamManager()
+    gravBody1.registerProperties(newManager)
     SpiceObject.UpdateState(0)
 
     for i in range(2*3600):

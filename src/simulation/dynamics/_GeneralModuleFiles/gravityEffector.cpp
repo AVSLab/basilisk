@@ -309,6 +309,11 @@ void GravBodyData::registerProperties(DynParamManager& statesIn)
     muInit.setZero();
     this->muPlanet = statesIn.createProperty(this->bodyInMsgName + ".mu", muInit);
 
+    this->J20002Pfix = statesIn.createProperty(this->bodyInMsgName + ".J20002Pfix",
+                                               Eigen::Map<Eigen::Matrix3d> (&(this->localPlanet.J20002Pfix[0][0]), 3, 3));
+    this->J20002Pfix_dot = statesIn.createProperty(this->bodyInMsgName + ".J20002Pfix_dot",
+                                                   Eigen::Map<Eigen::Matrix3d> (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3));
+
     return;
 }
 
@@ -319,15 +324,21 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     
     double rMag = r_I.norm();
     gravOut  = -r_I*this->mu/(rMag*rMag*rMag);
-    
+
+    /* compute orientation of the body */
+    double dt = ((int64_t) simTimeNanos - (int64_t) this->localHeader.WriteClockNanos)*NANO2SEC;
+    Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
+        (&(this->localPlanet.J20002Pfix[0][0]), 3, 3);
+    Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>
+    (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3);
+    dcm_PfixN += dcm_PfixN_dot * dt;
+
+    /* store the current planet orientation and rates */
+    *this->J20002Pfix = dcm_PfixN;
+    *this->J20002Pfix_dot = dcm_PfixN_dot;
+
     if(this->spherHarm.harmReady() && this->useSphericalHarmParams)
     {
-        double dt = ((int64_t) simTimeNanos - (int64_t) this->localHeader.WriteClockNanos)*NANO2SEC;
-        Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
-            (&(this->localPlanet.J20002Pfix[0][0]), 3, 3);
-        Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>
-        (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3);
-        dcm_PfixN += dcm_PfixN_dot * dt;
         dcm_PfixN.transposeInPlace();
         Eigen::Vector3d r_Pfix = dcm_PfixN*r_I;
         Eigen::Vector3d gravPert_Pfix = this->spherHarm.computeField(r_Pfix,
