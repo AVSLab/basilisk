@@ -22,7 +22,7 @@
 # Creation Date:  Jan 12, 2019
 #
 
-import sys, os, inspect
+import os, inspect
 import numpy as np
 import pytest
 
@@ -38,8 +38,8 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody, orbitalMotion, RigidBodyKinematics
 from Basilisk.simulation import GravityGradientEffector
 from Basilisk.utilities import unitTestSupport
-#print dir(exponentialAtmosphere)
-from Basilisk.simulation import dragDynamicEffector
+from Basilisk import __path__
+bskPath = __path__[0]
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -53,15 +53,16 @@ path = os.path.dirname(os.path.abspath(filename))
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("outMsgType", ["default", "custom"])
+@pytest.mark.parametrize("multPlanet", [0, 1, 2])
 @pytest.mark.parametrize("cmOffset", [[[0.1], [0.15], [-0.1]], [[0.0], [0.0], [0.0]]])
 
 
 # provide a unique test method name, starting with test_
-def test_gravityGradientModule(show_plots, outMsgType, cmOffset):
+def test_gravityGradientModule(show_plots, outMsgType, cmOffset, multPlanet):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(
-            show_plots, outMsgType, cmOffset, 2.0)
+            show_plots, outMsgType, cmOffset, multPlanet, 2.0)
     assert testResults < 1, testMessage
 
 
@@ -75,7 +76,7 @@ def truthGravityGradient(mu, rN, sigmaBN, hub):
 
     return ggTorque
 
-def run(show_plots, outMsgType, cmOffset, simTime):
+def run(show_plots, outMsgType, cmOffset, multPlanet, simTime):
     """Call this routine directly to run the unit test."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -101,6 +102,19 @@ def run(show_plots, outMsgType, cmOffset, simTime):
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
     mu = earth.mu
+
+    if multPlanet:
+        venus = gravFactory.createVenus()
+        timeInitString = "2012 MAY 1 00:28:30.0"
+        spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                                                 timeInitString,
+                                                                 epochInMsgName='simEpoch')
+        gravFactory.spiceObject.zeroBase = 'earth'  # spacecraft states are logged relative to Earth for plotting
+        unitTestSupport.setMessage(scSim.TotalSim,
+                                   simProcessName,
+                                   spiceObject.epochInMsgName,
+                                   epochMsg)
+        scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -136,6 +150,9 @@ def run(show_plots, outMsgType, cmOffset, simTime):
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()
     ggEff.ModelTag = scObject.ModelTag
+    ggEff.addPlanetName(earth.bodyInMsgName)
+    if multPlanet == 2:
+        ggEff.addPlanetName(venus.bodyInMsgName)
     if outMsgType == "default":
         logMsgName = ggEff.ModelTag + "_gravityGradient"
     else:
@@ -220,9 +237,9 @@ def run(show_plots, outMsgType, cmOffset, simTime):
                                                                     "gravityGradientTorque_B",
                                                                     testFailCount, testMessages)
 
-
+    print("Accuracy used: " + str(accuracy))
     if testFailCount == 0:
-        print("PASSED: Gravity Effector" )
+        print("PASSED: Gravity Effector")
     else:
         print("Failed: Gravity Effector")
 
@@ -233,4 +250,5 @@ if __name__ == '__main__':
     run(True,           # show_plots
         "default",      # msgOutType (default, custom)
         [[0.0], [0.0], [0.0]], # cmOffset
-        3600)            # simTime (seconds)
+        2,              # multPlanet
+        3600)  # simTime (seconds)

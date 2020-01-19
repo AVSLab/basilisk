@@ -45,6 +45,8 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
+    void addPlanetName(std::string planetName);
+
 
 public:
     std::string gravityGradientOutMsgName;          //!< message used to read command inputs
@@ -53,11 +55,15 @@ public:
     Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components
     Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *m_SC;                          //!< [kg] mass of spacecraft
+    std::vector<Eigen::MatrixXd *> r_PN_N;          //!< [kg] mass of spacecraft
+    std::vector<Eigen::MatrixXd *> muPlanet;        //!< [m^3/s^-2] gravitational constant of planet
     uint64_t OutputBufferCount;                     //!< number of output buffers for messaging system
     BSKLogger bskLogger;                            //!< BSK Logging
 
 private:
     int64_t gravityGradientOutMsgId;                //!< Message ID for outgoing data
+    std::vector<std::string> planetPropertyNames;   //!< Names of planets we want to track
+
 };
 
 
