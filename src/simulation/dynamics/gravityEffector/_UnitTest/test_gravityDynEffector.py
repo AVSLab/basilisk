@@ -409,6 +409,31 @@ def singleGravityBody(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+def register(manager):
+    """
+    populates the state engines dynParamManager with nominal values
+    :param manager:
+    :return: posVelSig, posVelSig
+    """
+    positionName = "hubPosition"
+    stateDim = [3, 1]
+    posState = manager.registerState(stateDim[0], stateDim[1], positionName)
+    posVelSig = [[0.], [0.], [0.]]
+    posState.setState(posVelSig)
+    velocityName = "hubVelocity"
+    stateDim = [3, 1]
+    velState = manager.registerState(stateDim[0], stateDim[1], velocityName)
+    velState.setState(posVelSig)
+    sigmaName = "hubSigma"
+    stateDim = [3, 1]
+    sigmaState = manager.registerState(stateDim[0], stateDim[1], sigmaName)
+    sigmaState.setState(posVelSig)
+    initC_B = [[0.0], [0.0], [0.0]]
+    manager.createProperty("centerOfMassSC", initC_B)
+    manager.createProperty("systemTime", [[0], [0.0]])
+
+    return
+
 def multiBodyGravity(show_plots):
     testCase = 'multiBody' #for AutoTeX stuff
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -436,23 +461,7 @@ def multiBodyGravity(show_plots):
     #velocity and attitude are just set to zero.
     #center of mass and time are set to zero.
     newManager = stateArchitecture.DynParamManager()
-    positionName = "hubPosition"
-    stateDim = [3, 1]
-    posState = newManager.registerState(stateDim[0], stateDim[1], positionName)
-    posVelSig = [[0.],[0.],[0.]]
-    posState.setState(posVelSig)
-    velocityName = "hubVelocity"
-    stateDim = [3, 1]
-    velState = newManager.registerState(stateDim[0], stateDim[1], velocityName)
-    velState.setState(posVelSig)
-    sigmaName = "hubSigma"
-    stateDim = [3, 1]
-    sigmaState = newManager.registerState(stateDim[0], stateDim[1], sigmaName)
-    sigmaState.setState(posVelSig)
-    initC_B = [[0.0], [0.0], [0.0]]
-    newManager.createProperty("centerOfMassSC", initC_B)
-    newManager.createProperty("systemTime", [[0], [0.0]])
-    #
+    register(newManager)
 
 
     #Create a message struct to place gravBody1 where it is wanted
@@ -476,7 +485,8 @@ def multiBodyGravity(show_plots):
     allGrav.linkInStates(newManager)
     allGrav.registerProperties(newManager)
     multiSim.AddModelToTask(unitTaskName, allGrav)
-    allGrav.computeGravityField(posVelSig,posVelSig) #compute acceleration only considering the first body.
+    posVelSig = [[0.], [0.], [0.]]
+    allGrav.computeGravityField(posVelSig, posVelSig) #compute acceleration only considering the first body.
     step1 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
 
     #Create a message struct to place gravBody2&3 where they are wanted.
@@ -494,10 +504,15 @@ def multiBodyGravity(show_plots):
     gravBody2.localPlanet = localPlanetEditor
 
     #This is the gravityEffector which will actually compute the gravitational acceleration
-    allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2])
-    allGrav.computeGravityField(posVelSig,posVelSig) #compute acceleration considering the first and second bodies.
+    newManager = stateArchitecture.DynParamManager()
+    register(newManager)
+    allGrav2 = gravityEffector.GravityEffector()
+    allGrav2.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2])
+    allGrav2.linkInStates(newManager)
+    allGrav2.registerProperties(newManager)
+    multiSim.AddModelToTask(unitTaskName, allGrav2)
+    allGrav2.computeGravityField(posVelSig, posVelSig) #compute acceleration considering the first and second bodies.
     step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
-
     # grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
     gravBody3 = gravityEffector.GravBodyData()
     gravBody3.bodyInMsgName = "gravBody3_planet_data"
@@ -509,8 +524,14 @@ def multiBodyGravity(show_plots):
     gravBody3.localPlanet = localPlanetEditor
 
     #This is the gravityEffector which will actually compute the gravitational acceleration
-    allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2, gravBody3])
-    allGrav.computeGravityField(posVelSig,posVelSig) #comput acceleration considering all three bodies
+    newManager = stateArchitecture.DynParamManager()
+    register(newManager)
+    allGrav3 = gravityEffector.GravityEffector()
+    allGrav3.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2, gravBody3])
+    allGrav3.linkInStates(newManager)
+    allGrav3.registerProperties(newManager)
+    multiSim.AddModelToTask(unitTaskName, allGrav3)
+    allGrav3.computeGravityField(posVelSig, posVelSig) #comput acceleration considering all three bodies
     step3 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
 
     step3 = [0., step3[0][0], step3[1][0], step3[2][0]] #add a first (time) column to use isArrayZero
