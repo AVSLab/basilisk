@@ -62,7 +62,7 @@ User Guide
 ----------
 
 Basic Setup
-~~~~~~~~~~~
+^^^^^^^^^^^
 The gravity effector setup follows the standard process of creating the effector and asigning it to a
 spacecraft as well as adding it to the task list::
 
@@ -72,7 +72,7 @@ spacecraft as well as adding it to the task list::
     scSim.AddModelToTask(simTaskName, ggEff)
 
 Specifying Gravity Bodies
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 To specify which planets must be considered for gravity gradient torques, use the command::
 
     ggEff.addPlanetName("name")
@@ -93,7 +93,7 @@ information::
     spacecraft.
 
 Module Output Message Name
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 The effector write an output message with the current gravity gradient torque information at each ``update`` cycle.
 The output name ``gravityGradientOutMsgName`` of this effector can be set using 2 methods.
 
