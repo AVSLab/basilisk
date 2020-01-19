@@ -53,16 +53,39 @@ path = os.path.dirname(os.path.abspath(filename))
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("outMsgType", ["default", "custom"])
-@pytest.mark.parametrize("multPlanet", [0, 1, 2])
+@pytest.mark.parametrize("planetCase", [0, 1, 2, 3])
 @pytest.mark.parametrize("cmOffset", [[[0.1], [0.15], [-0.1]], [[0.0], [0.0], [0.0]]])
 
 
 # provide a unique test method name, starting with test_
-def test_gravityGradientModule(show_plots, outMsgType, cmOffset, multPlanet):
-    """Module Unit Test"""
+def test_gravityGradientModule(show_plots, outMsgType, cmOffset, planetCase):
+    r"""
+    **Validation Test Description**
+
+    This test creates a spacecraft in orbit about either Earth or Venus to check if the correct gravity gradient
+    torque is evaluated.  Multiple test scenario combinations are possible where either a single or multiple
+    gravity bodies are included, using either zero planet ephemeris for the single planet case, or using SPICE
+    for the multi-planet scenario.
+
+    **Test Parameters**
+
+    The following list discusses in detail the various test parameters used. These are test tested in
+    all possible permutations (except show_plots of course) which is turned off for pytest usage.
+
+    :param show_plots:  flag to show some simulation plots
+    :param outMsgType:  flag indicating if a default effector output message name should be used, or a custom name.  The flag values can be either "default" or "custom"
+    :param cmOffset:    center of mass offset vector in meters
+    :param planetCase:  integer flag with values (0,1,2,3).  Case 0 indicates a simulation with only Earth present at (0,0,0).  Case 1 is a simulation with both Earth and Venus present using Spice, but the gravity gradient torque is only evaluated using Earth.  Case 2 is same as 1 but Venus is also included in the torque evaluation.  Case 3 is like 2 but here the spacecraft is orbiting venus.
+    :return: None
+
+    **Description of Variables Being Tested**
+
+    The gravity effector torque output message is compared against a python evaluated vector.
+
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(
-            show_plots, outMsgType, cmOffset, multPlanet, 2.0)
+            show_plots, outMsgType, cmOffset, planetCase, 2.0)
     assert testResults < 1, testMessage
 
 
@@ -76,7 +99,7 @@ def truthGravityGradient(mu, rN, sigmaBN, hub):
 
     return ggTorque
 
-def run(show_plots, outMsgType, cmOffset, multPlanet, simTime):
+def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     """Call this routine directly to run the unit test."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -103,18 +126,25 @@ def run(show_plots, outMsgType, cmOffset, multPlanet, simTime):
     earth.isCentralBody = True  # ensure this is the central gravitational body
     mu = earth.mu
 
-    if multPlanet:
+    if planetCase:
         venus = gravFactory.createVenus()
         timeInitString = "2012 MAY 1 00:28:30.0"
         spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
                                                                  timeInitString,
                                                                  epochInMsgName='simEpoch')
-        gravFactory.spiceObject.zeroBase = 'earth'  # spacecraft states are logged relative to Earth for plotting
         unitTestSupport.setMessage(scSim.TotalSim,
                                    simProcessName,
                                    spiceObject.epochInMsgName,
                                    epochMsg)
         scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+
+        if planetCase == 3:
+            earth.isCentralBody = False
+            venus.isCentralBody = True
+            mu = venus.mu
+            gravFactory.spiceObject.zeroBase = 'venus'  # spacecraft states are logged relative to Earth for plotting
+        else:
+            gravFactory.spiceObject.zeroBase = 'earth'  # spacecraft states are logged relative to Earth for plotting
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -151,7 +181,7 @@ def run(show_plots, outMsgType, cmOffset, multPlanet, simTime):
     ggEff = GravityGradientEffector.GravityGradientEffector()
     ggEff.ModelTag = scObject.ModelTag
     ggEff.addPlanetName(earth.bodyInMsgName)
-    if multPlanet == 2:
+    if planetCase >= 2:
         ggEff.addPlanetName(venus.bodyInMsgName)
     if outMsgType == "default":
         logMsgName = ggEff.ModelTag + "_gravityGradient"
@@ -250,5 +280,5 @@ if __name__ == '__main__':
     run(True,           # show_plots
         "default",      # msgOutType (default, custom)
         [[0.0], [0.0], [0.0]], # cmOffset
-        2,              # multPlanet
+        3,              # planetCase
         3600)  # simTime (seconds)
