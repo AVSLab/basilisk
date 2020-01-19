@@ -79,7 +79,8 @@ public:
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
-    
+    void registerProperties(DynParamManager& statesIn);
+
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
     bool isDisplayBody;             //!<          Flag indicating that body is display
@@ -89,7 +90,7 @@ public:
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
-    SpicePlanetStateSimMsg localPlanet;//!< [-]      Class storage of ephemeris info from scheduled portion
+    SpicePlanetStateSimMsg localPlanet;//!< [-]   Class storage of ephemeris info from scheduled portion
     SingleMessageHeader localHeader;//!  [-]      Header information for ephemeris storage
     std::string bodyInMsgName;      //!<          Gravitational body name
     std::string outputMsgName;      //!<          Ephemeris information relative to display frame
@@ -97,7 +98,10 @@ public:
     int64_t outputMsgID;            //!<          ID for output message data
     int64_t bodyMsgID;              //!<          ID for ephemeris data message
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;            //!< -- BSK Logging
+    Eigen::MatrixXd *r_PN_N;        //!< [m]      planet inertial position vector
+    Eigen::MatrixXd *v_PN_N;        //!< [m/s]    planet inertial velocity vector
+    Eigen::MatrixXd *muPlanet;      //!< [m/s]    planet inertial velocity vector
 
 };
 

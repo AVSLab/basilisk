@@ -22,6 +22,7 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/linearAlgebra.h"
+#include <iostream>
 
 SphericalHarmonics::SphericalHarmonics()
 {
@@ -297,6 +298,20 @@ void GravBodyData::initBody(int64_t moduleID)
     return;
 }
 
+void GravBodyData::registerProperties(DynParamManager& statesIn)
+{
+    Eigen::Vector3d stateInit;
+    stateInit.fill(0.0);
+    this->r_PN_N = statesIn.createProperty(this->bodyInMsgName + ".r_PN_N", stateInit);
+    this->v_PN_N = statesIn.createProperty(this->bodyInMsgName + ".v_PN_N", stateInit);
+
+    Eigen::MatrixXd muInit(1,1);
+    muInit.setZero();
+    this->muPlanet = statesIn.createProperty(this->bodyInMsgName + ".mu", muInit);
+
+    return;
+}
+
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     uint64_t simTimeNanos)
 {
@@ -415,6 +430,13 @@ void GravityEffector::registerProperties(DynParamManager& statesIn)
     this->gravProperty = statesIn.createProperty(this->vehicleGravityPropName, gravInit);
     this->inertialPositionProperty = statesIn.createProperty(this->inertialPositionPropName, gravInit);
     this->inertialVelocityProperty = statesIn.createProperty(this->inertialVelocityPropName, gravInit);
+
+    /* register planet position and velocity state vectors as parameters in the state engine */
+    std::vector<GravBodyData *>::iterator it;
+    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++) {
+        (*it)->registerProperties(statesIn);
+    }
+
 }
 
 void GravityEffector::linkInStates(DynParamManager& statesIn)
@@ -458,6 +480,11 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
         }
         rDotDot_cN_N_P = (*it)->computeGravityInertial(r_cP_N, systemClock); //acc of s/c wrt N CoM in Frame used for s/c dynamics
         rDotDot_cF_N += rDotDot_cN_N_P;
+
+        /* store planet states in the state engine parameters */
+        *((*it)->r_PN_N) = r_PN_N;
+        *((*it)->v_PN_N) = Eigen::Map<Eigen::Vector3d>(&((*it)->localPlanet.VelocityVector[0]), 3, 1);
+        (*((*it)->muPlanet))(0,0) = (*it)->mu;
     }
     
     *this->gravProperty = rDotDot_cF_N;
