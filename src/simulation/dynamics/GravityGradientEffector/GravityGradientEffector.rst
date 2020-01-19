@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This :ref:`dynamicEffector` implements a first order gravity gradient torque acting on a spacecraft.  It is written
+This module, a sub-class of :ref:`dynamicEffector`, implements a first order gravity gradient torque acting on a spacecraft.  It is written
 in a general manner such that one or more gravitational objects are considered.  This allows a continues simulation to
 apply gravity gradients torque near the Earth, the moon and onwards to Mars.
 
