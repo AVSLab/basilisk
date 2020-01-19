@@ -25,10 +25,6 @@
 
 GravityGradientEffector::GravityGradientEffector()
 {
-	this->forceExternal_B.fill(0.0);
-	this->torqueExternalPntB_B.fill(0.0);
-    this->forceExternal_N.fill(0.0);
-    
 	this->gravityGradientOutMsgId = -1;
     this->OutputBufferCount = 2;
 
@@ -69,6 +65,27 @@ void GravityGradientEffector::SelfInit()
  */
 void GravityGradientEffector::CrossInit()
 {
+    return;
+}
+
+/*! This method is used to set the effector, and check same module variables
+@return void
+*/
+void GravityGradientEffector::Reset(uint64_t CurrentSimNanos)
+{
+    /* zero the effector output forces and torques */
+    this->forceExternal_B.fill(0.0);
+    this->torqueExternalPntB_B.fill(0.0);
+    this->forceExternal_N.fill(0.0);
+
+    if (this->planetPropertyNames.size()==0) {
+        bskLogger.bskLog(BSK_ERROR, "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
+    }
+
+    /* empty the vector of planet state pointers */
+    this->r_PN_N.empty();
+    this->muPlanet.empty();
+
     return;
 }
 
