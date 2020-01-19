@@ -96,6 +96,12 @@ Magnetic Field Models
    Centered Dipole Model <scenarioMagneticFieldCenteredDipole>
    World Magnetic Model WMM <scenarioMagneticFieldWMM>
 
+Gravity Gradient Torque
+^^^^^^^^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   Gravity  Gradient Perturbed Hill Pointing <scenarioAttitudeGG>
 
 
 Spacecraft Sensors
