@@ -31,9 +31,9 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate                 # import the module that is to be tested
+from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate  # import the module that is to be tested
 from Basilisk.utilities import macros
-
+from Basilisk.fswAlgorithms import fswMessages
 
 
 class DataStore:
@@ -136,8 +136,8 @@ def fswModuleTestFunction(plotFixture, show_plots):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = fswModuleTemplate.FswModuleTemplateFswMsg()     # Create a structure for the input message
-    inputMessageData.outputVector = [1.0, -0.5, 0.7]       # Set up a list as a 3-vector
+    inputMessageData = fswMessages.FswModuleTemplateFswMsg()    # Create a structure for the input message
+    inputMessageData.outputVector = [1.0, -0.5, 0.7]            # Set up a list as a 3-vector
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                moduleConfig.dataInMsgName,

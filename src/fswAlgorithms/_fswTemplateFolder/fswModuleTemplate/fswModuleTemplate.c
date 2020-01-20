@@ -31,8 +31,6 @@
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "simulation/utilities/linearAlgebra.h"
-//#include "simulation/utilities/rigidBodyKinematics.h"
-//#include "simulation/utilities/astroConstants.h"
 
 
 /*! This method initializes the configData for this module.

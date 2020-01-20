@@ -44,8 +44,9 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate                # import the module that is to be tested
+from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate  # import the module that is to be tested
 from Basilisk.utilities import macros
+from Basilisk.fswAlgorithms import fswMessages
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -148,7 +149,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = fswModuleTemplate.FswModuleTemplateFswMsg()  # Create a structure for the input message
+    inputMessageData = fswMessages.FswModuleTemplateFswMsg()    # Create a structure for the input message
     inputMessageData.outputVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
