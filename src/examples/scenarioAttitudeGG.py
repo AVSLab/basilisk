@@ -22,7 +22,8 @@ Overview
 
 Illustrates how to add a :ref:`GravityGradientEffector` to the spacecraft while a Hill-frame pointing
 control solution is active.  This script expands on :ref:`scenarioAttitudeGuidance` sets
-up a 6-DOF spacecraft which is orbiting the Earth.
+up a 6-DOF spacecraft which is orbiting the Earth.  More illustrations on using the gravity gradient
+torque effector can be found in the modules :ref:`UnitTestGravityGradientEffector` folder.
 
 The script is found in the folder ``src/examples`` and executed by using::
 
