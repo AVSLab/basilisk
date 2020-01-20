@@ -22,6 +22,9 @@ Upcoming Version 1.X.X
 ----------------------
 - Fixed the long-standing issue of not being able to run ``pytest`` on Windows from ``src``, but it only ran from withing sub-folders of ``src``.  Still recommended to run on Windows multi-threaded ``pytest -n XXX`` using ``pytest-xdist``.
 - temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion at `<https://github.com/conan-community/community/issues/210>`_
+- Updated :ref:`fswModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
+- Updated the documentation of :ref:`Folder_MRP_PD` to the RST format
+- Updated the documentation of :ref:`Folder_MRP_Steering` to the RST format
 
 Version 1.5.1
 -------------
