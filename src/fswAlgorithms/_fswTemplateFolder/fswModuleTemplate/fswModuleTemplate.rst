@@ -10,7 +10,11 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
+.. _ModuleIO_MRP_PD:
+.. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/moduleIOFswModuleTemplate.svg
+    :align: center
 
+    Figure 1: ``fswModuleTemplate()`` Module I/O Illustration
 
 
 .. table:: Module I/O Messages
@@ -129,7 +133,7 @@ To include a figure (has a caption and you can add label), use the following cod
     .. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
         :align: center
 
-        Figure 1: Concept Illustration of the Math used in this Module
+        Figure 2: Concept Illustration of the Math used in this Module
 
 This yields
 
@@ -137,7 +141,7 @@ This yields
 .. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
     :align: center
 
-    Figure 1: Concept Illustration of the Math used in this Module
+    Figure 2: Concept Illustration of the Math used in this Module
 
 You can cite the figure using ``:ref:`figLabel```. For example, as seen in :ref:`figLabel`, the figure can
 now be referenced.
