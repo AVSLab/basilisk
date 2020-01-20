@@ -25,7 +25,7 @@ Simply add the the desired module documentation as ``genericModule.rst`` to this
 
 Adding Documentation to a Basilisk Folder
 -----------------------------------------
-Some modules in Basilisk are organized into sub-folders.  If you want to add documentation to a particular sub-folder, as is done with :ref:`power` found at ``src/simulation/power``, then add the name the restructured text file inside that folder and call it ``_doc.rst``.  If a file with this name is found, then its contents will be parsed ahead of show the folders files or sub-folders.
+Some modules in Basilisk are organized into sub-folders.  If you want to add documentation to a particular sub-folder, as is done with :ref:`Folder_power` found at ``src/simulation/power``, then add the name the restructured text file inside that folder and call it ``_doc.rst``.  If a file with this name is found, then its contents will be parsed ahead of show the folders files or sub-folders.
 
 
 Overriding the Folder's Auto-Generated ``index.rst`` File

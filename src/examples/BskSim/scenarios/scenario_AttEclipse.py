@@ -59,7 +59,7 @@ Custom Dynamics Configurations Instructions
 -------------------------------------------
 The fundamental simulation setup is a combination of the setups used in
 :ref:`scenarioAttitudeFeedback` and :ref:`scenarioCSS`.
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which an Earth gravity
+The dynamics simulation is setup using a :ref:`spacecraftPlus` module to which an Earth gravity
 effector is attached. In addition a CSS constellation and RW pyramid are attached.
 
 The new element is adding the eclipse module ``self.eclipseObject`` to the simulation environment.
