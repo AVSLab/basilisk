@@ -1,7 +1,7 @@
 Executive Summary
 -----------------
 Provide a brief introduction to purpose and intent of this module.  This should be a short description.
-If this requires lots explanation, images, equations, etc., then used the `Detailed Module Description`_
+If this requires lots explanation, images, equations, etc., then use the `Detailed Module Description`_
 section below.
 
 Message Connection Descriptions
