@@ -45,7 +45,25 @@ from Basilisk.utilities import RigidBodyKinematics
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_mrp_steering_tracking(show_plots, K1, K3, omegaMax):
-    """Module Unit Test"""
+    r"""
+    **Validation Test Description**
+
+    This unit test  compares the computed :math:`\pmb\omega_{\mathcal{B}^{\ast}/\mathcal{R}}` and
+    :math:`\pmb\omega_{\mathcal{B}^{\ast}/\mathcal{R}}'` to truth values computed in the python unit test.
+
+    **Test Parameters**
+
+    This test checks a set of gains ``K1``, ``K3`` and ``omegaMax`` on a rigid body with no external
+    torques, and with a fixed input reference attitude message. The commanded rate solution
+    is evaluated against python computed values at 0s, 0.5s and 1s to within a tolerance of :math:`10^{-12}`.
+
+    :param show_plots: flag indicating if plots should be shown.
+    :param K1: The control gain :math:`K_1`
+    :param K3: The control gain :math:`K_3`
+    :param omegaMax: The control gain :math:`\omega_{\text{max}}`
+    :return: void
+
+    """
     [testResults, testMessage] = mrp_steering_tracking(show_plots, K1, K3, omegaMax)
     assert testResults < 1, testMessage
 
@@ -164,14 +182,14 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueValues(guidCmdData,moduleConfig):
+def findTrueValues(guidCmdData, moduleConfig):
 
     omegaMax = moduleConfig.omega_max
     sigma = np.asarray(guidCmdData.sigma_BR)
     K1 = np.asarray(moduleConfig.K1)
     K3 = np.asarray(moduleConfig.K3)
     Bmat = RigidBodyKinematics.BmatMRP(sigma)
-    omegaAst = []#np.asarray([0, 0, 0])
+    omegaAst = []   #np.asarray([0, 0, 0])
     omegaAst_P = []
 
     for i in range(len(sigma)):
@@ -179,7 +197,7 @@ def findTrueValues(guidCmdData,moduleConfig):
         omegaAst.append(steerRate)
 
 
-    if 1:#moduleConfig.ignoreOuterLoopFeedforward: #should be "if not"
+    if 1:   #moduleConfig.ignoreOuterLoopFeedforward: #should be "if not"
         sigmaP = 0.25*Bmat.dot(omegaAst)
         for i in range(len(sigma)):
             omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]

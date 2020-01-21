@@ -47,6 +47,7 @@
     #include "../fswMessages/thrConfigFswMsg.h"
     #include "../fswMessages/vehicleConfigFswMsg.h"
     #include "../fswMessages/rateCmdFswMsg.h"
+    #include "fswModuleTemplateFswMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -114,6 +115,8 @@ GEN_SIZEOF(THRConfigFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 %include "../fswMessages/rateCmdFswMsg.h"
 GEN_SIZEOF(RateCmdFswMsg);
+%include "fswModuleTemplateFswMsg.h"
+GEN_SIZEOF(FswModuleTemplateFswMsg);
 
 %include "../fswUtilities/fswDefinitions.h"
 

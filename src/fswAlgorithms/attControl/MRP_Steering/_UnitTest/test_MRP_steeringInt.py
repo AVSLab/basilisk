@@ -17,7 +17,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
 import numpy as np
 import pytest
 
@@ -49,7 +48,26 @@ from Basilisk.utilities import RigidBodyKinematics
 
 
 def test_mrp_steering_tracking(show_plots,K1, K3, omegaMax):
-    "module integrated test"
+    r"""
+    **Validation Test Description**
+
+    This unit test is an integrated test of this module with :ref:`rateServoFullNonlinear` as well,
+    comparing the desired torques computed :math:`{\bf L}_r` with truth values computed in the test.
+
+    **Test Parameters**
+
+    This test checks a set of gains ``K1``, ``K3`` and ``omegaMax`` on a rigid body with no external
+    torques, and with a fixed input reference attitude message. The commanded rate solution
+    is evaluated against python computed values at 0s, 0.5s, 1.0s, 1.5s and 2s to within a
+    tolerance of :math:`10^{-12}`.
+
+    :param show_plots: flag indicating if plots should be shown.
+    :param K1: The control gain :math:`K_1`
+    :param K3: The control gain :math:`K_3`
+    :param omegaMax: The control gain :math:`\omega_{\text{max}}`
+    :return: void
+
+    """
     [testResults, testMessage] = mrp_steering_tracking(show_plots,K1, K3, omegaMax)
     assert testResults < 1, testMessage
 

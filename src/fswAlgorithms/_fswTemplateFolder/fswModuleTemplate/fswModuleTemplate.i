@@ -33,8 +33,8 @@
 GEN_SIZEOF(fswModuleTemplateConfig);
 %include "fswModuleTemplate.h"
 
-// sample Module supportfile to be included in this sub-module
-%include "../_GeneralModuleFiles/fswModuleTemplateFswMsg.h"
+// sample Module support file to be included in this sub-module
+%include "../../fswMessages/fswModuleTemplateFswMsg.h"
 GEN_SIZEOF(FswModuleTemplateFswMsg);
 
 %pythoncode %{

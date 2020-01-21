@@ -22,6 +22,9 @@ Upcoming Version 1.X.X
 ----------------------
 - Fixed the long-standing issue of not being able to run ``pytest`` on Windows from ``src``, but it only ran from withing sub-folders of ``src``.  Still recommended to run on Windows multi-threaded ``pytest -n XXX`` using ``pytest-xdist``.
 - temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion at `<https://github.com/conan-community/community/issues/210>`_
+- Updated :ref:`fswModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
+- Updated the documentation of :ref:`Folder_MRP_PD` to the RST format
+- Updated the documentation of :ref:`Folder_MRP_Steering` to the RST format
 
 Version 1.5.1
 -------------
@@ -47,7 +50,7 @@ Version 1.5.0
 
 - added :ref:`Vizard scripting <vizardSettings>` abilities to control the new spacecraft camera view panel behaviors
 - added :ref:`Vizard scripting <vizardSettings>` abilities to specify custom CAD OBJ models to replace the default satellite shape
-- added  :ref:`onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
+- added  :ref:`Folder_onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
 - updated :ref:`sunlineSuKF` with some general improvements
 - tweak to ``cmake`` file to make BSK be portable across Linux systems
 - changed the :ref:`bskLogging` level names to make them unique.  This avoids potential variable name conflicts, especially on Windows.

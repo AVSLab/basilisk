@@ -43,7 +43,24 @@ from Basilisk.utilities import macros
 @pytest.mark.parametrize("setExtTorque", [False, True])
 
 def test_mrp_PD_tracking(show_plots, setExtTorque):
-    """Module Unit Test"""
+    r"""
+    **Validation Test Description**
+
+    The unit test  for this module is kept as there are no branching code segments to account for different cases.
+    The spacecraft inertia tensor message is setup, as well as a guidance message.  The module is then run for a
+    few time steps and the control torque output message compared to a known answer.  The simulation only variable
+    is if the known external torque is specified, or if the zero default vector is used.
+
+    **Test Parameters**
+
+    The unit test verifies that the module output torque message vector matches expected values.  The test
+    method parameters include the following.
+
+    :param show_plots: flag to show the test run plots
+    :param setExtTorque: flag to set the knownTorquePntB_B variable
+    :return: void
+
+    """
     [testResults, testMessage] = mrp_PD_tracking(show_plots, setExtTorque)
     assert testResults < 1, testMessage
 
@@ -124,7 +141,7 @@ def mrp_PD_tracking(show_plots, setExtTorque):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    print("accuracy = " + str(accuracy))
 
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
                                                                "torqueRequestBody", testFailCount, testMessages)
@@ -138,7 +155,6 @@ def mrp_PD_tracking(show_plots, setExtTorque):
         colorText = 'Red'
         print("Failed: " + moduleWrap.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

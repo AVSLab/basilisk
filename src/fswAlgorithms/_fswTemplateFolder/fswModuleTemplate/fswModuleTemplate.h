@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/fswModuleTemplateFswMsg.h"
+#include "fswMessages/fswModuleTemplateFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
 
 
