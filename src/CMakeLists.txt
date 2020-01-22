@@ -13,6 +13,10 @@ if(POLICY CMP0086)
   cmake_policy(SET CMP0086 NEW)
 endif()
 
+if(POLICY CMP0068)
+  cmake_policy(SET CMP0068 NEW)
+endif()
+
 if(POLICY CMP0046)
   cmake_policy(SET CMP0046 NEW)
 endif()
@@ -367,14 +371,259 @@ function(findAndCreateSwigModules SubModule)
 	endforeach()
 endfunction(findAndCreateSwigModules)
 
+
+
+function(sub_dir_list result curdir)
+  # Searches through all directories in source, and keeps those called GeneralModuleFiles
+  FILE(GLOB_RECURSE children LIST_DIRECTORIES true RELATIVE ${curdir} ${curdir}/*/)
+  SET(dirlist "")
+  FOREACH(child ${children})
+    IF(IS_DIRECTORY ${curdir}/${child})
+        string(FIND ${curdir}/${child} "_GeneralModuleFiles" FOUND)
+        string(FIND ${curdir}/${child} "__pycache__" FOUND_PY)
+        string(FIND ${curdir}/${child} "_UnitTest" FOUND_UNIT)
+        IF(${FOUND} GREATER -1 AND ${FOUND_PY} EQUAL -1 AND ${FOUND_UNIT} EQUAL -1)
+            LIST(APPEND dirlist ${child})
+        ENDIF()
+    ENDIF()
+  ENDFOREACH()
+  SET(${result} ${dirlist} PARENT_SCOPE)
+endfunction(sub_dir_list)
+
+
+function(generate_package_libraries INIT_DIRECTORY)
+    # Find all _GeneralModuleFiles and put them into library targets so they aren't rewrapped, built with every module.
+
+    # Find all _GeneralModuleFiles directories
+    sub_dir_list(LIB_DIRS ${INIT_DIRECTORY})
+    foreach(LIB_DIR ${LIB_DIRS})
+
+        # Determine the name of the parent directory of _GeneralModuleFiles (i.e. dynamics, environment, etc)
+        get_filename_component(PARENT_DIR ${LIB_DIR} DIRECTORY) # Relative to the source directory (e.g. simulation/power)
+        string(FIND ${PARENT_DIR} "/" DIR_NAME_IDX REVERSE)
+        math(EXPR DIR_NAME_IDX "${DIR_NAME_IDX} + 1")# "simulation/"
+        string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be (e.g. power)
+
+        # Set the library name (ex. dynamicsLib, environmentLib, etc)
+        set(LIB_NAME "${PARENT_DIR_NAME}Lib")
+
+        # Grab the library source files
+        file(GLOB C_FILES
+                "${LIB_DIR}/*.cpp" # SH Base Class
+                "${LIB_DIR}/*.h"
+            )
+
+        # Grab the framework source files
+        file(GLOB BSK_FWK_FILES
+            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp" #Might not be needed
+            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
+            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
+            )
+
+        # Add Target
+        add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
+
+        # Link all necessary libraries
+        target_link_libraries(${LIB_NAME} SimUtilities)
+        target_link_libraries(${LIB_NAME} SimMessaging)
+        target_link_libraries(${LIB_NAME} AlgorithmMessaging)
+        target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
+	    target_link_libraries(${LIB_NAME} ${CONAN_LIBS})
+
+        # define build location, IDE generation specifications
+        set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
+        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PARENT_DIR})
+        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PARENT_DIR})
+        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PARENT_DIR})
+    endforeach()
+endfunction(generate_package_libraries)
+
+function(find_package_targets PKG_DIR ALL_TARGET_LIST)
+	file(GLOB_RECURSE SWIG_TARGETS RELATIVE ${PKG_DIR} "${PKG_DIR}/*.i")
+	set(${ALL_TARGET_LIST} ${SWIG_TARGETS} PARENT_SCOPE)
+endfunction(find_package_targets)
+
+function(generate_package_targets TARGET_LIST LIB_DEP_LIST)
+
+    find_package(SWIG REQUIRED)
+    include(UseSwig REQUIRED)
+    find_package(PythonLibs 3 REQUIRED)
+
+    foreach(TARGET_FILE ${TARGET_LIST})
+        get_filename_component(TARGET_NAME ${TARGET_FILE} NAME)
+        get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
+
+        # Grab the target source files
+        file(GLOB C_FILES
+                "${PARENT_DIR}/*.c"
+                "${PARENT_DIR}/*.cpp"
+                "${PARENT_DIR}/*.h"
+                "${PARENT_DIR}/*.rst"
+            )
+
+        # Add Target
+        swig_add_library(${TARGET_NAME}
+                           LANGUAGE "python"
+                           TYPE MODULE
+                           SOURCES ${TARGET_FILE} ${C_FILES})
+
+        # Link all necessary libraries
+        foreach(LIB ${LIB_DEP_LIST})
+            target_link_libraries(${TARGET_NAME} ${LIB})
+        endforeach()
+
+        # define build location, IDE generation specifications
+        set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR})
+        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PARENT_DIR})
+        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PARENT_DIR})
+        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PARENT_DIR})
+    endforeach()
+endfunction(generate_package_targets)
+
+
+
+function(temp)
+    # Name the project "Simulation"
+	string(FIND ${CMAKE_CURRENT_SOURCE_DIR} "/" DIR_NAME_START REVERSE)
+	math(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")
+	string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRING)
+	project("${DIR_NAME_STRING}")
+
+    # Get all swig source files (.i)
+	file(GLOB_RECURSE swig_modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.i")
+
+	# Get all of the libraries that will get linked to the swig modules
+	get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
+	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
+	get_property(INTER_FILES GLOBAL PROPERTY SYS_INTER_FILES)
+
+    # Make Simulation within the build directory and create the original __init__.py file
+	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}")
+	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}__init__.py" "#empty init file")
+
+	foreach(module ${swig_modules})
+	    # Skip any modules that require custom CMakeLists.txt
+	    if((NOT USE_PROTOBUFFERS OR NOT USE_ZMQ) AND (module IN_LIST requires_protobuff_modules OR module IN_LIST requires_zmq_modules))
+               continue()
+ 	    endif()
+ 	    if((NOT USE_OPENCV) AND (module IN_LIST requires_opencv_modules))
+ 	           continue()
+ 	    endif()
+ 	    if((module IN_LIST requires_vulkan_modules))
+ 	           continue()
+ 	    endif()
+
+	    get_filename_component(FileNameWoExt ${module} NAME_WE) # .i File Name without Extension
+        get_filename_component(FileDir ${module} DIRECTORY) # FileDir
+
+        # This defines where to write the language specific files (.py in our case)
+	    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileNameWoExt}")
+
+        # Grab all of the C/C++ source and header files
+	    file(GLOB impl_files
+		    "${FileDir}/*.cpp"
+		    "${FileDir}/*.c"
+		    "${FileDir}/*.h"
+		    "${FileDir}/*.rst"
+		)
+
+		# Grab all of the BSK Framework files
+	    file(GLOB gen_files
+	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp"
+	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
+	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c")
+
+	    # Grab all of the BSK Framework SWIG source files
+	    file(GLOB swig_dep_files "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.i")
+
+
+        # Seperate the file directory into its parent and child directories
+	    string(REPLACE "/" ";" DirList ${FileDir})
+
+        # Search for additional _GeneralModuleFiles (.cpp/.c/.i) within subdirectories (i.e. dynamics/_GeneralModuleFiles)
+        # and add them to the list of dependant files
+        # TODO: These should become their own libraries so they aren't constantly getting reswigged/rebuilt
+	    set(currentDir "")
+	    set(endDir "")
+	    foreach(localDir ${DirList})
+	        set(currentDir "${currentDir}${localDir}/")
+	        file(GLOB gen_files_loc
+	            "${currentDir}_GeneralModuleFiles/*.cpp"
+	            "${currentDir}_GeneralModuleFiles/*.h"
+	            "${currentDir}_GeneralModuleFiles/*.c")
+	        file(GLOB swig_dep_loc "${currentDir}_GeneralModuleFiles/*.i")
+	        set(gen_files "${gen_files};${gen_files_loc}")
+	        set(swig_dep_files "${swig_dep_files};${swig_dep_loc}")
+	    set(endDir ${localDir})
+	    endforeach()
+
+	    # Uncertain why this would happen -- potentially legacy code
+	    # TODO: Look into if this is necessary
+	    if("${endDir}" STREQUAL "_GeneralModuleFiles")
+	        continue()
+	    endif()
+
+		# Create the __init__.py files, and symlink any preexisting support files to the (to-be-populated) SWIG output directory
+		make_python_package(${FileNameWoExt} ${FileDir} ${CMAKE_SWIG_OUTDIR})
+
+        # Set the include flags
+	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
+
+	    # Make sure the SWIG source file is in C++ mode
+	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
+
+	    # Grants the module's .i file access to the other SWIG .i files needed for successful compilation
+		set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
+
+		# Gives the generated _wrap.cxx file access to simulation directory
+		# TODO: Determine why this is needed
+		set_source_files_properties( ${swig_generated_file_fullname} PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
+
+	    # Specifies the C/C++ source files, the SWIG Source Files, and GeneralModule Source files
+	    set(SWIG_MODULE_${FileNameWoExt}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
+
+	    # Custom swig function (to allow support for CMake versions < 3 or > 3) that generates a library target.
+	    MAKE_SWIG_MODULE(${FileNameWoExt} python ${module} ${impl_files} ${gen_files})
+
+        # The built library target then gets linked with python, conan, and any odditional libraries
+	    target_link_libraries(${FileNameWoExt} ${PYTHON_LIBRARIES})
+	    target_link_libraries(${FileNameWoExt} ${CONAN_LIBS})
+
+        if (USE_PROTOBUFFERS)
+	       target_link_libraries(${FileNameWoExt} protocode) # TODO: This should be added to the BUILT_LIB_LIST rather than have its own conditional here.
+        endif()
+	    foreach(LibFile ${LIBRARY_BUILD_LIST})
+	         target_link_libraries(${FileNameWoExt} ${LibFile})
+	    endforeach()
+	    foreach(LibFile ${library_dependencies})
+	         target_link_libraries(${FileNameWoExt} ${LibFile}) # TODO: Same as above, spice should be added to BUILT_LIB_LIST rather than be in its own list object
+	    endforeach()
+
+        # Set some final properties for the target build
+	    set_target_properties(${FileNameWoExt} PROPERTIES FOLDER "${DIR_NAME_STRING}/${FileDir}")
+	    set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SWIG_OUTDIR}")
+	    set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SWIG_OUTDIR}")
+		set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SWIG_OUTDIR}")
+	    set_target_properties(${FileNameWoExt} PROPERTIES COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
+
+	    #MESSAGE(STATUS "FILEDIR ${CMAKE_SWIG_OUTDIR}")
+
+
+	endforeach()
+endfunction(temp)
+
+
+
+
+
+
+
+
 # Start of main projection configuration
 if(USE_PYTHON3)
-    #find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 	find_package(PythonInterp 3 REQUIRED)
 	find_package(PythonLibs 3 REQUIRED)
 else()
-    #find_package(Python2 REQUIRED COMPONENTS Interpreter Development)
-
 	find_package(PythonInterp 2.7 REQUIRED)
 	find_package(PythonLibs 2.7 REQUIRED)
 endif()
@@ -519,12 +768,16 @@ message(STATUS "Adding Basilisk module to python with: ${PROGRAM} ${ARG} in ${CM
 This resulted in the output:
 ${out}")
 
-if(USE_PROTOBUFFERS)
-  add_subdirectory("utilities/vizProtobuffer")
-endif()
+#if(USE_PROTOBUFFERS)
+#  add_subdirectory("utilities/vizProtobuffer")
+#endif()
 add_subdirectory("simulation")
-add_subdirectory("fswAlgorithms")
-add_subdirectory("topLevelModules") 	
+#add_subdirectory("fswAlgorithms")
+#add_subdirectory("topLevelModules")
+
+generate_package_libraries("${CMAKE_SOURCE_DIR}")
+find_package_targets("${CMAKE_SOURCE_DIR}" DYN_TARGETS)
+generate_package_targets("${DYN_TARGETS}" "dynamicsLib;") # The quotations around DYN_TARGETS informs function that it is a list
 
 #run python script to modify swig gen code
 add_custom_target(OverwriteSwig ALL)
