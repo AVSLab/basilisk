@@ -70,12 +70,19 @@ def test_gravityGradientModule(show_plots, outMsgType, cmOffset, planetCase):
     **Test Parameters**
 
     The following list discusses in detail the various test parameters used. These are test tested in
-    all possible permutations (except show_plots of course) which is turned off for pytest usage.
+    all possible permutations (except show_plots of course) which is turned off for ``pytest`` usage.
 
     :param show_plots:  flag to show some simulation plots
-    :param outMsgType:  flag indicating if a default effector output message name should be used, or a custom name.  The flag values can be either "default" or "custom"
+    :param outMsgType:  flag indicating if a default effector output message name should be used, or a custom name.
+                        The flag values can be either "default" or "custom".
     :param cmOffset:    center of mass offset vector in meters
-    :param planetCase:  integer flag with values (0,1,2,3).  Case 0 indicates a simulation with only Earth present at (0,0,0).  Case 1 is a simulation with both Earth and Venus present using Spice, but the gravity gradient torque is only evaluated using Earth.  Case 2 is same as 1 but Venus is also included in the torque evaluation.  Case 3 is like 2 but here the spacecraft is orbiting venus.
+    :param planetCase: integer flag with values (0,1,2,3).  The cases consider the following simulation scenarios:
+
+                        - Case 0 indicates a simulation with only Earth present at (0,0,0).
+                        - Case 1 is a simulation with both Earth and Venus present using Spice, but the gravity
+                          gradient torque is only evaluated using Earth.
+                        - Case 2 is same as 1 but Venus is also included in the torque evaluation.
+                        - Case 3 is like 2 but here the spacecraft is orbiting venus.
     :return: None
 
     **Description of Variables Being Tested**
@@ -127,6 +134,8 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     mu = earth.mu
 
     if planetCase:
+        # here all planet positions are provided by Spice, and both Earth and Venus are include
+        # for gravity acceleration calculations
         venus = gravFactory.createVenus()
         timeInitString = "2012 MAY 1 00:28:30.0"
         spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
@@ -139,6 +148,7 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
         scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
 
         if planetCase == 3:
+            # orbit should be defined relative to Venus
             earth.isCentralBody = False
             venus.isCentralBody = True
             mu = venus.mu
