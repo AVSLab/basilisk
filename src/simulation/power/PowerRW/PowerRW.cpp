@@ -111,7 +111,7 @@ void PowerRW::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
     wheelPower = this->rwStatus.Omega*this->rwStatus.u_current;
     if (wheelPower > 0.0 ||         /* accelerating the wheel to larger Omega values always takes power */
         this->eta_m2e < 0.0) {      /* if m2e is negative model the breaking as taking power as well */
-        rwPowerNeed += this->eta_e2m * fabs(wheelPower);
+        rwPowerNeed += fabs(wheelPower)/ this->eta_e2m;
     } else {
         /* breaking the wheeel speed where some mechanics energy is recovered */
         rwPowerNeed += this->eta_m2e * wheelPower;

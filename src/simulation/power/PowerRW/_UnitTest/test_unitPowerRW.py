@@ -130,7 +130,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
         wheelPower = OmegaValue * rwStatusMsg.u_current
         truePower = testModule.nodePowerOut
         if wheelPower > 0.0 or eta_m2e < 0.0:
-            truePower += eta_e2m * abs(wheelPower)
+            truePower += abs(wheelPower)/eta_e2m
         else:
             print(eta_m2e)
             truePower += eta_m2e * wheelPower
