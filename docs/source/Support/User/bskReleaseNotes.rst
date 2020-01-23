@@ -13,7 +13,6 @@ Basilisk Release Notes
     - GPU based methods to evaluate solar radiation pressure forces and torques
     - atmospheric drag evaluation using multi-faceted spacecraft model
     - create modules to determine if a satellite can see a ground point such as a communication station
-    - make a gravity gradient torque effector
     - upgrading :ref:`vizInterface` to support showing info panels and HUD multiple spacecraft with thruster
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
@@ -25,6 +24,11 @@ Upcoming Version 1.X.X
 - Updated :ref:`fswModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
 - Updated the documentation of :ref:`Folder_MRP_PD` to the RST format
 - Updated the documentation of :ref:`Folder_MRP_Steering` to the RST format
+- At long last, 🍾, created :ref:`GravityGradientEffector`  which can simulate the gravity gradient torque acting on a
+  spacecraft due to the gravitational influence from one or more planets.
+- Create a new example script :ref:`scenarioAttitudeGG` that illustrates the use of the gravity gradient effector
+- Enhanced the ``GravBodyData`` class to now register the planet position, velocity, orientation and attitude rate states.  This allows other effectors, such as the gravity gradient effector, to have access to the current planet states at any time step.
+
 
 Version 1.5.1
 -------------

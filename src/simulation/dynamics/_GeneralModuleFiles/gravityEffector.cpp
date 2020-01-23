@@ -22,6 +22,7 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/linearAlgebra.h"
+#include <iostream>
 
 SphericalHarmonics::SphericalHarmonics()
 {
@@ -297,6 +298,25 @@ void GravBodyData::initBody(int64_t moduleID)
     return;
 }
 
+void GravBodyData::registerProperties(DynParamManager& statesIn)
+{
+    Eigen::Vector3d stateInit;
+    stateInit.fill(0.0);
+    this->r_PN_N = statesIn.createProperty(this->bodyInMsgName + ".r_PN_N", stateInit);
+    this->v_PN_N = statesIn.createProperty(this->bodyInMsgName + ".v_PN_N", stateInit);
+
+    Eigen::MatrixXd muInit(1,1);
+    muInit.setZero();
+    this->muPlanet = statesIn.createProperty(this->bodyInMsgName + ".mu", muInit);
+
+    this->J20002Pfix = statesIn.createProperty(this->bodyInMsgName + ".J20002Pfix",
+                                               Eigen::Map<Eigen::Matrix3d> (&(this->localPlanet.J20002Pfix[0][0]), 3, 3));
+    this->J20002Pfix_dot = statesIn.createProperty(this->bodyInMsgName + ".J20002Pfix_dot",
+                                                   Eigen::Map<Eigen::Matrix3d> (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3));
+
+    return;
+}
+
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     uint64_t simTimeNanos)
 {
@@ -304,15 +324,21 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     
     double rMag = r_I.norm();
     gravOut  = -r_I*this->mu/(rMag*rMag*rMag);
-    
+
+    /* compute orientation of the body */
+    double dt = ((int64_t) simTimeNanos - (int64_t) this->localHeader.WriteClockNanos)*NANO2SEC;
+    Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
+        (&(this->localPlanet.J20002Pfix[0][0]), 3, 3);
+    Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>
+    (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3);
+    dcm_PfixN += dcm_PfixN_dot * dt;
+
+    /* store the current planet orientation and rates */
+    *this->J20002Pfix = dcm_PfixN;
+    *this->J20002Pfix_dot = dcm_PfixN_dot;
+
     if(this->spherHarm.harmReady() && this->useSphericalHarmParams)
     {
-        double dt = ((int64_t) simTimeNanos - (int64_t) this->localHeader.WriteClockNanos)*NANO2SEC;
-        Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
-            (&(this->localPlanet.J20002Pfix[0][0]), 3, 3);
-        Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>
-        (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3);
-        dcm_PfixN += dcm_PfixN_dot * dt;
         dcm_PfixN.transposeInPlace();
         Eigen::Vector3d r_Pfix = dcm_PfixN*r_I;
         Eigen::Vector3d gravPert_Pfix = this->spherHarm.computeField(r_Pfix,
@@ -415,6 +441,13 @@ void GravityEffector::registerProperties(DynParamManager& statesIn)
     this->gravProperty = statesIn.createProperty(this->vehicleGravityPropName, gravInit);
     this->inertialPositionProperty = statesIn.createProperty(this->inertialPositionPropName, gravInit);
     this->inertialVelocityProperty = statesIn.createProperty(this->inertialVelocityPropName, gravInit);
+
+    /* register planet position and velocity state vectors as parameters in the state engine */
+    std::vector<GravBodyData *>::iterator it;
+    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++) {
+        (*it)->registerProperties(statesIn);
+    }
+
 }
 
 void GravityEffector::linkInStates(DynParamManager& statesIn)
@@ -458,6 +491,11 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
         }
         rDotDot_cN_N_P = (*it)->computeGravityInertial(r_cP_N, systemClock); //acc of s/c wrt N CoM in Frame used for s/c dynamics
         rDotDot_cF_N += rDotDot_cN_N_P;
+
+        /* store planet states in the state engine parameters */
+        *((*it)->r_PN_N) = r_PN_N;
+        *((*it)->v_PN_N) = Eigen::Map<Eigen::Vector3d>(&((*it)->localPlanet.VelocityVector[0]), 3, 1);
+        (*((*it)->muPlanet))(0,0) = (*it)->mu;
     }
     
     *this->gravProperty = rDotDot_cF_N;
