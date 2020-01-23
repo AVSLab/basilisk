@@ -38,7 +38,7 @@ PowerRW::~PowerRW(){
     return;
 }
 
-/*! This method subscribes to anything that would tell the power node to turn on/off.
+/*! This method subscribes to the RW state message.
  @return void
  */
 void PowerRW::customCrossInit()
@@ -66,7 +66,7 @@ void PowerRW::customReset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! This method is used to read incoming power status messages.
+/*! This method is used to read incoming RW state message.
  @return void
  */
 bool PowerRW::customReadMessages()
@@ -98,7 +98,7 @@ bool PowerRW::customReadMessages()
 }
 
 
-/*! Loads the nodePowerOut attribute into the powerUsageSimMessage instance.
+/*! Computes the RW power load. Loads the nodePowerOut attribute into the powerUsageSimMessage instance.
 */
 void PowerRW::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
     double rwPowerNeed;
