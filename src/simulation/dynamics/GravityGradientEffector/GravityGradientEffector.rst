@@ -36,7 +36,7 @@ contributing to the net gravity gradient torque, then this is evaluated using
 .. math::
     :label: eq-gg-Lg
 
-    {\bf L}_G = \sum_{i=1}^N \frac{3 \mu}{R_{C/P_i}^5} {\bf R}_{C/P_i} \times [I_c] {\bf R}_{C/P_i}
+    {\bf L}_G = \sum_{i=1}^N \frac{3 \mu}{| {\bf R}_{C/P_i} |^5} {\bf R}_{C/P_i} \times [I_c] {\bf R}_{C/P_i}
 
 The spacecraft location relative to the :math:`i^{\text{th}}` planet is
 
