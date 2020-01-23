@@ -154,14 +154,14 @@ void GravityGradientEffector::computeForceTorque(double integTime){
     for(it = this->planetPropertyNames.begin(); it != this->planetPropertyNames.end(); it++) {
         double mu = (*this->muPlanet[c])(0,0);  /* in m^3/s^2 */
 
-        /* determine spacecraft position relative to planet*/
-        Eigen::Vector3d r_BP_N = this->r_BN_N->getState() - *(this->r_PN_N[c]);
+        /* determine spacecraft CM position relative to planet */
+        Eigen::Vector3d r_CP_N = this->r_BN_N->getState() + dcm_BN.transpose()*(*this->c_B) - *(this->r_PN_N[c]);
 
         /* find orbit radius */
-        double rMag = r_BP_N.norm();
+        double rMag = r_CP_N.norm();
 
         /* compute normalized position vector in B frame */
-        Eigen::Vector3d rHat_B = dcm_BN * r_BP_N.normalized();
+        Eigen::Vector3d rHat_B = dcm_BN * r_CP_N.normalized();
 
         /* compute gravity gradient torque */
         Eigen::Vector3d ggTorque;
