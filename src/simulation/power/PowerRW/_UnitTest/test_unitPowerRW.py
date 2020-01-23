@@ -53,7 +53,45 @@ from Basilisk.simulation import bskLogging
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy):
-    """Module Unit Test"""
+    """
+    **Validation Test Description**
+
+    This unit test checks the output of the RW power module.  Only the power module is created, and all
+    required input messages are created from python.  The tests consider both default behavior and
+    manually setting behavior.
+
+    **Test Parameters**
+
+    The test parameters are described below.
+    All possible permutations of these cases are tests.
+
+    :param show_plots: flag if plots should be shown.  Not used in this script.
+    :param setRwMsg: [bool] flag if the RW state message should be set.  If not then a warning is created and the output
+                     message should be 0
+    :param setDeviceStatusMsg: [int] flag to check if a device is on or off.  If this msg is not set the device
+                               should default to being on. The options include:
+
+                               - 0,  use default behavior,
+                               - 1,  set msg and turn device off,
+                               - 2,  set msg and turn device on
+
+    :param setEta_e2m: [bool] to specify a conversion efficiency from electrical to mechanical power
+    :param OmegaValue: [RPM] specifies the RW wheel speed to either positive or negative values
+    :param setEta_m2c: [int] flag to set the mechanical to electrical conversion efficiency when breaking the RW.
+                             The cases include:
+
+                             - 0, default case of -1 turning of energy recovery,
+                             - 1, set the efficiency to zero,
+                             - 2, set the efficiency to 0.5
+
+    :param accuracy: [float] accuracy used when compute actual to truth power requirement
+    :return: void
+
+    **Description of Variables Being Tested**
+
+    In each case the module output power value is check against a python evaluated truth value.
+
+    """
 
     # each test method requires a single assert method to be called
     [testResults, testMessage] = powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy)
