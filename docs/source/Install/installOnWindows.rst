@@ -66,7 +66,7 @@ Install Conan
 Go to the `Conan Website <https://conan.io/downloads.html>`__ and download the windows installer. Proceed with installation. If it asks to be added to the PATH, allow it to add itself to the PATH.  The ``conan`` environment is setup using::
 
     $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-    $ conan remote add conan-community https://api
+    $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
 
 
 

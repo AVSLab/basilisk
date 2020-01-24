@@ -63,7 +63,7 @@ For Basilisk Python 2 and Python 3 inter-compatability, build using both followi
 #. Setup Conan Repositories. These can be consolidated into a private conan server `conan getting started docs <https://docs.conan.io/en/latest/introduction.html>`__::
 
        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-       $ conan remote add conan-community https://api
+       $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
 
 #. CMake here in the build directory with Unix Makefiles, where the source code is located at: ``../src``::
 
