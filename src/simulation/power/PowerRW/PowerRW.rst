@@ -91,8 +91,8 @@ Case 3: No Power Requirement for Breaking
 If the user wants to model a case where breaking the RW speed requires no power, then
 simply set :math:`\eta_{m2e}` = 0.
 
-Module Power Requirement Output
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Module Power Output Evaluation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Having computed the net RW power need :math:`p_{\text{RW}}`, next the module power draw must be determined.  Note that
 :math:`p_{\text{RW}}` is typically a positive value, indicating it takes power to run this RW device.  Thus, the
 power draw on the network is simply :math:`-p_{\text{RW}}`.
@@ -108,6 +108,43 @@ RW power requirement means the devices is converting mechanical energy back to t
 
 User Guide
 ----------
-This module inherits the user guide from the :ref:`PowerNodeBase` base class.
 
-    For more information on how to set up and use this module, see the simple power system example: :ref:`scenarioPowerDemo`
+Inheritance
+^^^^^^^^^^^
+This module inherits the user guide from the :ref:`PowerNodeBase` base class.  See that documentation of features
+common to that base class.
+
+
+Minimum Module Setup
+^^^^^^^^^^^^^^^^^^^^
+The following code illustrates the minimum module setup within Python assuming the module is
+connected to the fist RW (thus the ``0`` label)::
+
+    testModule = PowerRW.PowerRW()
+    testModule.ModelTag = "bskSat"
+    testModule.nodePowerOut = 10.   # baseline power draw, Watts
+    testModule.rwStateInMsgName = testModule.ModelTag + "_rw_config_0_data"
+    unitTestSim.AddModelToTask(unitTaskName, testModule)
+
+The user needs to specify a base power consumption :math:`p_{\text{base}}` through the module variable ``nodePowerOut``.
+This should be a positive value to reflect the power required just to be turning on the RW device, even without
+any motor torque commands being applied.
+
+You also need to specify the RW state message with the module variable ``rwStateInMsgName``.
+
+This setup will evaluate the RW power using Eq. :eq:`eq:prw:2` where 100% efficiency is assumed in converting
+electrical to mechanical energy  with ``eta_e2m`` = 1, and no electrical energy is recovered
+from breaking the wheel speeds with ``eta_m2e`` = 1.
+
+Accounting for Non-Ideal Power Conversion
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If for exam 10W of electrical power does not lead to 10W of mechanical power, then this is modeling by setting
+the module variable ``eta_e2m`` to a strictly positive value less than 1.  The value of 1 represents 100% conversion
+efficiency and is the default value for this parameter.
+
+To account for harvesting mechanical power during the RW speed braking process, converting mechanical to electrical
+power, then the variable :math:`1 ge` ``eta_m2e``:math:`\ge 0` must be set to a positive value.  The value of
+1 again 100% conversion efficiency (not realisitic).  Typically this is a smaller percentage.
+
+To account that breaking doesn't require any electrical power, but doesn't generate any power, the simply set
+``eta_m2e`` to 0.
