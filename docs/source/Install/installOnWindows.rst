@@ -79,11 +79,8 @@ When all the prerequisite installations are complete, the project can be built a
 
 #. First step is to create the destination directory.  This is ``dist3`` for Python 3 and ``dist`` for Python 2::
 
-       $ mkdir dist
-       $ cd
-
-
-
+       $ mkdir dist3
+       $ cd dist3
 
 #. Configuration and Build:
 

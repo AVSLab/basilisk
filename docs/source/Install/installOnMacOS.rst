@@ -234,7 +234,7 @@ When all the prerequisite installations are complete, the project can be built a
 
 #. To test your setup you can run one of the example scenario scripts.
 
-   -  For example, in the terminal window, make ``basilisk/src/examples/01-OrbitalSimulations`` the
+   -  For example, in the terminal window, make ``basilisk/src/examples/`` the
       current directory.
    -  Run one of the tutorial scenarios, such as::
 
