@@ -75,11 +75,11 @@ For Basilisk Python 2 and Python 3 inter-compatability, build using both followi
 
 #. More information is available on Basilisk ``cmake`` :ref:`flag options <cmakeOptions>`.
 
-#. To test your setup you can run one of the example scenario scripts.
+#. To test your setup you can run one of the :ref:`examples`:
 
    -  For example, in the terminal window, make ``basilisk/src/examples/`` the
       current directory.
-   -  Run one of the tutorial scenarios, such as::
+   -  Run one of the example scripts, such as::
 
        $ python3 scenarioBasicOrbit.py
 

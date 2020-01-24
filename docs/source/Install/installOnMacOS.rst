@@ -232,7 +232,7 @@ When all the prerequisite installations are complete, the project can be built a
 
    -  You can now build the project within the Xcode IDE
 
-#. To test your setup you can run one of the example scenario scripts.
+#. To test your setup you can run one of the :ref:`examples`:
 
    -  For example, in the terminal window, make ``basilisk/src/examples/`` the
       current directory.

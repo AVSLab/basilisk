@@ -128,7 +128,7 @@ When all the prerequisite installations are complete, the project can be built a
 
 #. If the build was not setup correctly, you can delete the ``dist3`` folder and re-run the above command to get another clean build attempt.
 
-#. To test your setup you can run one of the example scenario scripts.
+#. To test your setup you can run one of the :ref:`examples`:
 
    -  For example, in the terminal window, make ``basilisk/src/examples`` the
       current directory.
