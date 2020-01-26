@@ -402,14 +402,10 @@ def run(show_plots, useRwPowerGeneration):
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
-    plot_attitude_error(timeData, dataSigmaBR)
     figureList = {}
-    pltName = fileName + "1" + str(useRwPowerGeneration)
-    figureList[pltName] = plt.figure(1)
+    plot_attitude_error(timeData, dataSigmaBR)
 
     plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
-    pltName = fileName + "2" + str(useRwPowerGeneration)
-    figureList[pltName] = plt.figure(2)
 
     plot_rw_power(timeData, dataRwPower, numRW)
     pltName = fileName + "3" + str(useRwPowerGeneration)
