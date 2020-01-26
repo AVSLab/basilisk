@@ -146,5 +146,5 @@ def run(case):
 #
 if __name__ == "__main__":
     run(
-         2,       # case 1 uses global default, case 2 use module specific default, case 0 uses compiler default
+         0,       # case 1 uses global default, case 2 use module specific default, case 0 uses compiler default
        )

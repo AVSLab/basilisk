@@ -49,13 +49,13 @@ import scenarioBskLog
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("case", [
-    (0),
+    # (0),
     (1),
     (2)
 ])
 @pytest.mark.scenarioTest
 
-def test_scenarioBasicOrbit(show_plots, case):
+def test_scenarioBskLog(show_plots, case):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
@@ -78,7 +78,7 @@ def test_scenarioBasicOrbit(show_plots, case):
 
     if level != trueLevel:
         testFailCount += 1
-        testMessages += "bskLog test returned an incorrect value"
+        testMessages.append("bskLog test returned an incorrect value " + str(level) + ". Truth is " + str(trueLevel))
 
     #   print out success message if no error were found
     if testFailCount == 0:
