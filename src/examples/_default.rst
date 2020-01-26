@@ -137,6 +137,7 @@ Power Sub-System
    :maxdepth: 1
 
    Basic Power Usage and Tracking  <scenarioPowerDemo>
+   Power Usage with RW-Based ADCS  <scenarioAttitudeFeedbackRWPower>
 
 Data Sub-System
 ^^^^^^^^^^^^^^^^
