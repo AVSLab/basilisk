@@ -410,6 +410,7 @@ function(generate_package_libraries INIT_DIRECTORY)
         # Grab the library source files
         file(GLOB C_FILES
                 "${LIB_DIR}/*.cpp" # SH Base Class
+                "${LIB_DIR}/*.c" # SH Base Class
                 "${LIB_DIR}/*.h"
             )
 
@@ -439,18 +440,36 @@ function(generate_package_libraries INIT_DIRECTORY)
 endfunction(generate_package_libraries)
 
 function(find_package_targets PKG_DIR ALL_TARGET_LIST)
-	file(GLOB_RECURSE SWIG_TARGETS RELATIVE ${PKG_DIR} "${PKG_DIR}/*.i")
+	file(GLOB_RECURSE SWIG_TARGETS RELATIVE ${CMAKE_SOURCE_DIR} "${PKG_DIR}/*.i")
 	set(${ALL_TARGET_LIST} ${SWIG_TARGETS} PARENT_SCOPE)
 endfunction(find_package_targets)
 
-function(generate_package_targets TARGET_LIST LIB_DEP_LIST)
+macro(is_cpp_module C_FILES CPP_FILE_EXISTS)
+    # If there are no files, use c++ mode.
+    if(NOT C_FILES)
+        set(${CPP_FILE_EXISTS} 1)
+        break()
+    endif()
+
+    # If there are files and there is a .cpp file, use c++ mode
+    foreach(C_FILE ${C_FILES})
+        get_filename_component(FILE_EXT ${C_FILE} EXT)
+        string(COMPARE EQUAL ${FILE_EXT} ".cpp" OUTPUT_VAR)
+        if(${OUTPUT_VAR})
+            set(${CPP_FILE_EXISTS} ${OUTPUT_VAR})
+            break()
+        endif()
+    endforeach()
+endmacro(is_cpp_module)
+
+function(generate_package_targets TARGET_LIST LIB_DEP_LIST IDE_DIR)
 
     find_package(SWIG REQUIRED)
     include(UseSwig REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
 
     foreach(TARGET_FILE ${TARGET_LIST})
-        get_filename_component(TARGET_NAME ${TARGET_FILE} NAME)
+        get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
         get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
 
         # Grab the target source files
@@ -461,11 +480,22 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST)
                 "${PARENT_DIR}/*.rst"
             )
 
+        set_property(SOURCE ${TARGET_FILE} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" ) # This allows for swig_common_models.i to be imported
+
+        is_cpp_module("${C_FILES}" CPP_FILE_EXISTS) # Need quotations around list, otherwise expands into other fcn parameters.
+        if(${CPP_FILE_EXISTS})
+            set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
+        endif()
+
         # Add Target
         swig_add_library(${TARGET_NAME}
                            LANGUAGE "python"
                            TYPE MODULE
                            SOURCES ${TARGET_FILE} ${C_FILES})
+
+
+        target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) #TODO: Check if this is the correct property identifier
+        target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) #This allows for the .h files to be imported to the PYTHON_wrap.c(xx) file
 
         # Link all necessary libraries
         foreach(LIB ${LIB_DEP_LIST})
@@ -771,13 +801,44 @@ ${out}")
 #if(USE_PROTOBUFFERS)
 #  add_subdirectory("utilities/vizProtobuffer")
 #endif()
-add_subdirectory("simulation")
+#add_subdirectory("simulation")
 #add_subdirectory("fswAlgorithms")
 #add_subdirectory("topLevelModules")
 
-generate_package_libraries("${CMAKE_SOURCE_DIR}")
-find_package_targets("${CMAKE_SOURCE_DIR}" DYN_TARGETS)
-generate_package_targets("${DYN_TARGETS}" "dynamicsLib;") # The quotations around DYN_TARGETS informs function that it is a list
+add_subdirectory("simulation/utilities")
+add_subdirectory("utilities")
+add_subdirectory("simulation/architecture/messaging")
+add_subdirectory("fswAlgorithms/messaging")
+
+
+# TODO: Currently the libraries generated works well except for the simulationLib which really is the architectureLib -- I'd like for these files to be moved.
+# TODO: I'd call this generate_libraries(), because it really does find all of them.
+generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
+
+set(ARCHITECTURE_LIBS "simulationLib;SimUtilities;SimMessaging")
+
+
+# The rationale for this is to explicitly specify packages that the user wants built. 
+# TODO: We might automate this, and leave the custom libraries to CMakeLists found within the automated search. 
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/dynamics" DYN_TARGETS) # Finds relative path of all .i files within the directory
+generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
+
+# TODO: Don't link cspice to all of the environment targets -- instead write a custom CMakeLists.txt file for spice_interface that includes it.
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/environment" ENV_TARGETS) # Finds relative path of all .i files within the directory
+generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # Library Dependencies include cspice
+
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
+generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/onboardDataHandling" DATA_TARGETS)
+generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
+
+
+
+# This is the flight software section
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
+generate_package_targets("${ATT_DET_TARGETS}" "attDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+
 
 #run python script to modify swig gen code
 add_custom_target(OverwriteSwig ALL)
