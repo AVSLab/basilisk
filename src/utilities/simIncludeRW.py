@@ -462,3 +462,36 @@ class rwFactory(object):
             exit(1)
 
         return
+
+
+    #
+    #   BCT RWP015
+    #
+    #   RW Information Source:
+    #   https://storage.googleapis.com/blue-canyon-tech-news/1/2019/10/BCT_DataSheet_Components_ReactionWheels_F2.pdf
+    #
+    #   Not complete; fields not listed are estimates.
+    
+    def BCT_RWP015(self, RW):
+
+        # maximum allowable wheel speed
+        RW.Omega_max = 6000.0*macros.RPM
+        # maximum RW torque [Nm]
+        RW.u_max = 0.004
+        # minimum RW torque [Nm]
+        RW.u_min = 0.00001
+        # static friction torque [Nm]
+        RW.fCoulomb = 0.00005
+        # RW rotor mass [kg]
+        # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
+        # static RW imbalance [kg*m]
+        # dynamic RW imbalance [kg*m^2]
+
+        large = 0.130
+        medium = 25
+        small = 12
+        RW.mass = 0.130
+        RW.U_s = 1E-7 # Guestimate
+        RW.U_d = 1E-8 # Guestimate
+
+        return
