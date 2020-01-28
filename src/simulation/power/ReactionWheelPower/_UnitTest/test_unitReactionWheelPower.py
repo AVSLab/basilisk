@@ -119,7 +119,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     # create the rw power test module
     testModule = ReactionWheelPower.ReactionWheelPower()
     testModule.ModelTag = "bskSat"
-    testModule.nodePowerOut = 10.   # baseline power draw, Watts
+    testModule.basePowerNeed = 10.   # baseline power draw, Watts
     testModule.rwStateInMsgName = testModule.ModelTag + "_rw_config_0_data"
     if setEta_e2m:
         testModule.eta_e2m = 0.9
@@ -166,7 +166,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     # compare the module results to the truth values
     if setRwMsg and setDeviceStatusMsg != 1:
         wheelPower = OmegaValue * rwStatusMsg.u_current
-        truePower = testModule.nodePowerOut
+        truePower = testModule.basePowerNeed
         if wheelPower > 0.0 or eta_m2e < 0.0:
             truePower += abs(wheelPower)/eta_e2m
         else:

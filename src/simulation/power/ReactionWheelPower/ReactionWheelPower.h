@@ -44,6 +44,7 @@ public:
     std::string rwStateInMsgName;       //!< Reaction wheel state input message name
     double eta_e2m;                     //!< efficiency factor to convert electrical power to mechanical power
     double eta_m2e;                     //!< efficiency factor to convert mechanical power to electrical power
+    double basePowerNeed;               //!< [W] base electrical power required to operate RW, typically a positive value
     BSKLogger bskLogger;                //!< -- BSK Logging
 
 private:

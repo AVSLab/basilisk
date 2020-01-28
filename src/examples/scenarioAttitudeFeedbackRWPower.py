@@ -239,7 +239,7 @@ def run(show_plots, useRwPowerGeneration):
     for c in range(0, numRW):
         powerRW = ReactionWheelPower.ReactionWheelPower()
         powerRW.ModelTag = scObject.ModelTag
-        powerRW.nodePowerOut = 5.   # baseline power draw, Watts
+        powerRW.basePowerNeed = 5.   # baseline power draw, Watts
         powerRW.rwStateInMsgName = powerRW.ModelTag + "_rw_config_" + str(c) + "_data"
         powerRW.nodePowerOutMsgName = "rwPower_" + str(c)
         if useRwPowerGeneration:

@@ -22,11 +22,11 @@
 #include "architecture/messaging/system_messaging.h"
 #include <math.h>
 
-/*! Constructor, which sets the default nodePowerOut to zero.
+/*! Constructor
 */
 ReactionWheelPower::ReactionWheelPower(){
 
-    this->nodePowerOut = 0.0;
+    this->basePowerNeed = 0.0;
     this->eta_e2m = 1.0;            //!< default efficiency is 100%
     this->eta_m2e = -1.0;           //!< negative value turns of mechanical to electrical energy conversion
     return;
@@ -98,14 +98,14 @@ bool ReactionWheelPower::customReadMessages()
 }
 
 
-/*! Computes the RW power load. Loads the nodePowerOut attribute into the powerUsageSimMessage instance.
+/*! Computes the RW power load. Determines the netPower attribute in powerUsageSimMessage.
 */
 void ReactionWheelPower::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
     double rwPowerNeed;
     double wheelPower;
 
     /* add base RW power consumption */
-    rwPowerNeed = this->nodePowerOut;
+    rwPowerNeed = this->basePowerNeed;
 
     /* evaluate power required to torque RW */
     wheelPower = this->rwStatus.Omega*this->rwStatus.u_current;
