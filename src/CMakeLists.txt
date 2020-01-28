@@ -48,13 +48,13 @@ option(USE_OPENCV "Include modules which use OpenCV" OFF)
 option(USE_ZMQ "Include modules which use ZMQ" ON)
 option(USE_PYTHON3 "Build For Python 3" ON)
 
-set(requires_protobuff_modules "vizard/vizInterface/vizInterface.i")
-set(requires_zmq_modules "vizard/vizInterface/vizInterface.i")
+set(requires_protobuff_modules "vizInterface")
+set(requires_zmq_modules "vizInterface")
 
 
-set(requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
-list(APPEND requires_opencv_modules "imageProcessing/limbFinding/limbFinding.i")
-list(APPEND requires_opencv_modules "sensors/camera/camera.i")
+set(requires_opencv_modules "houghCircles")
+list(APPEND requires_opencv_modules "limbFinding")
+list(APPEND requires_opencv_modules "camera")
 
 set(requires_vulkan_modules "dynamics/SphericalHarmonicsSolvers/sphericalHarmonicsGPU/sphericalHarmonicsGPU.i"  "dynamics/SphericalHarmonicsSolvers/sphericalHarmonicsCPU/sphericalHarmonicsCPU.i")
 
@@ -226,152 +226,6 @@ endfunction(create_symlinks)
 
 
 
-function(findAndCreateSwigModules SubModule)
-
-	find_package(SWIG REQUIRED)
-	include(${SWIG_USE_FILE}) # Include the UseSwig.cmake file
-
-	#Include Python
-  	if(USE_PYTHON3)
-		find_package(PythonLibs 3 REQUIRED)
-	else()
-		find_package(PythonLibs 2 REQUIRED)
-  	endif()
-	include_directories(${PYTHON_INCLUDE_PATH})
-
-	file(GLOB sub_directories RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
-
-    # Name the project "Simulation"
-	string(FIND ${CMAKE_CURRENT_SOURCE_DIR} "/" DIR_NAME_START REVERSE)
-	math(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")
-	string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRING)
-	project("${DIR_NAME_STRING}")
-
-    # Get all swig source files (.i)
-	file(GLOB_RECURSE swig_modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.i")
-
-	# Get all of the libraries that will get linked to the swig modules
-	get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
-	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
-	get_property(INTER_FILES GLOBAL PROPERTY SYS_INTER_FILES)
-
-    # Make Simulation within the build directory and create the original __init__.py file
-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}")
-	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}__init__.py" "#empty init file")
-
-	foreach(module ${swig_modules})
-	    # Skip any modules that require custom CMakeLists.txt
-	    if((NOT USE_PROTOBUFFERS OR NOT USE_ZMQ) AND (module IN_LIST requires_protobuff_modules OR module IN_LIST requires_zmq_modules))
-               continue()
- 	    endif()
- 	    if((NOT USE_OPENCV) AND (module IN_LIST requires_opencv_modules))
- 	           continue()
- 	    endif()
- 	    if((module IN_LIST requires_vulkan_modules))
- 	           continue()
- 	    endif()
-
-	    get_filename_component(FileNameWoExt ${module} NAME_WE) # .i File Name without Extension
-        get_filename_component(FileDir ${module} DIRECTORY) # FileDir
-
-        # This defines where to write the language specific files (.py in our case)
-	    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileNameWoExt}")
-
-        # Grab all of the C/C++ source and header files
-	    file(GLOB impl_files
-		    "${FileDir}/*.cpp"
-		    "${FileDir}/*.c"
-		    "${FileDir}/*.h"
-		    "${FileDir}/*.rst"
-		)
-
-		# Grab all of the BSK Framework files
-	    file(GLOB gen_files
-	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp"
-	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
-	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c")
-
-	    # Grab all of the BSK Framework SWIG source files
-	    file(GLOB swig_dep_files "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.i")
-
-
-        # Seperate the file directory into its parent and child directories
-	    string(REPLACE "/" ";" DirList ${FileDir})
-
-        # Search for additional _GeneralModuleFiles (.cpp/.c/.i) within subdirectories (i.e. dynamics/_GeneralModuleFiles)
-        # and add them to the list of dependant files
-        # TODO: These should become their own libraries so they aren't constantly getting reswigged/rebuilt
-	    set(currentDir "")
-	    set(endDir "")
-	    foreach(localDir ${DirList})
-	        set(currentDir "${currentDir}${localDir}/")
-	        file(GLOB gen_files_loc
-	            "${currentDir}_GeneralModuleFiles/*.cpp"
-	            "${currentDir}_GeneralModuleFiles/*.h"
-	            "${currentDir}_GeneralModuleFiles/*.c")
-	        file(GLOB swig_dep_loc "${currentDir}_GeneralModuleFiles/*.i")
-	        set(gen_files "${gen_files};${gen_files_loc}")
-	        set(swig_dep_files "${swig_dep_files};${swig_dep_loc}")
-	    set(endDir ${localDir})
-	    endforeach()
-
-	    # Uncertain why this would happen -- potentially legacy code
-	    # TODO: Look into if this is necessary
-	    if("${endDir}" STREQUAL "_GeneralModuleFiles")
-	        continue()
-	    endif()
-
-		# Create the __init__.py files, and symlink any preexisting support files to the (to-be-populated) SWIG output directory
-		make_python_package(${FileNameWoExt} ${FileDir} ${CMAKE_SWIG_OUTDIR})
-
-        # Set the include flags
-	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
-
-	    # Make sure the SWIG source file is in C++ mode
-	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
-
-	    # Grants the module's .i file access to the other SWIG .i files needed for successful compilation
-		set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
-
-		# Gives the generated _wrap.cxx file access to simulation directory
-		# TODO: Determine why this is needed
-		set_source_files_properties( ${swig_generated_file_fullname} PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
-
-	    # Specifies the C/C++ source files, the SWIG Source Files, and GeneralModule Source files
-	    set(SWIG_MODULE_${FileNameWoExt}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
-
-	    # Custom swig function (to allow support for CMake versions < 3 or > 3) that generates a library target.
-	    MAKE_SWIG_MODULE(${FileNameWoExt} python ${module} ${impl_files} ${gen_files})
-
-        # The built library target then gets linked with python, conan, and any odditional libraries
-	    target_link_libraries(${FileNameWoExt} ${PYTHON_LIBRARIES})
-	    target_link_libraries(${FileNameWoExt} ${CONAN_LIBS})
-
-        if (USE_PROTOBUFFERS)
-	       target_link_libraries(${FileNameWoExt} protocode) # TODO: This should be added to the BUILT_LIB_LIST rather than have its own conditional here.
-
-        endif()
-	    foreach(LibFile ${LIBRARY_BUILD_LIST})
-	         target_link_libraries(${FileNameWoExt} ${LibFile})
-	    endforeach()
-	    foreach(LibFile ${library_dependencies})
-	         target_link_libraries(${FileNameWoExt} ${LibFile}) # TODO: Same as above, spice should be added to BUILT_LIB_LIST rather than be in its own list object
-	    endforeach()
-
-        # Set some final properties for the target build
-	    set_target_properties(${FileNameWoExt} PROPERTIES FOLDER "${DIR_NAME_STRING}/${FileDir}")
-	    set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SWIG_OUTDIR}")
-	    set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SWIG_OUTDIR}")
-		set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SWIG_OUTDIR}")
-	    set_target_properties(${FileNameWoExt} PROPERTIES COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
-
-	    #MESSAGE(STATUS "FILEDIR ${CMAKE_SWIG_OUTDIR}")
-
-
-	endforeach()
-endfunction(findAndCreateSwigModules)
-
-
 
 function(sub_dir_list result curdir)
   # Searches through all directories in source, and keeps those called GeneralModuleFiles
@@ -472,6 +326,12 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST IDE_DIR)
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
         get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
 
+        # TODO: Need to make custom CMakeLists.txt for each of these modules.
+        if((${TARGET_NAME} IN_LIST requires_protobuff_modules) OR (${TARGET_NAME} IN_LIST requires_zmq_modules) OR (${TARGET_NAME} IN_LIST requires_opencv_modules))
+               MESSAGE("SKIPPED: ${TARGET_NAME}")
+               continue()
+ 	    endif()
+
         # Grab the target source files
         file(GLOB C_FILES
                 "${PARENT_DIR}/*.c"
@@ -480,9 +340,9 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST IDE_DIR)
                 "${PARENT_DIR}/*.rst"
             )
 
-        set_property(SOURCE ${TARGET_FILE} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" ) # This allows for swig_common_models.i to be imported
+        set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the .i files
 
-        is_cpp_module("${C_FILES}" CPP_FILE_EXISTS) # Need quotations around list, otherwise expands into other fcn parameters.
+        is_cpp_module("${C_FILES}" CPP_FILE_EXISTS)
         if(${CPP_FILE_EXISTS})
             set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
         endif()
@@ -494,8 +354,16 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST IDE_DIR)
                            SOURCES ${TARGET_FILE} ${C_FILES})
 
 
-        target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) #TODO: Check if this is the correct property identifier
-        target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) #This allows for the .h files to be imported to the PYTHON_wrap.c(xx) file
+        target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
+        target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file (not located in src)
+
+
+        #TODO: V2 change recommended -- messages should be in there own messaging folder at same level as sim/fsw/framework.
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation") # Exposes simMessages, simFswInterfaceMessages for easy includes
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/fswAlgorithms") # Exposes fswMessages for easy includes
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles") # Exposes framework files for easy includes
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../libs") # Exposes third party library include folders
+
 
         # Link all necessary libraries
         foreach(LIB ${LIB_DEP_LIST})
@@ -512,135 +380,8 @@ endfunction(generate_package_targets)
 
 
 
-function(temp)
-    # Name the project "Simulation"
-	string(FIND ${CMAKE_CURRENT_SOURCE_DIR} "/" DIR_NAME_START REVERSE)
-	math(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")
-	string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRING)
-	project("${DIR_NAME_STRING}")
-
-    # Get all swig source files (.i)
-	file(GLOB_RECURSE swig_modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.i")
-
-	# Get all of the libraries that will get linked to the swig modules
-	get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
-	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
-	get_property(INTER_FILES GLOBAL PROPERTY SYS_INTER_FILES)
-
-    # Make Simulation within the build directory and create the original __init__.py file
-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}")
-	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}__init__.py" "#empty init file")
-
-	foreach(module ${swig_modules})
-	    # Skip any modules that require custom CMakeLists.txt
-	    if((NOT USE_PROTOBUFFERS OR NOT USE_ZMQ) AND (module IN_LIST requires_protobuff_modules OR module IN_LIST requires_zmq_modules))
-               continue()
- 	    endif()
- 	    if((NOT USE_OPENCV) AND (module IN_LIST requires_opencv_modules))
- 	           continue()
- 	    endif()
- 	    if((module IN_LIST requires_vulkan_modules))
- 	           continue()
- 	    endif()
-
-	    get_filename_component(FileNameWoExt ${module} NAME_WE) # .i File Name without Extension
-        get_filename_component(FileDir ${module} DIRECTORY) # FileDir
-
-        # This defines where to write the language specific files (.py in our case)
-	    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileNameWoExt}")
-
-        # Grab all of the C/C++ source and header files
-	    file(GLOB impl_files
-		    "${FileDir}/*.cpp"
-		    "${FileDir}/*.c"
-		    "${FileDir}/*.h"
-		    "${FileDir}/*.rst"
-		)
-
-		# Grab all of the BSK Framework files
-	    file(GLOB gen_files
-	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp"
-	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
-	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c")
-
-	    # Grab all of the BSK Framework SWIG source files
-	    file(GLOB swig_dep_files "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.i")
 
 
-        # Seperate the file directory into its parent and child directories
-	    string(REPLACE "/" ";" DirList ${FileDir})
-
-        # Search for additional _GeneralModuleFiles (.cpp/.c/.i) within subdirectories (i.e. dynamics/_GeneralModuleFiles)
-        # and add them to the list of dependant files
-        # TODO: These should become their own libraries so they aren't constantly getting reswigged/rebuilt
-	    set(currentDir "")
-	    set(endDir "")
-	    foreach(localDir ${DirList})
-	        set(currentDir "${currentDir}${localDir}/")
-	        file(GLOB gen_files_loc
-	            "${currentDir}_GeneralModuleFiles/*.cpp"
-	            "${currentDir}_GeneralModuleFiles/*.h"
-	            "${currentDir}_GeneralModuleFiles/*.c")
-	        file(GLOB swig_dep_loc "${currentDir}_GeneralModuleFiles/*.i")
-	        set(gen_files "${gen_files};${gen_files_loc}")
-	        set(swig_dep_files "${swig_dep_files};${swig_dep_loc}")
-	    set(endDir ${localDir})
-	    endforeach()
-
-	    # Uncertain why this would happen -- potentially legacy code
-	    # TODO: Look into if this is necessary
-	    if("${endDir}" STREQUAL "_GeneralModuleFiles")
-	        continue()
-	    endif()
-
-		# Create the __init__.py files, and symlink any preexisting support files to the (to-be-populated) SWIG output directory
-		make_python_package(${FileNameWoExt} ${FileDir} ${CMAKE_SWIG_OUTDIR})
-
-        # Set the include flags
-	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
-
-	    # Make sure the SWIG source file is in C++ mode
-	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
-
-	    # Grants the module's .i file access to the other SWIG .i files needed for successful compilation
-		set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
-
-		# Gives the generated _wrap.cxx file access to simulation directory
-		# TODO: Determine why this is needed
-		set_source_files_properties( ${swig_generated_file_fullname} PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
-
-	    # Specifies the C/C++ source files, the SWIG Source Files, and GeneralModule Source files
-	    set(SWIG_MODULE_${FileNameWoExt}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
-
-	    # Custom swig function (to allow support for CMake versions < 3 or > 3) that generates a library target.
-	    MAKE_SWIG_MODULE(${FileNameWoExt} python ${module} ${impl_files} ${gen_files})
-
-        # The built library target then gets linked with python, conan, and any odditional libraries
-	    target_link_libraries(${FileNameWoExt} ${PYTHON_LIBRARIES})
-	    target_link_libraries(${FileNameWoExt} ${CONAN_LIBS})
-
-        if (USE_PROTOBUFFERS)
-	       target_link_libraries(${FileNameWoExt} protocode) # TODO: This should be added to the BUILT_LIB_LIST rather than have its own conditional here.
-        endif()
-	    foreach(LibFile ${LIBRARY_BUILD_LIST})
-	         target_link_libraries(${FileNameWoExt} ${LibFile})
-	    endforeach()
-	    foreach(LibFile ${library_dependencies})
-	         target_link_libraries(${FileNameWoExt} ${LibFile}) # TODO: Same as above, spice should be added to BUILT_LIB_LIST rather than be in its own list object
-	    endforeach()
-
-        # Set some final properties for the target build
-	    set_target_properties(${FileNameWoExt} PROPERTIES FOLDER "${DIR_NAME_STRING}/${FileDir}")
-	    set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SWIG_OUTDIR}")
-	    set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SWIG_OUTDIR}")
-		set_target_properties(${FileNameWoExt} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SWIG_OUTDIR}")
-	    set_target_properties(${FileNameWoExt} PROPERTIES COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
-
-	    #MESSAGE(STATUS "FILEDIR ${CMAKE_SWIG_OUTDIR}")
-
-
-	endforeach()
-endfunction(temp)
 
 
 
@@ -723,18 +464,12 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register -std=c++11")
 endif()
 
-# Add include directories
-include_directories(simulation)
-include_directories(../libs)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(_arch_suffix 64)
 else()
   set(_arch_suffix 32)
 endif()
-
-
-
 
 # Manually create list of libraries depending on system
 if(WIN32)
@@ -768,6 +503,105 @@ set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimUtilities;SimMessaging")
 set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+
+# Targets that must be built first
+add_subdirectory("simulation/utilities")
+add_subdirectory("utilities") # has protobuffers included
+add_subdirectory("simulation/architecture/messaging")
+add_subdirectory("fswAlgorithms/messaging")
+add_subdirectory("topLevelModules")
+
+
+
+# TODO: Currently the libraries generated works well except for the simulationLib which really is the architectureLib -- I'd like for these files to be moved.
+# TODO: I'd call this generate_libraries(), because it really does find all of them.
+generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
+
+set(ARCHITECTURE_LIBS simulationLib SimUtilities SimMessaging)
+
+############
+# SIMULATION
+############
+# TODO: Move these commands into a CMakeList.txt in simulation (currently when I do this the targets arg in generate_package_targets gets interpreted differently
+# TODO: Automate this: 1) Look for package directories (dynamics, environment),
+#                      2) Find/Link any libraries associated with that package (dynamicsLib),
+#                      3) Look for custom CMakeLists.txt to link additional libraries.
+#
+
+
+
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/dynamics" DYN_TARGETS) # Finds relative path of all .i files within the directory
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/environment" ENV_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/onboardDataHandling" DATA_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/deviceInterface" DEVICE_INTERFACE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/power" POWER_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sim_synch" SIM_SYNCH_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilitiesSelfCheck" UTILITIES_SELF_CHECK_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizInterface" VIZ_INTERFACE_TARGETS)
+
+
+generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
+generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # TODO: include cspice for just spice_interface, not all packages
+generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${POWER_TARGETS}" "powerLib;${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${UTILITIES_SELF_CHECK_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+
+
+
+
+
+
+
+############
+# FSW ALGORITHMS
+############
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attGuidance" ATT_GUID_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/dvGuidance" DV_GUID_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/effectorInterfaces" EFF_INTERFACES_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/formationFlying" FORM_FLYING_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/fswUtilities" FSW_UTIL_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/imageProcessing" IMAGE_PROC_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/opticalNavigation" OPT_NAV_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/rwConfigData" RW_CONFIG_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/sensorInterfaces" SENSOR_INTERFACE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/transDetermination" TRANS_DET_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/vehicleConfigData" VEH_CONFIG_TARGETS)
+
+
+
+generate_package_targets("${ATT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${ATT_DET_TARGETS}" "attDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${ATT_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${DV_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${EFF_INTERFACES_TARGETS}" "effectorInterfacesLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${FORM_FLYING_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${FSW_UTIL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${IMAGE_PROC_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${OPT_NAV_TARGETS}" "opticalNavigationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${RW_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${SENSOR_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+
+
+
+
+
+
+
+##############################
+#PYTHON PACKAGE CONFIGURATION#
+##############################
+
 # make the built package with an empty init file
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
 file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
@@ -797,47 +631,6 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} ${ARG}
 message(STATUS "Adding Basilisk module to python with: ${PROGRAM} ${ARG} in ${CMAKE_SOURCE_DIR}/..
 This resulted in the output:
 ${out}")
-
-#if(USE_PROTOBUFFERS)
-#  add_subdirectory("utilities/vizProtobuffer")
-#endif()
-#add_subdirectory("simulation")
-#add_subdirectory("fswAlgorithms")
-#add_subdirectory("topLevelModules")
-
-add_subdirectory("simulation/utilities")
-add_subdirectory("utilities")
-add_subdirectory("simulation/architecture/messaging")
-add_subdirectory("fswAlgorithms/messaging")
-
-
-# TODO: Currently the libraries generated works well except for the simulationLib which really is the architectureLib -- I'd like for these files to be moved.
-# TODO: I'd call this generate_libraries(), because it really does find all of them.
-generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
-
-set(ARCHITECTURE_LIBS "simulationLib;SimUtilities;SimMessaging")
-
-
-# The rationale for this is to explicitly specify packages that the user wants built. 
-# TODO: We might automate this, and leave the custom libraries to CMakeLists found within the automated search. 
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/dynamics" DYN_TARGETS) # Finds relative path of all .i files within the directory
-generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
-
-# TODO: Don't link cspice to all of the environment targets -- instead write a custom CMakeLists.txt file for spice_interface that includes it.
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/environment" ENV_TARGETS) # Finds relative path of all .i files within the directory
-generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # Library Dependencies include cspice
-
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
-generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/onboardDataHandling" DATA_TARGETS)
-generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
-
-
-
-# This is the flight software section
-find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
-generate_package_targets("${ATT_DET_TARGETS}" "attDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 
 
 #run python script to modify swig gen code
