@@ -19,15 +19,24 @@ Basilisk Release Notes
 
 Upcoming Version 1.X.X
 ----------------------
-- Fixed the long-standing issue of not being able to run ``pytest`` on Windows from ``src``, but it only ran from withing sub-folders of ``src``.  Still recommended to run on Windows multi-threaded ``pytest -n XXX`` using ``pytest-xdist``.
-- temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion at `<https://github.com/conan-community/community/issues/210>`_
+- Fixed the long-standing issue of not being able to run ``pytest`` on Windows from ``src``, but it only ran from
+  within sub-folders of ``src``.  Still recommended to run on Windows multi-threaded ``pytest -n XXX``
+  using ``pytest-xdist``.
+- temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion
+  at `<https://github.com/conan-community/community/issues/210>`_
 - Updated :ref:`fswModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
 - Updated the documentation of :ref:`Folder_MRP_PD` to the RST format
 - Updated the documentation of :ref:`Folder_MRP_Steering` to the RST format
 - At long last, 🍾, created :ref:`GravityGradientEffector`  which can simulate the gravity gradient torque acting on a
   spacecraft due to the gravitational influence from one or more planets.
 - Create a new example script :ref:`scenarioAttitudeGG` that illustrates the use of the gravity gradient effector
-- Enhanced the ``GravBodyData`` class to now register the planet position, velocity, orientation and attitude rate states.  This allows other effectors, such as the gravity gradient effector, to have access to the current planet states at any time step.
+- Enhanced the ``GravBodyData`` class to now register the planet position, velocity, orientation and attitude
+  rate states.  This allows other effectors, such as the gravity gradient effector, to have access to the current
+  planet states at any time step.
+- added :ref:`ReactionWheelPower` module which can compute the electrical power consumed by a reaction wheel device
+- added new example script :ref:`scenarioAttitudeFeedbackRWPower` that illustrates doing a RW-based attitude
+  maneuver and tracking the RW power and net battery capacity left.
+
 
 
 Version 1.5.1
