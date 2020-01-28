@@ -471,7 +471,7 @@ class rwFactory(object):
     #   https://storage.googleapis.com/blue-canyon-tech-news/1/2019/10/BCT_DataSheet_Components_ReactionWheels_F2.pdf
     #
     #   Not complete; fields not listed are estimates.
-    
+
     def BCT_RWP015(self, RW):
 
         # maximum allowable wheel speed
