@@ -18,15 +18,15 @@
  */
 
 
-%module PowerRW
+%module ReactionWheelPower
 %{
-    #include "PowerRW.h"
+    #include "ReactionWheelPower.h"
 %}
 
 %include "swig_common_model.i"
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/powerNodeBase.h"
-%include "PowerRW.h"
+%include "ReactionWheelPower.h"
 
 %include "../../simMessages/powerNodeUsageSimMsg.h"
 %include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"

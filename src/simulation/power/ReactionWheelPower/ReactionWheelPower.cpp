@@ -17,14 +17,14 @@
 
  */
 
-#include "PowerRW.h"
+#include "ReactionWheelPower.h"
 #include "../../simMessages/powerNodeUsageSimMsg.h"
 #include "architecture/messaging/system_messaging.h"
 #include <math.h>
 
 /*! Constructor, which sets the default nodePowerOut to zero.
 */
-PowerRW::PowerRW(){
+ReactionWheelPower::ReactionWheelPower(){
 
     this->nodePowerOut = 0.0;
     this->eta_e2m = 1.0;            //!< default efficiency is 100%
@@ -33,7 +33,7 @@ PowerRW::PowerRW(){
 
 }
 
-PowerRW::~PowerRW(){
+ReactionWheelPower::~ReactionWheelPower(){
 
     return;
 }
@@ -41,7 +41,7 @@ PowerRW::~PowerRW(){
 /*! This method subscribes to the RW state message.
  @return void
  */
-void PowerRW::customCrossInit()
+void ReactionWheelPower::customCrossInit()
 {
     //! - subscribe to the RW state message
     if(this->rwStateInMsgName.length() > 0) {
@@ -58,7 +58,7 @@ void PowerRW::customCrossInit()
 /*! This method is used to reset the module. Here variables are checked for correct values.
  @return void
  */
-void PowerRW::customReset(uint64_t CurrentSimNanos)
+void ReactionWheelPower::customReset(uint64_t CurrentSimNanos)
 {
     if (this->eta_e2m <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "PowerRW: eta_e2m is %f, must a strictly positive value.", this->eta_e2m);
@@ -69,7 +69,7 @@ void PowerRW::customReset(uint64_t CurrentSimNanos)
 /*! This method is used to read incoming RW state message.
  @return void
  */
-bool PowerRW::customReadMessages()
+bool ReactionWheelPower::customReadMessages()
 {
     RWConfigLogSimMsg statusMsg;
     SingleMessageHeader localHeader;
@@ -100,7 +100,7 @@ bool PowerRW::customReadMessages()
 
 /*! Computes the RW power load. Loads the nodePowerOut attribute into the powerUsageSimMessage instance.
 */
-void PowerRW::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
+void ReactionWheelPower::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
     double rwPowerNeed;
     double wheelPower;
 

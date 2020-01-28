@@ -28,11 +28,11 @@
 
 
 
-class PowerRW: public PowerNodeBase {
+class ReactionWheelPower: public PowerNodeBase {
 
 public:
-    PowerRW();
-    ~PowerRW();
+    ReactionWheelPower();
+    ~ReactionWheelPower();
     void customCrossInit();             //!< Custom message subscription method
     void customReset(uint64_t CurrentSimNanos); //!< Custom reset method
     bool customReadMessages();          //!< Custom read method, similar to customSelfInit; returns `true' by default.

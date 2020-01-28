@@ -88,7 +88,7 @@ from Basilisk.simulation import reactionWheelStateEffector, simple_nav, spacecra
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.simulation import PowerRW
+from Basilisk.simulation import ReactionWheelPower
 from Basilisk.simulation import simpleBattery
 
 # The path to the location of Basilisk
@@ -237,7 +237,7 @@ def run(show_plots, useRwPowerGeneration):
     # add RW power modules
     rwPowerList = []
     for c in range(0, numRW):
-        powerRW = PowerRW.PowerRW()
+        powerRW = ReactionWheelPower.ReactionWheelPower()
         powerRW.ModelTag = scObject.ModelTag
         powerRW.nodePowerOut = 5.   # baseline power draw, Watts
         powerRW.rwStateInMsgName = powerRW.ModelTag + "_rw_config_" + str(c) + "_data"

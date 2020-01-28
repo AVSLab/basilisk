@@ -35,7 +35,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import PowerRW
+from Basilisk.simulation import ReactionWheelPower
 from Basilisk.simulation import simMessages
 from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import macros
@@ -117,7 +117,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # create the rw power test module
-    testModule = PowerRW.PowerRW()
+    testModule = ReactionWheelPower.ReactionWheelPower()
     testModule.ModelTag = "bskSat"
     testModule.nodePowerOut = 10.   # baseline power draw, Watts
     testModule.rwStateInMsgName = testModule.ModelTag + "_rw_config_0_data"
