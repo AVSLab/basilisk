@@ -21,7 +21,6 @@
 #define SIM_RW_CONFIG_LOG_MESSAGE_H
 
 #include "rwConfigSimMsg.h"
-#include <Eigen/Dense>
 
 /*! \defgroup simMessages
  *  @{
