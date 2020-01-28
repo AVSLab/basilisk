@@ -243,7 +243,7 @@ def run(show_plots, useRwPowerGeneration):
         powerRW.rwStateInMsgName = powerRW.ModelTag + "_rw_config_" + str(c) + "_data"
         powerRW.nodePowerOutMsgName = "rwPower_" + str(c)
         if useRwPowerGeneration:
-            powerRW.eta_m2e = 0.5
+            powerRW.mechToElecEfficiency = 0.5
         scSim.AddModelToTask(simTaskName, powerRW)
         rwPowerList.append(powerRW)
 

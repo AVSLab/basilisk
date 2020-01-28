@@ -139,18 +139,18 @@ any motor torque commands being applied.
 You also need to specify the RW state message with the module variable ``rwStateInMsgName``.
 
 This setup will evaluate the RW power using Eq. :eq:`eq:prw:2` where 100% efficiency is assumed in converting
-electrical to mechanical energy  with ``eta_e2m`` = 1, and no electrical energy is recovered
-from breaking the wheel speeds with ``eta_m2e`` = 1.
+electrical to mechanical energy  with ``elecToMechEfficiency`` = :math:`\eta_{e2m}` = 1, and no electrical energy is recovered
+from breaking the wheel speeds with ``mechToElecEfficiency`` = :math:`eta_{m2}` = 1.
 
 Accounting for Non-Ideal Power Conversion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If for example 10W of electrical power does not lead to 10W of mechanical power, then this is modeled by setting
-the module variable ``eta_e2m`` to a strictly positive value less than 1.  The value of 1 represents 100% conversion
+For example, if 10W of electrical power does not lead to 10W of mechanical power, then this is modeled by setting
+the module variable ``elecToMechEfficiency`` to a strictly positive value less than 1.  The value of 1 represents 100% conversion
 efficiency and is the default value for this parameter.
 
 To account for harvesting mechanical power during the RW speed braking process, converting mechanical to electrical
-power, then the variable :math:`1 \ge` ``eta_m2e``:math:`\ge 0` must be set to a positive value.  The value of
+power, then the variable :math:`1 \ge` ``mechToElecEfficiency``:math:`\ge 0` must be set to a positive value.  The value of
 1 again 100% conversion efficiency (not realisitic).  Typically this is a smaller percentage.
 
 To account that breaking does not require any electrical power, then simply set
-``eta_m2e`` to 0.
+``mechToElecEfficiency`` to 0.

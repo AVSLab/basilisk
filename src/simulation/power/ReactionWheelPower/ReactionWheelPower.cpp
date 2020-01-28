@@ -27,8 +27,8 @@
 ReactionWheelPower::ReactionWheelPower(){
 
     this->basePowerNeed = 0.0;
-    this->eta_e2m = 1.0;            //!< default efficiency is 100%
-    this->eta_m2e = -1.0;           //!< negative value turns of mechanical to electrical energy conversion
+    this->elecToMechEfficiency = 1.0;   //!< default efficiency is 100%
+    this->mechToElecEfficiency = -1.0;  //!< negative value turns of mechanical to electrical energy conversion
     return;
 
 }
@@ -60,8 +60,9 @@ void ReactionWheelPower::customCrossInit()
  */
 void ReactionWheelPower::customReset(uint64_t CurrentSimNanos)
 {
-    if (this->eta_e2m <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "PowerRW: eta_e2m is %f, must a strictly positive value.", this->eta_e2m);
+    if (this->elecToMechEfficiency <= 0.0) {
+        bskLogger.bskLog(BSK_ERROR, "PowerRW: elecToMechEfficiency is %f, must a strictly positive value.",
+                         this->elecToMechEfficiency);
     }
     return;
 }
@@ -110,11 +111,11 @@ void ReactionWheelPower::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimM
     /* evaluate power required to torque RW */
     wheelPower = this->rwStatus.Omega*this->rwStatus.u_current;
     if (wheelPower > 0.0 ||         /* accelerating the wheel to larger Omega values always takes power */
-        this->eta_m2e < 0.0) {      /* if m2e is negative model the breaking as taking power as well */
-        rwPowerNeed += fabs(wheelPower)/ this->eta_e2m;
+        this->mechToElecEfficiency < 0.0) {  /* if negative model the breaking as taking power as well */
+        rwPowerNeed += fabs(wheelPower)/ this->elecToMechEfficiency;
     } else {
         /* breaking the wheeel speed where some mechanics energy is recovered */
-        rwPowerNeed += this->eta_m2e * wheelPower;
+        rwPowerNeed += this->mechToElecEfficiency * wheelPower;
     }
 
     /* flip sign as a positive RW power requirement is a negative draw on the power system */

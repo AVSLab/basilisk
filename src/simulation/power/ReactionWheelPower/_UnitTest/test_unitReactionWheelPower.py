@@ -122,13 +122,13 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
     testModule.rwStateInMsgName = testModule.ModelTag + "_rw_config_0_data"
     if setEta_e2m:
-        testModule.eta_e2m = 0.9
-        eta_e2m = testModule.eta_e2m
+        testModule.elecToMechEfficiency = 0.9
+        eta_e2m = testModule.elecToMechEfficiency
     else:
         eta_e2m = 1.0
     if setEta_m2c:
-        testModule.eta_m2e = (setEta_m2c - 1.0)/2.0
-        eta_m2e = testModule.eta_m2e
+        testModule.mechToElecEfficiency = (setEta_m2c - 1.0)/2.0
+        eta_m2e = testModule.mechToElecEfficiency
     else:
         eta_m2e = -1
 
