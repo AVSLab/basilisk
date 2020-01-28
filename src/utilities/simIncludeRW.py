@@ -487,6 +487,8 @@ class rwFactory(object):
         # static RW imbalance [kg*m]
         # dynamic RW imbalance [kg*m^2]
 
+        self.maxMomentum = 0.015     # Nms
+
         RW.mass = 0.130
         RW.U_s = 1E-7 # Guestimate
         RW.U_d = 1E-8 # Guestimate
