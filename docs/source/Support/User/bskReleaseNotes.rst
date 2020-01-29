@@ -17,8 +17,8 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
-Upcoming Version 1.X.X
-----------------------
+Version 1.6.0
+-------------
 - Fixed the long-standing issue of not being able to run ``pytest`` on Windows from ``src``, but it only ran from
   within sub-folders of ``src``.  Still recommended to run on Windows multi-threaded ``pytest -n XXX``
   using ``pytest-xdist``.

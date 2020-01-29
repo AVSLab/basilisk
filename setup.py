@@ -159,13 +159,13 @@ else:
 
 setup(
     name='Basilisk',
-    version='1.5.1',
+    version='1.6.0',
     description="Astrodynamic Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),
     long_description=open('./README.md').read(),
     author_email='basilisk-info@colorado.edu',
-    url='http://hanspeterschaub.info/bskHtml/index.html',
+    url='https://hanspeterschaub.info/basilisk/',
     package_dir={'': package_dir},
     install_requires=[
         'matplotlib',
