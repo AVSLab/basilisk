@@ -487,6 +487,8 @@ class rwFactory(object):
         # static RW imbalance [kg*m]
         # dynamic RW imbalance [kg*m^2]
 
+        if self.maxMomentum > 0.0:
+            print("WARNING: BCT_RWP015 has a fixed maxMomentum value.  Custom value being replaced.")
         self.maxMomentum = 0.015     # Nms
 
         RW.mass = 0.130
