@@ -33,7 +33,7 @@ Upcoming Version 1.X.X
 - Enhanced the ``GravBodyData`` class to now register the planet position, velocity, orientation and attitude
   rate states.  This allows other effectors, such as the gravity gradient effector, to have access to the current
   planet states at any time step.
-- added :ref:`ReactionWheelPower` module which can compute the electrical power consumed by a reaction wheel device
+- added :ref:`ReactionWheelPower` which can compute the electrical power consumed by a reaction wheel device
 - added new example script :ref:`scenarioAttitudeFeedbackRWPower` that illustrates doing a RW-based attitude
   maneuver and tracking the RW power and net battery capacity left.
 - added ``BCT_RWP015`` RW model template to the ``simIncludeRW.py`` support file
