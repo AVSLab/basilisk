@@ -36,7 +36,7 @@ Upcoming Version 1.X.X
 - added :ref:`ReactionWheelPower` module which can compute the electrical power consumed by a reaction wheel device
 - added new example script :ref:`scenarioAttitudeFeedbackRWPower` that illustrates doing a RW-based attitude
   maneuver and tracking the RW power and net battery capacity left.
-
+- added ``BCT_RWP015`` RW model template to the ``simIncludeRW.py`` support file
 
 
 Version 1.5.1
