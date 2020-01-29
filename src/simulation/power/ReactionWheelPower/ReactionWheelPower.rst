@@ -21,7 +21,7 @@ user from python.  The message type contains a link to the message structure def
 provides information on what this message is used for.
 
 .. _ModuleIO_MRP_PD:
-.. figure:: /../../src/simulation/power/PowerRW/_Documentation/Images/PowerRW.svg
+.. figure:: /../../src/simulation/power/ReactionWheelPower/_Documentation/Images/PowerRW.svg
     :align: center
 
     Figure 1: ``fswModuleTemplate()`` Module I/O Illustration
