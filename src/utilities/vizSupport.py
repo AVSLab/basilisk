@@ -229,8 +229,6 @@ def setActuatorGuiSetting(viz, **kwargs):
         vizElement.spacecraftName = scName
     else:
         vizElement.spacecraftName = firstSpacecraftName
-    print("HPS: 0")
-    print(vizElement.spacecraftName)
 
     if 'viewThrusterPanel' in kwargs:
         setting = kwargs['viewThrusterPanel']
