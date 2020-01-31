@@ -102,6 +102,8 @@ typedef struct {
     int viewThrusterHUD;        //!< [bool] should thruster Heads-Up-Display be shown
     int viewRWPanel;            //!< [bool] should reaction wheel panel illustration be shown
     int viewRWHUD;              //!< [bool] should reaction wheel Heads-Up-Display be shown
+    int showThrusterLabels;     //!< [bool] should the thruster labels be shown
+    int showRWLabels;           //!< [bool] should the reaction wheel labels be shown
 }ActuatorGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.

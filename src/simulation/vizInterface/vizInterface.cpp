@@ -468,6 +468,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             al->set_viewthrusterhud(this->settings.actuatorGuiSettingsList[idx].viewThrusterHUD);
             al->set_viewrwpanel(this->settings.actuatorGuiSettingsList[idx].viewRWPanel);
             al->set_viewrwhud(this->settings.actuatorGuiSettingsList[idx].viewRWHUD);
+            al->set_showthrusterlabels(this->settings.actuatorGuiSettingsList[idx].showThrusterLabels);
+            al->set_showrwlabels(this->settings.actuatorGuiSettingsList[idx].showRWLabels);
         }
 
         // define scene object custom object shapes

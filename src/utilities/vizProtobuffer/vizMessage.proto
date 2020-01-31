@@ -38,11 +38,11 @@ message VizMessage{
 }
 
     message ReactionWheel{
-        repeated double position = 2; // [m] position of the reaction wheel in body frame components
+        repeated double position = 2; // [m] position of the reaction wheel in body frame components. Note that this is not currently populated or used in Basilisk
         repeated double spinAxisVector = 4; // reaction wheel spin axis in body frame components
-        double wheelSpeed = 5;  //[r/s] RWSpeedIntMsg.wheelSpeeds
+        double wheelSpeed = 5;  //[rad/s] RWSpeedIntMsg.wheelSpeeds
         double wheelTorque = 6; //[N m] RWArrayTorqueIntMsg.motorTorque
-        double maxSpeed = 7; //[r/s] (Optional) maximum RW speed capability
+        double maxSpeed = 7; //[rad/s] (Optional) maximum RW speed capability
         double maxTorque = 8; //[N m] (Optional) maximum RW toruqe capability
     }
 
@@ -114,11 +114,13 @@ message VizMessage{
     }
 
     message ActuatorSettings{
-        string spacecraftName = 1; //Which spacecraft's thrusters to set
+        string spacecraftName = 1; //Which spacecraft's actuators to set
         int32 viewThrusterPanel = 2; // Value of -1 to use viz default, 0 for false, 1 for true
         int32 viewThrusterHUD = 3; //Value of -1 to use viz default, 0 for false, 1 for true
         int32 viewRWPanel = 4; // Value of -1 to use viz default, 0 for false, 1 for true
         int32 viewRWHUD = 5; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 showThrusterLabels = 6; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 showRWLabels = 7; //Value of -1 to use viz default, 0 for false, 1 for true
     }
     
     message CustomModel{
@@ -146,7 +148,11 @@ message VizMessage{
         repeated ActuatorSettings actuatorSettings = 10;
         string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
         repeated CustomModel customModels = 12;
-
+        int32 viewCameraBoresightHUD = 13; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 viewCameraConeHUD = 14; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 showCSLabels = 15; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 showCelestialBodyLabels = 16; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 showSpacecraftLabels = 17; //Value of -1 to use viz default, 0 for false, 1 for true
     }
 
     TimeStamp currentTime = 1;

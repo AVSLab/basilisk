@@ -217,7 +217,8 @@ def setActuatorGuiSetting(viz, **kwargs):
     vizElement = vizInterface.ActuatorGuiSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'viewThrusterPanel', 'viewThrusterHUD', 'viewRWPanel', 'viewRWHUD'],
+        ['spacecraftName', 'viewThrusterPanel', 'viewThrusterHUD', 'viewRWPanel', 'viewRWHUD',
+         'showThrusterLabels', 'showRWLabels'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -266,6 +267,24 @@ def setActuatorGuiSetting(viz, **kwargs):
         vizElement.viewRWHUD = setting
     else:
         vizElement.viewRWHUD = -1
+
+    if 'showThrusterLabels' in kwargs:
+        setting = kwargs['showThrusterLabels']
+        if not isinstance(setting, bool):
+            print('ERROR: showThrusterLabels must be an integer value')
+            exit(1)
+        vizElement.showThrusterLabels = setting
+    else:
+        vizElement.showThrusterLabels = -1
+
+    if 'showRWLabels' in kwargs:
+        setting = kwargs['showRWLabels']
+        if not isinstance(setting, bool):
+            print('ERROR: showRWLabels must be an integer value')
+            exit(1)
+        vizElement.showRWLabels = setting
+    else:
+        vizElement.showRWLabels = -1
 
     actuatorGuiSettingList.append(vizElement)
     del viz.settings.actuatorGuiSettingsList[:]  # clear settings list to replace it with updated list

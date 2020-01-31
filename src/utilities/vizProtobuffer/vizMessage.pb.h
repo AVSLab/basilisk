@@ -1994,6 +1994,18 @@ class VizMessage_ActuatorSettings : public ::google::protobuf::Message /* @@prot
   ::google::protobuf::int32 viewrwhud() const;
   void set_viewrwhud(::google::protobuf::int32 value);
 
+  // int32 showThrusterLabels = 6;
+  void clear_showthrusterlabels();
+  static const int kShowThrusterLabelsFieldNumber = 6;
+  ::google::protobuf::int32 showthrusterlabels() const;
+  void set_showthrusterlabels(::google::protobuf::int32 value);
+
+  // int32 showRWLabels = 7;
+  void clear_showrwlabels();
+  static const int kShowRWLabelsFieldNumber = 7;
+  ::google::protobuf::int32 showrwlabels() const;
+  void set_showrwlabels(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.ActuatorSettings)
  private:
 
@@ -2003,6 +2015,8 @@ class VizMessage_ActuatorSettings : public ::google::protobuf::Message /* @@prot
   ::google::protobuf::int32 viewthrusterhud_;
   ::google::protobuf::int32 viewrwpanel_;
   ::google::protobuf::int32 viewrwhud_;
+  ::google::protobuf::int32 showthrusterlabels_;
+  ::google::protobuf::int32 showrwlabels_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_ActuatorSettingsImpl();
@@ -2398,6 +2412,36 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 planetcson() const;
   void set_planetcson(::google::protobuf::int32 value);
 
+  // int32 viewCameraBoresightHUD = 13;
+  void clear_viewcameraboresighthud();
+  static const int kViewCameraBoresightHUDFieldNumber = 13;
+  ::google::protobuf::int32 viewcameraboresighthud() const;
+  void set_viewcameraboresighthud(::google::protobuf::int32 value);
+
+  // int32 viewCameraConeHUD = 14;
+  void clear_viewcameraconehud();
+  static const int kViewCameraConeHUDFieldNumber = 14;
+  ::google::protobuf::int32 viewcameraconehud() const;
+  void set_viewcameraconehud(::google::protobuf::int32 value);
+
+  // int32 showCSLabels = 15;
+  void clear_showcslabels();
+  static const int kShowCSLabelsFieldNumber = 15;
+  ::google::protobuf::int32 showcslabels() const;
+  void set_showcslabels(::google::protobuf::int32 value);
+
+  // int32 showCelestialBodyLabels = 16;
+  void clear_showcelestialbodylabels();
+  static const int kShowCelestialBodyLabelsFieldNumber = 16;
+  ::google::protobuf::int32 showcelestialbodylabels() const;
+  void set_showcelestialbodylabels(::google::protobuf::int32 value);
+
+  // int32 showSpacecraftLabels = 17;
+  void clear_showspacecraftlabels();
+  static const int kShowSpacecraftLabelsFieldNumber = 17;
+  ::google::protobuf::int32 showspacecraftlabels() const;
+  void set_showspacecraftlabels(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
 
@@ -2412,6 +2456,11 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 orbitlineson_;
   ::google::protobuf::int32 spacecraftcson_;
   ::google::protobuf::int32 planetcson_;
+  ::google::protobuf::int32 viewcameraboresighthud_;
+  ::google::protobuf::int32 viewcameraconehud_;
+  ::google::protobuf::int32 showcslabels_;
+  ::google::protobuf::int32 showcelestialbodylabels_;
+  ::google::protobuf::int32 showspacecraftlabels_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -4505,6 +4554,34 @@ inline void VizMessage_ActuatorSettings::set_viewrwhud(::google::protobuf::int32
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.ActuatorSettings.viewRWHUD)
 }
 
+// int32 showThrusterLabels = 6;
+inline void VizMessage_ActuatorSettings::clear_showthrusterlabels() {
+  showthrusterlabels_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_ActuatorSettings::showthrusterlabels() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.ActuatorSettings.showThrusterLabels)
+  return showthrusterlabels_;
+}
+inline void VizMessage_ActuatorSettings::set_showthrusterlabels(::google::protobuf::int32 value) {
+  
+  showthrusterlabels_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.ActuatorSettings.showThrusterLabels)
+}
+
+// int32 showRWLabels = 7;
+inline void VizMessage_ActuatorSettings::clear_showrwlabels() {
+  showrwlabels_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_ActuatorSettings::showrwlabels() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.ActuatorSettings.showRWLabels)
+  return showrwlabels_;
+}
+inline void VizMessage_ActuatorSettings::set_showrwlabels(::google::protobuf::int32 value) {
+  
+  showrwlabels_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.ActuatorSettings.showRWLabels)
+}
+
 // -------------------------------------------------------------------
 
 // VizMessage_CustomModel
@@ -5102,6 +5179,76 @@ inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizM
 VizMessage_VizSettingsPb::custommodels() const {
   // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.customModels)
   return custommodels_;
+}
+
+// int32 viewCameraBoresightHUD = 13;
+inline void VizMessage_VizSettingsPb::clear_viewcameraboresighthud() {
+  viewcameraboresighthud_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::viewcameraboresighthud() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.viewCameraBoresightHUD)
+  return viewcameraboresighthud_;
+}
+inline void VizMessage_VizSettingsPb::set_viewcameraboresighthud(::google::protobuf::int32 value) {
+  
+  viewcameraboresighthud_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.viewCameraBoresightHUD)
+}
+
+// int32 viewCameraConeHUD = 14;
+inline void VizMessage_VizSettingsPb::clear_viewcameraconehud() {
+  viewcameraconehud_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::viewcameraconehud() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.viewCameraConeHUD)
+  return viewcameraconehud_;
+}
+inline void VizMessage_VizSettingsPb::set_viewcameraconehud(::google::protobuf::int32 value) {
+  
+  viewcameraconehud_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.viewCameraConeHUD)
+}
+
+// int32 showCSLabels = 15;
+inline void VizMessage_VizSettingsPb::clear_showcslabels() {
+  showcslabels_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showcslabels() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showCSLabels)
+  return showcslabels_;
+}
+inline void VizMessage_VizSettingsPb::set_showcslabels(::google::protobuf::int32 value) {
+  
+  showcslabels_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showCSLabels)
+}
+
+// int32 showCelestialBodyLabels = 16;
+inline void VizMessage_VizSettingsPb::clear_showcelestialbodylabels() {
+  showcelestialbodylabels_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showcelestialbodylabels() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showCelestialBodyLabels)
+  return showcelestialbodylabels_;
+}
+inline void VizMessage_VizSettingsPb::set_showcelestialbodylabels(::google::protobuf::int32 value) {
+  
+  showcelestialbodylabels_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showCelestialBodyLabels)
+}
+
+// int32 showSpacecraftLabels = 17;
+inline void VizMessage_VizSettingsPb::clear_showspacecraftlabels() {
+  showspacecraftlabels_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showspacecraftlabels() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showSpacecraftLabels)
+  return showspacecraftlabels_;
+}
+inline void VizMessage_VizSettingsPb::set_showspacecraftlabels(::google::protobuf::int32 value) {
+  
+  showspacecraftlabels_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showSpacecraftLabels)
 }
 
 // -------------------------------------------------------------------
