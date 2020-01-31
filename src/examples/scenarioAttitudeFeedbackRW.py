@@ -616,7 +616,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                        saveFile=fileName,
+                                        # saveFile=fileName,
                                         numRW=numRW,
                                         scName=[scObject.ModelTag]  # sc name must be set to pull RW info
                                         )
