@@ -615,7 +615,11 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName, numRW=numRW)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
+                                        # saveFile=fileName,
+                                        numRW=numRW,
+                                        scName=[scObject.ModelTag]  # sc name must be set to pull RW info
+                                        )
 
     #
     #   initialize Simulation
