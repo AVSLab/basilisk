@@ -38,37 +38,55 @@ the Vizard default values are used.
 
 General Settings
 ~~~~~~~~~~~~~~~~
+The following settings can be set directly using::
+
+    viz.settings.variableName = value
 
 .. table:: Vizard Simulation Parameters
     :widths: 10 10 100
 
-    +-----------------------+---------------+------------------------------+
-    | Variable              | Type          | Description                  |
-    +=======================+===============+==============================+
-    | ambient               | [0,8]         | value to specify the ambient |
-    |                       |               | Vizard lighting.             |
-    +-----------------------+---------------+------------------------------+
-    | orbitLinesOn          | (0,1)         | flag to show (1) or hide (0) |
-    |                       |               | the orbit trajectory lines   |
-    +-----------------------+---------------+------------------------------+
-    | spacecraftCSon        | (0,1)         | flag to show (1) or hide (0) |
-    |                       |               | the spacecraft coordinate    |
-    |                       |               | axes                         |
-    +-----------------------+---------------+------------------------------+
-    | planetCSon            | (0,1)         | flag to show (1) or hide (0) |
-    |                       |               | the planet coordinate axes   |
-    +-----------------------+---------------+------------------------------+
-    | skyBox                | String        | Used determine what star     |
-    |                       |               | background should be shown.  |
-    |                       |               | The empty string "" provides |
-    |                       |               | default NASA SVS Starmap,    |
-    |                       |               | “ESO” shows the ESO Milky    |
-    |                       |               | Way skybox, “black” provides |
-    |                       |               | a black background, or the   |
-    |                       |               | user can provide a filepath  |
-    |                       |               | to custom background image   |
-    |                       |               | file.                        |
-    +-----------------------+---------------+------------------------------+
+    +---------------------------+---------------+------------------------------+
+    | Variable                  | Type          | Description                  |
+    +===========================+===============+==============================+
+    | ambient                   | [0,8]         | value to specify the ambient |
+    |                           |               | Vizard lighting.             |
+    +---------------------------+---------------+------------------------------+
+    | orbitLinesOn              | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the orbit trajectory lines   |
+    +---------------------------+---------------+------------------------------+
+    | spacecraftCSon            | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the spacecraft coordinate    |
+    |                           |               | axes                         |
+    +---------------------------+---------------+------------------------------+
+    | planetCSon                | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the planet coordinate axes   |
+    +---------------------------+---------------+------------------------------+
+    | skyBox                    | String        | Used determine what star     |
+    |                           |               | background should be shown.  |
+    |                           |               | The empty string "" provides |
+    |                           |               | default NASA SVS Starmap,    |
+    |                           |               | “ESO” shows the ESO Milky    |
+    |                           |               | Way skybox, “black” provides |
+    |                           |               | a black background, or the   |
+    |                           |               | user can provide a filepath  |
+    |                           |               | to custom background image   |
+    |                           |               | file.                        |
+    +---------------------------+---------------+------------------------------+
+    | viewCameraBoresightHUD    | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the camera boresight line    |
+    +---------------------------+---------------+------------------------------+
+    | viewCameraConeHUD         | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the camera cone              |
+    +---------------------------+---------------+------------------------------+
+    | showCSLabels              | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the coordinate system labels |
+    +---------------------------+---------------+------------------------------+
+    | showCelestialBodyLabels   | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the celestial body labels    |
+    +---------------------------+---------------+------------------------------+
+    | showSpacecraftLabels      | (0,1)         | flag to show (1) or hide (0) |
+    |                           |               | the spacecraft labels        |
+    +---------------------------+---------------+------------------------------+
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

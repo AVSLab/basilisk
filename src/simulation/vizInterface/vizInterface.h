@@ -153,11 +153,11 @@ typedef struct {
 /*! Structure defining various Vizard options
 */
 typedef struct {
-    double      ambient;        /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
-                                         A value of -1 means it is not set. */
-    int32_t     orbitLinesOn;   //!< toogle for showing orbit lines (-1, 0, 1)
-    int32_t     spacecraftCSon; //!< toogle for showing spacecraft CS (-1, 0, 1)
-    int32_t     planetCSon;     //!< toogle for showing planet CS (-1, 0, 1)
+    double      ambient;                            /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
+                                                             A value of -1 means it is not set. */
+    int32_t     orbitLinesOn;                       //!< toogle for showing orbit lines (-1, 0, 1)
+    int32_t     spacecraftCSon;                     //!< toogle for showing spacecraft CS (-1, 0, 1)
+    int32_t     planetCSon;                         //!< toogle for showing planet CS (-1, 0, 1)
     std::vector<PointLine> pointLineList;           //!< vector of powerLine structures
     std::vector<KeepOutInCone> coneList;            //!< vector of keep in/out cones
     std::vector<StdCameraSettings> stdCameraList;   //!< vector of spacecraft cameras
@@ -166,7 +166,13 @@ typedef struct {
     std::string skyBox;         /*!< string containing the star field options, an empty string'' provides default NASA SVS Starmap,
                                      ``ESO`` use ESO Milky Way skybox, ``black`` provides a black background,
                                      or provide a filepath to custom background */
-    bool        dataFresh;      //!<< [-] flag indicating if the settings have been transmitted,
+    bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,
+    int32_t viewCameraBoresightHUD ;                //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t viewCameraConeHUD;                      //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showCSLabels;                           //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showCelestialBodyLabels;                //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showSpacecraftLabels ;                  //!< Value of -1 to use viz default, 0 for false, 1 for true
+
 }VizSettings;
 
 

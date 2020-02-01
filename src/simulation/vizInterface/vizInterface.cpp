@@ -199,7 +199,7 @@ void VizInterface::CrossInit()
                         scIt->numThr++;
                     } else {
                         thrStatus.msgID = -1;
-                        bskLogger.bskLog(BSK_WARNING, "TH(%d) msg %s of tag %s requested but not found.", idx, tmpThrustMsgName.c_str(), thrIt->thrTag.c_str());
+                        bskLogger.bskLog(BSK_WARNING, "vizInterface: TH(%d) msg %s of tag %s requested but not found.", idx, tmpThrustMsgName.c_str(), thrIt->thrTag.c_str());
                     }
                 }
             }
@@ -406,25 +406,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_ambient(this->settings.ambient);
         if (this->settings.ambient > 8.0 ||
             (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
         }
 
         // define if orbit lines should be shown
         vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
         if (abs(this->settings.orbitLinesOn)>1) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
         }
 
         // define if spacecraft axes should be shown
         vizSettings->set_spacecraftcson(this->settings.spacecraftCSon);
         if (abs(this->settings.spacecraftCSon)>1) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
         }
 
         // define if planet axes should be shown
         vizSettings->set_planetcson(this->settings.planetCSon);
         if (abs(this->settings.planetCSon)>1) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
         }
 
         // define the skyBox variable
@@ -458,6 +458,36 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 cone->add_conecolor(this->settings.coneList[idx].coneColor[i]);
             }
             cone->set_conename(this->settings.coneList[idx].coneName);
+        }
+
+        // define if camera boresight line should be shown
+        vizSettings->set_viewcameraboresighthud(this->settings.viewCameraBoresightHUD);
+        if (abs(this->settings.viewCameraBoresightHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraBoresightHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraBoresightHUD);
+        }
+
+        // define if camera cone should be shown
+        vizSettings->set_viewcameraconehud(this->settings.viewCameraConeHUD);
+        if (abs(this->settings.viewCameraConeHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraConeHUD);
+        }
+
+        // define if coordinate system labels should be shown
+        vizSettings->set_showcslabels(this->settings.showCSLabels);
+        if (abs(this->settings.showCSLabels)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCSLabels);
+        }
+
+        // define if celestial body labels should be shown
+        vizSettings->set_showcelestialbodylabels(this->settings.showCelestialBodyLabels);
+        if (abs(this->settings.showCelestialBodyLabels)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodyLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodyLabels);
+        }
+
+        // define if spacecraft labels should be shown
+        vizSettings->set_showspacecraftlabels(this->settings.showSpacecraftLabels);
+        if (abs(this->settings.showSpacecraftLabels)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftLabels);
         }
 
         // define actuator GUI settings
