@@ -63,6 +63,9 @@ def toRGBA255(color):
 
 pointLineList = []
 def createPointLine(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     vizElement = vizInterface.PointLine()
 
@@ -102,6 +105,9 @@ def createPointLine(viz, **kwargs):
 
 customModelList = []
 def createCustomModel(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     vizElement = vizInterface.CustomModel()
 
@@ -246,6 +252,10 @@ def setActuatorGuiSetting(viz, **kwargs):
         Default: if not provided, then the Vizard default settings are used
 
     """
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+
     global firstSpacecraftName
     vizElement = vizInterface.ActuatorGuiSettings()
 
@@ -325,6 +335,9 @@ def setActuatorGuiSetting(viz, **kwargs):
 
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     vizElement = vizInterface.KeepOutInCone()
 
@@ -423,6 +436,9 @@ def createConeInOut(viz, **kwargs):
 
 stdCameraList = []
 def createStandardCamera(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     cam = vizInterface.StdCameraSettings()
 
     unitTestSupport.checkMethodKeyword(
@@ -518,6 +534,9 @@ def createStandardCamera(viz, **kwargs):
 
 
 def createCameraConfigMsg(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
         ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'focalLength', 'sensorSize', 'cameraPos_B', 'sigma_CB', 'skyBox'],
