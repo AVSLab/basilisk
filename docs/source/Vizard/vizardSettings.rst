@@ -83,32 +83,38 @@ The following table includes the keyword options for this method.
 .. table:: GUI Parameter Options
     :widths: 10 10 20 100
 
-    +----------------------+-------------+---------------+-----------------------+
-    | Variable             | Type        | Required      | Description           |
-    +======================+=============+===============+=======================+
-    | ``viewThrusterPanel``| Boolean     | No            | Show the thruster     |
-    |                      |             |               | panel                 |
-    +----------------------+-------------+---------------+-----------------------+
-    | ``viewThrusterHUD``  | Boolean     | No            | Show the thruster     |
-    |                      |             |               | particle streams      |
-    +----------------------+-------------+---------------+-----------------------+
-    | ``viewRWPanel``      | Boolean     | No            | Show the reaction     |
-    |                      |             |               | wheel panel           |
-    +----------------------+-------------+---------------+-----------------------+
-    | ``viewRWHUD``        | Boolean     | No            | Show the reaction     |
-    |                      |             |               | wheel disks           |
-    |                      |             |               | configuration         |
-    |                      |             |               | outside the           |
-    |                      |             |               | spacecraft            |
-    +----------------------+-------------+---------------+-----------------------+
-    | ``spacecraftName``   | String      | No, sc name   | Specify which         |
-    |                      |             | default       | spacecraft should     |
-    |                      |             |               | show actuator         |
-    |                      |             |               | information. If not   |
-    |                      |             |               | provided then the     |
-    |                      |             |               | ``viz.spacecraftName``|
-    |                      |             |               | is used.              |
-    +----------------------+-------------+---------------+-----------------------+
+    +---------------------------+-------------+---------------+-----------------------+
+    | Variable                  | Type        | Required      | Description           |
+    +===========================+=============+===============+=======================+
+    | ``viewThrusterPanel``     | Boolean     | No            | Show the thruster     |
+    |                           |             |               | panel                 |
+    +---------------------------+-------------+---------------+-----------------------+
+    | ``viewThrusterHUD``       | Boolean     | No            | Show the thruster     |
+    |                           |             |               | particle streams      |
+    +---------------------------+-------------+---------------+-----------------------+
+    | ``showThrusterLabels``    | Boolean     | No            | Show the thruster     |
+    |                           |             |               | labels                |
+    +---------------------------+-------------+---------------+-----------------------+
+    | ``viewRWPanel``           | Boolean     | No            | Show the reaction     |
+    |                           |             |               | wheel panel           |
+    +---------------------------+-------------+---------------+-----------------------+
+    | ``viewRWHUD``             | Boolean     | No            | Show the reaction     |
+    |                           |             |               | wheel disks           |
+    |                           |             |               | configuration         |
+    |                           |             |               | outside the           |
+    |                           |             |               | spacecraft            |
+    +---------------------------+-------------+---------------+-----------------------+
+    | ``showRWLabels``          | Boolean     | No            | Show the reaction     |
+    |                           |             |               | wheel labels          |
+    +---------------------------+-------------+---------------+-----------------------+
+    | ``spacecraftName``        | String      | No, sc name   | Specify which         |
+    |                           |             | default       | spacecraft should     |
+    |                           |             |               | show actuator         |
+    |                           |             |               | information. If not   |
+    |                           |             |               | provided then the     |
+    |                           |             |               | ``viz.spacecraftName``|
+    |                           |             |               | is used.              |
+    +---------------------------+-------------+---------------+-----------------------+
 
 Defining a Pointing Line
 ~~~~~~~~~~~~~~~~~~~~~~~~

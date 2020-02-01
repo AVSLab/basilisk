@@ -213,6 +213,39 @@ def createCustomModel(viz, **kwargs):
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
+    """
+    This method sets the actuator GUI properties for a particular spacecraft.  If no ``spacecraftName`` is
+    provided, then the name of the first spacecraft in the simulation is assumed.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    spacecraftName: str
+        The name of the spacecraft for which the actuator GUI options are set.
+        Default: If not provided, then the name of the first spacecraft in the simulation is used.
+    viewThrusterPanel: bool
+        flag if the GUI panel should be shown illustrating the thruster states
+        Default: if not provided, then the Vizard default settings are used
+    viewRWPanel: bool
+        flag if the GUI panel should be shown illustrating the reaction wheel states
+        Default: if not provided, then the Vizard default settings are used
+    viewThrusterHUD: bool
+        flag if the HUD visualization of the thruster states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    viewRWHUD: bool
+        flag if the HUD visualization of the reaction wheel states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    showThrusterLabels: bool
+        flag if the thruster labels should be shown
+        Default: if not provided, then the Vizard default settings are used
+    showRWLabels: bool
+        flag if the reaction wheel labels should be shown
+        Default: if not provided, then the Vizard default settings are used
+
+    """
     global firstSpacecraftName
     vizElement = vizInterface.ActuatorGuiSettings()
 
