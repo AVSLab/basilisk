@@ -20,7 +20,7 @@ r"""
 Overview
 --------
 
-Illustrates how to add a :ref:`PowerRW` to the simulation to track the RW power usages.  Further,
+Illustrates how to add a :ref:`ReactionWheelPower` to the simulation to track the RW power usages.  Further,
 a the RW power modules are connected to a battery to illustrate the energy usage during this maneuver.
 This script expands on :ref:`scenarioAttitudeFeedbackRW`.
 
@@ -30,8 +30,9 @@ The script is found in the folder ``src/examples`` and executed by using::
 
 The simulation layout is shown in the following illustration.  A single simulation process is created
 which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-modules.  The 3 separate :ref:`PowerRW` modules are created to model the RW power requirements.
-For more examples on using the RW power module see :ref:`test_unitPowerRW`.  Next, a battery module is created
+modules.  The 3 separate :ref:`ReactionWheelPower` instances are created to model the RW power requirements.
+For more examples on using the RW power module see :ref:`test_unitReactionWheelPower`.
+Next, a battery module is created
 using :ref:`simpleBattery`.  All the RW power draw messages are connected to the battery to model the total
 energy usage.
 
