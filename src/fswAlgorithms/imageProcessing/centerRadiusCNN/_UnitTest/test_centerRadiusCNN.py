@@ -113,12 +113,12 @@ def cnnTest(show_plots, image, saveImage):
     # moduleConfig.imageInMsgName = "sample_image"
     moduleConfig.opnavCirclesOutMsgName = "circles"
 
-    moduleConfig.pathToNetwork = path + "/../position_net2_trained_11-14.onnx"
+    moduleConfig.pathToNetwork = path + "/../CAD.onnx"
     moduleConfig.filename = imagePath
     moduleConfig.pixelNoise = [5,5,5]
 
     circles = []
-    if image == "mars.png":
+    if image == "mars.jpg":
         circles = [(254.81655883789062, 263.2418518066406, 120.9570541381836)]
     if image == "mars2.jpg":
         circles = [(269.21127319, 231.63162231, 144.85394287)]
@@ -180,4 +180,4 @@ def cnnTest(show_plots, image, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    cnnTest(True, "mars.png", True) # Moon images
+    cnnTest(True, "mars.jpg", True) # Moon images
