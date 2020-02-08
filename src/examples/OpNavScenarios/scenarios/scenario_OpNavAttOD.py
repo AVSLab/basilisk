@@ -258,7 +258,8 @@ def run(showPlots):
     TheScenario.configure_initial_conditions()
 
     TheBSKSim.get_DynModel().cameraMod.saveImages = 0
-    TheBSKSim.get_DynModel().vizInterface.opNavMode = 1
+    TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
+
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 2:
         child = subprocess.Popen(["open", TheBSKSim.get_DynModel().vizPath, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,, "-batchmode"
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 1:

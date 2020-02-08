@@ -341,17 +341,16 @@ def run(showPlots):
         TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
-    # TheBSKSim.get_DynModel().cameraMod.saveImages = 1
-    TheBSKSim.get_DynModel().vizInterface.opNavMode = 1
+    TheBSKSim.get_DynModel().cameraMod.saveImages = 0
+    TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 2:
-        appPath = '/Applications/OpNavScene.app'
+        child = subprocess.Popen(["open", TheBSKSim.get_DynModel().vizPath, "--args", "-opNavMode",
+                                  "tcp://localhost:5556"])  # ,, "-batchmode"
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 1:
-        appPath = '/Applications/Vizard.app'
-    if TheBSKSim.get_DynModel().vizInterface.opNavMode > 0:
-        child = subprocess.Popen(["open", appPath, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
-        # os.system("nice -n -20 " + str(child.pid))
-        print("Vizard spawned with PID = " + str(child.pid))
+        child = subprocess.Popen(["open", TheBSKSim.get_DynModel().vizPath, "--args", "-directComm",
+                                  "tcp://localhost:5556"])  # ,, "-batchmode"
+    print("Vizard spawned with PID = " + str(child.pid))
 
     # Configure FSW mode
     TheScenario.masterSim.modeRequest = 'pointHead'
