@@ -30,10 +30,10 @@ dataType1 = range(3)
 dataType2 = range(3)
 dataType3 = range(1)
 
-NUMBER_OF_RUNS = 1000
+NUMBER_OF_RUNS = 10
 VERBOSE = True
 PROCESSES = 1
-RUN = False
+RUN = True
 POST = True
 
 dirName = os.path.abspath(os.path.dirname(__file__)) + "/cnn_MC_data"
@@ -87,7 +87,7 @@ if RUN:
 
 if POST:
     monteCarlo = Controller.load(dirName)
-    for i in range(1000,1000+NUMBER_OF_RUNS):
+    for i in range(0,NUMBER_OF_RUNS):
         try:
             monteCarloData = monteCarlo.getRetainedData(i)
         except FileNotFoundError:

@@ -6,6 +6,9 @@ from BSK_masters import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import csv, subprocess, signal
 
+Sim = BSKSim()
+viz_path = Sim.vizPath
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -143,9 +146,7 @@ if RUN:
     retentionPolicy.setDataCallback(displayPlots)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
-    appPath = '/Applications/OpNavScene.app'
-    child = subprocess.Popen(["open", appPath, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
-    # os.system("nice -n -20 " + str(child.pid))
+    child = subprocess.Popen(["open", viz_path, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
     print("Vizard spawned with PID = " + str(child.pid))
 
     failures = monteCarlo.executeSimulations()

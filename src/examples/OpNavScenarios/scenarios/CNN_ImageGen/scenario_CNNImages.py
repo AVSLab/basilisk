@@ -139,10 +139,8 @@ def run(TheScenario, runLog):
     TheScenario.get_DynModel().cameraMod.saveDir = runLog.split('/')[-2] +'/' +runLog.split('/')[-1] + '/'
     TheScenario.get_DynModel().vizInterface.opNavMode = 2
 
-    if runLog.split('/')[-1] == "run2000":
-        appPath = '/Applications/OpNavScene.app'
-        child = subprocess.Popen(["open", appPath, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
-        # os.system("nice -n -20 " + str(child.pid))
+    if runLog.split('/')[-1] == "run0":
+        child = subprocess.Popen(["open", TheScenario.vizPath, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
         print("Vizard spawned with PID = " + str(child.pid))
 
     # Configure FSW mode

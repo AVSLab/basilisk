@@ -214,10 +214,10 @@ def run(showPlots):
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 2:
-        child = subprocess.Popen(["open", TheBSKSim.get_DynModel().vizPath, "--args", "-opNavMode",
+        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", "-opNavMode",
                                   "tcp://localhost:5556"])  # ,, "-batchmode"
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 1:
-        child = subprocess.Popen(["open", TheBSKSim.get_DynModel().vizPath, "--args", "-directComm",
+        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", "-directComm",
                                   "tcp://localhost:5556"])  # ,, "-batchmode"
     print("Vizard spawned with PID = " + str(child.pid))
 
