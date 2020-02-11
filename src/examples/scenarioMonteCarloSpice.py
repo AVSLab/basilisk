@@ -68,7 +68,6 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
 from Basilisk import pyswice
 
 from Basilisk.simulation import spacecraftPlus
@@ -108,8 +107,8 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
 
         scObject = spacecraftPlus.SpacecraftPlus()
         self.AddModelToTask(simTaskName, scObject, None, 1)
-        scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd([7000000.0, 0.0, 0.0])  # m   - r_CN_N
-        scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd([0.0, 7500.0, 0.0])  # m/s - v_CN_N
+        scObject.hub.r_CN_NInit = [7000000.0, 0.0, 0.0]     # m   - r_CN_N
+        scObject.hub.v_CN_NInit = [0.0, 7500.0, 0.0]        # m/s - v_CN_N
 
 
         # operate on pyswice
