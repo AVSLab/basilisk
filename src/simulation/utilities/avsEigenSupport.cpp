@@ -100,7 +100,7 @@ in order to save an unnecessary conversion between types
 */
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
 {
-	return Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3);
+	return Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3).transpose();
 }
 
 
