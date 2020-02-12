@@ -98,7 +98,7 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     sensorV3_P[2] = sin(tempPhi);
     
     //! Rotation from P frame to body frame (B)
-    this->nHat_B = this->dcm_PB * sensorV3_P;
+    this->nHat_B = this->dcm_PB.transpose() * sensorV3_P;
 }
 
 /*!
