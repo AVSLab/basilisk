@@ -98,7 +98,7 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     sensorV3_P[2] = sin(tempPhi);
     
     //! Rotation from P frame to body frame (B)
-    this->nHat_B = this->dcm_PB * sensorV3_P;
+    this->nHat_B = this->dcm_PB.transpose() * sensorV3_P;
 }
 
 /*!
@@ -112,7 +112,6 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
 {
     double q[3] = {yaw, pitch, roll};
     double dcm_PBcArray[9];
-    eigenMatrix3d2CArray(this->dcm_PB, dcm_PBcArray);
     Euler3212C(q, RECAST3X3 dcm_PBcArray);
     this->dcm_PB = cArray2EigenMatrix3d(dcm_PBcArray);
 }

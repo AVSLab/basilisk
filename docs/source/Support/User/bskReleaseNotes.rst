@@ -19,7 +19,9 @@ Basilisk Release Notes
 
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- Fixed a transformation issue in ``avsEigenSupport.cpp`` where ``cArray2EigenMatrix3d()`` has to deal with
+  both column and row dominant matrix formulations.  This only got used in :ref:`scenarioCSS` and the issue was offset
+  by an issue in ``setUnitDirectionVectorWithPerturbation()`` that compensated.  Now, all is as it should be.
 
 Version 1.6.0
 -------------
