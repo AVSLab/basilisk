@@ -112,7 +112,6 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
 {
     double q[3] = {yaw, pitch, roll};
     double dcm_PBcArray[9];
-    eigenMatrix3d2CArray(this->dcm_PB, dcm_PBcArray);
     Euler3212C(q, RECAST3X3 dcm_PBcArray);
     this->dcm_PB = cArray2EigenMatrix3d(dcm_PBcArray);
 }
