@@ -196,7 +196,7 @@ class scenario_OpNav(BSKScenario):
         return figureList
 
 
-def run(showPlots):
+def run(showPlots, simTime = None):
 
     # Instantiate base simulation
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
@@ -214,10 +214,10 @@ def run(showPlots):
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 2:
-        child = subprocess.Popen(["open", TheBSKSim.get_DynModel().vizPath, "--args", "-opNavMode",
+        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", "-opNavMode",
                                   "tcp://localhost:5556"])  # ,, "-batchmode"
     if TheBSKSim.get_DynModel().vizInterface.opNavMode == 1:
-        child = subprocess.Popen(["open", TheBSKSim.get_DynModel().vizPath, "--args", "-directComm",
+        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", "-directComm",
                                   "tcp://localhost:5556"])  # ,, "-batchmode"
     print("Vizard spawned with PID = " + str(child.pid))
 
@@ -226,7 +226,10 @@ def run(showPlots):
     # Initialize simulation
     TheBSKSim.InitializeSimulationAndDiscover()
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(200.)
+    if simTime != None:
+        simulationTime = macros.min2nano(simTime)
+    else:
+        simulationTime = macros.min2nano(200)
     TheBSKSim.ConfigureStopTime(simulationTime)
     print('Starting Execution')
     t1 = time.time()
@@ -245,7 +248,7 @@ def run(showPlots):
         figureList = TheScenario.pull_outputs(showPlots)
         return figureList
     else:
-        return
+        return {}
 
 
 if __name__ == "__main__":

@@ -31,8 +31,8 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/models')
 
 # TODO : Modify the path to the viz here
-appPath = '/Applications/Vizard.app'
-
+appPath = '/Applications/Vizard.app' #If on Mac
+# appPath = './../../Applications/Vizard.app' #If on Linux
 class BSKSim(SimulationBaseClass.SimBaseClass):
     def __init__(self, fswRate=0.1, dynRate=0.1):
         self.dynRate = dynRate

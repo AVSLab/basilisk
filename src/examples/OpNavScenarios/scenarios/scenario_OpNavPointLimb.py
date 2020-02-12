@@ -196,7 +196,7 @@ class scenario_OpNav(BSKScenario):
         return figureList
 
 
-def run(showPlots):
+def run(showPlots, simTime = None):
 
     # Instantiate base simulation
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
@@ -232,7 +232,10 @@ def run(showPlots):
     t1 = time.time()
     TheBSKSim.ExecuteSimulation()
     TheScenario.masterSim.modeRequest = 'pointLimb'
-    simulationTime = macros.min2nano(50.)
+    if simTime != None:
+        simulationTime = macros.min2nano(simTime)
+    else:
+        simulationTime = macros.min2nano(50)
     TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
     t2 = time.time()
@@ -249,7 +252,7 @@ def run(showPlots):
         figureList = TheScenario.pull_outputs(showPlots)
         return figureList
     else:
-        return
+        return {}
 
 
 if __name__ == "__main__":

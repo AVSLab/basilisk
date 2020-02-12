@@ -54,15 +54,14 @@ if os.path.exists(SimBase.vizPath) == False:
 
 try:
     from Basilisk.simulation import vizInterface, camera
-    from Basilisk.fswAlgorithms import centerRadiusCNN, houghCircles, limbFinding
+    from Basilisk.fswAlgorithms import houghCircles, limbFinding#,centerRadiusCNN
 except ImportError:
     pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use OpenCV, ZMQ, and Protobuffers in build")
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("bskSimCase", [
-     ('scenario_CNNAttOD')
-    , ('scenario_DoubleOpNavOD')
+     ('scenario_DoubleOpNavOD')
     , ('scenario_faultDetOpNav')
     , ('scenario_OpNavAttOD')
     , ('scenario_OpNavAttODLimb')
@@ -70,7 +69,9 @@ except ImportError:
     , ('scenario_OpNavOD')
     , ('scenario_OpNavODLimb')
     , ('scenario_OpNavPoint')
-    , ('scenario_OpNavPointLimb') ])
+    , ('scenario_OpNavPointLimb')
+    # , ('scenario_CNNAttOD')
+])
 
 # @pytest.mark.opNavScenarioTest
 
@@ -82,7 +83,7 @@ def test_opnavBskScenarios(show_plots, bskSimCase):
     scene_plt = importlib.import_module(bskSimCase)
 
     try:
-        figureList = scene_plt.run(False)
+        figureList = scene_plt.run(False, 10)
 
         # save the figures to the Doxygen scenario images folder
 

@@ -31,7 +31,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 try:
-    from Basilisk.fswAlgorithms import limbFinding, centerRadiusCNN, houghCircles  # FSW for OpNav
+    from Basilisk.fswAlgorithms import limbFinding, houghCircles#, centerRadiusCNN  # FSW for OpNav
 except ImportError:
     print("OpNav Modules Missing, check build options")
 
@@ -89,8 +89,8 @@ class BSKFswModels():
         self.imageProcessing = houghCircles.HoughCircles()
         self.imageProcessing.ModelTag = "houghCircles"
 
-        self.opNavCNN = centerRadiusCNN.CenterRadiusCNN()
-        self.opNavCNN.ModelTag = "opNavCNN"
+        # self.opNavCNN = centerRadiusCNN.CenterRadiusCNN()
+        # self.opNavCNN.ModelTag = "opNavCNN"
 
         self.pixelLineData = pixelLineConverter.PixelLineConvertData()
         self.pixelLineWrap = SimBase.setModelDataWrap(self.pixelLineData)
@@ -184,11 +184,11 @@ class BSKFswModels():
         # SimBase.AddModelToTask("opNavAttODTask", self.pixelLineFilterWrap, self.pixelLineFilterData, 9)
         SimBase.AddModelToTask("opNavAttODTask", self.relativeODWrap, self.relativeODData, 9)
 
-        SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
-        SimBase.AddModelToTask("cnnAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        SimBase.AddModelToTask("cnnAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
-        # SimBase.AddModelToTask("opNavAttODTask", self.pixelLineFilterWrap, self.pixelLineFilterData, 9)
-        SimBase.AddModelToTask("cnnAttODTask", self.relativeODWrap, self.relativeODData, 9)
+        # SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
+        # SimBase.AddModelToTask("cnnAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
+        # SimBase.AddModelToTask("cnnAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
+        # # SimBase.AddModelToTask("opNavAttODTask", self.pixelLineFilterWrap, self.pixelLineFilterData, 9)
+        # SimBase.AddModelToTask("cnnAttODTask", self.relativeODWrap, self.relativeODData, 9)
 
         SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10) #used for external torque
 
@@ -210,13 +210,13 @@ class BSKFswModels():
         SimBase.AddModelToTask("opNavFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
         SimBase.AddModelToTask("opNavFaultDet", self.relativeODWrap, self.relativeODData, 9)
 
-        SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, None, 25)
-        SimBase.AddModelToTask("cnnFaultDet", self.pixelLineWrap, self.pixelLineData, 20)
-        SimBase.AddModelToTask("cnnFaultDet", self.imageProcessing, None, 18)
-        SimBase.AddModelToTask("cnnFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-        SimBase.AddModelToTask("cnnFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-        SimBase.AddModelToTask("cnnFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
-        SimBase.AddModelToTask("cnnFaultDet", self.relativeODWrap, self.relativeODData, 9)
+        # SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, None, 25)
+        # SimBase.AddModelToTask("cnnFaultDet", self.pixelLineWrap, self.pixelLineData, 20)
+        # SimBase.AddModelToTask("cnnFaultDet", self.imageProcessing, None, 18)
+        # SimBase.AddModelToTask("cnnFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
+        # SimBase.AddModelToTask("cnnFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
+        # SimBase.AddModelToTask("cnnFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
+        # SimBase.AddModelToTask("cnnFaultDet", self.relativeODWrap, self.relativeODData, 9)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
@@ -629,7 +629,7 @@ class BSKFswModels():
         self.SetImageProcessing()
         self.SetPixelLineConversion()
 
-        self.SetCNNOpNav()
+        # self.SetCNNOpNav()
         self.SetRelativeODFilter()
         self.SetFaultDetection()
         # J. Christian methods

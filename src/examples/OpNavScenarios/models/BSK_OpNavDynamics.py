@@ -24,14 +24,14 @@ from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
                                  reactionWheelStateEffector, coarse_sun_sensor, eclipse, alg_contain, bore_ang_calc,
-                                 thrusterDynamicEffector, simFswInterfaceMessages, ephemeris_converter, vizInterface,
+                                 thrusterDynamicEffector, ephemeris_converter, vizInterface,
                                  camera)
 from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody, unitTestSupport
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk import pyswice
 from Basilisk import __path__
 
-from Basilisk.fswAlgorithms import attTrackingError, rwMotorVoltage, fswMessages
+from Basilisk.fswAlgorithms import attTrackingError
 
 bskPath = __path__[0]
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -142,7 +142,9 @@ class BSKDynamicModels():
             os.mkdir(home + '_VizFiles')
         fileName = home + '_VizFiles/' + name
 
-        self.vizInterface.spacecraftName = 'inertial'
+        scData = vizInterface.VizSpacecraftData()
+        scData.spacecraftName = 'inertial'
+        self.vizInterface.scData.push_back(scData)
         self.vizInterface.opnavImageOutMsgName = "unity_image"#"opnav_image"#
         self.vizInterface.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
                                                                 "mars barycenter_planet_data",
