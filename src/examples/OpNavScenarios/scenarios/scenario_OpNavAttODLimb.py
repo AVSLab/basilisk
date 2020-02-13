@@ -46,7 +46,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
 sys.path.append(path + '/..')
-from BSK_masters import BSKSim, BSKScenario
+from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
 from sys import platform

@@ -34,8 +34,6 @@ The script can be called by running::
 import os
 import inspect
 import scenario_CNNImages as scenario
-from BSK_masters import BSKSim, BSKScenario
-import BSK_OpNavDynamics, BSK_OpNavFsw
 import csv, subprocess, signal
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -63,69 +61,72 @@ dataType1 = range(3)
 dataType2 = range(3)
 dataType3 = range(1)
 
-NUMBER_OF_RUNS = 10
-VERBOSE = True
-PROCESSES = 1
-RUN = True
-POST = True
 
-dirName = os.path.abspath(os.path.dirname(__file__)) + "/cnn_MC_data"
-if RUN:
-    myExecutionFunction = scenario.run
-    myCreationFunction = scenario.scenario_OpNav
+def run(show_plots):
 
-    monteCarlo = Controller()
-    monteCarlo.setShouldDisperseSeeds(True)
-    monteCarlo.setExecutionFunction(myExecutionFunction)
-    monteCarlo.setSimulationFunction(myCreationFunction)
-    monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
-    monteCarlo.setThreadCount(PROCESSES)
-    monteCarlo.setVerbose(True)
-    monteCarlo.setArchiveDir(dirName)
+    NUMBER_OF_RUNS = 10
+    VERBOSE = True
+    PROCESSES = 1
+    RUN = True
+    POST = True
 
-    # Add some dispersions
-    dispDict = {}
-    dispDict["mu"] = 4.2828371901284001E+13
-    dispDict["a"] = ["normal", 14000*1E3, 2500*1E3] # 12000
-    dispDict["e"] = ["uniform", 0.2, 0.5]           # 0.4, 0.7
-    dispDict["i"] = ["uniform", np.deg2rad(40), np.deg2rad(90)]
-    dispDict["Omega"] = None
-    dispDict["omega"] = None
-    dispDict["f"] = ["uniform", np.deg2rad(0), np.deg2rad(359)]
+    dirName = os.path.abspath(os.path.dirname(__file__)) + "/cnn_MC_data"
+    if RUN:
+        myExecutionFunction = scenario.run
+        myCreationFunction = scenario.scenario_OpNav
 
-    disp1Name = 'get_DynModel().scObject.hub.r_CN_NInit'
-    disp2Name = 'get_DynModel().scObject.hub.v_CN_NInit'
-    disp3Name = 'get_FswModel().trackingErrorCamData.sigma_R0R'
-    dispGauss = 'get_DynModel().cameraMod.gaussian'
-    dispDC = 'get_DynModel().cameraMod.darkCurrent'
-    dispSP = 'get_DynModel().cameraMod.saltPepper'
-    dispCR = 'get_DynModel().cameraMod.cosmicRays'
-    dispBlur = 'get_DynModel().cameraMod.blurParam'
+        monteCarlo = Controller()
+        monteCarlo.setShouldDisperseSeeds(True)
+        monteCarlo.setExecutionFunction(myExecutionFunction)
+        monteCarlo.setSimulationFunction(myCreationFunction)
+        monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+        monteCarlo.setThreadCount(PROCESSES)
+        monteCarlo.setVerbose(True)
+        monteCarlo.setArchiveDir(dirName)
 
-    monteCarlo.addDispersion(OrbitalElementDispersion(disp1Name,disp2Name, dispDict))
-    monteCarlo.addDispersion(MRPDispersionPerAxis(disp3Name, bounds=[[1./3-0.051, 1./3+0.051], [1./3-0.051, 1./3+0.051], [-1./3-0.051, -1./3+0.051]]))
-    monteCarlo.addDispersion(UniformDispersion(dispGauss, [0,5]))
-    monteCarlo.addDispersion(UniformDispersion(dispSP, [0,2.5]))
-    monteCarlo.addDispersion(UniformDispersion(dispCR, [0.5,4]))
-    monteCarlo.addDispersion(UniformDispersion(dispBlur, [1,6]))
+        # Add some dispersions
+        dispDict = {}
+        dispDict["mu"] = 4.2828371901284001E+13
+        dispDict["a"] = ["normal", 14000*1E3, 2500*1E3] # 12000
+        dispDict["e"] = ["uniform", 0.2, 0.5]           # 0.4, 0.7
+        dispDict["i"] = ["uniform", np.deg2rad(40), np.deg2rad(90)]
+        dispDict["Omega"] = None
+        dispDict["omega"] = None
+        dispDict["f"] = ["uniform", np.deg2rad(0), np.deg2rad(359)]
 
-    # Add retention policy
-    retentionPolicy = RetentionPolicy()
-    retentionPolicy.addMessageLog(retainedMessageName1, [(var1, dataType1), (var2, dataType2)], retainedRate)
-    retentionPolicy.addMessageLog(retainedMessageName2, [(var3, dataType3)], retainedRate)
-    monteCarlo.addRetentionPolicy(retentionPolicy)
+        disp1Name = 'get_DynModel().scObject.hub.r_CN_NInit'
+        disp2Name = 'get_DynModel().scObject.hub.v_CN_NInit'
+        disp3Name = 'get_FswModel().trackingErrorCamData.sigma_R0R'
+        dispGauss = 'get_DynModel().cameraMod.gaussian'
+        dispDC = 'get_DynModel().cameraMod.darkCurrent'
+        dispSP = 'get_DynModel().cameraMod.saltPepper'
+        dispCR = 'get_DynModel().cameraMod.cosmicRays'
+        dispBlur = 'get_DynModel().cameraMod.blurParam'
 
-    failures = monteCarlo.executeSimulations()
-    assert len(failures) == 0, "No runs should fail"
+        monteCarlo.addDispersion(OrbitalElementDispersion(disp1Name,disp2Name, dispDict))
+        monteCarlo.addDispersion(MRPDispersionPerAxis(disp3Name, bounds=[[1./3-0.051, 1./3+0.051], [1./3-0.051, 1./3+0.051], [-1./3-0.051, -1./3+0.051]]))
+        monteCarlo.addDispersion(UniformDispersion(dispGauss, [0,5]))
+        monteCarlo.addDispersion(UniformDispersion(dispSP, [0,2.5]))
+        monteCarlo.addDispersion(UniformDispersion(dispCR, [0.5,4]))
+        monteCarlo.addDispersion(UniformDispersion(dispBlur, [1,6]))
 
-if POST:
-    monteCarlo = Controller.load(dirName)
-    for i in range(0,NUMBER_OF_RUNS):
-        try:
-            monteCarloData = monteCarlo.getRetainedData(i)
-        except FileNotFoundError:
-            print("File not found, ",  i)
-            continue
+        # Add retention policy
+        retentionPolicy = RetentionPolicy()
+        retentionPolicy.addMessageLog(retainedMessageName1, [(var1, dataType1), (var2, dataType2)], retainedRate)
+        retentionPolicy.addMessageLog(retainedMessageName2, [(var3, dataType3)], retainedRate)
+        monteCarlo.addRetentionPolicy(retentionPolicy)
+
+        failures = monteCarlo.executeSimulations()
+        assert len(failures) == 0, "No runs should fail"
+
+    if POST:
+        monteCarlo = Controller.load(dirName)
+        for i in range(0,NUMBER_OF_RUNS):
+            try:
+                monteCarloData = monteCarlo.getRetainedData(i)
+            except FileNotFoundError:
+                print("File not found, ",  i)
+                continue
         csvfile = open(dirName + "/run" + str(i) + "/data.csv", 'w')
         writer = csv.writer(csvfile)
         writer.writerow(['Filename', 'Valid', 'X_p', 'Y_p', 'rho_p', 'r_BN_N_1', 'r_BN_N_2', 'r_BN_N_3'])
@@ -171,3 +172,12 @@ if POST:
                 writer.writerow([str("{0:.6f}".format(position_N[i,0]*1E-9))+".jpg", validCircle[i, 1], trueCircles[i, 1], trueCircles[i, 2], trueCircles[i, 3], position_N[i,1], position_N[i,2], position_N[i,3]])
         csvfile.close()
 
+    if show_plots:
+        monteCarlo.executeCallbacks()
+        plt.show()
+
+    return
+
+
+if __name__ == "__main__":
+    pid = run(True)

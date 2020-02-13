@@ -26,19 +26,21 @@ The orbit is a 18,000km orbit around Mars, with eccentricity of 0.6, and is pict
 Hough Circles is the image processing method used. After processing measurements through a Orbit Determination Filter,
 spacecraft position and velocity estimates are pictured in the Mars-frame:
 
-.. image:: /_images/static/Filterpos1_1.svg
-:width: 30%
-.. image:: /_images/static/Filtervel1_1.svg
-:width: 30%
-.. image:: /_images/static/Filterpos2_1.svg
-:width: 30%
-.. image:: /_images/static/Filtervel2_1.svg
-:width: 30%
-.. image:: /_images/static/Filterpos3_1.svg
-:width: 30%
-.. image:: /_images/static/Filtervel3_1.svg
-:width: 30%
-   :align: center
+    .. image:: /_images/static/Filterpos1_1.svg
+    .. image:: /_images/static/Filtervel1_1.svg
+
+ Spacecraft Position and Velocity in X component
+
+    .. image:: /_images/static/Filterpos2_1.svg
+    .. image:: /_images/static/Filtervel2_1.svg
+
+ Spacecraft Position and Velocity in Y component
+
+    .. image:: /_images/static/Filterpos3_1.svg
+    .. image:: /_images/static/Filtervel3_1.svg
+
+ Spacecraft Position and Velocity in Z component
+
 
 More details can be found in Chapter 2 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
 

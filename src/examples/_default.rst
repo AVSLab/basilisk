@@ -168,7 +168,7 @@ Optical Navigation Simulations
 .. toctree::
    :maxdepth: 1
 
-   BSK Master Sim  <OpNavScenarios/BSK_masters>
+   BSK OpNav Sim  <OpNavScenarios/BSK_OpNav>
    Hough Circles for Pointing and Orbit Determination  <OpNavScenarios/scenarios/scenario_OpNavAttOD>
    Limb-based method for Pointing and Orbit Determination  <OpNavScenarios/scenarios/scenario_OpNavAttODLimb>
    CNN for Pointing and Orbit Determination   <OpNavScenarios/scenarios/scenario_CNNAttOD>

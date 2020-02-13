@@ -34,7 +34,7 @@ import os
 import inspect
 # import scenario_LimbAttOD as scenario
 import scenario_OpNavAttOD as scenario
-from BSK_masters import BSKSim, BSKScenario
+from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import csv, subprocess, signal
 

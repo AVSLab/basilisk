@@ -45,12 +45,10 @@ Running OpNav Simulations
 --------
 
 In order to call Vizard from python simulations, the path to the downloaded Vizard app must be properly set.
-This is marked with a "TO DO" in this file:
+This is marked with a "TO DO" in this file::
 
-::
     # TODO : Modify the path to the viz here
     appPath = '/Applications/Vizard.app' #If on Mac
-::
 
 The Vizard app must therefore me downloaded, and this path must reflect it's position in the file structure, and its
 name. If the path is not properly set, the OpNav simulations will hang (printing that it is waiting for the Vizard connection).
@@ -66,14 +64,14 @@ OpNav Dynamics, Flight Software, and Plotting
 
 The simulations use three other main python scripts.
 
-OpNavScenarios/models/BSK_OpNavDynamics.py is similar to the BSKSim versions seen previously. The main additions are
+:ref:`models/BSK_OpNavDynamics` is similar to the BSKSim versions seen previously. The main additions are
 the instantiation of vizInterfance, and the camera module.
 
-OpNavScenarios/models/BSK_OpNavFsw.py contains the FSW algorithms used in the scenarios. Examples are the Orbit Determination
+:ref:`models/BSK_OpNavFsw.py` contains the FSW algorithms used in the scenarios. Examples are the Orbit Determination
 filters, the pointing guidance module, the CNN module, and more. This file also contains the modeRequest definitions which
 enable all the tasks necessary to perform a specific action.
 
-OpNavScenarios/plotting/OpNav_Plotting.py contains the plotting routines. None of the files are saved, but are shown when
+:ref:`plotting/OpNav_Plotting.py` contains the plotting routines. None of the files are saved, but are shown when
 the scenario is run with python. Saving is left to the user's discretion.
 
 """
