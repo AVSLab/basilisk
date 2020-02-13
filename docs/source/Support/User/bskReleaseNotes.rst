@@ -22,6 +22,10 @@ Upcoming Version 1.X.X
 - Fixed a transformation issue in ``avsEigenSupport.cpp`` where ``cArray2EigenMatrix3d()`` has to deal with
   both column and row dominant matrix formulations.  This only got used in :ref:`scenarioCSS` and the issue was offset
   by an issue in ``setUnitDirectionVectorWithPerturbation()`` that compensated.  Now, all is as it should be.
+- Fixed the issue of running :ref:`scenarioMonteCarloSpice` on macOS Catalina.  The issue was loading ``matplotlib`` in a
+  multi-threaded simulation.
+- Removed unneeded instances of using ``unitTestSupport.np2EigenVectorXd()`` when setting the spacecraft states
+
 
 Version 1.6.0
 -------------
