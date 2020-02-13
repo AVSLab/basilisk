@@ -1,4 +1,27 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+r"""
+Overview
+--------
 
+This script is called by OpNavScenarios/CNN_ImageGen/OpNavMonteCarlo.py in order to generate images.
+
+"""
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -14,7 +37,7 @@ sys.path.append(path + '/../..')
 from BSK_masters import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
-
+from sys import platform
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../../plotting')
@@ -139,9 +162,15 @@ def run(TheScenario, runLog):
     TheScenario.get_DynModel().cameraMod.saveDir = runLog.split('/')[-2] +'/' +runLog.split('/')[-1] + '/'
     TheScenario.get_DynModel().vizInterface.opNavMode = 2
 
-    if runLog.split('/')[-1] == "run0":
-        child = subprocess.Popen(["open", TheScenario.vizPath, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
-        print("Vizard spawned with PID = " + str(child.pid))
+    mode = ["None", "-directComm", "-opNavMode"]
+    # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
+    if platform != "darwin":
+        child = subprocess.Popen([TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
+             "tcp://localhost:5556"])
+    else:
+        child = subprocess.Popen(["open", TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
+                                  "tcp://localhost:5556"])
+    print("Vizard spawned with PID = " + str(child.pid))
 
     # Configure FSW mode
     TheScenario.modeRequest = 'imageGen'

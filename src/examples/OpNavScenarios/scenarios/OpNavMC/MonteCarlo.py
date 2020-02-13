@@ -128,64 +128,72 @@ def displayPlots(data, retentionPolicy):
     plt.savefig('MCCovarVel.pdf')
 
 
+def run(show_plots):
 
-NUMBER_OF_RUNS = 100
-VERBOSE = True
-PROCESSES = 1
-RUN = True
-POST = False
+    NUMBER_OF_RUNS = 100
+    VERBOSE = True
+    PROCESSES = 1
+    RUN = True
+    POST = False
 
-dirName = os.path.abspath(os.path.dirname(__file__)) + "/MC_data"
-if RUN:
-    myExecutionFunction = scenario.run
-    myCreationFunction = scenario.scenario_OpNav
+    dirName = os.path.abspath(os.path.dirname(__file__)) + "/MC_data"
+    if RUN:
+        myExecutionFunction = scenario.run
+        myCreationFunction = scenario.scenario_OpNav
 
-    monteCarlo = Controller()
-    monteCarlo.setShouldDisperseSeeds(True)
-    monteCarlo.setExecutionFunction(myExecutionFunction)
-    monteCarlo.setSimulationFunction(myCreationFunction)
-    monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
-    monteCarlo.setThreadCount(PROCESSES)
-    monteCarlo.setVerbose(True)
-    monteCarlo.setArchiveDir(dirName)
+        monteCarlo = Controller()
+        monteCarlo.setShouldDisperseSeeds(True)
+        monteCarlo.setExecutionFunction(myExecutionFunction)
+        monteCarlo.setSimulationFunction(myCreationFunction)
+        monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+        monteCarlo.setThreadCount(PROCESSES)
+        monteCarlo.setVerbose(True)
+        monteCarlo.setArchiveDir(dirName)
 
-    # Add some dispersions
-    dispDict = {}
-    dispDict["mu"] = 4.2828371901284001E+13
-    dispDict["a"] = ["normal", 22000*1E3, 3000*1E3]
-    dispDict["e"] = ["uniform", 0.2, 0.4]
-    dispDict["i"] = ["uniform", -np.deg2rad(20), np.deg2rad(20)]
-    dispDict["Omega"] = None
-    dispDict["omega"] = None
-    dispDict["f"] = ["uniform", 0., np.deg2rad(180)]
+        # Add some dispersions
+        dispDict = {}
+        dispDict["mu"] = 4.2828371901284001E+13
+        dispDict["a"] = ["normal", 22000*1E3, 3000*1E3]
+        dispDict["e"] = ["uniform", 0.2, 0.4]
+        dispDict["i"] = ["uniform", -np.deg2rad(20), np.deg2rad(20)]
+        dispDict["Omega"] = None
+        dispDict["omega"] = None
+        dispDict["f"] = ["uniform", 0., np.deg2rad(180)]
 
-    disp1Name = 'get_DynModel().scObject.hub.r_CN_NInit'
-    disp2Name = 'get_DynModel().scObject.hub.v_CN_NInit'
-    # disp3Name = 'get_FswModel().trackingErrorCamData.sigma_R0R'
-    dispFOV = 'get_DynModel().cameraMod.fieldOfView'
-    dispNoise = 'get_FswModel().relativeODData.noiseSF'
-    # disp3Name = 'get_FswModel().trackingErrorCamData.sigma_R0R' = 5#7.5
-    monteCarlo.addDispersion(UniformDispersion(dispNoise, [1, 10]))
-    monteCarlo.addDispersion(UniformDispersion(dispFOV, [np.deg2rad(40) - np.deg2rad(0.001), np.deg2rad(40) + np.deg2rad(0.001)]))
-    monteCarlo.addDispersion(OrbitalElementDispersion(disp1Name,disp2Name, dispDict))
-    # monteCarlo.addDispersion(MRPDispersionPerAxis(disp3Name, bounds=[[1./3-0.05, 1./3+0.05], [1./3-0.05, 1./3+0.05], [-1./3-0.05, -1./3+0.05]]))
+        disp1Name = 'get_DynModel().scObject.hub.r_CN_NInit'
+        disp2Name = 'get_DynModel().scObject.hub.v_CN_NInit'
+        # disp3Name = 'get_FswModel().trackingErrorCamData.sigma_R0R'
+        dispFOV = 'get_DynModel().cameraMod.fieldOfView'
+        dispNoise = 'get_FswModel().relativeODData.noiseSF'
+        # disp3Name = 'get_FswModel().trackingErrorCamData.sigma_R0R' = 5#7.5
+        monteCarlo.addDispersion(UniformDispersion(dispNoise, [1, 10]))
+        monteCarlo.addDispersion(UniformDispersion(dispFOV, [np.deg2rad(40) - np.deg2rad(0.001), np.deg2rad(40) + np.deg2rad(0.001)]))
+        monteCarlo.addDispersion(OrbitalElementDispersion(disp1Name,disp2Name, dispDict))
+        # monteCarlo.addDispersion(MRPDispersionPerAxis(disp3Name, bounds=[[1./3-0.05, 1./3+0.05], [1./3-0.05, 1./3+0.05], [-1./3-0.05, -1./3+0.05]]))
 
-    # Add retention policy
-    retentionPolicy = RetentionPolicy()
-    retentionPolicy.addMessageLog("inertial_state_output", [("r_BN_N", range(3)), ("v_BN_N", range(3)), ("sigma_BN", range(3))], macros.sec2nano(10))
-    retentionPolicy.addMessageLog("output_nav_msg", [("r_BN_N", range(3)), ("covar_N", range(3*3)), ("r_BN_C", range(3)), ("covar_C", range(3*3)), ("valid", range(1))], macros.sec2nano(10)) #horizon nav
-    retentionPolicy.addMessageLog("relod_filter_data", [("state", range(6)), ("covar", range(6*6))], macros.sec2nano(10)) #horizon nav
-    retentionPolicy.setDataCallback(displayPlots)
-    monteCarlo.addRetentionPolicy(retentionPolicy)
+        # Add retention policy
+        retentionPolicy = RetentionPolicy()
+        retentionPolicy.addMessageLog("inertial_state_output", [("r_BN_N", range(3)), ("v_BN_N", range(3)), ("sigma_BN", range(3))], macros.sec2nano(10))
+        retentionPolicy.addMessageLog("output_nav_msg", [("r_BN_N", range(3)), ("covar_N", range(3*3)), ("r_BN_C", range(3)), ("covar_C", range(3*3)), ("valid", range(1))], macros.sec2nano(10)) #horizon nav
+        retentionPolicy.addMessageLog("relod_filter_data", [("state", range(6)), ("covar", range(6*6))], macros.sec2nano(10)) #horizon nav
+        retentionPolicy.setDataCallback(displayPlots)
+        monteCarlo.addRetentionPolicy(retentionPolicy)
 
-    child = subprocess.Popen(["open", viz_path, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
-    print("Vizard spawned with PID = " + str(child.pid))
+        child = subprocess.Popen(["open", viz_path, "--args", "-opNavMode", "tcp://localhost:5556"])  # ,,"-batchmode",
+        print("Vizard spawned with PID = " + str(child.pid))
 
-    failures = monteCarlo.executeSimulations()
-    assert len(failures) == 0, "No runs should fail"
+        failures = monteCarlo.executeSimulations()
+        assert len(failures) == 0, "No runs should fail"
 
-    monteCarlo.executeCallbacks()
-    plt.show()
+        if show_plots:
+            monteCarlo.executeCallbacks()
+            plt.show()
 
-os.kill(child.pid + 1, signal.SIGKILL)
+        return  child.pid
+
+
+if __name__ == "__main__":
+    pid = run(True)
+    os.kill(pid + 1, signal.SIGKILL)
+
 
