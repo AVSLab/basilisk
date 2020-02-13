@@ -20,7 +20,11 @@ r"""
 Overview
 --------
 
-This script is a basic demonstration of a script that can be used to rerun a set or subset of Monte Carlo simulations
+This script is a basic demonstration of a script that can be used to rerun a set or subset of Monte Carlo simulations.
+
+.. important::
+   This script can only be run once there exists data produced by the scenario_AttFeedbackMC.py script.
+
 
 """
 

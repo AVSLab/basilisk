@@ -33,7 +33,7 @@ def curve_per_df_component(df):
         varIdx_df = df.loc[idx[:], idx[:, i]]
 
         # Inject NaNs at the end of the run so the curves don't wrap from t_f to t_0
-        varIdx_df = varIdx_df.append(pd.Series(name=np.nan))
+        varIdx_df = varIdx_df.append(pd.Series(name=np.nan, dtype='float'))
 
         # Flatten values by column order
         time = np.tile(varIdx_df.index, len(varIdx_df.columns.codes[0]))  # Repeat time by number of runs

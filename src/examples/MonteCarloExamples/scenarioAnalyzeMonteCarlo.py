@@ -25,12 +25,13 @@ This script is a basic demonstration of a script that can be used to plot Monte 
 bokeh and datashaders. 
 
 .. important::
+   1.   This script can only be run once there exists data produced by the scenario_AttFeedbackMC.py script.
 
-   1.   The name guard at the end of the file must be removed before this script can run.
+   2.   The name guard at the end of the file must be removed before this script can run.
         It is provided here to ensure that the sphinx documentation generation process does not
         run this script automatically.
 
-   2.   This script must be called from command line using
+   3.   This script must be called from command line using
         ``/usr/local/bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py``
 
 """
