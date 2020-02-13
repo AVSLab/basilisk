@@ -147,8 +147,8 @@ def run(show_plots):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)
+    scObject.hub.r_CN_NInit = rN
+    scObject.hub.v_CN_NInit = vN
 
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.001], [0.001]]

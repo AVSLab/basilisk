@@ -281,8 +281,8 @@ def run(show_plots):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
+    scObject.hub.r_CN_NInit = rN  # m - r_CN_N
+    scObject.hub.v_CN_NInit = vN  # m - v_CN_N
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)

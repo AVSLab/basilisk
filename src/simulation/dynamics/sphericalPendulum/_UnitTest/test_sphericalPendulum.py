@@ -190,8 +190,8 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # attach the state to the spacecraft
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
 
     simulationTime = macros.sec2nano(10)
 

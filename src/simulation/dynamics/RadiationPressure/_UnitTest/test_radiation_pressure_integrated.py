@@ -106,8 +106,8 @@ def radiationPressureIntegratedTest(show_plots):
     #
     #   initialize Spacecraft States with the initialization variables
     #
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)

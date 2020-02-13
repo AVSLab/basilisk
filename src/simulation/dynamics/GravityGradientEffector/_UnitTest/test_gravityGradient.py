@@ -178,8 +178,8 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     scObject.hub.r_BcB_B = cmOffset
     scObject.hub.mHub = 100.0  # kg - spacecraft mass
     scObject.hub.IHubPntBc_B = IIC
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
