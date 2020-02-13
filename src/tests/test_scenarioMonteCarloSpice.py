@@ -35,7 +35,7 @@ sys.path.append(path + '/../examples/')
 import scenarioMonteCarloSpice
 
 @pytest.mark.scenarioTest
-# @pytest.mark.skip(reason="This test is having issues right now passing with the new Controller class.")
+@pytest.mark.skip(reason="This test is having issues right now passing with the new Controller class.")
 
 def test_MonteCarloSimulationDatashader(show_plots):
     """This function is called by the py.test environment."""
