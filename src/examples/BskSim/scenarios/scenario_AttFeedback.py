@@ -23,7 +23,7 @@ This script is base BSK Sim script used for the MC examples.
 
 """
 
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport, vizSupport
+from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
 
 # Get current file path
@@ -74,8 +74,8 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
         mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
         self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 

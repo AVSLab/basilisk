@@ -73,7 +73,7 @@ Illustration of Simulation Results
 
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport, vizSupport
+from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
 # Get current file path
 import sys, os, inspect
@@ -125,8 +125,8 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
         mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # [m]
-        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # [m/s]
+        self.get_DynModel().scObject.hub.r_CN_NInit = rN  # [m]
+        self.get_DynModel().scObject.hub.v_CN_NInit = vN  # [m/s]
         self.get_DynModel().scObject.hub.sigma_BNInit = [[0.5], [0.6], [-0.3]]
         self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]
 
