@@ -1,3 +1,38 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+r"""
+Overview
+--------
+
+This scenario is identical to OpNavAttOD, except that it uses the Canny transform to extract limb points.
+Then it reconstructs the spacecraft position using the horizon points.
+More details can be found in Chapter 4 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
+
+The algorithms used are found in src/fswAlgorithms/imageProcessing/limbFinding, and in
+src/fswAlgorithms/imageProcessing/horizonOpNav.
+
+The script can be run at full length by calling::
+
+    python3 scenario_OpNavAttODLimb.py
+
+"""
+
+
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport

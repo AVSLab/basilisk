@@ -1,4 +1,36 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+r"""
+Overview
+--------
 
+This scenario is similar to the pointing scenario. The spacecraft is simply attempting to point to the planet.
+
+
+On top of using src/fswAlgorithms/attGuidance/opNavPoint, it also filters the measurements using a "Switch" filter
+found in src/fswAlgorithms/attDetermination/headingSuKF.
+More details can be found in Chapter 2-3 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
+
+The script can be run at full length by calling::
+
+    python3 scenario_OpNavHeading.py
+
+"""
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 from Basilisk.utilities import RigidBodyKinematics as rbk

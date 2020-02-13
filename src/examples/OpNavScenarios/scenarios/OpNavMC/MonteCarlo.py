@@ -1,3 +1,35 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+r"""
+Overview
+--------
+
+The OpNav Monte-Carlo python scripts provides the capability to run Monte-Carlo simulations using a OpNav scenario.
+This script contains the dispersions applied, the plotting methods used, and the number of desired runs.
+
+This script calls OpNavScenarios/OpNavMC/scenario_OpNavAttOD.py (or others) in order to generate the simulations.
+The script can be called by running::
+
+    python3 MonteCarlo.py
+
+"""
+
+
 import os
 import inspect
 # import scenario_LimbAttOD as scenario

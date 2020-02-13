@@ -1,3 +1,53 @@
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+r"""
+Overview
+--------
+
+This scenario uses the OpNav FSW stack to perform both pointing towards the target planet, and Orbit Determination.
+As the primary scenario for OpNav, it will be detailed more carefully.
+
+The orbit is a 18,000km orbit around Mars, with eccentricity of 0.6, and is pictured alongside the measurements:
+
+.. image:: /_images/static/Orbit_OpNav.svg
+   :align: center
+
+Hough Circles is the image processing method used. After processing measurements through a Orbit Determination Filter,
+spacecraft position and velocity estimates are pictured in the Mars-frame:
+
+.. image:: /_images/static/Filterpos1_1.svg
+:width: 30%
+.. image:: /_images/static/Filtervel1_1.svg
+:width: 30%
+.. image:: /_images/static/Filterpos2_1.svg
+:width: 30%
+.. image:: /_images/static/Filtervel2_1.svg
+:width: 30%
+.. image:: /_images/static/Filterpos3_1.svg
+:width: 30%
+.. image:: /_images/static/Filtervel3_1.svg
+:width: 30%
+   :align: center
+
+More details can be found in Chapter 2 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
+
+The script can be run at full length by calling::
+
+    python3 scenario_OpNavAttOD.py
+
+"""
+
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
