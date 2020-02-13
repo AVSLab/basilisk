@@ -191,9 +191,9 @@ def TestDragCalculation():
     vN = np.array([0,7.788e3,0])
     sig_BN = np.array([0,0,0])
     #   initialize Spacecraft States with the initialization variables
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
-    scObject.hub.sigma_BNInit =  unitTestSupport.np2EigenVectorXd(sig_BN)
+    scObject.hub.r_CN_NInit = rN  # m - r_CN_N
+    scObject.hub.v_CN_NInit = vN  # m - v_CN_N
+    scObject.hub.sigma_BNInit = sig_BN
 
     simulationTime = macros.sec2nano(5.)
     #
@@ -344,9 +344,9 @@ def TestShadowCalculation():
     sig_BN = np.array([0,0,0])
 
     #   initialize Spacecraft States with the initialization variables
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
-    scObject.hub.sigma_BNInit =  unitTestSupport.np2EigenVectorXd(sig_BN)
+    scObject.hub.r_CN_NInit = rN  # m - r_CN_N
+    scObject.hub.v_CN_NInit = vN  # m - v_CN_N
+    scObject.hub.sigma_BNInit = sig_BN
 
     simulationTime = macros.sec2nano(10.)
     #

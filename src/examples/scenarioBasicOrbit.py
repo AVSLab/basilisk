@@ -308,8 +308,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
 
     # These vectors specify the inertial position and velocity vectors relative to the planet of the
     # spacecraft center of mass location.  Note that there are 2 points that can be tracked.  The user always

@@ -39,7 +39,6 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 import shutil
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
@@ -98,8 +97,8 @@ def myCreationFunction():
     oe = orbitalMotion.rv2elem(planet.mu, rN, vN)  # with circular or equatorial orbit, some angles are arbitrary
 
     #   initialize Spacecraft States with the initialization variables
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
 
     # set the simulation time
     mean_motion = np.sqrt(planet.mu / oe.a / oe.a / oe.a)

@@ -220,8 +220,8 @@ def run(show_plots):
     t0_Tp = (1 / n) * E
 
     # initialize Spacecraft States with the initialization variables
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(r_E)  # m   - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(v_E)  # m/s - v_BN_N
+    scObject.hub.r_CN_NInit = r_E  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = v_E  # m/s - v_BN_N
 
     # set the simulation time
     simulationTime = macros.sec2nano(t0_Tp)

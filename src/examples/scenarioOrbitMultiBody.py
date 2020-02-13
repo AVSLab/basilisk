@@ -256,8 +256,8 @@ def run(show_plots, scCase):
 
     # Note that these vectors are given here relative to the Earth frame.  When we set the spacecraftPlus()
     # initial position and velocity vectors through before initialization
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
+    scObject.hub.r_CN_NInit = rN  # m - r_CN_N
+    scObject.hub.v_CN_NInit = vN  # m - v_CN_N
     # the natural question arises, how does Basilisk know relative to what frame these states are defined?  This is
     # actually setup above where we set `.isCentralBody = True` and mark the Earth as are central body.
     # Without this statement, the code would assume the spacecraftPlus() states are

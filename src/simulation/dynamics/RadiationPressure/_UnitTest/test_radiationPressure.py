@@ -101,17 +101,17 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cube_lookup.xml")
         for i in range(0, len(handler.forceBLookup)):
-            srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
-            srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
-            srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
+            srpDynEffector.addForceLookupBEntry(handler.forceBLookup[i, :])
+            srpDynEffector.addTorqueLookupBEntry(handler.torqueBLookup[i, :])
+            srpDynEffector.addSHatLookupBEntry(handler.sHatBLookup[i, :])
     elif modelType == "cannonballLookup":
         srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cannonballLookup.xml")
         for i in range(0, len(handler.forceBLookup)):
-            srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
-            srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
-            srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
+            srpDynEffector.addForceLookupBEntry(handler.forceBLookup[i, :])
+            srpDynEffector.addTorqueLookupBEntry(handler.torqueBLookup[i, :])
+            srpDynEffector.addSHatLookupBEntry(handler.sHatBLookup[i, :])
         srpDynEffector2.setUseCannonballModel()
         srpDynEffector2.area = 182018.072141393 #set to give a force of 1N at 1AU to make spherical table generation easy
         srpDynEffector2.coefficientReflection = 1.2

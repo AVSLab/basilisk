@@ -192,15 +192,15 @@ def run(show_plots, useCentral):
     # ~~~~~~~~~~~~~
     # Then, the planetPositionVelocity() method can be used to get the needed information
     if useCentral:
-        scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
-        scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+        scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+        scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     else:
         #by default planetstates.planetPositionVelocity returns SSB central ICRS coordinates for the planet at the time
         # requested. also pck0010.tpc ephemeris file
         #look in the function for how to use other ephemeris files, reference frames, and observers
         planetPosition, planetVelocity = planetStates.planetPositionVelocity('EARTH', UTCInit)
-        scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN + array(planetPosition))
-        scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN + array(planetVelocity))
+        scObject.hub.r_CN_NInit = rN + array(planetPosition)
+        scObject.hub.v_CN_NInit = vN + array(planetVelocity)
         # In the above call, the first input is the planet to get the states of and the second is the UTC time
         # to get the states at. Additional inputs are available in the method documentation. These states can then be added
         # to the planet-relative states before setting them to the spacecraft initial states

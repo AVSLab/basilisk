@@ -490,8 +490,8 @@ def run(show_plots, simCase):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = om.elem2rv(mu, oe)
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+    scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
     if simCase < 2:
         scObject.hub.sigma_BNInit = [[0.5], [0.6], [-0.3]]  # sigma_CN_B
         scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]  # rad/s - omega_CN_B
