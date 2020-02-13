@@ -74,7 +74,7 @@ def clear_all_plots():
 
 def omegaTrack(rError, covar):
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -104,7 +104,7 @@ def omegaTrack(rError, covar):
 
 def vecTrack(ref, track, covar):
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -157,14 +157,14 @@ def vecTrack(ref, track, covar):
     plt.plot(t , rError[:, 3], color = colorList[2])
     plt.plot(t, 3*np.sqrt(covar[:, 2,2]), color=colorList[8], linestyle = '--')
     plt.plot(t, -3*np.sqrt(covar[:, 2,2]), color=colorList[8], linestyle = '--')
-    plt.ylabel('$\hat{\mathbf{h}}_{' + str(3) +'}$ Error in $\mathcal{C}$ (-)')
+    plt.ylabel(r'$\hat{\mathbf{h}}_{' + str(3) +'}$ Error in $\mathcal{C}$ (-)')
     plt.ylim([-0.04,0.04])
     plt.xlabel('Time (min)')
     plt.savefig('HeadingCam3.pdf')
 
 
 def plot_faults(dataFaults, valid1, valid2):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -185,7 +185,7 @@ def plot_faults(dataFaults, valid1, valid2):
     return
 
 def diff_methods(vec1, meth1, meth2, val1, val2):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -237,7 +237,7 @@ def diff_methods(vec1, meth1, meth2, val1, val2):
 def diff_vectors(vec1, vec2, valid, string):
     assert len(vec1[0,:]) == len(vec2[0,:]), print("Vectors need to be the same size")
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -266,7 +266,7 @@ def diff_vectors(vec1, vec2, valid, string):
     plt.legend()
     plt.ylabel("$\mathbf{r}_{\mathrm{true}} - \mathbf{r}_{\mathrm{opnav}}$ (km)")
     plt.xlabel("Time (min)")
-    plt.savefig('MeasErrorComponents.pdf')
+    ##plt.savefig('MeasErrorComponents.pdf')
 
     # plt.figure(2, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.figure(2, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
@@ -275,12 +275,12 @@ def diff_vectors(vec1, vec2, valid, string):
     plt.plot(diff[:, 0] * ns2min, np.mean(diffNorms[:,1]) * m2km2 * np.ones(len(diff[:, 0])),  color = colorList[1], linestyle="--")
     plt.ylabel("$|\mathbf{r}_{\mathrm{true}}|$ - $|\mathbf{r}_{\mathrm{opnav}}|$ (km)")
     plt.xlabel("Time (min)")
-    plt.savefig('MeasErrorNorm.pdf')
+    #plt.savefig('MeasErrorNorm.pdf')
     return
 
 def nav_percentages(truth, states, covar, valid, string):
     numStates = len(states[0:,1:])
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -314,7 +314,7 @@ def nav_percentages(truth, states, covar, valid, string):
     plt.ylabel("$\mathbf{r}_\mathrm{"+string+"}$ errors ($\%$)")
     plt.xlabel("Time (min)")
     # plt.ylim([0,3.5])
-    plt.savefig('PercentErrorPos.pdf')
+    #plt.savefig('PercentErrorPos.pdf')
 
     plt.figure(102, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(102, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
@@ -323,7 +323,7 @@ def nav_percentages(truth, states, covar, valid, string):
     plt.ylabel("$\dot{\mathbf{r}}_\mathrm{"+string+ "}$ errors ($\%$)")
     plt.xlabel("Time (min)")
     # plt.ylim([0,15])
-    plt.savefig('PercentErrorVel.pdf')
+    #plt.savefig('PercentErrorVel.pdf')
 
 
     RMSPos = np.sqrt(sum(diffPos[:, 1] ** 2)/len(diffPos[:, 1]))
@@ -356,7 +356,7 @@ def plot_orbit(r_BN):
     return
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -370,13 +370,13 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
                  color=colorList[idx*2],
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
-    plt.savefig('RWMotorTorque.pdf')
+    #plt.savefig('RWMotorTorque.pdf')
     plt.xlabel('Time (min)')
     plt.ylabel('RW Motor Torque (Nm)')
 
 
 def plot_TwoOrbits(r_BN, r_BN2):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -396,7 +396,7 @@ def plot_TwoOrbits(r_BN, r_BN2):
     return
 
 def plot_attitude_error(timeLineSet, dataSigmaBR):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -413,12 +413,12 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     plt.xlabel('Time (min)')
     plt.xlim([40, 100])
     plt.ylabel('Attitude Error Norm $|\sigma_{C/R}|$')
-    plt.savefig('AttErrorNorm.pdf')
+    #plt.savefig('AttErrorNorm.pdf')
     ax.set_yscale('log')
 
 
 def plot_rate_error(timeLineSet, dataOmegaBR):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -433,7 +433,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     plt.legend(loc='lower right')
     plt.xlim([40, 100])
     plt.xlabel('Time (min)')
-    plt.savefig('RateErrorControl.pdf')
+    #plt.savefig('RateErrorControl.pdf')
     plt.ylabel('Rate Tracking Error (rad/s) ')
     return
 
@@ -447,7 +447,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
                  label='$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time (min)')
-    plt.savefig('RWMotorTorque.pdf')
+    #plt.savefig('RWMotorTorque.pdf')
     plt.ylabel('RW Motor Torque (Nm)')
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
@@ -462,7 +462,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 
 def plotStateCovarPlot(x, Pflat):
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -556,7 +556,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t ,- 3 * np.sqrt(P[:, 0, 0])*m2km, '--', color = colorList[8])
         plt.legend(loc='best')
         plt.ylabel('$r_1$ Error (km)')
-        plt.savefig('Filterpos1.pdf')
+        #plt.savefig('Filterpos1.pdf')
 
     if numStates == 6:
         plt.figure(21, figsize=(2.4, 1.4), facecolor='w', edgecolor='k')
@@ -564,7 +564,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , 3 * np.sqrt(P[:, 3, 3])*m2km, '--', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 3, 3])*m2km, '--', color = colorList[8])
         plt.ylabel('$v_1$ Error (km/s)')
-        plt.savefig('Filtervel1.pdf')
+        #plt.savefig('Filtervel1.pdf')
 
     if numStates == 6 or numStates ==3:
         plt.figure(22, figsize=(2.4, 1.4), facecolor='w', edgecolor='k')
@@ -572,7 +572,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , 3 * np.sqrt(P[:, 1, 1])*m2km, '--', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 1, 1])*m2km, '--', color = colorList[8])
         plt.ylabel('$r_2$ Error (km)')
-        plt.savefig('Filterpos2.pdf')
+        #plt.savefig('Filterpos2.pdf')
 
     if numStates == 6:
         plt.figure(23, figsize=(2.4, 1.4), facecolor='w', edgecolor='k')
@@ -580,7 +580,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , 3 * np.sqrt(P[:, 4, 4])*m2km, '--', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 4, 4])*m2km, '--', color = colorList[8])
         plt.ylabel('$v_2$ Error (km/s)')
-        plt.savefig('Filtervel2.pdf')
+        #plt.savefig('Filtervel2.pdf')
 
     if numStates == 6 or numStates ==3:
         plt.figure(24, figsize=(2.4, 1.4), facecolor='w', edgecolor='k')
@@ -589,7 +589,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t ,-3 * np.sqrt(P[:, 2, 2])*m2km, '--', color = colorList[8])
         plt.xlabel('Time (min)')
         plt.ylabel('$r_3$ Error (km)')
-        plt.savefig('Filterpos3.pdf')
+        #plt.savefig('Filterpos3.pdf')
 
     if numStates == 6:
         plt.figure(25, figsize=(2.4, 1.4), facecolor='w', edgecolor='k')
@@ -598,7 +598,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , -3 * np.sqrt(P[:, 5, 5])*m2km, '--', color = colorList[8])
         plt.xlabel('Time (min)')
         plt.ylabel('$v_3$ Error (km/s)')
-        plt.savefig('Filtervel3.pdf')
+        #plt.savefig('Filtervel3.pdf')
 
 
 def centerXY(centerPoints, size):
@@ -616,7 +616,7 @@ def centerXY(centerPoints, size):
             subX.append(center[i,1])
             subY.append(center[i, 2])
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -635,7 +635,7 @@ def centerXY(centerPoints, size):
     plt.legend(loc='best')
     plt.ylabel("Pixels")
     plt.title('First unit Vec component in C frame (-)')
-    plt.savefig('CentersXY.pdf')
+    #plt.savefig('CentersXY.pdf')
 
 
 def pixelAndPos(x, r, centers, size):
@@ -671,7 +671,7 @@ def pixelAndPos(x, r, centers, size):
         centerPoints[:, i+1]/=maxCenter/maxDiff[i]
 
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -712,7 +712,7 @@ def pixelAndPos(x, r, centers, size):
 def imgProcVsExp(true, centers, radii, size):
 
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -743,7 +743,7 @@ def imgProcVsExp(true, centers, radii, size):
     plt.ylabel('X (px)')
     plt.xlabel('Time (min)')
     plt.grid(b=None, which='major', axis='y')
-    plt.savefig('Xpix.pdf')
+    #plt.savefig('Xpix.pdf')
 
     plt.figure(302, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(302, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
@@ -758,7 +758,7 @@ def imgProcVsExp(true, centers, radii, size):
     plt.ylabel('Y (px)')
     plt.xlabel('Time (min)')
     plt.grid(b=None, which='major', axis='y')
-    plt.savefig('Ypix.pdf')
+    #plt.savefig('Ypix.pdf')
 
     plt.figure(312, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(312, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
@@ -768,7 +768,7 @@ def imgProcVsExp(true, centers, radii, size):
     plt.ylabel('$\\rho$ (px)')
     plt.xlabel('Time (min)')
     plt.grid(b=None, which='minor', axis='y')
-    plt.savefig('Rhopix.pdf')
+    #plt.savefig('Rhopix.pdf')
 
 
     plt.figure(303, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
@@ -777,7 +777,7 @@ def imgProcVsExp(true, centers, radii, size):
     plt.legend(loc='best')
     plt.ylabel('X error (px)')
     plt.grid()
-    plt.savefig('Xerror.pdf')
+    #plt.savefig('Xerror.pdf')
 
     plt.figure(304, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(304, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
@@ -785,7 +785,7 @@ def imgProcVsExp(true, centers, radii, size):
     plt.legend(loc='best')
     plt.ylabel('Y error (px)')
     plt.grid()
-    plt.savefig('Yerror.pdf')
+    #plt.savefig('Yerror.pdf')
 
     plt.figure(305, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(305, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
@@ -794,7 +794,7 @@ def imgProcVsExp(true, centers, radii, size):
     plt.ylabel('Radius error (px)')
     plt.xlabel("Time (min)")
     plt.grid()
-    plt.savefig('Rhoerror.pdf')
+    #plt.savefig('Rhoerror.pdf')
 
 
 def plotPostFitResiduals(Res, noise):
@@ -802,7 +802,7 @@ def plotPostFitResiduals(Res, noise):
     MeasNoise = np.zeros([len(Res[:,0]), 3])
     Noiselast = np.zeros([3,3])
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10)
+    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
@@ -834,7 +834,7 @@ def plotPostFitResiduals(Res, noise):
         plt.ylabel('$r_1$ Measured (km)')
         plt.xlabel("Time (min)")
         plt.grid()
-        plt.savefig('Res1.pdf')
+        #plt.savefig('Res1.pdf')
 
         plt.figure(402, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
         plt.plot(t , Res[:, 2]*m2km, ".",  color = colorList[1])
@@ -846,7 +846,7 @@ def plotPostFitResiduals(Res, noise):
         plt.ylabel('$r_2$ Measured (km)')
         plt.xlabel("Time (min)")
         plt.grid()
-        plt.savefig('Res2.pdf')
+        #plt.savefig('Res2.pdf')
 
 
         plt.figure(403, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
@@ -859,7 +859,7 @@ def plotPostFitResiduals(Res, noise):
         plt.ylabel('$r_3$ Measured (km)')
         plt.xlabel("Time (min)")
         plt.grid()
-        plt.savefig('Res3.pdf')
+        #plt.savefig('Res3.pdf')
 
 
     if len(Res[0,:])-1 == 6:
@@ -935,7 +935,7 @@ def plot_cirlces(centers, radii, validity, resolution):
     plt.xlabel('X-axis (px)')
     plt.ylabel('Y-axis (px)')
     plt.axis("equal")
-    plt.savefig('Circles.pdf')
+    #plt.savefig('Circles.pdf')
 
 
 def plot_limb(limbPoints, numLimb,  validity, resolution):
@@ -971,13 +971,13 @@ def plot_limb(limbPoints, numLimb,  validity, resolution):
     plt.xlabel('X-axis (px)')
     plt.ylabel('Y-axis (px)')
     plt.axis("equal")
-    plt.savefig('Limbs.pdf')
+    #plt.savefig('Limbs.pdf')
 
     plt.figure(601, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(time, numBerPoints, color=colorList[1])
     plt.xlabel('Time (min)')
     plt.ylabel('Limb Size (px)')
-    plt.savefig('LimbPoints.pdf')
+    #plt.savefig('LimbPoints.pdf')
 
 class AnimatedCircles(object):
     """An animated scatter plot using matplotlib.animations.FuncAnimation."""

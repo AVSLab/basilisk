@@ -145,6 +145,7 @@ class BSKDynamicModels():
         scData = vizInterface.VizSpacecraftData()
         scData.spacecraftName = 'inertial'
         self.vizInterface.scData.push_back(scData)
+        self.vizInterface.opNavMode = 2
         self.vizInterface.opnavImageOutMsgName = "unity_image"#"opnav_image"#
         self.vizInterface.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
                                                                 "mars barycenter_planet_data",

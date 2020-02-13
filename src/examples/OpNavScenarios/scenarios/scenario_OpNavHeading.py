@@ -14,7 +14,7 @@ sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
-
+from sys import platform
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../plotting')
@@ -342,14 +342,17 @@ def run(showPlots, simTime = None):
     TheScenario.configure_initial_conditions()
 
     TheBSKSim.get_DynModel().cameraMod.saveImages = 0
+    # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 
-    if TheBSKSim.get_DynModel().vizInterface.opNavMode == 2:
-        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", "-opNavMode",
-                                  "tcp://localhost:5556"])  # ,, "-batchmode"
-    if TheBSKSim.get_DynModel().vizInterface.opNavMode == 1:
-        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", "-directComm",
-                                  "tcp://localhost:5556"])  # ,, "-batchmode"
+    mode = ["None", "-directComm", "-opNavMode"]
+    # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
+    if platform != "darwin":
+        child = subprocess.Popen([TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
+             "tcp://localhost:5556"])
+    else:
+        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
+                                  "tcp://localhost:5556"])
     print("Vizard spawned with PID = " + str(child.pid))
 
     # Configure FSW mode

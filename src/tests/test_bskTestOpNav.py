@@ -54,7 +54,7 @@ if os.path.exists(SimBase.vizPath) == False:
 
 try:
     from Basilisk.simulation import vizInterface, camera
-    from Basilisk.fswAlgorithms import houghCircles, limbFinding#,centerRadiusCNN
+    from Basilisk.fswAlgorithms import houghCircles, limbFinding #,centerRadiusCNN
 except ImportError:
     pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use OpenCV, ZMQ, and Protobuffers in build")
 
@@ -73,7 +73,7 @@ except ImportError:
     # , ('scenario_CNNAttOD')
 ])
 
-# @pytest.mark.opNavScenarioTest
+@pytest.mark.scenarioTest
 
 def test_opnavBskScenarios(show_plots, bskSimCase):
 
