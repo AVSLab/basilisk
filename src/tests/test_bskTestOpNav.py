@@ -47,8 +47,8 @@ Requirements:
     • Basilisk built with ZMQ, protobuffers, and OpenCV (build with USE_*** options set to ON)
 """
 
-import BSK_masters
-SimBase = BSK_masters.BSKSim(1,1)
+import BSK_OpNav
+SimBase = BSK_OpNav.BSKSim(1,1)
 if os.path.exists(SimBase.vizPath) == False:
     pytestmark = pytest.mark.skip(reason= "Vizard App not found: modify app in examples/OpNavScenarios/BSK_masters")
 
