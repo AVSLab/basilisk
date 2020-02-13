@@ -40,6 +40,7 @@ m2km = 1.0 / 1000.0
 ns2min = 1/60.*1E-9
 
 mpl.rcParams.update({'font.size' : 8 })
+# If a specific style for plotting wants to be used
 try:
     plt.style.use("myStyle")
     params = {'axes.labelsize': 8, 'axes.titlesize': 8, 'legend.fontsize': 8, 'xtick.labelsize': 7,
@@ -224,7 +225,7 @@ def diff_methods(vec1, meth1, meth2, val1, val2):
     plt.legend()
     plt.ylabel("$\mathbf{r}_{\mathrm{true}} - \mathbf{r}_{\mathrm{opnav}}$ (km)")
     plt.xlabel("Time (min)")
-    plt.savefig('MeasErrorComponents.pdf')
+    # plt.savefig('MeasErrorComponents.pdf')
 
     plt.figure(2, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.xlabel('Time')
@@ -232,7 +233,7 @@ def diff_methods(vec1, meth1, meth2, val1, val2):
     plt.plot(diff2[:, 0] * ns2min, diffNorms2[:,1] * m2km,  color = colorList[1], linestyle="--", linewidth=2)
     plt.ylabel("$|\mathbf{r}_{\mathrm{true}}|$ - $|\mathbf{r}_{\mathrm{opnav}}|$ (km)")
     plt.xlabel("Time (min)")
-    plt.savefig('MeasErrorNorm.pdf')
+    # plt.savefig('MeasErrorNorm.pdf')
 
 def diff_vectors(vec1, vec2, valid, string):
     assert len(vec1[0,:]) == len(vec2[0,:]), print("Vectors need to be the same size")
@@ -340,10 +341,10 @@ def nav_percentages(truth, states, covar, valid, string):
     print(RMSVelCov)
     print('------------------------')
     # RMS Errors Computed for heading and rate
-    unitTestSupport.writeTeXSnippet('RMSPos_'+ string, str(round(RMSPos,3)), os.path.dirname(__file__))
-    unitTestSupport.writeTeXSnippet('RMSPosCov_'+ string, str(round(RMSPosCov,3)),os.path.dirname(__file__))
-    unitTestSupport.writeTeXSnippet('RMSVel_'+ string, str(round(RMSVel,3)), os.path.dirname(__file__))
-    unitTestSupport.writeTeXSnippet('RMSVelCov_'+ string, str(round(RMSVelCov,3)),os.path.dirname(__file__))
+    # unitTestSupport.writeTeXSnippet('RMSPos_'+ string, str(round(RMSPos,3)), os.path.dirname(__file__))
+    # unitTestSupport.writeTeXSnippet('RMSPosCov_'+ string, str(round(RMSPosCov,3)),os.path.dirname(__file__))
+    # unitTestSupport.writeTeXSnippet('RMSVel_'+ string, str(round(RMSVel,3)), os.path.dirname(__file__))
+    # unitTestSupport.writeTeXSnippet('RMSVelCov_'+ string, str(round(RMSVelCov,3)),os.path.dirname(__file__))
     return
 
 def plot_orbit(r_BN):

@@ -66,11 +66,11 @@ class scenario_OpNav(BSKScenario):
 
         self.masterSim.get_DynModel().cameraMod.cameraIsOn = 1
         # Camera noise params
-        # self.masterSim.get_DynModel().cameraMod.gaussian = 5 #2  #
-        # self.masterSim.get_DynModel().cameraMod.darkCurrent = 0.5 #0 #
-        # self.masterSim.get_DynModel().cameraMod.saltPepper = 1 # 0.5 #
-        self.masterSim.get_DynModel().cameraMod.cosmicRays = 1 #1 #
-        # self.masterSim.get_DynModel().cameraMod.blurParam = 5 #3 #
+        # self.masterSim.get_DynModel().cameraMod.gaussian = 5
+        # self.masterSim.get_DynModel().cameraMod.darkCurrent = 0.5
+        # self.masterSim.get_DynModel().cameraMod.saltPepper = 1
+        self.masterSim.get_DynModel().cameraMod.cosmicRays = 1
+        # self.masterSim.get_DynModel().cameraMod.blurParam = 5
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)
@@ -79,8 +79,6 @@ class scenario_OpNav(BSKScenario):
 
         # FSW process outputs
         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
-        # self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorCamData.outputDataName, samplingTime)
-        # self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
 
         if self.filterUse == "relOD":
             self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().relativeODData.filtDataOutMsgName, samplingTime)
@@ -96,8 +94,6 @@ class scenario_OpNav(BSKScenario):
     def pull_outputs(self, showPlots):
         print('%s: pull_outputs' % self.name)
 
-        # Dynamics process outputs: pull log messages below if any
-        mars_pos = self.masterSim.pullMessageLogData("mars barycenter_planet_data" + ".PositionVector", range(3))
         ## Spacecraft true states
         position_N = self.masterSim.pullMessageLogData(
             self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", range(3))
@@ -212,25 +208,17 @@ class scenario_OpNav(BSKScenario):
                     covar_C[i, 1:] = np.full(3 * 3, np.nan)
         navCovarLong[switchIdx:,:] = np.copy(navCovar)
 
-        timeData = position_N[:, 0] * macros.NANO2MIN
-
-        # BSK_plt.AnimatedCircles(sizeOfCam, circleCenters, circleRadii, validCircle)
         BSK_plt.plot_TwoOrbits(position_N[switchIdx:,:], measPos)
         BSK_plt.diff_vectors(trueR_C, r_C, validCircle, "Circ")
         BSK_plt.nav_percentages(truth[switchIdx:,:], navState, navCovar, validCircle, "Circ")
 
         BSK_plt.plot_cirlces(circleCenters, circleRadii, validCircle, sizeOfCam)
-        # # BSK_plt.plot_rate_error(timeData, sigma_BR)
-        # # BSK_plt.plot_rate_error(timeData, omega_BR_B)
         BSK_plt.plotStateCovarPlot(stateError, navCovarLong)
-        # # BSK_plt.plotStateCovarPlot(measError, measCovar)
-        # BSK_plt.pixelAndPos(measError_C, position_N[switchIdx:,:], circleCenters, np.array(sizeOfCam))
         if self.filterUse == "bias":
             circleCenters[i,1:] += centerBias[i,1:]
             circleRadii[i,1:] += radBias[i,1:]
             BSK_plt.plotPostFitResiduals(navPostFits, pixCovar)
         BSK_plt.imgProcVsExp(trueCircles, circleCenters, circleRadii, np.array(sizeOfCam))
-        # BSK_plt.centerXY(circleCenters, np.array(sizeOfCam))
         if self.filterUse == "relOD":
             BSK_plt.plotPostFitResiduals(navPostFits, measCovar)
         figureList = {}

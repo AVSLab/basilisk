@@ -162,6 +162,24 @@ bskSim()-Based Simulation
    MRP Steering Attitude Control  <BskSim/scenarios/scenario_AttSteering>
    Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
 
+Optical Navigation Simulations
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   BSK Master Sim  <OpNavScenarios/BSK_masters>
+   Hough Circles for Pointing and Orbit Determination  <OpNavScenarios/scenarios/scenario_OpNavAttOD>
+   Limb-based method for Pointing and Orbit Determination  <OpNavScenarios/scenarios/scenario_OpNavAttODLimb>
+   CNN for Pointing and Orbit Determination   <OpNavScenarios/scenarios/scenario_CNNAttOD>
+   Simultaneously run two OpNav methods  <OpNavScenarios/scenarios/scenario_DoubleOpNavOD>
+   Perform fault detection with two OpNav methods  <OpNavScenarios/scenarios/scenario_faultDetOpNav>
+   Orbit Determination with Hough Circles  <OpNavScenarios/scenarios/scenario_OpNavOD>
+   Orbit Determination with Limb-based method   <OpNavScenarios/scenarios/scenario_OpNavODLimb>
+   Pointing with Hough Circles  <OpNavScenarios/scenarios/scenario_OpNavPoint>
+   Pointing with Limb-based method   <OpNavScenarios/scenarios/scenario_OpNavPointLimb>
+   Filter Heading measurements  <OpNavScenarios/scenarios/scenario_OpNavHeading>
+
 
 
 Monte Carlo Simulations

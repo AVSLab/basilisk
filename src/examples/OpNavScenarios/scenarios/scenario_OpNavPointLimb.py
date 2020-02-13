@@ -215,7 +215,7 @@ def run(showPlots, simTime = None):
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 
     mode = ["None", "-directComm", "-opNavMode"]
-    # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
+    # Spawn the Vizard application from python as a function of the mode selected above, and the platform.
     if platform != "darwin":
         child = subprocess.Popen([TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
              "tcp://localhost:5556"])
