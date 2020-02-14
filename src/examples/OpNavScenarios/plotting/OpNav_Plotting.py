@@ -27,6 +27,7 @@ but are shown when the scenario is run with python. Saving is left to the user's
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import Ellipse
 import numpy as np
 import scipy.optimize
