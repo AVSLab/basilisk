@@ -63,6 +63,7 @@ dataType3 = range(1)
 
 
 def run(show_plots):
+    """Main Simulation Method"""
 
     NUMBER_OF_RUNS = 10
     VERBOSE = True

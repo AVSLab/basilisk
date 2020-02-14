@@ -23,8 +23,8 @@ This scenario is identical to OpNavAttOD, except that it uses the Canny transfor
 Then it reconstructs the spacecraft position using the horizon points.
 More details can be found in Chapter 4 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
 
-The algorithms used are found in src/fswAlgorithms/imageProcessing/limbFinding, and in
-src/fswAlgorithms/imageProcessing/horizonOpNav.
+The algorithms used are found in ``src/fswAlgorithms/imageProcessing/limbFinding``, and in
+``src/fswAlgorithms/imageProcessing/horizonOpNav``.
 
 The script can be run at full length by calling::
 
@@ -57,6 +57,7 @@ import OpNav_Plotting as BSK_plt
 
 # Create your own scenario child class
 class scenario_OpNav(BSKScenario):
+    """Main Simulation Class"""
     def __init__(self, masterSim):
         super(scenario_OpNav, self).__init__(masterSim)
         self.name = 'scenario_opnav'

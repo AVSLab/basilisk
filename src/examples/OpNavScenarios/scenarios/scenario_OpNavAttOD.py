@@ -21,25 +21,25 @@ As the primary scenario for OpNav, it will be detailed more carefully.
 The orbit is a 18,000km orbit around Mars, with eccentricity of 0.6, and is pictured alongside the measurements:
 
 .. image:: /_images/static/Orbit_OpNav.svg
+   :width: 500px
    :align: center
 
 Hough Circles is the image processing method used. After processing measurements through a Orbit Determination Filter,
 spacecraft position and velocity estimates are pictured in the Mars-frame:
 
     .. image:: /_images/static/Filterpos1_1.svg
+       :width: 300
     .. image:: /_images/static/Filtervel1_1.svg
-
- Spacecraft Position and Velocity in X component
-
+       :width: 300
     .. image:: /_images/static/Filterpos2_1.svg
+       :width: 300
     .. image:: /_images/static/Filtervel2_1.svg
-
- Spacecraft Position and Velocity in Y component
-
+       :width: 300
     .. image:: /_images/static/Filterpos3_1.svg
+       :width: 300
     .. image:: /_images/static/Filtervel3_1.svg
+       :width: 300
 
- Spacecraft Position and Velocity in Z component
 
 
 More details can be found in Chapter 2 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
@@ -75,6 +75,7 @@ import OpNav_Plotting as BSK_plt
 
 # Create your own scenario child class
 class scenario_OpNav(BSKScenario):
+    """Main Simulation Class"""
     def __init__(self, masterSim):
         super(scenario_OpNav, self).__init__(masterSim)
         self.name = 'scenario_opnav'

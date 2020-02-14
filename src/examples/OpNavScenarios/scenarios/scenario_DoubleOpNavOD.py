@@ -51,6 +51,7 @@ import OpNav_Plotting as BSK_plt
 
 # Create your own scenario child class
 class scenario_OpNav(BSKScenario):
+    """Main Simulation Class"""
     def __init__(self, masterSim):
         super(scenario_OpNav, self).__init__(masterSim)
         self.name = 'scenario_opnav'

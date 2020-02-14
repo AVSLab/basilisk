@@ -95,6 +95,9 @@ sys.path.append(path + '/models')
 appPath = '/Applications/Vizard.app' #If on Mac
 # appPath = './../../Applications/Vizard.app' #If on Linux
 class BSKSim(SimulationBaseClass.SimBaseClass):
+    """
+    BSK Simulation base class for opNav scenarios
+    """
     def __init__(self, fswRate=0.1, dynRate=0.1):
         self.dynRate = dynRate
         self.fswRate = fswRate
