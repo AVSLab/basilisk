@@ -19,27 +19,21 @@ r"""
 Overview
 --------
 
-OpNavScenarios/plotting/OpNav_Plotting.py contains the plotting routines. None of the files are saved, but are shown when
-the scenario is run with python. Saving is left to the user's discretion.
+``OpNavScenarios/plotting/OpNav_Plotting.py`` contains the plotting routines. None of the files are saved,
+but are shown when the scenario is run with python. Saving is left to the user's discretion.
 
 """
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import Ellipse
 import numpy as np
 import scipy.optimize
-import os
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import orbitalMotion
 
 
-# --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
 color_x = 'dodgerblue'
 color_y = 'salmon'
 color_z = 'lightgreen'
@@ -57,7 +51,9 @@ except:
     pass
 
 def fit_sin(tt, yy):
-    '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
+    """
+    Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"
+    """
     tt = np.array(tt)
     yy = np.array(yy)
     ff = np.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
@@ -81,7 +77,6 @@ def clear_all_plots():
     plt.close("all")
 
 def omegaTrack(rError, covar):
-
     colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
@@ -1001,7 +996,7 @@ class AnimatedCircles(object):
         self.ax.set_aspect("equal")
         # Then setup FuncAnimation.
         self.setData(centers, radii, validity)
-        self.ani = animation.FuncAnimation(self.fig, self.update, interval=100,
+        self.ani = mpl.animation.FuncAnimation(self.fig, self.update, interval=100,
                                           init_func=self.setup_plot, frames=len(self.circleIndx), blit=True)
         self.ani.save('../../TestImages/circlesAnimated.gif', writer='imagemagick', fps=60)
 
@@ -1211,7 +1206,7 @@ class AnimatedLimb(object):
         # Setup the figure and axes...
         self.fig, self.ax = plt.subplots()
         # Then setup FuncAnimation.
-        self.ani = animation.FuncAnimation(self.fig, self.update, interval=100,
+        self.ani = mpl.animation.FuncAnimation(self.fig, self.update, interval=100,
                                           init_func=self.setup_plot, blit=True)
 
     def setup_plot(self):
@@ -1261,4 +1256,4 @@ class AnimatedLimb(object):
         self.scat.set_facecolor("none")
         # We need to return the updated artist for FuncAnimation to draw..
         # Note that it expects a sequence of artists, thus the trailing comma.
-        return self.scat,
+        return self.scat

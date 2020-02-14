@@ -19,8 +19,9 @@ r"""
 Overview
 --------
 
-OpNavScenarios/models/BSK_OpNavDynamics.py is similar to the BSKSim versions seen previously. The main additions are
-the instantiation of vizInterfance, and the camera module.
+``OpNavScenarios/models/BSK_OpNavDynamics.py`` is similar to the :ref:`Folder_BskSim` versions seen previously.
+The main additions are
+the instantiation of :ref:`vizInterface`, and the camera module.
 
 
 """
@@ -46,6 +47,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 class BSKDynamicModels():
+    """
+    BSK Dynamics model for the op nav simulations
+    """
     def __init__(self, SimBase, dynRate):
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName

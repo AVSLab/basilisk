@@ -19,8 +19,9 @@ r"""
 Overview
 --------
 
-OpNavScenarios/models/BSK_OpNavFsw.py contains the FSW algorithms used in the scenarios. Examples are the Orbit Determination
-filters, the pointing guidance module, the CNN module, and more. This file also contains the modeRequest definitions which
+``OpNavScenarios/models/BSK_OpNavFsw.py`` contains the FSW algorithms used in the scenarios. Examples are the
+Orbit Determination
+filters, the pointing guidance module, the CNN module, and more. This file also contains the ``modeRequest`` definitions which
 enable all the tasks necessary to perform a specific action.
 
 
@@ -46,6 +47,9 @@ except ImportError:
     print("OpNav Modules Missing, check build options")
 
 class BSKFswModels():
+    """
+    OpNav BSK FSW Models
+    """
     def __init__(self, SimBase, fswRate):
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
