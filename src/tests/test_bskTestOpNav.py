@@ -75,6 +75,11 @@ except ImportError:
 
 @pytest.mark.scenarioTest
 
+# if this script is run, it requires Vizard to be installed, and the pytest must be run single-threaded
+# not with "-n 8" etc.
+@pytest.mark.skip(reason="This test has special requirements to run.  See note in the script.")
+
+
 def test_opnavBskScenarios(show_plots, bskSimCase):
 
     testFailCount = 0                       # zero unit test result counter
