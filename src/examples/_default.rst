@@ -97,7 +97,7 @@ Magnetic Field Models
    World Magnetic Model WMM <scenarioMagneticFieldWMM>
 
 Gravity Gradient Torque
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
 
@@ -163,7 +163,7 @@ bskSim()-Based Simulation
    Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
 
 Optical Navigation Simulations
------------------------
+------------------------------
 
 .. toctree::
    :maxdepth: 1
