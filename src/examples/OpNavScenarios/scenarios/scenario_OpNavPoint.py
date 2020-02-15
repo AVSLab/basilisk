@@ -98,7 +98,8 @@ class scenario_OpNav(BSKScenario):
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().scObject.scStateOutMsgName,samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
-        rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data", "rw_config_3_data"]
+        rwOutName = ["RWStateEffector_rw_config_0_data", "RWStateEffector_rw_config_1_data",
+                     "RWStateEffector_rw_config_2_data", "RWStateEffector_rw_config_3_data"]
         for item in rwOutName:
             self.masterSim.TotalSim.logThisMessage(item, samplingTime)
         return
@@ -137,7 +138,8 @@ class scenario_OpNav(BSKScenario):
 
         numRW = 4
         dataUsReq = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(numRW)))
-        rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data", "rw_config_3_data"]
+        rwOutName = ["RWStateEffector_rw_config_0_data", "RWStateEffector_rw_config_1_data",
+                     "RWStateEffector_rw_config_2_data", "RWStateEffector_rw_config_3_data"]
         dataRW = []
         for i in range(0, numRW):
             dataRW.append(self.masterSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
