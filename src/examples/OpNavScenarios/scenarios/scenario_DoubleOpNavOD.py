@@ -24,7 +24,7 @@ This can allows for different results to be compared in the same simulation
 
 The script can be run at full length by calling::
 
-    python3 scenario_DoupleOpNavOD.py
+    python3 scenario_DoubleOpNavOD.py
 
 """
 
