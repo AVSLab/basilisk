@@ -93,7 +93,7 @@ def omegaTrack(rError, covar):
     plt.ylabel('$\mathbf{\omega}_{' + str(2) +'}$ Error in $\mathcal{C}$ ($^\circ$/s)')
     plt.ylim([-0.07,0.07])
     plt.xlabel('Time (min)')
-    plt.savefig('RateCam1.pdf')
+    # plt.savefig('RateCam1.pdf')
 
     plt.figure(num=2210201, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(t , rError[:, 2]*180./np.pi, color = colorList[2])
@@ -102,7 +102,7 @@ def omegaTrack(rError, covar):
     plt.ylabel('$\mathbf{\omega}_{' + str(3) +'}$ Error in $\mathcal{C}$ ($^\circ$/s)')
     plt.ylim([-0.07,0.07])
     plt.xlabel('Time (min)')
-    plt.savefig('RateCam2.pdf')
+    # plt.savefig('RateCam2.pdf')
 
 
 
@@ -136,7 +136,7 @@ def vecTrack(ref, track, covar):
     plt.ylabel('Mean $\hat{\mathbf{h}}$ Error in $\mathcal{C}$ ($^\circ$)')
     plt.xlabel('Time (min)')
     plt.ylim([0,2])
-    plt.savefig('HeadingDeg.pdf')
+    # plt.savefig('HeadingDeg.pdf')
 
     plt.figure(num=10101, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(t , rError[:, 1], color = colorList[2] , label= 'Error')
@@ -146,7 +146,7 @@ def vecTrack(ref, track, covar):
     plt.ylabel('$\hat{\mathbf{h}}_{' + str(1) +'}$ Error in $\mathcal{C}$ (-)')
     plt.ylim([-0.04,0.04])
     plt.xlabel('Time (min)')
-    plt.savefig('HeadingCam1.pdf')
+    # plt.savefig('HeadingCam1.pdf')
 
     plt.figure(num=10201, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(t , rError[:, 2], color = colorList[2] )
@@ -155,7 +155,7 @@ def vecTrack(ref, track, covar):
     plt.ylabel('$\hat{\mathbf{h}}_{' + str(2) +'}$ Error in $\mathcal{C}$ (-)')
     plt.ylim([-0.04,0.04])
     plt.xlabel('Time (min)')
-    plt.savefig('HeadingCam2.pdf')
+    # plt.savefig('HeadingCam2.pdf')
 
     plt.figure(num=10301, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(t , rError[:, 3], color = colorList[2])
@@ -164,7 +164,7 @@ def vecTrack(ref, track, covar):
     plt.ylabel(r'$\hat{\mathbf{h}}_{' + str(3) +'}$ Error in $\mathcal{C}$ (-)')
     plt.ylim([-0.04,0.04])
     plt.xlabel('Time (min)')
-    plt.savefig('HeadingCam3.pdf')
+    # plt.savefig('HeadingCam3.pdf')
 
 
 def plot_faults(dataFaults, valid1, valid2):
