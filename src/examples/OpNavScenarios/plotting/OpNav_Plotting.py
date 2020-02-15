@@ -185,7 +185,7 @@ def plot_faults(dataFaults, valid1, valid2):
     plt.scatter(valid2[:,0]* ns2min, valid2[:,1], color = colorList[8], alpha = 0.1, label = "Circ")
     plt.scatter(dataFaults[:,0]* ns2min, dataFaults[:,1], marker = '.', color = colorList[2], label = "Faults")
     plt.legend()
-    plt.savefig('FaultsDetected.pdf')
+    # plt.savefig('FaultsDetected.pdf')
     return
 
 def diff_methods(vec1, meth1, meth2, val1, val2):
