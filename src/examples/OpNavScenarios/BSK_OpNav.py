@@ -32,14 +32,16 @@ These simulations spawn the Basilisk :ref:`Vizard <Vizard>` visualization in ord
 handled by the vizInterface module found in ``src/simulation/viz_interface``. A figure illustrating the architecture
 is found here:
 
-.. image:: /_images/static/OpNavInterfaceOverview.svg
+.. image:: /_images/static/OpNavInterfaceOverview.png
+   :scale: 50%
    :align: center
 
 More details on the software interaction can be found in Chapter 2 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
 Sequentially, Basilisk modules then receive the images in order to process and navigate using them. This is illustrated
 in more detail:
 
-.. image:: /_images/static/OpNav_Details.svg
+.. image:: /_images/static/OpNav_Details.png
+   :scale: 50%
    :align: center
 
 
