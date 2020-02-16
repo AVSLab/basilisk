@@ -287,7 +287,7 @@ def run(showPlots, simTime = None):
     t1 = time.time()
     TheBSKSim.ExecuteSimulation()
     if TheScenario.filterUse == "relOD":
-        TheScenario.masterSim.modeRequest = 'pointOpNav'
+        TheScenario.masterSim.modeRequest = 'OpNavOD'
     else:
         TheScenario.masterSim.modeRequest = 'OpNavODB'
     if simTime != None:
