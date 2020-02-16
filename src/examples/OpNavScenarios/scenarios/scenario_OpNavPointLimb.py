@@ -120,8 +120,8 @@ class scenario_OpNav(BSKScenario):
         sigma_BN = self.masterSim.pullMessageLogData(
             self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".sigma_BN", range(3))
         ## Image processing
-        circleCenters = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName+ ".circlesCenters", range(2*10))
+        # circleCenters = self.masterSim.pullMessageLogData(
+        #     self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName+ ".circlesCenters", range(2*10))
         circleRadii = self.masterSim.pullMessageLogData(
             self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName+ ".circlesRadii", range(10))
         validCircle = self.masterSim.pullMessageLogData(
@@ -166,43 +166,43 @@ class scenario_OpNav(BSKScenario):
         dcm_CB = rbk.MRP2C(sigma_CB)
         # Plot results
         BSK_plt.clear_all_plots()
-        pixCovar = np.ones([len(circleCenters[:,0]), 3*3+1])
-        pixCovar[:,0] = circleCenters[:,0]
-        pixCovar[:,1:]*=np.array([1,0,0,0,1,0,0,0,2])
+        # pixCovar = np.ones([len(circleCenters[:,0]), 3*3+1])
+        # pixCovar[:,0] = circleCenters[:,0]
+        # pixCovar[:,1:]*=np.array([1,0,0,0,1,0,0,0,2])
 
         measError = np.full([len(measPos[:,0]), 4], np.nan)
         measError[:,0] = measPos[:,0]
         measError_C = np.full([len(measPos[:,0]), 5], np.nan)
         measError_C[:,0] = measPos[:,0]
 
-        trueRhat_C = np.full([len(circleCenters[:,0]), 4], np.nan)
-        trueCircles = np.full([len(circleCenters[:,0]), 4], np.nan)
-        trueCircles[:,0] = circleCenters[:,0]
-        trueRhat_C[:,0] = circleCenters[:,0]
+        # trueRhat_C = np.full([len(circleCenters[:,0]), 4], np.nan)
+        # trueCircles = np.full([len(circleCenters[:,0]), 4], np.nan)
+        # trueCircles[:,0] = circleCenters[:,0]
+        # trueRhat_C[:,0] = circleCenters[:,0]
 
-        centerBias = np.copy(circleCenters)
-        radBias = np.copy(circleRadii)
+        # centerBias = np.copy(circleCenters)
+        # radBias = np.copy(circleRadii)
 
-        ModeIdx = 0
-        Rmars = 3396.19*1E3
-        for j in range(len(position_N[:, 0])):
-            if position_N[j, 0] in circleCenters[:, 0]:
-                ModeIdx = j
-                break
-        for i in range(len(circleCenters[:,0])):
-            if circleCenters[i,1:].any() > 1E-8 or circleCenters[i,1:].any() < -1E-8:
-                trueRhat_C[i,1:] = np.dot(np.dot(dcm_CB, rbk.MRP2C(sigma_BN[ModeIdx+i , 1:4])) ,position_N[ModeIdx+i, 1:4])/np.linalg.norm(position_N[ModeIdx+i, 1:4])
-                trueCircles[i,3] = focal*np.tan(np.arcsin(Rmars/np.linalg.norm(position_N[ModeIdx+i,1:4])))/pixelSize[0]
-                trueRhat_C[i,1:] *= focal/trueRhat_C[i,3]
-                trueCircles[i, 1] = trueRhat_C[i, 1] / pixelSize[0] + sizeOfCam[0]/2 - 0.5
-                trueCircles[i, 2] = trueRhat_C[i, 2] / pixelSize[1] + sizeOfCam[1]/2 - 0.5
-
-                measError[i, 1:4] = position_N[ModeIdx+i, 1:4] - measPos[i, 1:4]
-                measError_C[i, 4] = np.linalg.norm(position_N[ModeIdx+i, 1:4]) - np.linalg.norm(r_C[i, 1:4])
-                measError_C[i, 1:4] = trueRhat_C[i,1:] - r_C[i, 1:4]/np.linalg.norm(r_C[i, 1:4])
-            else:
-                measCovar[i,1:] = np.full(3*3, np.nan)
-                covar_C[i, 1:] = np.full(3 * 3, np.nan)
+        # ModeIdx = 0
+        # Rmars = 3396.19*1E3
+        # for j in range(len(position_N[:, 0])):
+        #     if position_N[j, 0] in circleCenters[:, 0]:
+        #         ModeIdx = j
+        #         break
+        # for i in range(len(circleCenters[:,0])):
+        #     if circleCenters[i,1:].any() > 1E-8 or circleCenters[i,1:].any() < -1E-8:
+        #         trueRhat_C[i,1:] = np.dot(np.dot(dcm_CB, rbk.MRP2C(sigma_BN[ModeIdx+i , 1:4])) ,position_N[ModeIdx+i, 1:4])/np.linalg.norm(position_N[ModeIdx+i, 1:4])
+        #         trueCircles[i,3] = focal*np.tan(np.arcsin(Rmars/np.linalg.norm(position_N[ModeIdx+i,1:4])))/pixelSize[0]
+        #         trueRhat_C[i,1:] *= focal/trueRhat_C[i,3]
+        #         trueCircles[i, 1] = trueRhat_C[i, 1] / pixelSize[0] + sizeOfCam[0]/2 - 0.5
+        #         trueCircles[i, 2] = trueRhat_C[i, 2] / pixelSize[1] + sizeOfCam[1]/2 - 0.5
+        #
+        #         measError[i, 1:4] = position_N[ModeIdx+i, 1:4] - measPos[i, 1:4]
+        #         measError_C[i, 4] = np.linalg.norm(position_N[ModeIdx+i, 1:4]) - np.linalg.norm(r_C[i, 1:4])
+        #         measError_C[i, 1:4] = trueRhat_C[i,1:] - r_C[i, 1:4]/np.linalg.norm(r_C[i, 1:4])
+        #     else:
+        #         measCovar[i,1:] = np.full(3*3, np.nan)
+        #         covar_C[i, 1:] = np.full(3 * 3, np.nan)
 
         timeData = position_N[:, 0] * macros.NANO2MIN
 
@@ -212,7 +212,7 @@ class scenario_OpNav(BSKScenario):
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
 
-        BSK_plt.imgProcVsExp(trueCircles, circleCenters, circleRadii, np.array(sizeOfCam))
+        # BSK_plt.imgProcVsExp(trueCircles, circleCenters, circleRadii, np.array(sizeOfCam))
         # BSK_plt.centerXY(circleCenters, np.array(sizeOfCam))
 
         figureList = {}
@@ -268,7 +268,7 @@ def run(showPlots, simTime = None):
     if simTime != None:
         simulationTime = macros.min2nano(simTime)
     else:
-        simulationTime = macros.min2nano(50)
+        simulationTime = macros.min2nano(200.)
     TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
     t2 = time.time()
