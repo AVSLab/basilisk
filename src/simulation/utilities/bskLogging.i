@@ -22,7 +22,7 @@
 %}
 
 %include "bskLogging.h"
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 
 %pythoncode %{
 import sys

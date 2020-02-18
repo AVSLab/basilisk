@@ -25,6 +25,8 @@
 
 %include "swig_common_model.i"
 
+%include "std_vector.i"
+
 namespace std {
     %template(GravBodyVector) vector<GravBodyData *>;
 }

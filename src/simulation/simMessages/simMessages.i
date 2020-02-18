@@ -59,6 +59,7 @@
 
 %include "swig_conly_data.i"
 %include "swig_common_model.i"
+%include "std_vector.i"
 
 namespace std {
     %template(ThrusterTimeVector) vector<THRTimePairSimMsg>;

@@ -21,7 +21,7 @@
    #include "orb_elem_convert.h"
 %}
 
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 
 %include "sys_model.h"
 %include "../utilities/orbitalMotion.h"

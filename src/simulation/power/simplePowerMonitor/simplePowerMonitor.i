@@ -43,7 +43,7 @@
     #include "simplePowerMonitor.h"
 %}
 
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/powerStorageBase.h"
 %include "simplePowerMonitor.h"

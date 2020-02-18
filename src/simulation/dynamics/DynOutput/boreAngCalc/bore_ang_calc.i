@@ -22,7 +22,7 @@
 %}
 
 %include "cmalloc.i"
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 %include "simMessages/boreAngleSimMsg.h"
 %include "sys_model.h"
 GEN_SIZEOF(BoreAngCalc);

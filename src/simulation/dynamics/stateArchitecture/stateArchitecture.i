@@ -24,7 +24,7 @@
    #include "../../utilities/avsEigenSupport.h"
 %}
 
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/stateData.h"

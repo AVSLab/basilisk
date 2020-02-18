@@ -16,6 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
+%module swig_common_model
+
 %include "std_vector.i"
 %include "std_string.i"
 %include "std_set.i"

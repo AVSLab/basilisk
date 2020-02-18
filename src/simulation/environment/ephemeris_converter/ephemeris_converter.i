@@ -24,6 +24,8 @@
 
 %include "swig_common_model.i"
 %include "std_map.i"
+%include "std_vector.i"
+
 
 namespace std {
     %template(map_string_string) map<string, string>;

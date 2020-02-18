@@ -24,6 +24,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "swig_common_model.i"
 
 %include "sys_model.h"
+%include "std_vector.i"
 
 // Instantiate templates used by example
 namespace std {

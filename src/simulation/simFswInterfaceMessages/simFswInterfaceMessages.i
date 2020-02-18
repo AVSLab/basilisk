@@ -43,7 +43,7 @@
 %}
 
 %include "swig_conly_data.i"
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 
 %include "cameraConfigMsg.h"
 GEN_SIZEOF(CameraConfigMsg)

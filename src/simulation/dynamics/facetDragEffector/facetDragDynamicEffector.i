@@ -23,7 +23,7 @@
    #include "facetDragDynamicEffector.h"
 %}
 
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 
 // Instantiate templates used by example
 %include "sys_model.h"

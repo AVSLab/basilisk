@@ -23,7 +23,7 @@
     #include "magneticFieldWMM.h"
 %}
 
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/magneticFieldBase.h"
 %include "magneticFieldWMM.h"

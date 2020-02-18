@@ -21,7 +21,7 @@
    #include "camera.h"
 %}
 
-%include "swig_common_model.i"
+%import "swig_common_model.i"
 %include "stdint.i"
 %include "sys_model.h"
 %include "camera.h"

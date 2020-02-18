@@ -30,6 +30,8 @@
 #pragma SWIG nowarn=362
 %include "../_GeneralModuleFiles/gravityEffector.h"
 
+%include "std_vector.i"
+
 namespace std {
     %template(GravBodyVector) vector<GravBodyData *>;
 }

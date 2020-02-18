@@ -40,6 +40,7 @@
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"
 
+%include "std_vector.i"
 namespace std {
     %template(RWConfigVector) vector<RWConfigSimMsg>;
 	%template(RWCmdVector) vector<RWCmdSimMsg>;

@@ -39,10 +39,18 @@
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"
 
+%include "std_vector.i"
 namespace std {
     %template(VSCMGConfigVector) vector<VSCMGConfigSimMsg>;
 	%template(VSCMGCmdVector) vector<VSCMGCmdSimMsg>;
 }
+
+EIGEN_MAT_WRAP(Eigen::MatrixXd)
+EIGEN_MAT_WRAP(Eigen::Matrix3d)
+EIGEN_MAT_WRAP(Eigen::Vector3d)
+EIGEN_MAT_WRAP(Eigen::VectorXd)
+
+
 GEN_SIZEOF(VSCMGArrayTorqueIntMsg);
 %pythoncode %{
 import sys
