@@ -55,6 +55,11 @@ VizInterface::VizInterface()
     this->settings.spacecraftCSon = -1;
     this->settings.planetCSon = -1;
     this->settings.skyBox = "";
+    this->settings.viewCameraBoresightHUD = -1;
+    this->settings.viewCameraConeHUD = -1;
+    this->settings.showCelestialBodyLabels = -1;
+    this->settings.showSpacecraftLabels = -1;
+    this->settings.showCSLabels = -1;
 
     this->firstPass = 0;
     return;
@@ -645,7 +650,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
             camera->add_cameradir_b(unityCameraMRP[j]);
             camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
-        camera->set_renderrate(this->cameraConfigMessage.renderRate);
+        camera->set_renderrate(this->cameraConfigMessage.renderRate);        // Unity expects nano-seconds between images 
         camera->set_cameraid(this->cameraConfigMessage.cameraID);
         camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees
         camera->set_skybox(this->cameraConfigMessage.skyBox);
