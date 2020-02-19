@@ -209,8 +209,6 @@ def createCustomModel(viz, **kwargs):
             exit(1)
 
         vizElement.shader = shaderVariable
-    else:
-        vizElement.shader = -1
 
     customModelList.append(vizElement)
     del viz.settings.customModelList[:] # clear settings list to replace it with updated list
@@ -452,8 +450,6 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: setMode must be a 0 (body targeting) or 1 (pointing vector)')
             exit(1)
         cam.setMode = setMode
-    else:
-        cam.setMode = 1
 
     if 'setView' in kwargs:
         setView = kwargs['setView']
@@ -469,8 +465,6 @@ def createStandardCamera(viz, **kwargs):
                   'This is a setting for body targeting mode.')
             exit(1)
         cam.setView = setView
-    else:
-        cam.setView = 0  # nadir mode
 
     if 'fieldOfView' in kwargs:
         fieldOfView = kwargs['fieldOfView']
@@ -478,8 +472,6 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: spacecraftVisible must be a float in radians')
             exit(1)
         cam.fieldOfView = fieldOfView
-    else:
-        cam.fieldOfView = -1.0
 
     if 'bodyTarget' in kwargs:
         if cam.setMode == 1:

@@ -85,10 +85,10 @@ typedef struct {
 */
 typedef struct {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
-    int setMode;                //!< 0 -> body targeting, 1 -> pointing vector (default)
-    double fieldOfView;         //!< [rad], field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
+    int setMode=1;              //!< 0 -> body targeting, 1 -> pointing vector (default)
+    double fieldOfView=-1;      //!< [rad], field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
-    int setView;                //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
+    int setView=0;              //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
     double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
     double position_B[3];       //!< (default to 0, 0, 0). If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside of the spacecraft along the pointing vector direction.
 }StdCameraSettings;
@@ -116,7 +116,7 @@ typedef struct {
     double scale[3];                        //!< [-] desired model scaling factor along the body x, y, z axes in spacecraft CS
     std::string customTexturePath;          //!< (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
     std::string normalMapPath;              //!< (Optional) Path to the normal map for the customTexture
-    int shader;                             //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
+    int shader=-1;                          //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
 }CustomModel;
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
