@@ -620,7 +620,6 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
                                         numRW=numRW,
                                         scName=[scObject.ModelTag]  # sc name must be set to pull RW info
                                         )
-    vizSupport.setActuatorGuiSetting(viz, showRWLabels=True)
 
     #
     #   initialize Simulation

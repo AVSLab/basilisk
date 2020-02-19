@@ -279,8 +279,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewThrusterPanel must be True or False')
             exit(1)
         vizElement.viewThrusterPanel = setting
-    else:
-        vizElement.viewThrusterPanel = -1
 
     if 'viewThrusterHUD' in kwargs:
         setting = kwargs['viewThrusterHUD']
@@ -288,8 +286,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewThrusterHUD must be True or False')
             exit(1)
         vizElement.viewThrusterHUD = setting
-    else:
-        vizElement.viewThrusterHUD = -1
 
     if 'viewRWPanel' in kwargs:
         setting = kwargs['viewRWPanel']
@@ -297,8 +293,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewRWPanel must be True or False')
             exit(1)
         vizElement.viewRWPanel = setting
-    else:
-        vizElement.viewRWPanel = -1
 
     if 'viewRWHUD' in kwargs:
         setting = kwargs['viewRWHUD']
@@ -306,8 +300,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewRWHUD must be an integer value')
             exit(1)
         vizElement.viewRWHUD = setting
-    else:
-        vizElement.viewRWHUD = -1
 
     if 'showThrusterLabels' in kwargs:
         setting = kwargs['showThrusterLabels']
@@ -315,8 +307,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: showThrusterLabels must be an integer value')
             exit(1)
         vizElement.showThrusterLabels = setting
-    else:
-        vizElement.showThrusterLabels = -1
 
     if 'showRWLabels' in kwargs:
         setting = kwargs['showRWLabels']
@@ -324,8 +314,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: showRWLabels must be an integer value')
             exit(1)
         vizElement.showRWLabels = setting
-    else:
-        vizElement.showRWLabels = -1
 
     actuatorGuiSettingList.append(vizElement)
     del viz.settings.actuatorGuiSettingsList[:]  # clear settings list to replace it with updated list
