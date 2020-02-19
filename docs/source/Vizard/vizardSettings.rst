@@ -319,14 +319,17 @@ the arguments for the ``createStandardCamera`` method.
    :align: center
    :width: 90 %
 
-It is also possible to create a custom camera view for opNav mode which points in an
+It is also possible to create a custom instrument camera view for opNav mode which points in an
 arbitrary direction as illustrate in the image above. The following
-helper method is an example of how such a custom camera view can be
+helper method is an example of how such an instrument camera view can be
 created::
 
    vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
                                         resolution=[1024, 1024], renderRate=0.1, sensorSize=[0.2, 0.2],
                                         cameraPos_B=[0.2, 0.1, 0.3], sigma_CB=[-1./3., 1./3., -1./3.])
+
+Note that with this instrument camera Vizard will save off images the the user home folder at the rate
+specified in ``renderRate``.  To avoid saving off images just make ``renderRate`` a large value.
 
 The following tale illustrates the arguments for the
 ``createCameraConfigMsg`` method.
