@@ -78,7 +78,7 @@ class scenario_OpNav(BSKScenario):
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
-        oe.a = 5000*1E3 # meters
+        oe.a = 18000*1E3 # meters
         self.semiMajAxis = oe.a
         oe.e = 0.
         oe.i = 20 * macros.D2R
@@ -105,6 +105,7 @@ class scenario_OpNav(BSKScenario):
         # self.masterSim.get_FswModel().opNavPointData.opnavDataInMsgName = "heading_filtered"
         self.masterSim.get_FswModel().imageProcessing.noiseSF = 0.5
         self.masterSim.get_FswModel().headingUKFData.noiseSF = 1.001
+        self.masterSim.get_FswModel().opNavPointData.opnavDataInMsgName = "heading_filtered"
 
     def log_outputs(self):
         print('%s: log_outputs' % self.name)

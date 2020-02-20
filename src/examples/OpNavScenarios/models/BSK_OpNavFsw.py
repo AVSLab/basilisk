@@ -359,13 +359,13 @@ class BSKFswModels():
         self.headingUKFData.opnavOutMsgName = "heading_filtered"
         self.headingUKFData.filtDataOutMsgName = "heading_filter_data"
         self.headingUKFData.opnavDataInMsgName = "output_nav_msg"
-        # self.headingUKFData.cameraConfigMsgName = "camera_config_data"
+        self.headingUKFData.cameraConfigMsgName = "camera_config_data"
 
         self.headingUKFData.alpha = 0.02
         self.headingUKFData.beta = 2.0
         self.headingUKFData.kappa = 0.0
 
-        # filterObject.state = [0.0, 0., 0., 0., 0.]
+        self.headingUKFData.state = [0.0, 0., 0., 0., 0.]
         self.headingUKFData.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0]
         self.headingUKFData.covarInit = [0.2, 0.0, 0.0, 0.0, 0.0,
                                       0.0, 0.2, 0.0, 0.0, 0.0,
@@ -377,7 +377,7 @@ class BSKFswModels():
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-6 * 1E-6
         qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5] * 1E-6 * 1E-6
         self.headingUKFData.qNoise = qNoiseIn.reshape(25).tolist()
-        # self.headingUKFData.qObsVal = 0.001
+        self.headingUKFData.qObsVal = 0.001
 
     def SetAttitudeTrackingError(self, SimBase):
         self.trackingErrorData.inputNavName = SimBase.DynModels.SimpleNavObject.outputAttName
