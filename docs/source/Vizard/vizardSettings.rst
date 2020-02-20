@@ -331,6 +331,14 @@ created::
 Note that with this instrument camera Vizard will save off images the the user home folder at the rate
 specified in ``renderRate``.  To avoid saving off images just make ``renderRate`` zero.
 
+The camera frame is illustrated in the following image.  It uses classical image image coordinates where ``x`` points
+to the right, ``y`` point downwards and ``z`` points outward.  More information is availabe in section 2.4.1 of
+Dr. Teil's `dissertation <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
+
+.. image:: /_images/static/imageFrame.jpg
+   :align: center
+   :width: 600px
+
 The following tale illustrates the arguments for the
 ``createCameraConfigMsg`` method.
 
