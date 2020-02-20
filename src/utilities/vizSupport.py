@@ -569,7 +569,7 @@ def createCameraConfigMsg(viz, **kwargs):
 
     if 'renderRate' in kwargs:
         val = kwargs['renderRate']
-        if not isinstance(val, float) or val <= 0:
+        if not isinstance(val, float) or val < 0:
             print('ERROR: renderRate ' + str(val) + ' must be positive float value in units of seconds.')
             exit(1)
         viz.cameraConfigMessage.renderRate = int(val * 1e9)     # convert to nano-seconds

@@ -329,7 +329,7 @@ created::
                                         cameraPos_B=[0.2, 0.1, 0.3], sigma_CB=[-1./3., 1./3., -1./3.])
 
 Note that with this instrument camera Vizard will save off images the the user home folder at the rate
-specified in ``renderRate``.  To avoid saving off images just make ``renderRate`` a large value.
+specified in ``renderRate``.  To avoid saving off images just make ``renderRate`` zero.
 
 The following tale illustrates the arguments for the
 ``createCameraConfigMsg`` method.
@@ -337,76 +337,48 @@ The following tale illustrates the arguments for the
 .. table:: ``createCameraConfigMsg`` Parameter Options
     :widths: 15 10 10 15 100
 
-    +-------------------+---------+---------+--------------+-------------+
-    | Variable          | Type    | Units   | Required     | Description |
-    +===================+=========+=========+==============+=============+
-    | cameraID          | Int     |         | Yes          | ID of the   |
-    |                   |         |         |              | Vizard      |
-    |                   |         |         |              | camera      |
-    +-------------------+---------+---------+--------------+-------------+
-    | parentName        | string  |         | No, sc name  | name of the |
-    |                   |         |         | default      | spacecraft  |
-    |                   |         |         |              | with        |
-    |                   |         |         |              | respect to  |
-    |                   |         |         |              | which the   |
-    |                   |         |         |              | camera is   |
-    |                   |         |         |              | shown       |
-    +-------------------+---------+---------+--------------+-------------+
-    | fieldOfView       | Float   | rad     | Yes          | field of    |
-    |                   |         |         |              | view        |
-    +-------------------+---------+---------+--------------+-------------+
-    | resolution        | Int(2)  |         | Yes          | image       |
-    |                   |         |         |              | sensor      |
-    |                   |         |         |              | pixels      |
-    +-------------------+---------+---------+--------------+-------------+
-    | renderRate        | Float   | s       | Yes          | time        |
-    |                   |         |         |              | between     |
-    |                   |         |         |              | image grabs |
-    +-------------------+---------+---------+--------------+-------------+
-    | sensorSize        | Float(2)| mm      | Yes          | sensor      |
-    |                   |         |         |              | dimensions  |
-    +-------------------+---------+---------+--------------+-------------+
-    | cameraPos_B       | Float(3)| m       | Yes          | camera      |
-    |                   |         |         |              | location    |
-    |                   |         |         |              | relative to |
-    |                   |         |         |              | body frame  |
-    |                   |         |         |              | in B frame  |
-    |                   |         |         |              | components  |
-    +-------------------+---------+---------+--------------+-------------+
-    | sigma_CB          | Float(3)|         | Yes          | camera      |
-    |                   |         |         |              | orientation |
-    |                   |         |         |              | relative to |
-    |                   |         |         |              | teh body    |
-    |                   |         |         |              | frame in    |
-    |                   |         |         |              | MRPs        |
-    +-------------------+---------+---------+--------------+-------------+
-    | skyBox            | String  |         | No           | Used        |
-    |                   |         |         |              | determine   |
-    |                   |         |         |              | what star   |
-    |                   |         |         |              | background  |
-    |                   |         |         |              | should be   |
-    |                   |         |         |              | shown. The  |
-    |                   |         |         |              | empty       |
-    |                   |         |         |              | string ""   |
-    |                   |         |         |              | provides    |
-    |                   |         |         |              | default     |
-    |                   |         |         |              | NASA SVS    |
-    |                   |         |         |              | Starmap,    |
-    |                   |         |         |              | “ESO” shows |
-    |                   |         |         |              | the ESO     |
-    |                   |         |         |              | Milky Way   |
-    |                   |         |         |              | skybox,     |
-    |                   |         |         |              | “black”     |
-    |                   |         |         |              | provides a  |
-    |                   |         |         |              | black       |
-    |                   |         |         |              | background, |
-    |                   |         |         |              | or the user |
-    |                   |         |         |              | can provide |
-    |                   |         |         |              | a filepath  |
-    |                   |         |         |              | to custom   |
-    |                   |         |         |              | background  |
-    |                   |         |         |              | image file. |
-    +-------------------+---------+---------+--------------+-------------+
+    +-------------------+---------+---------+--------------+------------------------+
+    | Variable          | Type    | Units   | Required     | Description            |
+    +===================+=========+=========+==============+========================+
+    | cameraID          | Int     |         | Yes          | ID of the Vizard       |
+    |                   |         |         |              | camera                 |
+    +-------------------+---------+---------+--------------+------------------------+
+    | parentName        | string  |         | No, sc name  | name of the spacecraft |
+    |                   |         |         | default      | with respect to which  |
+    |                   |         |         |              | the camera is shown    |
+    +-------------------+---------+---------+--------------+------------------------+
+    | fieldOfView       | Float   | rad     | Yes          | field of view          |
+    +-------------------+---------+---------+--------------+------------------------+
+    | resolution        | Int(2)  |         | Yes          | image sensor pixels    |
+    +-------------------+---------+---------+--------------+------------------------+
+    | renderRate        | Float   | s       | Yes          | time between image     |
+    |                   |         |         |              | grabs. 0 turns this    |
+    |                   |         |         |              | off (default).         |
+    +-------------------+---------+---------+--------------+------------------------+
+    | sensorSize        | Float(2)| m       | Yes          | sensor dimensions      |
+    +-------------------+---------+---------+--------------+------------------------+
+    | cameraPos_B       | Float(3)| m       | Yes          | camera  location       |
+    |                   |         |         |              | relative to body frame |
+    |                   |         |         |              | in B frame components  |
+    +-------------------+---------+---------+--------------+------------------------+
+    | sigma_CB          | Float(3)|         | Yes          | camera orientation     |
+    |                   |         |         |              | relative to the body   |
+    |                   |         |         |              | frame in MRPs          |
+    +-------------------+---------+---------+--------------+------------------------+
+    | skyBox            | String  |         | No           | Used to determine      |
+    |                   |         |         |              | what star background   |
+    |                   |         |         |              | should be shown. The   |
+    |                   |         |         |              | empty string ""        |
+    |                   |         |         |              | provides default NASA  |
+    |                   |         |         |              | SVS Starmap, “ESO”     |
+    |                   |         |         |              | shows the ESO Milky Way|
+    |                   |         |         |              | skybox, “black”        |
+    |                   |         |         |              | provides a black       |
+    |                   |         |         |              | background, or the user|
+    |                   |         |         |              | can provide a filepath |
+    |                   |         |         |              | to custom  background  |
+    |                   |         |         |              | image file.            |
+    +-------------------+---------+---------+--------------+------------------------+
 
 
 Defining the Custom Spacecraft Shape model
