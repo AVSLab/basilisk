@@ -149,7 +149,7 @@ void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
     
     
     /*! - Check for switching frames */
-    if (v3Dot(configData->bVec_B, sunheading_hat) > configData->switchTresh)
+    if (fabs(v3Dot(configData->bVec_B, sunheading_hat)) > configData->switchTresh)
     {
         sunlineSEKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
