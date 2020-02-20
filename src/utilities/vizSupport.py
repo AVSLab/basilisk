@@ -506,6 +506,8 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: position_B must be 3D list of float values')
             exit(1)
         cam.position_B = position_B
+    else:
+        cam.position_B = [0, 0, 0]
 
     stdCameraList.append(cam)
     del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list
@@ -580,7 +582,7 @@ def createCameraConfigMsg(viz, **kwargs):
     if 'sensorSize' in kwargs:
         val = kwargs['sensorSize']
         if not isinstance(val, list):
-            print('ERROR: sensorSize must be a list')
+            print('ERROR: sensorSize must be a list floats in meters')
             exit(1)
         if len(val) != 2:
             print('ERROR: sensorSize list ' + str(val) + 'must be of length 2')
