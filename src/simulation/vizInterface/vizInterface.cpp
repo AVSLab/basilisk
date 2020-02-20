@@ -46,6 +46,7 @@ VizInterface::VizInterface()
     memset(&this->cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
     this->cameraConfigMessage.cameraID = -1;
     strcpy(this->cameraConfigMessage.skyBox, "");
+    this->cameraConfigMessage.renderRate = 0;
 
     this->planetNames = {};
 
