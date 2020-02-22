@@ -23,6 +23,9 @@ Version |release|
 -----------------
 - Updated documentation and ``CMakeLists.txt`` to required 3.14 or higher
 - Updated how ``openCV`` is included to avoid false Xcode warnings about the library not being installed
+- Added CNN module for image processing as well as a pre-trained model
+  (read by the module) that allows to extract center and apparent diameter from Mars
+  images. Module and model found in :ref:`centerRadiusCNN`
 
 Version 1.8.1
 -------------
