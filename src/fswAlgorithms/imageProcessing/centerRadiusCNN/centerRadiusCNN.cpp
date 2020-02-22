@@ -20,8 +20,6 @@
     Convolutional Neural Net Circle Finder
 
     Note:   This module takes an image and writes out the circles that are found in the image by OpenCV's AI library.
-    Author: Thibaud Teil
-    Date:   February 13, 2019
  
  */
 
@@ -138,7 +136,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
 
     positionNet2.setInput(img_blob);
     cv::Mat output = positionNet2.forward();
-    float x_pred = output.at<float>(0,0);
+    float x_pred = output.at<float>(0,0); // Neural net outputs floats
     float y_pred = output.at<float>(0,1);
     float rad_pred = output.at<float>(0,2);
     
@@ -147,7 +145,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.valid = 1;
         circleBuffer.cameraID = 1;
         circleBuffer.planetIds[0] = 2;
-        circleBuffer.circlesCenters[0] = (double)x_pred;
+        circleBuffer.circlesCenters[0] = (double)x_pred; // Recasting to double, as per the message definition
         circleBuffer.circlesCenters[1] = (double)y_pred;
         circleBuffer.circlesRadii[0] = (double)rad_pred;
         for (int j=0; j<3; j++){
