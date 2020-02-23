@@ -124,10 +124,6 @@ def pixelLineConverterTestFunction():
     planet["name"] = "Mars"
     planet["diameter"] = 3396.19 * 2  # km
 
-    # camera["focal"] = inputCamera.focalLength  # m
-    # camera["pixelSizeX"] = inputCamera.sensorSize[0]/inputCamera.resolution[0] * 1E-3  # m
-    # camera["pixelSizeY"] = inputCamera.sensorSize[1]/inputCamera.resolution[1] * 1E-3  # m
-
     state = [inputCircles.circlesCenters[0], inputCircles.circlesCenters[1], inputCircles.circlesRadii[0]]
 
     r_Cexp = mapState(state, planet, inputCamera)

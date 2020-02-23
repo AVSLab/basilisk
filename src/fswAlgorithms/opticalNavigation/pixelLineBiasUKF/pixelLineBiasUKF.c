@@ -434,8 +434,12 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
     MRP2C(configData->attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_CN);
     double X, Y;
-    X = configData->cameraSpecs.sensorSize[0]/configData->cameraSpecs.resolution[0]; 
-    Y = configData->cameraSpecs.sensorSize[1]/configData->cameraSpecs.resolution[1];
+    double pX, pY;
+    /* compute sensorSize/focalLength = 2*tan(FOV/2) */
+    pX = 2.*tan(configData->cameraSpecs.fieldOfView*configData->cameraSpecs.resolution[0]/configData->cameraSpecs.resolution[1]/2.0);
+    pY = 2.*tan(configData->cameraSpecs.fieldOfView/2.0);
+    X = pX/configData->cameraSpecs.resolution[0];
+    Y = pY/configData->cameraSpecs.resolution[1];
     
     if(configData->cirlcesInMsg.planetIds[0] > 0){
         if(configData->cirlcesInMsg.planetIds[0] ==1){
@@ -462,14 +466,14 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
         v3Scale(-1./r_C[2], r_C, r_C);
         
         /*! - Find pixel size using camera specs */
-        reCentered[0] = r_C[0]*configData->cameraSpecs.focalLength/X;
-        reCentered[1] = r_C[1]*configData->cameraSpecs.focalLength/Y;
+        reCentered[0] = r_C[0]/X;
+        reCentered[1] = r_C[1]/Y;
         
         centers[0] = reCentered[0] + configData->cameraSpecs.resolution[0]/2 - 0.5;
         centers[1] = reCentered[1] + configData->cameraSpecs.resolution[1]/2 - 0.5;
         
         denom = planetRad/rNorm;
-        radius = configData->cameraSpecs.focalLength/X*tan(asin(denom));
+        radius = tan(asin(denom)) / X;
         if (j==0){
             v2Subtract(centers, configData->obs, &configData->obs[3]);
             configData->obs[5] = radius - configData->obs[2];
