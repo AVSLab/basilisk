@@ -255,8 +255,7 @@ def horizonOpNav_update():
     inputAtt = horizonOpNav.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 1.
-    inputCamera.sensorSize = [10*1E-3, 10*1E-3] # In m
+    inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / 1. )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.2,0.3]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.cameraConfigMsgName, inputCamera)
@@ -301,8 +300,10 @@ def horizonOpNav_update():
     alpha =0
     up = inputCamera.resolution[0] / 2
     vp = inputCamera.resolution[1] / 2
-    d_x = inputCamera.focalLength/(inputCamera.sensorSize[0] / inputCamera.resolution[0])
-    d_y = inputCamera.focalLength/(inputCamera.sensorSize[1] / inputCamera.resolution[1])
+    pX = 2. * np.tan(inputCamera.fieldOfView * inputCamera.resolution[0] / inputCamera.resolution[1] / 2.0)
+    pY = 2. * np.tan(inputCamera.fieldOfView / 2.0)
+    d_x = inputCamera.resolution[0] / pX
+    d_y = inputCamera.resolution[1] / pY
 
     transf = np.zeros([3,3])
     transf[0, 0] = 1 / d_x
