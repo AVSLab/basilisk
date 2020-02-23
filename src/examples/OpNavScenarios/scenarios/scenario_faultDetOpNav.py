@@ -20,7 +20,7 @@ Overview
 --------
 
 This scenario uses the two OpNav methods implemented in previous scenarios for fault detection.
-The algorithm provides a similarity check and can be found in src/fswAlgorithms/opticalNavigation/faultDetection.
+The algorithm provides a similarity check and can be found in :ref:`faultDetection`.
 More details can be found in Chapter 5 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
 
 
