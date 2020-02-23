@@ -298,8 +298,9 @@ the arguments for the ``createStandardCamera`` method.
     |                   |         |         | body in      |                                            |
     |                   |         |         | messages     |                                            |
     +-------------------+---------+---------+--------------+--------------------------------------------+
-    | fieldOfView       | float   | rad     | No, default  | camera field of view, to use the Vizard    |
-    |                   |         |         | -1           | default set it to -1                       |
+    | fieldOfView       | float   | rad     | No, default  | camera edge-to-edge field of view in the   |
+    |                   |         |         |              | camera vertical ``y`` axis, to use the     |
+    |                   |         |         | -1           | Vizard default set it to -1                |
     +-------------------+---------+---------+--------------+--------------------------------------------+
     | pointingVector_B  | float(3)|         | No, default  | Body relative unit vector. This is a       |
     |                   |         |         | is           | setting for pointing vector mode           |
@@ -325,7 +326,7 @@ helper method is an example of how such an instrument camera view can be
 created::
 
    vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
-                                        resolution=[1024, 1024], renderRate=0.1, sensorSize=[0.2, 0.2],
+                                        resolution=[1024, 1024], renderRate=0.1,
                                         cameraPos_B=[0.2, 0.1, 0.3], sigma_CB=[-1./3., 1./3., -1./3.])
 
 Note that with this instrument camera Vizard will save off images the the user home folder at the rate
@@ -355,15 +356,15 @@ The following tale illustrates the arguments for the
     |                   |         |         | default      | with respect to which  |
     |                   |         |         |              | the camera is shown    |
     +-------------------+---------+---------+--------------+------------------------+
-    | fieldOfView       | Float   | rad     | Yes          | field of view          |
+    | fieldOfView       | Float   | rad     | Yes          | edge-to-edge field of  |
+    |                   |         |         |              | view in the camera     |
+    |                   |         |         |              | vertical ``y`` axis    |
     +-------------------+---------+---------+--------------+------------------------+
     | resolution        | Int(2)  |         | Yes          | image sensor pixels    |
     +-------------------+---------+---------+--------------+------------------------+
     | renderRate        | Float   | s       | Yes          | time between image     |
     |                   |         |         |              | grabs. 0 turns this    |
     |                   |         |         |              | off (default).         |
-    +-------------------+---------+---------+--------------+------------------------+
-    | sensorSize        | Float(2)| m       | Yes          | sensor dimensions      |
     +-------------------+---------+---------+--------------+------------------------+
     | cameraPos_B       | Float(3)| m       | Yes          | camera  location       |
     |                   |         |         |              | relative to body frame |

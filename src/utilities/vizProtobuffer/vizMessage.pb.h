@@ -1255,18 +1255,6 @@ class VizMessage_CameraConfig : public ::google::protobuf::Message /* @@protoc_i
   ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
       mutable_resolution();
 
-  // repeated double sensorSize = 6;
-  int sensorsize_size() const;
-  void clear_sensorsize();
-  static const int kSensorSizeFieldNumber = 6;
-  double sensorsize(int index) const;
-  void set_sensorsize(int index, double value);
-  void add_sensorsize(double value);
-  const ::google::protobuf::RepeatedField< double >&
-      sensorsize() const;
-  ::google::protobuf::RepeatedField< double >*
-      mutable_sensorsize();
-
   // repeated double cameraPos_B = 7;
   int camerapos_b_size() const;
   void clear_camerapos_b();
@@ -1331,12 +1319,6 @@ class VizMessage_CameraConfig : public ::google::protobuf::Message /* @@protoc_i
   double fieldofview() const;
   void set_fieldofview(double value);
 
-  // double focalLength = 5;
-  void clear_focallength();
-  static const int kFocalLengthFieldNumber = 5;
-  double focallength() const;
-  void set_focallength(double value);
-
   // uint64 renderRate = 9;
   void clear_renderrate();
   static const int kRenderRateFieldNumber = 9;
@@ -1349,8 +1331,6 @@ class VizMessage_CameraConfig : public ::google::protobuf::Message /* @@protoc_i
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int64 > resolution_;
   mutable int _resolution_cached_byte_size_;
-  ::google::protobuf::RepeatedField< double > sensorsize_;
-  mutable int _sensorsize_cached_byte_size_;
   ::google::protobuf::RepeatedField< double > camerapos_b_;
   mutable int _camerapos_b_cached_byte_size_;
   ::google::protobuf::RepeatedField< double > cameradir_b_;
@@ -1359,7 +1339,6 @@ class VizMessage_CameraConfig : public ::google::protobuf::Message /* @@protoc_i
   ::google::protobuf::internal::ArenaStringPtr skybox_;
   ::google::protobuf::int64 cameraid_;
   double fieldofview_;
-  double focallength_;
   ::google::protobuf::uint64 renderrate_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
@@ -3621,50 +3600,6 @@ inline ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
 VizMessage_CameraConfig::mutable_resolution() {
   // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.CameraConfig.resolution)
   return &resolution_;
-}
-
-// double focalLength = 5;
-inline void VizMessage_CameraConfig::clear_focallength() {
-  focallength_ = 0;
-}
-inline double VizMessage_CameraConfig::focallength() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraConfig.focalLength)
-  return focallength_;
-}
-inline void VizMessage_CameraConfig::set_focallength(double value) {
-  
-  focallength_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraConfig.focalLength)
-}
-
-// repeated double sensorSize = 6;
-inline int VizMessage_CameraConfig::sensorsize_size() const {
-  return sensorsize_.size();
-}
-inline void VizMessage_CameraConfig::clear_sensorsize() {
-  sensorsize_.Clear();
-}
-inline double VizMessage_CameraConfig::sensorsize(int index) const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraConfig.sensorSize)
-  return sensorsize_.Get(index);
-}
-inline void VizMessage_CameraConfig::set_sensorsize(int index, double value) {
-  sensorsize_.Set(index, value);
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraConfig.sensorSize)
-}
-inline void VizMessage_CameraConfig::add_sensorsize(double value) {
-  sensorsize_.Add(value);
-  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.CameraConfig.sensorSize)
-}
-inline const ::google::protobuf::RepeatedField< double >&
-VizMessage_CameraConfig::sensorsize() const {
-  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.CameraConfig.sensorSize)
-  return sensorsize_;
-}
-inline ::google::protobuf::RepeatedField< double >*
-VizMessage_CameraConfig::mutable_sensorsize() {
-  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.CameraConfig.sensorSize)
-  return &sensorsize_;
 }
 
 // repeated double cameraPos_B = 7;

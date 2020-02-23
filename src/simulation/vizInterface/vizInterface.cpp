@@ -647,7 +647,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         for (int j=0; j<3; j++){
             if (j < 2){
             camera->add_resolution(this->cameraConfigMessage.resolution[j]);
-            camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]*1000.);  // Unity expects millimeter
             }
             camera->add_cameradir_b(unityCameraMRP[j]);
             camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
@@ -655,7 +654,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         camera->set_cameraid(this->cameraConfigMessage.cameraID);
         camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unity expects degrees
         camera->set_skybox(this->cameraConfigMessage.skyBox);
-        camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2./tan(this->cameraConfigMessage.fieldOfView));
         camera->set_parentname(this->cameraConfigMessage.parentName);
     }
 

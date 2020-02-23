@@ -521,7 +521,7 @@ def createCameraConfigMsg(viz, **kwargs):
         return
     global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
-        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'focalLength', 'sensorSize', 'cameraPos_B', 'sigma_CB', 'skyBox'],
+        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox'],
         kwargs)
 
     if 'cameraID' in kwargs:
@@ -575,22 +575,6 @@ def createCameraConfigMsg(viz, **kwargs):
             print('ERROR: renderRate ' + str(val) + ' must be positive float value in units of seconds.')
             exit(1)
         viz.cameraConfigMessage.renderRate = int(val * 1e9)     # convert to nano-seconds
-
-    if 'sensorSize' in kwargs:
-        val = kwargs['sensorSize']
-        if not isinstance(val, list):
-            print('ERROR: sensorSize must be a list floats in meters')
-            exit(1)
-        if len(val) != 2:
-            print('ERROR: sensorSize list ' + str(val) + 'must be of length 2')
-            exit(1)
-        if not isinstance(val[0], float) or not isinstance(val[1], float):
-            print('ERROR: sensorSize list ' + str(val) + ' must contain floats')
-            exit(1)
-        viz.cameraConfigMessage.sensorSize = val
-    else:
-        print('ERROR: sensorSize must be defined in createCameraConfigMsg()')
-        exit(1)
 
     if 'cameraPos_B' in kwargs:
         val = kwargs['cameraPos_B']

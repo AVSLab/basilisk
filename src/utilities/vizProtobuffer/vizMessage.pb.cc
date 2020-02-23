@@ -507,8 +507,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, parentname_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, fieldofview_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, resolution_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, focallength_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, sensorsize_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, camerapos_b_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, cameradir_b_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, renderrate_),
@@ -612,13 +610,13 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 50, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
   { 59, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
   { 69, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
-  { 84, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
-  { 92, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
-  { 106, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
-  { 118, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 130, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
-  { 143, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 163, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 82, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
+  { 90, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
+  { 104, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
+  { 116, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
+  { 128, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 141, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 161, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -662,7 +660,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\275\027\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\224\027\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -695,52 +693,51 @@ void AddDescriptorsImpl() {
       "\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarTracker\022\020\n\010"
       "position\030\002 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\031\n\021fiel"
       "dOfViewHeight\030\005 \001(\001\022\030\n\020fieldOfViewWidth\030"
-      "\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 \001(\005\032\324\001\n\014Ca"
+      "\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 \001(\005\032\253\001\n\014Ca"
       "meraConfig\022\020\n\010cameraID\030\001 \001(\003\022\022\n\nparentNa"
       "me\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022\022\n\nresolut"
-      "ion\030\004 \003(\003\022\023\n\013focalLength\030\005 \001(\001\022\022\n\nsensor"
-      "Size\030\006 \003(\001\022\023\n\013cameraPos_B\030\007 \003(\001\022\023\n\013camer"
-      "aDir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004\022\016\n\006skyb"
-      "ox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBodyName\030\001 "
-      "\001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tlineColor\030\003 \003"
-      "(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepIn\030\001 \001(\010\022\020"
-      "\n\010position\030\002 \003(\001\022\024\n\014normalVector\030\003 \003(\001\022\026"
-      "\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHeight\030\005 \001"
-      "(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBodyName\030\007"
-      " \001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010coneName\030\t \001("
-      "\t\032\245\001\n\026StandardCameraSettings\022\026\n\016spacecra"
-      "ftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023\n\013fieldOf"
-      "View\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017\n\007setVie"
-      "w\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\022\020\n\010posit"
-      "ion\030\t \003(\001\032\270\001\n\020ActuatorSettings\022\026\n\016spacec"
-      "raftName\030\001 \001(\t\022\031\n\021viewThrusterPanel\030\002 \001("
-      "\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013viewRWPane"
-      "l\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022\032\n\022showThrust"
-      "erLabels\030\006 \001(\005\022\024\n\014showRWLabels\030\007 \001(\005\032\256\001\n"
-      "\013CustomModel\022\021\n\tmodelPath\030\001 \001(\t\022\031\n\021simBo"
-      "diesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010ro"
-      "tation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customTex"
-      "turePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\022\016\n"
-      "\006shader\030\010 \001(\005\032\371\004\n\rVizSettingsPb\022\017\n\007ambie"
-      "nt\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026\n\016spacec"
-      "raftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npo"
-      "intLines\030\005 \003(\0132+.vizProtobufferMessage.V"
-      "izMessage.PointLine\022G\n\016keepOutInCones\030\006 "
-      "\003(\0132/.vizProtobufferMessage.VizMessage.K"
-      "eepOutInCone\022X\n\026standardCameraSettings\030\007"
-      " \003(\01328.vizProtobufferMessage.VizMessage."
-      "StandardCameraSettings\022L\n\020actuatorSettin"
-      "gs\030\n \003(\01322.vizProtobufferMessage.VizMess"
-      "age.ActuatorSettings\022\016\n\006skybox\030\013 \001(\t\022C\n\014"
-      "customModels\030\014 \003(\0132-.vizProtobufferMessa"
-      "ge.VizMessage.CustomModel\022\036\n\026viewCameraB"
-      "oresightHUD\030\r \001(\005\022\031\n\021viewCameraConeHUD\030\016"
-      " \001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027showCelest"
-      "ialBodyLabels\030\020 \001(\005\022\034\n\024showSpacecraftLab"
-      "els\030\021 \001(\005b\006proto3"
+      "ion\030\004 \003(\003\022\023\n\013cameraPos_B\030\007 \003(\001\022\023\n\013camera"
+      "Dir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004\022\016\n\006skybo"
+      "x\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBodyName\030\001 \001"
+      "(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tlineColor\030\003 \003("
+      "\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepIn\030\001 \001(\010\022\020\n"
+      "\010position\030\002 \003(\001\022\024\n\014normalVector\030\003 \003(\001\022\026\n"
+      "\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHeight\030\005 \001("
+      "\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBodyName\030\007 "
+      "\001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010coneName\030\t \001(\t"
+      "\032\245\001\n\026StandardCameraSettings\022\026\n\016spacecraf"
+      "tName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023\n\013fieldOfV"
+      "iew\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017\n\007setView"
+      "\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\022\020\n\010positi"
+      "on\030\t \003(\001\032\270\001\n\020ActuatorSettings\022\026\n\016spacecr"
+      "aftName\030\001 \001(\t\022\031\n\021viewThrusterPanel\030\002 \001(\005"
+      "\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013viewRWPanel"
+      "\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022\032\n\022showThruste"
+      "rLabels\030\006 \001(\005\022\024\n\014showRWLabels\030\007 \001(\005\032\256\001\n\013"
+      "CustomModel\022\021\n\tmodelPath\030\001 \001(\t\022\031\n\021simBod"
+      "iesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rot"
+      "ation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customText"
+      "urePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006"
+      "shader\030\010 \001(\005\032\371\004\n\rVizSettingsPb\022\017\n\007ambien"
+      "t\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026\n\016spacecr"
+      "aftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npoi"
+      "ntLines\030\005 \003(\0132+.vizProtobufferMessage.Vi"
+      "zMessage.PointLine\022G\n\016keepOutInCones\030\006 \003"
+      "(\0132/.vizProtobufferMessage.VizMessage.Ke"
+      "epOutInCone\022X\n\026standardCameraSettings\030\007 "
+      "\003(\01328.vizProtobufferMessage.VizMessage.S"
+      "tandardCameraSettings\022L\n\020actuatorSetting"
+      "s\030\n \003(\01322.vizProtobufferMessage.VizMessa"
+      "ge.ActuatorSettings\022\016\n\006skybox\030\013 \001(\t\022C\n\014c"
+      "ustomModels\030\014 \003(\0132-.vizProtobufferMessag"
+      "e.VizMessage.CustomModel\022\036\n\026viewCameraBo"
+      "resightHUD\030\r \001(\005\022\031\n\021viewCameraConeHUD\030\016 "
+      "\001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027showCelesti"
+      "alBodyLabels\030\020 \001(\005\022\034\n\024showSpacecraftLabe"
+      "ls\030\021 \001(\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3057);
+      descriptor, 3016);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -3839,8 +3836,6 @@ const int VizMessage_CameraConfig::kCameraIDFieldNumber;
 const int VizMessage_CameraConfig::kParentNameFieldNumber;
 const int VizMessage_CameraConfig::kFieldOfViewFieldNumber;
 const int VizMessage_CameraConfig::kResolutionFieldNumber;
-const int VizMessage_CameraConfig::kFocalLengthFieldNumber;
-const int VizMessage_CameraConfig::kSensorSizeFieldNumber;
 const int VizMessage_CameraConfig::kCameraPosBFieldNumber;
 const int VizMessage_CameraConfig::kCameraDirBFieldNumber;
 const int VizMessage_CameraConfig::kRenderRateFieldNumber;
@@ -3859,7 +3854,6 @@ VizMessage_CameraConfig::VizMessage_CameraConfig(const VizMessage_CameraConfig& 
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       resolution_(from.resolution_),
-      sensorsize_(from.sensorsize_),
       camerapos_b_(from.camerapos_b_),
       cameradir_b_(from.cameradir_b_),
       _cached_size_(0) {
@@ -3927,7 +3921,6 @@ void VizMessage_CameraConfig::Clear() {
   (void) cached_has_bits;
 
   resolution_.Clear();
-  sensorsize_.Clear();
   camerapos_b_.Clear();
   cameradir_b_.Clear();
   parentname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -4005,39 +3998,6 @@ bool VizMessage_CameraConfig::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  1, 34u, input, this->mutable_resolution())));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // double focalLength = 5;
-      case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &focallength_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // repeated double sensorSize = 6;
-      case 6: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, this->mutable_sensorsize())));
-        } else if (
-            static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(49u /* 49 & 0xFF */)) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 1, 50u, input, this->mutable_sensorsize())));
         } else {
           goto handle_unusual;
         }
@@ -4169,20 +4129,6 @@ void VizMessage_CameraConfig::SerializeWithCachedSizes(
       this->resolution(i), output);
   }
 
-  // double focalLength = 5;
-  if (this->focallength() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->focallength(), output);
-  }
-
-  // repeated double sensorSize = 6;
-  if (this->sensorsize_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(6, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
-        _sensorsize_cached_byte_size_));
-    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
-      this->sensorsize().data(), this->sensorsize_size(), output);
-  }
-
   // repeated double cameraPos_B = 7;
   if (this->camerapos_b_size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteTag(7, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
@@ -4264,24 +4210,6 @@ void VizMessage_CameraConfig::SerializeWithCachedSizes(
       WriteInt64NoTagToArray(this->resolution_, target);
   }
 
-  // double focalLength = 5;
-  if (this->focallength() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->focallength(), target);
-  }
-
-  // repeated double sensorSize = 6;
-  if (this->sensorsize_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      6,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-        static_cast< ::google::protobuf::int32>(
-            _sensorsize_cached_byte_size_), target);
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteDoubleNoTagToArray(this->sensorsize_, target);
-  }
-
   // repeated double cameraPos_B = 7;
   if (this->camerapos_b_size() > 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
@@ -4357,22 +4285,6 @@ size_t VizMessage_CameraConfig::ByteSizeLong() const {
     total_size += data_size;
   }
 
-  // repeated double sensorSize = 6;
-  {
-    unsigned int count = static_cast<unsigned int>(this->sensorsize_size());
-    size_t data_size = 8UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-            static_cast< ::google::protobuf::int32>(data_size));
-    }
-    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _sensorsize_cached_byte_size_ = cached_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
-  }
-
   // repeated double cameraPos_B = 7;
   {
     unsigned int count = static_cast<unsigned int>(this->camerapos_b_size());
@@ -4431,11 +4343,6 @@ size_t VizMessage_CameraConfig::ByteSizeLong() const {
     total_size += 1 + 8;
   }
 
-  // double focalLength = 5;
-  if (this->focallength() != 0) {
-    total_size += 1 + 8;
-  }
-
   // uint64 renderRate = 9;
   if (this->renderrate() != 0) {
     total_size += 1 +
@@ -4473,7 +4380,6 @@ void VizMessage_CameraConfig::MergeFrom(const VizMessage_CameraConfig& from) {
   (void) cached_has_bits;
 
   resolution_.MergeFrom(from.resolution_);
-  sensorsize_.MergeFrom(from.sensorsize_);
   camerapos_b_.MergeFrom(from.camerapos_b_);
   cameradir_b_.MergeFrom(from.cameradir_b_);
   if (from.parentname().size() > 0) {
@@ -4489,9 +4395,6 @@ void VizMessage_CameraConfig::MergeFrom(const VizMessage_CameraConfig& from) {
   }
   if (from.fieldofview() != 0) {
     set_fieldofview(from.fieldofview());
-  }
-  if (from.focallength() != 0) {
-    set_focallength(from.focallength());
   }
   if (from.renderrate() != 0) {
     set_renderrate(from.renderrate());
@@ -4523,14 +4426,12 @@ void VizMessage_CameraConfig::Swap(VizMessage_CameraConfig* other) {
 void VizMessage_CameraConfig::InternalSwap(VizMessage_CameraConfig* other) {
   using std::swap;
   resolution_.InternalSwap(&other->resolution_);
-  sensorsize_.InternalSwap(&other->sensorsize_);
   camerapos_b_.InternalSwap(&other->camerapos_b_);
   cameradir_b_.InternalSwap(&other->cameradir_b_);
   parentname_.Swap(&other->parentname_);
   skybox_.Swap(&other->skybox_);
   swap(cameraid_, other->cameraid_);
   swap(fieldofview_, other->fieldofview_);
-  swap(focallength_, other->focallength_);
   swap(renderrate_, other->renderrate_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
