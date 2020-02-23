@@ -46,12 +46,11 @@ Camera::Camera()
     this->resolution[0] = 512;
     this->resolution[1] = 512;
     this->renderRate = 60*1E9;
-    v2Set(1E-3, 1E-3, this->sensorSize);
     v3SetZero(this->cameraPos_B);
     v3SetZero(this->sigma_CB);
     this->cameraIsOn = 0;
     this->filename = "";
-    this->focalLength = this->sensorSize[0]/2/tan(0.7/2.);
+    this->fieldOfView = 0.7;
     strcpy(this->skyBox, "black");
 
     /*! Default values for the perturbations.  */
@@ -285,9 +284,8 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     cameraMsg.resolution[0] = this->resolution[0];
     cameraMsg.resolution[1] = this->resolution[1];
     cameraMsg.renderRate = this->renderRate;
-    cameraMsg.focalLength = this->focalLength;
+    cameraMsg.fieldOfView = this->fieldOfView;
     cameraMsg.isOn = this->cameraIsOn;
-    v2Copy(this->sensorSize, cameraMsg.sensorSize);
     v3Copy(this->cameraPos_B, cameraMsg.cameraPos_B);
     v3Copy(this->sigma_CB, cameraMsg.sigma_CB);
     strcpy(cameraMsg.skyBox, this->skyBox);
