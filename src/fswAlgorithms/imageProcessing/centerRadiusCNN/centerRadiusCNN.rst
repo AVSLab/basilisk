@@ -16,17 +16,17 @@ The following table lists all the module input and output messages.  The module 
 
 
 .. table:: Module I/O Messages
-        :widths: 25 25 100
+    :widths: 25 25 100
 
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name     | Msg Type                        | Description                                       |
-        +=======================+=================================+===================================================+
-        | imageInMsgName        | :ref:`CameraImageMsg`           | Input image message.                              |
-        |                       |                                 | This message either comes from the camera module  |
-        |                       |                                 | or the viz interface if no noise is added.        |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | opnavCirclesOutMsgName| :ref:`CirclesOpNavMsg`          | Circle found in the image.                        |
-        +-----------------------+---------------------------------+---------------------------------------------------+
+    +-----------------------+---------------------------------+---------------------------------------------------+
+    | Msg Variable Name     | Msg Type                        | Description                                       |
+    +=======================+=================================+===================================================+
+    | imageInMsgName        | :ref:`CameraImageMsg`           | Input image message.                              |
+    |                       |                                 | This message either comes from the camera module  |
+    |                       |                                 | or the viz interface if no noise is added.        |
+    +-----------------------+---------------------------------+---------------------------------------------------+
+    | opnavCirclesOutMsgName| :ref:`CirclesOpNavMsg`          | Circle found in the image.                        |
+    +-----------------------+---------------------------------+---------------------------------------------------+
 
 
 User Guide
