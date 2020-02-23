@@ -61,7 +61,6 @@ public:
     char parentName[MAX_MESSAGE_SIZE];  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn; //!< [-] Is the camera currently taking images
     int cameraID; //!< [-] Is the camera currently taking images
-    double fieldOfView;        //!< [rad]   Camera Field of View
     int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
     uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond
     double focalLength;        //!< [m] Camera Focal Length in meters
