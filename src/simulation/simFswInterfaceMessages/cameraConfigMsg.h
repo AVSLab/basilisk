@@ -33,7 +33,7 @@ typedef struct {
     int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
     uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond */
     double focalLength;        //!< [m] Camera Focal Length in meters*/
-    double sensorSize[2];      //!< [m] Size of the camera sensor-paired with resolution gives you pixel size in mm*/
+    double sensorSize[2];      //!< [m] Size of the camera sensor */
     double cameraPos_B[3];     //!< [m] Camera position in body frame */
     double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
     char skyBox[MAX_STRING_LENGTH]; //!< string containing the star field preference

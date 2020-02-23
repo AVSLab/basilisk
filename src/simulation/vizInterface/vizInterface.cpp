@@ -653,7 +653,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
         camera->set_renderrate(this->cameraConfigMessage.renderRate);        // Unity expects nano-seconds between images 
         camera->set_cameraid(this->cameraConfigMessage.cameraID);
-        camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees
+        camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unity expects degrees
         camera->set_skybox(this->cameraConfigMessage.skyBox);
         camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2./tan(this->cameraConfigMessage.fieldOfView));
         camera->set_parentname(this->cameraConfigMessage.parentName);
