@@ -38,6 +38,7 @@ from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
 
+from sys import platform
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../../plotting')
@@ -113,8 +114,18 @@ def run(TheScenario):
     TheScenario.configure_initial_conditions()
 
     TheScenario.get_FswModel().imageProcessing.saveImages = 0
-    TheScenario.get_DynModel().vizInterface.opNavMode = 2
+    TheScenario.get_DynModel().vizInterface.opNavMode = 1
 
+    mode = ["None", "-directComm", "-opNavMode"]
+    # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
+    if platform != "darwin":
+        child = subprocess.Popen([TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
+                                  "tcp://localhost:5556"])
+    else:
+        child = subprocess.Popen(
+            ["open", TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
+             "tcp://localhost:5556"])
+    print("Vizard spawned with PID = " + str(child.pid))
 
     # Configure FSW mode
     TheScenario.modeRequest = 'prepOpNav'
