@@ -22,9 +22,20 @@ Upcoming Version 1.X.X
 - Fixed a transformation issue in ``avsEigenSupport.cpp`` where ``cArray2EigenMatrix3d()`` has to deal with
   both column and row dominant matrix formulations.  This only got used in :ref:`scenarioCSS` and the issue was offset
   by an issue in ``setUnitDirectionVectorWithPerturbation()`` that compensated.  Now, all is as it should be.
-- Fixed the issue of running :ref:`scenarioMonteCarloSpice` on macOS Catalina.  The issue was loading ``matplotlib`` in a
-  multi-threaded simulation.
 - Removed unneeded instances of using ``unitTestSupport.np2EigenVectorXd()`` when setting the spacecraft states
+- Many new Basilisk scenarios illustration interfacing with :ref:`Vizard <Vizard>` to simulate opNav cases:
+
+    - :ref:`scenario_DoubleOpNavOD` uses the two OpNav methods at once
+    - :ref:`scenario_faultDetOpNav` implements two OpNav methods and employs a fault detection
+    - :ref:`scenario_OpNavAttOD` uses the OpNav FSW stack to perform both pointing towards the target planet
+    - :ref:`scenario_OpNavAttODLimb` uses a Canny transform to extract limb points
+    - :ref:`scenario_OpNavHeading` point the spacecraft visually towards a target
+    - :ref:`scenario_OpNavOD` only performs the orbit determination component
+    - :ref:`scenario_OpNavODLimb` only performs the orbit determination component using the Limb based method
+    - :ref:`scenario_OpNavPoint` only performs the pointing component
+    - :ref:`scenario_OpNavPointLimb` only performs the pointing component using the Limb based method
+    - :ref:`scenario_LimbAttOD` performs a longer simulation using the limb based method
+    - :ref:`scenario_OpNavAttOD` performs a longer simulatin using the Hough transform method
 
 
 Version 1.6.0
