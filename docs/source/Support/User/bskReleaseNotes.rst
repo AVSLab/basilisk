@@ -37,6 +37,8 @@ Upcoming Version 1.X.X
     - :ref:`scenario_LimbAttOD` performs a longer simulation using the limb based method
     - :ref:`scenario_OpNavAttOD` performs a longer simulatin using the Hough transform method
 
+- make :ref:`scenarioVizPoint` work with the latest Vizard scripting methods
+
 
 Version 1.6.0
 -------------

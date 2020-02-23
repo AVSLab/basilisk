@@ -189,16 +189,14 @@ def run(show_plots, missionType, saveVizardFile):
         # Setup Camera.
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
-        cameraConfig.renderRate = int(59 * 1E9)  # in ns
-        cameraConfig.sigma_CB = [0, 0, 1]
+        cameraConfig.renderRate = 0
+        cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
-        cameraConfig.fieldOfView = 0.62  # in degrees
-        cameraConfig.sensorSize = [30.72 , 30.72 ]  # in mm
+        cameraConfig.fieldOfView = 0.62*macros.D2R  # in degrees
+        cameraConfig.sensorSize = [30.72*1e-3 , 30.72*1e-3]  # in m
         cameraConfig.resolution = [2048, 2048]  # in pixels
         cameraMsgName = 'camera_config_data'
-        cameraMessageSize = cameraConfig.getStructSize()
-        scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
-        scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
+        unitTestSupport.setMessage(scSim.TotalSim, simProcessName, cameraMsgName, cameraConfig)
     else:
         simulationTime = macros.min2nano(6.25)
         gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -208,16 +206,14 @@ def run(show_plots, missionType, saveVizardFile):
         mu = mars.mu
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
-        cameraConfig.renderRate = int(30 * 1E9)  # in ns
-        cameraConfig.sigma_CB = [0, 0, 1]
+        cameraConfig.renderRate = 0
+        cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
-        cameraConfig.fieldOfView = 50.  # in degrees
-        cameraConfig.sensorSize = [10. , 10. ]  # in mm
+        cameraConfig.fieldOfView = 50.*macros.D2R
+        cameraConfig.sensorSize = [10.*1e-3 , 10.*1e-3]  # in m
         cameraConfig.resolution = [512, 512]  # in pixels
         cameraMsgName = 'camera_config_data'
-        cameraMessageSize = cameraConfig.getStructSize()
-        scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
-        scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
+        unitTestSupport.setMessage(scSim.TotalSim, simProcessName, cameraMsgName, cameraConfig)
 
     #
     #   setup the simulation tasks/objects
