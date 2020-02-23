@@ -193,7 +193,6 @@ def run(show_plots, missionType, saveVizardFile):
         cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 0.62*macros.D2R  # in degrees
-        cameraConfig.sensorSize = [30.72*1e-3 , 30.72*1e-3]  # in m
         cameraConfig.resolution = [2048, 2048]  # in pixels
         cameraMsgName = 'camera_config_data'
         unitTestSupport.setMessage(scSim.TotalSim, simProcessName, cameraMsgName, cameraConfig)
@@ -210,7 +209,6 @@ def run(show_plots, missionType, saveVizardFile):
         cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 50.*macros.D2R
-        cameraConfig.sensorSize = [10.*1e-3 , 10.*1e-3]  # in m
         cameraConfig.resolution = [512, 512]  # in pixels
         cameraMsgName = 'camera_config_data'
         unitTestSupport.setMessage(scSim.TotalSim, simProcessName, cameraMsgName, cameraConfig)

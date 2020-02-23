@@ -135,13 +135,11 @@ class BSKDynamicModels():
         self.cameraMod.cameraPos_B = [0., 0.2, 0.2]  # in meters
         self.cameraRez = [512, 512]  #[1024,1024] # in pixels
         self.cameraSize = [10.*1E-3, self.cameraRez[1]/self.cameraRez[0]*10.*1E-3]  # in m
-        self.cameraMod.sensorSize = self.cameraSize
         self.cameraMod.resolution = self.cameraRez
-        self.cameraMod.fieldOfView = np.deg2rad(55)  # in degrees
-        self.cameraMod.focalLength = self.cameraMod.sensorSize[1]/2./np.tan(self.cameraMod.fieldOfView/2.) #in m
+        self.cameraMod.fieldOfView = np.deg2rad(55)
         self.cameraMod.parentName = 'inertial'
         self.cameraMod.skyBox = 'black'
-        self.cameraFocal = self.cameraMod.focalLength
+        self.cameraFocal = self.cameraSize[1]/2./np.tan(self.cameraMod.fieldOfView/2.) #in m
 
 
     def SetVizInterface(self):
