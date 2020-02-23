@@ -85,10 +85,10 @@ def pixelLineConverterTestFunction():
     inputAtt = pixelLineConverter.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 1.
-    inputCamera.sensorSize = [10, 10] # In mm
+    inputCamera.focalLength = 1.*1e-3   # in meters
+    inputCamera.sensorSize = [10*1e-3, 10*1e-3] # In meters
     inputCamera.resolution = [512, 512]
-    inputCamera.sigma_CB = [1.,0.3,0.1]
+    inputCamera.sigma_CB = [1., 0.3, 0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
 
     # Set circles

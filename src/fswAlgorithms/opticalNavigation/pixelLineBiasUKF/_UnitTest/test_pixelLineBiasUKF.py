@@ -171,7 +171,7 @@ def relOD_method_test(show_plots):
     # Set up a camera message
     cam = pixelLineBiasUKF.CameraConfigMsg()
     cam.sigma_CB = [-0.2, 0., 0.3]
-    cam.focalLength = 1
+    cam.focalLength = 1*1e-3
     cam.sensorSize = [10*1E-3,10*1E-3]
     cam.resolution = [512, 512]
     data.cameraSpecs = cam
@@ -270,7 +270,7 @@ def StatePropRelOD(show_plots, dt):
 
     # Set camera
     inputCamera.focalLength = 0.01
-    inputCamera.sensorSize = [10, 10]  # In mm
+    inputCamera.sensorSize = [10*1e-3, 10*1e-3]  # In mm
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.cameraConfigMsgName, inputCamera)
