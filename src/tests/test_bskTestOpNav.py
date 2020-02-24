@@ -40,7 +40,7 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../examples/OpNavScenarios/scenarios')
 sys.path.append(path + '/../examples/OpNavScenarios/')
 
-"""
+r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
     • Vizard downloaded and app path set properly (in src/examples/OpNavScenarios/BSK_masters)
