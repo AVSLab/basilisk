@@ -134,7 +134,7 @@ where (``psi``, ``theta``, ``phi``) are classical 3-2-1 Euler angles that map fr
 
 Specifying TAM Sensor Corruptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the variable ``senNoiseStd`` is set to a non-zero value.  This is the standard deviation of Gaussian noise in Tesla.
+Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the 3d vector ``senNoiseStd`` is set to non-zero values.  This is the standard deviation of Gaussian noise in Tesla.  If any ``senNoiseStd`` component is negative then the noise is not applied.
 
 Next, to simulate a constant bias, the variable ``senBias`` is set to a non-zero value. To simulate a linear scaling of the outputs, the variable ``scaleFactor`` is used.
 
