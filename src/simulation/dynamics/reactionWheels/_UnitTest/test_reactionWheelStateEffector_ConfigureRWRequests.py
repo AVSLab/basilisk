@@ -106,10 +106,10 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     expOut = dict() # expected output
 
     print(testCase)
-    if testCase is 'basic':
+    if testCase == 'basic':
         pass
 
-    elif testCase is 'saturation':
+    elif testCase == 'saturation':
         RWs.append(defaultReactionWheel())
         RWs[0].u_max = 1.
         RWs[1].u_max = 2.
@@ -119,7 +119,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
         expOut['u_current'] = [-1.,1.5,2.]
 
-    elif testCase is 'minimum':
+    elif testCase == 'minimum':
         RWs[0].u_min = .1
         RWs[1].u_min = .0
         u_cmd = [-.09,0.0001]
@@ -127,7 +127,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
         expOut['u_current'] = [0.,0.0001]
 
-    elif testCase is 'speedSaturation':
+    elif testCase == 'speedSaturation':
         RWs.append(defaultReactionWheel())
         RWs[0].Omega_max = 50.
         RWs[1].Omega_max = 50.

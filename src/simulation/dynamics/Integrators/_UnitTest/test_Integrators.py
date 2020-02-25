@@ -244,7 +244,7 @@ def run(doUnitTests, show_plots, integratorCase):
         dataPosRed = posData[::skipValue]
 
         # setup truth data for unit test
-        if integratorCase is "rk4":
+        if integratorCase == "rk4":
             truePos = [
                   [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
                 , [-6.379381726549218e6, -1.4688565370540658e6, 2.4807857675497606e6]
@@ -252,7 +252,7 @@ def run(doUnitTests, show_plots, integratorCase):
                 , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
                 , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
             ]
-        if integratorCase is "euler":
+        if integratorCase == "euler":
             truePos = [
                   [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
                 , [-7.061548530211288e6, -1.4488790844105487e6, 2.823580168201031e6]
@@ -260,7 +260,7 @@ def run(doUnitTests, show_plots, integratorCase):
                 , [719606.5825106134, -1.0537603309084207e7, -4.966060248346598e6]
                 , [6.431097055190775e6, -9.795566286964862e6, -7.438012269629238e6]
             ]
-        if integratorCase is "rk2":
+        if integratorCase == "rk2":
             truePos = [
                   [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
                 , [-6.425636528569288e6, -1.466693214251768e6, 2.50438327358707e6]

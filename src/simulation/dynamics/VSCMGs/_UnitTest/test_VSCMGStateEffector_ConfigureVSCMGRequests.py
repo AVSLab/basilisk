@@ -140,10 +140,10 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     expOut = dict() # expected output
 
     print(testCase)
-    if testCase is 'basic':
+    if testCase == 'basic':
         pass
 
-    elif testCase is 'saturation':
+    elif testCase == 'saturation':
         VSCMGs[0].u_s_max = 1.
         VSCMGs[1].u_s_max = 2.
         VSCMGs[0].u_g_max = 1.
@@ -154,7 +154,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
         expOut['u_s_current'] = [-1.,1.5]
 
-    elif testCase is 'minimum':
+    elif testCase == 'minimum':
         VSCMGs[0].u_s_min = .1
         VSCMGs[1].u_s_min = .0
         VSCMGs[0].u_g_min = .1
@@ -165,7 +165,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
         expOut['u_s_current'] = [0.,0.0001]
 
-    elif testCase is 'friction':
+    elif testCase == 'friction':
         u_s_f = [0.1,0.]
         u_g_f = [0.1,0.]
         Omega = [-20.,0.]

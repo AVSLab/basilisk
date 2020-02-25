@@ -176,12 +176,12 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
 
     # wheelAvailability message
     rwAvailabilityMessage = fswMessages.RWAvailabilityFswMsg()
-    if useRwAvailability is not "NO":
+    if useRwAvailability != "NO":
         moduleConfig.rwAvailInMsgName = "rw_availability"
-        if useRwAvailability is "ON":
+        if useRwAvailability == "ON":
             rwAvailabilityMessage.wheelAvailability  = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE,
                                                         rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
-        elif useRwAvailability is "OFF":
+        elif useRwAvailability == "OFF":
             rwAvailabilityMessage.wheelAvailability  = [rateServoFullNonlinear.UNAVAILABLE, rateServoFullNonlinear.UNAVAILABLE,
                                                         rateServoFullNonlinear.UNAVAILABLE, rateServoFullNonlinear.UNAVAILABLE]
         else:

@@ -158,7 +158,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     ])
 
     controlAxes_B = controlAxes_B[0:numControlAxis]
-    if len(controlAxes_B) is 0:
+    if len(controlAxes_B) == 0:
         controlAxes_B = np.array([[]])
 
     controlAxes_B = np.reshape(controlAxes_B, (1, 3 * numControlAxis))

@@ -222,7 +222,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         accuracy = 1e-6
 
     for moduleOutputName in fieldNames:
-        if moduleOutputName is 'qInrtl2Case':
+        if moduleOutputName == 'qInrtl2Case':
             if testCase == 'noise':
                 for i in range(0,3):
                     if np.abs(np.mean(moduleOutput['prvInrtl2Case'][:,i])) > 0.01 \

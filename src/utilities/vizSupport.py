@@ -144,7 +144,7 @@ def createCustomModel(viz, **kwargs):
         if not isinstance(offsetVariable, list):
             print('ERROR: offset must be a list of three floats')
             exit(1)
-        if len(offsetVariable) is not 3:
+        if len(offsetVariable) != 3:
             print('ERROR: offset must be list of three floats')
             exit(1)
         vizElement.offset = offsetVariable
@@ -156,7 +156,7 @@ def createCustomModel(viz, **kwargs):
         if not isinstance(rotationVariable, list):
             print('ERROR: rotation must be a list of three floats')
             exit(1)
-        if len(rotationVariable) is not 3:
+        if len(rotationVariable) != 3:
             print('ERROR: rotation must be list of three floats')
             exit(1)
         vizElement.rotation = rotationVariable
@@ -168,7 +168,7 @@ def createCustomModel(viz, **kwargs):
         if not isinstance(scaleVariable, list):
             print('ERROR: scale must be a list of three floats')
             exit(1)
-        if len(scaleVariable) is not 3:
+        if len(scaleVariable) != 3:
             print('ERROR: scale must be list of three floats')
             exit(1)
         vizElement.scale = scaleVariable

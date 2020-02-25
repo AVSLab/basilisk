@@ -80,7 +80,7 @@ def rwNullSpaceTestFunction(numWheels):
     inputSpeedMsg = rwNullSpace.RWSpeedIntMsg()
 
     gsHat = [[1, 0, 0], [0,1,0], [0, 0, 1]]
-    if numWheels is 4:
+    if numWheels == 4:
         gs4Hat = np.array([1,1,1])
         gs4Hat = gs4Hat/np.sqrt(gs4Hat.dot(gs4Hat))
         gsHat.append(gs4Hat.tolist())
@@ -97,7 +97,7 @@ def rwNullSpaceTestFunction(numWheels):
         rwConfigElementList.append(rwConfigElementMsg)
 
     rwSpeeds = [10, 20, 30] # [rad/sec] The current angular velocities of the RW wheel
-    if numWheels is 4:
+    if numWheels == 4:
         rwSpeeds.append(40)  # [rad/sec]
     inputSpeedMsg.wheelSpeeds = rwSpeeds
 
@@ -106,7 +106,7 @@ def rwNullSpaceTestFunction(numWheels):
 
     inputRWCmdMsg = simFswInterfaceMessages.RWArrayTorqueIntMsg()
     usControl = [0.1, 0.2, 0.15] # [Nm] RW motor torque array
-    if numWheels is 4:
+    if numWheels == 4:
         usControl.append(-0.2) # [Nm]
     inputRWCmdMsg.motorTorque = usControl
 
@@ -128,14 +128,14 @@ def rwNullSpaceTestFunction(numWheels):
     outputCrtlData = unitTestSim.pullMessageLogData(moduleConfig.outputControlName+'.motorTorque', list(range(3)))
     print(outputCrtlData)
 
-    if numWheels is 3:
+    if numWheels == 3:
         # in this case there is no nullspace of the RW configuration.  The output torque should be the input torque
         trueVector = [inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque]
-    elif numWheels is 4:
+    elif numWheels == 4:
         # in this case there is a 1D nullspace of [Gs]
         GsT = np.array(gsHat)
         Gs = GsT.transpose()

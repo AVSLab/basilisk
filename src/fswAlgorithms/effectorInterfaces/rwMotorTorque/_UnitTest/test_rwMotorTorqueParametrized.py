@@ -88,7 +88,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     # Initialize the test module msg names
     moduleConfig.outputDataName = "rwMotorTorqueOut"
     moduleConfig.inputVehControlName = "LrRequested"
-    if RWAvailMsg is not "NO":
+    if RWAvailMsg != "NO":
         moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Initialize module variables
@@ -194,9 +194,9 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 
         avail = [rwMotorTorque.UNAVAILABLE] * numWheels
         for i in range(numWheels):
-            if RWAvailMsg is "ON":
+            if RWAvailMsg == "ON":
                 avail[i] = rwMotorTorque.AVAILABLE
-            elif RWAvailMsg is "OFF":
+            elif RWAvailMsg == "OFF":
                 avail[i] = rwMotorTorque.UNAVAILABLE
             else:
                 if i < int(numWheels/2):

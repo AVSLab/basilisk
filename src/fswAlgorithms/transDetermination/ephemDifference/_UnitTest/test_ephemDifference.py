@@ -67,7 +67,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
     changeBodyList = list()
 
-    if ephBdyCount is 3:
+    if ephBdyCount == 3:
         for i in range(ephBdyCount):
             # Create the change body message
             changeBodyMsg = ephem_difference.EphemChangeConfig()
@@ -108,7 +108,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
     unitTestSim.ConfigureStopTime(0)  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    if ephBdyCount is 3:
+    if ephBdyCount == 3:
         trueRVector = [[69313607.6209608,  -75620898.04028425,   -5443274.17030424],
                        [-5.33462105e+08,  -7.56888610e+08,   1.17556184e+07],
                        [9.94135029e+07,  -1.54721593e+09,   1.65081472e+07]]

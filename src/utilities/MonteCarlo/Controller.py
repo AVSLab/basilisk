@@ -323,7 +323,7 @@ class Controller:
         # the list of failures
         failed = []
 
-        assert self.icDirectory is not "", "No initial condition directory was given"
+        assert self.icDirectory != "", "No initial condition directory was given"
         assert self.ICrunFlag is not False, "IC run flag was not set"
 
         if self.simParams.verbose:

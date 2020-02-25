@@ -233,7 +233,7 @@ def run(show_plots, scCase):
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
     #       SPICE kernals in Python.
-    if scCase is 'NewHorizons':
+    if scCase == 'NewHorizons':
         scEphemerisFileName = 'nh_pred_od077.bsp'
         scSpiceName = 'NEW HORIZONS'
     else:  # default case
@@ -309,7 +309,7 @@ def run(show_plots, scCase):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    if scCase is 'NewHorizons':
+    if scCase == 'NewHorizons':
         axesScale = astroFunctions.AU * 1000.  # convert to AU
         axesLabel = '[AU]'
         timeScale = macros.NANO2MIN  # convert to minutes
@@ -331,7 +331,7 @@ def run(show_plots, scCase):
     figureList[pltName] = plt.figure(1)
 
     rBSK = posData[-1, 1:4]  # store the last position to compare to the SPICE position
-    if scCase is 'Hubble':
+    if scCase == 'Hubble':
         #
         # draw orbit in perifocal frame
         #

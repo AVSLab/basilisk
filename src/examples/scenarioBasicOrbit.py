@@ -248,7 +248,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # overridden.  If multiple bodies are simulated, then their positions can be
     # dynamically updated.  See [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
     # done via a SPICE object.
-    if planetCase is 'Mars':
+    if planetCase == 'Mars':
         planet = gravFactory.createMarsBarycenter()
         planet.isCentralBody = True           # ensure this is the central gravitational body
         if useSphericalHarmonics:
@@ -287,11 +287,11 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000. * 1000      # meters
     rGEO = 42000. * 1000     # meters
-    if orbitCase is 'GEO':
+    if orbitCase == 'GEO':
         oe.a = rGEO
         oe.e = 0.00001
         oe.i = 0.0 * macros.D2R
-    elif orbitCase is 'GTO':
+    elif orbitCase == 'GTO':
         oe.a = (rLEO + rGEO) / 2.0
         oe.e = 1.0 - rLEO / oe.a
         oe.i = 0.0 * macros.D2R

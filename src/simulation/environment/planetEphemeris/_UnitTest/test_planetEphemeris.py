@@ -193,7 +193,7 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
             timeTrue, J2000Current, accuracy, "J2000Current", testFailCount, testMessages)
 
         # check that the position and velocity vectors are correct
-        if planet is "earth":
+        if planet == "earth":
             oe = oeEarth
         else:
             oe = oeVenus

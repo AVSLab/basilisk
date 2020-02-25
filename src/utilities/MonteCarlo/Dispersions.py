@@ -519,7 +519,7 @@ class InertiaTensorDispersion:
             val += '[' + str(nextValue[i][0]) + ', ' \
                 + str(nextValue[i][1]) + ', ' \
                 + str(nextValue[i][2]) + ']'
-            if i is not 2:
+            if i != 2:
                 val += ','
         val = val[0:] + ']'
         return val

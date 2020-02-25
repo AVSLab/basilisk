@@ -202,12 +202,12 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
     # wheelAvailability message
     rwAvailabilityMessage = fswMessages.RWAvailabilityFswMsg()
-    if useRwAvailability is not "NO":
+    if useRwAvailability != "NO":
         moduleConfig.rwAvailInMsgName = "rw_availability"
-        if useRwAvailability is "ON":
+        if useRwAvailability == "ON":
             rwAvailabilityMessage.wheelAvailability  = [MRP_Feedback.AVAILABLE, MRP_Feedback.AVAILABLE,
                                                         MRP_Feedback.AVAILABLE, MRP_Feedback.AVAILABLE]
-        elif useRwAvailability is "OFF":
+        elif useRwAvailability == "OFF":
             rwAvailabilityMessage.wheelAvailability  = [MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE,
                                                         MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE]
         else:

@@ -744,7 +744,7 @@ class SimBaseClass:
                     for singInt in intDef.interfaceDef:
                         for i in range(2):
                             if singInt.moduleID == messagePair[i]:
-                                if singInt.ModelTag is not "":
+                                if singInt.ModelTag != "":
                                     namePairs[i] = singInt.ModelTag
                                 else:
                                     namePairs[i] = singInt.moduleID
@@ -753,7 +753,7 @@ class SimBaseClass:
                     for i in range(2):
                         if module.ModelPtr.moduleID == messagePair[i]:
                             if namePairs[i] == None:
-                                if module.ModelPtr.ModelTag is not "":
+                                if module.ModelPtr.ModelTag != "":
                                     namePairs[i] = module.ModelPtr.ModelTag
                                 else:
                                     namePairs[i] = module.ModelPtr.moduleID

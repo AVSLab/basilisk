@@ -29,7 +29,7 @@ def exponentialAtmosphere(atmosModule, name):
     :param name: planet name string
     :return:
     """
-    if name is "earth":
+    if name == "earth":
         atmosModule.planetRadius = 6378136.6   # meters
         atmosModule.baseDensity = 1.217  # kg/m^3
         atmosModule.scaleHeight = 8500.0 # meters
@@ -51,7 +51,7 @@ def centeredDipoleMagField(magFieldModule, name):
     :param name: planet name string
     :return:
     """
-    if name is "earth":
+    if name == "earth":
         # The following parameters are from the 2020 IGRF model
         # (https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html)
         magFieldModule.g10 = -30926.00/1e9     # Tesla
@@ -59,7 +59,7 @@ def centeredDipoleMagField(magFieldModule, name):
         magFieldModule.h11 =   5817.00/1e9     # Tesla
         magFieldModule.planetRadius = 6371.2*1000   # meters
 
-    elif name is "mercury":
+    elif name == "mercury":
         # The following parameters are from NASA planetary fact sheet
         # (https://nssdc.gsfc.nasa.gov/planetary/planetfact.html)
         magFieldModule.planetRadius = 2440.0*1000   # meters
@@ -68,7 +68,7 @@ def centeredDipoleMagField(magFieldModule, name):
                                         0.0*macros.D2R,     # [rad] Longitude of tilt
                                         magFieldModule)
 
-    elif name is "jupiter":
+    elif name == "jupiter":
         # The following parameters are from NASA planetary fact sheet
         # (https://nssdc.gsfc.nasa.gov/planetary/planetfact.html)
         magFieldModule.planetRadius = 71398.0*1000   # meters
@@ -77,7 +77,7 @@ def centeredDipoleMagField(magFieldModule, name):
                                         200.1*macros.D2R,   # [rad] Longitude of tilt
                                         magFieldModule)
 
-    elif name is "saturn":
+    elif name == "saturn":
         # The following parameters are from NASA planetary fact sheet
         # (https://nssdc.gsfc.nasa.gov/planetary/planetfact.html)
         magFieldModule.planetRadius = 60330.0*1000   # meters
@@ -86,7 +86,7 @@ def centeredDipoleMagField(magFieldModule, name):
                                         0.0*macros.D2R,     # [rad] Longitude of tilt
                                         magFieldModule)
 
-    elif name is "uranus":
+    elif name == "uranus":
         # The following parameters are from NASA planetary fact sheet
         # (https://nssdc.gsfc.nasa.gov/planetary/planetfact.html)
         magFieldModule.planetRadius = 25600.0*1000   # meters
@@ -95,7 +95,7 @@ def centeredDipoleMagField(magFieldModule, name):
                                         53.6*macros.D2R,    # [rad] Longitude of tilt
                                         magFieldModule)
 
-    elif name is "neptune":
+    elif name == "neptune":
         # The following parameters are from NASA planetary fact sheet
         # (https://nssdc.gsfc.nasa.gov/planetary/planetfact.html)
         magFieldModule.planetRadius = 24765.0*1000   # meters
