@@ -40,7 +40,7 @@ Magnetometer::Magnetometer()
     this->tamDataOutMsgName = "";
     this->numStates = 3;
     this->senBias.fill(0.0); // Tesla
-    this->senNoiseStd = -1.0; // Tesla
+    this->senNoiseStd.fill(-1.0); // Tesla
     this->walkBounds.fill(0.0);
     this->noiseModel = GaussMarkov(this->numStates);
     this->noiseModel.setRNGSeed(this->RNGSeed);
@@ -116,10 +116,7 @@ void Magnetometer::CrossInit()
 void Magnetometer::Reset(uint64_t CurrentSimNanos)
 {
     this->noiseModel.setUpperBounds(this->walkBounds);
-    Eigen::Matrix3d idm3d;
-    idm3d.setIdentity(3, 3);
-    Eigen::Matrix3d nMatrix;
-    nMatrix = this->senNoiseStd * 1.5 * idm3d;
+    auto nMatrix = (this->senNoiseStd * 1.5).asDiagonal();
     this->noiseModel.setNoiseMatrix(nMatrix);
     Eigen::MatrixXd satBounds;
     satBounds.resize(this->numStates, 2);
@@ -175,10 +172,12 @@ void Magnetometer::computeTrueOutput()
  it over to an errored value.  It applies Gaussian noise, constant bias and scale factor to the truth. */
 void Magnetometer::applySensorErrors()
 {
-    //! - If the standard deviation is not positive, do not use noise error from RNG
-    if (this->senNoiseStd <= 0.0) {
-        this->sensedValue = this->trueValue;
-    }
+    //! - If any of the standard deviation vector elements is not positive, do not use noise error from RNG.
+    double n0 = 0.0;
+    for (unsigned i = 0; i < this->senNoiseStd.size(); i++){
+        if ((this->senNoiseStd(i) <= 0.0)) {n0++;}
+    }    
+    if (n0 == this->senNoiseStd.size()) {this->sensedValue = this->trueValue;}
     else {
         //! - Get current error from random number generator
         this->noiseModel.computeNextState();
