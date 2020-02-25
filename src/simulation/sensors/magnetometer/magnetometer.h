@@ -57,8 +57,8 @@ public:
     Eigen::Vector3d     sensedValue;            //!< [T] Measurement including perturbations
     Eigen::Vector3d     trueValue;              //!< [T] Measurement without perturbations
     double              scaleFactor;            //!< [-] Scale factor applied to sensor
-    Eigen::Vector3d     senBias;                //!< [T] Sensor bias value
-    double              senNoiseStd;            //!< [T] Sensor noise standard deviation value
+    Eigen::Vector3d     senBias;                //!< [T] Sensor bias vector
+    Eigen::Vector3d     senNoiseStd;            //!< [T] Sensor noise standard deviation vector
     uint64_t            outputBufferCount;      //!< [-] Number of output msgs stored
     Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states
     double              maxOutput;              //!< [T] Maximum output for saturation application
