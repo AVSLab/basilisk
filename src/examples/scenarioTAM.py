@@ -217,7 +217,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     # specify the optional TAM variables
     TAM.scaleFactor = 1.0
     TAM.tamDataOutMsgName = "TAM_output"
-    TAM.senNoiseStd = 100e-9
+    TAM.senNoiseStd = [100e-9,  100e-9, 100e-9]
     if useBias:
         TAM.senBias = [0, 0, -1e-6]  # Tesla
     if useBounds:

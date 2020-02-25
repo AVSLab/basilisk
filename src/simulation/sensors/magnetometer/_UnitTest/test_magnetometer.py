@@ -103,7 +103,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     testModule = magnetometer.Magnetometer()
     testModule.ModelTag = "TAM_sensor"
     testModule.tamDataOutMsgName = "TAM_output"
-    NoiseStd = 3e-9  # Tesla
+    NoiseStd = [3e-9, 3e-9, 3e-9]  # Tesla
     bias = [1e-6, 1e-6, 1e-5]  # Tesla
     minOut = -1e-4  # Tesla
     maxOut = 1e-4  # Tesla
