@@ -16,6 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
+%module swig_conly_data
+
 %include "stdint.i"
 %define ARRAYASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {

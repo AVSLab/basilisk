@@ -308,12 +308,28 @@ macro(is_cpp_module C_FILES CPP_FILE_EXISTS)
     # If there are files and there is a .cpp file, use c++ mode
     foreach(C_FILE ${C_FILES})
         get_filename_component(FILE_EXT ${C_FILE} EXT)
-        string(COMPARE EQUAL ${FILE_EXT} ".cpp" OUTPUT_VAR)
-        if(${OUTPUT_VAR})
-            set(${CPP_FILE_EXISTS} ${OUTPUT_VAR})
+        string(COMPARE EQUAL ${FILE_EXT} ".cpp" CPP_VAR)
+        if(${CPP_VAR})
+            set(${CPP_FILE_EXISTS} ${CPP_VAR})
             break()
         endif()
     endforeach()
+
+    # If no C++ file found, check if there are any .c files or if the directory is header files only
+    # If headers only, we use c++ mode (this is for the message directories)
+    if(NOT ${CPP_VAR})
+        set(HEADER_FILES_ONLY 1)
+        foreach(C_FILE ${C_FILES})
+            get_filename_component(FILE_EXT ${C_FILE} EXT)
+            string(COMPARE EQUAL ${FILE_EXT} ".c" C_VAR)
+            if(${C_VAR})
+                set(${HEADER_FILES_ONLY} 0)
+                break()
+            endif()
+        endforeach()
+        set(${CPP_FILE_EXISTS} ${HEADER_FILES_ONLY})
+    endif()
+
 endmacro(is_cpp_module)
 
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
@@ -342,7 +358,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
         set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the .i files
 
-        is_cpp_module("${C_FILES}" CPP_FILE_EXISTS)
+        is_cpp_module("${C_FILES}" CPP_FILE_EXISTS) # Header only directories (message directories) will get set to c mode
         if(${CPP_FILE_EXISTS})
             set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
         endif()
@@ -556,6 +572,8 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilitiesSelfCheck" UTILITI
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizInterface" VIZ_INTERFACE_TARGETS)
 
 
+
+
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # TODO: include cspice for just spice_interface, not all packages
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
@@ -566,6 +584,8 @@ generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulatio
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${UTILITIES_SELF_CHECK_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+
+
 
 
 
@@ -601,6 +621,30 @@ generate_package_targets("${RW_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgo
 generate_package_targets("${SENSOR_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+
+
+##################
+# MESSAGES #
+##################
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simMessages" SIM_MESSAGES_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simFswInterfaceMessages" SIM_FSW_INTERFACE_TARGETS)
+
+generate_package_targets("${SIM_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/fswMessages" FSW_MESSAGES_TARGETS)
+generate_package_targets("${FSW_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+
+
+
+##################
+# ARCHITECTURE #
+##################
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/architecture" ARCHITECTURE_TARGETS)
+generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" SIM_TARGETS)
+generate_package_targets("${SIM_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 
 
