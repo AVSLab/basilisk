@@ -153,6 +153,7 @@ message VizMessage{
         int32 showCSLabels = 15; //Value of -1 to use viz default, 0 for false, 1 for true
         int32 showCelestialBodyLabels = 16; //Value of -1 to use viz default, 0 for false, 1 for true
         int32 showSpacecraftLabels = 17; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 customGUIScale = 18; //Value of -1 or 0 to use viz default
     }
 
     TimeStamp currentTime = 1;

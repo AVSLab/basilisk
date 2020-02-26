@@ -61,6 +61,7 @@ VizInterface::VizInterface()
     this->settings.showCelestialBodyLabels = -1;
     this->settings.showSpacecraftLabels = -1;
     this->settings.showCSLabels = -1;
+    this->settings.customGUIScale = -1;
 
     this->firstPass = 0;
     return;
@@ -495,6 +496,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         if (abs(this->settings.showSpacecraftLabels)>1) {
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftLabels);
         }
+
+        // define the GUI scaling factor
+        vizSettings->set_customguiscale(this->settings.customGUIScale);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
