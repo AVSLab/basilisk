@@ -18,4 +18,13 @@ If you are making a C-module, then this template folder is a great place to star
 
 Other modules, such as :ref:`magneticFieldCenteredDipole`, :ref:`exponentialAtmosphere` or :ref:`simpleBattery` modules are based on base classes.  Be sure to study the baseline on the expected overall behavior of such modules, and use the ``customXXXX()`` methods to provide the new module custom functionality.
 
+If you are using linear algebra to do vector and tensor math, be sure to read the :ref:`codingGuidelines` on how to
+name matrix representations of vector and tensors.  Further, for C++ modules Basilisk includes support for the
+`Intel Eigen library <http://eigen.tuxfamily.org>`_.  However, note that the ``.toRotationMatrix()`` `method <http://eigen.tuxfamily.org/dox/classEigen_1_1QuaternionBase.html#a8cf07ab9875baba2eecdd62ff93bfc3f>`_ in
+Eigen will return the DCM :math:`[NB]`, not :math:`[BN]`.  Thus, the Basilisk specific Eigen MRP ``.toRotationMatrix()`` method
+follows this convention.
+If you are coding a C-module, then BSK includes the ``linearAlgebra.c/h`` support functions to do many common
+linear algebra calculations.  Rigid body kinematics calculations are supported through the ``rigidBodyKinematics.c/h``
+library.
+
 If you think you are done and would like to contribute this module to the Basilisk repository, be sure to study the :ref:`bskModuleCheckoutList` to complete all required check-out tasks.

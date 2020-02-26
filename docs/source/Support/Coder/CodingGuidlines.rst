@@ -107,6 +107,11 @@ of an  :math:`\cal N` frame vector into a  :math:`\cal B`
 frame vector, is written ``dcm_BN``. Similarly for the Modified
 Rodrigues Parameters (MRP) attitude parameterization the :math:`\pmb\sigma_{\mathcal{B}/\mathcal{N}}` is written ``sigma_BN``.
 
+.. warning::
+   If you are using the `Intel Eigen library <http://eigen.tuxfamily.org>`_ library to do linear algebra, the
+   mapping from an attitude description such as quaternions or MRPs to a direction cosine matrix (DCM)
+   using ``.toRotationMatrix()`` will return :math:`[NB]`, not :math:`[BN]`.
+
 Inertia Tensor
 ~~~~~~~~~~~~~~
 
