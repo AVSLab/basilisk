@@ -22,7 +22,7 @@ ambient lighting the following code is used:
 .. code-block:: python
 
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName) 
-	viz.settings.ambient = [0.5] 
+	viz.settings.ambient = 0.5
 
 If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
@@ -48,8 +48,8 @@ The following settings can be set directly using::
     +----------------------------+---------------+------------------------------+
     | Variable                   | Type          | Description                  |
     +============================+===============+==============================+
-    | ``ambient``                | [0,8]         | value to specify the ambient |
-    |                            |               | Vizard lighting.             |
+    | ``ambient``                | [0,8]         | float value to specify the   |
+    |                            |               | ambient Vizard lighting.     |
     +----------------------------+---------------+------------------------------+
     | ``orbitLinesOn``           | (0,1)         | flag to show (1) or hide (0) |
     |                            |               | the orbit trajectory lines   |
