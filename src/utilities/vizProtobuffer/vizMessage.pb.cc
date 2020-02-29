@@ -735,7 +735,7 @@ void AddDescriptorsImpl() {
       "resightHUD\030\r \001(\005\022\031\n\021viewCameraConeHUD\030\016 "
       "\001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027showCelesti"
       "alBodyLabels\030\020 \001(\005\022\034\n\024showSpacecraftLabe"
-      "ls\030\021 \001(\005\022\026\n\016customGUIScale\030\022 \001(\005b\006proto3"
+      "ls\030\021 \001(\005\022\026\n\016customGUIScale\030\022 \001(\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
       descriptor, 3040);
@@ -7484,13 +7484,13 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // int32 customGUIScale = 18;
+      // double customGUIScale = 18;
       case 18: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(144u /* 144 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(145u /* 145 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
                  input, &customguiscale_)));
         } else {
           goto handle_unusual;
@@ -7614,9 +7614,9 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(17, this->showspacecraftlabels(), output);
   }
 
-  // int32 customGUIScale = 18;
+  // double customGUIScale = 18;
   if (this->customguiscale() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(18, this->customguiscale(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(18, this->customguiscale(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7729,9 +7729,9 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(17, this->showspacecraftlabels(), target);
   }
 
-  // int32 customGUIScale = 18;
+  // double customGUIScale = 18;
   if (this->customguiscale() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(18, this->customguiscale(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(18, this->customguiscale(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7874,11 +7874,9 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
         this->showspacecraftlabels());
   }
 
-  // int32 customGUIScale = 18;
+  // double customGUIScale = 18;
   if (this->customguiscale() != 0) {
-    total_size += 2 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->customguiscale());
+    total_size += 2 + 8;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);

@@ -172,7 +172,7 @@ typedef struct {
     int32_t showCSLabels;                           //!< Value of -1 to use viz default, 0 for false, 1 for true
     int32_t showCelestialBodyLabels;                //!< Value of -1 to use viz default, 0 for false, 1 for true
     int32_t showSpacecraftLabels ;                  //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t customGUIScale;                         //!< GUI scaling parameter, Value of -1 to use viz default, otherwise a positive integer
+    double customGUIScale;                          //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
 }VizSettings;
 
 
