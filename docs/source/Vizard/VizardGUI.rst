@@ -96,11 +96,8 @@ axes being modeled.
 
 
 
-Vizard Configuration Options
-----------------------------
-
 ``View`` Menu Item
-^^^^^^^^^^^^^^^^^^
+------------------
 The ``View`` menu tab contains a range of Vizard options. A range of coordinate frames can be toggled on or off.
 
 .. image:: ../_images/static/vizard-imgAxes.jpg
@@ -140,6 +137,12 @@ becomes solid.
 Adjust Brightness
 ^^^^^^^^^^^^^^^^^
 This option allows the user to increase or decrease the ambient lighting of the Vizard Simulation.
+
+Adjust GUI Scale
+^^^^^^^^^^^^^^^^^
+This brings up a panel where a global GUI scale factor can be set.  This is useful increase or decrease,
+the Vizard font, panel and GUI element sizes.  The Vizard default values switch automatically with the screen
+resolution.  If a specific value is set in this panel than this over-rides the auto-setting.
 
 Model Inventory Panel
 ^^^^^^^^^^^^^^^^^^^^^
