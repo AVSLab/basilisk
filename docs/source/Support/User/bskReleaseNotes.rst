@@ -43,7 +43,7 @@ Upcoming Version 1.X.X
     - All instrument cameras are now specified through `fieldOfView`, not sensor size and focal length
     - Added scripting support to turn on camera boresight line or HUD frustum
     - Made instrument cameras not render images to the home folder by default by setting `renderRate` to zero by default
-    - 
+
 
 
 Version 1.6.0
