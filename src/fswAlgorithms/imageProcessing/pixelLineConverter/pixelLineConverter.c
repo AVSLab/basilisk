@@ -105,8 +105,12 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
 
     /*! - Find pixel size using camera specs */
     double X, Y;
-    X = cameraSpecs.sensorSize[0]/cameraSpecs.resolution[0];
-    Y = cameraSpecs.sensorSize[1]/cameraSpecs.resolution[1];
+    double pX, pY;
+    /* compute sensorSize/focalLength = 2*tan(FOV/2) */
+    pX = 2.*tan(cameraSpecs.fieldOfView*cameraSpecs.resolution[0]/cameraSpecs.resolution[1]/2.0);
+    pY = 2.*tan(cameraSpecs.fieldOfView/2.0);
+    X = pX/cameraSpecs.resolution[0];
+    Y = pY/cameraSpecs.resolution[1];
 
     /*! - Get the heading */
     double rtilde_C[2];
@@ -116,8 +120,8 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double covar_map_C[3*3], covar_In_C[3*3], covar_In_B[3*3];
     double covar_In_N[3*3];
     double x_map, y_map, rho_map;
-    rtilde_C[0] = (X*reCentered[0])/cameraSpecs.focalLength;
-    rtilde_C[1] = (Y*reCentered[1])/cameraSpecs.focalLength;
+    rtilde_C[0] = reCentered[0]*X;
+    rtilde_C[1] = reCentered[1]*Y;
     v3Set(rtilde_C[0], rtilde_C[1], 1.0, rHat_BN_C);
     v3Scale(-1, rHat_BN_C, rHat_BN_C);
     v3Normalize(rHat_BN_C, rHat_BN_C);
@@ -139,13 +143,13 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
             opNavMsgOut.planetID = configData->planetTarget;
         }
         
-        denom = sin(atan(X*circlesIn.circlesRadii[0]/cameraSpecs.focalLength));
+        denom = sin(atan(X*circlesIn.circlesRadii[0]));
         rNorm = planetRad/denom; //in km
         
         /*! - Compute the uncertainty */
-        x_map = planetRad/denom*(X/cameraSpecs.focalLength);
-        y_map = planetRad/denom*(Y/cameraSpecs.focalLength);
-        rho_map = planetRad*(X/(cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2)))-cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2))/(pow(circlesIn.circlesRadii[0], 2)*X));
+        x_map = planetRad/denom*(X);
+        y_map = planetRad/denom*(Y);
+        rho_map = planetRad*(X/(sqrt(1 + pow(circlesIn.circlesRadii[0]*X,2)))-1.0/X*sqrt(1 + pow(circlesIn.circlesRadii[0]*X,2))/pow(circlesIn.circlesRadii[0], 2));
         mSetIdentity(covar_map_C, 3, 3);
         covar_map_C[0] = x_map;
         covar_map_C[4] = y_map;

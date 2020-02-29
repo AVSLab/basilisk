@@ -119,8 +119,7 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     inputAtt = faultDetection.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 1.
-    inputCamera.sensorSize = [10, 10] # In mm
+    inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.3,0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.cameraConfigMsgName, inputCamera)

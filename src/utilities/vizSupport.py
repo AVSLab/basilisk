@@ -63,6 +63,9 @@ def toRGBA255(color):
 
 pointLineList = []
 def createPointLine(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     vizElement = vizInterface.PointLine()
 
@@ -102,6 +105,9 @@ def createPointLine(viz, **kwargs):
 
 customModelList = []
 def createCustomModel(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     vizElement = vizInterface.CustomModel()
 
@@ -203,8 +209,6 @@ def createCustomModel(viz, **kwargs):
             exit(1)
 
         vizElement.shader = shaderVariable
-    else:
-        vizElement.shader = -1
 
     customModelList.append(vizElement)
     del viz.settings.customModelList[:] # clear settings list to replace it with updated list
@@ -213,11 +217,49 @@ def createCustomModel(viz, **kwargs):
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
+    """
+    This method sets the actuator GUI properties for a particular spacecraft.  If no ``spacecraftName`` is
+    provided, then the name of the first spacecraft in the simulation is assumed.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    spacecraftName: str
+        The name of the spacecraft for which the actuator GUI options are set.
+        Default: If not provided, then the name of the first spacecraft in the simulation is used.
+    viewThrusterPanel: bool
+        flag if the GUI panel should be shown illustrating the thruster states
+        Default: if not provided, then the Vizard default settings are used
+    viewRWPanel: bool
+        flag if the GUI panel should be shown illustrating the reaction wheel states
+        Default: if not provided, then the Vizard default settings are used
+    viewThrusterHUD: bool
+        flag if the HUD visualization of the thruster states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    viewRWHUD: bool
+        flag if the HUD visualization of the reaction wheel states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    showThrusterLabels: bool
+        flag if the thruster labels should be shown
+        Default: if not provided, then the Vizard default settings are used
+    showRWLabels: bool
+        flag if the reaction wheel labels should be shown
+        Default: if not provided, then the Vizard default settings are used
+
+    """
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+
     global firstSpacecraftName
     vizElement = vizInterface.ActuatorGuiSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'viewThrusterPanel', 'viewThrusterHUD', 'viewRWPanel', 'viewRWHUD'],
+        ['spacecraftName', 'viewThrusterPanel', 'viewThrusterHUD', 'viewRWPanel', 'viewRWHUD',
+         'showThrusterLabels', 'showRWLabels'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -228,8 +270,6 @@ def setActuatorGuiSetting(viz, **kwargs):
         vizElement.spacecraftName = scName
     else:
         vizElement.spacecraftName = firstSpacecraftName
-    print("HPS: 0")
-    print(vizElement.spacecraftName)
 
     if 'viewThrusterPanel' in kwargs:
         setting = kwargs['viewThrusterPanel']
@@ -237,8 +277,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewThrusterPanel must be True or False')
             exit(1)
         vizElement.viewThrusterPanel = setting
-    else:
-        vizElement.viewThrusterPanel = -1
 
     if 'viewThrusterHUD' in kwargs:
         setting = kwargs['viewThrusterHUD']
@@ -246,8 +284,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewThrusterHUD must be True or False')
             exit(1)
         vizElement.viewThrusterHUD = setting
-    else:
-        vizElement.viewThrusterHUD = -1
 
     if 'viewRWPanel' in kwargs:
         setting = kwargs['viewRWPanel']
@@ -255,8 +291,6 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewRWPanel must be True or False')
             exit(1)
         vizElement.viewRWPanel = setting
-    else:
-        vizElement.viewRWPanel = -1
 
     if 'viewRWHUD' in kwargs:
         setting = kwargs['viewRWHUD']
@@ -264,8 +298,20 @@ def setActuatorGuiSetting(viz, **kwargs):
             print('ERROR: viewRWHUD must be an integer value')
             exit(1)
         vizElement.viewRWHUD = setting
-    else:
-        vizElement.viewRWHUD = -1
+
+    if 'showThrusterLabels' in kwargs:
+        setting = kwargs['showThrusterLabels']
+        if not isinstance(setting, bool):
+            print('ERROR: showThrusterLabels must be an integer value')
+            exit(1)
+        vizElement.showThrusterLabels = setting
+
+    if 'showRWLabels' in kwargs:
+        setting = kwargs['showRWLabels']
+        if not isinstance(setting, bool):
+            print('ERROR: showRWLabels must be an integer value')
+            exit(1)
+        vizElement.showRWLabels = setting
 
     actuatorGuiSettingList.append(vizElement)
     del viz.settings.actuatorGuiSettingsList[:]  # clear settings list to replace it with updated list
@@ -275,6 +321,9 @@ def setActuatorGuiSetting(viz, **kwargs):
 
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     vizElement = vizInterface.KeepOutInCone()
 
@@ -373,6 +422,9 @@ def createConeInOut(viz, **kwargs):
 
 stdCameraList = []
 def createStandardCamera(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     cam = vizInterface.StdCameraSettings()
 
     unitTestSupport.checkMethodKeyword(
@@ -398,8 +450,6 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: setMode must be a 0 (body targeting) or 1 (pointing vector)')
             exit(1)
         cam.setMode = setMode
-    else:
-        cam.setMode = 1
 
     if 'setView' in kwargs:
         setView = kwargs['setView']
@@ -415,8 +465,6 @@ def createStandardCamera(viz, **kwargs):
                   'This is a setting for body targeting mode.')
             exit(1)
         cam.setView = setView
-    else:
-        cam.setView = 0  # nadir mode
 
     if 'fieldOfView' in kwargs:
         fieldOfView = kwargs['fieldOfView']
@@ -424,8 +472,6 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: spacecraftVisible must be a float in radians')
             exit(1)
         cam.fieldOfView = fieldOfView
-    else:
-        cam.fieldOfView = -1.0
 
     if 'bodyTarget' in kwargs:
         if cam.setMode == 1:
@@ -460,6 +506,8 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: position_B must be 3D list of float values')
             exit(1)
         cam.position_B = position_B
+    else:
+        cam.position_B = [0, 0, 0]
 
     stdCameraList.append(cam)
     del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list
@@ -468,9 +516,12 @@ def createStandardCamera(viz, **kwargs):
 
 
 def createCameraConfigMsg(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
     global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
-        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'focalLength', 'sensorSize', 'cameraPos_B', 'sigma_CB', 'skyBox'],
+        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox'],
         kwargs)
 
     if 'cameraID' in kwargs:
@@ -520,29 +571,10 @@ def createCameraConfigMsg(viz, **kwargs):
 
     if 'renderRate' in kwargs:
         val = kwargs['renderRate']
-        if not isinstance(val, int) or val <= 0:
-            print('ERROR: renderRate ' + str(val) + ' must be positive integer value.')
+        if not isinstance(val, float) or val < 0:
+            print('ERROR: renderRate ' + str(val) + ' must be positive float value in units of seconds.')
             exit(1)
-        viz.cameraConfigMessage.renderRate = val
-    else:
-        print('ERROR: renderRate must be defined in createCameraConfigMsg()')
-        exit(1)
-
-    if 'sensorSize' in kwargs:
-        val = kwargs['sensorSize']
-        if not isinstance(val, list):
-            print('ERROR: sensorSize must be a list')
-            exit(1)
-        if len(val) != 2:
-            print('ERROR: sensorSize list ' + str(val) + 'must be of length 2')
-            exit(1)
-        if not isinstance(val[0], float) or not isinstance(val[1], float):
-            print('ERROR: sensorSize list ' + str(val) + ' must contain floats')
-            exit(1)
-        viz.cameraConfigMessage.sensorSize = val
-    else:
-        print('ERROR: sensorSize must be defined in createCameraConfigMsg()')
-        exit(1)
+        viz.cameraConfigMessage.renderRate = int(val * 1e9)     # convert to nano-seconds
 
     if 'cameraPos_B' in kwargs:
         val = kwargs['cameraPos_B']

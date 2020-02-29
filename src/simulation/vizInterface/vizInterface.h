@@ -85,10 +85,10 @@ typedef struct {
 */
 typedef struct {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
-    int setMode;                //!< 0 -> body targeting, 1 -> pointing vector (default)
-    double fieldOfView;         //!< [rad], field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
+    int setMode=1;              //!< 0 -> body targeting, 1 -> pointing vector (default)
+    double fieldOfView=-1;      //!< [rad], field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
-    int setView;                //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
+    int setView=0;              //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
     double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
     double position_B[3];       //!< (default to 0, 0, 0). If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside of the spacecraft along the pointing vector direction.
 }StdCameraSettings;
@@ -96,12 +96,14 @@ typedef struct {
 /*! Vizard User Interface structure specifying what actuator visualizations to show.
 */
 typedef struct {
-    std::string spacecraftName; /*!< Specify which spacecraft should show actuator information.
-                                     If not provided then the ``viz.spacecraftName`` is used. */
-    int viewThrusterPanel;      //!< [bool] should thruster panel illustration be shown
-    int viewThrusterHUD;        //!< [bool] should thruster Heads-Up-Display be shown
-    int viewRWPanel;            //!< [bool] should reaction wheel panel illustration be shown
-    int viewRWHUD;              //!< [bool] should reaction wheel Heads-Up-Display be shown
+    std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
+                                         If not provided then the ``viz.spacecraftName`` is used. */
+    int viewThrusterPanel=-1;       //!< [bool] should thruster panel illustration be shown
+    int viewThrusterHUD=-1;         //!< [bool] should thruster Heads-Up-Display be shown
+    int viewRWPanel=-1;             //!< [bool] should reaction wheel panel illustration be shown
+    int viewRWHUD=-1;               //!< [bool] should reaction wheel Heads-Up-Display be shown
+    int showThrusterLabels=-1;      //!< [bool] should the thruster labels be shown
+    int showRWLabels=-1;            //!< [bool] should the reaction wheel labels be shown
 }ActuatorGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
@@ -114,7 +116,7 @@ typedef struct {
     double scale[3];                        //!< [-] desired model scaling factor along the body x, y, z axes in spacecraft CS
     std::string customTexturePath;          //!< (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
     std::string normalMapPath;              //!< (Optional) Path to the normal map for the customTexture
-    int shader;                             //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
+    int shader=-1;                          //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
 }CustomModel;
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
@@ -151,11 +153,11 @@ typedef struct {
 /*! Structure defining various Vizard options
 */
 typedef struct {
-    double      ambient;        /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
-                                         A value of -1 means it is not set. */
-    int32_t     orbitLinesOn;   //!< toogle for showing orbit lines (-1, 0, 1)
-    int32_t     spacecraftCSon; //!< toogle for showing spacecraft CS (-1, 0, 1)
-    int32_t     planetCSon;     //!< toogle for showing planet CS (-1, 0, 1)
+    double      ambient;                            /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
+                                                             A value of -1 means it is not set. */
+    int32_t     orbitLinesOn;                       //!< toogle for showing orbit lines (-1, 0, 1)
+    int32_t     spacecraftCSon;                     //!< toogle for showing spacecraft CS (-1, 0, 1)
+    int32_t     planetCSon;                         //!< toogle for showing planet CS (-1, 0, 1)
     std::vector<PointLine> pointLineList;           //!< vector of powerLine structures
     std::vector<KeepOutInCone> coneList;            //!< vector of keep in/out cones
     std::vector<StdCameraSettings> stdCameraList;   //!< vector of spacecraft cameras
@@ -164,7 +166,13 @@ typedef struct {
     std::string skyBox;         /*!< string containing the star field options, an empty string'' provides default NASA SVS Starmap,
                                      ``ESO`` use ESO Milky Way skybox, ``black`` provides a black background,
                                      or provide a filepath to custom background */
-    bool        dataFresh;      //!<< [-] flag indicating if the settings have been transmitted,
+    bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,
+    int32_t viewCameraBoresightHUD ;                //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t viewCameraConeHUD;                      //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showCSLabels;                           //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showCelestialBodyLabels;                //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showSpacecraftLabels ;                  //!< Value of -1 to use viz default, 0 for false, 1 for true
+    double customGUIScale;                          //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
 }VizSettings;
 
 

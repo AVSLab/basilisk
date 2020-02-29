@@ -46,6 +46,7 @@ VizInterface::VizInterface()
     memset(&this->cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
     this->cameraConfigMessage.cameraID = -1;
     strcpy(this->cameraConfigMessage.skyBox, "");
+    this->cameraConfigMessage.renderRate = 0;
 
     this->planetNames = {};
 
@@ -55,6 +56,12 @@ VizInterface::VizInterface()
     this->settings.spacecraftCSon = -1;
     this->settings.planetCSon = -1;
     this->settings.skyBox = "";
+    this->settings.viewCameraBoresightHUD = -1;
+    this->settings.viewCameraConeHUD = -1;
+    this->settings.showCelestialBodyLabels = -1;
+    this->settings.showSpacecraftLabels = -1;
+    this->settings.showCSLabels = -1;
+    this->settings.customGUIScale = -1.0;
 
     this->firstPass = 0;
     return;
@@ -199,7 +206,7 @@ void VizInterface::CrossInit()
                         scIt->numThr++;
                     } else {
                         thrStatus.msgID = -1;
-                        bskLogger.bskLog(BSK_WARNING, "TH(%d) msg %s of tag %s requested but not found.", idx, tmpThrustMsgName.c_str(), thrIt->thrTag.c_str());
+                        bskLogger.bskLog(BSK_WARNING, "vizInterface: TH(%d) msg %s of tag %s requested but not found.", idx, tmpThrustMsgName.c_str(), thrIt->thrTag.c_str());
                     }
                 }
             }
@@ -406,25 +413,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_ambient(this->settings.ambient);
         if (this->settings.ambient > 8.0 ||
             (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
         }
 
         // define if orbit lines should be shown
         vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
         if (abs(this->settings.orbitLinesOn)>1) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
         }
 
         // define if spacecraft axes should be shown
         vizSettings->set_spacecraftcson(this->settings.spacecraftCSon);
         if (abs(this->settings.spacecraftCSon)>1) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
         }
 
         // define if planet axes should be shown
         vizSettings->set_planetcson(this->settings.planetCSon);
         if (abs(this->settings.planetCSon)>1) {
-            bskLogger.bskLog(BSK_WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
         }
 
         // define the skyBox variable
@@ -460,6 +467,43 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             cone->set_conename(this->settings.coneList[idx].coneName);
         }
 
+        // define if camera boresight line should be shown
+        vizSettings->set_viewcameraboresighthud(this->settings.viewCameraBoresightHUD);
+        if (abs(this->settings.viewCameraBoresightHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraBoresightHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraBoresightHUD);
+        }
+
+        // define if camera cone should be shown
+        vizSettings->set_viewcameraconehud(this->settings.viewCameraConeHUD);
+        if (abs(this->settings.viewCameraConeHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraConeHUD);
+        }
+
+        // define if coordinate system labels should be shown
+        vizSettings->set_showcslabels(this->settings.showCSLabels);
+        if (abs(this->settings.showCSLabels)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCSLabels);
+        }
+
+        // define if celestial body labels should be shown
+        vizSettings->set_showcelestialbodylabels(this->settings.showCelestialBodyLabels);
+        if (abs(this->settings.showCelestialBodyLabels)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodyLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodyLabels);
+        }
+
+        // define if spacecraft labels should be shown
+        vizSettings->set_showspacecraftlabels(this->settings.showSpacecraftLabels);
+        if (abs(this->settings.showSpacecraftLabels)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftLabels);
+        }
+
+        // define the GUI scaling factor
+        vizSettings->set_customguiscale(this->settings.customGUIScale);
+        if (abs(this->settings.customGUIScale)>3.0) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of %d was received.", this->settings.customGUIScale);
+        }
+
+
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
@@ -468,6 +512,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             al->set_viewthrusterhud(this->settings.actuatorGuiSettingsList[idx].viewThrusterHUD);
             al->set_viewrwpanel(this->settings.actuatorGuiSettingsList[idx].viewRWPanel);
             al->set_viewrwhud(this->settings.actuatorGuiSettingsList[idx].viewRWHUD);
+            al->set_showthrusterlabels(this->settings.actuatorGuiSettingsList[idx].showThrusterLabels);
+            al->set_showrwlabels(this->settings.actuatorGuiSettingsList[idx].showRWLabels);
         }
 
         // define scene object custom object shapes
@@ -609,15 +655,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         for (int j=0; j<3; j++){
             if (j < 2){
             camera->add_resolution(this->cameraConfigMessage.resolution[j]);
-            camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]*1000.);  // Unity expects millimeter
             }
             camera->add_cameradir_b(unityCameraMRP[j]);
             camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
-        camera->set_renderrate(this->cameraConfigMessage.renderRate);
+        camera->set_renderrate(this->cameraConfigMessage.renderRate);        // Unity expects nano-seconds between images 
         camera->set_cameraid(this->cameraConfigMessage.cameraID);
-        camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unit expects degrees
+        camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unity expects degrees
         camera->set_skybox(this->cameraConfigMessage.skyBox);
-        camera->set_focallength(this->cameraConfigMessage.sensorSize[0]/2./tan(this->cameraConfigMessage.fieldOfView));
         camera->set_parentname(this->cameraConfigMessage.parentName);
     }
 

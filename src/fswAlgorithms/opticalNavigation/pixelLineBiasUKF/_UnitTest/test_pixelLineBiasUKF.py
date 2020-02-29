@@ -171,8 +171,7 @@ def relOD_method_test(show_plots):
     # Set up a camera message
     cam = pixelLineBiasUKF.CameraConfigMsg()
     cam.sigma_CB = [-0.2, 0., 0.3]
-    cam.focalLength = 1
-    cam.sensorSize = [10*1E-3,10*1E-3]
+    cam.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     cam.resolution = [512, 512]
     data.cameraSpecs = cam
 
@@ -197,8 +196,10 @@ def relOD_method_test(show_plots):
     dcm_BN = rbk.MRP2C(att.sigma_BN)
     dcm_CN = np.dot(dcm_CB, dcm_BN)
 
-    X = cam.sensorSize[0] / cam.resolution[0]
-    Y = cam.sensorSize[1] / cam.resolution[1]
+    pX = 2. * np.tan(cam.fieldOfView * cam.resolution[0] / cam.resolution[1] / 2.0)
+    pY = 2. * np.tan(cam.fieldOfView / 2.0)
+    X = pX / cam.resolution[0]
+    Y = pY / cam.resolution[1]
     planetRad = 3396.19
     obs = np.array([msg.circlesCenters[0], msg.circlesCenters[1], msg.circlesRadii[0], 0, 0, 0])
     for i in range(2*len(state)+1):
@@ -206,12 +207,12 @@ def relOD_method_test(show_plots):
         rNorm = np.linalg.norm(SP[0:3,i])
         r_C = -1./r_C[2]*r_C
 
-        centerX = r_C[0]*cam.focalLength/X
-        centerY = r_C[1] * cam.focalLength / Y
+        centerX = r_C[0] / X
+        centerY = r_C[1] / Y
         centerX += cam.resolution[0]/2 - 0.5
         centerY += cam.resolution[1] / 2 - 0.5
 
-        rad = cam.focalLength/X*np.tan(np.arcsin(planetRad/rNorm))
+        rad = 1.0/X*np.tan(np.arcsin(planetRad/rNorm))
 
         if i == 0:
             obs[3:5] = np.array(msg.circlesCenters[0:2]) - obs[0:2]
@@ -269,8 +270,7 @@ def StatePropRelOD(show_plots, dt):
     inputAtt = pixelLineBiasUKF.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 0.01
-    inputCamera.sensorSize = [10, 10]  # In mm
+    inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / 0.01)  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.cameraConfigMsgName, inputCamera)

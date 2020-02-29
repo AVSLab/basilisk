@@ -15,27 +15,33 @@ path = os.path.dirname(os.path.abspath(filename))
 
 def mapState(state, planet, camera):
     D = planet["diameter"]
-    f = camera["focal"]
-    d_x = camera["pixelSizeX"]
-    d_y = camera["pixelSizeY"]
-    A = 2 * np.arctan(state[2]*d_x/f)
+
+    pX = 2. * np.tan(camera.fieldOfView * camera.resolution[0] / camera.resolution[1] / 2.0)
+    pY = 2. * np.tan(camera.fieldOfView/2.0)
+    d_x = pX/camera.resolution[0]
+    d_y = pY/camera.resolution[1]
+
+    A = 2 * np.arctan(state[2]*d_x)
 
     norm = 0.5 * D/np.sin(0.5*A)
-    vec = np.array([state[0]*d_x/f, state[1]*d_y/f, 1.])
+    vec = np.array([state[0]*d_x, state[1]*d_y, 1.])
     return norm*vec/np.linalg.norm(vec)
 
 
 def mapCovar(CovarXYR, rho, planet, camera):
     D = planet["diameter"]
-    f = camera["focal"]
-    d_x = camera["pixelSizeX"]
-    d_y = camera["pixelSizeY"]
-    A = 2 * np.arctan(rho*d_x/f)
+
+    pX = 2. * np.tan(camera.fieldOfView * camera.resolution[0] / camera.resolution[1] / 2.0)
+    pY = 2. * np.tan(camera.fieldOfView/2.0)
+    d_x = pX / camera.resolution[0]
+    d_y = pY / camera.resolution[1]
+
+    A = 2 * np.arctan(rho*d_x)
 
     # rho_map = (0.33 * D * np.cos(A)/np.sin(A/2.)**2. * 2./f * 1./(1. + (rho/f)**2.) * (d_x/f) )
-    rho_map = 0.5*D*(-f*np.sqrt(1 + rho**2*d_x**2/f**2)/(rho**2*d_x) + d_x/(f*np.sqrt(1 + rho**2*d_x**2/f**2)))
-    x_map =   0.5 * D/np.sin(0.5*A)*(d_x/f)
-    y_map =  0.5 * D/np.sin(0.5*A)*(d_y/f)
+    rho_map = 0.5*D*(-np.sqrt(1 + rho**2*d_x**2)/(rho**2*d_x) + d_x/(np.sqrt(1 + rho**2*d_x**2)))
+    x_map =   0.5 * D/np.sin(0.5*A)*(d_x)
+    y_map =  0.5 * D/np.sin(0.5*A)*(d_y)
     CovarMap = np.array([[x_map,0.,0.],[0., y_map, 0.],[0.,0., rho_map]])
     CoarIn = np.array(CovarXYR).reshape([3,3])
     return np.dot(CovarMap, np.dot(CoarIn, CovarMap.T))
@@ -85,10 +91,9 @@ def pixelLineConverterTestFunction():
     inputAtt = pixelLineConverter.NavAttIntMsg()
 
     # Set camera
-    inputCamera.focalLength = 1.
-    inputCamera.sensorSize = [10, 10] # In mm
+    inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
-    inputCamera.sigma_CB = [1.,0.3,0.1]
+    inputCamera.sigma_CB = [1., 0.3, 0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
 
     # Set circles
@@ -113,20 +118,16 @@ def pixelLineConverterTestFunction():
     unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # Truth Vlaues
+    # Truth Values
     planet = {}
-    camera = {}
+    # camera = {}
     planet["name"] = "Mars"
     planet["diameter"] = 3396.19 * 2  # km
 
-    camera["focal"] = inputCamera.focalLength  # m
-    camera["pixelSizeX"] = inputCamera.sensorSize[0]/inputCamera.resolution[0] * 1E-3  # m
-    camera["pixelSizeY"] = inputCamera.sensorSize[1]/inputCamera.resolution[1] * 1E-3  # m
-
     state = [inputCircles.circlesCenters[0], inputCircles.circlesCenters[1], inputCircles.circlesRadii[0]]
 
-    r_Cexp = mapState(state, planet, camera)
-    covar_Cexp = mapCovar(inputCircles.uncertainty, state[2], planet, camera)
+    r_Cexp = mapState(state, planet, inputCamera)
+    covar_Cexp = mapCovar(inputCircles.uncertainty, state[2], planet, inputCamera)
 
     dcm_CB = rbk.MRP2C(inputCamera.sigma_CB)
     dcm_BN = rbk.MRP2C(inputAtt.sigma_BN)
