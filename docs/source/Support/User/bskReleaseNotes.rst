@@ -17,6 +17,10 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
+Upcoming Version 1.X.X
+----------------------
+- text here
+
 Version 1.7.0
 -------------
 - Fixed a transformation issue in ``avsEigenSupport.cpp`` where ``cArray2EigenMatrix3d()`` has to deal with
@@ -68,8 +72,8 @@ Version 1.6.0
 - added ``BCT_RWP015`` RW model template to the ``simIncludeRW.py`` support file
 
 
-Version 1.5.1
--------------
+**Version 1.5.1**
+
 - Fixed an issue running :ref:`test_reactionWheelStateEffector_integrated` using Python 2
 - fixed a ``cmake`` issue where the module renaming from ``viz_interface`` to ``vizInterface`` was applied
 
