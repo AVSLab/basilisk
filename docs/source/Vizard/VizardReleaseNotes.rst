@@ -19,6 +19,21 @@ Release Notes
     - better support for visualizing multiple spacecraft
     - add labels to spacecraft and sensor visualization
 
+**Version 1.0.0**🍾🍾🍾🍾
+
+- Support for various screen sizes, including retina support on macOS
+- Added support to show the boresight of a camera model (both instrument and standard cameras)
+- Added support to draw a camera frustum that illustrates the camera orientation,
+  field of view, camera pixel sensor aspect ratio.  If the camera position is provided then the frustum is draw at
+  that location as well.
+- Support for the user changing the GUI scaling on the fly from within the ``View`` menu
+- Improved 2-way camera models that interface with Basilisk v 1.7.0.  The custom cameras are now called instrument cameras
+- Standard camera panels are now drawn at a more compact size by default.  This makes their sizing and positioning more flexible.
+- Various under the hood improvements to support a BSK simulation with a simulated camera
+- Improved full screen support
+- Added support for all the new Vizard features to be scriptable from a python BSK simulation
+
+
 **Version 0.9.0**
 
 - added an option to Standard Camera GUI panel and vizMessage to supply a custom camera position
