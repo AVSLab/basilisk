@@ -17,8 +17,8 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
-Upcoming Version 1.X.X
-----------------------
+Version 1.7.0
+-------------
 - Fixed a transformation issue in ``avsEigenSupport.cpp`` where ``cArray2EigenMatrix3d()`` has to deal with
   both column and row dominant matrix formulations.  This only got used in :ref:`scenarioCSS` and the issue was offset
   by an issue in ``setUnitDirectionVectorWithPerturbation()`` that compensated.  Now, all is as it should be.
@@ -35,9 +35,9 @@ Upcoming Version 1.X.X
     - :ref:`scenario_OpNavPoint` only performs the pointing component
     - :ref:`scenario_OpNavPointLimb` only performs the pointing component using the Limb based method
     - :ref:`scenario_LimbAttOD` performs a longer simulation using the limb based method
-    - :ref:`scenario_OpNavAttOD` performs a longer simulatin using the Hough transform method
+    - :ref:`scenario_OpNavAttOD` performs a longer simulation using the Hough transform method
 
-- make :ref:`scenarioVizPoint` work with the latest Vizard scripting methods
+- make :ref:`scenarioVizPoint` work with the latest :ref:`Vizard <Vizard>` scripting methods
 
     - Add scripting support for the `customGUIScale` parameter
     - All instrument cameras are now specified through `fieldOfView`, not sensor size and focal length
