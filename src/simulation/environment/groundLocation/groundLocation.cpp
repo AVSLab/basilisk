@@ -55,7 +55,7 @@ GroundLocation::~GroundLocation()
 }
 
 /*! Resets the internal position to the specified initial position.*/
-void GroundLocation::Reset()
+void GroundLocation::Reset(uint64_t CurrentSimNanos)
 {
     this->r_LP_P = this->r_LP_P_Init;
 }
@@ -104,8 +104,6 @@ void GroundLocation::SelfInit()
                                                                             moduleID);
         this->accessOutMsgIds.push_back(tmpAccessMsgId);
     }
-
-    this->r_LP_P = this->r_LP_P_Init;
     return;
 }
 

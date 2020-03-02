@@ -115,7 +115,7 @@ public:
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
-    void Reset();
+    void Reset(uint64_t CurrentSimNanos);
     bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(std::string tmpScMsgName);
