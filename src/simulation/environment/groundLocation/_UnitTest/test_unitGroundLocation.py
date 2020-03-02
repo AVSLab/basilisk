@@ -126,7 +126,7 @@ def test_range(show_plots):
     test_access = [sc1_access[0,1],sc2_access[0,1],sc3_access[0,1]]
 
     range_worked = test_ranges == pytest.approx(ref_ranges, accuracy)
-    elevation_worked = test_elevation == pytest.approx(ref_elevation, test_elevation)
+    elevation_worked = test_elevation == pytest.approx(ref_elevation, accuracy)
     access_worked = test_access == pytest.approx(ref_access, abs=1e-16)
 
     assert (range_worked and elevation_worked and access_worked)
@@ -141,13 +141,14 @@ def test_rotation(show_plots):
     """
     testFailCount = 0
     testMessages = []
+    simTime = 1.
 
     simTaskName = "simTask"
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.TotalSim.terminateSimulation()
     dynProcess = scSim.CreateNewProcess(simProcessName)
-    simulationTime = macros.sec2nano(10. * 60.)
+    simulationTime = macros.sec2nano(simTime)
     simulationTimeStep = macros.sec2nano(1.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
@@ -157,7 +158,7 @@ def test_rotation(show_plots):
     groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
     groundTarget.maximumRange = 200e3 # meters
     groundTarget.minimumElevation = np.radians(10.)
-    groundTarget.specifyLocation(np.radians(1.), np.radians(-10), 0.)
+    groundTarget.specifyLocation(np.radians(0.), np.radians(-10.), 0.)
     scSim.AddModelToTask(simTaskName, groundTarget)
 
     #   Write out mock planet rotation, spacecraft position messages
@@ -170,7 +171,7 @@ def test_rotation(show_plots):
 
     planet_message = simMessages.SpicePlanetStateSimMsg()
     planet_message_name = "test_planet"
-    planet_message.J20002Pfix = rbk.euler3(np.radians(10.)).tolist()
+    planet_message.J20002Pfix = rbk.euler3(np.radians(-10.)).tolist()
 
     unitTestSupport.setMessage(scSim.TotalSim, simProcessName, planet_message_name, planet_message)
     groundTarget.planetInMsgName = planet_message_name
@@ -200,7 +201,7 @@ def test_rotation(show_plots):
     test_access = [sc1_access[0,1]]
 
     range_worked = test_ranges == pytest.approx(ref_ranges, accuracy)
-    elevation_worked = test_elevation == pytest.approx(ref_elevation, test_elevation)
+    elevation_worked = test_elevation == pytest.approx(ref_elevation, accuracy)
     access_worked = test_access == pytest.approx(ref_access, abs=1e-16)
 
     assert (range_worked and elevation_worked and access_worked)
