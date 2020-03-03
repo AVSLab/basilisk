@@ -43,7 +43,7 @@
 # ...
 # --------------------------------------------------------------
 import sys, os, inspect
-from Basilisk.pyswice import pyswice
+from Basilisk.topLevelModules import pyswice
 import numpy
 
 def spkRead(target, time, ref, observer):

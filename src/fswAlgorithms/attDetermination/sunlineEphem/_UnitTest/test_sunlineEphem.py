@@ -36,7 +36,7 @@ import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms.sunlineEphem import sunlineEphem  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
-from Basilisk.simulation.simMessages import simMessages
+from Basilisk.simulation import simMessages
 from Basilisk.utilities import RigidBodyKinematics
 import numpy as np
 

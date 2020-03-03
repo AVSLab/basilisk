@@ -21,7 +21,8 @@
    #include "alg_contain.h"
 %}
 
-%import "swig_common_model.i"
+#%import "swig_common_model.i"
+%include "swig_conly_data.i"
 
 %feature("copyctor");
 %include "sys_model.h"
