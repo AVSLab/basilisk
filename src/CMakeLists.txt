@@ -476,7 +476,7 @@ add_subdirectory("simulation/utilities")
 add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("simulation/architecture/messaging")
 add_subdirectory("fswAlgorithms/messaging")
-add_subdirectory("topLevelModules")
+#add_subdirectory("topLevelModules")
 
 
 

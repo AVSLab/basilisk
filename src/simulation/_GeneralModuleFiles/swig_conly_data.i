@@ -223,6 +223,7 @@ def protectSetAttr(self, name, value):
 
 def protectAllClasses(moduleType):
     import inspect
+    import sys
     clsmembers = inspect.getmembers(sys.modules[__name__], inspect.isclass)
     for member in clsmembers:
         try:

@@ -22,7 +22,12 @@
 %}
 #pragma SWIG nowarn=503
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 %include "std_map.i"
 %include "std_vector.i"
 

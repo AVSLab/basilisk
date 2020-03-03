@@ -23,7 +23,10 @@
    #include "facetDragDynamicEffector.h"
 %}
 
-%import "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
 
 // Instantiate templates used by example
 %include "sys_model.h"
@@ -32,6 +35,8 @@
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include  "simMessages/atmoPropsSimMsg.h"
 %include "facetDragDynamicEffector.h"
+%include "swig_conly_data.i"
+
 
 GEN_SIZEOF(AtmoPropsSimMsg)
 %pythoncode %{

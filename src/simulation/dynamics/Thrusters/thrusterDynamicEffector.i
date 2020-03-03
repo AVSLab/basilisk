@@ -23,7 +23,12 @@
    #include "thrusterDynamicEffector.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 
 // Instantiate templates used by example
 %include "std_vector.i"

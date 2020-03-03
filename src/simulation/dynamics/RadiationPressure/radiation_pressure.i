@@ -21,8 +21,11 @@
    #include "radiation_pressure.h"
 %}
 
-%import "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
 
+%include "std_string.i"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "sys_model.h"

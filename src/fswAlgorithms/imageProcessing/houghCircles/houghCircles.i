@@ -21,7 +21,10 @@
    #include "houghCircles.h"
 %}
 
-%import "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
 %include "stdint.i"
 %include "sys_model.h"
 %include "houghCircles.h"

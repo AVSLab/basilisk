@@ -22,7 +22,13 @@
 %}
 
 %include "cmalloc.i"
-%import "swig_common_model.i"
+%include "std_string.i"
+
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "swig_conly_data.i"
+
 %include "simMessages/boreAngleSimMsg.h"
 %include "sys_model.h"
 GEN_SIZEOF(BoreAngCalc);

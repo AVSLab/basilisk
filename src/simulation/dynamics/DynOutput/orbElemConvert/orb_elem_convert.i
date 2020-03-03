@@ -21,7 +21,12 @@
    #include "orb_elem_convert.h"
 %}
 
-%import "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
+%include "std_string.i"
+%include "swig_conly_data.i"
 
 %include "sys_model.h"
 %include "../utilities/orbitalMotion.h"
@@ -31,6 +36,7 @@
 GEN_SIZEOF(classicElements);
 GEN_SIZEOF(SCPlusStatesSimMsg);
 GEN_SIZEOF(SpicePlanetStateSimMsg);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

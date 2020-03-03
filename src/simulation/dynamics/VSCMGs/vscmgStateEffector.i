@@ -21,7 +21,12 @@
    #include "vscmgStateEffector.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
@@ -45,10 +50,7 @@ namespace std {
 	%template(VSCMGCmdVector) vector<VSCMGCmdSimMsg>;
 }
 
-EIGEN_MAT_WRAP(Eigen::MatrixXd)
-EIGEN_MAT_WRAP(Eigen::Matrix3d)
-EIGEN_MAT_WRAP(Eigen::Vector3d)
-EIGEN_MAT_WRAP(Eigen::VectorXd)
+
 
 
 GEN_SIZEOF(VSCMGArrayTorqueIntMsg);

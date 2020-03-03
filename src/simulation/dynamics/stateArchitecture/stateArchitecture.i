@@ -24,7 +24,12 @@
    #include "../../utilities/avsEigenSupport.h"
 %}
 
-%import "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/stateData.h"

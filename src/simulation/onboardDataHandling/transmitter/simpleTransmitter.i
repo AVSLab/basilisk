@@ -22,11 +22,16 @@
 #include "simpleTransmitter.h"
 %}
 
-%import "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
 %include "carrays.i"
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/dataNodeBase.h"
 %include "simpleTransmitter.h"
+%include "swig_conly_data.i"
+
 
 %include "../../simMessages/dataNodeUsageSimMsg.h"
 %include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"

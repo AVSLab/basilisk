@@ -23,9 +23,15 @@
 %}
 
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 %include "carrays.i"
 %include "sys_model.h"
+%include "std_vector.i"
 namespace std {
     %template(storedDataVector) std::vector<dataInstance>;
 }
