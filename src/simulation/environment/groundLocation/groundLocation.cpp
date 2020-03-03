@@ -146,7 +146,7 @@ bool GroundLocation::ReadMessages()
                 this->scStates.push_back(scMsg);
             }
     } else {
-        BSK_PRINT(MSG_ERROR, "Ground location has no spacecraft to track.");
+        bskLogger.bskLog(BSK_ERROR, "Ground location has no spacecraft to track.");
         scRead = false;
     }
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed
