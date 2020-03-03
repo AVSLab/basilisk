@@ -206,7 +206,7 @@ void GroundLocation::computeAccess()
         Eigen::Vector3d r_BL_N = (cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N) - this->r_LP_N;
         auto r_BL_mag = r_BL_N.norm();
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
-        double viewAngle = (M_PI-acos(this->rhat_LP_N.dot(relativeHeading_N)));
+        double viewAngle = (M_PI_2-acos(this->rhat_LP_N.dot(relativeHeading_N)));
 
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange)){
             accessMsgIt->hasAccess = 1;
