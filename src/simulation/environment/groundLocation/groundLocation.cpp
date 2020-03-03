@@ -28,8 +28,8 @@
 GroundLocation::GroundLocation()
 {
     //! - Set some default initial conditions:
-    this->minimumElevation = 0.; //! [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 0 radians
-    this->maximumRange = -1; //! [m] Maximum range for the groundLocation to compute access.
+    this->minimumElevation = 10.*D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
+    this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
     this->planetInMsgName = "";
     this->planetInMsgId = -1;
 

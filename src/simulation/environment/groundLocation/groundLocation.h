@@ -50,12 +50,12 @@ private:
     void computeAccess();
 
 public:
-    double planetRadius; //! [m] Planet radius in meters.
-    double minimumElevation; //! [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees equivalent.
-    double maximumRange; //! [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
+    double planetRadius; //!< [m] Planet radius in meters.
+    double minimumElevation; //!< [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees equivalent.
+    double maximumRange; //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
     std::string planetInMsgName;
     std::vector<std::string> accessOutMsgNames;
-    Eigen::Vector3d r_LP_P_Init; //! [m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation.
+    Eigen::Vector3d r_LP_P_Init; //!< [m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation.
     BSKLogger bskLogger;         //!< -- BSK Logging
 
 private:
@@ -67,13 +67,13 @@ private:
     std::vector<int64_t> accessOutMsgIds;
     int64_t planetInMsgId;
     SpicePlanetStateSimMsg planetState;
-    Eigen::Matrix3d C_PFPZ; //! Rotation matrix from planet-centered, planet-fixed into site-local topographic (SEZ) coordinates (i.e., the site location is [
-    Eigen::Vector3d r_PN_N; //! [m]Planet to inertial frame origin vector.
-    Eigen::Vector3d r_LP_P; //! [m] Location to planet origin vector.
-    Eigen::Vector3d r_LP_N; //! [m] Location to planet origin vector in inertial coordinates.
-    Eigen::Vector3d rhat_LP_N;//! [-] Surface normal vector from the target location.
+    Eigen::Matrix3d C_PFPZ; //!< Rotation matrix from planet-centered, planet-fixed into site-local topographic (SEZ) coordinates (i.e., the site location is [
+    Eigen::Vector3d r_PN_N; //!< [m]Planet to inertial frame origin vector.
+    Eigen::Vector3d r_LP_P; //!< [m] Location to planet origin vector.
+    Eigen::Vector3d r_LP_N; //!< [m] Location to planet origin vector in inertial coordinates.
+    Eigen::Vector3d rhat_LP_N;//!< [-] Surface normal vector from the target location.
     Eigen::Vector3d r_LN_N;
-    Eigen::Vector3d r_North_N; //![-] Inertial 3rd axis, defined internally as "North".
+    Eigen::Vector3d r_North_N; //!<[-] Inertial 3rd axis, defined internally as "North".
 };
 
 /*! @} */
