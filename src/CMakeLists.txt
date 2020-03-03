@@ -622,7 +622,6 @@ endforeach()
 
 #TODO: Symlink the remainder of the .py and support files within src into the dist directory
 
-
 #symlink into the package the current python module code
 file(GLOB pythonModules
 	"${CMAKE_SOURCE_DIR}/utilities/*.py"

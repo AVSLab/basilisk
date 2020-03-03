@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk import pyswice
+from Basilisk.topLevelModules import pyswice
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 

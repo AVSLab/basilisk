@@ -68,7 +68,8 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk import pyswice
+from Basilisk.utilities import unitTestSupport
+from Basilisk.topLevelModules import pyswice
 
 from Basilisk.simulation import spacecraftPlus
 

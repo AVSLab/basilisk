@@ -39,7 +39,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
+from Basilisk.simulation import coarse_sun_sensor
 from Basilisk.simulation import simMessages
 
 path = os.path.dirname(os.path.abspath(__file__))

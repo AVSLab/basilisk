@@ -21,7 +21,11 @@
    #include "coarse_sun_sensor.h"
 %}
 
+%include "swig_conly_data.i"
+%include "swig_eigen.i"
 %include "std_vector.i"
+%include "std_string.i"
+%feature("copyctor");
 
 namespace std {
     %template(CSSVector) vector<CoarseSunSensor>;

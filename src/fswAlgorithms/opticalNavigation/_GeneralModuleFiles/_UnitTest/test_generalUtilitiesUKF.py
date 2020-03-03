@@ -29,7 +29,7 @@ from Basilisk.fswAlgorithms.inertialUKF import inertialUKF
 from Basilisk.fswAlgorithms.fswMessages import fswMessages
 from Basilisk.fswAlgorithms.cssComm import cssComm
 
-from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
+from Basilisk.simulation import coarse_sun_sensor
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

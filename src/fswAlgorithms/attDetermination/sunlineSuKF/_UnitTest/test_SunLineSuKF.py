@@ -23,7 +23,7 @@ import pytest
 import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
-from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
+from Basilisk.simulation import coarse_sun_sensor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms.sunlineSuKF import sunlineSuKF  # import the module that is to be tested
 from Basilisk.fswAlgorithms.cssComm import cssComm

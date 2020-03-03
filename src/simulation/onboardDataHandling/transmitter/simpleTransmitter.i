@@ -25,6 +25,7 @@
 %pythoncode %{
 from Basilisk.simulation.swig_common_model import *
 %}
+%include "std_string.i"
 
 %include "carrays.i"
 %include "sys_model.h"

@@ -26,8 +26,10 @@
 %pythoncode %{
 from Basilisk.simulation.swig_common_model import *
 %}
-
+%include "std_string.i"
 %include "sys_model.h"
+%include "swig_eigen.i"
+%include "std_vector.i"
 %include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "msisAtmosphere.h"
 #include "nrlmsise-00.h"

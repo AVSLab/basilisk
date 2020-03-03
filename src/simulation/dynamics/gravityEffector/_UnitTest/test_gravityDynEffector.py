@@ -32,9 +32,9 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk import pyswice
+from Basilisk.topLevelModules import pyswice
 from Basilisk.simulation import stateArchitecture
-from Basilisk.simulation.gravityEffector.gravCoeffOps import loadGravFromFileToList
+from Basilisk.simulation.gravityEffector import loadGravFromFileToList
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import simMessages
 

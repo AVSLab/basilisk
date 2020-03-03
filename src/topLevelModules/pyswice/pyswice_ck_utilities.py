@@ -25,7 +25,7 @@ import sys, os, inspect #Don't worry about this, standard stuff plus file discov
 
 
 
-import Basilisk.pyswice
+from Basilisk.topLevelModules import pyswice
 import numpy
 from Basilisk.utilities import RigidBodyKinematics
 
