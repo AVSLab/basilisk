@@ -26,6 +26,8 @@ from Basilisk.simulation.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "sys_model.h"
@@ -38,7 +40,11 @@ GEN_SIZEOF(SpicePlanetStateSimMsg);
 GEN_SIZEOF(SCPlusStatesSimMsg);
 GEN_SIZEOF(EclipseSimMsg);
 
+
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+
+%pythoncode "parseSRPLookup.py"

@@ -19,6 +19,5 @@
 '''
 
 
-from .pyswice import *
 from .pyswice_ck_utilities import *
 from .pyswice_spk_utilities import *

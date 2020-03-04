@@ -68,3 +68,6 @@ typedef int SpiceBoolean;
 %cstring_bounded_mutable(SpiceChar *utcstr, 1024);
 
 %include "../../libs/cspice/include/SpiceZpr.h"
+
+%pythoncode "pyswice_ck_utilities.py"
+%pythoncode "pyswice_spk_utilities.py"
