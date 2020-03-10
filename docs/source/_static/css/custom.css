@@ -55,6 +55,10 @@ tr td p, th.head p {
 	color-scheme: light dark;
 }
 
+.sidebar {
+	max-width: 500px;
+}
+
 @media (prefers-color-scheme: dark) {
 	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
 		background-color: black;

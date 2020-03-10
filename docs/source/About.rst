@@ -11,7 +11,7 @@ Architecture
 
     .. image:: _images/static/Basilisk-Logo.png
        :align: center
-       :width: 100 %
+       :width: 300
 
     **Description:** Basilisk is a fast, open source, spacecraft-centric mission simulation framework
 
@@ -40,16 +40,6 @@ include hardware-in-the-loop scenarios.
    :align: center
    :scale: 50 %
 
-.. sidebar:: Basilisk Users and Customers
-
-    - Startup Space Companies
-    - Academic Researcher Groups
-    - Autonomous Vehicle Systems Lab
-    - Spaceflight Algorithm Designers
-    - Space Mission Analysts and Contractors
-    - International Researchers and Organizations
-    - Mission Developers
-
 A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner. The following image links to a video showing the basic features.
 
 
@@ -61,6 +51,15 @@ nature of the product-design as well as a nod to the speed requirements
 as the South American common basilisk runs so fast that it can even run
 across water.
 
+.. sidebar:: Basilisk Users and Customers
+
+    - Startup Space Companies
+    - Academic Researcher Groups
+    - Autonomous Vehicle Systems Lab
+    - Spaceflight Algorithm Designers
+    - Space Mission Analysts and Contractors
+    - International Researchers and Organizations
+    - Mission Developers
 
 Basilisk Design Goals
 ----------------------
@@ -86,16 +85,6 @@ several different (often competing) requirements.
    This capability also applies to the Monte-Carlo engine available
    natively in the Basilisk framework.
 
-.. sidebar:: Basilisk Impact and Value
-
-    - Research repeatability and extensibility
-    - Rapid development
-    - Open source access
-    - Rapid development and integrated V&V
-    - Integrated systems modeling via a well-defined API
-    - Speed
-
-
 -  **Hardware-in-the-Loop:** Basilisk will provide synchronization to
    realtime via software-based clock tracking modules. This allows the
    package to synchronize itself to one or more timing frames in order
@@ -111,6 +100,16 @@ several different (often competing) requirements.
    algorithm modules. Further, the Python layer abstracts
    logging/analysis which allows a single compilation of the source code
    to support completely different simulations.
+
+.. sidebar:: Basilisk Impact and Value
+
+    - Research repeatability and extensibility
+    - Rapid development
+    - Open source access
+    - Rapid development and integrated V&V
+    - Integrated systems modeling via a well-defined API
+    - Speed
+
 
 -  **Controlled Data Flow:** Simulation modules and FSW algorithm
    modules communicate through the message passing interface (MPI),
