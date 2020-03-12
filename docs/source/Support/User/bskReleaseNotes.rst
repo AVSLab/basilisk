@@ -12,14 +12,13 @@ Basilisk Release Notes
     - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
     - GPU based methods to evaluate solar radiation pressure forces and torques
     - atmospheric drag evaluation using multi-faceted spacecraft model
-    - create modules to determine if a satellite can see a ground point such as a communication station
     - upgrading :ref:`vizInterface` to support showing info panels and HUD multiple spacecraft with thruster
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
 Upcoming Version 1.X.X
 ----------------------
-- text here
+- Added the ability to detect if a satellite is visible to a ground location in the new :ref:`groundLocation` module
 
 Version 1.7.0
 -------------
