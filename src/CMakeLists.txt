@@ -214,7 +214,7 @@ function(generate_package_libraries INIT_DIRECTORY)
         target_link_libraries(${LIB_NAME} SimMessaging)
         target_link_libraries(${LIB_NAME} AlgorithmMessaging)
         target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
-	    target_link_libraries(${LIB_NAME} ${CONAN_LIBS})
+	      target_link_libraries(${LIB_NAME} ${CONAN_LIBS})
 
         # define build location, IDE generation specifications
         set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
@@ -264,7 +264,7 @@ endmacro(is_cpp_module)
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     find_package(SWIG REQUIRED)
-    include(UseSwig REQUIRED)
+    include(UseSWIG REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
 
     foreach(TARGET_FILE ${TARGET_LIST})
@@ -276,7 +276,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         if((${TARGET_NAME} IN_LIST requires_protobuff_modules) OR (${TARGET_NAME} IN_LIST requires_zmq_modules) OR (${TARGET_NAME} IN_LIST requires_opencv_modules))
                MESSAGE("SKIPPED: ${TARGET_NAME}")
                continue()
- 	    endif()
+ 	      endif()
 
         # Grab the target source files
         file(GLOB C_FILES
@@ -293,6 +293,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         endif()
 
         # Add Target
+        #message(STATUS ${TARGET_NAME})
         swig_add_library(${TARGET_NAME}
                            LANGUAGE "python"
                            TYPE MODULE
