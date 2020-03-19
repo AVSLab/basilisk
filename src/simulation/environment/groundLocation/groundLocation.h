@@ -72,6 +72,7 @@ private:
     SpicePlanetStateSimMsg planetState;
     GroundStateSimMsg currentGroundStateOutMsg;
     Eigen::Matrix3d C_PFPZ; //!< Rotation matrix from planet-centered, planet-fixed into site-local topographic (SEZ) coordinates (i.e., the site location is [
+    Eigen::Matrix3d C_ECI2ECEF; //!< Rotation matrix from ECI to planet-centered, planet-fixed frame (i.e. J20002 transposed)
     Eigen::Vector3d r_PN_N; //!< [m]Planet to inertial frame origin vector.
     Eigen::Vector3d r_LP_P; //!< [m] Location to planet origin vector.
     Eigen::Vector3d r_LP_N; //!< [m] Location to planet origin vector in inertial coordinates.

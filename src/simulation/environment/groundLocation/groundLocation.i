@@ -29,10 +29,13 @@
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/accessSimMsg.h"
+%include "../../simMessages/groundStateSimMsg.h"
 
 GEN_SIZEOF(AccessSimMsg)
 GEN_SIZEOF(SpicePlanetStateSimMsg)
 GEN_SIZEOF(SCPlusStatesSimMsg)
+GEN_SIZEOF(GroundStateSimMsg)
+
 
 %pythoncode %{
 import sys
