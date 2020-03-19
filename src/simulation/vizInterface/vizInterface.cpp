@@ -60,6 +60,7 @@ VizInterface::VizInterface()
     this->settings.viewCameraConeHUD = -1;
     this->settings.showCelestialBodyLabels = -1;
     this->settings.showSpacecraftLabels = -1;
+    this->settings.showCameraLabels = -1;
     this->settings.showCSLabels = -1;
     this->settings.customGUIScale = -1.0;
 
@@ -495,6 +496,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showspacecraftlabels(this->settings.showSpacecraftLabels);
         if (abs(this->settings.showSpacecraftLabels)>1) {
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftLabels);
+        }
+
+        // define if camera labels should be shown
+        vizSettings->set_showcameralabels(this->settings.showCameraLabels);
+        if (abs(this->settings.showCameraLabels)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCameraLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCameraLabels);
         }
 
         // define the GUI scaling factor

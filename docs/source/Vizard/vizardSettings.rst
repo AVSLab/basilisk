@@ -87,6 +87,9 @@ The following settings can be set directly using::
     | ``showSpacecraftLabels``   | (0,1)         | flag to show (1) or hide (0) |
     |                            |               | the spacecraft labels        |
     +----------------------------+---------------+------------------------------+
+    | ``showCameraLabels``       | (0,1)         | flag to show (1) or hide (0) |
+    |                            |               | the camera labels            |
+    +----------------------------+---------------+------------------------------+
     | ``customGUIScale``         | pos. integer  | GUI scaling factor, default  |
     |                            |               | is -1 which uses Vizard      |
     |                            |               | default.                     |
