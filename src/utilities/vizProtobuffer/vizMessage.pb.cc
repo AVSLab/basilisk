@@ -590,6 +590,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showcslabels_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showcelestialbodylabels_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showspacecraftlabels_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showcameralabels_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, customguiscale_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, _internal_metadata_),
@@ -617,7 +618,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 116, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
   { 128, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
   { 141, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 162, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 163, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -661,7 +662,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\254\027\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\306\027\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -719,7 +720,7 @@ void AddDescriptorsImpl() {
       "iesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rot"
       "ation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customText"
       "urePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006"
-      "shader\030\010 \001(\005\032\221\005\n\rVizSettingsPb\022\017\n\007ambien"
+      "shader\030\010 \001(\005\032\253\005\n\rVizSettingsPb\022\017\n\007ambien"
       "t\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026\n\016spacecr"
       "aftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npoi"
       "ntLines\030\005 \003(\0132+.vizProtobufferMessage.Vi"
@@ -735,10 +736,11 @@ void AddDescriptorsImpl() {
       "resightHUD\030\r \001(\005\022\031\n\021viewCameraConeHUD\030\016 "
       "\001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027showCelesti"
       "alBodyLabels\030\020 \001(\005\022\034\n\024showSpacecraftLabe"
-      "ls\030\021 \001(\005\022\026\n\016customGUIScale\030\022 \001(\001b\006proto3"
+      "ls\030\021 \001(\005\022\030\n\020showCameraLabels\030\022 \001(\005\022\026\n\016cu"
+      "stomGUIScale\030\023 \001(\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3040);
+      descriptor, 3066);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -7188,6 +7190,7 @@ const int VizMessage_VizSettingsPb::kViewCameraConeHUDFieldNumber;
 const int VizMessage_VizSettingsPb::kShowCSLabelsFieldNumber;
 const int VizMessage_VizSettingsPb::kShowCelestialBodyLabelsFieldNumber;
 const int VizMessage_VizSettingsPb::kShowSpacecraftLabelsFieldNumber;
+const int VizMessage_VizSettingsPb::kShowCameraLabelsFieldNumber;
 const int VizMessage_VizSettingsPb::kCustomGUIScaleFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -7484,10 +7487,24 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // double customGUIScale = 18;
+      // int32 showCameraLabels = 18;
       case 18: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(145u /* 145 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(144u /* 144 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &showcameralabels_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double customGUIScale = 19;
+      case 19: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(153u /* 153 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -7614,9 +7631,14 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(17, this->showspacecraftlabels(), output);
   }
 
-  // double customGUIScale = 18;
+  // int32 showCameraLabels = 18;
+  if (this->showcameralabels() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(18, this->showcameralabels(), output);
+  }
+
+  // double customGUIScale = 19;
   if (this->customguiscale() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(18, this->customguiscale(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(19, this->customguiscale(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7729,9 +7751,14 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(17, this->showspacecraftlabels(), target);
   }
 
-  // double customGUIScale = 18;
+  // int32 showCameraLabels = 18;
+  if (this->showcameralabels() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(18, this->showcameralabels(), target);
+  }
+
+  // double customGUIScale = 19;
   if (this->customguiscale() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(18, this->customguiscale(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(19, this->customguiscale(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7874,7 +7901,14 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
         this->showspacecraftlabels());
   }
 
-  // double customGUIScale = 18;
+  // int32 showCameraLabels = 18;
+  if (this->showcameralabels() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->showcameralabels());
+  }
+
+  // double customGUIScale = 19;
   if (this->customguiscale() != 0) {
     total_size += 2 + 8;
   }
@@ -7944,6 +7978,9 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   if (from.showspacecraftlabels() != 0) {
     set_showspacecraftlabels(from.showspacecraftlabels());
   }
+  if (from.showcameralabels() != 0) {
+    set_showcameralabels(from.showcameralabels());
+  }
   if (from.customguiscale() != 0) {
     set_customguiscale(from.customguiscale());
   }
@@ -7988,6 +8025,7 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   swap(showcslabels_, other->showcslabels_);
   swap(showcelestialbodylabels_, other->showcelestialbodylabels_);
   swap(showspacecraftlabels_, other->showspacecraftlabels_);
+  swap(showcameralabels_, other->showcameralabels_);
   swap(customguiscale_, other->customguiscale_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);

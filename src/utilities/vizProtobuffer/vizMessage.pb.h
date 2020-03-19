@@ -2421,9 +2421,15 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showspacecraftlabels() const;
   void set_showspacecraftlabels(::google::protobuf::int32 value);
 
-  // double customGUIScale = 18;
+  // int32 showCameraLabels = 18;
+  void clear_showcameralabels();
+  static const int kShowCameraLabelsFieldNumber = 18;
+  ::google::protobuf::int32 showcameralabels() const;
+  void set_showcameralabels(::google::protobuf::int32 value);
+
+  // double customGUIScale = 19;
   void clear_customguiscale();
-  static const int kCustomGUIScaleFieldNumber = 18;
+  static const int kCustomGUIScaleFieldNumber = 19;
   double customguiscale() const;
   void set_customguiscale(double value);
 
@@ -2446,6 +2452,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showcslabels_;
   ::google::protobuf::int32 showcelestialbodylabels_;
   ::google::protobuf::int32 showspacecraftlabels_;
+  ::google::protobuf::int32 showcameralabels_;
   double customguiscale_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
@@ -5193,7 +5200,21 @@ inline void VizMessage_VizSettingsPb::set_showspacecraftlabels(::google::protobu
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showSpacecraftLabels)
 }
 
-// double customGUIScale = 18;
+// int32 showCameraLabels = 18;
+inline void VizMessage_VizSettingsPb::clear_showcameralabels() {
+  showcameralabels_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showcameralabels() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showCameraLabels)
+  return showcameralabels_;
+}
+inline void VizMessage_VizSettingsPb::set_showcameralabels(::google::protobuf::int32 value) {
+  
+  showcameralabels_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showCameraLabels)
+}
+
+// double customGUIScale = 19;
 inline void VizMessage_VizSettingsPb::clear_customguiscale() {
   customguiscale_ = 0;
 }
