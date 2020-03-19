@@ -41,7 +41,7 @@ from Basilisk.utilities import macros
 
 @pytest.mark.parametrize("deviceStatus", [0,1])
 @pytest.mark.parametrize("accessStatus", [0,1])
-def test_module(deviceStatus, accessStatus):
+def test_module(show_plots,deviceStatus, accessStatus):
     """
     **Validation Test Description**
 
@@ -54,7 +54,7 @@ def test_module(deviceStatus, accessStatus):
     :return:
     """
 
-    default_results, default_message = test_spaceToGround(deviceStatus, accessStatus)
+    default_results, default_message = run(deviceStatus, accessStatus)
 
     testResults = sum([default_results])
     testMessage = [default_message]
@@ -62,7 +62,7 @@ def test_module(deviceStatus, accessStatus):
     assert testResults < 1, testMessage
 
 
-def test_spaceToGround(deviceStatus, accessStatus):
+def run(deviceStatus, accessStatus):
 
     expectedValue = deviceStatus * accessStatus
 
@@ -126,8 +126,7 @@ def test_spaceToGround(deviceStatus, accessStatus):
     unitTestSim.ExecuteSimulation()
 
     generatedData = unitTestSim.pullMessageLogData(testModule.nodeDataOutMsgName + ".baudRate")
-
-    print(generatedData)
+    print(generatedData[:,1])
     accuracy = 1e-16
 
     trueData = 9600. # Module should be on after enough data is accrued
@@ -145,4 +144,4 @@ def test_spaceToGround(deviceStatus, accessStatus):
 # stand-alone python script
 #
 if __name__ == "__main__":
-    test_module(1,1)
+    test_module(False, 1,1)

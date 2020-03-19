@@ -59,6 +59,10 @@ void SpaceToGroundTransmitter::customCrossInit(){
         this->storageUnitMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(DataStorageStatusSimMsg), moduleID));
     }
 
+    for(it = this->groundLocationAccessMsgNames.begin(); it != this->groundLocationAccessMsgNames.end(); it++){
+        this->groundLocationAccessMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(AccessSimMsg), moduleID));
+    }
+
     return;
 }
 
@@ -125,7 +129,7 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageSimMsg *dataUsageS
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
 
     //! - If we have access to any ground location, do the transmission logic
-    if (std::any_of(this->groundLocationAccessMsgs.begin(), this->groundLocationAccessMsgs.end(), [](AccessSimMsg msg){return msg.hasAccess>1;})){
+    if (std::any_of(this->groundLocationAccessMsgs.begin(), this->groundLocationAccessMsgs.end(), [](AccessSimMsg msg){return msg.hasAccess>0;})){
         //! - If we have no transmitted any of the packet, we select a new type of data to downlink
         if (this->packetTransmitted == 0.0) {
 
@@ -168,6 +172,7 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageSimMsg *dataUsageS
     }
     // If we don't have access, we can't transmit anything
     else{
-        this->packetTransmitted = 0.0;
+        dataUsageSimMsg->baudRate = 0;
+        this->packetTransmitted = 0;
     }
 }
