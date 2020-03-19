@@ -79,7 +79,7 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt)
 {
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
     this->r_LP_P_Init = LLA2PCPF(tmpLLAPosition, this->planetRadius);
-    this->C_PFPZ = C_PCPF2SEZ(lat, longitude);
+    this->dcm_LP = C_PCPF2SEZ(lat, longitude);
 }
 
 
@@ -201,10 +201,10 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock)
 void GroundLocation::updateInertialPositions()
 {
     // Update the planet inertial position:
-    Eigen::Matrix3d pcpf2pci = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
-    this->C_ECI2ECEF = pcpf2pci.transpose();
+    Eigen::Matrix3d dcm_NP = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
+    this->dcm_PN = dcm_NP.transpose();
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
-    this->r_LP_N = pcpf2pci * this->r_LP_P_Init;
+    this->r_LP_N = dcm_NP * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
     //  Stash updated position in the groundState message
@@ -233,7 +233,7 @@ void GroundLocation::computeAccess()
             accessMsgIt->slantRange = r_BL_N.norm();
             accessMsgIt->elevation = viewAngle;
 
-            Eigen::Vector3d sezPosition = this->C_PFPZ * this->C_ECI2ECEF * r_BL_N;
+            Eigen::Vector3d sezPosition = this->dcm_LP * this->dcm_PN * r_BL_N;
             double cos_az = -sezPosition[0]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
             double sin_az = sezPosition[1]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
             accessMsgIt->azimuth = atan2(sin_az, cos_az);

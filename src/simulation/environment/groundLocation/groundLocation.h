@@ -71,11 +71,11 @@ private:
     int64_t currentGroundStateOutMsgId;
     SpicePlanetStateSimMsg planetState;
     GroundStateSimMsg currentGroundStateOutMsg;
-    Eigen::Matrix3d C_PFPZ; //!< Rotation matrix from planet-centered, planet-fixed into site-local topographic (SEZ) coordinates (i.e., the site location is [
-    Eigen::Matrix3d C_ECI2ECEF; //!< Rotation matrix from ECI to planet-centered, planet-fixed frame (i.e. J20002 transposed)
-    Eigen::Vector3d r_PN_N; //!< [m]Planet to inertial frame origin vector.
-    Eigen::Vector3d r_LP_P; //!< [m] Location to planet origin vector.
-    Eigen::Vector3d r_LP_N; //!< [m] Location to planet origin vector in inertial coordinates.
+    Eigen::Matrix3d dcm_LP; //!< Rotation matrix from planet-centered, planet-fixed frame P to site-local topographic (SEZ) frame L coordinates
+    Eigen::Matrix3d dcm_PN; //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P 
+    Eigen::Vector3d r_PN_N; //!< [m] Planet to inertial frame origin vector.
+    Eigen::Vector3d r_LP_P; //!< [m] Ground Location to planet origin vector in planet frame coordinates.
+    Eigen::Vector3d r_LP_N; //!< [m] Gound Location to planet origin vector in inertial coordinates.
     Eigen::Vector3d rhat_LP_N;//!< [-] Surface normal vector from the target location.
     Eigen::Vector3d r_LN_N;
     Eigen::Vector3d r_North_N; //!<[-] Inertial 3rd axis, defined internally as "North".
