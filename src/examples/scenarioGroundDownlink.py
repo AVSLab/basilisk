@@ -35,13 +35,20 @@ located in Boulder, Colorado.
 When the simulation completes, the following plots are shown to
 demonstrate the data stored, generated, and downlinked.
 
-.. image:: /_images/Scenarios/scenario_dataDemoBits.svg
+.. image:: /_images/Scenarios/scenarioGroundPassECI.png
    :align: center
 
-.. image:: /_images/Scenarios/scenario_dataDemoBaud.svg
+.. image:: /_images/Scenarios/scenarioGroundPassPolar.png
+   :align: center
+   
+.. image:: /_images/Scenarios/scenarioGroundPassRange.png
    :align: center
 
+.. image:: /_images/Scenarios/scenarioGroundPassBaud.png
+   :align: center
 
+.. image:: /_images/Scenarios/scenarioGroundPassStorage.png
+   :align: center
 """
 import os, inspect
 import numpy as np
@@ -222,6 +229,11 @@ def run(show_plots):
 
     scPosition = scPosition - earthPosition
 
+    pass_inds = np.nonzero(accessData[:,1])
+    pass_az = azimuthData[pass_inds,1]
+    pass_el = elevationData[pass_inds,1]
+
+
 
     tvec = storageLevel[:,0]
     tvec = tvec * macros.NANO2HOUR
@@ -230,7 +242,7 @@ def run(show_plots):
     # Stopped here. Revisiting instrument implementation first.
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
-    plt.figure(1)
+    fig=plt.figure(1)
     plt.plot(tvec,storageLevel[:,1]/(8E3),label='Data Unit Total Storage Level (KB)')
     plt.plot(tvec,storedData[:,1]/(8E3),label='Instrument 1 Partition Level (KB)')
     plt.plot(tvec,storedData[:,2]/(8E3),label='Instrument 2 Partition Level (KB)')
@@ -238,49 +250,47 @@ def run(show_plots):
     plt.ylabel('Data Stored (KB)')
     plt.grid(True)
     plt.legend()
+    figureList['scenarioGroundPassStorage']=fig
 
     #   Plot the orbit and ground station location data
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1, projection='3d')
-    ax.plot(scPosition[:,1],scPosition[:,2],scPosition[:,3], label='S/C Position')
-    ax.plot(groundPosition[:,1],groundPosition[:,2],groundPosition[:,3], label='Ground Station Position')
-    pltNameBits = "scenario_groundLocationOrbits"
+    ax.plot(scPosition[:,1]/1000.,scPosition[:,2]/1000.,scPosition[:,3]/1000., label='S/C Position')
+    ax.plot(groundPosition[:,1]/1000.,groundPosition[:,2]/1000.,groundPosition[:,3]/1000., label='Ground Station Position')
+    plt.legend()
+    figureList['scenarioGroundPassECI'] = fig
 
-    plt.figure()
-    plt.polar(azimuthData[:,1], 90-np.degrees(elevationData[:,1]))
+    fig = plt.figure()
+    plt.polar(pass_az[0,:], 90.-np.degrees(pass_el[0,:]))
     ax.set_yticks(range(0, 90, 10))  # Define the yticks
     ax.set_yticklabels(map(str, range(90, 0, -10)))
-    plt.title('Ground Pass Polar View')
+    plt.title('Ground Pass Azimuth and Declination')
+    figureList['scenarioGroundPassPolar'] = fig
 
     plt.figure()
     plt.plot(tvec, np.degrees(azimuthData[:,1]),label='az')
     plt.plot(tvec, np.degrees(elevationData[:, 1]), label='el')
     plt.legend()
+    plt.grid(True)
+    plt.ylabel('Angles (deg)')
+    plt.xlabel('Time (hr)')
 
-    plt.figure()
+    fig=plt.figure()
     plt.plot(tvec, rangeData[:,1]/1000.)
     plt.plot(tvec, accessData[:,1]*1000.)
-    plt.title('Slant Range')
+    plt.grid(True)
+    plt.title('Slant Range, Access vs. Time')
+    plt.ylabel('Slant Range (km)')
+    plt.xlabel('Time (hr)')
+    figureList['scenarioGroundPassRange'] = fig
 
     fig = plt.figure()
-    plt.plot(tvec,scPosition[:,1]/(1E3),label='sc_1')
-    plt.plot(tvec,scPosition[:,2]/(1e3),label='sc_2')
-    plt.plot(tvec,scPosition[:,3]/(1e3),label='sc_3')
-    plt.plot(tvec,groundPosition[:,1]/(1E3),label='sc_1')
-    plt.plot(tvec,groundPosition[:,2]/(1e3),label='sc_2')
-    plt.plot(tvec,groundPosition[:,3]/(1e3),label='sc_3')
-
-    fig = plt.figure()
-    plt.plot(tvec,earthPosition[:,1]/(1E3),label='sc_1')
-    plt.plot(tvec,earthPosition[:,2]/(1e3),label='sc_2')
-    plt.plot(tvec,earthPosition[:,3]/(1e3),label='sc_3')
-
-    plt.figure()
     plt.plot(tvec,storageNetBaud[:,1]/(8E3),label='Net Baud Rate (KB/s)')
     plt.xlabel('Time (Hr)')
     plt.ylabel('Data Rate (KB/s)')
     plt.grid(True)
     plt.legend()
+    figureList['scenarioGroundPassBaud'] = fig
 
     pltNameBaud = "scenario_dataDemoBaud"
 
