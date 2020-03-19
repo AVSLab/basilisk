@@ -17,25 +17,25 @@
 
  */
 
-
-%module groundLocation
+%module spaceToGroundTransmitter
 %{
-    #include "groundLocation.h"
+#include "spaceToGroundTransmitter.h"
 %}
 
 %include "swig_common_model.i"
+%include "carrays.i"
 %include "sys_model.h"
-%include "groundLocation.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
+%include "../_GeneralModuleFiles/dataNodeBase.h"
+%include "spaceToGroundTransmitter.h"
+
+%include "../../simMessages/dataNodeUsageSimMsg.h"
+%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
 %include "../../simMessages/accessSimMsg.h"
-%include "../../simMessages/groundStateSimMsg.h"
 
+GEN_SIZEOF(DataNodeUsageSimMsg)
+GEN_SIZEOF(DeviceStatusIntMsg)
+GEN_SIZEOF(DataStorageStatusSimMsg)
 GEN_SIZEOF(AccessSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(GroundStateSimMsg)
-
 
 %pythoncode %{
 import sys

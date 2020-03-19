@@ -18,26 +18,20 @@
  */
 
 
-%module groundLocation
-%{
-    #include "groundLocation.h"
-%}
+#ifndef BASILISK_GROUNDPOSITIONSIMMSG_H
+#define BASILISK_GROUNDPOSITIONSIMMSG_H
 
-%include "swig_common_model.i"
-%include "sys_model.h"
-%include "groundLocation.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/accessSimMsg.h"
-%include "../../simMessages/groundStateSimMsg.h"
+/*! \defgroup simMessages
+ *  @{
+ */
 
-GEN_SIZEOF(AccessSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(GroundStateSimMsg)
+/*! @brief Message that defines the inertial location of a groundLocation at the current time.
+ */
+typedef struct {
+    double r_LN_N[3]; //! Position vector of the planet w.r.t. the inertial origin in the inertial frame
+    double r_LP_N[3]; //! Position vector of the location with respect to the planet center in the inertial frame
+}GroundStateSimMsg;
 
+/* @} */
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif //BASILISK_GROUNDPOSITIONSIMMSG_H

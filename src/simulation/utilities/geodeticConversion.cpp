@@ -19,6 +19,7 @@
 
 #include <math.h>
 #include "geodeticConversion.h"
+#include "rigidBodyKinematics.h"
 #include "avsEigenSupport.h"
 
 
@@ -114,4 +115,16 @@ Eigen::Vector3d LLA2PCI(Eigen::Vector3d llaPosition, double J20002Pfix[3][3], do
   Eigen::Vector3d pcpfPosition = LLA2PCPF(llaPosition, planetRad);
   Eigen::Vector3d pciPosition = PCPF2PCI(pcpfPosition, J20002Pfix);
   return pciPosition;
+}
+
+Eigen::Matrix3d C_PCPF2SEZ(double lat, double longitude)
+{
+     double m1[3][3];
+     double m2[3][3];
+     Euler2(M_PI_2-lat, m1);
+     Euler3(longitude, m2);
+
+     Eigen::MatrixXd rot2 = cArray2EigenMatrix3d(*m1);
+     Eigen::MatrixXd rot3 = cArray2EigenMatrix3d(*m2);
+     return rot2*rot3;
 }

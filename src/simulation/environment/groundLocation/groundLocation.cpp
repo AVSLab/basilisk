@@ -32,8 +32,16 @@ GroundLocation::GroundLocation()
     this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
     this->planetInMsgName = "";
     this->planetInMsgId = -1;
+    this->currentGroundStateOutMsgName = "";
+    this->currentGroundStateOutMsgId = -1;
 
-    this->planetRadius = REQ_EARTH;
+    for(int i=0; i<4; i++){
+        this->currentGroundStateOutMsg.r_LN_N[i]=0;
+        this->currentGroundStateOutMsg.r_LP_N[i]=0;
+    }
+
+
+    this->planetRadius = REQ_EARTH*1e3;
 
     this->r_LP_P.fill(0.0);
     this->r_LP_P_Init.fill(0.0);
@@ -71,8 +79,7 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt)
 {
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
     this->r_LP_P_Init = LLA2PCPF(tmpLLAPosition, this->planetRadius);
-
-    return;
+    this->dcm_LP = C_PCPF2SEZ(lat, longitude);
 }
 
 
@@ -86,8 +93,6 @@ void GroundLocation::addSpacecraftToModel(std::string tmpScMsgName)
         tmpAccessMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1) + "_access";
     this->accessOutMsgNames.push_back(tmpAccessMsgName);
     this->accessMsgBuffer.push_back(tmpAccessMsg);
-
-    return;
 }
 
 void GroundLocation::SelfInit()
@@ -104,11 +109,21 @@ void GroundLocation::SelfInit()
                                                                             moduleID);
         this->accessOutMsgIds.push_back(tmpAccessMsgId);
     }
-    return;
+
+    //If the user hasn't set a state message name, set it to ModelTag_GroundState
+    if(this->currentGroundStateOutMsgName.length() == 0){
+        this->currentGroundStateOutMsgName = this->ModelTag+"_GroundState";
+    }
+    this->currentGroundStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->currentGroundStateOutMsgName,
+                                                                                        sizeof(GroundStateSimMsg),
+                                                                                        this->OutputBufferCount,
+                                                                                        "GroundStateSimMsg",
+                                                                                        moduleID);
 }
 
 void GroundLocation::CrossInit()
 {
+
       //! - if a planet message name is specified, subscribe to this message. If not, then a zero planet position and orientation is assumed
     if (this->planetInMsgName.length() > 0) {
         this->planetInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
@@ -118,8 +133,6 @@ void GroundLocation::CrossInit()
     for(it = this->scStateInMsgNames.begin(); it != this->scStateInMsgNames.end(); it++){
         this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
     }
-
-    return;
 }
 
 bool GroundLocation::ReadMessages()
@@ -131,7 +144,7 @@ bool GroundLocation::ReadMessages()
 
     //! - read in the spacecraft state messages
     bool scRead;
-    if(this->scStateInMsgIds.size() > 0)
+    if(!this->scStateInMsgIds.empty())
     {
         scRead = true;
         std::vector<int64_t>::iterator it;
@@ -178,19 +191,25 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock)
                                                   reinterpret_cast<uint8_t*>(&tmpAccessSimMsg),
                                                   moduleID);
     }
-
-    return;
+    SystemMessaging::GetInstance()->WriteMessage(this->currentGroundStateOutMsgId,
+                                                 CurrentClock,
+                                                 sizeof(GroundStateSimMsg),
+                                                 reinterpret_cast<uint8_t*>(&this->currentGroundStateOutMsg),
+                                                 moduleID);
 }
 
 void GroundLocation::updateInertialPositions()
 {
     // Update the planet inertial position:
+    Eigen::Matrix3d dcm_NP = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
+    this->dcm_PN = dcm_NP.transpose();
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
-    this->r_LP_N = cArray2EigenMatrix3d(*this->planetState.J20002Pfix) * this->r_LP_P_Init;
+    this->r_LP_N = dcm_NP * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
-
-    return;
+    //  Stash updated position in the groundState message
+    eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateOutMsg.r_LN_N);
+    eigenVector3d2CArray(this->r_LP_N,this->currentGroundStateOutMsg.r_LP_N);
 }
 
 void GroundLocation::computeAccess()
@@ -206,19 +225,25 @@ void GroundLocation::computeAccess()
         Eigen::Vector3d r_BL_N = (cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N) - this->r_LP_N;
         auto r_BL_mag = r_BL_N.norm();
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
+
         double viewAngle = (M_PI_2-acos(this->rhat_LP_N.dot(relativeHeading_N)));
 
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange)){
             accessMsgIt->hasAccess = 1;
             accessMsgIt->slantRange = r_BL_N.norm();
             accessMsgIt->elevation = viewAngle;
-            accessMsgIt->azimuth = acos(this->r_North_N.dot(relativeHeading_N));
+
+            Eigen::Vector3d sezPosition = this->dcm_LP * this->dcm_PN * r_BL_N;
+            double cos_az = -sezPosition[0]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
+            double sin_az = sezPosition[1]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
+            accessMsgIt->azimuth = atan2(sin_az, cos_az);
         }
         else
         {
             accessMsgIt->hasAccess = 0;
             accessMsgIt->slantRange = 0.0;
             accessMsgIt->elevation = 0.0;
+            accessMsgIt->azimuth = 0.0;
         }
     }
 }
