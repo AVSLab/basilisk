@@ -19,6 +19,8 @@ Basilisk Release Notes
 Upcoming Version 1.X.X
 ----------------------
 - Added the ability to detect if a satellite is visible to a ground location in the new :ref:`groundLocation` module
+- Added support to script Vizard to specify spacecraft, planet and actuator labels
+
 
 Version 1.7.0
 -------------
