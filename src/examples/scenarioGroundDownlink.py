@@ -1,53 +1,54 @@
- # ISC License
- #
- # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
- #
- # Permission to use, copy, modify, and/or distribute this software for any
- # purpose with or without fee is hereby granted, provided that the above
- # copyright notice and this permission notice appear in all copies.
- #
- # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- # ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 """
 Overview
 --------
 
-This scenario demonstrates how the on-board power system can be used to simulate data down-link that is depenedent on access
+This scenario demonstrates how the on-board power system can be used to simulate data down-link that is dependent on access
 to specific geographic locations (i.e., ground stations). 
 
-This scenario is intended to provide both an overview and a concrete demonstration of the features and interface of the
-:ref:`GroundLocation` module, which represents a specific ground location and computes visibility from that location to spacecraft,
-and :ref:`spaceToGroundTransmitter`, which represents a spacecraft-based radio system that requires visibility to a ground station. 
+This scenario is intended to provide both an overview and a concrete demonstration of the features and interface of
+:ref:`GroundLocation`, which represents a specific ground location and computes visibility from that location to spacecraft,
+and :ref:`spaceToGroundTransmitter`, which represents a spacecraft-based radio system that requires
+visibility to a ground station.
 
 The script is found in the folder ``src/examples`` and executed by using::
 
       python3 scenarioDataDemo.py
 
-The scenario is meant to be representative of a small satellite with constant data collection attempting to downlink data to a groundstation
-located in Boulder, Colorado.
+The scenario is meant to be representative of a small satellite with constant data collection attempting to
+downlink data to a ground station located in Boulder, Colorado.
 
 When the simulation completes, the following plots are shown to
 demonstrate the data stored, generated, and downlinked.
 
-.. image:: /_images/Scenarios/scenarioGroundPassECI.png
+.. image:: /_images/Scenarios/scenarioGroundPassECI.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioGroundPassPolar.png
+.. image:: /_images/Scenarios/scenarioGroundPassPolar.svg
    :align: center
    
-.. image:: /_images/Scenarios/scenarioGroundPassRange.png
+.. image:: /_images/Scenarios/scenarioGroundPassRange.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioGroundPassBaud.png
+.. image:: /_images/Scenarios/scenarioGroundPassBaud.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioGroundPassStorage.png
+.. image:: /_images/Scenarios/scenarioGroundPassStorage.svg
    :align: center
 """
 import os, inspect
@@ -62,8 +63,7 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit,spaceToGroundTransmitter
+from Basilisk.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit, spaceToGroundTransmitter
 from Basilisk.simulation import groundLocation
 
 from Basilisk.simulation import spacecraftPlus
@@ -129,7 +129,7 @@ def run(show_plots):
     timeInitString = '2020 MAR 15 12:00:00 (UTC)'
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
                                      , timeInitString
-                                     , spicePlanetNames = ["sun", "earth"]
+                                     , spicePlanetNames=["sun", "earth"]
                                      )
     scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
 
@@ -164,8 +164,8 @@ def run(show_plots):
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
     transmitter.ModelTag = "transmitter"
-    transmitter.nodeBaudRate = -9600. # baud
-    transmitter.packetSize = -1E6 # bits
+    transmitter.nodeBaudRate = -9600.   # baud
+    transmitter.packetSize = -1E6   # bits
     transmitter.numBuffers = 2
     transmitter.nodeDataOutMsgName = "TransmitterMsg"
     transmitter.addAccessMsgToTransmitter(groundStation.accessOutMsgNames[-1])
@@ -175,7 +175,7 @@ def run(show_plots):
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
     dataMonitor.storageUnitDataOutMsgName = "dataMonitorMsg"
-    dataMonitor.storageCapacity = 8E9 # bits (1 GB)
+    dataMonitor.storageCapacity = 8E9   # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsgName)
     dataMonitor.addDataNodeToModel(instrument2.nodeDataOutMsgName)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsgName)
@@ -250,13 +250,13 @@ def run(show_plots):
     plt.ylabel('Data Stored (KB)')
     plt.grid(True)
     plt.legend()
-    figureList['scenarioGroundPassStorage']=fig
+    figureList['scenarioGroundPassStorage'] = fig
 
     #   Plot the orbit and ground station location data
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1, projection='3d')
-    ax.plot(scPosition[:,1]/1000.,scPosition[:,2]/1000.,scPosition[:,3]/1000., label='S/C Position')
-    ax.plot(groundPosition[:,1]/1000.,groundPosition[:,2]/1000.,groundPosition[:,3]/1000., label='Ground Station Position')
+    ax.plot(scPosition[:,1]/1000.,scPosition[:, 2]/1000.,scPosition[:,3]/1000., label='S/C Position')
+    ax.plot(groundPosition[:,1]/1000.,groundPosition[:, 2]/1000.,groundPosition[:,3]/1000., label='Ground Station Position')
     plt.legend()
     figureList['scenarioGroundPassECI'] = fig
 
@@ -268,7 +268,7 @@ def run(show_plots):
     figureList['scenarioGroundPassPolar'] = fig
 
     plt.figure()
-    plt.plot(tvec, np.degrees(azimuthData[:,1]),label='az')
+    plt.plot(tvec, np.degrees(azimuthData[:, 1]),label='az')
     plt.plot(tvec, np.degrees(elevationData[:, 1]), label='el')
     plt.legend()
     plt.grid(True)
@@ -276,8 +276,8 @@ def run(show_plots):
     plt.xlabel('Time (hr)')
 
     fig=plt.figure()
-    plt.plot(tvec, rangeData[:,1]/1000.)
-    plt.plot(tvec, accessData[:,1]*1000.)
+    plt.plot(tvec, rangeData[:, 1]/1000.)
+    plt.plot(tvec, accessData[:, 1]*1000.)
     plt.grid(True)
     plt.title('Slant Range, Access vs. Time')
     plt.ylabel('Slant Range (km)')
@@ -285,14 +285,12 @@ def run(show_plots):
     figureList['scenarioGroundPassRange'] = fig
 
     fig = plt.figure()
-    plt.plot(tvec,storageNetBaud[:,1]/(8E3),label='Net Baud Rate (KB/s)')
+    plt.plot(tvec,storageNetBaud[:, 1] / (8E3), label='Net Baud Rate (KB/s)')
     plt.xlabel('Time (Hr)')
     plt.ylabel('Data Rate (KB/s)')
     plt.grid(True)
     plt.legend()
     figureList['scenarioGroundPassBaud'] = fig
-
-    pltNameBaud = "scenario_dataDemoBaud"
 
     if show_plots:
         plt.show()
