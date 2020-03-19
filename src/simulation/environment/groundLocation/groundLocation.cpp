@@ -32,6 +32,8 @@ GroundLocation::GroundLocation()
     this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
     this->planetInMsgName = "";
     this->planetInMsgId = -1;
+    this->currentGroundStateOutMsgName = "";
+    this->currentGroundStateOutMsgId = -1;
 
     this->planetRadius = REQ_EARTH;
 
@@ -104,7 +106,16 @@ void GroundLocation::SelfInit()
                                                                             moduleID);
         this->accessOutMsgIds.push_back(tmpAccessMsgId);
     }
-    return;
+
+    //If the user hasn't set a state message name, set it to ModelTag_GroundState
+    if(this->currentGroundStateOutMsgName.lengh() == 0){
+        this->currentGroundStateOutMsgName = this->ModelTag+"_GroundState";
+    }
+    this->currentGroundStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->currentGroundStateOutMsgName,
+                                                                                        sizeof(GroundStateSimMsg),
+                                                                                        this->OutputBufferCount,
+                                                                                        "GroundStateSimMsg",
+                                                                                        moduleID);
 }
 
 void GroundLocation::CrossInit()
@@ -178,8 +189,12 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock)
                                                   reinterpret_cast<uint8_t*>(&tmpAccessSimMsg),
                                                   moduleID);
     }
+    SystemMessaging::GetInstance()->WriteMessage(this->currentGroundStateOutMsgId,
+                                                 CurrentClock,
+                                                 sizeof(GroundStateSimMsg),
+                                                 reinterpret_cast<uint8_t*>(&this->currentGroundStateOutMsg),
+                                                 moduleID);
 
-    return;
 }
 
 void GroundLocation::updateInertialPositions()
@@ -189,8 +204,9 @@ void GroundLocation::updateInertialPositions()
     this->r_LP_N = cArray2EigenMatrix3d(*this->planetState.J20002Pfix) * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
-
-    return;
+    //  Stash updated position in the groundState message
+    eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateOutMsg.r_LN_N );
+    eigenVector3d2CArray(this->r_LP_N,this->currentGroundStateOutMsg.r_LP_N);
 }
 
 void GroundLocation::computeAccess()
