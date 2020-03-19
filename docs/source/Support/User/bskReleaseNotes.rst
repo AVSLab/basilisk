@@ -18,9 +18,10 @@ Basilisk Release Notes
 
 Upcoming Version 1.X.X
 ----------------------
-- Added the ability to detect if a satellite is visible to a ground location in the new :ref:`groundLocation` module
+- Added the ability to detect if a satellite is visible to a ground location in the new :ref:`groundLocation`
 - Added support to script Vizard to specify spacecraft, planet and actuator labels
-
+- Added :ref:`spaceToGroundTransmitter` which simulates transmitting data from space to an antenna at a ground location.
+- Added a nice new integrated scenario :ref:`scenarioGroundDownlink` that shows how to use :ref:`groundLocation` and :ref:`spaceToGroundTransmitter`
 
 Version 1.7.0
 -------------
