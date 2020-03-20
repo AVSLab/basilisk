@@ -22,6 +22,8 @@ Upcoming Version 1.X.X
 - Added support to script Vizard to specify spacecraft, planet and actuator labels
 - Added :ref:`spaceToGroundTransmitter` which simulates transmitting data from space to an antenna at a ground location.
 - Added a nice new integrated scenario :ref:`scenarioGroundDownlink` that shows how to use :ref:`groundLocation` and :ref:`spaceToGroundTransmitter`
+- Updated the definition of the variable noiseMatrix in ``gaussMarkov.h``, and PMatrix in ``simple_nav.h``,
+  ``imu_sensor.h`` and ``star_tracker.h``
 
 Version 1.7.0
 -------------
