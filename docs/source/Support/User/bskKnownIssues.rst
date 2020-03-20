@@ -4,16 +4,16 @@
 Basilisk Known Issues
 =====================
 
-Upcoming Version 1.X.X
-----------------------
-- text here
+Version 1.7.1
+-------------
+- None
 
 Version 1.7.0
 -------------
 - None
 
-Version 1.6.0
--------------
+**Version 1.6.0**
+
 - None
 
 **Version 1.5.1**
