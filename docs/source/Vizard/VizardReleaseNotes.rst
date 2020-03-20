@@ -19,6 +19,22 @@ Release Notes
     - better support for visualizing multiple spacecraft
     - add labels to spacecraft and sensor visualization
 
+**Version 1.1.0**
+
+- added floating labels for the following:
+
+   - spacecraft names
+   - sun, planets, moons names
+   - coordinate axes
+   - thruster HUD components
+   - reaction wheel HUD components
+   - standard and instrument camera names
+
+- labels can be toggled on and off from Labels Panel accessed through the View menu
+- label font size can be increased or decreased through the Labels panel
+- labels can also be toggled by type by using newly added fields in the Protobuffers vizMessage
+- revamped startup screen and file browser appearance to follow the general Vizard application design themes
+
 **Version 1.0.0**🍾🍾🍾🍾
 
 - Support for various screen sizes, including retina support on macOS
