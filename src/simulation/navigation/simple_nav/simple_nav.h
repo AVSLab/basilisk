@@ -46,7 +46,7 @@ public:
     
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
-    Eigen::MatrixXd PMatrix;       //!< -- Covariance matrix used to perturb state
+    Eigen::MatrixXd PMatrix;       //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;    //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;     //!< -- Current navigation errors applied to truth
     std::string inputStateName;        //!< -- Message that contains s/c state

@@ -47,29 +47,35 @@ public:
     GaussMarkov(uint64_t size, uint64_t newSeed = 0x1badcad1);
     ~GaussMarkov();
     void computeNextState();
+
     /*!@brief Method does just what it says, seeds the random number generator
        @param newSeed The seed to use in the random number generator
        @return void*/
     void setRNGSeed(uint64_t newSeed) {rGen.seed((unsigned int)newSeed); RNGSeed = newSeed;}
+
     /*!@brief Method returns the current random walk state from model
        @return The private currentState which is the vector of random walk values*/
     Eigen::VectorXd getCurrentState() {return(currentState);}
+
     /*!@brief Set the upper bounds on the random walk to newBounds
        @param newBounds the bounds to put on the random walk states
        @return void*/
     void setUpperBounds(Eigen::VectorXd newBounds){stateBounds = newBounds;}
+
     /*!@brief Set the noiseMatrix that is used to define error sigmas
        @param noise The new value to use for the noiseMatrix variable (error sigmas)
        @return void*/
     void setNoiseMatrix(Eigen::MatrixXd noise){noiseMatrix = noise;}
+
     /*!@brief Set the propagation matrix that is used to propagate the state.
        @param prop The new value for the state propagation matrix
        @return void*/
     void setPropMatrix(Eigen::MatrixXd prop){propMatrix = prop;}
+
     Eigen::VectorXd stateBounds;  //!< -- Upper bounds to use for markov
     Eigen::VectorXd currentState;  //!< -- State of the markov model
     Eigen::MatrixXd propMatrix;    //!< -- Matrix to propagate error state with
-    Eigen::MatrixXd noiseMatrix;   //!< -- covariance matrix to apply errors with
+    Eigen::MatrixXd noiseMatrix;   //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:

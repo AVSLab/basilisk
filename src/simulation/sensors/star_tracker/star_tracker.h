@@ -54,7 +54,7 @@ public:
     std::string inputStateMessage;    //!< [-] String for the input state message
     std::string outputStateMessage;   //!< [-] String for the output state message
     bool messagesLinked;              //!< [-] Indicator for whether inputs bound
-    Eigen::Matrix3d PMatrix;      //!< [-] Covariance matrix used to perturb state
+    Eigen::Matrix3d PMatrix;      //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::Vector3d walkBounds;   //!< [-] "3-sigma" errors to permit for states
     Eigen::Vector3d navErrors;    //!< [-] Current navigation errors applied to truth
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers

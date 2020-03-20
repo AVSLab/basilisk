@@ -69,11 +69,11 @@ public:
 	double senTransMax;					/// [m/s2] Accelerometer saturation value
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
-    Eigen::Matrix3d PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
+    Eigen::Matrix3d PMatrixAccel;   //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
 	Eigen::Matrix3d AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
 	Eigen::Vector3d walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
 	Eigen::Vector3d navErrorsAccel; //!< [-] Current navigation errors applied to truth
-	Eigen::Matrix3d PMatrixGyro;    //!< [-] Covariance matrix used to perturb state
+	Eigen::Matrix3d PMatrixGyro;    //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
 	Eigen::Matrix3d AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
 	Eigen::Vector3d walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
 	Eigen::Vector3d navErrorsGyro;  //!< [-] Current navigation errors applied to truth
