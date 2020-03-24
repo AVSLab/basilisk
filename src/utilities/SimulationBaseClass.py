@@ -676,10 +676,7 @@ class SimBaseClass:
                         msgNames = structToName[structName]
                         headerDatas = headerDict[obj.__name__]
 
-                        print("Msg names:{}".format(msgNames))
                         for idx,msgName in enumerate(msgNames):
-                            print(idx)
-                            print(msgName)
                             headerData = headerDatas[idx]
                             msgAttributes = attributeDict[msgName]
                             messageID = self.TotalSim.getMessageID(msgName)
@@ -699,8 +696,6 @@ class SimBaseClass:
                                 else:
                                     indices_use = indices
 
-                                print(type)
-                                print(attr)
                                 dataUse = MessagingAccess.obtainMessageVector(msgName, moduleFound,
                                                                               structName, messageCount,
                                                                               self.TotalSim,
@@ -710,8 +705,6 @@ class SimBaseClass:
                                 pullDict.update({msgName+'.'+attr:dataUse})
 
                                 foundDict.update({msgName+'.'+attr:True})
-                                print(foundDict.keys())
-                                print(foundDict.values())
 
         return pullDict
 
