@@ -21,9 +21,9 @@ import numpy as np
 import pytest
 
 from Basilisk.simulation import solarFlux
-from Basilisk.simulation import SpicePlanetStateSimMsg
-from Basilisk.simulation import SCPlusStatesSimMsg
-from Basilisk.simulation import EclipseSimMsg
+from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
+from Basilisk.simulation.simMessages import SCPlusStatesSimMsg
+from Basilisk.simulation.simMessages import EclipseSimMsg
 
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
