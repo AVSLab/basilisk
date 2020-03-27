@@ -34,9 +34,9 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
 from Basilisk.topLevelModules import pyswice
 from Basilisk.simulation import stateArchitecture
-from Basilisk.simulation.gravityEffector import loadGravFromFileToList
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import simMessages
+from Basilisk.simulation.gravityEffector import loadGravFromFileToList
 
 #script to check spherical harmonics calcs out to 20th degree
 #Uses coefficient from Vallado tables D-1

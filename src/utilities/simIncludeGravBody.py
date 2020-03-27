@@ -20,8 +20,9 @@
 
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
 from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
+
 
 class gravBodyFactory(object):
     def __init__(self, bodyNames=None):

@@ -44,7 +44,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate  # import the module that is to be tested
+from Basilisk.fswAlgorithms import fswModuleTemplate                # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import fswMessages
 

@@ -7,8 +7,8 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms.dvGuidance import dvGuidance
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import dvGuidance
+from Basilisk.fswAlgorithms import fswMessages
 import matplotlib.pyplot as plt
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename

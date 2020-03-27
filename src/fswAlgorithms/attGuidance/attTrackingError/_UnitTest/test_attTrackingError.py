@@ -40,10 +40,10 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.alg_contain import alg_contain
+from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport              # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.attTrackingError import attTrackingError                  # import the module that is to be tested
+from Basilisk.fswAlgorithms import attTrackingError                  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 

@@ -5,7 +5,7 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms.faultDetection import faultDetection
+from Basilisk.fswAlgorithms import faultDetection
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 import os, inspect, pytest

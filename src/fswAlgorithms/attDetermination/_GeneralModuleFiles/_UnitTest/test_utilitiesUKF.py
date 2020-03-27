@@ -24,10 +24,10 @@ import math
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.sunlineSuKF import sunlineSuKF
-from Basilisk.fswAlgorithms.inertialUKF import inertialUKF
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
-from Basilisk.fswAlgorithms.cssComm import cssComm
+from Basilisk.fswAlgorithms import sunlineSuKF
+from Basilisk.fswAlgorithms import inertialUKF
+from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms import cssComm
 from Basilisk.simulation import coarse_sun_sensor
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

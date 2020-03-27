@@ -40,8 +40,8 @@ import numpy as np
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import fswMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

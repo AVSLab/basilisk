@@ -38,9 +38,9 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms.rwMotorTorque import rwMotorTorque
+from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
-from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.simulation import simFswInterfaceMessages
 from Support import results_rwMotorTorque
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

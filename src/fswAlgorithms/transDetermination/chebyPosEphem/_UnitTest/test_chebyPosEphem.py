@@ -29,11 +29,11 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms.cheby_pos_ephem import cheby_pos_ephem
+from Basilisk.fswAlgorithms import cheby_pos_ephem
 from Basilisk.simulation import sim_model
 import ctypes
 from Basilisk.topLevelModules import pyswice
-from Basilisk.pyswice.pyswice_spk_utilities import spkRead
+from Basilisk.topLevelModules.pyswice import spkRead
 import matplotlib.pyplot as plt
 
 orbitPosAccuracy = 1.0

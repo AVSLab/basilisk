@@ -25,9 +25,9 @@ import math
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
 from Basilisk.simulation import coarse_sun_sensor
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.sunlineSuKF import sunlineSuKF  # import the module that is to be tested
-from Basilisk.fswAlgorithms.cssComm import cssComm
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms import cssComm
+from Basilisk.fswAlgorithms import fswMessages
 
 import SunLineSuKF_test_utilities as FilterPlots
 

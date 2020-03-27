@@ -32,10 +32,10 @@ import math
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import sim_model
-from Basilisk.simulation.alg_contain import alg_contain
+from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.lowPassFilterTorqueCommand import lowPassFilterTorqueCommand       # import the module that is to be tested
+from Basilisk.fswAlgorithms import lowPassFilterTorqueCommand       # import the module that is to be tested
 from Basilisk.utilities import macros
 
 

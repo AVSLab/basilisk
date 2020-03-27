@@ -36,9 +36,9 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms.tamComm import tamComm
+from Basilisk.fswAlgorithms import tamComm
 from Basilisk.utilities import macros
-from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.simulation import simFswInterfaceMessages
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)

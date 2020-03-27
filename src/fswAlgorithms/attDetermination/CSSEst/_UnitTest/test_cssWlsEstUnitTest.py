@@ -36,9 +36,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms.cssWlsEst import cssWlsEst
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
-from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.fswAlgorithms import cssWlsEst
+from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import simFswInterfaceMessages
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

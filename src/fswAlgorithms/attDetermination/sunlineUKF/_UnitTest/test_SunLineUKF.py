@@ -30,9 +30,9 @@ import math
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.sunlineUKF import sunlineUKF
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
-from Basilisk.fswAlgorithms.cssComm import cssComm
+from Basilisk.fswAlgorithms import sunlineUKF
+from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms import cssComm
 from Basilisk.simulation import coarse_sun_sensor
 import SunLineuKF_test_utilities as FilterPlots
 

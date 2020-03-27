@@ -18,8 +18,8 @@
 
 import pytest
 
-from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
-from Basilisk.simulation.simMessages import SCPlusStatesSimMsg
+from Basilisk.simulation import SpicePlanetStateSimMsg
+from Basilisk.simulation import SCPlusStatesSimMsg
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
