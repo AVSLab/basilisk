@@ -589,8 +589,11 @@ generate_package_targets("${PYSWICE_TARGETS}" "${ARCHITECTURE_LIBS};${library_de
 #PYTHON PACKAGE CONFIGURATION#
 ##############################
 
-# make the built package with an empty init file
+# Must make the build directories first, so that cmake can insert empty init files before build (linux specific need)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
+
 file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
 
 #TODO: Iterate through all dist directories and add __init__.py's where they don't exist
