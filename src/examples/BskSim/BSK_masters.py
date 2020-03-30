@@ -75,8 +75,8 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Discover interfaces between processes
         self.dyn2FSWInterface.addNewInterface(self.DynamicsProcessName, self.FSWProcessName)
         self.fsw2DynInterface.addNewInterface(self.FSWProcessName, self.DynamicsProcessName)
-        self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
-        self.fswProc.addInterfaceRef(self.fsw2DynInterface)
+        self.dynProc.addInterfaceRef(self.fsw2DynInterface)
+        self.fswProc.addInterfaceRef(self.dyn2FSWInterface)
 
 class BSKScenario(object):
     def __init__(self):
