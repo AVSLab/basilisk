@@ -24,7 +24,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "avsLibrarySelfCheck.h" 
+#include "avsLibrarySelfCheck.h"
 
 
 int isEqual(double a, double b, double accuracy)
@@ -161,7 +161,7 @@ int testLinearAlgebra(double accuracy)
     v3Set(1, 2, 3, v3_0);
     m33Set(4, 5, 6,
            7, 8, 9,
-           10, 11, 12, 
+           10, 11, 12,
            m33_0);
     v3Set(48, 54, 60, v3_1);
     vtMultM(v3_0, m33_0, 3, 3, v3_0);
@@ -1928,8 +1928,48 @@ int testOrbitalElements(double accuracy)
         errorCount++;
     }
 
+    /* classical elements osculating  <-> mean J2 first-order mapping*/
+    elements.a     = 1000.0;
+    elements.e     = 0.2;
+    elements.i     = 0.2;
+    elements.Omega = 0.15;
+    elements.omega = 0.5;
+    elements.f     = 0.2;
+    double req = 300.0;
+    double J2 = 1e-3;
+    classicElements elements_p;
+    clMeanOscMap(req, J2, &elements, &elements_p, 1);
+    if(!isEqualRel(elements_p.a, 1000.07546442015950560744386166334152, accuracy)
+       || !isEqual(elements_p.e, 0.20017786852908628358882481279579, accuracy)
+       || !isEqualRel(elements_p.i, 0.20000333960738947425284095515963, accuracy)
+       || !isEqual(elements_p.Omega, 0.15007256499303692209856819772540, accuracy)
+       || !isEqual(elements_p.omega, 0.50011857315729335571319325026707, accuracy)
+       || !isEqualRel(elements_p.f, 0.19982315726261962174348241205735, accuracy)
+       ) {
+        printf("clMeanOscMap failed\n");
+        errorCount++;
+    }
 
-
+    /* classical elements to equinoctial elements */
+    elements.a     = 1000.0;
+    elements.e     = 0.2;
+    elements.i     = 0.2;
+    elements.Omega = 0.15;
+    elements.omega = 0.5;
+    elements.f     = 0.2;
+    equinoctialElements elements_eq;
+    clElem2eqElem(&elements, &elements_eq);
+    if(!isEqualRel(elements_eq.a, 1000.00000000000000000000000000000000, accuracy)
+       || !isEqual(elements_eq.P1, 0.12103728114720790909331071816268, accuracy)
+       || !isEqualRel(elements_eq.P2, 0.15921675970981119530023306651856, accuracy)
+       || !isEqual(elements_eq.Q1, 0.01499382601880069713906618034116, accuracy)
+       || !isEqual(elements_eq.Q2, 0.09920802187229026125603326136115, accuracy)
+       || !isEqualRel(elements_eq.l, 0.78093005232114087732497864635661, accuracy)
+       || !isEqualRel(elements_eq.L, 0.85000000000000008881784197001252, accuracy)
+       ) {
+        printf("clElem2eqElem failed\n");
+        errorCount++;
+    }
     return errorCount;
 }
 
@@ -3827,8 +3867,7 @@ int testRigidBodyKinematics(double accuracy)
         printf("Mi(30 deg, 1, C) failed\n");
         errorCount++;
     }
-    
+
 
     return errorCount;
 }
-
