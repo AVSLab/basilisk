@@ -200,5 +200,48 @@ arvec = orbitalMotion.solarRad(A, m, sunvec)
 arvecCValue = np.array([-4.77259E-12, -4.77259E-12, -4.77259E-12])
 e_count += arrayEqualCheck(arvec, arvecCValue, 'solarRad')
 
+# Function clMeanOscMap
+req = 300
+J2 = 1e-3
+elements = orbitalMotion.ClassicElements()
+elements.a = 1000
+elements.e = 0.2
+elements.i = 0.2
+elements.Omega = 0.15
+elements.omega = 0.5
+elements.f = 0.2
+elements_p = orbitalMotion.ClassicElements()
+orbitalMotion.clMeanOscMap(req, J2, elements, elements_p, 1)
+trueElements_p = np.array([1000.07546442015950560744386166334152,
+                           0.20017786852908628358882481279579,
+                           0.20000333960738947425284095515963,
+                           0.15007256499303692209856819772540,
+                           0.50011857315729335571319325026707,
+                           0.19982315726261962174348241205735])
+mappedElements_p = np.array([elements_p.a, elements_p.e, elements_p.i,
+                             elements_p.Omega, elements_p.omega, elements_p.f])
+e_count += arrayEqualCheck(trueElements_p, mappedElements_p, 'clMeanOscMap')
+
+# Function clElem2eqElem
+elements_cl = orbitalMotion.ClassicElements()
+elements_eq = orbitalMotion.EquinoctialElements()
+elements_cl.a = 1000
+elements_cl.e = 0.2
+elements_cl.i = 0.2
+elements_cl.Omega = 0.15
+elements_cl.omega = 0.5
+elements_cl.f = 0.2
+orbitalMotion.clElem2eqElem(elements_cl, elements_eq)
+trueElements = np.array([1000.00000000000000000000000000000000,
+                         0.12103728114720790909331071816268,
+                         0.15921675970981119530023306651856,
+                         0.01499382601880069713906618034116,
+                         0.09920802187229026125603326136115,
+                         0.78093005232114087732497864635661,
+                         0.85000000000000008881784197001252])
+convertedElements = np.array([elements_eq.a, elements_eq.P1, elements_eq.P2,
+                              elements_eq.Q1, elements_eq.Q2, elements_eq.l, elements_eq.L])
+e_count += arrayEqualCheck(trueElements, convertedElements, 'clElem2eqElem')
+
 if e_count > 0:
     print(str(e_count) + " functions failed")

@@ -39,6 +39,16 @@ class ClassicElements(object):
     rApoap = None
 
 
+class EquinoctialElements(object):
+    a = None
+    P1 = None
+    P2 = None
+    Q1 = None
+    Q2 = None
+    l = None
+    L = None
+
+
 N_DEBYE_PARAMETERS = 37  # orbitalMotion.h #
 
 DB0_EPS = 1e-30
@@ -1028,3 +1038,101 @@ def v3Normalize(v):
     if norm > DB0_EPS:
         result = (1. / norm) * v
     return result
+
+
+def clMeanOscMap(req, J2, oe, oep, sign):
+    # Classical orbital elements = (a,e,i,Omega,omega,f)
+    # First-order J2 Mapping Between Mean and Osculating Orbital Elements
+    # sgn=1:mean to osc, sgn=-1:osc to mean
+    # Analytical Mechanics of Space Systems
+    # Hanspeter Schaub, John L. Junkins, 4th edition.
+    # [m] or [km] should be the same both for req and elements.a
+    a       = oe.a
+    e       = oe.e
+    i       = oe.i
+    Omega   = oe.Omega
+    omega   = oe.omega
+    f       = oe.f
+    E       = f2E(f, e)
+    M       = E2M(E, e)
+    gamma2  = sign*J2/2*((req/oe.a)**2)
+    eta     = math.sqrt(1-oe.e*oe.e)
+    gamma2p = gamma2/(eta**4)
+    a_r     = (1+oe.e*math.cos(oe.f))/(eta**2)
+    # calculate oep.a
+    ap = oe.a + oe.a*gamma2*((3*(math.cos(oe.i))**2-1)*(a_r**3-1/(eta**3)) \
+       +3*(1-(math.cos(oe.i))**2)*(a_r**3)*math.cos(2*oe.omega+2*oe.f))  # (F.7)
+
+    de1 = gamma2p/8*e*(eta**2)*(1-11*((math.cos(i))**2)-40*((math.cos(i)) **4) \
+        /(1-5*((math.cos(i))**2)))*math.cos(2*omega)  # (F.8)
+
+    de = de1 + (eta ** 2) / 2 * (gamma2 *((3 * ((math.cos(i)) ** 2) - 1) / (eta ** 6) \
+       *(e * eta + e / (1 + eta) + 3 * math.cos(f) + 3 * e * ((math.cos(f)) ** 2) + (e ** 2) \
+       *((math.cos(f)) ** 3)) + 3 * (1 - ((math.cos(i)) ** 2)) / (eta ** 6) \
+       *(e + 3 * math.cos(f) + 3 * e * ((math.cos(f)) ** 2) + (e ** 2) * ((math.cos(f)) ** 3)) * math.cos(2 * omega + 2 * f)) \
+       - gamma2p * (1 - ((math.cos(i)) ** 2)) *(3 * math.cos(2 * omega + f) + math.cos(2 * omega + 3 * f)))  # (F.9)
+
+    di = -e*de1/(eta**2)/math.tan(i) + gamma2p/2*math.cos(i)*math.sqrt(1-((math.cos(i))**2)) \
+       *(3*math.cos(2*omega+2*f) + 3*e*math.cos(2*omega+f)+e*math.cos(2*omega+3*f))  # (F.10)
+
+    MpopOp = M + omega + Omega + gamma2p / 8 * (eta ** 3) * (1 - 11 * ((math.cos(i)) ** 2) \
+           - 40 *((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2))) * math.sin(2 * omega) \
+           - gamma2p / 16 * (2 + (e ** 2) - 11 * (2 + 3 * (e ** 2)) * ((math.cos(i)) ** 2) - 40 * (2 + 5 * (e ** 2)) \
+           *((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2)) - 400 * (e ** 2) * ((math.cos(i)) ** 6) \
+           /((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \
+           + gamma2p / 4 * (-6 *(1 - 5 * ((math.cos(i)) ** 2)) * (f - M + e * math.sin(f)) + (3 - 5 * ((math.cos(i)) ** 2)) \
+           *(3 * math.sin(2 * omega + 2 * f) + 3 * e * math.sin(2 * omega + f) + e * math.sin(2 * omega + 3 * f))) \
+           - gamma2p / 8 * (e ** 2) * math.cos(i) * (11 + 80 *((math.cos(i)) ** 2) / (1 - 5 * ((math.cos(i)) ** 2)) \
+           + 200 * ((math.cos(i)) ** 4) / ((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \
+           - gamma2p / 2 * math.cos(i) * (6 *(f - M + e * math.sin(f)) - 3 * math.sin(2 * omega + 2 * f) \
+           - 3 * e * math.sin(2 * omega + f) - e * math.sin(2 * omega + 3 * f))  # (F.11)
+
+    edM = gamma2p / 8 * e * (eta ** 3) * (1 - 11 * ((math.cos(i)) ** 2) - 40 * ((math.cos(i)) ** 4) \
+        /(1 - 5 * ((math.cos(i)) ** 2))) * math.sin(2 * omega) - gamma2p / 4 * (eta ** 3) * (2 * (3 * ((math.cos(i)) ** 2) - 1) \
+        * ((a_r * eta) ** 2 + a_r + 1) * math.sin(f) + 3 *(1 - ((math.cos(i)) ** 2)) *((-(a_r * eta) ** 2 - a_r + 1) \
+        * math.sin(2 * omega + f) + ((a_r * eta) ** 2 + a_r + 1 / 3) * math.sin(2 * omega + 3 * f)))  # (F.12)
+
+    dOmega = -gamma2p / 8 * (e ** 2) * math.cos(i) * (11 + 80 * ((math.cos(i)) ** 2) /(1 - 5 * ((math.cos(i)) ** 2)) \
+           + 200 * ((math.cos(i)) ** 4) /((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \
+           - gamma2p / 2 * math.cos(i) * (6 *(f - M + e * math.sin(f)) - 3 * math.sin(2 * omega + 2 * f) \
+           - 3 * e * math.sin(2 * omega + f) - e* math.sin(2 * omega + 3 * f))  # (F.13)
+
+    d1 = (e+de)*math.sin(M) + edM*math.cos(M)  # (F.14)
+    d2 = (e+de)*math.cos(M) - edM*math.sin(M)  # (F.15)
+
+    Mp = math.atan2(d1, d2)  # (F.16)
+    ep = math.sqrt(d1**2+d2**2)  # (F.17)
+
+    d3 = (math.sin(i/2)+math.cos(i/2)*di/2)*math.sin(Omega) + math.sin(i/2)*dOmega*math.cos(Omega)  # (F.18)
+    d4 = (math.sin(i/2)+math.cos(i/2)*di/2)*math.cos(Omega) - math.sin(i/2)*dOmega*math.sin(Omega)  # (F.19)
+
+    Omegap = math.atan2(d3, d4)  # (F.20)
+    ip = 2*math.asin(math.sqrt(d3**2+d4**2))  # (F.21)
+    omegap = MpopOp - Mp - Omegap  # (F.22)
+
+    Ep = M2E(Mp, ep)
+    fp = E2f(Ep, ep)
+
+    oep.a = ap
+    oep.e = ep
+    oep.i = ip
+    oep.Omega = Omegap
+    oep.omega = omegap
+    oep.f = fp
+    return
+
+
+def clElem2eqElem(elements_cl, elements_eq):
+    # conversion
+    # from classical orbital elements (a,e,i,Omega,omega,f)
+    # to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)
+    elements_eq.a  = elements_cl.a
+    elements_eq.P1 = elements_cl.e * math.sin(elements_cl.Omega + elements_cl.omega)
+    elements_eq.P2 = elements_cl.e * math.cos(elements_cl.Omega + elements_cl.omega)
+    elements_eq.Q1 = math.tan(elements_cl.i / 2) * math.sin(elements_cl.Omega)
+    elements_eq.Q2 = math.tan(elements_cl.i / 2) * math.cos(elements_cl.Omega)
+    E              = f2E(elements_cl.f, elements_cl.e)
+    M              = E2M(E, elements_cl.e)
+    elements_eq.l  = elements_cl.Omega + elements_cl.omega + M
+    elements_eq.L  = elements_cl.Omega + elements_cl.omega + elements_cl.f
+    return
