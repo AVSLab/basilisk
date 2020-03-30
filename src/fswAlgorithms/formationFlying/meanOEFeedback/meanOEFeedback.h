@@ -30,24 +30,19 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    /* declare module IO interfaces */
-    // in
-    char ChiefTransInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t ChiefTransInMsgID;
-    char DeputyTransInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t DeputyTransInMsgID;
-    // out
-    char ForceOutMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t ForceOutMsgID;
-    // Lyapunov Gain (6*6)
-    double K[36];
-    // target mean orital element difference
-    double target_oe_mean[6];
-    // parameters
-    uint8_t oe_type;  // 0: classic, 1: equinoctial
-    double mu;        // [m^3/s^2]
-    double req;       // [m]
-    double J2;        // []
+    char chiefTransInMsgName[MAX_STAT_MSG_LENGTH];
+    int32_t chiefTransInMsgID;
+    char deputyTransInMsgName[MAX_STAT_MSG_LENGTH];
+    int32_t deputyTransInMsgID;
+    char forceOutMsgName[MAX_STAT_MSG_LENGTH];
+    int32_t forceOutMsgID;
+    double K[36];               //!< Lyapunov Gain (6*6)
+    double targetDiffOeMean[6];   //!< target mean orbital element difference
+    uint8_t oeType;            //!< 0: classic (default), 1: equinoctial
+    double mu;                  //!< [m^3/s^2] gravitational constant
+    double req;                 //!< [m] equatorial planet radius
+    double J2;                  //!< [] J2 planet oblateness parameter
+    BSKLogger *bskLogger;       //!< BSK Logging
 } meanOEFeedbackConfig;
 
 #ifdef __cplusplus

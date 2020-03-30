@@ -64,10 +64,10 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     moduleConfig = meanOEFeedback.meanOEFeedbackConfig()  # update with current values
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "meanOEFeedback"  # update python name of test meanOEFeedback
-    moduleConfig.ChiefTransInMsgName = "chiefInputMsg"
-    moduleConfig.DeputyTransInMsgName = "deputyInputMsg"
-    moduleConfig.ForceOutMsgName = "forceOutputMsg"
-    moduleConfig.target_oe_mean = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    moduleConfig.chiefTransInMsgName = "chiefInputMsg"
+    moduleConfig.deputyTransInMsgName = "deputyInputMsg"
+    moduleConfig.forceOutMsgName = "forceOutputMsg"
+    moduleConfig.targetDiffOeMean = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     moduleConfig.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
     moduleConfig.req = orbitalMotion.REQ_EARTH * 1e3  # [m]
     moduleConfig.J2 = orbitalMotion.J2_EARTH      # []
@@ -78,9 +78,9 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
                       0.0, 0.0, 0.0, 0.0, 1e7, 0.0,
                       0.0, 0.0, 0.0, 0.0, 0.0, 1e7]
     if(useClassicElem):
-        moduleConfig.oe_type = 0  # 0: classic
+        moduleConfig.oeType = 0  # 0: classic
     else:
-        moduleConfig.oe_type = 1  # 1: equinoctial
+        moduleConfig.oeType = 1  # 1: equinoctial
     # Add test meanOEFeedback to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     # Create input message and size it because the regular creator of that message
@@ -96,14 +96,14 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     oe.omega = 0.4
     oe.f = 0.5
     (r_BN_N, v_BN_N) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe)
-    ChiefNavStateOutData = meanOEFeedback.NavTransIntMsg()  # Create a structure for the input message
-    ChiefNavStateOutData.timeTag = 0
-    ChiefNavStateOutData.r_BN_N = r_BN_N
-    ChiefNavStateOutData.v_BN_N = v_BN_N
-    ChiefNavStateOutData.vehAccumDV = [0, 0, 0]
+    chiefNavStateOutData = meanOEFeedback.NavTransIntMsg()  # Create a structure for the input message
+    chiefNavStateOutData.timeTag = 0
+    chiefNavStateOutData.r_BN_N = r_BN_N
+    chiefNavStateOutData.v_BN_N = v_BN_N
+    chiefNavStateOutData.vehAccumDV = [0, 0, 0]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
-                               moduleConfig.ChiefTransInMsgName,
-                               ChiefNavStateOutData)
+                               moduleConfig.chiefTransInMsgName,
+                               chiefNavStateOutData)
     #
     # Deputy Navigation Message
     #
@@ -115,16 +115,16 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     oe2.omega = 0.0 + 0.0002
     oe2.f = 0.0001
     (r_BN_N2, v_BN_N2) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe2)
-    DeputyNavStateOutData = meanOEFeedback.NavTransIntMsg()  # Create a structure for the input message
-    DeputyNavStateOutData.timeTag = 0
-    DeputyNavStateOutData.r_BN_N = r_BN_N2
-    DeputyNavStateOutData.v_BN_N = v_BN_N2
-    DeputyNavStateOutData.vehAccumDV = [0, 0, 0]
+    deputyNavStateOutData = meanOEFeedback.NavTransIntMsg()  # Create a structure for the input message
+    deputyNavStateOutData.timeTag = 0
+    deputyNavStateOutData.r_BN_N = r_BN_N2
+    deputyNavStateOutData.v_BN_N = v_BN_N2
+    deputyNavStateOutData.vehAccumDV = [0, 0, 0]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
-                               moduleConfig.DeputyTransInMsgName,
-                               DeputyNavStateOutData)
+                               moduleConfig.deputyTransInMsgName,
+                               deputyNavStateOutData)
     # Setup logging on the test meanOEFeedback output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.ForceOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.forceOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -141,10 +141,10 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     forceOutput = unitTestSim.pullMessageLogData(
-        moduleConfig.ForceOutMsgName + ".forceRequestInertial", list(range(3)))
+        moduleConfig.forceOutMsgName + ".forceRequestInertial", list(range(3)))
 
     # set the filtered output truth states
-    if(useClassicElem):
+    if useClassicElem:
         trueVector = [[-849.57347406544340628897771239280701,
                        1849.77641265032843875815160572528839,
                        136.07817734479317550722043961286545]]
@@ -159,7 +159,7 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
         if not unitTestSupport.isArrayEqual(forceOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed "
-                                + moduleConfig.ForceOutMsgName
+                                + moduleConfig.forceOutMsgName
                                 + ".forceRequestInertial" + " unit test at t="
                                 + str(forceOutput[i, 0]*macros.NANO2SEC) + "sec\n")
 

@@ -43,7 +43,7 @@ static double adjust_range(double lower, double upper, double angle);
  @param moduleID The Basilisk module identifier
  */
 void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID) {
-    configData->ForceOutMsgID = CreateNewMessage(configData->ForceOutMsgName,
+    configData->forceOutMsgID = CreateNewMessage(configData->forceOutMsgName,
                                                  sizeof(CmdForceInertialIntMsg),
                                                  "CmdForceInertialIntMsg", moduleID);
 }
@@ -56,9 +56,9 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
  @param moduleID The Basilisk module identifier
  */
 void CrossInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID) {
-    configData->ChiefTransInMsgID = subscribeToMessage(configData->ChiefTransInMsgName,
+    configData->chiefTransInMsgID = subscribeToMessage(configData->chiefTransInMsgName,
                                                        sizeof(NavTransIntMsg), moduleID);
-    configData->DeputyTransInMsgID = subscribeToMessage(configData->DeputyTransInMsgName,
+    configData->deputyTransInMsgID = subscribeToMessage(configData->deputyTransInMsgName,
                                                         sizeof(NavTransIntMsg), moduleID);
 }
 
@@ -93,14 +93,14 @@ void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, 
     memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
 
     /*! - Read the input messages */
-    ReadMessage(configData->ChiefTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->chiefTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void *)&(chiefTransMsg), moduleID);
-    ReadMessage(configData->DeputyTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->deputyTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void *)&(deputyTransMsg), moduleID);
 
     /*! - write the module output message */
     calc_LyapunovFeedback(configData, chiefTransMsg, deputyTransMsg, &forceMsg);
-    WriteMessage(configData->ForceOutMsgID, callTime,
+    WriteMessage(configData->forceOutMsgID, callTime,
                  sizeof(CmdForceInertialIntMsg), (void *)&(forceMsg), moduleID);
     return;
 }
@@ -127,36 +127,36 @@ static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransIntM
     double oed[6];
     double B[6][3];
     double force_LVLH[3];
-    if (configData->oe_type == 0) {
+    if (configData->oeType == 0) {
         // calculate classical oed (da,de,di,dOmega,domega,dM)
-        oed[0] = (oe_cl_mean_d.a - oe_cl_mean_c.a) / oe_cl_mean_c.a - configData->target_oe_mean[0];
-        oed[1] = oe_cl_mean_d.e - oe_cl_mean_c.e - configData->target_oe_mean[1];
-        oed[2] = oe_cl_mean_d.i - oe_cl_mean_c.i - configData->target_oe_mean[2];
-        oed[3] = oe_cl_mean_d.Omega - oe_cl_mean_c.Omega - configData->target_oe_mean[3];
-        oed[4] = oe_cl_mean_d.omega - oe_cl_mean_c.omega - configData->target_oe_mean[4];
+        oed[0] = (oe_cl_mean_d.a - oe_cl_mean_c.a) / oe_cl_mean_c.a - configData->targetDiffOeMean[0];
+        oed[1] = oe_cl_mean_d.e - oe_cl_mean_c.e - configData->targetDiffOeMean[1];
+        oed[2] = oe_cl_mean_d.i - oe_cl_mean_c.i - configData->targetDiffOeMean[2];
+        oed[3] = oe_cl_mean_d.Omega - oe_cl_mean_c.Omega - configData->targetDiffOeMean[3];
+        oed[4] = oe_cl_mean_d.omega - oe_cl_mean_c.omega - configData->targetDiffOeMean[4];
         double E_mean_c = f2E(oe_cl_mean_c.f, oe_cl_mean_c.e);
         double M_mean_c = E2M(E_mean_c, oe_cl_mean_c.e);
         double E_mean_d = f2E(oe_cl_mean_d.f, oe_cl_mean_d.e);
         double M_mean_d = E2M(E_mean_d, oe_cl_mean_d.e);
-        oed[5] = M_mean_d - M_mean_c - configData->target_oe_mean[5];
+        oed[5] = M_mean_d - M_mean_c - configData->targetDiffOeMean[5];
         oed[2] = adjust_range(-M_PI, M_PI, oed[2]);
         oed[3] = adjust_range(-M_PI, M_PI, oed[3]);
         oed[4] = adjust_range(-M_PI, M_PI, oed[4]);
         oed[5] = adjust_range(-M_PI, M_PI, oed[5]);
         // calculate control matrix B
         calc_B_cl(configData->mu, oe_cl_mean_d, B);
-    } else if (configData->oe_type == 1) {
+    } else if (configData->oeType == 1) {
         // mean classic oe to mean equinoctial oe
         equinoctialElements oe_eq_mean_c, oe_eq_mean_d;
         clElem2eqElem(&oe_cl_mean_c, &oe_eq_mean_c);
         clElem2eqElem(&oe_cl_mean_d, &oe_eq_mean_d);
         // calculate equinoctial oed (da,dP1,dP2,dQ1,dQ2,dl)
-        oed[0] = (oe_eq_mean_d.a - oe_eq_mean_c.a) / oe_eq_mean_c.a - configData->target_oe_mean[0];
-        oed[1] = oe_eq_mean_d.P1 - oe_eq_mean_c.P1 - configData->target_oe_mean[1];
-        oed[2] = oe_eq_mean_d.P2 - oe_eq_mean_c.P2 - configData->target_oe_mean[2];
-        oed[3] = oe_eq_mean_d.Q1 - oe_eq_mean_c.Q1 - configData->target_oe_mean[3];
-        oed[4] = oe_eq_mean_d.Q2 - oe_eq_mean_c.Q2 - configData->target_oe_mean[4];
-        oed[5] = oe_eq_mean_d.l - oe_eq_mean_c.l - configData->target_oe_mean[5];
+        oed[0] = (oe_eq_mean_d.a - oe_eq_mean_c.a) / oe_eq_mean_c.a - configData->targetDiffOeMean[0];
+        oed[1] = oe_eq_mean_d.P1 - oe_eq_mean_c.P1 - configData->targetDiffOeMean[1];
+        oed[2] = oe_eq_mean_d.P2 - oe_eq_mean_c.P2 - configData->targetDiffOeMean[2];
+        oed[3] = oe_eq_mean_d.Q1 - oe_eq_mean_c.Q1 - configData->targetDiffOeMean[3];
+        oed[4] = oe_eq_mean_d.Q2 - oe_eq_mean_c.Q2 - configData->targetDiffOeMean[4];
+        oed[5] = oe_eq_mean_d.l - oe_eq_mean_c.l - configData->targetDiffOeMean[5];
         oed[5] = adjust_range(-M_PI, M_PI, oed[5]);
         // calculate control matrix B
         calc_B_eq(configData->mu, oe_eq_mean_d, B);

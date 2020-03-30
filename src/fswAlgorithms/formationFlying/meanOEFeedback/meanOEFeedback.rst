@@ -1,5 +1,5 @@
 Summary
------------------
+-------
 The primary purpose of this module is to calculate feedback control input for deputy spacecraft in terms of mean orbital element difference.
 This module uses Lyapunov control theory described in chapter 14 of `Analytical Mechanics of Space Systems <http://doi.org/10.2514/4.105210>`__.
 In addition to classic orbital element set :math:`(a,e,i,\Omega,\omega,M)`, this module can also deal with equinoctial orbital element
@@ -30,11 +30,11 @@ provides information on what this message is used for.
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
     | Msg Variable Name     | Msg Type                          | Description                                                   |
     +=======================+===================================+===============================================================+
-    | ChiefTransInMsgName   | :ref:`NavTransIntMsg`             | The name of the chief's position and velocity input message   |
+    | chiefTransInMsgName   | :ref:`NavTransIntMsg`             | The name of the chief's position and velocity input message   |
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
-    | DeputyTransInMsgName  | :ref:`NavTransIntMsg`             | The name of the deputy's position and velocity input message  |
+    | deputyTransInMsgName  | :ref:`NavTransIntMsg`             | The name of the deputy's position and velocity input message  |
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
-    | ForceOutMsgName       | :ref:`CmdForceInertialIntMsg`     | Calculated Force to control orbital element difference        |
+    | forceOutMsgName       | :ref:`CmdForceInertialIntMsg`     | Calculated Force to control orbital element difference        |
     |                       |                                   | output message                                                |
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
 
@@ -46,12 +46,12 @@ User Guide
 ----------------------------------
 This module requires the following variables to be set as parameters:
 
-- ``oe_type`` 0 for classic oe, 1 for equinoctial oe
-- ``mu`` gravitatinal constant for a central body
-- ``req`` equatorial radius of a central body
+- ``oeType`` 0 for classic oe (default), 1 for equinoctial oe
+- ``mu`` gravitational constant for a central body in m^3/s^2
+- ``req`` equatorial radius of a central body in meters
 - ``J2`` J2 constant of a central body
-- ``target_oe_mean`` desired mean orbital element difference. Assumed oe is linked to ``oe_type``.
+- ``targetDiffOeMean`` desired mean orbital element difference. Assumed oe is linked to ``oeType``.
 - ``K`` control gain matrix
 
 You must be careful about a meter unit used for ``mu`` and ``req``.
-For ``target_oe_mean``, normalized semi major axis must be used.
+For ``targetDiffOeMean``, normalized semi major axis must be used.
