@@ -229,7 +229,7 @@ When all the prerequisite installations are complete, the project can be built a
       .. image:: /_images/static/256564102-xcode.png
          :align: center
          :scale: 40%
-
+   -  Ensure that the target scheme is set to ``ALL_BUILD`` as shown in figure above
    -  You can now build the project within the Xcode IDE
 
 #. To test your setup you can run one of the :ref:`examples`:
