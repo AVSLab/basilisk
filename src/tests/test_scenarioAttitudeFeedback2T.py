@@ -157,15 +157,3 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-
-
-#
-# This statement below ensures that the unit test scrip can be run as a
-# stand-along python script
-#
-if __name__ == "__main__":
-    run(False,  # do unit tests
-        True,  # show_plots
-        False,  # useUnmodeledTorque
-        False  # useIntGain
-        )
