@@ -71,6 +71,17 @@ void CrossInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID
  @param moduleID The Basilisk module identifier
  */
 void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID) {
+
+    if (configData->mu <= 0.0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error in meanOEFeedback: mu must be set to a positive value.");
+    }
+    if (configData->req <= 0.0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error in meanOEFeedback: req must be set to a positive value.");
+    }
+    if (configData->J2 <= 0.0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error in meanOEFeedback: J2 must be set to a positive value.");
+    }
+
     return;
 }
 
@@ -191,7 +202,7 @@ static void calc_B_cl(double mu, classicElements oe_cl, double B[6][3]) {
     double a = oe_cl.a;
     double e = oe_cl.e;
     double i = oe_cl.i;
-    double Omega = oe_cl.Omega;
+//    double Omega = oe_cl.Omega;
     double omega = oe_cl.omega;
     double f = oe_cl.f;
     double theta = omega + f;
