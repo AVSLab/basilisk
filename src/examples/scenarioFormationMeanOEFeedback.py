@@ -161,20 +161,20 @@ def run(show_plots, useClassicElem):
     meanOEFeedbackData = meanOEFeedback.meanOEFeedbackConfig()
     meanOEFeedbackWrap = scSim.setModelDataWrap(meanOEFeedbackData)
     meanOEFeedbackWrap.ModelTag = "meanOEFeedback"
-    meanOEFeedbackData.ChiefTransInMsgName = simpleNavObject.outputTransName
-    meanOEFeedbackData.DeputyTransInMsgName = simpleNavObject2.outputTransName
-    meanOEFeedbackData.ForceOutMsgName = extFTObject2.cmdForceInertialInMsgName
+    meanOEFeedbackData.chiefTransInMsgName = simpleNavObject.outputTransName
+    meanOEFeedbackData.deputyTransInMsgName = simpleNavObject2.outputTransName
+    meanOEFeedbackData.forceOutMsgName = extFTObject2.cmdForceInertialInMsgName
     meanOEFeedbackData.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
                             0.0, 1e7, 0.0, 0.0, 0.0, 0.0,
                             0.0, 0.0, 1e7, 0.0, 0.0, 0.0,
                             0.0, 0.0, 0.0, 1e7, 0.0, 0.0,
                             0.0, 0.0, 0.0, 0.0, 1e7, 0.0,
                             0.0, 0.0, 0.0, 0.0, 0.0, 1e7]
-    meanOEFeedbackData.target_oe_mean = [0.000, 0.000, 0.000, 0.0003, 0.0002, 0.0001]
-    if(useClassicElem):
-        meanOEFeedbackData.oe_type = 0  # 0: classic
+    meanOEFeedbackData.targetDiffOeMean = [0.000, 0.000, 0.000, 0.0003, 0.0002, 0.0001]
+    if useClassicElem:
+        meanOEFeedbackData.oeType = 0  # 0: classic
     else:
-        meanOEFeedbackData.oe_type = 1  # 1: equinoctial
+        meanOEFeedbackData.oeType = 1  # 1: equinoctial
     meanOEFeedbackData.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
     meanOEFeedbackData.req = orbitalMotion.REQ_EARTH*1e3  # [m]
     meanOEFeedbackData.J2 = orbitalMotion.J2_EARTH      # []
