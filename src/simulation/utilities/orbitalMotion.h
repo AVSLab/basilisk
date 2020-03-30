@@ -45,8 +45,8 @@ typedef enum {
     MAX_CELESTIAL
 } CelestialObject_t;
 
-/*! This structure contains the set of Keplerian orbital elements that define the 
-    spacecraft translational state.  It is operated on by the orbital element 
+/*! This structure contains the set of Keplerian orbital elements that define the
+    spacecraft translational state.  It is operated on by the orbital element
     routines and the OrbElemConvert module.
 */
 typedef struct {
@@ -61,6 +61,16 @@ typedef struct {
 	double rPeriap;   //!< Radius of periapsis (extra)
 	double rApoap;    //!< Radius if apoapsis (extra)
 } classicElements;
+
+typedef struct {
+    double a;   //!< semi-major axis
+    double P1;  //!< e*sin(omega+Omega)
+    double P2;  //!< e*cos(omega+Omega)
+    double Q1;  //!< tan(i/2)*sin(Omega)
+    double Q2;  //!< tan(i/2)*cos(Omega)
+    double l;   //!< Omega+omega+M
+    double L;   //!< Omega+omega+f
+} equinoctialElements;
 
 #ifdef __cplusplus
 extern "C" {
@@ -82,13 +92,15 @@ extern "C" {
     double  N2H(double N, double e);
     void    elem2rv(double mu, classicElements *elements, double *rVec, double *vVec);
     void    rv2elem(double mu, double *rVec, double *vVec, classicElements *elements);
-    
+    void    clMeanOscMap(double req, double J2, classicElements *elements, classicElements *elements_p, double sgn);
+    void    clElem2eqElem(classicElements *elements_cl, equinoctialElements *elements_eq);
+
     double  atmosphericDensity(double alt);
     double  debyeLength(double alt);
     void    atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec);
     void    jPerturb(double *rvec, int num, double *ajtot, ...);
     void    solarRad(double A, double m, double *sunvec, double *arvec);
-    
+
 #ifdef __cplusplus
 }
 #endif
