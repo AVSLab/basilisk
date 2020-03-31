@@ -16,27 +16,29 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+%module meanOEFeedback
+%{
+   #include "meanOEFeedback.h"
+%}
 
-#ifndef SIM_FSW_MACROS_H
-#define SIM_FSW_MACROS_H
+%include "swig_conly_data.i"
+%constant void Update_meanOEFeedback(void*, uint64_t, uint64_t);
+%ignore Update_meanOEFeedback;
+%constant void SelfInit_meanOEFeedback(void*, uint64_t);
+%ignore SelfInit_meanOEFeedback;
+%constant void CrossInit_meanOEFeedback(void*, uint64_t);
+%ignore CrossInit_meanOEFeedback;
+%constant void Reset_meanOEFeedback(void*, uint64_t, uint64_t);
+%ignore Reset_meanOEFeedback;
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
-#define MAX_CIRCLE_NUM 10
-#define MAX_LIMB_PNTS 2000
-#define MAX_EFF_CNT 36
-#define MAX_NUM_CSS_SENSORS 32
-#define MAX_ST_VEH_COUNT 4
+%include "meanOEFeedback.h"
+GEN_SIZEOF(meanOEFeedbackConfig);
+%include "simFswInterfaceMessages/navTransIntMsg.h"
+GEN_SIZEOF(NavTransIntMsg);
+%include "simFswInterfaceMessages/cmdForceInertialIntMsg.h"
+GEN_SIZEOF(CmdForceInertialIntMsg);
 
-#define NANO2SEC        1e-9
-#define SEC2NANO        1e9
-#define RECAST6X6       (double (*)[6])
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
-#define SEC2HOUR        1./3600.
-
-/* @} */
-
-
-#endif
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

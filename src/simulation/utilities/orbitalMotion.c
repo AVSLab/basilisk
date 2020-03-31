@@ -831,3 +831,100 @@ void solarRad(double A, double m, double *sunvec, double *arvec)
     /* Computing the acceleration vector */
     v3Scale((-Cr * A * flux) / (m * c * pow(sundist, 3)) / 1000., sunvec, arvec);
 }
+
+void clMeanOscMap(double req, double J2, classicElements *elements, classicElements *elements_p, double sgn) {
+    // Classical orbital elements = (a,e,i,Omega,omega,f)
+    // First-order J2 Mapping Between Mean and Osculating Orbital Elements
+    // sgn=1:mean2osc, sgn=-1:osc2mean
+    // Analytical Mechanics of Space Systems
+    // Hanspeter Schaub, John L. Junkins, 4th edition.
+    // [m] or [km] should be the same both for req and elements->a
+
+    double a     = elements->a;
+    double e     = elements->e;
+    double i     = elements->i;
+    double Omega = elements->Omega;
+    double omega = elements->omega;
+    double f     = elements->f;
+    double E     = f2E(f, e);
+    double M     = E2M(E, e);
+
+    double gamma2 = sgn * J2 / 2.0 * pow((req / a), 2.0);  // (F.1),(F.2)
+    double eta = sqrt(1.0 - pow(e, 2.0));
+    double gamma2p = gamma2 / pow(eta, 4.0);        // (F.3)
+    double a_r = (1.0 + e * cos(f)) / pow(eta, 2.0);  // (F.6)
+
+    double ap = a + a * gamma2 * ((3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r, 3.0) - 1.0 / pow(eta, 3.0))
+              + 3.0 * (1.0 - pow(cos(i), 2.0)) * pow(a_r, 3.0) * cos(2.0 * omega + 2.0 * f));  // (F.7)
+
+    double de1 = gamma2p / 8.0 * e * pow(eta, 2.0) * (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0)
+               / (1.0 - 5.0 * pow(cos(i), 2.0))) * cos(2.0 * omega);  // (F.8)
+
+    double de = de1 + pow(eta, 2.0) / 2.0 * (gamma2 * ((3.0 * pow(cos(i), 2.0) - 1.0) / pow(eta, 6.0) * (e * eta + e / (1.0 + eta) + 3.0 * cos(f)
+              + 3.0 * e * pow(cos(f), 2.0) + pow(e, 2.0) * pow(cos(f), 3.0)) + 3.0 * (1.0 - pow(cos(i), 2.0)) / pow(eta, 6.0) * (e + 3.0 * cos(f)
+              + 3 * e * pow(cos(f), 2) + pow(e, 2) * pow(cos(f), 3)) * cos(2 * omega + 2 * f))
+              - gamma2p * (1.0 - pow(cos(i), 2.0)) * (3.0 * cos(2.0 * omega + f) + cos(2.0 * omega + 3.0 * f)));  // (F.9)
+
+    double di = -e * de1 / pow(eta, 2.0) / tan(i)
+              + gamma2p / 2.0 * cos(i) * sqrt(1.0 - pow(cos(i), 2.0)) * (3.0 * cos(2.0 * omega + 2.0 * f) + 3.0 * e * cos(2.0 * omega + f)
+              + e * cos(2.0 * omega + 3.0 * f));  // (F.10)
+
+    double MpopOp = M + omega + Omega + gamma2p / 8.0 * pow(eta, 3.0) * (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0)
+                  / (1.0 - 5.0 * pow(cos(i), 2.0))) * sin(2.0 * omega) - gamma2p / 16.0 * (2.0 + pow(e, 2.0) - 11.0 * (2.0 + 3.0 * pow(e, 2.0))
+                  * pow(cos(i), 2.0) - 40.0 * (2.0 + 5.0 * pow(e, 2.0)) * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) - 400.0 * pow(e, 2.0)
+                  * pow(cos(i), 6.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) * sin(2.0 * omega) + gamma2p / 4.0 * (-6.0 * (1.0 - 5.0 * pow(cos(i), 2.0))
+                  * (f - M + e * sin(f)) + (3.0 - 5.0 * pow(cos(i), 2.0)) * (3.0 * sin(2.0 * omega + 2.0 * f) + 3.0 * e * sin(2.0 * omega + f) + e
+                  * sin(2.0 * omega + 3.0 * f))) - gamma2p / 8.0 * pow(e, 2.0) * cos(i) * (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0))
+                  + 200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) * sin(2.0 * omega) - gamma2p / 2.0 * cos(i)
+                  * (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) - e * sin(2.0 * omega + 3.0 * f));  // (F.11)
+
+    double edM = gamma2p / 8.0 * e * pow(eta, 3.0) * (1.0 - 11.0 * pow(cos(i), 2.0)
+               - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) * sin(2.0 * omega)
+               - gamma2p / 4.0 * pow(eta, 3.0) * (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f)
+               + 3.0 * (1.0 - pow(cos(i), 2.0)) * ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) + (pow(a_r * eta, 2.0) + a_r
+               + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f)));  // (F.12)
+
+    double dOmega = -gamma2p / 8.0 * pow(e, 2.0) * cos(i) * (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0))
+                  + 200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) * sin(2.0 * omega) - gamma2p / 2.0 * cos(i)
+                  * (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) - e * sin(2.0 * omega + 3.0 * f));  // (F.13)
+
+    double d1 = (e + de) * sin(M) + edM * cos(M);  // (F.14)
+    double d2 = (e + de) * cos(M) - edM * sin(M);  // (F.15)
+
+    double Mp = atan2(d1, d2);            // (F.16)
+    double ep = sqrt(d1 * d1 + d2 * d2);  // (F.17)
+
+    double d3 = (sin(i / 2.0) + cos(i / 2.0) * di / 2.0) * sin(Omega) + sin(i / 2.0) * dOmega * cos(Omega);  // (F.18)
+    double d4 = (sin(i / 2.0) + cos(i / 2.0) * di / 2.0) * cos(Omega) - sin(i / 2.0) * dOmega * sin(Omega);  // (F.19)
+
+    double Omegap = atan2(d3, d4);                  // (F.20)
+    double ip = 2.0 * asin(sqrt(d3 * d3 + d4 * d4));  // (F.21)
+    double omegap = MpopOp - Mp - Omegap;           // (F.22)
+
+    double Ep = M2E(Mp, ep);
+    double fp = E2f(Ep, ep);
+
+    elements_p->a = ap;
+    elements_p->e = ep;
+    elements_p->i = ip;
+    elements_p->Omega = Omegap;
+    elements_p->omega = omegap;
+    elements_p->f = fp;
+    return;
+}
+
+void clElem2eqElem(classicElements *elements_cl, equinoctialElements *elements_eq) {
+    // conversion
+    // from classical orbital elements (a,e,i,Omega,omega,f)
+    // to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)
+    elements_eq->a  = elements_cl->a;
+    elements_eq->P1 = elements_cl->e * sin(elements_cl->Omega + elements_cl->omega);
+    elements_eq->P2 = elements_cl->e * cos(elements_cl->Omega + elements_cl->omega);
+    elements_eq->Q1 = tan(elements_cl->i / 2.0) * sin(elements_cl->Omega);
+    elements_eq->Q2 = tan(elements_cl->i / 2.0) * cos(elements_cl->Omega);
+    double E        = f2E(elements_cl->f, elements_cl->e);
+    double M        = E2M(E, elements_cl->e);
+    elements_eq->l  = elements_cl->Omega + elements_cl->omega + M;
+    elements_eq->L  = elements_cl->Omega + elements_cl->omega + elements_cl->f;
+    return;
+}

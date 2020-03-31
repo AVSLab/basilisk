@@ -16,6 +16,12 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
+Version 1.X.X
+-------------
+- new spacecraft formation flying control :ref:`meanOEFeedback` that implements a mean orbit element feedback
+  control law
+- new relative orbit control tutorial example :ref:`scenarioFormationMeanOEFeedback` that uses :ref:`meanOEFeedback`
+
 Version 1.7.1
 -------------
 - Added the ability to detect if a satellite is visible to a ground location in the new :ref:`groundLocation`

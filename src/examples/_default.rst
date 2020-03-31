@@ -223,6 +223,7 @@ Formation Flying Control
    :maxdepth: 1
 
    Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
+   Mean orbit element based relative motion control <scenarioFormationMeanOEFeedback>
 
 
 
