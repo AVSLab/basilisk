@@ -214,7 +214,6 @@ Formation Flying Dynamics
 
    Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
    Basic Servicer/Debris Simulation <scenarioFormationBasic>
-   Mean orbit element based relative motion control <scenarioFormationMeanOEFeedback>
 
 
 Formation Flying Control
@@ -224,6 +223,7 @@ Formation Flying Control
    :maxdepth: 1
 
    Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
+   Mean orbit element based relative motion control <scenarioFormationMeanOEFeedback>
 
 
 
