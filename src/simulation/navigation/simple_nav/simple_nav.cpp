@@ -28,17 +28,8 @@
     values and initializes the various parts of the model */
 SimpleNav::SimpleNav()
 {
-    this->inputStateName = "inertial_state_output";
-    this->outputAttName = "simple_att_nav_output";
-    this->outputTransName = "simple_trans_nav_output";
-    this->inputSunName = "sun_planet_data";
     this->crossTrans = false;
     this->crossAtt = false;
-    this->outputBufferCount = 2;
-    this->inputStateID = -1;
-    this->inputSunID = -1;
-    this->outputAttID = -1;
-    this->outputTransID = -1;
     this->prevTime = 0;
     memset(&estAttState, 0x0, sizeof(NavAttIntMsg));
     memset(&trueAttState, 0x0, sizeof(NavAttIntMsg));
@@ -49,6 +40,8 @@ SimpleNav::SimpleNav()
     this->walkBounds.resize(18);
     this->walkBounds.fill(0.0);
     this->errorModel =  GaussMarkov(18, this->RNGSeed);
+    this->writeOutputAttMessage = this->outputAttMessage.addAuthor();
+    this->writeOutputTransMessage = this->outputTransMessage.addAuthor();
     return;
 }
 
@@ -73,19 +66,12 @@ SimpleNav::~SimpleNav()
 void SimpleNav::SelfInit()
 {
     int64_t numStates = 18;
-    //! - Create a new message for the output simple nav state data
-    this->outputAttID = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->outputAttName, sizeof(NavAttIntMsg), this->outputBufferCount,
-        "NavAttIntMsg", moduleID);
-    this->outputTransID = SystemMessaging::GetInstance()->
-    CreateNewMessage(this->outputTransName, sizeof(NavTransIntMsg), this->outputBufferCount,
-                     "NavTransIntMsg", this->moduleID);
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity(numStates, numStates);
     this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
     this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
-    
+
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
@@ -106,24 +92,7 @@ void SimpleNav::SelfInit()
 */
 void SimpleNav::CrossInit()
 {
-    MessageIdentData msgInfo;
-
-    //! - Obtain the ID associated with the input state name and alert if not found.
-    this->inputStateID = SystemMessaging::GetInstance()->
-    SystemMessaging::GetInstance()->
-       subscribeToMessage(this->inputStateName, sizeof(SCPlusStatesSimMsg), this->moduleID);
-    if(this->inputStateID < 0)
-    {
-        bskLogger.bskLog(BSK_WARNING, "input state message name: %s could not be isolated, message disabled.", this->inputStateName.c_str());
-    }
-    //! - Obtain the ID associated with the optional input Sun name.
-    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->inputSunName);
-    if (msgInfo.itemFound && this->inputSunName.length() > 0) {
-        this->inputSunID =SystemMessaging::GetInstance()->
-        subscribeToMessage(this->inputSunName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
-    } else {
-        this->inputSunID = -1;
-    }
+    return;
 }
 
 /*! This method reads the input messages associated with the vehicle state and
@@ -131,18 +100,16 @@ void SimpleNav::CrossInit()
  */
 void SimpleNav::readInputMessages()
 {
-    SingleMessageHeader localHeader;
     memset(&this->sunState, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&this->inertialState, 0x0, sizeof(SCPlusStatesSimMsg));
-    if(this->inputStateID >= 0)
-    {
-        SystemMessaging::GetInstance()->ReadMessage(this->inputStateID, &localHeader,
-                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&this->inertialState), this->moduleID);
+
+    if(this->readInputState.linked()){
+        this->inertialState = this->readInputState();
     }
-    if(this->inputSunID >= 0)
+
+    if(this->readSunInput.linked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->inputSunID, &localHeader,
-                                                    sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->sunState), this->moduleID);
+        this->sunState = this->readSunInput();
     }
 }
 
@@ -152,12 +119,8 @@ void SimpleNav::readInputMessages()
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
-    SystemMessaging::GetInstance()->
-    WriteMessage(this->outputAttID, Clock, sizeof(NavAttIntMsg),
-                 reinterpret_cast<uint8_t*> (&estAttState), this->moduleID);
-    SystemMessaging::GetInstance()->
-    WriteMessage(this->outputTransID, Clock, sizeof(NavTransIntMsg),
-                 reinterpret_cast<uint8_t*> (&estTransState), this->moduleID);
+  this->writeOutputAttMessage(this->estAttState);
+  this->writeOutputTransMessage(this->estTransState);
 }
 
 void SimpleNav::applyErrors()
@@ -169,7 +132,7 @@ void SimpleNav::applyErrors()
     v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
-    if(inputSunID >= 0) {
+    if(this->readSunInput.linked()){
         double dcm_OT[3][3];       /* dcm, body T to body O */
         MRP2C(&(this->navErrors.data()[12]), dcm_OT);
         m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
@@ -194,7 +157,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
 
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
-    if(inputSunID >= 0) {
+    if(this->readSunInput.linked()){
         double sc2SunInrtl[3];
         double dcm_BN[3][3];        /* dcm, inertial to body */
         v3Subtract(this->sunState.PositionVector, this->inertialState.r_BN_N, sc2SunInrtl);

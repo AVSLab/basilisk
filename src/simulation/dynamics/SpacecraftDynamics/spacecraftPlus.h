@@ -76,6 +76,8 @@ public:
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    SimMessage<SCPlusStatesSimMsg> stateOutMsg;
+    SimMessage<SCPlusMassPropsSimMsg> massOutMsg;
 
 public:
     SpacecraftPlus();                    //!< -- Constructor
@@ -93,6 +95,8 @@ public:
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
     void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
+    WriteFunctor<SCPlusStatesSimMsg> writeStateOutputMessage;
+    WriteFunctor<SCPlusMassPropsSimMsg> writeMassOutputMessage;
 
 private:
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub

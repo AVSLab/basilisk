@@ -37,6 +37,9 @@ GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
+struct CmdTorqueBodyIntMsg_C;
+struct AttGuidFswMsg_C;
+struct VehicleConfigFswMsg_C;
 %include "MRP_Feedback.h"
 %include "../../fswMessages/attGuidFswMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
@@ -52,4 +55,3 @@ GEN_SIZEOF(CmdTorqueBodyIntMsg);
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

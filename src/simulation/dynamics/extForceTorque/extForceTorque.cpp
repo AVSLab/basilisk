@@ -31,18 +31,6 @@ ExtForceTorque::ExtForceTorque()
     this->extForce_B.fill(0.0);
     this->extTorquePntB_B.fill(0.0);
 
-    /* setup default input message names.  These can be over-riden by the user */
-    this->cmdTorqueInMsgName = "extTorquePntB_B_cmds";
-    this->cmdForceInertialInMsgName = "extForce_N_cmds";
-    this->cmdForceBodyInMsgName = "extForce_B_cmds";
-    this->cmdTorqueInMsgID = -1;
-    this->cmdForceInertialInMsgID = -1;
-    this->cmdForceBodyInMsgID = -1;
-    this->goodTorqueCmdMsg = false;
-    this->goodForceNCmdMsg = false;
-    this->goodForceBCmdMsg = false;
-
-
     CallCounts = 0;
     return;
 }
@@ -68,13 +56,6 @@ void ExtForceTorque::SelfInit()
  */
 void ExtForceTorque::CrossInit()
 {
-    //! - Find the message ID associated with the InputCmds string.
-    this->cmdTorqueInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdTorqueInMsgName,
-                                                                                sizeof(CmdTorqueBodyIntMsg), moduleID);
-    this->cmdForceInertialInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceInertialInMsgName,
-                                                                                       sizeof(CmdForceInertialIntMsg), moduleID);
-    this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
-                                                                                   sizeof(CmdForceBodyIntMsg), moduleID);
     /* zero the input message vectors */
     memset(&(this->incomingCmdTorqueBuffer.torqueRequestBody), 0x0, 3*sizeof(double));
     memset(&(this->incomingCmdForceInertialBuffer.forceRequestInertial), 0x0, 3*sizeof(double));
@@ -106,36 +87,15 @@ void ExtForceTorque::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
 
-    //! - If the input message ID is invalid, return without touching states
-    if(this->cmdTorqueInMsgID >= 0)
-    {
-        memset(&(this->incomingCmdTorqueBuffer), 0x0, sizeof(CmdTorqueBodyIntMsg));
-        this->goodTorqueCmdMsg =
-            SystemMessaging::GetInstance()->ReadMessage(this->cmdTorqueInMsgID, &LocalHeader,
-                                                     sizeof(CmdTorqueBodyIntMsg),
-                                                     reinterpret_cast<uint8_t*> (&(this->incomingCmdTorqueBuffer)), moduleID);
+    if(this->readCmdTorque.linked()){
+        this->incomingCmdTorqueBuffer = this->readCmdTorque();
     }
-
-    //! - If the input message ID is invalid, return without touching states
-    if(this->cmdForceInertialInMsgID >= 0)
-    {
-        memset(&(this->incomingCmdForceInertialBuffer), 0x0, sizeof(CmdForceInertialIntMsg));
-        this->goodForceNCmdMsg =
-            SystemMessaging::GetInstance()->ReadMessage(this->cmdForceInertialInMsgID, &LocalHeader,
-                                                     sizeof(CmdForceInertialIntMsg),
-                                                     reinterpret_cast<uint8_t*> (&(this->incomingCmdForceInertialBuffer)), moduleID);
+    if(this->readBodyForce.linked()){
+        this->incomingCmdForceBodyBuffer = this->readBodyForce();
     }
-
-    //! - If the input message ID is invalid, return without touching states
-    if(this->cmdForceBodyInMsgID >= 0)
-    {
-        memset(&(this->incomingCmdForceBodyBuffer), 0x0, sizeof(CmdForceBodyIntMsg));
-        this->goodForceBCmdMsg =
-            SystemMessaging::GetInstance()->ReadMessage(this->cmdForceBodyInMsgID, &LocalHeader,
-                                                     sizeof(CmdForceBodyIntMsg),
-                                                     reinterpret_cast<uint8_t*> (&(this->incomingCmdForceBodyBuffer)), moduleID);
+    if(this->readInertialForce.linked()){
+        this->incomingCmdForceInertialBuffer = this->readInertialForce();
     }
-
 
 }
 
@@ -151,7 +111,7 @@ void ExtForceTorque::computeForceTorque(double integTime)
     /* add the cmd force in inertial frame components set via Python */
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
-    if (this->goodForceNCmdMsg) {
+    if(this->readInertialForce.linked()){
 		cmdVec = cArray2EigenVector3d(this->incomingCmdForceInertialBuffer.forceRequestInertial);
 		this->forceExternal_N += cmdVec;
     }
@@ -159,7 +119,7 @@ void ExtForceTorque::computeForceTorque(double integTime)
     /* add the cmd force in body frame components set via Python */
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
-    if (this->goodForceBCmdMsg) {
+    if(this->readBodyForce.linked()){
 		cmdVec = cArray2EigenVector3d(this->incomingCmdForceBodyBuffer.forceRequestBody);
         this->forceExternal_B +=cmdVec;
     }
@@ -167,7 +127,7 @@ void ExtForceTorque::computeForceTorque(double integTime)
     /* add the cmd torque about Point B in body frame components set via Python */
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
-    if (this->goodTorqueCmdMsg) {
+    if(this->readCmdTorque.linked()){
 		cmdVec = cArray2EigenVector3d(this->incomingCmdTorqueBuffer.torqueRequestBody);
         this->torqueExternalPntB_B += cmdVec;
     }

@@ -21,6 +21,9 @@
 #define _ATT_TRACKING_ERROR_
 
 #include "messaging/static_messaging.h"
+#include "../../../simulation/architecture/messaging/c_messages/AttGuidFswMsg_C.h"
+#include "../../../simulation/architecture/messaging/c_messages/NavAttIntMsg_C.h"
+#include "../../../simulation/architecture/messaging/c_messages/AttRefFswMsg_C.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/attGuidFswMsg.h"
@@ -34,19 +37,16 @@
 typedef struct {
     /* declare module private variables */
     double sigma_R0R[3];                            //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
-    char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
-    char inputRefName[MAX_STAT_MSG_LENGTH];         //!< The name of the guidance reference Input message
-    char inputNavName[MAX_STAT_MSG_LENGTH];         //!< The name of the navigation Input message
-    int32_t outputMsgID;                            //!< ID for the outgoing message
-    int32_t inputRefID;                             //!< ID for the incoming guidance reference message
-    int32_t inputNavID;                             //!< ID for the incoming navigation message
+    AttGuidFswMsg_C outputDataMessage;
+    NavAttIntMsg_C inputNavMessage;
+    AttRefFswMsg_C inputRefMessage;
     BSKLogger *bskLogger;                             //!< BSK Logging
 }attTrackingErrorConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID);
     void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID);
     void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID);

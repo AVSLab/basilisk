@@ -28,6 +28,7 @@
 #include <Eigen/Dense>
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "utilities/bskLogging.h"
+#include "architecture/messaging/message.h"
 
 /*! @brief spherical harmonics class */
 class SphericalHarmonics
@@ -75,18 +76,19 @@ public:
     // Default constructor
     GravBodyData();
     ~GravBodyData();
-    
+
     void initBody(int64_t moduleID); //!<        Method to initialize the gravity body
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
     void registerProperties(DynParamManager& statesIn);  //!< class method
+    ReadFunctor<SpicePlanetStateSimMsg> readInputMsg;
 
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
     bool isDisplayBody;             //!<          Flag indicating that body is display
     bool useSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
-    
+
     double mu;                      //!< [m3/s^2] central body gravitational param
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
@@ -129,7 +131,8 @@ public:
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData); //!< class method
     void writeOutputMessages(uint64_t currentSimNanos); //!< class method
-    
+    WriteFunctor<SpicePlanetStateSimMsg> writeCentralBodyOutMsg;
+
 public:
     std::string vehicleGravityPropName;            //!< [-] Name of the vehicle mass state
     std::string systemTimeCorrPropName;            //!< [-] Name of the correlation between times
@@ -139,6 +142,7 @@ public:
     std::string inertialVelocityPropName;           //!< [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //!< [-] Name of the s/c this gravity model is attached to
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    SimMessage<SpicePlanetStateSimMsg> centralBodyOutMsg;
 
 private:
     Eigen::MatrixXd *gravProperty;                  //!< [-] g_N property for output

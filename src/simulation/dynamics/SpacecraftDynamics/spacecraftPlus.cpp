@@ -48,6 +48,9 @@ SpacecraftPlus::SpacecraftPlus()
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
 
+    this->writeStateOutputMessage = this->stateOutMsg.addAuthor();
+    this->writeMassOutputMessage = this->massOutMsg.addAuthor();
+
     return;
 }
 
@@ -60,16 +63,6 @@ SpacecraftPlus::~SpacecraftPlus()
 /*! This method creates the messages for s/c output data and initializes the gravity field*/
 void SpacecraftPlus::SelfInit()
 {
-    // - Create the message for the spacecraft state
-    this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
-                                                                             sizeof(SCPlusStatesSimMsg),
-                                                                             this->numOutMsgBuffers,
-                                                                             "SCPlusStatesSimMsg", this->moduleID);
-    // - Create the message for the spacecraft mass state
-    this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
-                                                                             sizeof(SCPlusMassPropsSimMsg),
-                                                                                 this->numOutMsgBuffers,
-                                                                               "SCPlusMassPropsSimMsg", this->moduleID);
     // - Call the gravity fields selfInit method
     this->gravField.SelfInit();
 
@@ -131,16 +124,14 @@ void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
-    SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
-                                                 reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
+    this->writeStateOutputMessage(stateOut);
 
     // - Populate mass state output message
     SCPlusMassPropsSimMsg massStateOut;
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
-    SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCPlusMassPropsSimMsg),
-                                                 reinterpret_cast<uint8_t*> (&massStateOut), this->moduleID);
+    this->writeMassOutputMessage(massStateOut);
 
     return;
 }
@@ -202,7 +193,7 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! This method allows the spacecraftPlus to have access to the current state of the hub for MRP switching, writing 
+/*! This method allows the spacecraftPlus to have access to the current state of the hub for MRP switching, writing
  messages, and calculating energy and momentum */
 void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 {
@@ -244,20 +235,20 @@ void SpacecraftPlus::initializeDynamics()
     this->cPrime_B = this->dynManager.createProperty("centerOfMassPrimeSC", initCPrime_B);
     this->cDot_B = this->dynManager.createProperty("centerOfMassDotSC", initCDot_B);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
-    
+
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
     this->gravField.registerProperties(this->dynManager);
-    
+
     // - Register the hub states
     this->hub.registerStates(this->dynManager);
-    
+
     // - Loop through stateEffectors to register their states
     std::vector<StateEffector*>::iterator stateIt;
     for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
     {
         (*stateIt)->registerStates(this->dynManager);
     }
-    
+
     // - Link in states for the spaceCraftPlus, gravity and the hub
     this->linkInStates(this->dynManager);
     this->gravField.linkInStates(this->dynManager);
@@ -286,7 +277,7 @@ void SpacecraftPlus::initializeDynamics()
     {
         (*stateIt)->linkInStates(this->dynManager);
     }
-    
+
     // - Loop through the dynamicEffectors to link in the states needed
     std::vector<DynamicEffector*>::iterator dynIt;
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
@@ -299,7 +290,7 @@ void SpacecraftPlus::initializeDynamics()
 
     // - Call equations of motion at time zero
     this->equationsOfMotion(0.0);
-    
+
     return;
 }
 
@@ -347,9 +338,9 @@ void SpacecraftPlus::updateSCMassProps(double time)
     return;
 }
 
-/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of 
- the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
- in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
+/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of
+ the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled
+ in this method. At the end of this method all of the states will have their corresponding state derivatives set in the
  dynParam Manager thus solving for Xdot*/
 void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
 {
@@ -450,7 +441,7 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
     // - Need to find force of gravity on the spacecraft
     Eigen::Vector3d gravityForce_N;
     gravityForce_N = (*this->m_SC)(0,0)*gLocal_N;
-    
+
     Eigen::Vector3d gravityForce_B;
     gravityForce_B = dcm_NB.transpose()*gravityForce_N;
     this->hub.hubBackSubMatrices.vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
@@ -468,7 +459,7 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
     return;
 }
 
-/*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and 
+/*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and
  calculate the accumulated deltaV */
 void SpacecraftPlus::integrateState(double integrateToThisTime)
 {
@@ -488,7 +479,7 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     // - Finally find v_CN_N
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->cDot_B);
-    
+
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     double timeBefore = integrateToThisTime - localTimeStep;
@@ -524,13 +515,13 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
 
     // - Find accumulated DV of the center of mass in the body frame
     this->dvAccum_B += newDcm_NB.transpose()*dV_N;
-    
+
     // - Find the accumulated DV of the body frame in the body frame
     this->dvAccum_BN_B += dV_B_B;
-    
+
     // - non-conservative acceleration of the body frame in the body frame
     this->nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
-    
+
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
     newOmega_BN_B = this->hubOmega_BN_B->getState();
@@ -556,7 +547,7 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
- total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used 
+ total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used
  for validation purposes. */
 void SpacecraftPlus::computeEnergyMomentum(double time)
 {
@@ -633,12 +624,12 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -(*this->m_SC)(0,0)*(Eigen::Vector3d (*this->c_B)).cross(cDotLocal_B);
     this->totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
-    
+
     return;
 }
 
 /*! This method is used to find the force and torque that each stateEffector is applying to the spacecraft. These values
- are held in the stateEffector class. Additionally, the stateDerivative value is behind the state values because they 
+ are held in the stateEffector class. Additionally, the stateDerivative value is behind the state values because they
  are calculated in the intergrator calls */
 void SpacecraftPlus::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B)
 {

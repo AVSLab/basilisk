@@ -48,13 +48,13 @@ double SphericalHarmonics::getK(const unsigned int degree)
 bool SphericalHarmonics::initializeParameters()
 {
     bool paramsDone = false;
-    
+
     //! - If coefficients haven't been loaded, quit and return failure
     if(cBar.size() == 0 || sBar.size() == 0)
     {
         return paramsDone;
     }
-    
+
     for(unsigned int i = 0; i <= maxDeg + 1; i++)
     {
         std::vector<double> aRow, n1Row, n2Row;
@@ -76,14 +76,14 @@ bool SphericalHarmonics::initializeParameters()
             {
                 n1Row[m] = sqrt(double((2*i+1)*(2*i-1))/((i-m)*(i+m)));
                 n2Row[m] = sqrt(double((i+m-1)*(2*i+1)*(i-m-1))/((i+m)*(i-m)*(2*i-3)));
-            
+
             }
         }
         n1.push_back(n1Row);
         n2.push_back(n2Row);
         aBar.push_back(aRow);
     }
-    
+
     for (unsigned int l = 0; l <= maxDeg; l++) // up to _maxDegree-1
     {
         std::vector<double> nq1Row, nq2Row;
@@ -101,7 +101,7 @@ bool SphericalHarmonics::initializeParameters()
         nQuot2.push_back(nq2Row);
     }
     paramsDone = true;
-    
+
     return paramsDone;
 }
 
@@ -126,26 +126,26 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
     std::vector<double> rE, iM, rhol;
     Eigen::Vector3d acc;
     acc.fill(0.0);
-    
+
     // Change of variables: direction cosines
     r = sqrt(x*x + y*y + z*z);
     s = x/r;
     t = y/r;
     u = z/r;
-    
+
     // maximum degree!
     if (degree > maxDeg)
         degree = maxDeg;
-    
+
     order = degree;
-    
+
     for (unsigned int l = 1; l <= degree+1; l++)
     {
         //Diagonal terms are computed in initialize()
         // Low diagonal terms
         aBar[l][l-1] = sqrt(double((2*l)*getK(l-1))/getK(l)) * aBar[l][l] * u;
     }
-    
+
     // Lower terms of A_bar
     for (unsigned int m = 0; m <= order+1; m++)
     {
@@ -154,7 +154,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
             aBar[l][m] = u * n1[l][m] * aBar[l-1][m] - n2[l][m] * aBar[l-2][m];
 
         }
-        
+
         // Computation of real and imaginary parts of (2+j*t)^m
         if (m == 0)
         {
@@ -167,29 +167,29 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
             iM.push_back(s * iM[m-1] + t * rE[m-1]);
         }
 
-        
+
     }
-    
+
     rho = radEquator/r;
     rhol.resize(degree+2, 0.0);
     rhol[0] = muBody/r;
     rhol[1] = rhol[0]*rho;
 
-    
+
     // Degree 0
-    
+
     // Gravity field and potential of degree l = 0
     // Gravity components
     a1 = 0.0;
     a2 = 0.0;
     a3 = 0.0;
     a4 = 0.0;
-    
+
     if (include_zero_degree == true)
     {
         a4 = -rhol[1]/radEquator; // * this->_Nquot_2[0][0] * this->_A_bar[1][1]; //This is 1, so it's not included!
     }
-    
+
     for (unsigned int l = 1; l <= degree; l++) // does not include l = maxDegree
     {
         rhol[l+1] =  rho * rhol[l]; // rho_l computed
@@ -198,7 +198,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
         sum_a2 = 0.0;
         sum_a3 = 0.0;
         sum_a4 = 0.0;
-        
+
         for(unsigned int m = 0; m <= l; m++)
         {
             double D, E, F;
@@ -213,7 +213,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
                 E = cBar[l][m] * rE[m-1] + sBar[l][m] * iM[m-1];
                 F = sBar[l][m] * rE[m-1] - cBar[l][m] * iM[m-1];
             }
-            
+
             //            if (l < degree)   // Gravity contains up to max_degree-1 harmonics
             //            {
             sum_a1 = sum_a1 + m * aBar[l][m] * E;
@@ -224,9 +224,9 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
             }
             sum_a4 = sum_a4 + nQuot2[l][m] * aBar[l+1][m+1] * D;
             //            }
-            
+
         }
-        
+
         //        if (l < degree)   // Gravity contains up to max_degree-1 harmonics
         //        {
         a1 = a1 + rhol[l+1]/radEquator * sum_a1;
@@ -235,11 +235,11 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
         a4 = a4 - rhol[l+1]/radEquator * sum_a4;
         //        }
     }
-    
+
     acc[0] = a1 + s * a4;
     acc[1] = a2 + t * a4;
     acc[2] = a3 + u * a4;
-    
+
     return acc;
 }
 
@@ -250,7 +250,7 @@ bool SphericalHarmonics::harmReady()
     harmGood = harmGood && cBar.size() > 0;
     harmGood = harmGood && sBar.size() > 0;
     harmGood = harmGood && aBar.size()> 0;
-    
+
     return harmGood;
 }
 
@@ -284,15 +284,13 @@ GravBodyData::GravBodyData()
  */
 GravBodyData::~GravBodyData()
 {
-    
+
 }
 
 void GravBodyData::initBody(int64_t moduleID)
 {
     bool spherFound;
     spherFound = this->spherHarm.initializeParameters();
-    this->bodyMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
-                    this->bodyInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
     this->mu = spherFound ? this->spherHarm.muBody : this->mu;
     this->radEquator = spherFound ? this->spherHarm.radEquator : this->radEquator;
     return;
@@ -326,7 +324,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     uint64_t simTimeNanos)
 {
     Eigen::Vector3d gravOut;
-    
+
     double rMag = r_I.norm();
     gravOut  = -r_I*this->mu/(rMag*rMag*rMag);
 
@@ -350,7 +348,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
             this->spherHarm.maxDeg, false);
         gravOut += dcm_PfixN.transpose() * gravPert_Pfix;
     }
-    
+
     return(gravOut);
 }
 
@@ -370,12 +368,8 @@ double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
  */
 void GravBodyData::loadEphemeris(int64_t moduleID)
 {
-    bool msgRead;
-    msgRead = SystemMessaging::GetInstance()->ReadMessage(this->bodyMsgID, &this->localHeader,
-        sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t *>(&this->localPlanet));
-    if (!msgRead) {
-        /* use default zero planet state information, including a zero orientation */
-        m33SetIdentity(this->localPlanet.J20002Pfix);
+    if(this->readInputMsg.linked()){
+        this->localPlanet = this->readInputMsg();
     }
     return;
 }
@@ -385,10 +379,10 @@ GravityEffector::GravityEffector()
     this->centralBody = nullptr;
     this->systemTimeCorrPropName = "systemTime";
     this->vehicleGravityPropName = "g_N";
-    this->centralBodyOutMsgName = "central_body_spice";
     this->centralBodyOutMsgId = -1;
     this->inertialPositionPropName = "r_BN_N";
     this->inertialVelocityPropName = "v_BN_N";
+    this->writeCentralBodyOutMsg = this->centralBodyOutMsg.addAuthor();
     return;
 }
 
@@ -399,9 +393,6 @@ GravityEffector::~GravityEffector()
 
 void GravityEffector::SelfInit()
 {
-    if (this->centralBody) {
-        this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetStateSimMsg), 2, "SpicePlanetStateSimMsg", this->moduleID);
-    }
     return;
 }
 
@@ -441,7 +432,7 @@ void GravityEffector::UpdateState(uint64_t currentSimNanos)
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
     if (this->centralBodyOutMsgId > 0) {
-        SystemMessaging::GetInstance()->WriteMessage(this->centralBodyOutMsgId, currentSimNanos, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->centralBody->localPlanet), this->moduleID);
+        this->writeCentralBodyOutMsg(this->centralBody->localPlanet);
     }
     return;
 }
@@ -496,14 +487,14 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
     Eigen::Vector3d rDotDot_cF_N;    //acceleration of CoM of s/c wrt Frame in which it is stored/integrated in spacecraft
     rDotDot_cF_N.fill(0.0);
     Eigen::Vector3d rDotDot_cN_N_P;  //acceleration of c wrt N in N, due to P
-    
+
     if (this->centralBody){   //Evaluates true if there is a central body, false otherwise
         r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
         r_cN_N = r_cF_N + r_CN_N; //shift s/c to be wrt inertial frame origin if it isn't already
     }else{
         r_cN_N = r_cF_N;
     }
-    
+
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         r_PN_N = getEulerSteppedGravBodyPosition(*it);
@@ -523,7 +514,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
         *((*it)->v_PN_N) = Eigen::Map<Eigen::Vector3d>(&((*it)->localPlanet.VelocityVector[0]), 3, 1);
         (*((*it)->muPlanet))(0,0) = (*it)->mu;
     }
-    
+
     *this->gravProperty = rDotDot_cF_N;
 }
 /*!
@@ -566,20 +557,20 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double &
     Eigen::Vector3d r_PN_N;  // P is planet being queried. position of planet wrt N in N
     Eigen::Vector3d r_cP_N;  // c is s/c CoM. position of c wrt P in N
     Eigen::Vector3d r_cN_N;  // position c wrt N in N
-    
+
     if(this->centralBody){   //Evaluates true if there is a central body, false otherwise
         r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
         r_cN_N = r_cF_N + r_CN_N; //shift s/c to be wrt inertial frame origin if it isn't already
     }else{
         r_cN_N = r_cF_N;
     }
-    
+
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         r_PN_N = getEulerSteppedGravBodyPosition(*it);
         r_cP_N = r_cN_N - r_PN_N;
-        
+
         if(this->centralBody)   //Evaluates true if there is a central body, false otherwise
         {
             if(this->centralBody != (*it))

@@ -16,28 +16,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module inertial3D
-%{
-   #include "inertial3D.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_inertial3D(void*, uint64_t, uint64_t);
-%ignore Update_inertial3D;
-%constant void SelfInit_inertial3D(void*, uint64_t);
-%ignore SelfInit_inertial3D;
-%constant void CrossInit_inertial3D(void*, uint64_t);
-%ignore CrossInit_inertial3D;
-%constant void Reset_inertial3D(void*, uint64_t, uint64_t);
-%ignore Reset_inertial3D;
-GEN_SIZEOF(inertial3DConfig);
-GEN_SIZEOF(AttRefFswMsg);
-struct AttRefFswMsg_C;
-%include "inertial3D.h"
-%include "../../fswMessages/attRefFswMsg.h"
+#ifndef _CMD_TORQUE_BODY_MESSAGE_
+#define _CMD_TORQUE_BODY_MESSAGE_
 
+/*! \defgroup simFswInterfaceMessages
+ *  @{
+ */
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief Message used to define the vehicle control torque vector in Body frame components*/
+typedef struct {
+    double torqueRequestBody[3];     //!< [Nm] Control torque requested
+}CmdTorqueBodyIntMsg;
+
+/*! @} */
+
+#endif

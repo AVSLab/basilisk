@@ -1,0 +1,27 @@
+%{{
+#include "{type}_C.h"
+%}}
+%include "{type}_C.h"
+%extend {type}_C {{
+    %pythoncode %{{
+
+    def subscribeTo(self, source):
+        from Basilisk.simulation.message import {type}Class
+        if type(source) == type(self):
+            {type}_C_subscribe(self, source)
+        elif type(source) == {type}Class:
+            {type}_cpp_subscribe(self, source)
+        else:
+            raise Exception('tried to subscribe {type} to another message type')
+
+    def log(self):
+        from Basilisk.simulation.message import {type}Logger
+        return {type}Logger(self)
+
+    def userMessage(self, data=None):
+        VehicleConfigFswMsg_C_claim(self, self)
+        if data:
+            VehicleConfigFswMsg_C_write(data, self)
+        return self
+    %}}
+}};

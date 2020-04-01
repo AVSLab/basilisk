@@ -34,10 +34,7 @@
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
     /*! Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(AttGuidFswMsg),
-                                               "AttGuidFswMsg",
-                                               moduleID);
+    AttGuidFswMsg_C_claim(&configData->outputDataMessage, &configData->outputDataMessage);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -48,14 +45,7 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t modul
  */
 void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
-    /*! - Get the reference and navigation data message ID*/
-    configData->inputRefID = subscribeToMessage(configData->inputRefName,
-                                                sizeof(AttRefFswMsg),
-                                                moduleID);
-    configData->inputNavID = subscribeToMessage(configData->inputNavName,
-                                                sizeof(NavAttIntMsg),
-                                                moduleID);
-
+    return;
 }
 
 /*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
@@ -87,15 +77,13 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
     memset(&ref, 0x0, sizeof(AttRefFswMsg));
     memset(&nav, 0x0, sizeof(NavAttIntMsg));
     memset(&attGuidOut, 0x0, sizeof(AttGuidFswMsg));
-    ReadMessage(configData->inputRefID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttRefFswMsg), (void*) &(ref), moduleID);
-    ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), (void*) &(nav), moduleID);
+
+    ref = AttRefFswMsg_C_read(&configData->inputRefMessage);
+    nav = NavAttIntMsg_C_read(&configData->inputNavMessage);
 
     computeAttitudeError(configData->sigma_R0R, nav, ref, &attGuidOut);
 
-    WriteMessage(configData->outputMsgID, callTime, sizeof(AttGuidFswMsg),   /*! - Write guidance message */
-                 (void*) &(attGuidOut), moduleID);
+    AttGuidFswMsg_C_write(&attGuidOut, &configData->outputDataMessage);
 
     return;
 }
@@ -111,19 +99,18 @@ void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg re
     double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
     double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
     double      dcm_BN[3][3];               /* DCM from inertial to body frame */
-    
+
     /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
     v3Scale(-1.0, sigma_R0R, sigma_RR0);
     addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
-    
+
     subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR);               /*! - compute attitude error */
-    
+
     MRP2C(nav.sigma_BN, dcm_BN);                                /* [BN] */
     m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B);              /*! - compute reference omega in body frame components */
-    
-    v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
-    
-    m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
-    
-}
 
+    v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
+
+    m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
+
+}

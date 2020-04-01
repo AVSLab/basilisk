@@ -29,31 +29,32 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
+#include "../../architecture/messaging/message.h"
 
 /*! @brief simple navigation module class */
 class SimpleNav: public SysModel {
 public:
     SimpleNav();
     ~SimpleNav();
-   
+
     void SelfInit();
-    void CrossInit(); 
+    void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void computeTrueOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);
     void applyErrors();
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
-    
+
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
     Eigen::MatrixXd PMatrix;       //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;    //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;     //!< -- Current navigation errors applied to truth
-    std::string inputStateName;        //!< -- Message that contains s/c state
-    std::string outputAttName;         //!< -- Message that we output state to
-    std::string outputTransName;       //!< -- Message that we output state to
-    std::string inputSunName;          //!< -- Message name for the sun state
+    SimMessage<NavAttIntMsg> outputAttMessage;
+    SimMessage<NavTransIntMsg> outputTransMessage;
+    WriteFunctor<NavAttIntMsg>  writeOutputAttMessage;
+    WriteFunctor<NavTransIntMsg> writeOutputTransMessage;
     bool crossTrans;                   //!< -- Have position error depend on velocity
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
     NavAttIntMsg trueAttState;        //!< -- attitude nav state without errors
@@ -63,6 +64,11 @@ public:
     SCPlusStatesSimMsg inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateSimMsg sunState;  //!< -- input Sun state
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    ReadFunctor<SCPlusStatesSimMsg> readInputState;
+
+private:
+    ReadFunctor<SpicePlanetStateSimMsg> readSunInput;
+
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state

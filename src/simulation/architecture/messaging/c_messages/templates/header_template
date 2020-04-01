@@ -1,0 +1,29 @@
+#ifndef {type}_C_H
+#define {type}_C_H
+
+#include <stdint.h>
+#include "{structHeader}"
+
+typedef struct {{
+    {type} payload;
+    {type} *payloadPointer;
+}} {type}_C;
+
+#ifdef __cplusplus
+extern "C" {{
+#endif
+
+void {type}_cpp_subscribe({type}_C *subscriber, void* source);
+
+void {type}_C_subscribe({type}_C *subscriber, {type}_C *source);
+
+void {type}_C_claim({type}_C *coowner, {type}_C *data);
+
+void {type}_C_write({type} *data, {type}_C *destination);
+
+{type} {type}_C_read({type}_C *source);
+
+#ifdef __cplusplus
+}}
+#endif
+#endif

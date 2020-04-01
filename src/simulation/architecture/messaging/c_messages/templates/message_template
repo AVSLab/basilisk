@@ -1,0 +1,24 @@
+#include "{type}_C.h"
+#include "message.h"
+
+void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
+    subscriber->payloadPointer = &(source->payload);
+}};
+
+void {type}_C_claim({type}_C *coowner, {type}_C *data) {{
+    coowner->payloadPointer = &data->payload;
+}};
+
+void {type}_C_write({type} *data, {type}_C *destination) {{
+    *destination->payloadPointer = *data;
+    return;
+}};
+
+{type} {type}_C_read({type}_C *source) {{
+    return *source->payloadPointer;
+}};
+
+void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
+    SimMessage<{type}>* source_t = (SimMessage<{type}>*) source;
+    subscriber->payloadPointer = source_t->subscribeRaw();
+}};

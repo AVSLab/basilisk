@@ -30,6 +30,9 @@
 %ignore CrossInit_attTrackingError;
 %constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
 %ignore Reset_attTrackingError;
+struct AttGuidFswMsg_C;
+struct AttRefFswMsg_C;
+struct NavAttIntMsg_C;
 %include "attTrackingError.h"
 %include "../../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/attGuidFswMsg.h"

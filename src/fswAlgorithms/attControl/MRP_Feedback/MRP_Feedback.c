@@ -19,7 +19,7 @@
  */
 /*
     MRP_FEEDBACK Module
- 
+
  */
 
 #include "attControl/MRP_Feedback/MRP_Feedback.h"
@@ -40,9 +40,8 @@
 void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->attControlTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
-        sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
-    
+    CmdTorqueBodyIntMsg_C_claim(&configData->outputMessage, &configData->outputMessage);
+
 }
 
 /*! @brief This method performs the second stage of initialization for this module.
@@ -59,11 +58,6 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    configData->attGuidInMsgId = subscribeToMessage(configData->inputGuidName,
-                                                 sizeof(AttGuidFswMsg), moduleID);
-    configData->vehConfigInMsgId = subscribeToMessage(configData->vehConfigInMsgName,
-                                                 sizeof(VehicleConfigFswMsg), moduleID);
-    
     configData->rwParamsInMsgId = -1;
     configData->rwSpeedsInMsgId = -1;
     configData->rwAvailInMsgId = -1;
@@ -96,13 +90,12 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
     /* - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    int i;    
+    int i;
 
     /*! - zero and read in vehicle configuration message */
     VehicleConfigFswMsg sc;
     memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
-    ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
+    sc = VehicleConfigFswMsgRead_C(&configData->vehicleConfigMessage);
     /*! - copy over spacecraft inertia tensor */
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
@@ -110,7 +103,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
 
     /*! - zero the number of RW by default */
     configData->rwConfigParams.numRW = 0;
-    
+
     /*! - check if RW configuration message exists */
     if (configData->rwParamsInMsgId >= 0) {
         /*! - Zero and Read static RW config data message and store it in module variables*/
@@ -118,7 +111,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
         ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
-    
+
     /*! - Reset the integral measure of the rate tracking error */
     v3SetZero(configData->int_sigma);
 
@@ -168,8 +161,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - Read the attitude tracking error message */
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
-    ReadMessage(configData->attGuidInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
+    guidCmd = AttGuidFswMsg_C_read(&configData->inputGuidanceMessage);
 
     /*! - read in optional RW speed and availability message */
     if(configData->rwConfigParams.numRW > 0) {
@@ -182,7 +174,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
-    
+
     /*! - compute control update time */
     if (configData->priorTime == 0) {
         dt = 0.0;
@@ -193,13 +185,13 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
-    
+
     /*! - evaluate integral term */
     v3SetZero(configData->z);
     if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(configData->K * dt, guidCmd.sigma_BR, v3_1);
         v3Add(v3_1, configData->int_sigma, configData->int_sigma);
-        
+
         for (i=0;i<3;i++) {
             intCheck = fabs(configData->int_sigma[i]);
             if (intCheck > configData->integralLimit) {
@@ -230,7 +222,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
             v3Add(v3_6, v3_7, v3_6);
         }
     }
-    
+
     v3Add(guidCmd.omega_RN_B, v3_4, v3_8);
     v3Cross(v3_8, v3_6, v3_9);
     v3Subtract(Lr, v3_9, Lr);
@@ -246,9 +238,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    WriteMessage(configData->attControlTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(controlOut), moduleID);
-    
+    CmdTorqueBodyIntMsg_C_write(&controlOut, &configData->outputMessage);
+
     return;
 }
-

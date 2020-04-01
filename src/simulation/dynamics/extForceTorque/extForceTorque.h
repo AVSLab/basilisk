@@ -20,6 +20,7 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
+#include "../../architecture/messaging/message.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../../simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
@@ -42,26 +43,21 @@ public:
     void writeOutputMessages(uint64_t currentClock);    //!< class method
     void readInputMessages();
     void computeForceTorque(double integTime);
+    ReadFunctor<CmdTorqueBodyIntMsg> readCmdTorque;
+    ReadFunctor<CmdForceBodyIntMsg> readBodyForce;
+    ReadFunctor<CmdForceInertialIntMsg> readInertialForce;
 
 private:
-    int64_t cmdTorqueInMsgID;           //!< -- Message ID for incoming data
-    int64_t cmdForceInertialInMsgID;    //!< -- Message ID for incoming data
-    int64_t cmdForceBodyInMsgID;        //!< -- Message ID for incoming data
     CmdTorqueBodyIntMsg incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
     CmdForceInertialIntMsg incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
     CmdForceBodyIntMsg incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
-    bool goodTorqueCmdMsg;              //!< -- flag indicating if a torque command message was read
-    bool goodForceBCmdMsg;              //!< -- flag indicating if a inertial force command message was read
-    bool goodForceNCmdMsg;              //!< -- flag indicating if a body-relative force command message was read
 
 
 public:
     Eigen::Vector3d extForce_N;         //!< [N]  external force in inertial  frame components
     Eigen::Vector3d extForce_B;         //!< [N]  external force in body frame components
     Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
-    std::string cmdTorqueInMsgName;     //!< -- message used to read torque command inputs
-    std::string cmdForceInertialInMsgName; //!< -- message used to read force command inputs
-    std::string cmdForceBodyInMsgName;  //!< -- message used to read force command inputs
+
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 };
