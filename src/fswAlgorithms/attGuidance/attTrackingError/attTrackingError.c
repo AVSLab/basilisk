@@ -67,8 +67,6 @@ void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTim
  */
 void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t    timeOfMsgWritten;
-    uint32_t    sizeOfMsgWritten;
     AttRefFswMsg ref;                      /* reference guidance message */
     NavAttIntMsg nav;                      /* navigation message */
     AttGuidFswMsg attGuidOut;              /* Guidance message */

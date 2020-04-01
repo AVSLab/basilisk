@@ -85,8 +85,6 @@ void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
  */
 void ExtForceTorque::readInputMessages()
 {
-    SingleMessageHeader LocalHeader;
-
     if(this->readCmdTorque.linked()){
         this->incomingCmdTorqueBuffer = this->readCmdTorque();
     }

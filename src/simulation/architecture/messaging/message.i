@@ -17,11 +17,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #define SWIGPYTHON_BUILTIN
 
-#ifdef __APPLE__
-#else
-#define SWIGWORDSIZE64
-#endif
-
 %include "swig_common_model.i"
 
 %module message
