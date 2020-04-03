@@ -429,7 +429,7 @@ def getLineColor(idx,maxNum):
     colorMap = mpl.pyplot.get_cmap('gist_earth')
     cNorm = colors.Normalize(vmin=0, vmax=values[-1])
     scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=colorMap)
-    return scalarMap.to_rgba(values[idx])
+    return scalarMap.to_rgba(values[idx+1])
 
 def np2EigenMatrix3d(mat):
     return [

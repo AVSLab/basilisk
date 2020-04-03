@@ -141,6 +141,7 @@ to settle on a value that matches the un-modeled external torque.
 import sys
 import os
 import numpy as np
+np.set_printoptions(precision=16)
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -154,6 +155,7 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import simple_nav
+from Basilisk.simulation import message
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import MRP_Feedback
@@ -161,7 +163,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation.c_messages import VehicleConfigFswMsg_C
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -261,25 +263,18 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
-    inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
 
     # setup the MRP Feedback control module
     mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
     mrpControlConfig.K = 3.5
     if useIntGain:
         mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback
@@ -291,29 +286,40 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
         mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
 
     #
-    #   Setup data logging before the simulation is initialized
-    #
-    numDataPoints = 50
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
-
-    #
     # create simulation messages
     #
-
     # The MRP Feedback algorithm requires the vehicle configuration structure. This defines various spacecraft
     # related states such as the inertia tensor and the position vector between the primary Body-fixed frame
     # B origin and the center of mass (defaulted to zero).  This message is set through
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
-    # Here the container object is first created, then the inertia tensor is set.  Finally the macro
-    # setMessage() can be used to conveniently create, size and write this message to a process.
+    configData = VehicleConfigFswMsg_C().userMessage()
+    configData.payload.ISCPntB_B = I
+
+    #
+    # Setup data logging before the simulation is initialized
+    #
+    snLog = scObject.stateOutMsg.log()
+    attErrorLog = attErrorConfig.outputDataMessage.log()
+    mrpLog = mrpControlConfig.outputMessage.log()
+
+    #   Add logging object to a task group, this controls the logging rate
+    numDataPoints = 50
+    samplingTime = simulationTime // (numDataPoints - 1)
+    logTaskName = "logTask"
+    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    scSim.AddModelToTask(logTaskName, snLog)
+    scSim.AddModelToTask(logTaskName, attErrorLog)
+    scSim.AddModelToTask(logTaskName, mrpLog)
+
+    #
+    # connect the messages to the modules
+    #
+    sNavObject.readInputState.subscribeTo(scObject.stateOutMsg)
+    attErrorConfig.inputNavMessage.subscribeTo(sNavObject.outputAttMessage)
+    attErrorConfig.inputRefMessage.subscribeTo(inertial3DConfig.outMsg)
+    mrpControlConfig.inputGuidanceMessage.subscribeTo(attErrorConfig.outputDataMessage)
+    extFTObject.readCmdTorque.subscribeTo(mrpControlConfig.outputMessage)
+    mrpControlConfig.vehicleConfigMessage.subscribeTo(configData)
+
 
     #
     #   set initial Spacecraft States
@@ -347,33 +353,24 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scSim.ExecuteSimulation()
 
     #
-    #   retrieve the logged data
-    #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
-    np.set_printoptions(precision=16)
-
-    #
     #   plot the results
     #
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    for idx in range(1, 4):
-        plt.plot(dataSigmaBR[:, 0] * macros.NANO2MIN, dataSigmaBR[:, idx],
+    for idx in range(3):
+        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList = {}
-    pltName = fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))+ str(int(useKnownTorque))
+    pltName = fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain)) + str(int(useKnownTorque))
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
-    for idx in range(1, 4):
-        plt.plot(dataLr[:, 0] * macros.NANO2MIN, dataLr[:, idx],
+    for idx in range(3):
+        plt.plot(mrpLog.times() * macros.NANO2MIN, mrpLog.torqueRequestBody[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -383,8 +380,8 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
-    for idx in range(1, 4):
-        plt.plot(dataOmegaBR[:, 0] * macros.NANO2MIN, dataOmegaBR[:, idx],
+    for idx in range(3):
+        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.omega_BR_B[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -397,7 +394,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBR, dataLr, numDataPoints, figureList
+    return snLog.r_BN_N, attErrorLog.sigma_BR, mrpLog.torqueRequestBody, numDataPoints, figureList
 
 
 #
