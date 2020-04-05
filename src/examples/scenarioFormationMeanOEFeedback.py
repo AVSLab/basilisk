@@ -16,25 +16,6 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import numpy as np
-import math
-import matplotlib.pyplot as plt
-import os
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import sim_model
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simple_nav
-from Basilisk.fswAlgorithms import meanOEFeedback
-from Basilisk import __path__
-bskPath = __path__[0]
-fileName = os.path.basename(os.path.splitext(__file__)[0])
-
 
 r"""
 Overview
@@ -88,7 +69,34 @@ This resulting feedback control error is shown below.
 """
 
 
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+import os
+
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import sim_model
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import simple_nav
+from Basilisk.fswAlgorithms import meanOEFeedback
+from Basilisk import __path__
+bskPath = __path__[0]
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
+
 def run(show_plots, useClassicElem):
+    """
+    At the end of the python script you can specify the following example parameters.
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useClassicElem (bool): Determines if classic orbital element is used
+    """
     scSim = SimulationBaseClass.SimBaseClass()
 
     # ----- dynamics ----- #
