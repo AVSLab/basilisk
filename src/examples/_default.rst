@@ -224,6 +224,7 @@ Formation Flying Control
 
    Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
    Mean orbit element based relative motion control <scenarioFormationMeanOEFeedback>
+   Impulsive feedback control of relative motion <scenarioFormationReconfig>
 
 
 
