@@ -30,17 +30,10 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
 
-
-include(conan)
-conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-community/conan)
-conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
-
-set(required_conan_libraries eigen/3.3.7@conan/stable)
-
-# This appears to be temporarily nessesary until the new conan center libsodium is ready
-list(APPEND required_conan_libraries libsodium/1.0.18@bincrafters/stable)
 
 
 option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
@@ -57,35 +50,25 @@ list(APPEND requires_opencv_modules "camera")
 set(requires_vulkan_modules "dynamics/SphericalHarmonicsSolvers/sphericalHarmonicsGPU/sphericalHarmonicsGPU.i"  "dynamics/SphericalHarmonicsSolvers/sphericalHarmonicsCPU/sphericalHarmonicsCPU.i")
 
 
-if(USE_PROTOBUFFERS)
-  list(APPEND required_conan_libraries protobuf/3.5.2@bincrafters/stable)
-endif()
-if(USE_OPENCV )
-  list(APPEND required_conan_libraries opencv/4.1.1@conan/stable)
-  # temp bug fix for bad pcre dependancies
-  list(APPEND required_conan_libraries zlib/1.2.11@conan/stable)
-  list(APPEND required_conan_libraries bzip2/1.0.8@conan/stable)
+find_package(Eigen3 CONFIG REQUIRED)
+if(Eigen3_FOUND)
+  message(STATUS "Eigen3 Include Dir ${Eigen3_INCLUDE_DIR_RELEASE}" )
+  get_target_property(VAR Eigen3::Eigen3 INTERFACE_INCLUDE_DIRECTORIES)
+  message(STATUS "Eigen3 Target Include Dir ${VAR}" )
+  link_libraries(Eigen3::Eigen3)
 endif()
 
-if(USE_ZMQ)
-  list(APPEND required_conan_libraries cppzmq/4.3.0@bincrafters/stable)
-endif()
-
-conan_cmake_run(REQUIRES ${required_conan_libraries}
-                OPTIONS opencv:contrib=True
-	              BASIC_SETUP KEEP_RPATHS
-                BUILD missing )
 
 if(USE_PROTOBUFFERS)
    #! PROTO-BUFFERS
-   find_package(protobuf CONFIG REQUIRED)
+   #find_package(protobuf CONFIG REQUIRED)
    message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
 if(USE_OPENCV)
    #! OPEN_CV
-   #find_package(opencv CONFIG REQUIRED)
+   find_package(opencv CONFIG REQUIRED)
    message(STATUS "Using OpenCV ${opencv_VERSION}")
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
    if(APPLE)
@@ -214,7 +197,7 @@ function(generate_package_libraries INIT_DIRECTORY)
         target_link_libraries(${LIB_NAME} SimMessaging)
         target_link_libraries(${LIB_NAME} AlgorithmMessaging)
         target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
-	      target_link_libraries(${LIB_NAME} ${CONAN_LIBS})
+        target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
 
         # define build location, IDE generation specifications
         set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
@@ -271,14 +254,19 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
         get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
 
+        set(CUSTOM_CMAKE_BUILD_TARGETS)
+        set(CUSTOM_BUILD_HANDLED)
+        #message(STATUS "Looking for custom build step for: ${PARENT_DIR}/Custom.cmake" )
+        if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
+          MESSAGE(STATUS "Including Custom Build Steps for: ${TARGET_FILE}")
+          include("${PARENT_DIR}/Custom.cmake")
+        endif()
+        if(CUSTOM_BUILD_HANDLED)
+          continue()
+        endif()
 
-        # TODO: Need to make custom CMakeLists.txt for each of these modules.
-        if((${TARGET_NAME} IN_LIST requires_protobuff_modules) OR (${TARGET_NAME} IN_LIST requires_zmq_modules) OR (${TARGET_NAME} IN_LIST requires_opencv_modules))
-               MESSAGE("SKIPPED: ${TARGET_NAME}")
-               continue()
- 	      endif()
 
-        # Grab the target source files
+                # Grab the target source files
         file(GLOB C_FILES
                 "${PARENT_DIR}/*.c"
                 "${PARENT_DIR}/*.cpp"
@@ -305,6 +293,14 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
                            OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") # generated .py file
 
 
+        # TODO: Need to make custom CMakeLists.txt for each of these modules.
+        # Add any custom user defined targets to the build aka external library
+        foreach(CUSTOM_LIB ${CUSTOM_CMAKE_BUILD_TARGETS})
+          target_link_libraries(${TARGET_NAME} ${CUSTOM_LIB})
+        endforeach()
+
+
+
         target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
         target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file (not located in src)
 
@@ -320,6 +316,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         foreach(LIB ${LIB_DEP_LIST})
             target_link_libraries(${TARGET_NAME} ${LIB}) 
         endforeach()
+        target_link_libraries(${TARGET_NAME} Eigen3::Eigen3)
 
         # TODO: This is a better way to organize the dist olders, but it doesn't adhere to current python import structure
         # Would make (from Basilisk.simulation import SpacecraftPlus) --> (from Basilisk.simulation.dynamics.SpacecraftDynamics import SpacecraftPlus)

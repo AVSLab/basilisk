@@ -18,6 +18,7 @@ xml/*
 lastfailed
 .idea
 **/AutoTex/
+**/AutoTeX/
 cmake-build*/*
 *.aux
 *.log

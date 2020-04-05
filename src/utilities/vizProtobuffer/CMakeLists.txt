@@ -1,5 +1,7 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
+if(USE_PROTOBUFFERS)
+  find_package(protobuf CONFIG REQUIRED)
 message(STATUS "Generating protobuffers")
 
 #file(GLOB PROTOBUF_DEFINITION_FILES "*.proto")
@@ -11,3 +13,5 @@ message(STATUS "Generating protobuffers")
 #endforeach()
 file(GLOB PROTO_SRC "vizMessage.pb.cc" "vizMessage.hpp")
 add_library(protocode ${PROTO_SRC})
+target_link_libraries(protocode protobuf::protobuf)
+endif()
