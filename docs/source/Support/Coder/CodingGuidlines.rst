@@ -156,21 +156,11 @@ manner.
 
 .. code:: cpp
 
-   std::string sunEphmInMsgName;
+   std::string sunEphmInMsg;
 
 -  ``sunEphm``: description of the message content.
 -  ``In`` (``Out``): indicates the direction of the message with respect to the module.
--  ``MsgName``: explicitly identifies the variable as a message name and is required for all message name variables.
-
-Variables holding a message identification number are to be composed in the following manner.
-
-.. code:: cpp
-
-   int64_t stateInMsgId;
-
--  ``state``: description of the message content.
--  ``In`` (``Out``): indicates the direction of the message with respect to the module.
--  ``MsgId``: explicitly identifies the variable as a message identifier and is required for all message identifier variables.
+-  ``Msg``: explicitly identifies the variable as a message.
 
 Variables holding data from a read message are to be composed in the following manner.
 
