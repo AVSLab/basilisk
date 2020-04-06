@@ -62,7 +62,7 @@ void CrossInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t 
     // reference attitude message is optional message
     configData->attRefInMsgID = -1;
     if(strlen(configData->attRefInMsgName) > 0) {
-        configData->attRefInMsgID       = subscribeToMessage(configData->attRefInMsgName,
+        configData->attRefInMsgID   = subscribeToMessage(configData->attRefInMsgName,
                                                          sizeof(AttRefFswMsg),moduleID);
     }
     return;
@@ -81,9 +81,9 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
     configData->prevCallTime    = 0;
     configData->tCurrent        = 0.0;
     configData->thrustOnFlag    = 0;
-    configData->dvArray[0].flag = 0;
-    configData->dvArray[1].flag = 0;
-    configData->dvArray[2].flag = 0;
+    memset(&configData->dvArray[0], 0x0, sizeof(spacecraftReconfigConfigBurnInfo));
+    memset(&configData->dvArray[1], 0x0, sizeof(spacecraftReconfigConfigBurnInfo));
+    memset(&configData->dvArray[2], 0x0, sizeof(spacecraftReconfigConfigBurnInfo));
     return;
 }
 
