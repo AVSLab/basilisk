@@ -76,7 +76,8 @@ def setupFilterData(filterObject):
     qNoiseIn = numpy.identity(6)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.0017*0.0017
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.00017*0.00017
-    filterObject.qNoise = qNoiseIn.reshape(36).tolist()
+    filterObject.qNoiseCoarse = qNoiseIn.reshape(36).tolist()
+    filterObject.qNoiseFine = qNoiseIn.reshape(36).tolist()
 
     lpDataUse = inertialUKF.LowPassFilterData()
     lpDataUse.hStep = 0.5
@@ -710,8 +711,8 @@ def test_StatePropRateInertialAttitude(show_plots):
     qNoiseIn = numpy.identity(6)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 0.0017 * 0.0017
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 0.00017 * 0.00017
-    moduleConfig.qNoise = qNoiseIn.reshape(36).tolist()
-
+    moduleConfig.qNoiseCoarse = qNoiseIn.reshape(36).tolist()
+    moduleConfig.qNoiseFine = qNoiseIn.reshape(36).tolist()
     ST1Data = inertialUKF.STMessage()
     ST1Data.stInMsgName = "star_tracker_1_data"
     ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
@@ -919,7 +920,9 @@ def test_FaultScenarios(show_plots):
     qNoiseIn = numpy.identity(6)
     qNoiseIn[0:3, 0:3] = -qNoiseIn[0:3, 0:3] * 0.0017 * 0.0017
     qNoiseIn[3:6, 3:6] = -qNoiseIn[3:6, 3:6] * 0.00017 * 0.00017
-    moduleConfigClean1.qNoise = qNoiseIn.reshape(36).tolist()
+    moduleConfigClean1.qNoiseCoarse = qNoiseIn.reshape(36).tolist()
+    moduleConfigClean1.qNoiseFine = qNoiseIn.reshape(36).tolist()
+
     retTime = inertialUKF.inertialUKFTimeUpdate(moduleConfigClean1, 1)
     retMease = inertialUKF.inertialUKFMeasUpdate(moduleConfigClean1, 1)
 
