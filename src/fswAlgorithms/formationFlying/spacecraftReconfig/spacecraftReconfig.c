@@ -22,18 +22,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/orbitalMotion.h"
 #include "simulation/utilities/astroConstants.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 
-static void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTransMsg,
-                             NavTransIntMsg deputyTransMsg, AttRefFswMsg attRefInMsg,
-                             THRArrayConfigFswMsg thrustConfigMsg, AttRefFswMsg *attRefMsg,
-                             THRArrayOnTimeCmdIntMsg *thrustOnMsg, uint64_t callTime, int64_t moduleID);
-static double AdjustRange(double lower, double upper, double angle);
-static int CompareTime(const void * n1, const void * n2);
-static void ScheduleDV(spacecraftReconfigConfig *configData, classicElements oe_c,
-                         classicElements oe_d, THRArrayConfigFswMsg thrustConfigMsg);
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -162,10 +153,10 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-static void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTransMsg,
-                             NavTransIntMsg deputyTransMsg, AttRefFswMsg attRefInMsg,
-                             THRArrayConfigFswMsg thrustConfigMsg, AttRefFswMsg *attRefMsg,
-                             THRArrayOnTimeCmdIntMsg *thrustOnMsg, uint64_t callTime, int64_t moduleID)
+void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTransMsg,
+                     NavTransIntMsg deputyTransMsg, AttRefFswMsg attRefInMsg,
+                     THRArrayConfigFswMsg thrustConfigMsg, AttRefFswMsg *attRefMsg,
+                     THRArrayOnTimeCmdIntMsg *thrustOnMsg, uint64_t callTime, int64_t moduleID)
 {
     /* conversion from r,v to classical orbital elements */
     classicElements oe_c, oe_d;
@@ -283,7 +274,7 @@ static void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg 
  @param upper upper threshold
  @param angle an angle which you want to be between lower and upper
 */
-static double AdjustRange(double lower, double upper, double angle)
+double AdjustRange(double lower, double upper, double angle)
 {
     if(upper < lower){
         printf("illegal parameters\n");
@@ -306,7 +297,7 @@ static double AdjustRange(double lower, double upper, double angle)
  @param n1
  @param n2
  */
-static int CompareTime(const void * n1, const void * n2)
+int CompareTime(const void * n1, const void * n2)
 {
 	if (((spacecraftReconfigConfigBurnInfo *)n1)->t > ((spacecraftReconfigConfigBurnInfo *)n2)->t)
 	{
@@ -330,7 +321,7 @@ static int CompareTime(const void * n1, const void * n2)
  @param oe_d deputy's orbital element
  @param thrustConfigMsg
  */
-static void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
+void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
                           classicElements oe_d, THRArrayConfigFswMsg thrustConfigMsg)
 {
     // calculation necessary variables

@@ -27,6 +27,7 @@
 #include "fswMessages/attRefFswMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "simulation/utilities/bskLogging.h"
+#include "simulation/utilities/orbitalMotion.h"
 
 /*! @brief Local module specific data structure */
 typedef struct {
@@ -71,6 +72,16 @@ extern "C" {
     void CrossInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t moduleID);
     void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
+
+    void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTransMsg,
+                             NavTransIntMsg deputyTransMsg, AttRefFswMsg attRefInMsg,
+                             THRArrayConfigFswMsg thrustConfigMsg, AttRefFswMsg *attRefMsg,
+                             THRArrayOnTimeCmdIntMsg *thrustOnMsg, uint64_t callTime, int64_t moduleID);
+    double AdjustRange(double lower, double upper, double angle);
+    int CompareTime(const void * n1, const void * n2);
+    void ScheduleDV(spacecraftReconfigConfig *configData, classicElements oe_c,
+                         classicElements oe_d, THRArrayConfigFswMsg thrustConfigMsg);
+
 #ifdef __cplusplus
 }
 #endif
