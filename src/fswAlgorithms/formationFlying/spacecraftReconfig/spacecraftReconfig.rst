@@ -8,8 +8,8 @@ is scheduled so that reconfiguration is completed in one orbit period.
 In addition to formation control algorithm described in the textbook, some extensions and improvements are included in
 this module.
 First, this module assumes that deputy spacecraft has one-axis thrusters. Therefore, attitude control is also necessary 
-along with burn at certain period. When burn timing is approaching, target attitude is output as attRefOutMsgName.
-Otherwise, and if attRefInMsgName (which is optional) is set, the reference message is output as attRefOutMsgName.
+along with burn at certain period. When burn timing is approaching, target attitude is output as ``attRefOutMsgName``.
+Otherwise, and if ``attRefInMsgName`` (which is optional) is set, the reference message is output as ``attRefOutMsgName``.
 Second, if :math:`\delta a` is not zero, drift of :math:`\delta M` occurs. This module can take this drift into consideration
 . Therefore, this module can achieve formation reconfiguration in orbital period.
 Third, in general three-time burn is necessary for reconfiguration. Two of them occur at perigee and apogee each.
@@ -37,7 +37,10 @@ provides information on what this message is used for.
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
     | thrustConfigInMsgName    | :ref:`THRArrayConfigFswMsg`       | The name of deputy's thruster configuration input message     |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | attRefInMsgName(optional)| :ref:`AttRefFswMsg`               | The name of deputy's reference attitude input message         |
+    | attRefInMsgName          | :ref:`AttRefFswMsg`               | (optional) The name of deputy's reference attitude            |
+    |                          |                                   | input message. If set, then the deputy will point along this  |
+    |                          |                                   | reference attitude unless it must point the thrusters in a    |
+    |                          |                                   | control direction.                                            |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
     | attRefOutMsgName         | :ref:`AttRefFswMsg`               | The name of deputy's target attitude output message           |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
@@ -48,7 +51,7 @@ Module Assumptions and Limitations
 ----------------------------------
 - This module uses classic orbital element, so this module cannot be applied to near-circular or near-equatorial orbits.
 - Too long or too short attControlTime may result in control error.
-- Impulsive maneuvers are approcimated by steady thrust of a certain period.
+- Impulsive maneuvers are approximated by steady thrust of a certain period.
 
 User Guide
 ----------------------------------
