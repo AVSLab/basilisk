@@ -115,10 +115,12 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
                 sizeof(NavTransIntMsg), (void*) &(chiefTransMsg), moduleID);
     ReadMessage(configData->deputyTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
-    ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttRefFswMsg), (void*) &(attRefInMsg), moduleID);
     ReadMessage(configData->thrustConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), (void*) &(thrustConfigMsg), moduleID);
+    if (configData->attRefInMsgID >= 0) {
+        ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                    sizeof(AttRefFswMsg), (void*) &(attRefInMsg), moduleID);
+    }
 
     if(configData->prevCallTime == 0) {
         // initialize
