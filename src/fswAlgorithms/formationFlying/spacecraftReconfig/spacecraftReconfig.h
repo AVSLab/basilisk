@@ -28,14 +28,15 @@
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "simulation/utilities/bskLogging.h"
 
-/*! @brief Top level structure for the sub-module routines. */
+/*! @brief Local module specific data structure */
 typedef struct {
-    uint8_t flag;        // 0:not scheduled yet, 1:not burned yet, 2:already burned
-    double t;            // when to burn [s]
-    double thrustOnTime; // thrust on duration time [s]
-    double sigma_RN[3];  // target attitude
+    uint8_t flag;        //!< 0:not scheduled yet, 1:not burned yet, 2:already burned
+    double t;            //!< when to burn [s]
+    double thrustOnTime; //!< thrust on duration time [s]
+    double sigma_RN[3];  //!< target attitude
 }spacecraftReconfigConfigBurnInfo;
 
+/*! @brief Data structure for the MRP feedback attitude control routine. */
 typedef struct {
     /* declare module IO interfaces */
     // in
@@ -51,22 +52,15 @@ typedef struct {
     char attRefOutMsgName[MAX_STAT_MSG_LENGTH];
     int32_t attRefOutMsgID;
     char onTimeOutMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t onTimeOutMsgID;
-    // central body gravity constant
-    double mu;  // [m^3/s^2]
-    // attitude control margin time (time necessary to change sc's attitude)
-    double attControlTime; // [s]
-    // target classic orital element difference
-    double targetClassicOED[6]; // SMA should be normalized
-    // burn scheduling reset period
-    double resetPeriod; // [s]
-    // deputy SC mass
-    double scMassDeputy; //[kg]
-    // timer
-    double tCurrent; // [s]
-    uint64_t prevCallTime; // [ns]
-    // thrust control
-    uint8_t thrustOnFlag;
+    int32_t onTimeOutMsgID; //!< central body gravity constant
+    double mu;  //!< [m^3/s^2] gravity constant of planet being orbited
+    double attControlTime; //!< [s] attitude control margin time (time necessary to change sc's attitude)
+    double targetClassicOED[6]; //!< target classic orital element difference, SMA should be normalized
+    double resetPeriod; //!< [s] burn scheduling reset period
+    double scMassDeputy; //!< [kg] deputy SC mass
+    double tCurrent; //!< [s] timer
+    uint64_t prevCallTime; //!< [ns]
+    uint8_t thrustOnFlag; //!< thrust control
     spacecraftReconfigConfigBurnInfo dvArray[3];
 }spacecraftReconfigConfig;
 
