@@ -43,9 +43,6 @@ public:
     void writeOutputMessages(uint64_t currentClock);    //!< class method
     void readInputMessages();
     void computeForceTorque(double integTime);
-    ReadFunctor<CmdTorqueBodyIntMsg> readCmdTorque;
-    ReadFunctor<CmdForceBodyIntMsg> readBodyForce;
-    ReadFunctor<CmdForceInertialIntMsg> readInertialForce;
 
 private:
     CmdTorqueBodyIntMsg incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
@@ -59,6 +56,9 @@ public:
     Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    ReadFunctor<CmdTorqueBodyIntMsg> cmdTorqueInMsg;
+    ReadFunctor<CmdForceBodyIntMsg> cmdForceBodyInMsg;
+    ReadFunctor<CmdForceInertialIntMsg>cmdForceInertialInMsg;
 
 };
 
