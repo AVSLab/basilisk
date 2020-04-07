@@ -5,7 +5,7 @@ the nominal position, velocity, attitude, and attitude rate.  This is meant to
 be used in place of the nominal navigation system output.
 
 The module
-:download:`PDF Description </../../src/simulation/navigation/simple_nav/_Documentation/Basilisk-SIMPLE_NAV20170712.pdf>`
+:download:`PDF Description </../../src/simulation/navigation/simpleNav/_Documentation/Basilisk-SIMPLE_NAV20170712.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 

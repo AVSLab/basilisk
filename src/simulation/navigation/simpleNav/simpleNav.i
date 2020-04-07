@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module simple_nav
+%module simpleNav
 %{
-   #include "simple_nav.h"
+   #include "simpleNav.h"
 %}
 
 %pythoncode %{
@@ -29,7 +29,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.h"
-%include "simple_nav.h"
+%include "simpleNav.h"
 %include "simMessages/scPlusStatesSimMsg.h"
 %include "../../simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../simFswInterfaceMessages/navTransIntMsg.h"

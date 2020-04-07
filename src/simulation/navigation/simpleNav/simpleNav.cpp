@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "navigation/simple_nav/simple_nav.h"
+#include "navigation/simpleNav/simpleNav.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
@@ -40,8 +40,8 @@ SimpleNav::SimpleNav()
     this->walkBounds.resize(18);
     this->walkBounds.fill(0.0);
     this->errorModel =  GaussMarkov(18, this->RNGSeed);
-    this->writeOutputAttMessage = this->outputAttMessage.addAuthor();
-    this->writeOutputTransMessage = this->outputTransMessage.addAuthor();
+    this->writeAttOutMsg = this->attOutMsg.addAuthor();
+    this->writeTransOutMsg = this->transOutMsg.addAuthor();
     return;
 }
 
@@ -103,13 +103,13 @@ void SimpleNav::readInputMessages()
     memset(&this->sunState, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&this->inertialState, 0x0, sizeof(SCPlusStatesSimMsg));
 
-    if(this->readInputState.linked()){
-        this->inertialState = this->readInputState();
+    if(this->scStateInMsg.linked()){
+        this->inertialState = this->scStateInMsg();
     }
 
-    if(this->readSunInput.linked())
+    if(this->sunStateInMsg.linked())
     {
-        this->sunState = this->readSunInput();
+        this->sunState = this->sunStateInMsg();
     }
 }
 
@@ -119,8 +119,8 @@ void SimpleNav::readInputMessages()
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
-  this->writeOutputAttMessage(this->estAttState);
-  this->writeOutputTransMessage(this->estTransState);
+  this->writeAttOutMsg(this->estAttState);
+  this->writeTransOutMsg(this->estTransState);
 }
 
 void SimpleNav::applyErrors()
@@ -132,7 +132,7 @@ void SimpleNav::applyErrors()
     v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
-    if(this->readSunInput.linked()){
+    if(this->sunStateInMsg.linked()){
         double dcm_OT[3][3];       /* dcm, body T to body O */
         MRP2C(&(this->navErrors.data()[12]), dcm_OT);
         m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
@@ -157,7 +157,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
 
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
-    if(this->readSunInput.linked()){
+    if(this->sunStateInMsg.linked()){
         double sc2SunInrtl[3];
         double dcm_BN[3][3];        /* dcm, inertial to body */
         v3Subtract(this->sunState.PositionVector, this->inertialState.r_BN_N, sc2SunInrtl);
