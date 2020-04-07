@@ -156,8 +156,9 @@ manner.
 
 .. code:: cpp
 
-   std::string sunEphmInMsg;
+   descriptionInMsg sunEphmInMsg;
 
+-  ``descriptionInMsg``: message structure definition
 -  ``sunEphm``: description of the message content.
 -  ``In`` (``Out``): indicates the direction of the message with respect to the module.
 -  ``Msg``: explicitly identifies the variable as a message.
