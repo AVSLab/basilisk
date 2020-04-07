@@ -48,8 +48,8 @@ SpacecraftPlus::SpacecraftPlus()
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
 
-    this->writeStateOutputMessage = this->scStateOutMsg.addAuthor();
-    this->writeMassOutputMessage = this->scMassOutMsg.addAuthor();
+    this->writeScStateOutMsg = this->scStateOutMsg.addAuthor();
+    this->writeScMassOutMsg = this->scMassOutMsg.addAuthor();
 
     return;
 }
@@ -124,14 +124,14 @@ void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
-    this->writeStateOutputMessage(stateOut);
+    this->writeScStateOutMsg(stateOut);
 
     // - Populate mass state output message
     SCPlusMassPropsSimMsg massStateOut;
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
-    this->writeMassOutputMessage(massStateOut);
+    this->writeScMassOutMsg(massStateOut);
 
     return;
 }

@@ -95,8 +95,6 @@ public:
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
     void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
-    WriteFunctor<SCPlusStatesSimMsg> writeStateOutputMessage;
-    WriteFunctor<SCPlusMassPropsSimMsg> writeMassOutputMessage;
 
 private:
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
@@ -111,6 +109,8 @@ private:
 
 private:
     void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude
+    WriteFunctor<SCPlusStatesSimMsg> writeScStateOutMsg;
+    WriteFunctor<SCPlusMassPropsSimMsg> writeScMassOutMsg;
 };
 
 
