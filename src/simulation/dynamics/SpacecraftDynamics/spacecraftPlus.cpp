@@ -48,8 +48,8 @@ SpacecraftPlus::SpacecraftPlus()
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
 
-    this->writeStateOutputMessage = this->stateOutMsg.addAuthor();
-    this->writeMassOutputMessage = this->massOutMsg.addAuthor();
+    this->writeStateOutputMessage = this->scStateOutMsg.addAuthor();
+    this->writeMassOutputMessage = this->scMassOutMsg.addAuthor();
 
     return;
 }
