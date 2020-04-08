@@ -40,7 +40,7 @@
 void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    CmdTorqueBodyIntMsg_C_claim(&configData->outputMessage, &configData->outputMessage);
+    CmdTorqueBodyIntMsg_C_claim(&configData->cmdTorqueOutMsg, &configData->cmdTorqueOutMsg);
 
 }
 
@@ -95,7 +95,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
     /*! - zero and read in vehicle configuration message */
     VehicleConfigFswMsg sc;
     memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
-    sc = VehicleConfigFswMsgRead_C(&configData->vehicleConfigMessage);
+    sc = VehicleConfigFswMsg_C_read(&configData->vehConfigInMsg);
     /*! - copy over spacecraft inertia tensor */
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
@@ -161,7 +161,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - Read the attitude tracking error message */
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
-    guidCmd = AttGuidFswMsg_C_read(&configData->inputGuidanceMessage);
+    guidCmd = AttGuidFswMsg_C_read(&configData->guidInMsg);
 
     /*! - read in optional RW speed and availability message */
     if(configData->rwConfigParams.numRW > 0) {
@@ -238,7 +238,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    CmdTorqueBodyIntMsg_C_write(&controlOut, &configData->outputMessage);
+    CmdTorqueBodyIntMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg);
 
     return;
 }
