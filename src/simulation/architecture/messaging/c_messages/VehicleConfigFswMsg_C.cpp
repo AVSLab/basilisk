@@ -41,7 +41,7 @@ void VehicleConfigFswMsg_C_write(VehicleConfigFswMsg *data, VehicleConfigFswMsg_
     return;
 };
 
-VehicleConfigFswMsg VehicleConfigFswMsgRead_C(VehicleConfigFswMsg_C *source) {
+VehicleConfigFswMsg VehicleConfigFswMsg_C_read(VehicleConfigFswMsg_C *source) {
     return *source->payloadPointer;
 };
 

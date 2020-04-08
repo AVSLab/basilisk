@@ -107,7 +107,7 @@ INSTANTIATE_TEMPLATES(SpiceTimeSimMsg, spiceTimeSimMsg, simMessages)
 //fsw interface messages
 INSTANTIATE_TEMPLATES(NavAttIntMsg, navAttIntMsg, simFswInterfaceMessages)
 INSTANTIATE_TEMPLATES(NavTransIntMsg, navTransIntMsg, simFswInterfaceMessages)
-INSTANTIATE_TEMPLATES(CmdTorqueBodyIntMsg, cmdTorqueBodyIntMsg, simMessages)
+INSTANTIATE_TEMPLATES(CmdTorqueBodyIntMsg, cmdTorqueBodyIntMsg, simFswInterfaceMessages)
 INSTANTIATE_TEMPLATES(CmdForceBodyIntMsg, cmdForceBodyIntMsg, simFswInterfaceMessages)
 INSTANTIATE_TEMPLATES(CmdForceInertialIntMsg, cmdForceInertialIntMsg, simFswInterfaceMessages)
 INSTANTIATE_TEMPLATES(EphemerisIntMsg, ephemerisIntMsg, simFswInterfaceMessages)

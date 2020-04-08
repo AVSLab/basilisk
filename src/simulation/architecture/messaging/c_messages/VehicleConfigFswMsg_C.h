@@ -48,7 +48,7 @@ void VehicleConfigFswMsg_C_claim(VehicleConfigFswMsg_C *coowner, VehicleConfigFs
 
 void VehicleConfigFswMsg_C_write(VehicleConfigFswMsg *data, VehicleConfigFswMsg_C *destination);
 
-VehicleConfigFswMsg VehicleConfigFswMsgRead_C(VehicleConfigFswMsg_C *source);
+VehicleConfigFswMsg VehicleConfigFswMsg_C_read(VehicleConfigFswMsg_C *source);
 
 #ifdef __cplusplus
 }
