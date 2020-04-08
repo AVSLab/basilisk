@@ -21,6 +21,8 @@ Version 1.X.X
 - new spacecraft formation flying control :ref:`meanOEFeedback` that implements a mean orbit element feedback
   control law
 - new relative orbit control tutorial example :ref:`scenarioFormationMeanOEFeedback` that uses :ref:`meanOEFeedback`
+- updated documentation of :ref:`fswModuleTemplate` to show how to make much simpler lists of module messages
+  using the ``list-table`` RST command
 
 Version 1.7.1
 -------------
