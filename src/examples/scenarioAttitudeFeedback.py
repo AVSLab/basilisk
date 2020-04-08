@@ -315,7 +315,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     attErrorConfig.inputNavMessage.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.inputRefMessage.subscribeTo(inertial3DConfig.outMsg)
+    attErrorConfig.inputRefMessage.subscribeTo(inertial3DConfig.attRefOutMsg)
     mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.outputDataMessage)
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configData)

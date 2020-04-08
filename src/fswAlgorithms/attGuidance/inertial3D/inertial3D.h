@@ -31,8 +31,8 @@
 /*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
  */
 typedef struct {
-    double sigma_R0N[3];                            //!<        MRP from inertial frame N to corrected reference frame R
-    AttRefFswMsg_C outMsg;
+    double sigma_R0N[3];                            //!<  MRP from inertial frame N to corrected reference frame R
+    AttRefFswMsg_C attRefOutMsg;                    //!< reference attitude output message
     BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DConfig;
 
