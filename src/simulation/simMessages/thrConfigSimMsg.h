@@ -22,6 +22,8 @@
 
 #include <vector>
 #include <Eigen/Dense>
+#include "thrOperationSimMsg.h"
+#include "thrTimePairSimMsg.h"
 
 /*! \defgroup simMessages
  *  @{
