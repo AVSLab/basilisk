@@ -44,14 +44,44 @@ message naming is listed if it is outside the standard adjusted (see :ref:`codin
 ``descriptionOutMsgName`` becomes ``descriptionOutMsg``.    
 This list makes it simple to see what naming will need to be changed.
 
-MRP_Feedback
-    - ``outputDataName`` has become ``cmdTorqueOutMsg``
-    - ``inputGuidName`` has become ``guidInMsg``
-    - ``inputRWSpeedsName`` has become ``rwSpeedsInMsg``
+inertial3D
+~~~~~~~~~~
+.. table::
 
-simple_nav
-    - module name has been corrected to ``simpleNav``
-    - ``outputAttMessage`` has become ``attOutMsg``
-    - ``outputTransMessage`` has become ``transOutMsg``
-    - ``inputStateName`` has become ``scStateInMsg``
-    - ``inputSunName`` has become ``sunStateInMsg``
+    +-----------------------+-----------------------------------+
+    | Old Msg Name          | New Msg Name                      |
+    +=======================+===================================+
+    | ``outMsg``            | ``attRefOutMsg``                  |
+    +-----------------------+-----------------------------------+
+
+
+MRP_Feedback
+^^^^^^^^^^^^
+.. table::
+
+    +---------------------------+-----------------------------------+
+    | Old Msg Name              | New Msg Name                      |
+    +===========================+===================================+
+    | ``outputDataName``        | ``cmdTorqueOutMsg``               |
+    +---------------------------+-----------------------------------+
+    | ``inputGuidName``         | ``guidInMsg``                     |
+    +---------------------------+-----------------------------------+
+    | ``inputRWSpeedsName``     | ``rwSpeedsInMsg``                 |
+    +---------------------------+-----------------------------------+
+
+simple_nav -> ``simpleNav``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. table::
+
+    +---------------------------+-----------------------------------+
+    | Old Msg Name              | New Msg Name                      |
+    +===========================+===================================+
+    | ``outputAttMessage``      | ``attOutMsg``                     |
+    +---------------------------+-----------------------------------+
+    | ``outputTransMessage``    | ``transOutMsg``                   |
+    +---------------------------+-----------------------------------+
+    | ``inputStateName``        | ``scStateInMsg``                  |
+    +---------------------------+-----------------------------------+
+    | ``inputSunName``          | ``sunStateInMsg``                 |
+    +---------------------------+-----------------------------------+
+
