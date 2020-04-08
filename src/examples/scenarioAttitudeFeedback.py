@@ -49,7 +49,7 @@ the torque input message of this module.  If an external torque is being simulat
 then the module internal torque vector is set to a constant value.
 
 The flight software algorithm module require a navigation message with the
-spacecraft orientation and attitude rates.  This is setup using the :ref:`simple_nav`
+spacecraft orientation and attitude rates.  This is setup using the :ref:`simpleNav`
 module. By just invoking a sensor module it is setup to run without any simulated
 corruptions.  Thus in this simulation it will return truth measurements.
 
@@ -57,7 +57,7 @@ Next the flight software algorithms need to be setup.  The inertial pointing ref
 frame definition is provided through the simple :ref:`inertial3D` module.  The only input
 it requires is the desired inertial heading.
 
-The reference frame states and the navigation message (output of :ref:`simple_nav` are fed
+The reference frame states and the navigation message (output of :ref:`simpleNav` are fed
 into the :ref:`attTrackingError` module.  It is setup to compute the attitude tracking error
 between the body frame :math:`\cal B` and the reference frame :math:`\cal R`.
 If a body fixed frame other than :math:`\cal B`
@@ -154,7 +154,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.simulation import message
 
 # import FSW Algorithm related support
@@ -249,7 +249,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
@@ -297,9 +297,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     # Setup data logging before the simulation is initialized
     #
-    snLog = scObject.stateOutMsg.log()
+    snLog = scObject.scStateOutMsg.log()
     attErrorLog = attErrorConfig.outputDataMessage.log()
-    mrpLog = mrpControlConfig.outputMessage.log()
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.log()
 
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 50
@@ -313,12 +313,12 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     # connect the messages to the modules
     #
-    sNavObject.readInputState.subscribeTo(scObject.stateOutMsg)
-    attErrorConfig.inputNavMessage.subscribeTo(sNavObject.outputAttMessage)
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    attErrorConfig.inputNavMessage.subscribeTo(sNavObject.attOutMsg)
     attErrorConfig.inputRefMessage.subscribeTo(inertial3DConfig.outMsg)
-    mrpControlConfig.inputGuidanceMessage.subscribeTo(attErrorConfig.outputDataMessage)
-    extFTObject.readCmdTorque.subscribeTo(mrpControlConfig.outputMessage)
-    mrpControlConfig.vehicleConfigMessage.subscribeTo(configData)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.outputDataMessage)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(configData)
 
 
     #

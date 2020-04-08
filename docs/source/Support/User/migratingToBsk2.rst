@@ -39,7 +39,19 @@ yields a `Nx4` array, but rather a `Nx3` array.  Some plotting or value checking
 Module and Message Naming Changes
 ---------------------------------
 Some early Basilisk modules and message names never complied with the naming guidelines in :ref:`codingGuidelines`.
-The following list outlines any module or message naming changes that occured in this upgrade process.  This makes it
-simple to see what naming will need to be changed.
+The following list outlines any module or message naming changes that occurred in this upgrade process.  That is,
+message naming is listed if it is outside the standard adjusted (see :ref:`codingGuidelines`) where
+``descriptionOutMsgName`` becomes ``descriptionOutMsg``.    
+This list makes it simple to see what naming will need to be changed.
 
+MRP_Feedback
+    - ``outputDataName`` has become ``cmdTorqueOutMsg``
+    - ``inputGuidName`` has become ``guidInMsg``
+    - ``inputRWSpeedsName`` has become ``rwSpeedsInMsg``
 
+simple_nav
+    - module name has been corrected to ``simpleNav``
+    - ``outputAttMessage`` has become ``attOutMsg``
+    - ``outputTransMessage`` has become ``transOutMsg``
+    - ``inputStateName`` has become ``scStateInMsg``
+    - ``inputSunName`` has become ``sunStateInMsg``
