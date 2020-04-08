@@ -584,9 +584,7 @@ void VSCMGStateEffector::CrossInit()
 }
 
 /*! This method is here to write the output message structure into the specified
- message.  It is currently blank but we will certainly have an output message
- soon.  If it is already here, bludgeon whoever added it and didn't fix the
- comment.
+ message.  
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
