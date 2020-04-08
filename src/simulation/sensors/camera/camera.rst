@@ -40,11 +40,13 @@ Detailed Module Description
 This modules pulls heavily from the OpenCV library. The methods
 implemented create either:
 
-- Gaussian noise on the image
-- Dark Noise
-- Dead and stuck pixels
-- Random Cosmic rays
-- Bluring 
+- Gaussian noise on the image (``gaussian``)
+- Dark Noise (``darkCurrent``)
+- Dead and stuck pixels (``saltPepper``)
+- Random Cosmic rays (``cosmicRays``)
+- Blurring (``blurParam``)
+- HSV color adjustment (``HSV``)
+- RGB percent color adjustment (``RGB
 
 Doxygen documentation for OpenCV can be found `here <https://docs.opencv.org/4.1.2/>`__.
 

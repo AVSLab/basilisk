@@ -59,6 +59,8 @@ Camera::Camera()
     this->saltPepper = 0;
     this->cosmicRays = 0;
     this->blurParam = 0;
+    this->hsv = std::vector<int>{0, 0, 0};
+    this->rgbPercent = std::vector<int>{0, 0, 0};
     
     return;
 }
@@ -100,6 +102,77 @@ Camera::~Camera()
 void Camera::Reset(uint64_t CurrentSimNanos)
 {
     return;
+}
+
+/*!
+ * Adjusts the HSV values of each pixel.
+ * Can be used to shift the hue, saturation, and brightness of an image.
+ * @param cv::Mat source image
+ * @param cv::Mat destination of modified image
+ * @param std::vector<int> of H,S,V adjustment factors. H (-180 to 180) is added, S and V are percent multiplier factors)
+ * @return void
+ */
+void Camera::hueShift(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> HSV){
+    cv::Mat hsv;
+    cvtColor(mSrc, hsv, cv::COLOR_BGR2HSV);
+    
+    for (int j = 0; j < mSrc.rows; j++) {
+        for (int i = 0; i < mSrc.cols; i++) {
+            // Saturation is hsv.at<Vec3b>(j, i)[1] range: [0-255]
+            // Value is hsv.at<Vec3b>(j, i)[2] range: [0-255]
+            
+            // hue range: [0-179)
+            hsv.at<cv::Vec3b>(j, i)[0] = (hsv.at<cv::Vec3b>(j, i)[0] + this->hsv[0]) % 180;
+            hsv.at<cv::Vec3b>(j, i)[1] = (hsv.at<cv::Vec3b>(j, i)[1]) * (this->hsv[1]/100. + 1.);
+            hsv.at<cv::Vec3b>(j, i)[2] = (hsv.at<cv::Vec3b>(j, i)[2]) * (this->hsv[2]/100. + 1.);
+
+            // saturate S and V values to [0,255]
+            for(int k = 1; k < 3; k++){
+                if(hsv.at<cv::Vec3b>(j,i)[k] < 0){
+                    hsv.at<cv::Vec3b>(j,i)[k] = 0;
+                }
+                if(hsv.at<cv::Vec3b>(j,i)[k] > 255){
+                    hsv.at<cv::Vec3b>(j,i)[k] = 255;
+                }
+            }
+        }
+    }
+    cvtColor(hsv, mDst, cv::COLOR_HSV2BGR);
+}
+
+/*!
+ * Adjusts the RGB values of each pixel by a percent value.
+ * Can be used to simulate a sensor with different sensitivities to R, G, and B.
+ * @param cv::Mat source image
+ * @param cv::Mat destination of modified image
+ * @param std::vector<int> of R,G,B scaling factors (percent multipliers)
+ * @return void
+ */
+void Camera::RGBAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> RGB){
+    cv::Mat mRGB = cv::Mat(mSrc.size(), mSrc.type());
+    mSrc.convertTo(mRGB, mSrc.type());
+    
+    // RGB values range [0, 255]
+    // if value after adjustment is < 0 take 0
+    // if value after is > 255 take 255
+    for (int j = 0; j < mSrc.rows; j++) {
+        for (int i = 0; i < mSrc.cols; i++) {
+            mRGB.at<cv::Vec3b>(j,i)[0] = mRGB.at<cv::Vec3b>(j,i)[0] * (this->rgbPercent[0]/100. + 1.);
+            mRGB.at<cv::Vec3b>(j,i)[1] = mRGB.at<cv::Vec3b>(j,i)[1] * (this->rgbPercent[1]/100. + 1.);
+            mRGB.at<cv::Vec3b>(j,i)[2] = mRGB.at<cv::Vec3b>(j,i)[2] * (this->rgbPercent[2]/100. + 1.);
+            
+            // prevent overflow
+            for(int k = 0; k < 3; k++){
+                if(mRGB.at<cv::Vec3b>(j,i)[k] < 0){
+                    mRGB.at<cv::Vec3b>(j,i)[k] = 0;
+                }
+                if(mRGB.at<cv::Vec3b>(j,i)[k] > 255){
+                    mRGB.at<cv::Vec3b>(j,i)[k] = 255;
+                }
+            }
+        }
+    }
+    mRGB.convertTo(mDst, mSrc.type());
 }
 
 /*!
@@ -235,7 +308,7 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
  * @return void
  */
 void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam){
-    
+
     cv::Mat mFilters(mSource.size(), mSource.type());
     mSource.convertTo(mFilters, mSource.type());
 
@@ -251,6 +324,12 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
     if(darkCurrent > 0){
         float scale = 15;
         AddGaussianNoise(mFilters, mFilters, darkCurrent * scale, 0.0);
+    }
+    if (abs(this->hsv[0])+this->hsv[1]+this->hsv[2] != 0) {
+        hueShift(mFilters, mFilters, this->hsv);
+    }
+    if (this->rgbPercent[0]+this->rgbPercent[1]+this->rgbPercent[2] != 0) {
+        RGBAdjustPercent(mFilters, mFilters, this->rgbPercent);
     }
     if (saltPepper > 0){
         float scale = 0.00002;
