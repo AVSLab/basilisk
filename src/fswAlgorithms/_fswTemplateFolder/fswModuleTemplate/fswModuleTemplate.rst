@@ -17,19 +17,20 @@ provides information on what this message is used for.
     Figure 1: ``fswModuleTemplate()`` Module I/O Illustration
 
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                          | Description                                       |
-    +=======================+===================================+===================================================+
-    | dataInMsgName         | :ref:`FswModuleTemplateFswMsg`    | Input message description.  Note here if this     |
-    |                       |                                   | message is optional, and what the default behavior|
-    |                       |                                   | is if this message is not provided.               |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | dataOutMsgName        | :ref:`FswModuleTemplateFswMsg`    | Output message description.                       |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - dataInMsgName
+      - :ref:`FswModuleTemplateFswMsg`
+      - Input message description.  Note here if this message is optional, and what the default behavior
+        is if this message is not provided.
+    * - dataOutMsgName
+      - :ref:`FswModuleTemplateFswMsg`
+      - Output message description.
 
 Detailed Module Description
 ---------------------------
@@ -192,6 +193,48 @@ will generate the following table:
 
 
 .. note:: Doing tables with spinx is not simple.  The table outline must abide by tedious spacing rules.
+
+The ``list-table`` command is nice in that it allows for a simple table to be created where the table
+structure does not have to be drawn with ASCII vertical and horizontal lines.  However, the formatting options
+are more limited than with the above method.  See
+`documentation <https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table>`__ for more info.
+For example, the code::
+
+    .. list-table:: List Based Table Title
+        :widths: auto
+        :header-rows: 1
+
+        * - Header 1
+          - Header 2
+          - Header 3
+        * - Label 1
+          - text
+          - more text
+        * - Label 2
+          - text
+          -
+        * - Label 3
+          - text
+          - some more text
+
+will produce this table:
+
+.. list-table:: List Based Table Title
+    :widths: auto
+    :header-rows: 1
+
+    * - Header 1
+      - Header 2
+      - Header 3
+    * - Label 1
+      - text
+      - more text
+    * - Label 2
+      - text
+      -
+    * - Label 3
+      - text
+      - some more text
 
 HTML Highlight Options
 ----------------------
