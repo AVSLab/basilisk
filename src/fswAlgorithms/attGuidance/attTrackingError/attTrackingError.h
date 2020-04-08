@@ -36,11 +36,11 @@
  */
 typedef struct {
     /* declare module private variables */
-    double sigma_R0R[3];                            //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
-    AttGuidFswMsg_C outputDataMessage;
-    NavAttIntMsg_C inputNavMessage;
-    AttRefFswMsg_C inputRefMessage;
-    BSKLogger *bskLogger;                             //!< BSK Logging
+    double sigma_R0R[3];                        //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
+    AttGuidFswMsg_C attGuidOutMsg;              //!< output msg of attitude guidance
+    NavAttIntMsg_C attNavInMsg;                 //!< input msg measured attitude
+    AttRefFswMsg_C attRefInMsg;                 //!< input msg of reference attitude
+    BSKLogger *bskLogger;                       //!< BSK Logging
 }attTrackingErrorConfig;
 
 #ifdef __cplusplus

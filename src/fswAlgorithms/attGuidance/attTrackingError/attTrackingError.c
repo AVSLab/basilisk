@@ -34,7 +34,7 @@
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
     /*! Create output message for module */
-    AttGuidFswMsg_C_claim(&configData->outputDataMessage, &configData->outputDataMessage);
+    AttGuidFswMsg_C_claim(&configData->attGuidOutMsg, &configData->attGuidOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -76,12 +76,12 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
     memset(&nav, 0x0, sizeof(NavAttIntMsg));
     memset(&attGuidOut, 0x0, sizeof(AttGuidFswMsg));
 
-    ref = AttRefFswMsg_C_read(&configData->inputRefMessage);
-    nav = NavAttIntMsg_C_read(&configData->inputNavMessage);
+    ref = AttRefFswMsg_C_read(&configData->attRefInMsg);
+    nav = NavAttIntMsg_C_read(&configData->attNavInMsg);
 
     computeAttitudeError(configData->sigma_R0R, nav, ref, &attGuidOut);
 
-    AttGuidFswMsg_C_write(&attGuidOut, &configData->outputDataMessage);
+    AttGuidFswMsg_C_write(&attGuidOut, &configData->attGuidOutMsg);
 
     return;
 }

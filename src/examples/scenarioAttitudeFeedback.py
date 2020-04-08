@@ -298,7 +298,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # Setup data logging before the simulation is initialized
     #
     snLog = scObject.scStateOutMsg.log()
-    attErrorLog = attErrorConfig.outputDataMessage.log()
+    attErrorLog = attErrorConfig.attGuidOutMsg.log()
     mrpLog = mrpControlConfig.cmdTorqueOutMsg.log()
 
     #   Add logging object to a task group, this controls the logging rate
@@ -314,9 +314,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # connect the messages to the modules
     #
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.inputNavMessage.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.inputRefMessage.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.outputDataMessage)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configData)
 
