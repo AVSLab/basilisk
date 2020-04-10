@@ -21,9 +21,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "../../_GeneralModuleFiles/sys_model.h"
 #include <vector>
 
-/*! \addtogroup SimArchGroup
- * @{
- */
+
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
 class SimMessage;
