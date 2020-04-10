@@ -16,6 +16,10 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
+Version 1.X.X
+-------------
+- text here
+
 Version 1.7.2
 -------------
 - new spacecraft formation flying control :ref:`meanOEFeedback` that implements a mean orbit element feedback
@@ -38,8 +42,8 @@ Version 1.7.1
 - Updated the definition of the variable noiseMatrix in ``gaussMarkov.h``, and PMatrix in ``simple_nav.h``,
   ``imu_sensor.h`` and ``star_tracker.h``
 
-Version 1.7.0
--------------
+**Version 1.7.0**
+
 - Fixed a transformation issue in ``avsEigenSupport.cpp`` where ``cArray2EigenMatrix3d()`` has to deal with
   both column and row dominant matrix formulations.  This only got used in :ref:`scenarioCSS` and the issue was offset
   by an issue in ``setUnitDirectionVectorWithPerturbation()`` that compensated.  Now, all is as it should be.
