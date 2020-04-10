@@ -31,7 +31,7 @@
 
 /*! @brief Local module specific data structure */
 typedef struct {
-    uint8_t flag;        //!< 0:not scheduled yet, 1:not burned yet, 2:already burned
+    uint8_t flag;        //!< 0:not scheduled yet, 1:not burned yet, 2:already burned, 3:skipped (combined with another burn)
     double t;            //!< when to burn [s]
     double thrustOnTime; //!< thrust on duration time [s]
     double sigma_RN[3];  //!< target attitude
