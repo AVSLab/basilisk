@@ -23,6 +23,11 @@ Version 1.X.X
 - new relative orbit control tutorial example :ref:`scenarioFormationMeanOEFeedback` that uses :ref:`meanOEFeedback`
 - updated documentation of :ref:`fswModuleTemplate` to show how to make much simpler lists of module messages
   using the ``list-table`` RST command
+- new spaceraft relative motion control :ref:`spacecraftReconfig` that implements an orbit element based
+  impulsive feedback control strategy.  The control is implemented with a thruster model and an
+  attitude guidance message is used to point the spacecraft in the correct direction.
+- new example scenario :ref:`scenarioFormationReconfig` illustrating the use of the new impulsive relative motion
+  control module
 
 Version 1.7.1
 -------------
