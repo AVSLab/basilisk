@@ -178,7 +178,8 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
                                 + moduleConfig.attRefOutMsgName
                                 + ".sigma_RN" + " unit test at t="
                                 + str(attOutput[i, 0]*macros.NANO2SEC) + "sec\n")
-    if (not resetPeriod[0,1]==trueResetPeriod):
+
+    if (not unitTestSupport.isDoubleEqualRelative(resetPeriod[0,1], trueResetPeriod, accuracy)):
         testFailCount += 1
         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + "resetPeriod")
     #   print out success message if no error were found
