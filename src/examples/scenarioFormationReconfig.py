@@ -79,6 +79,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import fswSetupThrusters
+from Basilisk.utilities import vizSupport
 from Basilisk.simulation import sim_model
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
@@ -108,17 +109,17 @@ def run(show_plots, useRefAttitude):
     dynProcessName = "dynProcess"
     dynTaskName = "dynTask"
     dynProcess = scSim.CreateNewProcess(dynProcessName)
-    dynTimeStep = macros.sec2nano(1)
+    timeStep = 2.0
+    dynTimeStep = macros.sec2nano(timeStep)
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
 
     # sc
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "scObject"
-    scObject.scStateOutMsgName = "scStateOut"
     scObject.scMassStateOutMsgName = "scMassStateOut"
     scObject2.ModelTag = "scObject2"
-    scObject2.scStateOutMsgName = "scStateOut2"
+    scObject2.scStateOutMsgName = scObject.scStateOutMsgName + "2"
     scObject2.scMassStateOutMsgName = "scMassStateOut2"
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -176,7 +177,7 @@ def run(show_plots, useRefAttitude):
     fswProcessName = "fswProcess"
     fswTaskName = "fswTask"
     fswProcess = scSim.CreateNewProcess(fswProcessName)
-    fswTimeStep = macros.sec2nano(1)
+    fswTimeStep = macros.sec2nano(timeStep)
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # inertial 3D target attitude
@@ -251,7 +252,7 @@ def run(show_plots, useRefAttitude):
     # ----- Setup spacecraft initial states ----- #
     mu = gravFactory.gravBodies['earth'].mu
     oe = orbitalMotion.ClassicElements()
-    oe.a = 7000*1e3  # meters
+    oe.a = 11000*1e3  # meters
     oe.e = 0.4
     oe.i = 60.0 * macros.D2R
     oe.Omega = 90 * macros.D2R
@@ -292,6 +293,12 @@ def run(show_plots, useRefAttitude):
     scSim.TotalSim.logThisMessage(spacecraftReconfigData.attRefOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(spacecraftReconfigData.onTimeOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorData.outputDataName, samplingTime)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # to save the BSK data to a file, uncomment the saveFile line below
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, dynProcessName, gravBodies=gravFactory,
+                                              # saveFile=fileName,
+                                              scName=[scObject.ModelTag, scObject2.ModelTag])
 
     # ----- execute sim ----- #
     scSim.InitializeSimulationAndDiscover()

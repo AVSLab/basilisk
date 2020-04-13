@@ -18,7 +18,10 @@ Basilisk Release Notes
 
 Version 1.X.X
 -------------
-- text here
+- updated :ref:`scenarioFormationMeanOEFeedback` and :ref:`scenarioFormationReconfig` to increase
+  the orbit altitude to not hit the Earth. Also, added code that can be enabled to record the
+  simulation parameters for Vizard.
+
 
 Version 1.7.2
 -------------
