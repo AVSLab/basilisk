@@ -510,6 +510,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of %d was received.", this->settings.customGUIScale);
         }
 
+        // define default spacecraft sprite behavior
+        vizSettings->set_defaultspacecraftsprite(this->settings.defaultSpacecraftSprite);
+
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -590,6 +593,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_rotation(scIt->scPlusMessage.sigma_BN[i]);
             }
             //scPlusInMsgID.dataFresh = false;
+
+            /* Write the SC sprite string */
+            scp->set_spacecraftsprite(scIt->spacecraftSprite);
 
             /*! Write RW output msg */
             for (size_t idx =0; idx < scIt->numRW; idx++)
