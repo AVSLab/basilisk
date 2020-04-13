@@ -576,6 +576,20 @@ class VizMessage_Spacecraft : public ::google::protobuf::Message /* @@protoc_ins
   ::std::string* release_spacecraftname();
   void set_allocated_spacecraftname(::std::string* spacecraftname);
 
+  // string spacecraftSprite = 9;
+  void clear_spacecraftsprite();
+  static const int kSpacecraftSpriteFieldNumber = 9;
+  const ::std::string& spacecraftsprite() const;
+  void set_spacecraftsprite(const ::std::string& value);
+  #if LANG_CXX11
+  void set_spacecraftsprite(::std::string&& value);
+  #endif
+  void set_spacecraftsprite(const char* value);
+  void set_spacecraftsprite(const char* value, size_t size);
+  ::std::string* mutable_spacecraftsprite();
+  ::std::string* release_spacecraftsprite();
+  void set_allocated_spacecraftsprite(::std::string* spacecraftsprite);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.Spacecraft)
  private:
 
@@ -591,6 +605,7 @@ class VizMessage_Spacecraft : public ::google::protobuf::Message /* @@protoc_ins
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CoarseSunSensor > css_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_StarTracker > startrackers_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
+  ::google::protobuf::internal::ArenaStringPtr spacecraftsprite_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_SpacecraftImpl();
@@ -2367,6 +2382,20 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_skybox();
   void set_allocated_skybox(::std::string* skybox);
 
+  // string defaultSpacecraftSprite = 20;
+  void clear_defaultspacecraftsprite();
+  static const int kDefaultSpacecraftSpriteFieldNumber = 20;
+  const ::std::string& defaultspacecraftsprite() const;
+  void set_defaultspacecraftsprite(const ::std::string& value);
+  #if LANG_CXX11
+  void set_defaultspacecraftsprite(::std::string&& value);
+  #endif
+  void set_defaultspacecraftsprite(const char* value);
+  void set_defaultspacecraftsprite(const char* value, size_t size);
+  ::std::string* mutable_defaultspacecraftsprite();
+  ::std::string* release_defaultspacecraftsprite();
+  void set_allocated_defaultspacecraftsprite(::std::string* defaultspacecraftsprite);
+
   // double ambient = 1;
   void clear_ambient();
   static const int kAmbientFieldNumber = 1;
@@ -2421,17 +2450,17 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showspacecraftlabels() const;
   void set_showspacecraftlabels(::google::protobuf::int32 value);
 
-  // int32 showCameraLabels = 18;
-  void clear_showcameralabels();
-  static const int kShowCameraLabelsFieldNumber = 18;
-  ::google::protobuf::int32 showcameralabels() const;
-  void set_showcameralabels(::google::protobuf::int32 value);
-
   // double customGUIScale = 19;
   void clear_customguiscale();
   static const int kCustomGUIScaleFieldNumber = 19;
   double customguiscale() const;
   void set_customguiscale(double value);
+
+  // int32 showCameraLabels = 18;
+  void clear_showcameralabels();
+  static const int kShowCameraLabelsFieldNumber = 18;
+  ::google::protobuf::int32 showcameralabels() const;
+  void set_showcameralabels(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
@@ -2443,6 +2472,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings > actuatorsettings_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel > custommodels_;
   ::google::protobuf::internal::ArenaStringPtr skybox_;
+  ::google::protobuf::internal::ArenaStringPtr defaultspacecraftsprite_;
   double ambient_;
   ::google::protobuf::int32 orbitlineson_;
   ::google::protobuf::int32 spacecraftcson_;
@@ -2452,8 +2482,8 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showcslabels_;
   ::google::protobuf::int32 showcelestialbodylabels_;
   ::google::protobuf::int32 showspacecraftlabels_;
-  ::google::protobuf::int32 showcameralabels_;
   double customguiscale_;
+  ::google::protobuf::int32 showcameralabels_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -3075,6 +3105,59 @@ inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizM
 VizMessage_Spacecraft::startrackers() const {
   // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.Spacecraft.starTrackers)
   return startrackers_;
+}
+
+// string spacecraftSprite = 9;
+inline void VizMessage_Spacecraft::clear_spacecraftsprite() {
+  spacecraftsprite_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& VizMessage_Spacecraft::spacecraftsprite() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
+  return spacecraftsprite_.GetNoArena();
+}
+inline void VizMessage_Spacecraft::set_spacecraftsprite(const ::std::string& value) {
+  
+  spacecraftsprite_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
+}
+#if LANG_CXX11
+inline void VizMessage_Spacecraft::set_spacecraftsprite(::std::string&& value) {
+  
+  spacecraftsprite_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
+}
+#endif
+inline void VizMessage_Spacecraft::set_spacecraftsprite(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  spacecraftsprite_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
+}
+inline void VizMessage_Spacecraft::set_spacecraftsprite(const char* value, size_t size) {
+  
+  spacecraftsprite_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
+}
+inline ::std::string* VizMessage_Spacecraft::mutable_spacecraftsprite() {
+  
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
+  return spacecraftsprite_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* VizMessage_Spacecraft::release_spacecraftsprite() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
+  
+  return spacecraftsprite_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void VizMessage_Spacecraft::set_allocated_spacecraftsprite(::std::string* spacecraftsprite) {
+  if (spacecraftsprite != NULL) {
+    
+  } else {
+    
+  }
+  spacecraftsprite_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), spacecraftsprite);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.Spacecraft.spacecraftSprite)
 }
 
 // -------------------------------------------------------------------
@@ -5226,6 +5309,59 @@ inline void VizMessage_VizSettingsPb::set_customguiscale(double value) {
   
   customguiscale_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.customGUIScale)
+}
+
+// string defaultSpacecraftSprite = 20;
+inline void VizMessage_VizSettingsPb::clear_defaultspacecraftsprite() {
+  defaultspacecraftsprite_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& VizMessage_VizSettingsPb::defaultspacecraftsprite() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+  return defaultspacecraftsprite_.GetNoArena();
+}
+inline void VizMessage_VizSettingsPb::set_defaultspacecraftsprite(const ::std::string& value) {
+  
+  defaultspacecraftsprite_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+}
+#if LANG_CXX11
+inline void VizMessage_VizSettingsPb::set_defaultspacecraftsprite(::std::string&& value) {
+  
+  defaultspacecraftsprite_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+}
+#endif
+inline void VizMessage_VizSettingsPb::set_defaultspacecraftsprite(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  defaultspacecraftsprite_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+}
+inline void VizMessage_VizSettingsPb::set_defaultspacecraftsprite(const char* value, size_t size) {
+  
+  defaultspacecraftsprite_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+}
+inline ::std::string* VizMessage_VizSettingsPb::mutable_defaultspacecraftsprite() {
+  
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+  return defaultspacecraftsprite_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* VizMessage_VizSettingsPb::release_defaultspacecraftsprite() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+  
+  return defaultspacecraftsprite_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void VizMessage_VizSettingsPb::set_allocated_defaultspacecraftsprite(::std::string* defaultspacecraftsprite) {
+  if (defaultspacecraftsprite != NULL) {
+    
+  } else {
+    
+  }
+  defaultspacecraftsprite_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), defaultspacecraftsprite);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
 }
 
 // -------------------------------------------------------------------

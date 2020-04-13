@@ -35,6 +35,7 @@ message VizMessage{
         repeated Thruster thrusters = 6;
         repeated CoarseSunSensor CSS = 7;
         repeated StarTracker starTrackers = 8;
+        string spacecraftSprite = 9; // Set sprite for this spacecraft only through shape name and optional RGB color values [0,1] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 }
 
     message ReactionWheel{
@@ -155,6 +156,7 @@ message VizMessage{
         int32 showSpacecraftLabels = 17; //Value of -1 to use viz default, 0 for false, 1 for true
         int32 showCameraLabels = 18; //Value of -1 to use viz default, 0 for false, 1 for true
         double customGUIScale = 19; //Value of -1 or 0 to use viz default
+        string defaultSpacecraftSprite = 20; // Set sprite for ALL spacecraft through shape name and optional RGB color values [0,1] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
         
     }
 
