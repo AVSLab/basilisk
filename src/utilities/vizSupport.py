@@ -25,6 +25,7 @@
 #
 import sys, os
 from matplotlib import colors
+from matplotlib.colors import is_color_like
 import numpy as np
 from Basilisk.utilities import unitTestSupport
 from Basilisk import __path__
@@ -50,15 +51,54 @@ firstSpacecraftName = ''
 def toRGBA255(color):
     if isinstance(color, basestring):
         # convert color name to 4D array of values with 0-255
-        answer = np.array(colors.to_rgba(color)) * 255
+        if is_color_like(color):
+            answer = np.array(colors.to_rgba(color)) * 255
+        else:
+            print("toRGBA255() was provided unknown color name " + color)
+            exit(1)
     else:
         if not isinstance(color, list):
-            print('ERROR: lineColor must be a 4D array of integers')
+            print('ERROR: color must be a 4D array of integers')
             exit(1)
         if max(color) > 255 or min(color)<0:
-            print('ERROR: lineColor values must be between [0,255]')
+            print('ERROR: color values must be between [0,255]')
             exit(1)
         answer = color
+    return answer
+
+def setSprite(shape, **kwargs):
+    """
+    Helper function to set the sprite shape and optional sprite color.
+    :param shape: Sprite shape, must be either "CIRCLE", "SQUARE", "TRIANGLE", "STAR", or "bskSat"
+    :param kwargs: RGBA color, can be either color name string or a 4D list of [0,255] values
+    :return: string of the protobuffer sprite setting
+    """
+    unitTestSupport.checkMethodKeyword(
+        ['color'],
+        kwargs)
+    shapeList = ["CIRCLE", "SQUARE", "TRIANGLE", "STAR", "bskSat"]
+
+    if not isinstance(shape, basestring):
+        print("In setSprite() the shape argument must be a string using " + str(shapeList))
+        exit(1)
+
+    if (shape not in shapeList):
+        print("The setSprite() method was provided this unknown sprite shape primitive: " + shape)
+        exit(1)
+
+    answer = shape
+
+    if 'color' in kwargs:
+        colorInfo = kwargs['color']
+
+        if shape == "bskSat":
+            print("cannot set a color for the bskSat sprite option")
+            exit(1)
+
+        colorValues = toRGBA255(colorInfo)
+
+        answer += " " + " ".join(map(str, colorValues))
+
     return answer
 
 pointLineList = []
