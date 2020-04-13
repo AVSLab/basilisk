@@ -42,58 +42,57 @@ The following settings can be set directly using::
 
     viz.settings.variableName = value
 
-.. table:: Vizard Simulation Parameters
-    :widths: 10 10 100
+.. list-table:: Vizard Simulation Parameters
+    :widths: 10 10 80
+    :header-rows: 1
 
-    +----------------------------+---------------+------------------------------+
-    | Variable                   | Type          | Description                  |
-    +============================+===============+==============================+
-    | ``ambient``                | [0,8]         | float value to specify the   |
-    |                            |               | ambient Vizard lighting.     |
-    +----------------------------+---------------+------------------------------+
-    | ``orbitLinesOn``           | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the orbit trajectory lines   |
-    +----------------------------+---------------+------------------------------+
-    | ``spacecraftCSon``         | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the spacecraft coordinate    |
-    |                            |               | axes                         |
-    +----------------------------+---------------+------------------------------+
-    | ``planetCSon``             | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the planet coordinate axes   |
-    +----------------------------+---------------+------------------------------+
-    | ``skyBox``                 | String        | Used determine what star     |
-    |                            |               | background should be shown.  |
-    |                            |               | The empty string "" provides |
-    |                            |               | default NASA SVS Starmap,    |
-    |                            |               | “ESO” shows the ESO Milky    |
-    |                            |               | Way skybox, “black” provides |
-    |                            |               | a black background, or the   |
-    |                            |               | user can provide a filepath  |
-    |                            |               | to custom background image   |
-    |                            |               | file.                        |
-    +----------------------------+---------------+------------------------------+
-    | ``viewCameraBoresightHUD`` | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the camera boresight line    |
-    +----------------------------+---------------+------------------------------+
-    | ``viewCameraConeHUD``      | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the camera cone              |
-    +----------------------------+---------------+------------------------------+
-    | ``showCSLabels``           | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the coordinate system labels |
-    +----------------------------+---------------+------------------------------+
-    | ``showCelestialBodyLabels``| (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the celestial body labels    |
-    +----------------------------+---------------+------------------------------+
-    | ``showSpacecraftLabels``   | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the spacecraft labels        |
-    +----------------------------+---------------+------------------------------+
-    | ``showCameraLabels``       | (0,1)         | flag to show (1) or hide (0) |
-    |                            |               | the camera labels            |
-    +----------------------------+---------------+------------------------------+
-    | ``customGUIScale``         | pos. integer  | GUI scaling factor, default  |
-    |                            |               | is -1 which uses Vizard      |
-    |                            |               | default.                     |
-    +----------------------------+---------------+------------------------------+
+    * - Variable
+      - Type
+      - Description
+    * - ``ambient``
+      - [0,8]
+      - float value to specify the ambient Vizard lighting.
+    * - ``orbitLinesOn``
+      - (0,1)
+      - flag to show (1) or hide (0) the orbit trajectory lines
+    * - ``spacecraftCSon``
+      - (0,1)
+      - flag to show (1) or hide (0) the spacecraft coordinate axes
+    * - ``planetCSon``
+      - (0,1)
+      - flag to show (1) or hide (0) the planet coordinate axes
+    * - ``skyBox``
+      - String
+      - Used determine what star background should be shown. The empty string "" provides default NASA SVS Starmap,
+        “ESO” shows the ESO Milky Way skybox, “black” provides a black background, or the user can provide a
+        filepath to custom background image file.
+    * - ``viewCameraBoresightHUD``
+      - (0,1)
+      - flag to show (1) or hide (0) the camera boresight line
+    * - ``viewCameraConeHUD``
+      - (0,1)
+      - flag to show (1) or hide (0) the camera cone
+    * - ``showCSLabels``
+      - (0,1)
+      - flag to show (1) or hide (0) the coordinate system labels
+    * - ``showCelestialBodyLabels``
+      - (0,1)
+      - flag to show (1) or hide (0) the celestial body labels
+    * - ``showSpacecraftLabels``
+      - (0,1)
+      - flag to show (1) or hide (0) the spacecraft labels
+    * - ``showCameraLabels``
+      - (0,1)
+      - flag to show (1) or hide (0) the camera labels
+    * - ``customGUIScale``
+      - pos. integer
+      - GUI scaling factor, default is -1 which uses Vizard default.
+    * - ``defaultSpacecraftSprite``
+      - string
+      - Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255].
+        Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft
+        sprite of the bskSat shape.  Default value is empty yielding a white "CIRCLE".
+        To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -461,3 +460,21 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
     |                           |         |         |              | Standard Shader, 1 for Unity |
     |                           |         |         |              | Standard Shader              |
     +---------------------------+---------+---------+--------------+------------------------------+
+
+
+Specifying the Spacecraft Sprite Representation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In the spacecraft centric view a 3D model is rendered of the spacecraft.  However, in planet and heliocentric views
+the spacecraft is automatically represented as a 2D sprite (circle, triangle, etc.) if more than one
+spacecraft is being simulated.  The default sprite shape for all spacecraft can be set through the
+``defaultSpacecraftSprite`` value discussed above.  To specify a specific sprite shape, and optional color, for a
+specific spacecraft this can be done by setting the string variable ``spacecraftSprite`` inside the
+spacecraft data structure.
+
+The example scenario :ref:`scenarioFormationBasic` illustrates how to simulate multiple spacecraft.  To make
+a spacecraft use a specific sprite representation use::
+
+    scData.spacecraftSprite = vizSupport.setSprite("STAR")
+
+
+
