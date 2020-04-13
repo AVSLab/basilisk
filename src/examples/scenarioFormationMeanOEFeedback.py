@@ -79,6 +79,7 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import vizSupport
 from Basilisk.simulation import sim_model
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
@@ -88,8 +89,13 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+try:
+    from Basilisk.simulation import vizInterface
+    vizFound = True
+except ImportError:
+    vizFound = False
 
-def run(show_plots, useClassicElem):
+def run(show_plots, useClassicElem, numOrbits):
     """
     At the end of the python script you can specify the following example parameters.
 
@@ -103,17 +109,17 @@ def run(show_plots, useClassicElem):
     dynProcessName = "dynProcess"
     dynTaskName = "dynTask"
     dynProcess = scSim.CreateNewProcess(dynProcessName, 2)
-    dynTimeStep = macros.sec2nano(5)
+    dynTimeStep = macros.sec2nano(15.0)
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
 
     # sc
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "scObject"
-    scObject.scStateOutMsgName = "scStateOut"
+    # scObject.scStateOutMsgName = "scStateOut"
     scObject.scMassStateOutMsgName = "scMassStateOut"
     scObject2.ModelTag = "scObject2"
-    scObject2.scStateOutMsgName = "scStateOut2"
+    scObject2.scStateOutMsgName = scObject.scStateOutMsgName + "2"
     scObject2.scMassStateOutMsgName = "scMassStateOut2"
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -163,7 +169,7 @@ def run(show_plots, useClassicElem):
     fswProcessName = "fswProcess"
     fswTaskName = "fswTask"
     fswProcess = scSim.CreateNewProcess(fswProcessName, 1)
-    fswTimeStep = macros.sec2nano(5)
+    fswTimeStep = macros.sec2nano(15.0)
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # meanOEFeedback
@@ -200,7 +206,7 @@ def run(show_plots, useClassicElem):
     # ----- Setup spacecraft initial states ----- #
     mu = gravFactory.gravBodies['earth'].mu
     oe = orbitalMotion.ClassicElements()
-    oe.a = 7000 * 1e3  # meters
+    oe.a = 11000 * 1e3  # meters
     oe.e = 0.4
     oe.i = 10.0 * macros.D2R
     oe.Omega = 00.0 * macros.D2R
@@ -228,12 +234,18 @@ def run(show_plots, useClassicElem):
 
     # ----- log ----- #
     orbit_period = 2*math.pi/math.sqrt(mu/oe.a**3)
-    simulationTime = orbit_period*40
+    simulationTime = orbit_period*numOrbits
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
     samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scObject2.scStateOutMsgName, samplingTime)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # to save the BSK data to a file, uncomment the saveFile line below
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, dynProcessName, gravBodies=gravFactory,
+                                              # saveFile=fileName,
+                                              scName=[scObject.ModelTag, scObject2.ModelTag])
 
     # ----- execute sim ----- #
     scSim.InitializeSimulationAndDiscover()
@@ -336,5 +348,6 @@ def run(show_plots, useClassicElem):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        True   # useClassicElem
+        True,  # useClassicElem
+        40     # number of orbits
     )
