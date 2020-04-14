@@ -47,9 +47,9 @@ edit the templates in /templates and run GenCMessages.py.
         return SpicePlanetStateSimMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        SpicePlanetStateSimMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            SpicePlanetStateSimMsg_C_write(data, self)
         return self
     %}
 };
@@ -74,9 +74,9 @@ edit the templates in /templates and run GenCMessages.py.
         return EclipseSimMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        EclipseSimMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            EclipseSimMsg_C_write(data, self)
         return self
     %}
 };
@@ -101,9 +101,9 @@ edit the templates in /templates and run GenCMessages.py.
         return SCPlusStatesSimMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        SCPlusStatesSimMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            SCPlusStatesSimMsg_C_write(data, self)
         return self
     %}
 };
@@ -128,9 +128,9 @@ edit the templates in /templates and run GenCMessages.py.
         return SCPlusMassPropsSimMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        SCPlusMassPropsSimMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            SCPlusMassPropsSimMsg_C_write(data, self)
         return self
     %}
 };
@@ -155,9 +155,9 @@ edit the templates in /templates and run GenCMessages.py.
         return EpochSimMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        EpochSimMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            EpochSimMsg_C_write(data, self)
         return self
     %}
 };
@@ -182,9 +182,9 @@ edit the templates in /templates and run GenCMessages.py.
         return SpiceTimeSimMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        SpiceTimeSimMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            SpiceTimeSimMsg_C_write(data, self)
         return self
     %}
 };
@@ -209,9 +209,9 @@ edit the templates in /templates and run GenCMessages.py.
         return NavAttIntMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        NavAttIntMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            NavAttIntMsg_C_write(data, self)
         return self
     %}
 };
@@ -236,9 +236,9 @@ edit the templates in /templates and run GenCMessages.py.
         return NavTransIntMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        NavTransIntMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            NavTransIntMsg_C_write(data, self)
         return self
     %}
 };
@@ -263,9 +263,9 @@ edit the templates in /templates and run GenCMessages.py.
         return CmdTorqueBodyIntMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        CmdTorqueBodyIntMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            CmdTorqueBodyIntMsg_C_write(data, self)
         return self
     %}
 };
@@ -290,9 +290,9 @@ edit the templates in /templates and run GenCMessages.py.
         return CmdForceBodyIntMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        CmdForceBodyIntMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            CmdForceBodyIntMsg_C_write(data, self)
         return self
     %}
 };
@@ -317,9 +317,9 @@ edit the templates in /templates and run GenCMessages.py.
         return CmdForceInertialIntMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        CmdForceInertialIntMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            CmdForceInertialIntMsg_C_write(data, self)
         return self
     %}
 };
@@ -344,9 +344,9 @@ edit the templates in /templates and run GenCMessages.py.
         return EphemerisIntMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        EphemerisIntMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            EphemerisIntMsg_C_write(data, self)
         return self
     %}
 };
@@ -371,9 +371,9 @@ edit the templates in /templates and run GenCMessages.py.
         return AttRefFswMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        AttRefFswMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            AttRefFswMsg_C_write(data, self)
         return self
     %}
 };
@@ -398,9 +398,9 @@ edit the templates in /templates and run GenCMessages.py.
         return AttGuidFswMsgLogger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        AttGuidFswMsg_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            AttGuidFswMsg_C_write(data, self)
         return self
     %}
 };

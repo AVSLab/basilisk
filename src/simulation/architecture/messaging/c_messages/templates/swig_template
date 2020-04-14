@@ -19,9 +19,9 @@
         return {type}Logger(self)
 
     def userMessage(self, data=None):
-        VehicleConfigFswMsg_C_claim(self, self)
+        {type}_C_claim(self, self)
         if data:
-            VehicleConfigFswMsg_C_write(data, self)
+            {type}_C_write(data, self)
         return self
     %}}
 }};
