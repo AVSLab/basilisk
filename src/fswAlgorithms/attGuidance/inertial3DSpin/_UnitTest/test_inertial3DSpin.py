@@ -24,16 +24,8 @@
 #   Creation Date:      January 6, 2016
 #
 
-import pytest
-import sys, os, inspect
+
 import numpy as np
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-
-
-
-
-
-
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -42,6 +34,8 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import inertial3DSpin                   # import the module that is to be tested
 from Basilisk.utilities import macros as mc
+from Basilisk.simulation import message
+from Basilisk.simulation.c_messages import AttRefFswMsg_C
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -78,18 +72,13 @@ def subModuleTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = inertial3DSpin.inertial3DSpinConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        inertial3DSpin.Update_inertial3DSpin,
-                                        inertial3DSpin.SelfInit_inertial3DSpin,
-                                        inertial3DSpin.CrossInit_inertial3DSpin)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "inertial3DSpin"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.outputDataName = "outputName"
-    moduleConfig.inputRefName = "inputRefName"
     omega_spin = np.array([1., -1., 0.5]) * mc.D2R
     moduleConfig.omega_spin = omega_spin
     # Create input message and size it because the regular creator of that message
@@ -97,27 +86,20 @@ def subModuleTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = inertial3DSpin.AttRefFswMsg()  # Create a structure for the input message
-    inputMessageSize = RefStateOutData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRefName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+    RefStateOutData = AttRefFswMsg_C().userMessage()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
-                                          inputMessageSize,
-                                          0,
-                                          RefStateOutData)
-
-
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    moduleLog = moduleConfig.attRefOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, moduleLog)
+
+    # connect messages
+    moduleConfig.attRefInMsg.subscribeTo(RefStateOutData)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -131,16 +113,9 @@ def subModuleTestFunction(show_plots):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     #
     # check sigma_BR
     #
-    moduleOutputName = "sigma_RN"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(3)))
-    print('\n sigma RN = ', moduleOutput[:, 1:])
-    # set the filtered output truth states
     trueVector = [
                [0.1, 0.2, 0.3],
                [0.1, 0.2, 0.3],
@@ -152,22 +127,15 @@ def subModuleTestFunction(show_plots):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(moduleLog.sigma_RN[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0] * mc.NANO2SEC) +
-                                "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+                                str(moduleLog.times()[i] * mc.NANO2SEC) + "sec\n")
 
 
     #
     # check omega_RN_N
     #
-    moduleOutputName = "omega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(3)))
-    print('\n omega_RN_N = ', moduleOutput[:, 1:])
-    # set the filtered output truth states
     trueVector = [
         [0.02142849611, 0.01021197571, -0.011041933756],
         [0.02142849611, 0.01021197571, -0.011041933756],
@@ -178,22 +146,14 @@ def subModuleTestFunction(show_plots):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(moduleLog.omega_RN_N[i], trueVector[i] , 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0] * mc.NANO2SEC) +
-                                "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N  unit test at t=" +
+                                str(moduleOutput.times()[i] * mc.NANO2SEC) + "sec\n")
 
     #
     # check domega_RN_N
     #
-    moduleOutputName = "domega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(3)))
-    print('\n domega_RN_N = ', moduleOutput[:, 1:])
-
-    # set the filtered output truth states
     trueVector = [
                [0.0, 0.0, 0.0],
                [0.0, 0.0, 0.0],
@@ -205,12 +165,10 @@ def subModuleTestFunction(show_plots):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(moduleLog.domega_RN_N[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0] * mc.NANO2SEC) +
-                                "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_N unit test at t=" +
+                                str(moduleLog.times()[i] * mc.NANO2SEC) +"sec\n")
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
