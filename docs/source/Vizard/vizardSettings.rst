@@ -91,7 +91,7 @@ The following settings can be set directly using::
       - string
       - Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255].
         Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft
-        sprite of the bskSat shape.  Default value is empty yielding a white "CIRCLE".
+        sprite of the bskSat shape.  Default value is empty yielding a blue "CIRCLE".
         To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``
 
 Setting Actuator GUI Options
