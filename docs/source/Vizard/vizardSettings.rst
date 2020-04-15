@@ -93,6 +93,12 @@ The following settings can be set directly using::
         Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft
         sprite of the bskSat shape.  Default value is empty yielding a blue "CIRCLE".
         To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``
+    * - ``showSpacecraftAsSprites``
+      - (0,1)
+      - Flag to show spacecraft as sprites if their visual size gets too small
+    * - ``showCelestialBodiesAsSprites``
+      - (0,1)
+      - Flag to show celestial bodies as sprites if their visual size gets too small
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

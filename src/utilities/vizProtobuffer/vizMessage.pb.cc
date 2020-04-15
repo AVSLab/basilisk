@@ -594,6 +594,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showcameralabels_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, customguiscale_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, defaultspacecraftsprite_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showspacecraftassprites_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showcelestialbodiesassprites_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -620,7 +622,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 117, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
   { 129, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
   { 142, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 165, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 167, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -664,7 +666,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\201\030\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\310\030\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -722,8 +724,8 @@ void AddDescriptorsImpl() {
       "\tmodelPath\030\001 \001(\t\022\031\n\021simBodiesToModify\030\002 "
       "\003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n"
       "\005scale\030\005 \003(\001\022\031\n\021customTexturePath\030\006 \001(\t\022"
-      "\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\314"
-      "\005\n\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orb"
+      "\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\223"
+      "\006\n\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orb"
       "itLinesOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022"
       "\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132"
       "+.vizProtobufferMessage.VizMessage.Point"
@@ -740,11 +742,12 @@ void AddDescriptorsImpl() {
       "abels\030\017 \001(\005\022\037\n\027showCelestialBodyLabels\030\020"
       " \001(\005\022\034\n\024showSpacecraftLabels\030\021 \001(\005\022\030\n\020sh"
       "owCameraLabels\030\022 \001(\005\022\026\n\016customGUIScale\030\023"
-      " \001(\001\022\037\n\027defaultSpacecraftSprite\030\024 \001(\tb\006p"
-      "roto3"
+      " \001(\001\022\037\n\027defaultSpacecraftSprite\030\024 \001(\t\022\037\n"
+      "\027showSpacecraftAsSprites\030\025 \001(\005\022$\n\034showCe"
+      "lestialBodiesAsSprites\030\026 \001(\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3125);
+      descriptor, 3196);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -7254,6 +7257,8 @@ const int VizMessage_VizSettingsPb::kShowSpacecraftLabelsFieldNumber;
 const int VizMessage_VizSettingsPb::kShowCameraLabelsFieldNumber;
 const int VizMessage_VizSettingsPb::kCustomGUIScaleFieldNumber;
 const int VizMessage_VizSettingsPb::kDefaultSpacecraftSpriteFieldNumber;
+const int VizMessage_VizSettingsPb::kShowSpacecraftAsSpritesFieldNumber;
+const int VizMessage_VizSettingsPb::kShowCelestialBodiesAsSpritesFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
@@ -7283,8 +7288,8 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
     defaultspacecraftsprite_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.defaultspacecraftsprite_);
   }
   ::memcpy(&ambient_, &from.ambient_,
-    static_cast<size_t>(reinterpret_cast<char*>(&showcameralabels_) -
-    reinterpret_cast<char*>(&ambient_)) + sizeof(showcameralabels_));
+    static_cast<size_t>(reinterpret_cast<char*>(&showcelestialbodiesassprites_) -
+    reinterpret_cast<char*>(&ambient_)) + sizeof(showcelestialbodiesassprites_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
 }
 
@@ -7292,8 +7297,8 @@ void VizMessage_VizSettingsPb::SharedCtor() {
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&showcameralabels_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(showcameralabels_));
+      reinterpret_cast<char*>(&showcelestialbodiesassprites_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(showcelestialbodiesassprites_));
   _cached_size_ = 0;
 }
 
@@ -7344,8 +7349,8 @@ void VizMessage_VizSettingsPb::Clear() {
   skybox_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&showcameralabels_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(showcameralabels_));
+      reinterpret_cast<char*>(&showcelestialbodiesassprites_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(showcelestialbodiesassprites_));
   _internal_metadata_.Clear();
 }
 
@@ -7600,6 +7605,34 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
+      // int32 showSpacecraftAsSprites = 21;
+      case 21: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(168u /* 168 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &showspacecraftassprites_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 showCelestialBodiesAsSprites = 22;
+      case 22: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(176u /* 176 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &showcelestialbodiesassprites_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -7736,6 +7769,16 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
       20, this->defaultspacecraftsprite(), output);
   }
 
+  // int32 showSpacecraftAsSprites = 21;
+  if (this->showspacecraftassprites() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(21, this->showspacecraftassprites(), output);
+  }
+
+  // int32 showCelestialBodiesAsSprites = 22;
+  if (this->showcelestialbodiesassprites() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(22, this->showcelestialbodiesassprites(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -7865,6 +7908,16 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         20, this->defaultspacecraftsprite(), target);
+  }
+
+  // int32 showSpacecraftAsSprites = 21;
+  if (this->showspacecraftassprites() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(21, this->showspacecraftassprites(), target);
+  }
+
+  // int32 showCelestialBodiesAsSprites = 22;
+  if (this->showcelestialbodiesassprites() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(22, this->showcelestialbodiesassprites(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -8026,6 +8079,20 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
         this->showcameralabels());
   }
 
+  // int32 showSpacecraftAsSprites = 21;
+  if (this->showspacecraftassprites() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->showspacecraftassprites());
+  }
+
+  // int32 showCelestialBodiesAsSprites = 22;
+  if (this->showcelestialbodiesassprites() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->showcelestialbodiesassprites());
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -8101,6 +8168,12 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   if (from.showcameralabels() != 0) {
     set_showcameralabels(from.showcameralabels());
   }
+  if (from.showspacecraftassprites() != 0) {
+    set_showspacecraftassprites(from.showspacecraftassprites());
+  }
+  if (from.showcelestialbodiesassprites() != 0) {
+    set_showcelestialbodiesassprites(from.showcelestialbodiesassprites());
+  }
 }
 
 void VizMessage_VizSettingsPb::CopyFrom(const ::google::protobuf::Message& from) {
@@ -8145,6 +8218,8 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   swap(showspacecraftlabels_, other->showspacecraftlabels_);
   swap(customguiscale_, other->customguiscale_);
   swap(showcameralabels_, other->showcameralabels_);
+  swap(showspacecraftassprites_, other->showspacecraftassprites_);
+  swap(showcelestialbodiesassprites_, other->showcelestialbodiesassprites_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

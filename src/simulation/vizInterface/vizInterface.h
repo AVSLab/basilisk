@@ -178,6 +178,8 @@ typedef struct {
     int32_t showCameraLabels = -1;                  //!< Value of -1 to use viz default, 0 for false, 1 for true
     double customGUIScale = -1.0;                   //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
     std::string defaultSpacecraftSprite = "";       //!< Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+    int32_t showSpacecraftAsSprites = -1;           //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showCelestialBodiesAsSprites = -1;      //!< Value of -1 to use viz default, 0 for false, 1 for true
 }VizSettings;
 
 

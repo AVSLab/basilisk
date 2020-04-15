@@ -499,6 +499,17 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         // define default spacecraft sprite behavior
         vizSettings->set_defaultspacecraftsprite(this->settings.defaultSpacecraftSprite);
 
+        // define if spacecraft should be shown as sprites
+        vizSettings->set_showspacecraftassprites(this->settings.showSpacecraftAsSprites);
+        if (abs(this->settings.showSpacecraftAsSprites)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftAsSprites);
+        }
+
+        // define if celestial objects should be shown as sprites
+        vizSettings->set_showcelestialbodiesassprites(this->settings.showCelestialBodiesAsSprites);
+        if (abs(this->settings.showCelestialBodiesAsSprites)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodiesAsSprites);
+        }
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {

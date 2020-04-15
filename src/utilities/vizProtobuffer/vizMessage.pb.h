@@ -2462,6 +2462,18 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showcameralabels() const;
   void set_showcameralabels(::google::protobuf::int32 value);
 
+  // int32 showSpacecraftAsSprites = 21;
+  void clear_showspacecraftassprites();
+  static const int kShowSpacecraftAsSpritesFieldNumber = 21;
+  ::google::protobuf::int32 showspacecraftassprites() const;
+  void set_showspacecraftassprites(::google::protobuf::int32 value);
+
+  // int32 showCelestialBodiesAsSprites = 22;
+  void clear_showcelestialbodiesassprites();
+  static const int kShowCelestialBodiesAsSpritesFieldNumber = 22;
+  ::google::protobuf::int32 showcelestialbodiesassprites() const;
+  void set_showcelestialbodiesassprites(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
 
@@ -2484,6 +2496,8 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showspacecraftlabels_;
   double customguiscale_;
   ::google::protobuf::int32 showcameralabels_;
+  ::google::protobuf::int32 showspacecraftassprites_;
+  ::google::protobuf::int32 showcelestialbodiesassprites_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -5362,6 +5376,34 @@ inline void VizMessage_VizSettingsPb::set_allocated_defaultspacecraftsprite(::st
   }
   defaultspacecraftsprite_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), defaultspacecraftsprite);
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultSpacecraftSprite)
+}
+
+// int32 showSpacecraftAsSprites = 21;
+inline void VizMessage_VizSettingsPb::clear_showspacecraftassprites() {
+  showspacecraftassprites_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showspacecraftassprites() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showSpacecraftAsSprites)
+  return showspacecraftassprites_;
+}
+inline void VizMessage_VizSettingsPb::set_showspacecraftassprites(::google::protobuf::int32 value) {
+  
+  showspacecraftassprites_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showSpacecraftAsSprites)
+}
+
+// int32 showCelestialBodiesAsSprites = 22;
+inline void VizMessage_VizSettingsPb::clear_showcelestialbodiesassprites() {
+  showcelestialbodiesassprites_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showcelestialbodiesassprites() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showCelestialBodiesAsSprites)
+  return showcelestialbodiesassprites_;
+}
+inline void VizMessage_VizSettingsPb::set_showcelestialbodiesassprites(::google::protobuf::int32 value) {
+  
+  showcelestialbodiesassprites_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showCelestialBodiesAsSprites)
 }
 
 // -------------------------------------------------------------------
