@@ -110,41 +110,47 @@ helper method in Python. An example is::
 
 The following table includes the keyword options for this method.
 
-.. table:: GUI Parameter Options
-    :widths: 10 10 20 100
 
-    +---------------------------+-------------+---------------+-----------------------+
-    | Variable                  | Type        | Required      | Description           |
-    +===========================+=============+===============+=======================+
-    | ``viewThrusterPanel``     | Boolean     | No            | Show the thruster     |
-    |                           |             |               | panel                 |
-    +---------------------------+-------------+---------------+-----------------------+
-    | ``viewThrusterHUD``       | Boolean     | No            | Show the thruster     |
-    |                           |             |               | particle streams      |
-    +---------------------------+-------------+---------------+-----------------------+
-    | ``showThrusterLabels``    | Boolean     | No            | Show the thruster     |
-    |                           |             |               | labels                |
-    +---------------------------+-------------+---------------+-----------------------+
-    | ``viewRWPanel``           | Boolean     | No            | Show the reaction     |
-    |                           |             |               | wheel panel           |
-    +---------------------------+-------------+---------------+-----------------------+
-    | ``viewRWHUD``             | Boolean     | No            | Show the reaction     |
-    |                           |             |               | wheel disks           |
-    |                           |             |               | configuration         |
-    |                           |             |               | outside the           |
-    |                           |             |               | spacecraft            |
-    +---------------------------+-------------+---------------+-----------------------+
-    | ``showRWLabels``          | Boolean     | No            | Show the reaction     |
-    |                           |             |               | wheel labels          |
-    +---------------------------+-------------+---------------+-----------------------+
-    | ``spacecraftName``        | String      | No, sc name   | Specify which         |
-    |                           |             | default       | spacecraft should     |
-    |                           |             |               | show actuator         |
-    |                           |             |               | information. If not   |
-    |                           |             |               | provided then the     |
-    |                           |             |               | ``viz.spacecraftName``|
-    |                           |             |               | is used.              |
-    +---------------------------+-------------+---------------+-----------------------+
+    viz.settings.variableName = value
+
+.. list-table:: GUI Parameter Options
+    :widths: 10 10 20 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Required
+      - Description
+    * - ``viewThrusterPanel``
+      - Boolean
+      - No
+      - Show the thruster panel
+    * - ``viewThrusterHUD``
+      - Boolean
+      - No
+      - Show the thruster particle streams
+    * - ``showThrusterLabels``
+      - Boolean
+      - No
+      - Show the thruster labels
+    * - ``viewRWPanel``
+      - Boolean
+      - No
+      - Show the reaction wheel panel
+    * - ``viewRWHUD``
+      - Boolean
+      - No
+      - Show the reaction wheel disks configuration outside the spacecraft
+    * - ``showRWLabels``
+      - Boolean
+      - No
+      - Show the reaction wheel labels
+    * - ``spacecraftName``
+      - string
+      - No, sc name default
+      - Specify which spacecraft should show actuator information. If not provided then
+        the ``viz.spacecraftName`` is used.
+
 
 Defining a Pointing Line
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,26 +176,27 @@ into the required set of numerical values.
 Each pointing line message contains the three variables listed in the
 next table.
 
-.. table:: Pointing Line Parameter Options
+.. list-table:: Pointing Line Parameter Options
     :widths: 10 10 10 100
+    :header-rows: 1
 
-    +-----------------------+---------------+----------+-------------------+
-    | Variable              | Type          | Required | Description       |
-    +=======================+===============+==========+===================+
-    | ``fromBodyName``      | string        | No, sc   | contains the name |
-    |                       |               | name     | of the            |
-    |                       |               | default  | originating body  |
-    +-----------------------+---------------+----------+-------------------+
-    | ``toBodyName``        | string        | Yes      | contains the name |
-    |                       |               |          | of the body to    |
-    |                       |               |          | point towards     |
-    +-----------------------+---------------+----------+-------------------+
-    | ``lineColor``         | int(4)        | Yes      | color name or     |
-    |                       |               |          | array on integer  |
-    |                       |               |          | values specifying |
-    |                       |               |          | the RGBA values   |
-    |                       |               |          | between 0 to 255  |
-    +-----------------------+---------------+----------+-------------------+
+    * - Variable
+      - Type
+      - Required
+      - Description
+    * - ``fromBodyName``
+      - string
+      - No, sc name default
+      - contains the name of the originating body
+    * - ``toBodyName``
+      - string
+      - Yes
+      - contains the name of the body to point towards
+    * - ``lineColor``
+      - int(4)
+      - Yes
+      - color name or array on integer values specifying the RGBA values between 0 to 255
+
 
 Defining Keep In/Out Cones
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,64 +216,61 @@ using the helper function ``createConeInOut``:
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
 
-.. table:: Keep In/Out Cones Parameter Options
+.. list-table:: Keep In/Out Cones Parameter Options
     :widths: 20 10 10 10 100
+    :header-rows: 1
 
-    +-------------------+----------+---------+--------------+-------------+
-    | Variable          | Type     | Units   | Required     | Description |
-    +===================+==========+=========+==============+=============+
-    | ``isKeepIn``      | bool     |         | Yes          | make cone   |
-    |                   |          |         |              | keep in     |
-    |                   |          |         |              | (True) or   |
-    |                   |          |         |              | keep out    |
-    |                   |          |         |              | (False)     |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``fromBodyName``  | string   |         | No, sc name  | contains    |
-    |                   |          |         | default      | the name of |
-    |                   |          |         |              | the         |
-    |                   |          |         |              | originating |
-    |                   |          |         |              | body        |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``toBodyName``    | string   |         | Yes          | contains    |
-    |                   |          |         |              | the name of |
-    |                   |          |         |              | the body to |
-    |                   |          |         |              | point       |
-    |                   |          |         |              | towards     |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``lineColor``     | int(4)   |         | Yes          | color name  |
-    |                   |          |         |              | or array on |
-    |                   |          |         |              | integer     |
-    |                   |          |         |              | values      |
-    |                   |          |         |              | specifying  |
-    |                   |          |         |              | the RGBA    |
-    |                   |          |         |              | values      |
-    |                   |          |         |              | between 0   |
-    |                   |          |         |              | to 255      |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``position_B``    | float(3) | m       | No, (0,0,0)  | position of |
-    |                   |          |         | default      | the cone    |
-    |                   |          |         |              | vertex      |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``normalVector_B``| float(3) |         | Yes          | normal axis |
-    |                   |          |         |              | of the cone |
-    |                   |          |         |              | in body     |
-    |                   |          |         |              | frame       |
-    |                   |          |         |              | components  |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``incidenceAngle``| float    | rad     | Yes          | angle of    |
-    |                   |          |         |              | the cone    |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``coneHeight``    | float    | m       | Yes          | height of   |
-    |                   |          |         |              | the cone    |
-    +-------------------+----------+---------+--------------+-------------+
-    | ``coneName``      | string   |         | No           | cone label  |
-    |                   |          |         |              | name, if    |
-    |                   |          |         |              | unspecified |
-    |                   |          |         |              | ,           |
-    |                   |          |         |              | viz will    |
-    |                   |          |         |              | autogenerate|
-    |                   |          |         |              | name        |
-    +-------------------+----------+---------+--------------+-------------+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``isKeepIn``
+      - bool
+      -
+      - Yes
+      - make cone keep in (True) or keep out (False)
+    * - ``fromBodyName``
+      - string
+      -
+      - No, sc name default
+      - contains the name of the originating body
+    * - ``toBodyName``
+      - string
+      -
+      - Yes
+      - contains the name of the body to point towards
+    * - ``lineColor``
+      - int(4)
+      -
+      - Yes
+      - color name or array on integer values specifying the RGBA  values between 0 to 255
+    * - ``position_B``
+      - float(3)
+      - m
+      - No, (0,0,0) default
+      - position of the cone vertex
+    * - ``normalVector_B``
+      - float(3)
+      - m
+      - Yes
+      - normal axis of the cone in body frame components
+    * - ``incidenceAngle``
+      - float
+      - rad
+      - Yes
+      - angle of the cone
+    * - ``incidenceAngle``
+      - float
+      - rad
+      - Yes
+      - height of the cone
+    * - ``coneName``
+      - string
+      -
+      - No
+      - cone label name, if unspecified viz will autogenerate name
+
 
 Defining the Vizard Camera View Panels
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -288,45 +292,52 @@ they can be attached to different spacecraft through the ``spacecraftName`` argu
 The following table illustrates
 the arguments for the ``createStandardCamera`` method.
 
-.. table:: Standard Camera View Panel Parameter Options
+.. list-table:: Standard Camera View Panel Parameter Options
     :widths: 15 10 10 15 50
+    :header-rows: 1
 
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
-    | Variable              | Type    | Units   | Required     | Description                                |
-    +=======================+=========+=========+==============+============================================+
-    | ``spacecraftName``    | string  |         | No, sc name  | name of the spacecraft                     |
-    |                       |         |         | default      | with respect to which the camera is shown  |
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
-    | ``setMode``           | int     |         | No, default  | 0 -> body targeting, 1 -> pointing vector  |
-    |                       |         |         | is 1         |                                            |
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
-    | ``setView``           | int     |         | No, default  | 0 -> Nadir, 1 -> Orbit Normal, 2 ->        |
-    |                       |         |         | is 0         | Along Track (default to nadir). This       |
-    |                       |         |         |              | is a setting for body targeting mode.      |
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
-    | ``bodyTarget``        | string  |         | No, default  | Name of body camera should point to. This  |
-    |                       |         |         | to first     | is a setting for body targeting mode.      |
-    |                       |         |         | celestial    |                                            |
-    |                       |         |         | body in      |                                            |
-    |                       |         |         | messages     |                                            |
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
-    | ``fieldOfView``       | float   | rad     | No, default  | camera edge-to-edge field of view in the   |
-    |                       |         |         |              | camera vertical ``y`` axis, to use the     |
-    |                       |         |         | -1           | Vizard default set it to -1                |
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
-    | ``pointingVector_B``  | float(3)|         | No, default  | Body relative unit vector. This is a       |
-    |                       |         |         | is           | setting for pointing vector mode           |
-    |                       |         |         | (1, 0, 0)    |                                            |
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
-    | ``position_B``        | float(3)|         | No, default  | If populated,                              |
-    |                       |         |         | is           | sets camera  position relative             |
-    |                       |         |         | (0, 0, 0)    | to parent body coordinate frame            |
-    |                       |         |         | for auto     | in meters using B frame components.        |
-    |                       |         |         | placement    | If unpopulated camera is positioned        |
-    |                       |         |         |              | automatically along camera view direction  |
-    |                       |         |         |              | outside of parent body's mesh to prevent   |
-    |                       |         |         |              | obstruction of view.                       |
-    +-----------------------+---------+---------+--------------+--------------------------------------------+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``spacecraftName``
+      - string
+      -
+      - No, sc name default
+      - name of the spacecraft with respect to which the camera is shown
+    * - ``setMode``
+      - int
+      -
+      - No, default is 1
+      - 0 -> body targeting, 1 -> pointing vector
+    * - ``setView``
+      - int
+      -
+      - No, default is 0
+      - 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
+    * - ``bodyTarget``
+      - string
+      -
+      - No, default to first celestial body in messages
+      - Name of body camera should point to. This is a setting for body targeting mode.
+    * - ``fieldOfView``
+      - float
+      - rad
+      - No, default is -1
+      - camera edge-to-edge field of view in the camera vertical ``y`` axis, to use the Vizard default set it to -1
+    * - ``pointingVector_B``
+      - float(3)
+      -
+      - No, default is (0,0,0) for auto placement
+      - Name of body camera should point to. This is a setting for pointing vector mode
+    * - ``position_B``
+      - float(3)
+      - m
+      - No, default is (0,0,0) for auto placement
+      - If populated, ets camera  position relative to parent body coordinate frame in meters using B frame
+        components.  If unpopulated camera is positioned automatically along camera view direction outside
+        of parent body's mesh to prevent obstruction of view.
 
 .. image:: /_images/static/vizard-ImgCustomCam.jpg
    :align: center
@@ -355,51 +366,57 @@ Dr. Teil's `dissertation <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.p
 The following tale illustrates the arguments for the
 ``createCameraConfigMsg`` method.
 
-.. table:: ``createCameraConfigMsg`` Parameter Options
+.. list-table:: ``createCameraConfigMsg`` Parameter Options
     :widths: 15 10 10 15 100
+    :header-rows: 1
 
-    +-------------------+---------+---------+--------------+------------------------+
-    | Variable          | Type    | Units   | Required     | Description            |
-    +===================+=========+=========+==============+========================+
-    | ``cameraID``      | Int     |         | Yes          | ID of the Vizard       |
-    |                   |         |         |              | camera                 |
-    +-------------------+---------+---------+--------------+------------------------+
-    | ``parentName``    | string  |         | No, sc name  | name of the spacecraft |
-    |                   |         |         | default      | with respect to which  |
-    |                   |         |         |              | the camera is shown    |
-    +-------------------+---------+---------+--------------+------------------------+
-    | ``fieldOfView``   | Float   | rad     | Yes          | edge-to-edge field of  |
-    |                   |         |         |              | view in the camera     |
-    |                   |         |         |              | vertical ``y`` axis    |
-    +-------------------+---------+---------+--------------+------------------------+
-    | ``resolution``    | Int(2)  |         | Yes          | image sensor pixels    |
-    +-------------------+---------+---------+--------------+------------------------+
-    | ``renderRate``    | Float   | s       | Yes          | time between image     |
-    |                   |         |         |              | grabs. 0 turns this    |
-    |                   |         |         |              | off (default).         |
-    +-------------------+---------+---------+--------------+------------------------+
-    | ``cameraPos_B``   | Float(3)| m       | Yes          | camera  location       |
-    |                   |         |         |              | relative to body frame |
-    |                   |         |         |              | in B frame components  |
-    +-------------------+---------+---------+--------------+------------------------+
-    | ``sigma_CB``      | Float(3)|         | Yes          | camera orientation     |
-    |                   |         |         |              | relative to the body   |
-    |                   |         |         |              | frame in MRPs          |
-    +-------------------+---------+---------+--------------+------------------------+
-    | ``skyBox``        | String  |         | No           | Used to determine      |
-    |                   |         |         |              | what star background   |
-    |                   |         |         |              | should be shown. The   |
-    |                   |         |         |              | empty string ""        |
-    |                   |         |         |              | provides default NASA  |
-    |                   |         |         |              | SVS Starmap, “ESO”     |
-    |                   |         |         |              | shows the ESO Milky Way|
-    |                   |         |         |              | skybox, “black”        |
-    |                   |         |         |              | provides a black       |
-    |                   |         |         |              | background, or the user|
-    |                   |         |         |              | can provide a filepath |
-    |                   |         |         |              | to custom  background  |
-    |                   |         |         |              | image file.            |
-    +-------------------+---------+---------+--------------+------------------------+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``cameraID``
+      - int
+      -
+      - Yes
+      - ID of the Vizard camera
+    * - ``parentName``
+      - string
+      -
+      - No, sc name default
+      - name of the spacecraft with respect to which the camera is shown
+    * - ``fieldOfView``
+      - float
+      - rad
+      - yes
+      - edge-to-edge field of view in the camera vertical ``y`` axis
+    * - ``resolution``
+      - int(2)
+      -
+      - yes
+      - image sensor pixels
+    * - ``renderRate``
+      - float
+      -
+      - yes
+      - time between image grabs. 0 turns this off (default).
+    * - ``cameraPos_B``
+      - float(3)
+      - m
+      - yes
+      - camera  location relative to body frame in B frame components
+    * - ``sigma_CB``
+      - float(3)
+      -
+      - yes
+      - camera orientation relative to the body frame in MRPs
+    * - ``skyBox``
+      - string
+      -
+      - No
+      - Used to determine what star background should be shown. The empty string "" provides default NASA
+        SVS Starmap, “ESO”  shows the ESO Milky Way skybox, “black” provides a black background, or the
+        user can provide a filepath to custom  background image file.
 
 
 Defining the Custom Spacecraft Shape model
@@ -425,47 +442,57 @@ This functionality can be controlled by using the ‘createCustomModel’ helper
 
 The following table illustrates the arguments for the ``createCustomModel`` method.
 
-.. table:: Custom Space Object OBJ Import Parameter Options
+.. list-table:: Custom Space Object OBJ Import Parameter Options
     :widths: 15 10 10 15 50
+    :header-rows: 1
 
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | Variable                  | Type    | Units   | Required     | Description                  |
-    +===========================+=========+=========+==============+==============================+
-    | ``modelPath``             | string  |         | Yes          | Path to model obj -OR-       |
-    |                           |         |         |              | "CUBE", "CYLINDER", or       |
-    |                           |         |         |              | "SPHERE" to use a primitive  |
-    |                           |         |         |              | shape                        |
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | ``simBodiesToModify``     | string  |         | No, default  | Which bodies in scene to     |
-    |                           |         |         | is `bsk-Sat` | replace with this model, use |
-    |                           |         |         |              | "ALL_SPACECRAFT" to apply    |
-    |                           |         |         |              | custom model to all          |
-    |                           |         |         |              | spacecraft in simulation     |
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | ``offset``                | float(3)|  m      | No, default  | offset to use to draw the    |
-    |                           |         |         | is (0,0,0)   | model                        |
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | ``rotation``              | float(3)|  rad    | No, default  | 3-2-1 Euler angles to rotate |
-    |                           |         |         | is (0,0,0)   | CAD about z, y, x axes       |
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | ``scale``                 | float(3)|         | No, default  | desired model scale in       |
-    |                           |         |         | is (1,1,1)   | x, y, z in spacecraft CS     |
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | ``customTexturePath``     | string  |         | No           | Path to texture to apply to  |
-    |                           |         |         |              | model (note that a custom    |
-    |                           |         |         |              | model's .mtl will be         |
-    |                           |         |         |              | automatically imported with  |
-    |                           |         |         |              | its textures during custom   |
-    |                           |         |         |              | model import)                |
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | ``normalMapPath``         | string  |         | No           | Path to the normal map for   |
-    |                           |         |         |              | the customTexture            |
-    +---------------------------+---------+---------+--------------+------------------------------+
-    | ``shader``                | int     |         | No, default  | Value of -1 to use viz       |
-    |                           |         |         | is -1        | default, 0 for Unity Specular|
-    |                           |         |         |              | Standard Shader, 1 for Unity |
-    |                           |         |         |              | Standard Shader              |
-    +---------------------------+---------+---------+--------------+------------------------------+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``modelPath``
+      - string
+      -
+      - Yes
+      - Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+    * - ``simBodiesToModify``
+      - string
+      -
+      - No, default is `bsk-Sat`
+      - Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" to apply custom model to
+        all spacecraft in simulation
+    * - ``offset``
+      - float(3)
+      - m
+      - No, default is (0,0,0)
+      - offset to use to draw the model
+    * - ``rotation``
+      - float(3)
+      - rad
+      - No, default is (0,0,0)
+      - 3-2-1 Euler angles to rotate CAD about z, y, x axes
+    * - ``scale``
+      - float(3)
+      -
+      - No, default is (1,1,1)
+      - desired model scale in x, y, z in spacecraft CS
+    * - ``customTexturePath``
+      - String
+      -
+      - No
+      - Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with
+        its textures during custom model import)
+    * - ``normalMapPath``
+      - string
+      -
+      - No
+      - Path to the normal map for the customTexture
+    * - ``shader``
+      - int
+      -
+      - No, default is -1
+      - Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
 
 
 Specifying the Spacecraft Sprite Representation
