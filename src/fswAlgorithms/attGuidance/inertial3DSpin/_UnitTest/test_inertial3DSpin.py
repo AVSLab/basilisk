@@ -88,11 +88,11 @@ def subModuleTestFunction(show_plots):
     #
     RefStateOutData = AttRefFswMsg_C().userMessage()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
-    RefStateOutData.sigma_RN = sigma_R0N
+    RefStateOutData.payload.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.0, 0.0, 0.0])
-    RefStateOutData.omega_RN_N = omega_R0N_N
+    RefStateOutData.payload.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
-    RefStateOutData.domega_RN_N = domega_R0N_N
+    RefStateOutData.payload.domega_RN_N = domega_R0N_N
 
     # Setup logging on the test module output message so that we get all the writes to it
     moduleLog = moduleConfig.attRefOutMsg.log()
