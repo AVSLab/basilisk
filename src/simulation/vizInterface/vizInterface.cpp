@@ -50,20 +50,6 @@ VizInterface::VizInterface()
 
     this->planetNames = {};
 
-    // turn off all Viz settings by default
-    this->settings.ambient = -1.0;
-    this->settings.orbitLinesOn = -1;
-    this->settings.spacecraftCSon = -1;
-    this->settings.planetCSon = -1;
-    this->settings.skyBox = "";
-    this->settings.viewCameraBoresightHUD = -1;
-    this->settings.viewCameraConeHUD = -1;
-    this->settings.showCelestialBodyLabels = -1;
-    this->settings.showSpacecraftLabels = -1;
-    this->settings.showCameraLabels = -1;
-    this->settings.showCSLabels = -1;
-    this->settings.customGUIScale = -1.0;
-
     this->firstPass = 0;
     return;
 }
