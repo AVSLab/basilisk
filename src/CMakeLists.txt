@@ -36,9 +36,11 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
 
 
-option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
-option(USE_OPENCV "Include modules which use OpenCV" OFF)
-option(USE_ZMQ "Include modules which use ZMQ" ON)
+#option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
+#option(USE_OPENCV "Include modules which use OpenCV" OFF)
+#option(USE_ZMQ "Include modules which use ZMQ" ON)
+option(BUILD_VIZINTERFACE "Build VizInterface Module" ON)
+option(BUILD_OPNAV "Build OpNav Modules" OFF)
 option(USE_PYTHON3 "Build For Python 3" ON)
 
 #TODO: make custom CMakeLists.txt for each of these files and do this setup (~lines 42-101) within those modules specifically.
