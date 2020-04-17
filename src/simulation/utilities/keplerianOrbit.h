@@ -20,7 +20,7 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <../dynamics/_GeneralModuleFiles/gravityEffector.h>
+#include "../dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include <utilities/orbitalMotion.h>
 
 /*! \addtogroup Sim Utility Group
