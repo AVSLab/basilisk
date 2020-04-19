@@ -158,9 +158,9 @@ typedef struct {
 typedef struct {
     double      ambient = -1.0;                     /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
                                                              A value of -1 means it is not set. */
-    int32_t     orbitLinesOn = -1;                  //!< toogle for showing orbit lines (-1, 0, 1)
-    int32_t     spacecraftCSon = -1;                //!< toogle for showing spacecraft CS (-1, 0, 1)
-    int32_t     planetCSon = -1;                    //!< toogle for showing planet CS (-1, 0, 1)
+    int32_t     orbitLinesOn = 0;                  //!< toogle for showing orbit lines with values -1 (off), 0 (default), 1 (on)
+    int32_t     spacecraftCSon = 0;                //!< toogle for showing spacecraft CS with values -1 (off), 0 (default), 1 (on)
+    int32_t     planetCSon = 0;                    //!< toogle for showing planet CS with values -1 (off), 0 (default), 1 (on)
     std::vector<PointLine> pointLineList;           //!< vector of powerLine structures
     std::vector<KeepOutInCone> coneList;            //!< vector of keep in/out cones
     std::vector<StdCameraSettings> stdCameraList;   //!< vector of spacecraft cameras
@@ -170,16 +170,16 @@ typedef struct {
                                      ``ESO`` use ESO Milky Way skybox, ``black`` provides a black background,
                                      or provide a filepath to custom background */
     bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,
-    int32_t viewCameraBoresightHUD = -1;            //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t viewCameraConeHUD = -1;                 //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showCSLabels = -1;                      //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showCelestialBodyLabels = -1;           //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showSpacecraftLabels = -1;              //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showCameraLabels = -1;                  //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t viewCameraBoresightHUD = 0;            //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t viewCameraConeHUD = 0;                 //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCSLabels = 0;                      //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCelestialBodyLabels = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showSpacecraftLabels = 0;              //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCameraLabels = 0;                  //!< Value of 0 to use viz default, -1 for false, 1 for true
     double customGUIScale = -1.0;                   //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
     std::string defaultSpacecraftSprite = "";       //!< Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
-    int32_t showSpacecraftAsSprites = -1;           //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showCelestialBodiesAsSprites = -1;      //!< Value of -1 to use viz default, 0 for false, 1 for true
+    int32_t showSpacecraftAsSprites = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCelestialBodiesAsSprites = 0;      //!< Value of 0 to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 

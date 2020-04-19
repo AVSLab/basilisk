@@ -42,6 +42,9 @@ The following settings can be set directly using::
 
     viz.settings.variableName = value
 
+Note that for setting flags 1 means turn on, -1 means turn off, and a setting of 0 tells Vizard to use its own
+default setting for that behavior.
+
 .. list-table:: Vizard Simulation Parameters
     :widths: 10 10 80
     :header-rows: 1
@@ -53,37 +56,37 @@ The following settings can be set directly using::
       - [0,8]
       - float value to specify the ambient Vizard lighting.
     * - ``orbitLinesOn``
-      - (0,1)
-      - flag to show (1) or hide (0) the orbit trajectory lines
+      - (-1,1)
+      - flag to show (1) or hide (-1) the orbit trajectory lines
     * - ``spacecraftCSon``
-      - (0,1)
-      - flag to show (1) or hide (0) the spacecraft coordinate axes
+      - (-1,1)
+      - flag to show (1) or hide (-1) the spacecraft coordinate axes
     * - ``planetCSon``
-      - (0,1)
-      - flag to show (1) or hide (0) the planet coordinate axes
+      - (-1,1)
+      - flag to show (1) or hide (-1) the planet coordinate axes
     * - ``skyBox``
       - String
       - Used determine what star background should be shown. The empty string "" provides default NASA SVS Starmap,
         “ESO” shows the ESO Milky Way skybox, “black” provides a black background, or the user can provide a
         filepath to custom background image file.
     * - ``viewCameraBoresightHUD``
-      - (0,1)
-      - flag to show (1) or hide (0) the camera boresight line
+      - (-1,1)
+      - flag to show (1) or hide (-1) the camera boresight line
     * - ``viewCameraConeHUD``
-      - (0,1)
-      - flag to show (1) or hide (0) the camera cone
+      - (-1,1)
+      - flag to show (1) or hide (-1) the camera cone
     * - ``showCSLabels``
-      - (0,1)
-      - flag to show (1) or hide (0) the coordinate system labels
+      - (-1,1)
+      - flag to show (1) or hide (-) the coordinate system labels
     * - ``showCelestialBodyLabels``
-      - (0,1)
-      - flag to show (1) or hide (0) the celestial body labels
+      - (-1,1)
+      - flag to show (1) or hide (-1) the celestial body labels
     * - ``showSpacecraftLabels``
-      - (0,1)
-      - flag to show (1) or hide (0) the spacecraft labels
+      - (-1,1)
+      - flag to show (1) or hide (-1) the spacecraft labels
     * - ``showCameraLabels``
-      - (0,1)
-      - flag to show (1) or hide (0) the camera labels
+      - (-1,1)
+      - flag to show (1) or hide (-1) the camera labels
     * - ``customGUIScale``
       - pos. integer
       - GUI scaling factor, default is -1 which uses Vizard default.
@@ -94,10 +97,10 @@ The following settings can be set directly using::
         sprite of the bskSat shape.  Default value is empty yielding a white ``CIRCLE``.
         To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``
     * - ``showSpacecraftAsSprites``
-      - (0,1)
+      - (-1,1)
       - Flag to show spacecraft as sprites if their visual size gets too small
     * - ``showCelestialBodiesAsSprites``
-      - (0,1)
+      - (-1,1)
       - Flag to show celestial bodies as sprites if their visual size gets too small
 
 Setting Actuator GUI Options
