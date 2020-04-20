@@ -414,7 +414,6 @@ elseif(APPLE)
 else()
 	set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice.a)
 	set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 	set(CMAKE_INSTALL_RPATH "\$ORIGIN/../../")
 endif()
 
