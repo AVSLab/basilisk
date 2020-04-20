@@ -24,6 +24,14 @@ Version |release|
 -----------------
 - updated :ref:`imu_sensor` to initialize all class variables in the constructor
 - fixed a data frame issue in :ref:`groundLocation`
+- first iteration of the CMake refactor completed. The refactor updates the project CMakeList to
+
+    1) conform with more modern CMake practices,
+    2) allow developers to include custom dependencies on the module level with Custom.cmake files,
+    3) refactors existing SWIG interface files to generate significantly smaller _wrap.c(xx) files,
+    4) generates single libraries for GeneralModuleFiles rather than re-including, re-wraping, and
+       recompiling those files at the module level. The latter two changes provide significant
+       improvements in build time.
 
 Version 1.7.5
 -------------
@@ -39,8 +47,8 @@ Version 1.7.5
 
 Version 1.7.4
 -------------
-- hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that Windows expected,
-  but Unix systems didn't need
+- hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that
+  Windows expected, but Unix systems didn't need
 
 Version 1.7.3
 -------------
