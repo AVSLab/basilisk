@@ -1,10 +1,7 @@
 find_package(opencv CONFIG REQUIRED)
 
-set(CUSTOM_CMAKE_BUILD_TARGETS opencv::opencv)
-
+list(APPEND CUSTOM_DEPENDENCIES opencv::opencv)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 if(APPLE)
-  link_libraries("-framework OpenCL")
+  list(APPEND CUSTOM_DEPENDENCIES "-framework OpenCL")
 endif()
-
-

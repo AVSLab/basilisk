@@ -29,61 +29,17 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/cmake")
+
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 
-
-
-#option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" ON)
-#option(USE_OPENCV "Include modules which use OpenCV" OFF)
-#option(USE_ZMQ "Include modules which use ZMQ" ON)
 option(BUILD_VIZINTERFACE "Build VizInterface Module" ON)
 option(BUILD_OPNAV "Build OpNav Modules" OFF)
 option(USE_PYTHON3 "Build For Python 3" ON)
-
-#TODO: make custom CMakeLists.txt for each of these files and do this setup (~lines 42-101) within those modules specifically.
-set(requires_protobuff_modules "vizInterface")
-set(requires_zmq_modules "vizInterface")
-set(requires_opencv_modules "houghCircles")
-list(APPEND requires_opencv_modules "limbFinding")
-list(APPEND requires_opencv_modules "camera")
-set(requires_vulkan_modules "dynamics/SphericalHarmonicsSolvers/sphericalHarmonicsGPU/sphericalHarmonicsGPU.i"  "dynamics/SphericalHarmonicsSolvers/sphericalHarmonicsCPU/sphericalHarmonicsCPU.i")
-
-
-find_package(Eigen3 CONFIG REQUIRED)
-if(Eigen3_FOUND)
-  message(STATUS "Eigen3 Include Dir ${Eigen3_INCLUDE_DIR_RELEASE}" )
-  get_target_property(VAR Eigen3::Eigen3 INTERFACE_INCLUDE_DIRECTORIES)
-  message(STATUS "Eigen3 Target Include Dir ${VAR}" )
-  link_libraries(Eigen3::Eigen3)
-endif()
-
-
-if(USE_PROTOBUFFERS)
-   #! PROTO-BUFFERS
-   #find_package(protobuf CONFIG REQUIRED)
-   message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
-   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-endif()
-
-if(USE_OPENCV)
-   #! OPEN_CV
-   find_package(opencv CONFIG REQUIRED)
-   message(STATUS "Using OpenCV ${opencv_VERSION}")
-   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-   if(APPLE)
-     link_libraries("-framework OpenCL")
-   endif()
-endif()
-
-if(USE_ZMQ)
-   #! USE_ZMQ
-   find_package(cppzmq CONFIG REQUIRED)
-   message(STATUS "Using ZMQ ${cppzmq_VERSION}")
-   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-endif()
 
 
 # HACK: Create Release and Debug directories for conan
@@ -256,19 +212,19 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
         get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
 
-        set(CUSTOM_CMAKE_BUILD_TARGETS)
-        set(CUSTOM_BUILD_HANDLED)
-        #message(STATUS "Looking for custom build step for: ${PARENT_DIR}/Custom.cmake" )
+        # Collect any external dependencies
+        set(CUSTOM_DEPENDENCIES)
+        set(CUSTOM_DEPENDENCIES_HANDLED)
         if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
           MESSAGE(STATUS "Including Custom Build Steps for: ${TARGET_FILE}")
           include("${PARENT_DIR}/Custom.cmake")
         endif()
-        if(CUSTOM_BUILD_HANDLED)
+        if(CUSTOM_DEPENDENCIES_HANDLED)
           continue()
         endif()
 
 
-                # Grab the target source files
+        # Grab the target source files
         file(GLOB C_FILES
                 "${PARENT_DIR}/*.c"
                 "${PARENT_DIR}/*.cpp"
@@ -283,7 +239,6 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         endif()
 
         # Add Target
-        #message(STATUS ${TARGET_NAME})
         swig_add_library(${TARGET_NAME}
                            LANGUAGE "python"
                            TYPE MODULE
@@ -295,9 +250,8 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
                            OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") # generated .py file
 
 
-        # TODO: Need to make custom CMakeLists.txt for each of these modules.
         # Add any custom user defined targets to the build aka external library
-        foreach(CUSTOM_LIB ${CUSTOM_CMAKE_BUILD_TARGETS})
+        foreach(CUSTOM_LIB ${CUSTOM_DEPENDENCIES})
           target_link_libraries(${TARGET_NAME} ${CUSTOM_LIB})
         endforeach()
 
@@ -355,6 +309,13 @@ else()
 	find_package(PythonInterp 2.7 REQUIRED)
 	find_package(PythonLibs 2.7 REQUIRED)
 endif()
+
+#TODO: Remove the global link-libraries call
+find_package(Eigen3 CONFIG REQUIRED)
+get_target_property(VAR Eigen3::Eigen3 INTERFACE_INCLUDE_DIRECTORIES)
+link_libraries(Eigen3::Eigen3)
+
+
 
 ############################################################################################
 OPTION(USE_COVERAGE "GCOV code coverage analysis"      OFF)
