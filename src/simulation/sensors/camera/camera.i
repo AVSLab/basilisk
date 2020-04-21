@@ -30,8 +30,8 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_string.i"
 %include "sys_model.h"
 %include "camera.h"
-%include "../../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-%include "../../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
+%include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+%include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
 GEN_SIZEOF(CameraImageMsg)
 GEN_SIZEOF(CameraConfigMsg)
 
