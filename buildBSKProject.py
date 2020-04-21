@@ -33,8 +33,6 @@ parser.add_argument("--buildVizInterface", help="build vizInterface module", def
 parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
 args = parser.parse_args()
 
-print(args.buildType)
-
 # set the build destination folder
 if args.python2:
     buildFolderName = 'dist'
@@ -86,14 +84,8 @@ os.system(conanCmdString)
 
 # run cmake
 cmakeCmdString = 'cmake ../src -G ' + buildTarget
-if args.buildOpNav:
-    cmakeCmdString += ' -DBUILD_OPNAV=ON'
-else:
-    cmakeCmdString += ' -DBUILD_OPNAV=OFF'
-if args.buildVizInterface:
-    cmakeCmdString += ' -DBUILD_VIZINTERFACE=ON'
-else:
-    cmakeCmdString += ' -DBUILD_VIZINTERFACE=OFF'
+cmakeCmdString += ' -DBUILD_OPNAV=' + str(args.buildOpNav)
+cmakeCmdString += ' -DBUILD_VIZINTERFACE=' + str(args.buildVizInterface)
 if args.python2:
     cmakeCmdString += ' -DUSE_PYTHON3=OFF'
 cmakeCmdString += ' -DCMAKE_BUILD_TYPE=' + args.buildType
