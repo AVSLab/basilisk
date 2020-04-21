@@ -44,7 +44,7 @@ r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
     - Vizard downloaded and app path set properly (in src/examples/OpNavScenarios/BSK_masters)
-    - Basilisk built with ZMQ, protobuffers, and OpenCV (build with USE_*** options set to ON)
+    - Basilisk built with ZMQ, protobuffers, and OpenCV 
 """
 
 import BSK_OpNav
