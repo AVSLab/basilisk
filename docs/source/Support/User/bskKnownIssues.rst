@@ -4,10 +4,74 @@
 Basilisk Known Issues
 =====================
 
-
 Version |release|
 -----------------
-- None
+- The new build system provides many speed improvements in doing a clean or partial build, but some small changes are
+  required to update BSK python simulation scripts to be compatible with the new build system.
+  These changes include:
+
+  - In BSK python simulation scripts, BSK modules should be included using the indirect method.  Thus::
+
+        from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate
+
+    becomes::
+
+        from Basilisk.fswAlgorithms import fswModuleTemplate
+
+  - The ``pyswice`` package is now imported from ``topLevelModule``.  Thus::
+
+        from Basilisk import pyswice
+
+    becomes::
+
+        from Basilisk.topLevelModules import pyswice
+
+  - To include ``spkRead`` function replace::
+
+        from Basilisk.pyswice.pyswice_spk_utilities import spkRead
+
+    with::
+
+        from Basilisk.topLevelModules.pyswice import spkRead
+
+  - To include ``loadGravFromFileToList`` function replace::
+
+        from Basilisk.simulation.gravityEffector.gravCoeffOps import loadGravFromFileToList
+
+    with::
+
+        from Basilisk.simulation.gravityEffector import loadGravFromFileToList
+
+- If you have written custom BSK modules outside of the BSK distribution, the swig ``*.i`` files and some code files
+  will need to be adjusted as follows:
+
+  - To include the ``swig_common_model.i`` file, replace::
+
+        %include "swig_common_model.i"
+
+    with::
+
+        %pythoncode %{
+        from Basilisk.simulation.swig_common_model import *
+        %}
+
+  - If Eigen variables are being swig'd, then import::
+
+        %include "swig_eigen.i"
+
+  - To swig C arrays of variables, then import::
+
+        %include "swig_conly_data.i"
+
+  - To provide support of C++ ``std::string`` `types <http://www.swig.org/Doc1.3/Library.html#Library_nn14>`__, then import::
+
+        %include "std_string.i"
+
+  - To provide support of C++ ``std::vector`` `class <http://www.swig.org/Doc1.3/Library.html#Library_nn15>`__, then import::
+
+        %include "std_vector.i"
+
+
 
 Version 1.7.5
 -----------------
