@@ -26,6 +26,8 @@ cmake-build*/*
 *.gz
 *.toc
 src/cmake-build-debug/*
+supportData/*/__init__.py
+src/utilities/vizProtobuffer/__init__.py
 
 *.fdb_latexmk
 *.fls
