@@ -75,13 +75,11 @@ class BasiliskConan(ConanFile):
         self.build_folder = root + "/dist"
         if self.options.python3:
             self.build_folder += "3"  
-        self.install_folder = self.build_folder + "/conan"
 
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator) 
         cmake.definitions["USE_PYTHON3"] = self.options.python3
         cmake.definitions["BUILD_OPNAV"] = self.options.opnav_packages
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface_packages
-        cmake.set_cmake_flags = "--no-warn-unused-cli"
         cmake.parallel = True
         cmake.configure()
 
