@@ -4,6 +4,12 @@ from conans import ConanFile, CMake, tools
 import shutil
 import argparse
 
+# define BSK module option list (option name and default value)
+bskModuleOptions = {
+    "opNav": False,
+    "vizInterface": True
+}
+
 class BasiliskConan(ConanFile):
     name = "Basilisk"
     homepage = "http://hanspeterschaub.info/basilisk"
@@ -16,18 +22,18 @@ class BasiliskConan(ConanFile):
     options = { "clean": [True, False],
                 "python3": [True, False], 
                 "generateIdeProject": [True, False],
-                "buildProject": [True, False], 
-                "opNav": [True, False],
-                "vizInterface": [True, False]}
+                "buildProject": [True, False]}
 
     default_options = { "clean": False,
                         "python3": True,
                         "generateIdeProject": True,
-                        "buildProject": False,
-                        "opNav": False,
-                        "vizInterface": True}
+                        "buildProject": False}
 
-    generator=None 
+    for opt, value in bskModuleOptions.items():
+        options.update({opt: [True, False]})
+        default_options.update({opt: value})
+
+    generator = None
 
     def requirements(self):
         if self.options.opNav:
@@ -110,11 +116,10 @@ if __name__ == "__main__":
     parser.add_argument("--generator", help="cmake generator")
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
     parser.add_argument("--buildProject", help="flag to compile the code", action="store_true")
-    parser.add_argument("--opNav", help="build modules for OpNav behavior", default=False,
-                        type=lambda x: (str(x).lower() == 'true'))
-    parser.add_argument("--vizInterface", help="build vizInterface module", default=True,
-                        type=lambda x: (str(x).lower() == 'true'))
     parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
+    for opt, value in bskModuleOptions.items():
+        parser.add_argument("--" + opt, help="build modules for " + opt + " behavior", default=value,
+                            type=lambda x: (str(x).lower() == 'true'))
     args = parser.parse_args()
 
     # set the build destination folder
@@ -129,14 +134,14 @@ if __name__ == "__main__":
     conanCmdString = 'conan install . --build=missing'
     conanCmdString += ' -s build_type=' + str(args.buildType)
     conanCmdString += ' -if ' + buildFolderName
-    conanCmdString += ' -o opNav=' + str(args.opNav)
-    conanCmdString += ' -o vizInterface=' + str(args.vizInterface)
     if args.generator:
         conanCmdString += ' -g ' + str(args.generator) + ' -o generateIdeProject=False'
     if args.clean:
         conanCmdString += ' -o clean=True'
     if args.buildProject:
         conanCmdString += ' -o buildProject=True'
+    for opt, value in bskModuleOptions.items():
+        conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
     print("Running this conan command:")
     print(conanCmdString)
     os.system(conanCmdString)
