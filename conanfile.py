@@ -11,24 +11,19 @@ class BasiliskConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     build_policy = 'missing'
 
-    options = { "python2": [True, False], 
+    options = { "python3": [True, False], 
                 "generateProject": [True, False], 
                 "buildProject": [True, False], 
                 "opnav_packages": [True, False], 
                 "vizInterface_packages": [True, False]}
 
-    default_options = { "python2": False,
+    default_options = { "python3": True,
                         "generateProject": True,
                         "buildProject": False,
                         "opnav_packages": False, 
                         "vizInterface_packages": True}
 
-    generator=None # Autoselect fastest generator
-
-    root = os.path.abspath(os.path.curdir)
-    build_folder = root + "/dist3"
-    source_folder = root + "/src"
-
+    generator=None 
 
     def requirements(self):
         if self.options.opnav_packages: 
@@ -47,36 +42,41 @@ class BasiliskConan(ConanFile):
         if self.settings.build_type == "Debug":
             print("Build type is set to Debug. Performance will be significantly lower.")
 
+        # Install additional opencv methods
         if self.options.opnav_packages:
             self.options['opencv'].contrib = True
 
         if self.options.generateProject:
+            # Select default generator supplied to cmake based on os
             if self.settings.os == "Macos":
                 self.generator = "Xcode"
             elif self.settings.os == "Windows":
                 self.generator = "visual_studio_multi"
             else:
                 print("No default generator for Linux. Specify your own using the `-g GENERATOR` flag during conan install")
-                self.generator = None
 
     def build(self):
+        root = os.path.abspath(os.path.curdir)
 
-        if self.options.python2 == True:
-            self.build_folder = self.root + "/dist"
-        else:
-            self.build_folder = self.root + "/dist3"        
-        self.source_folder = self.root + "/src"
+        self.source_folder = root + "/src"
+        self.build_folder = root + "/dist"
+        if self.options.python3:
+            self.build_folder += "3"  
         self.install_folder = self.build_folder + "/conan"
 
-        cmake = CMake(self,set_cmake_flags=True, generator=self.generator) 
+        cmake = CMake(self, set_cmake_flags=True, generator=self.generator) 
+        cmake.definitions["USE_PYTHON3"] = self.options.python3
         cmake.definitions["BUILD_OPNAV"] = self.options.opnav_packages
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface_packages
+        cmake.parallel = True
         cmake.configure()
 
-        if self.options.buildProject: # Need to build through xcode to support multithreading. 
+        if self.options.buildProject: 
             start = datetime.now()
-            print("CPU Count: " +str(tools.cpu_count()))
-            cmake.build()
+            if self.generator == "Xcode":
+                cmake.build(['--', '-jobs', str(tools.cpu_count()), '-parallelizeTargets']) #Xcode multithreaded needs specialized arguments
+            else:
+                cmake.build()
             print("Total Build Time: "+ str(datetime.now()-start))
         return
 
