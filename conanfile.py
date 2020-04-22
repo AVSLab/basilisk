@@ -120,11 +120,12 @@ if __name__ == "__main__":
     else:
         buildFolderName = 'dist'
         print("Building for Python 2 (depreciated)")
+    buildFolderName += '/conan'
 
     # run conan install
     conanCmdString = 'conan install . --build=missing'
     conanCmdString += ' -s build_type=' + str(args.buildType)
-    conanCmdString += ' -if ' + buildFolderName + '/conan'
+    conanCmdString += ' -if ' + buildFolderName
     conanCmdString += ' -o opnav_packages=' + str(args.opNav)
     conanCmdString += ' -o vizInterface_packages=' + str(args.vizInterface)
     if args.generator:
