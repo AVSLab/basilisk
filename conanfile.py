@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 from conans import ConanFile, CMake, tools
 import shutil
+import argparse
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
@@ -96,3 +97,48 @@ class BasiliskConan(ConanFile):
         #self.run("python3 -m pip3 install --user numpy")
         #self.run("python3 -m pip3 install --user pandas")
 
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
+    # define the optional arguments
+    parser.add_argument("--python3", help="build for Python 3", default=True, type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument("--generator", help="cmake generator")
+    parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
+    parser.add_argument("--buildProject", help="flag to compile the code", action="store_true")
+    parser.add_argument("--opNav", help="build modules for OpNav behavior", default=False,
+                        type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument("--vizInterface", help="build vizInterface module", default=True,
+                        type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
+    args = parser.parse_args()
+
+    # set the build destination folder
+    if args.python3:
+        buildFolderName = 'dist3'
+    else:
+        buildFolderName = 'dist'
+        print("Building for Python 2 (depreciated)")
+
+    # run conan install
+    conanCmdString = 'conan install . --build=missing'
+    conanCmdString += ' -s build_type=' + str(args.buildType)
+    conanCmdString += ' -if ' + buildFolderName + '/conan'
+    conanCmdString += ' -o opnav_packages=' + str(args.opNav)
+    conanCmdString += ' -o vizInterface_packages=' + str(args.vizInterface)
+    if args.generator:
+        conanCmdString += ' -g ' + str(args.generator) + ' -o generateProject=False'
+    if args.clean:
+        conanCmdString += ' -o cleanDist=True'
+    if args.buildProject:
+        conanCmdString += ' -o buildProject=True'
+    print("Running this conan command:")
+    print(conanCmdString)
+    os.system(conanCmdString)
+
+    # run conan build
+    cmakeCmdString = 'conan build . -if ' + buildFolderName + '/conan'
+    print("Running cmake:")
+    print(cmakeCmdString)
+    os.system(cmakeCmdString)
