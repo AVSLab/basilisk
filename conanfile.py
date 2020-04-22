@@ -7,7 +7,8 @@ import argparse
 # define BSK module option list (option name and default value)
 bskModuleOptions = {
     "opNav": False,
-    "vizInterface": True
+    "vizInterface": True,
+    "python3": True
 }
 
 class BasiliskConan(ConanFile):
@@ -20,12 +21,10 @@ class BasiliskConan(ConanFile):
     build_policy = "missing"
 
     options = { "clean": [True, False],
-                "python3": [True, False], 
                 "generateIdeProject": [True, False],
                 "buildProject": [True, False]}
 
     default_options = { "clean": False,
-                        "python3": True,
                         "generateIdeProject": True,
                         "buildProject": False}
 
@@ -112,7 +111,6 @@ class BasiliskConan(ConanFile):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
     # define the optional arguments
-    parser.add_argument("--python3", help="build for Python 3", default=True, type=lambda x: (str(x).lower() == 'true'))
     parser.add_argument("--generator", help="cmake generator")
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
     parser.add_argument("--buildProject", help="flag to compile the code", action="store_true")
