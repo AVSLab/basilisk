@@ -77,6 +77,7 @@ class BasiliskConan(ConanFile):
         cmake.definitions["USE_PYTHON3"] = self.options.python3
         cmake.definitions["BUILD_OPNAV"] = self.options.opnav_packages
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface_packages
+        cmake.set_cmake_flags = "--no-warn-unused-cli"
         cmake.parallel = True
         cmake.configure()
 
