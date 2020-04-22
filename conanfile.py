@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from conans import ConanFile, CMake, tools
+import shutil
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
@@ -43,11 +44,12 @@ class BasiliskConan(ConanFile):
     def configure(self):
         if self.options.cleanDist:
             root = os.path.abspath(os.path.curdir)
-            if os.path.exists(root + "/dist3"):
-                os.removedirs(root + "/dist3")
-            if os.path.exists(root + "/dist"):
-                os.removedirs(root + "/dist")
-        
+            distPath = root + "/dist"
+            if self.options.python3:
+                distPath += "3"
+            if os.path.exists(distPath):
+                shutil.rmtree(distPath)
+
         if self.settings.build_type == "Debug":
             print("Build type is set to Debug. Performance will be significantly lower.")
 
