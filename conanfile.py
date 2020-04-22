@@ -64,10 +64,13 @@ class BasiliskConan(ConanFile):
             # Select default generator supplied to cmake based on os
             if self.settings.os == "Macos":
                 self.generator = "Xcode"
+            elif self.settings.os == "Linux":
+                self.generator = "Make"
             elif self.settings.os == "Windows":
                 self.generator = "visual_studio_multi"
             else:
-                print("No default generator for Linux. Specify your own using the `-g GENERATOR` flag during conan install")
+                print("OS not detected, conan auto-determines best generator. ")
+                print("Specify your own using the `-g GENERATOR` flag during conan install")
 
     def build(self):
         root = os.path.abspath(os.path.curdir)
@@ -139,7 +142,7 @@ if __name__ == "__main__":
     os.system(conanCmdString)
 
     # run conan build
-    cmakeCmdString = 'conan build . -if ' + buildFolderName + '/conan'
+    cmakeCmdString = 'conan build . -if ' + buildFolderName
     print("Running cmake:")
     print(cmakeCmdString)
     os.system(cmakeCmdString)
