@@ -9,15 +9,17 @@ class BasiliskConan(ConanFile):
     generators = "cmake_find_package_multi"
     requires = "eigen/3.3.7@conan/stable"
     settings = "os", "compiler", "build_type", "arch"
-    build_policy = 'missing'
+    build_policy = "missing"
 
-    options = { "python3": [True, False], 
+    options = { "cleanDist" : [True, False],
+                "python3": [True, False], 
                 "generateProject": [True, False], 
                 "buildProject": [True, False], 
                 "opnav_packages": [True, False], 
                 "vizInterface_packages": [True, False]}
 
-    default_options = { "python3": True,
+    default_options = { "cleanDist": False,
+                        "python3": True,
                         "generateProject": True,
                         "buildProject": False,
                         "opnav_packages": False, 
@@ -39,6 +41,13 @@ class BasiliskConan(ConanFile):
 
 
     def configure(self):
+        if self.options.cleanDist:
+            root = os.path.abspath(os.path.curdir)
+            if os.path.exists(root + "/dist3"):
+                os.removedirs(root + "/dist3")
+            if os.path.exists(root + "/dist"):
+                os.removedirs(root + "/dist")
+        
         if self.settings.build_type == "Debug":
             print("Build type is set to Debug. Performance will be significantly lower.")
 
