@@ -43,6 +43,8 @@ class BasiliskConan(ConanFile):
 
     def configure(self):
         if self.options.cleanDist:
+            # clean the distribution folder to start fresh
+            self.options.cleanDist = False
             root = os.path.abspath(os.path.curdir)
             distPath = root + "/dist"
             if self.options.python3:
