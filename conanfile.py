@@ -13,39 +13,39 @@ class BasiliskConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
 
-    options = { "cleanDist" : [True, False],
+    options = { "clean": [True, False],
                 "python3": [True, False], 
-                "generateProject": [True, False], 
+                "generateIdeProject": [True, False],
                 "buildProject": [True, False], 
-                "opnav_packages": [True, False], 
-                "vizInterface_packages": [True, False]}
+                "opNav": [True, False],
+                "vizInterface": [True, False]}
 
-    default_options = { "cleanDist": False,
+    default_options = { "clean": False,
                         "python3": True,
-                        "generateProject": True,
+                        "generateIdeProject": True,
                         "buildProject": False,
-                        "opnav_packages": False, 
-                        "vizInterface_packages": True}
+                        "opNav": False,
+                        "vizInterface": True}
 
     generator=None 
 
     def requirements(self):
-        if self.options.opnav_packages: 
-            self.options.vizInterface_packages = True
+        if self.options.opNav:
+            self.options.vizInterface = True
             self.requires.add("opencv/4.1.1@conan/stable")
             self.requires.add("zlib/1.2.11@conan/stable")
             self.requires.add("bzip2/1.0.8@conan/stable")
 
-        if self.options.vizInterface_packages: 
+        if self.options.vizInterface:
             self.requires.add("libsodium/1.0.18@bincrafters/stable")
             self.requires.add("protobuf/3.5.2@bincrafters/stable")
             self.requires.add("cppzmq/4.3.0@bincrafters/stable")            
 
 
     def configure(self):
-        if self.options.cleanDist:
+        if self.options.clean:
             # clean the distribution folder to start fresh
-            self.options.cleanDist = False
+            self.options.clean = False
             root = os.path.abspath(os.path.curdir)
             distPath = root + "/dist"
             if self.options.python3:
@@ -57,10 +57,10 @@ class BasiliskConan(ConanFile):
             print("Build type is set to Debug. Performance will be significantly lower.")
 
         # Install additional opencv methods
-        if self.options.opnav_packages:
+        if self.options.opNav:
             self.options['opencv'].contrib = True
 
-        if self.options.generateProject:
+        if self.options.generateIdeProject:
             # Select default generator supplied to cmake based on os
             if self.settings.os == "Macos":
                 self.generator = "Xcode"
@@ -82,8 +82,8 @@ class BasiliskConan(ConanFile):
 
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator) 
         cmake.definitions["USE_PYTHON3"] = self.options.python3
-        cmake.definitions["BUILD_OPNAV"] = self.options.opnav_packages
-        cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface_packages
+        cmake.definitions["BUILD_OPNAV"] = self.options.opNav
+        cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.parallel = True
         cmake.configure()
 
@@ -129,12 +129,12 @@ if __name__ == "__main__":
     conanCmdString = 'conan install . --build=missing'
     conanCmdString += ' -s build_type=' + str(args.buildType)
     conanCmdString += ' -if ' + buildFolderName
-    conanCmdString += ' -o opnav_packages=' + str(args.opNav)
-    conanCmdString += ' -o vizInterface_packages=' + str(args.vizInterface)
+    conanCmdString += ' -o opNav=' + str(args.opNav)
+    conanCmdString += ' -o vizInterface=' + str(args.vizInterface)
     if args.generator:
-        conanCmdString += ' -g ' + str(args.generator) + ' -o generateProject=False'
+        conanCmdString += ' -g ' + str(args.generator) + ' -o generateIdeProject=False'
     if args.clean:
-        conanCmdString += ' -o cleanDist=True'
+        conanCmdString += ' -o clean=True'
     if args.buildProject:
         conanCmdString += ' -o buildProject=True'
     print("Running this conan command:")
