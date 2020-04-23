@@ -206,7 +206,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     find_package(SWIG REQUIRED)
     include(UseSWIG REQUIRED)
-    find_package(PythonLibs 3 REQUIRED)
+    if(USE_PYTHON3)
+        find_package(PythonLibs 3 REQUIRED)
+    else()
+        find_package(PythonLibs 2.7 REQUIRED)
+    endif()
 
     foreach(TARGET_FILE ${TARGET_LIST})
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
