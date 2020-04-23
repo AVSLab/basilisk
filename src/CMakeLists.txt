@@ -560,6 +560,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
 
 #TODO: Iterate through all dist directories and add __init__.py's where they don't exist
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(GLOB_RECURSE DIST_DIRECTORIES LIST_DIRECTORIES true "${CMAKE_BINARY_DIR}/Basilisk/*" )
 foreach(DIR ${DIST_DIRECTORIES})
     if(IS_DIRECTORY ${DIR})
