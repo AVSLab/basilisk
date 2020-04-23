@@ -36,12 +36,11 @@ class BasiliskConan(ConanFile):
 
     def requirements(self):
         if self.options.opNav:
-            self.options.vizInterface = True
             self.requires.add("opencv/4.1.1@conan/stable")
             self.requires.add("zlib/1.2.11@conan/stable")
             self.requires.add("bzip2/1.0.8@conan/stable")
 
-        if self.options.vizInterface:
+        if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18@bincrafters/stable")
             self.requires.add("protobuf/3.5.2@bincrafters/stable")
             self.requires.add("cppzmq/4.3.0@bincrafters/stable")            
@@ -93,7 +92,8 @@ class BasiliskConan(ConanFile):
         if self.options.buildProject: 
             start = datetime.now()
             if self.generator == "Xcode":
-                cmake.build(['--', '-jobs', str(tools.cpu_count()), '-parallelizeTargets']) #Xcode multithreaded needs specialized arguments
+                # Xcode multithreaded needs specialized arguments
+                cmake.build(['--', '-jobs', str(tools.cpu_count()), '-parallelizeTargets'])
             else:
                 cmake.build()
             print("Total Build Time: "+ str(datetime.now()-start))
