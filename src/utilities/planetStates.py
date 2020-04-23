@@ -20,7 +20,7 @@
 
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk.topLevelModules.pyswice import spkRead
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.topLevelModules import pyswice
 
 from Basilisk import __path__

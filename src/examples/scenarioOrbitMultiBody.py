@@ -114,7 +114,7 @@ from Basilisk.utilities import vizSupport
 
 # Used to get the location of supporting data.
 from Basilisk.topLevelModules import pyswice
-from Basilisk.topLevelModules.pyswice import spkRead
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk import __path__
 bskPath = __path__[0]
 

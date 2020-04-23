@@ -26,13 +26,18 @@ Version |release|
 
         from Basilisk.topLevelModules import pyswice
 
-  - To include ``spkRead`` function replace::
+  - The support file ``pyswice_ck_utilities.py`` has become a regular suppoort file in ``src/utiliites``.  Thus,
+    it is imported using::
+
+        import Basilisk.pyswice.pyswice_ck_utilities
+
+  - Similarly, ``pyswice_spk_utilities.py`` has moved to the utilities folder. To include ``spkRead`` function replace::
 
         from Basilisk.pyswice.pyswice_spk_utilities import spkRead
 
     with::
 
-        from Basilisk.topLevelModules.pyswice import spkRead
+        from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
   - To include ``loadGravFromFileToList`` function replace::
 

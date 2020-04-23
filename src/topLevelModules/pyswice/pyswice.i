@@ -69,5 +69,3 @@ typedef int SpiceBoolean;
 
 %include "../../libs/cspice/include/SpiceZpr.h"
 
-%pythoncode "pyswice_ck_utilities.py"
-%pythoncode "pyswice_spk_utilities.py"

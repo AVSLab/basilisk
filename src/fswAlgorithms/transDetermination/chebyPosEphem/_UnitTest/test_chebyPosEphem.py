@@ -33,7 +33,7 @@ from Basilisk.fswAlgorithms import cheby_pos_ephem
 from Basilisk.simulation import sim_model
 import ctypes
 from Basilisk.topLevelModules import pyswice
-from Basilisk.topLevelModules.pyswice import spkRead
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 
 orbitPosAccuracy = 1.0

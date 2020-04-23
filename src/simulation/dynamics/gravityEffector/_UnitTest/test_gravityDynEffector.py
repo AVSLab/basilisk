@@ -33,6 +33,7 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
 from Basilisk.topLevelModules import pyswice
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import stateArchitecture
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import simMessages
@@ -346,13 +347,13 @@ def singleGravityBody(show_plots):
     SpiceObject.UpdateState(0)
 
     for i in range(2*3600):
-        stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
+        stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
         etPrev =etCurr - 2.0
         stringPrev = pyswice.et2utc_c(etPrev, 'C', 4, 1024, "Yo")
-        statePrev = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringPrev, 'J2000', 'EARTH')
+        statePrev = spkRead('HUBBLE SPACE TELESCOPE', stringPrev, 'J2000', 'EARTH')
         etNext =etCurr + 2.0
         stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
-        stateNext = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
+        stateNext = spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         normVec.append(np.linalg.norm(stateOut[0:3]))
 

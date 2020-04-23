@@ -26,7 +26,7 @@ from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import oe_state_ephem
 from Basilisk.simulation import sim_model
 from Basilisk.topLevelModules import pyswice
-from Basilisk.topLevelModules.pyswice import spkRead
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 from Basilisk.utilities import unitTestSupport
 
