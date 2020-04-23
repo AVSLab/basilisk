@@ -69,8 +69,6 @@ class BasiliskConan(ConanFile):
             # Select default generator supplied to cmake based on os
             if self.settings.os == "Macos":
                 self.generator = "Xcode"
-            elif self.settings.os == "Linux":
-                self.generator = "Make"
             elif self.settings.os == "Windows":
                 self.generator = "visual_studio_multi"
             else:
