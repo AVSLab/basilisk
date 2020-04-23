@@ -17,7 +17,6 @@ Basilisk Release Notes
     - GPU based methods to evaluate solar radiation pressure forces and torques
     - atmospheric drag evaluation using multi-faceted spacecraft model
     - upgrading :ref:`vizInterface` to support showing info panels and HUD multiple spacecraft with thruster
-    - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
 Version |release|
@@ -32,6 +31,10 @@ Version |release|
     4) generates single libraries for GeneralModuleFiles rather than re-including, re-wraping, and
        recompiling those files at the module level. The latter two changes provide significant
        improvements in build time.
+
+- The need for folder module ``__init__.py`` files has been removed.  If local python support files should be
+  included in the swig'd module, they can be included in the module ``*.i`` file using something like
+  ``%pythoncode "parseSRPLookup.py"``.
 
 Version 1.7.5
 -------------

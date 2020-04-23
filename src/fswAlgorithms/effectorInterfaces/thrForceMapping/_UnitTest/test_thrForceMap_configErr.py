@@ -36,7 +36,6 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.simulation import simFswInterfaceMessages
 
-from .Support import Results_thrForceMapping
 
 import os, inspect
 import numpy as np
@@ -284,7 +283,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for dv thrusters (only two axes controllable)
 
 
-    results = Results_thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
+    results = thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
                                          vehicleConfigOut.CoM_B, rcsLocationData,
                                          rcsDirectionData, moduleConfig.thrForceSign,
                                          moduleConfig.thrForcMag, moduleConfig.angErrThresh,
