@@ -98,12 +98,12 @@ typedef struct {
 typedef struct {
     std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
                                          If not provided then the ``viz.spacecraftName`` is used. */
-    int viewThrusterPanel=-1;       //!< [bool] should thruster panel illustration be shown
-    int viewThrusterHUD=-1;         //!< [bool] should thruster Heads-Up-Display be shown
-    int viewRWPanel=-1;             //!< [bool] should reaction wheel panel illustration be shown
-    int viewRWHUD=-1;               //!< [bool] should reaction wheel Heads-Up-Display be shown
-    int showThrusterLabels=-1;      //!< [bool] should the thruster labels be shown
-    int showRWLabels=-1;            //!< [bool] should the reaction wheel labels be shown
+    int viewThrusterPanel=0;       //!< [bool] should thruster panel illustration be shown, -1 (off), 0 (default), 1 (on)
+    int viewThrusterHUD=0;         //!< [bool] should thruster Heads-Up-Display be shown, -1 (off), 0 (default), 1 (on)
+    int viewRWPanel=0;             //!< [bool] should reaction wheel panel illustration be shown, -1 (off), 0 (default), 1 (on)
+    int viewRWHUD=0;               //!< [bool] should reaction wheel Heads-Up-Display be shown, -1 (off), 0 (default), 1 (on)
+    int showThrusterLabels=0;      //!< [bool] should the thruster labels be shown, -1 (off), 0 (default), 1 (on)
+    int showRWLabels=0;            //!< [bool] should the reaction wheel labels be shown, -1 (off), 0 (default), 1 (on)
 }ActuatorGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
