@@ -104,8 +104,3 @@ following::
                             [(1, False),
                              (2, False)])
 
-Protobuffers
-------------
-
-To use Google Protobuffers in a C++ context by building the source, please follow the following documentation
-`here <https://github.com/google/protobuf/blob/master/src/>`__. To use Google Protobuffers as a pre-built library, download the release from `here <https://github.com/google/protobuf/releases>`__.
