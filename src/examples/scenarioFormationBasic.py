@@ -20,7 +20,7 @@ r"""
 Overview
 --------
 
-Demonstrates a basic method to simulate 3 satellites with 6-DOF motion and how to visualize the simlation
+Demonstrates a basic method to simulate 3 satellites with 6-DOF motion and how to visualize the simulation
 data in :ref:`Vizard <vizard>`.  One satellite is a 3-axis attitude controlled
 satellite, while the second satellite is a tumbling space debris object.  The controlled satellite simulation components
 are taken from :ref:`scenarioAttitudeFeedbackRW`. The purpose of this script is to show an explicit method to

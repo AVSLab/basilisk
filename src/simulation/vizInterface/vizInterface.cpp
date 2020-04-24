@@ -50,20 +50,6 @@ VizInterface::VizInterface()
 
     this->planetNames = {};
 
-    // turn off all Viz settings by default
-    this->settings.ambient = -1.0;
-    this->settings.orbitLinesOn = -1;
-    this->settings.spacecraftCSon = -1;
-    this->settings.planetCSon = -1;
-    this->settings.skyBox = "";
-    this->settings.viewCameraBoresightHUD = -1;
-    this->settings.viewCameraConeHUD = -1;
-    this->settings.showCelestialBodyLabels = -1;
-    this->settings.showSpacecraftLabels = -1;
-    this->settings.showCameraLabels = -1;
-    this->settings.showCSLabels = -1;
-    this->settings.customGUIScale = -1.0;
-
     this->firstPass = 0;
     return;
 }
@@ -510,6 +496,20 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of %d was received.", this->settings.customGUIScale);
         }
 
+        // define default spacecraft sprite behavior
+        vizSettings->set_defaultspacecraftsprite(this->settings.defaultSpacecraftSprite);
+
+        // define if spacecraft should be shown as sprites
+        vizSettings->set_showspacecraftassprites(this->settings.showSpacecraftAsSprites);
+        if (abs(this->settings.showSpacecraftAsSprites)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftAsSprites);
+        }
+
+        // define if celestial objects should be shown as sprites
+        vizSettings->set_showcelestialbodiesassprites(this->settings.showCelestialBodiesAsSprites);
+        if (abs(this->settings.showCelestialBodiesAsSprites)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodiesAsSprites);
+        }
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -590,6 +590,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_rotation(scIt->scPlusMessage.sigma_BN[i]);
             }
             //scPlusInMsgID.dataFresh = false;
+
+            /* Write the SC sprite string */
+            scp->set_spacecraftsprite(scIt->spacecraftSprite);
 
             /*! Write RW output msg */
             for (size_t idx =0; idx < scIt->numRW; idx++)

@@ -35,6 +35,7 @@ message VizMessage{
         repeated Thruster thrusters = 6;
         repeated CoarseSunSensor CSS = 7;
         repeated StarTracker starTrackers = 8;
+        string spacecraftSprite = 9; // Set sprite for this spacecraft only through shape name and optional int RGBA color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 }
 
     message ReactionWheel{
@@ -115,12 +116,12 @@ message VizMessage{
 
     message ActuatorSettings{
         string spacecraftName = 1; //Which spacecraft's actuators to set
-        int32 viewThrusterPanel = 2; // Value of -1 to use viz default, 0 for false, 1 for true
-        int32 viewThrusterHUD = 3; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 viewRWPanel = 4; // Value of -1 to use viz default, 0 for false, 1 for true
-        int32 viewRWHUD = 5; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 showThrusterLabels = 6; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 showRWLabels = 7; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 viewThrusterPanel = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewThrusterHUD = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewRWPanel = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewRWHUD = 5; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showThrusterLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showRWLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     message CustomModel{
@@ -131,15 +132,15 @@ message VizMessage{
         repeated double scale = 5; //desired model scale in x, y, z in spacecraft CS
         string customTexturePath = 6; //(Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
         string normalMapPath = 7; //(Optional) Path to the normal map for the customTexture
-        int32 shader = 8; //(Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
+        int32 shader = 8; //(Optional) Value of -1 (protobuffer default) or 0 to use the viz default: Unity Specular Standard Shader, 1 for Unity Standard Shader
     }
 
 
     message VizSettingsPb{
         double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 8
-        int32 orbitLinesOn = 2; // Value of -1 to use viz default, 0 for false, 1 for true
-        int32 spacecraftCSon = 3; // Value of -1 to use viz default, 0 for false, 1 for true
-        int32 planetCSon = 4; // Value of -1 to use viz default, 0 for false, 1 for true
+        int32 orbitLinesOn = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 spacecraftCSon = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 planetCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         repeated PointLine pointLines = 5;
         repeated KeepOutInCone keepOutInCones = 6;
         repeated StandardCameraSettings standardCameraSettings = 7;
@@ -148,13 +149,16 @@ message VizMessage{
         repeated ActuatorSettings actuatorSettings = 10;
         string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
         repeated CustomModel customModels = 12;
-        int32 viewCameraBoresightHUD = 13; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 viewCameraConeHUD = 14; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 showCSLabels = 15; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 showCelestialBodyLabels = 16; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 showSpacecraftLabels = 17; //Value of -1 to use viz default, 0 for false, 1 for true
-        int32 showCameraLabels = 18; //Value of -1 to use viz default, 0 for false, 1 for true
+        int32 viewCameraBoresightHUD = 13; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCameraConeHUD = 14; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCSLabels = 15; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCelestialBodyLabels = 16; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showSpacecraftLabels = 17; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCameraLabels = 18; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         double customGUIScale = 19; //Value of -1 or 0 to use viz default
+        string defaultSpacecraftSprite = 20; // Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+        int32 showSpacecraftAsSprites = 21; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCelestialBodiesAsSprites =22; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         
     }
 

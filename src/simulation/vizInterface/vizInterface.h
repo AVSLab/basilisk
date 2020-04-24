@@ -98,12 +98,12 @@ typedef struct {
 typedef struct {
     std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
                                          If not provided then the ``viz.spacecraftName`` is used. */
-    int viewThrusterPanel=-1;       //!< [bool] should thruster panel illustration be shown
-    int viewThrusterHUD=-1;         //!< [bool] should thruster Heads-Up-Display be shown
-    int viewRWPanel=-1;             //!< [bool] should reaction wheel panel illustration be shown
-    int viewRWHUD=-1;               //!< [bool] should reaction wheel Heads-Up-Display be shown
-    int showThrusterLabels=-1;      //!< [bool] should the thruster labels be shown
-    int showRWLabels=-1;            //!< [bool] should the reaction wheel labels be shown
+    int viewThrusterPanel=0;       //!< [bool] should thruster panel illustration be shown, -1 (off), 0 (default), 1 (on)
+    int viewThrusterHUD=0;         //!< [bool] should thruster Heads-Up-Display be shown, -1 (off), 0 (default), 1 (on)
+    int viewRWPanel=0;             //!< [bool] should reaction wheel panel illustration be shown, -1 (off), 0 (default), 1 (on)
+    int viewRWHUD=0;               //!< [bool] should reaction wheel Heads-Up-Display be shown, -1 (off), 0 (default), 1 (on)
+    int showThrusterLabels=0;      //!< [bool] should the thruster labels be shown, -1 (off), 0 (default), 1 (on)
+    int showRWLabels=0;            //!< [bool] should the reaction wheel labels be shown, -1 (off), 0 (default), 1 (on)
 }ActuatorGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
@@ -148,32 +148,38 @@ typedef struct {
     SCPlusStatesSimMsg scPlusMessage;                           //!< [-] (Private) s/c plus message data
 //    CSSArraySensorIntMsg cssDataMessage;                      //!< [-] (Private) CSS message data
     CSSConfigFswMsg cssConfigMessage;                           //!< [-] (Private) CSS config message data
+
+    std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+
 }VizSpacecraftData;
 
 /*! Structure defining various Vizard options
 */
 typedef struct {
-    double      ambient;                            /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
+    double      ambient = -1.0;                     /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
                                                              A value of -1 means it is not set. */
-    int32_t     orbitLinesOn;                       //!< toogle for showing orbit lines (-1, 0, 1)
-    int32_t     spacecraftCSon;                     //!< toogle for showing spacecraft CS (-1, 0, 1)
-    int32_t     planetCSon;                         //!< toogle for showing planet CS (-1, 0, 1)
+    int32_t     orbitLinesOn = 0;                  //!< toogle for showing orbit lines with values -1 (off), 0 (default), 1 (on)
+    int32_t     spacecraftCSon = 0;                //!< toogle for showing spacecraft CS with values -1 (off), 0 (default), 1 (on)
+    int32_t     planetCSon = 0;                    //!< toogle for showing planet CS with values -1 (off), 0 (default), 1 (on)
     std::vector<PointLine> pointLineList;           //!< vector of powerLine structures
     std::vector<KeepOutInCone> coneList;            //!< vector of keep in/out cones
     std::vector<StdCameraSettings> stdCameraList;   //!< vector of spacecraft cameras
     std::vector<CustomModel> customModelList;       //!< vector of custom object models
     std::vector<ActuatorGuiSettings> actuatorGuiSettingsList; //!< msg containing the flags on displaying the actuator GUI elements
-    std::string skyBox;         /*!< string containing the star field options, an empty string'' provides default NASA SVS Starmap,
+    std::string skyBox = "";         /*!< string containing the star field options, an empty string'' provides default NASA SVS Starmap,
                                      ``ESO`` use ESO Milky Way skybox, ``black`` provides a black background,
                                      or provide a filepath to custom background */
     bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted,
-    int32_t viewCameraBoresightHUD ;                //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t viewCameraConeHUD;                      //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showCSLabels;                           //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showCelestialBodyLabels;                //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showSpacecraftLabels ;                  //!< Value of -1 to use viz default, 0 for false, 1 for true
-    int32_t showCameraLabels ;                  //!< Value of -1 to use viz default, 0 for false, 1 for true
-    double customGUIScale;                          //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
+    int32_t viewCameraBoresightHUD = 0;            //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t viewCameraConeHUD = 0;                 //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCSLabels = 0;                      //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCelestialBodyLabels = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showSpacecraftLabels = 0;              //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCameraLabels = 0;                  //!< Value of 0 to use viz default, -1 for false, 1 for true
+    double customGUIScale = -1.0;                   //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
+    std::string defaultSpacecraftSprite = "";       //!< Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+    int32_t showSpacecraftAsSprites = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t showCelestialBodiesAsSprites = 0;      //!< Value of 0 to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 

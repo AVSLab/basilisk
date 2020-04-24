@@ -240,3 +240,20 @@ Selecting this option brings up a settings panel that allows the user to specify
 .. warning::
 
    Compression can be applied when running the Vizard from a :ref:`vizInterface` archive file *or* when live streaming. Please note that the compression cannot be reversed, but that the archive file, if in use, will not be changed.
+
+
+Sprite Representation of Space Objects
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Vizard is setup to show an attitude dependent 3D rendering of a spacecraft model by default.  In a planet centric
+or helio-centric view the spacecraft is enlarged such that the orientation can still be determined.  This is the
+default behavior if a single satellite is shown.  However, if multiple satellites are shown then seeing enlarged
+3D renderings can both be a large computation hit and confusing to the viewer.  Thus, if 2 or more spacecraft are shown,
+and the view point is planet- or sun-centric, then Vizard defaults to showing the spacecraft locations as 2D sprites.
+
+The default shape is a white circle.  Using ``View/Sprite Settings`` opens a control panel to custumize the use
+of sprites.  Different shape primitives and colors can be selected for some or all the spacecraft and planets.  Further,
+toggles are provided to over-ride the default behavior and switch between a 3D rendering or 2D sprite representation.
+
+.. image:: ../_images/static/vizard-ImgSprite.jpg
+   :align: center
+   :width: 90 %
