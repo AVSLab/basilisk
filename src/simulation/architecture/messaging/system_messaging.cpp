@@ -208,7 +208,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
 {
     if (this->FindMessageID(MessageName) >= 0)
     {
-        BSK_PRINT_BRIEF(MSG_INFORMATION,"The message %s was created more than once.", MessageName.c_str());
+//        BSK_PRINT_BRIEF(MSG_INFORMATION,"The message %s was created more than once.", MessageName.c_str());
         if(moduleID >= 0)
         {
             std::vector<AllowAccessData>::iterator it;
