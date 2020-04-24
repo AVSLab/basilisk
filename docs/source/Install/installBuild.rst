@@ -51,12 +51,12 @@ The script accepts the following options to customize this process.
         process sensor images.  If this option is selected,
         then the dependencies of  ``vizInterface`` are also loaded as some components require the same libraries.
         Note that OpenCL related dependencies can take a while to compile, 10-20minutes is not unusual.  However,
-        once install they don't need to be rebuilt unless `.conan` is deleted or the dependency changes.
+        once install they don't need to be rebuilt unless ``.conan`` is deleted or the dependency changes.
     * - ``python3``
       - Boolean
       - True
       - (depreciated) Determines if the build is setup for Python 3.  This flag will go away when Python 2
-        support is dropped soon.  If this is False, then the destination folder is set to ``dist``
+        support is dropped soon.  If this is False, then the distribution folder is set to ``dist``
         instead of ``dist3``
     * - ``clean``
       -
@@ -74,7 +74,7 @@ The script accepts the following options to customize this process.
     * - ``generator``
       - see `here <https://docs.conan.io/en/latest/reference/generators.html>`__
       - Not Set
-      - The generator is not automatically selected to set to this generate case.
+      - If set, the build generator is not automatically selected, but it is set to the generator provided.
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
@@ -88,11 +88,17 @@ Calling ``conanfile.py`` with python executes a method that calls two separate `
 configure process, and build the executable if desired.  This section outlines this 2-step build process for
 those that seek to build it this way.
 
-All commands are called from the Basilisk root directory.  The first command, in its mimimalist form, is::
+.. note::
+
+    All commands are called from the Basilisk root directory.
+
+Step 1: Installing Basilisk Dependencies
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The first command, in its mimimalist form, is::
 
     conan install . -if dist3/conan --build=missing
 
-This conan command will create the destination folder, ``dist3`` in the above case, if needed, collect all the
+This conan command will create the distribution folder, ``dist3`` in the above case, if needed, collect all the
 require Basilisk 3rd party resources and compile them if their binaries are missing.  The cmake files to access these
 3rd party libraries are stored in ``dist3/conan``.
 
@@ -122,7 +128,7 @@ Note that the option names for groupings of Basilisk modules are the same as wit
     * - ``-o clean``
       - Boolean
       - False
-      - Make the destination folder to be deleted before configuring to yield a fresh build
+      - Delete the distribution folder before configuring to yield a fresh build
     * - ``-o generateIdeProject``
       - Boolean
       - True
@@ -148,6 +154,8 @@ but no :ref:`vizInterface`, and using a clean distribution folder, and that is b
 Note how much more verbose this is, but it gives you full control if you want to store the compiled binaries and
 cmake files in directories other than ``dist3/conan``.
 
+Step 2: Creating the IDE Project
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The final step is to create the IDE project file and possibly build the executables directly.
 At this stage there are no options to be provided.  This step is done with::
 
@@ -163,9 +171,11 @@ Running ``cmake`` Directly
 --------------------------
 
 The ``conan install`` command must always be run to install the required dependencies and compile them.  If the
-developer wishes, the ``cmake`` can be run directly instead of relying on the ``conan build`` step discussed above.
+developer wishes, the ``cmake`` can be run directly from the ``dist3`` distribution folder instead
+of relying on the ``conan build`` step discussed above.
 
-The following table summarizes the optional flags that can be provided to ``cmake``:
+The following table summarizes the optional Basilisk related flags that can be provided to ``cmake``.  If
+they are not used, then the shown default behaviors are used.
 
 .. list-table:: ``cmake`` Basilisk Build Flags
     :widths: 25 15 70
@@ -184,7 +194,53 @@ The following table summarizes the optional flags that can be provided to ``cmak
       - ``ON``
       - (depreciated) enables Basilisk to be compiled for Python 3
 
+macOS Example
+~~~~~~~~~~~~~
+::
 
+    $ cmake ../src -G Xcode -DBUILD_OPNAV=ON
 
+Linux Example
+~~~~~~~~~~~~~
+::
 
+    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src
 
+Windows Examples
+~~~~~~~~~~~~~~~~
+- Example direct build on Windows::
+
+    cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Release
+    cmake --build . --target ALL_BUILD --config Release
+
+- Example command using x86::
+
+  cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Release
+
+ MSVC Mapping
+
+    =================  ===============
+    MSVC Product Year  MSVC Version
+    =================  ===============
+    2019               16
+    2017               15.9
+                       15.8
+                       15.7
+                       15.6
+                       15.5
+                       15.4 - 15.3
+                       15.2 - 15.0
+    2015               14
+    2013               12
+    2012               11
+    =================  ===============
+
+Example build commands for Arch x86, MSVC Year 2017, MSVC Version 15::
+
+    cmake -G “Visual Studio 15 2017 Win32” ../src
+
+Example build commands forArch x64, MSVC Year 2019, MSVC Version 16::
+
+    cmake -G “Visual Studio 16 2019” -A x64 ../src -DCMAKE_BUILD_TYPE=Release
+
+    cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Release

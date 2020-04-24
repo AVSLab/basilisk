@@ -82,48 +82,9 @@ When all the prerequisite installations are complete, the project can be built a
 
         python3 conanfile.py
 
-   For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
-   ``dist3``.  This script should determine the Visual Studio compiler you are using.  You can also specify the
-   generator directly in this build process.
-
-#. Configuration and Build Examples if you are using `cmake` directly:
-
-   - Python 3::
-
-        cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug
-        cmake --build . --target ALL_BUILD --config Release
-
-   - Example command using x86::
-
-      cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Debug
-
-     MSVC Mapping
-
-        =================  ===============
-        MSVC Product Year  MSVC Version
-        =================  ===============
-        2019               16
-        2017               15.9
-                           15.8
-                           15.7
-                           15.6
-                           15.5
-                           15.4 - 15.3
-                           15.2 - 15.0
-        2015               14
-        2013               12
-        2012               11
-        =================  ===============
-
-    Example build commands for Arch x86, MSVC Year 2017, MSVC Version 15::
-
-        cmake -G “Visual Studio 15 2017 Win32” ../src
-
-    Example build commands forArch x64, MSVC Year 2019, MSVC Version 16::
-
-        cmake -G “Visual Studio 16 2019” -A x64 ../src -DCMAKE_BUILD_TYPE=Debug
-
-        cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Debug
+   This creates the IDE project in ``dist3``.  This script should determine the Visual Studio compiler you are using.
+   You can also specify the generator directly in this build process. For other configure and build options,
+   including running ``cmake`` directly, see :ref:`configureBuild`.
 
 #. To test your setup you can run one of the :ref:`examples`:
 
