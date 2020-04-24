@@ -51,7 +51,7 @@ class BasiliskConan(ConanFile):
             # clean the distribution folder to start fresh
             self.options.clean = False
             root = os.path.abspath(os.path.curdir)
-            distPath = root + "/dist"
+            distPath = os.path.join(root, "dist")
             if self.options.python3:
                 distPath += "3"
             if os.path.exists(distPath):
@@ -77,10 +77,10 @@ class BasiliskConan(ConanFile):
     def build(self):
         root = os.path.abspath(os.path.curdir)
 
-        self.source_folder = root + "/src"
-        self.build_folder = root + "/dist"
+        self.source_folder = os.path.join(root, "src")
+        self.build_folder = os.path.join(root, "dist")
         if self.options.python3:
-            self.build_folder += "3"  
+            self.build_folder += "3"
 
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator) 
         cmake.definitions["USE_PYTHON3"] = self.options.python3
