@@ -21,6 +21,9 @@ Version 1.X.X
 - updated :ref:`scenarioFormationMeanOEFeedback` and :ref:`scenarioFormationReconfig` to increase
   the orbit altitude to not hit the Earth. Also, added code that can be enabled to record the
   simulation parameters for Vizard.
+- updated :ref:`vizInterface` to support the latest Vizard features.  You can script that the spacecraft
+  and/or celestial objects are shown as sprites if they become very small.  This makes it easier to see where
+  satellites are in a constellation or formation, as well as where Earth is if orbiting about Mars
 
 
 Version 1.7.2
