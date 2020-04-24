@@ -24,15 +24,6 @@ In order to run Basilisk on macOS, the following software is necessary:
 
         $ xcode-select --install
 
-#. Get the `CMake <http://cmake.org>`__ application to be able to create the Xcode IDE file
-
-   -  You will need the command line version of ``cmake`` as well. To see if you have it already installed, type ``which cmake`` into the terminal and you should an output like
-      ``/usr/local/bin/cmake``. If you get no response, then you need to install ``cmake``. Here are two options:
-
-      1. The CMake.app contains instruction on how to install the
-         command line version inside the Tools menu.
-      2. As an alternate approach, you can also install using homebrew as described below
-
 #. (Optional) Get the `SourceTree <http://sourcetreeapp.com>`__
    application to be able to pull and manage a copy of Basilisk
 #. (Optional) Get the `PyCharm <https://www.jetbrains.com/pycharm/>`__
@@ -44,7 +35,7 @@ Basilisk is able to create both Python 3.7 or Python 2.7 code. All the unit test
 
 To install Python 3 on macOS there are two common options:
 
-#. Download the installer package from `python.org <https://python.org>`__
+#. Download the installer package from `python.org <https://python.org>`__.  This is the preferred method of getting Python 3.
 #. Install python 3 through the `HomeBrew <http://brew.sh>`__ package management system. The site has the command line to install homebrew from a terminal window.
 
 
@@ -60,20 +51,10 @@ Install HomeBrew Support Packages
 
    $ brew install swig
 
-#. (Optional) If you want to install the HomeBrew version of ``cmake``, you can do so with::
+#. If you want to install the HomeBrew version of ``cmake``, you can do so with::
 
    $ brew install cmake
    $ brew link cmake
-
-#. (Optional) If you want to install the HomeBrew version of
-   ``python3``, you can do so with::
-
-   $ brew install python3
-
-#. (If using Xcode 11 or higher) Install the ninja utility::
-
-   $ brew install ninja
-
 
 
 Setting up the Python Environment
@@ -81,12 +62,11 @@ Setting up the Python Environment
 
 .. Note:: The following instructions recommend installing all the required python packages in the user ``~/Library/Python`` folder. This has the benefit that no ``sudo`` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed. If you are familiar with python you can install in other locations as well.
 
-.. Note:: If you wish to use the HomeBrew version of python, or generally have multiple copies of python installed on your system, configure the CMake Python paths as described in :raw-latex:`\ref `customPython after following these instructions.
+.. Note:: If you wish to use the HomeBrew version of python, or generally have multiple copies of python installed on your system, configure the CMake Python paths as described in :ref:`configureBuild` after following these instructions.
 
 .. Note:: We suggest you remove any other python packages (such as Anaconda), or change the path in your terminal shell if you really want to keep it.
 
-In the following instructions, be sure to follow the sequence of tasks
-as outlined below.
+In the following instructions, be sure to follow the sequence of tasks as outlined below.
 
 Setting the ``PATH`` Environment Variable
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -116,6 +96,16 @@ must be setup within the terminal environment. If you are using Python 2, then r
    -  Add the line::
 
         set path = ( ~/Library/Python/3.7/bin $path )
+
+#. If using a zsh shell, then
+
+    - type::
+
+        $ open .zshrc
+
+    - Add the line::
+
+        PATH=/Users/hp/Library/Python/3.7/bin:$PATH
 
 #. Save and close the file
 #. Open a new terminal window for the path to take effect
@@ -156,10 +146,6 @@ Installing required python support packages
        $ pip3 install --user matplotlib
        $ pip3 install --user pandas
 
-- If using Xcode 11 or higher, then install the meson package using::
-
-        $ pip3 install --user meson
-
 -  Basilisk uses conan for package managing. In order to do so, users
    must install conan and set the remote repositories for libraries:::
 
@@ -178,35 +164,17 @@ When all the prerequisite installations are complete, the project can be built a
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
-#. The Cmake.app can’t be used by double clicking on it. The required ``conan`` paths are not loaded. Instead, run ``cmake`` directly from the terminal. For Python 3, make a ``dist3`` destination folder inside the Basilisk directory. Use ‘cd’ to make this your current directory. Then run ``cmake`` using::
+#. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
+   from the root Basilisk folder use::
 
-    $ cmake ../src -G Xcode
+        python3 conanfile.py
 
-   If you are using Python 2, then follow the same instructions but make the destination folder ``dist``. It is ok to have both ``dist3`` and ``dist`` folders. Basilisk is setup such that it can be compiled for both Python 2 and 3. This terminal command will both run the ``configure`` and ``generate`` steps outlined in the next step. You can now skip to step 8. If you have issues running ``cmake``, especially if switching between python 2 and 3 compiling, trying following the clean build instructions on :ref:`FAQ<FAQ>`.
-
-#. More information is available on Basilisk ``cmake`` :ref:`flag options <cmakeOptions>`.
-
-#. After successfully running ``cmake`` from the command line at least once, you can launch the GUI Cmake.app program from the terminal using::
-
-   $ open /Applications/cmake.app
-
-  .. image:: /_images/static/CMake-Options.png
-     :align: center
-     :scale: 40 %
-
-  This launches the application with knowledge of the ``conan`` paths. To use the Cmake.app GUI to create the build files follow these steps:
-
-  - Click on browse Source, and select the source directory, the Basilisk repository that you just cloned
-  - Browse and select the build directory (``dist3/`` or ``dist``). If this directory does not exist, create it first.
-
-  - The configuration shown above also enables support to connect with the Vizard visualization.
-  - Press ``Configure`` in Cmake, select the Xcode IDE if running for the first time. If you run into odd errors, try clearing the CMake.app cache under the ``File`` menu.
-  - (Optional) Add a variable named ``CMAKE_BUILD_TYPE`` and set the value to Debug or Release depending on your desired config.
-  - Press ``Generate`` in Cmake to build the Xcode Basilisk project file inside the ``dist3`` directory
+   For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
+   ``dist3``.
 
   .. Note:: If you wish to use the another version of python configure the Python paths in :ref:`customPython`
 
-  .. Warning:: If you get an error message in CMake saying it can’t find the compiler tools, open a Terminal window and type::
+  .. Warning:: If you get an error message in `cmake` saying it can’t find the compiler tools, open a Terminal window and type::
 
         $ xcode-select -p
 
@@ -218,7 +186,7 @@ When all the prerequisite installations are complete, the project can be built a
 
         sudo xcode-select --reset
 
-    Now clear the Cmake cache and try running ``Configure`` again.
+    Now clear the Cmake cache and try running the configure and build process again.
 
 
 #. Open the Xcode project  file  inside ``dist3`` or
@@ -252,10 +220,6 @@ FAQs
 
    -  A: clone it in the default directory, and copy it into the preferred one after it is done cloning.
 
-#. Q : Trouble configuring in Cmake
-
-   -  A: When configuring for the first time, select the appropriate platform for the project (Xcode for instance)
-
 #. Q : Permission denied when using brew
 
    -  A: Add sudo to the start of the command. If you do not have superuser access, get superuser access.
@@ -266,4 +230,4 @@ FAQs
 
 #. Q : I updated my macOS system to the latest released, and I can no longer run CMake or build with Xcode.
 
-   -  A: Most likely you just need to reset CMake.app to use the latest macOS information. In CMake.app, select File/Delete Cache, and then run Configure again. The application will ask you to confirm the use of the latest macOS and Developer tools.
+   -  A: Do a clean build as described in :ref:`FAQ`.

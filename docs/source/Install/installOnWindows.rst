@@ -77,26 +77,25 @@ When all the prerequisite installations are complete, the project can be built a
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
-#. First step is to create the destination directory.  This is ``dist3`` for Python 3 and ``dist`` for Python 2::
+#. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
+   from the root Basilisk folder use::
 
-       $ mkdir dist3
-       $ cd dist3
+        python3 conanfile.py
 
-#. Configuration and Build:
+   For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
+   ``dist3``.  This script should determine the Visual Studio compiler you are using.  You can also specify the
+   generator directly in this build process.
 
-   - Python 2::
-
-        cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
-        cmake --build . --target ALL_BUILD --config Release
+#. Configuration and Build Examples if you are using `cmake` directly:
 
    - Python 3::
 
-        cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF -DUSE_PYTHON3=ON
+        cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug
         cmake --build . --target ALL_BUILD --config Release
 
    - Example command using x86::
 
-      cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+      cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Debug
 
      MSVC Mapping
 
@@ -122,11 +121,9 @@ When all the prerequisite installations are complete, the project can be built a
 
     Example build commands forArch x64, MSVC Year 2019, MSVC Version 16::
 
-        cmake -G “Visual Studio 16 2019” -A x64 ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+        cmake -G “Visual Studio 16 2019” -A x64 ../src -DCMAKE_BUILD_TYPE=Debug
 
-        cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
-
-#. If the build was not setup correctly, you can delete the ``dist3`` folder and re-run the above command to get another clean build attempt.
+        cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Debug
 
 #. To test your setup you can run one of the :ref:`examples`:
 
@@ -135,6 +132,4 @@ When all the prerequisite installations are complete, the project can be built a
    -  Run one of the tutorial scenarios, such as::
 
        $ python3 scenarioBasicOrbit.py
-
-
 

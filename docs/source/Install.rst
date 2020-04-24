@@ -16,9 +16,8 @@ Install
    Install/installOnMacOS
    Install/installOnWindows
    Install/pullCloneBSK
-   Install/InstallWithCmakeOptions
+   Install/installBuild
    Install/installOptionalPackages
-   Install/installPowerUserTips
    Install/customPython
 
 

@@ -40,7 +40,7 @@ Dependencies
 
 #. SWIG: Available using::
 
-    $ apt-get install swig3.0
+    $ apt-get install swig
 
 #. A C/C++ Compiler: This is included by default with most Linux systems (``gcc``), but is necessary to build Basilisk.
 
@@ -48,42 +48,44 @@ Dependencies
 
 #. A install of Conan. Install with pip, an example is below::
 
-       $ pip3 install conan
-
-Build Process via Terminal
---------------------------
-
-For Basilisk Python 2 and Python 3 inter-compatability, build using both following instructions then run using preferred python version.
-
-#. First step is to create the destination directory.  This is ``dist3`` for Python 3 and ``dist`` for Python 2::
-
-       $ mkdir dist3
-       $ cd dist3
+       $ pip3 install --user conan
 
 #. Setup Conan Repositories. These can be consolidated into a private conan server `conan getting started docs <https://docs.conan.io/en/latest/introduction.html>`__::
 
        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
        $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
 
-#. CMake here in the build directory with Unix Makefiles, where the source code is located at: ``../src``::
+#. Install the required python packages through::
 
-    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src
+    $ pip3 install --user numpy matplolib pytest pandas
 
-   The ``CMAKE_BUILD_TYPE`` argument can be changed to ``Debug`` as well, but the run-time performance will be significantly slower.
+#. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
+
+Build Process via Terminal
+--------------------------
+
+For Basilisk Python 2 and Python 3 inter-compatability, build using both following instructions then run using preferred python version.
+
+#. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
+   from the root Basilisk folder use::
+
+        python3 conanfile.py
+
+   For other configure and build options, see :ref:`configureBuild`.
+
+#. Next, move to the distribution folder to build using a makefile::
+
+        cd dist3
 
 #. Can do a multi core make by running ``make -j<number of cores +1>`` such as ``make -j5``.
 
-#. More information is available on Basilisk ``cmake`` :ref:`flag options <cmakeOptions>`.
-
 #. To test your setup you can run one of the :ref:`examples`:
 
-   -  For example, in the terminal window, make ``basilisk/src/examples/`` the
+   -  For example, in the terminal window, switch ``/src/examples/`` to the
       current directory.
    -  Run one of the example scripts, such as::
 
        $ python3 scenarioBasicOrbit.py
-
-
 
 
 
