@@ -16,6 +16,10 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
+Version |release|
+-----------------
+- text here
+
 Version 1.7.3
 -------------
 - updated :ref:`scenarioFormationMeanOEFeedback` and :ref:`scenarioFormationReconfig` to increase
@@ -40,8 +44,8 @@ Version 1.7.2
 - new example scenario :ref:`scenarioFormationReconfig` illustrating the use of the new impulsive relative motion
   control module
 
-Version 1.7.1
--------------
+**Version 1.7.1**
+
 - Added the ability to detect if a satellite is visible to a ground location in the new :ref:`groundLocation`
 - Added support to script Vizard to specify spacecraft, planet and actuator labels
 - Added :ref:`spaceToGroundTransmitter` which simulates transmitting data from space to an antenna at a ground location.
