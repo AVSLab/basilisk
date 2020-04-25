@@ -5,10 +5,21 @@
 .. _pullCloneBSK:
 
 
-Pulling/Cloning a copy from the Repository
-==========================================
+Download Source Code
+====================
 
-The Basilisk frameworked is developed using the Git version control system.  The following directions explain how to cloe or pull a copy from the repository.  
+.. image:: ../_images/static/Basilisk-Logo.png
+   :align: right
+   :scale: 50 %
+
+The Basilisk software framework source code is openly hosted on `Bitbucket.org <https://Bitbucket.org>`_.
+Go to https://bitbucket.org/avslab/basilisk, log in with your Bitbucket account and download (see below)
+or :ref:`fork <makeBskFork>` a copy of the Basilisk code.  As this is the raw source code, you need to
+next :ref:`install <bskInstall>` and compile the code before you can run it.
+
+
+The Basilisk frameworked is developed using the Git version control system.  The following directions explain how to
+clone or pull a copy from the repository.
 
 #. If needed, create your own `bitbucket.org <http://bitbucket.org>`__ account
 

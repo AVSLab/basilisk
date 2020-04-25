@@ -3,8 +3,8 @@
 
 .. _installWindows:
 
-Installing On Windows
-=====================
+Setup On Windows
+================
 
 The following was developed using Windows 7 and Visual Studio Community 2017 or 2019. The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
 
@@ -70,12 +70,10 @@ Go to the `Conan Website <https://conan.io/downloads.html>`__ and download the w
 
 
 
-Pulling and Building the Basilisk Project
------------------------------------------
+Build Project Process via Terminal
+----------------------------------
 
 When all the prerequisite installations are complete, the project can be built as follows.
-
-#. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
 #. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::

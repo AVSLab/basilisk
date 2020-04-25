@@ -11,7 +11,6 @@ Note that the file structure in the Documentation section mirrors that of the Ba
    :caption: Basilisk:
    
    About
-   Download
    Install
    Quick-Start
    Support

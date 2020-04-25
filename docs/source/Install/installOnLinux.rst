@@ -4,8 +4,8 @@
 
 .. _installLinux:
 
-Installing On Linux
-===================
+Setup On Linux
+==============
 
 The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
 
