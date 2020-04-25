@@ -24,6 +24,7 @@ Version 1.X.X
 - updated :ref:`vizInterface` to support the latest Vizard features.  You can script that the spacecraft
   and/or celestial objects are shown as sprites if they become very small.  This makes it easier to see where
   satellites are in a constellation or formation, as well as where Earth is if orbiting about Mars
+- automated how the release number is pulled from a single txt file now
 
 
 Version 1.7.2
