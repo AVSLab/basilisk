@@ -157,9 +157,12 @@ if six.PY3:
 else:
     package_dir = "dist"
 
+f = open('docs/source/bskVersion.txt', 'r')
+bskVersion = f.read()
+
 setup(
     name='Basilisk',
-    version='1.7.2',
+    version=bskVersion,
     description="Astrodynamic Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),
