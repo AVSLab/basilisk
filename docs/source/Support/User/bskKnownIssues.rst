@@ -4,7 +4,7 @@
 Basilisk Known Issues
 =====================
 
-Version 1.X.X
+Version 1.7.3
 -------------
 - None
 
