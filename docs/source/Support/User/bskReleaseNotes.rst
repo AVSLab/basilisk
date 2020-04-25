@@ -16,12 +16,12 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
-Version 1.X.X
+Version 1.7.3
 -------------
 - updated :ref:`scenarioFormationMeanOEFeedback` and :ref:`scenarioFormationReconfig` to increase
   the orbit altitude to not hit the Earth. Also, added code that can be enabled to record the
   simulation parameters for Vizard.
-- updated :ref:`vizInterface` to support the latest Vizard features.  You can script that the spacecraft
+- updated :ref:`vizInterface` to support the latest Vizard v1.2.0 features.  You can script that the spacecraft
   and/or celestial objects are shown as sprites if they become very small.  This makes it easier to see where
   satellites are in a constellation or formation, as well as where Earth is if orbiting about Mars
 - automated how the release number is pulled from a single txt file now
