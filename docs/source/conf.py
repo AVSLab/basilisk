@@ -16,19 +16,24 @@ import os
 import sys
 import numpy as np
 import sphinx_rtd_theme
-
+import datetime
 
 
 # -- Project information -----------------------------------------------------
 
+now = datetime.datetime.now()
+f = open('bskVersion.txt', 'r')
+bskVersion = f.read()
+
 project = u'Basilisk'
-copyright = u'2020, Autonomous Vehicle Systems (AVS) Laboratory'
+copyright = str(now.year) + u', Autonomous Vehicle Systems (AVS) Laboratory'
 author = u'AVS Lab'
 
 # The short X.Y version
-version = u'version 1.7.2'
+
+release = bskVersion
+version = u'version ' + release
 # The full version, including alpha/beta/rc tags
-release = u'1.7.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -474,8 +479,8 @@ if rebuild:
     if os.path.exists(officialDoc):
         shutil.rmtree(officialDoc)
     # adjust the fileCrawler path to a local folder to just build a sub-system
-    breathe_projects_source = fileCrawler.run(officialSrc)
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_fswTemplateFolder")
+    # breathe_projects_source = fileCrawler.run(officialSrc)
+    breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_fswTemplateFolder")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizInterface")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/examples")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/utilities")
