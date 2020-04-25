@@ -553,8 +553,6 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     ax1.spines['right'].set_color('none')
     ax1.spines['bottom'].set_position('zero')
     ax1.spines['top'].set_color('none')
-    ax1.spines['left'].set_smart_bounds(False)
-    ax1.spines['bottom'].set_smart_bounds(False)
     for xtick in ax1.get_xticklabels():
         xtick.set_bbox(dict(facecolor='white', edgecolor='None', alpha=0.5))
     ax1.xaxis.set_ticks_position('bottom')
@@ -571,8 +569,6 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     ax2.spines['right'].set_color('none')
     ax2.spines['bottom'].set_position('zero')
     ax2.spines['top'].set_color('none')
-    ax2.spines['left'].set_smart_bounds(False)
-    ax2.spines['bottom'].set_smart_bounds(False)
     for xtick in ax2.get_xticklabels():
         xtick.set_bbox(dict(facecolor='white', edgecolor='None', alpha=0.5))
     ax2.xaxis.set_ticks_position('bottom')
