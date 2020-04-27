@@ -20,6 +20,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef _GEODETIC_CONV_H_
 #define _GEODETIC_CONV_H_
 
+#define _USE_MATH_DEFINES
+
 #include <math.h>
 #include <Eigen/Dense>
 

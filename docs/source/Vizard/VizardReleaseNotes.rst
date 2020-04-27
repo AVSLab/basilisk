@@ -19,6 +19,20 @@ Release Notes
     - better support for visualizing multiple spacecraft
     - add labels to spacecraft and sensor visualization
 
+**Version 1.2.0**
+
+- added 2D sprite representation of spacecraft and celestial bodies to support spacecraft constellation modeling and easier visualization of distant objects
+- added Sprite settings panel under view menu to allow customization of displayed sprites’ shape, size, and color
+- panel includes toggles to turn on/off sprite visualization for distant spacecraft or celestial bodies
+- added fields to protobuffer messages to allow setting of those toggles
+- added fields to protobuffer messages to allow user to specify a default spacecraft sprite  as well as sprites for individual spacecraft
+- added code to disable HUD when their parent spacecraft is in sprite mode
+- other issues addressed in this release:
+
+    - fixed bug in thruster HUD where thrusters with a minimum thrust of 0.5 N or less would not display a thruster plume by adding a floor to the particle life setting
+    - changed the protobuffer message default value for boolean flags to use 0 for viz default, -1 for OFF and 1 for ON. This matches the default value of 0 sent in all protobuffer messages for int32 fields.
+    - labels that belong to occluded bodies will now disappear until their body is visible again
+
 **Version 1.1.0**
 
 - added floating labels for the following:

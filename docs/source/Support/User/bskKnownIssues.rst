@@ -4,16 +4,26 @@
 Basilisk Known Issues
 =====================
 
+..
+    Version |release|
+    -----------------
+    - None
+
+Version 1.7.4
+-------------
+- None
+
 Version 1.7.3
 -------------
+- On Windows Basilisk didn't compile due to missing math ``#define`` delaration in ``geodeticConversion.cpp/h``.
+  This is fixed in the latest release.
+
+**Version 1.7.2**
+
 - None
 
-Version 1.7.2
--------------
-- None
+**Version 1.7.1**
 
-Version 1.7.1
--------------
 - None
 
 **Version 1.7.0**

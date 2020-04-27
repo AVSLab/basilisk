@@ -17,7 +17,6 @@
 
  */
 
-#include <math.h>
 #include "geodeticConversion.h"
 #include "rigidBodyKinematics.h"
 #include "avsEigenSupport.h"
