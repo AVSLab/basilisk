@@ -69,9 +69,9 @@ class BasiliskConan(ConanFile):
             if self.settings.os == "Macos":
                 self.generator = "Xcode"
             elif self.settings.os == "Windows":
-                self.generator = "visual_studio_multi"
+                self.generator = "Visual Studio 16 2019"
             else:
-                print("OS not detected, conan auto-determines best generator. ")
+                print("OS not detected, creating a make file for project. ")
                 print("Specify your own using the `-g GENERATOR` flag during conan install")
 
     def build(self):
