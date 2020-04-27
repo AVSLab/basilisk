@@ -16,8 +16,13 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
-Version |release|
------------------
+..
+    Version |release|
+    -----------------
+    - text here
+
+Version 1.7.4
+-------------
 - hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that Windows expected,
 but Unix systems didn't need
 
@@ -32,8 +37,8 @@ Version 1.7.3
 - automated how the release number is pulled from a single txt file now
 
 
-Version 1.7.2
--------------
+**Version 1.7.2**
+
 - new spacecraft formation flying control :ref:`meanOEFeedback` that implements a mean orbit element feedback
   control law
 - new relative orbit control tutorial example :ref:`scenarioFormationMeanOEFeedback` that uses :ref:`meanOEFeedback`
