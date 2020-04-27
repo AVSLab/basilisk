@@ -18,7 +18,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that Windows expected,
+but Unix systems didn't need
 
 Version 1.7.3
 -------------
