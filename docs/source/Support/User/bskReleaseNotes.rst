@@ -24,7 +24,7 @@ Version |release|
 Version 1.7.4
 -------------
 - hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that Windows expected,
-but Unix systems didn't need
+  but Unix systems didn't need
 
 Version 1.7.3
 -------------
