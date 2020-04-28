@@ -49,7 +49,7 @@ import numpy as np
 from sys import platform
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../plotting')
+sys.path.append(path + '/../plottingOpNav')
 import OpNav_Plotting as BSK_plt
 
 def DCM(bVec, d):

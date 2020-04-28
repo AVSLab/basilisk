@@ -1,7 +1,7 @@
 Executive Summary
 -----------------
 This module provides a general MRP feedback control law.  This 3-axis control can asymptotically track a general
-reference attitude trajectory.  The module is setup to work with or without $N$ reaction wheels with
+reference attitude trajectory.  The module is setup to work with or without `N` reaction wheels with
 general orientation.  If the reaction wheel states are fed into this module, then the resulting RW
 gyroscopic terms are compensated for. If the wheel information is not present, then these terms are ignored.
 

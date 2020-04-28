@@ -91,7 +91,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import Dynamics and FSW models
-sys.path.append(path + '/models')
+sys.path.append(path + '/modelsOpNav')
 
 # TODO : Modify the path to the viz here
 appPath = '/Applications/Vizard.app' #If on Mac

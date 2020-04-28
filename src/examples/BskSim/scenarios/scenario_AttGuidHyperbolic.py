@@ -29,7 +29,7 @@ The script is found in the folder ``src/examples/BskSim/scenarios`` and executed
 
 
 The simulation mimics the basic simulation simulation in the earlier tutorial in
-:ref:`scenarioAttGuideHyperbolic.
+:ref:`scenarioAttGuideHyperbolic`.
 
 The simulation layout is shown in the following illustration.
 

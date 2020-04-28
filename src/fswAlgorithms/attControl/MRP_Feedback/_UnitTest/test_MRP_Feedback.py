@@ -86,7 +86,7 @@ def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailabili
             integralLimit (float): value of the integral limit
             useRwAvailability (string): Flag to not use RW availabillity (``NO``), use the availability
                message and turn on the RW devices (``ON``) and use the message and turn off the devices (``OFF``)
-        """
+    """
 
     # each test method requires a single assert method to be called
 

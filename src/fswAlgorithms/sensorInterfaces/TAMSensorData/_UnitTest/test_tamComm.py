@@ -49,14 +49,14 @@ from Basilisk.simulation import simFswInterfaceMessages
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
     """
-    Validation Test Description
-    ---------------------------
+    **Validation Test Description**
+
     This section describes the specific unit tests conducted on this module. \
-    The test contains 1 test and is located at 'test_tamComm.py'. \
+    The test contains 1 test and is located at ``test_tamComm.py``. \
     The success criteria is to match the outputs with the generated truth.
 
-    Description of Variables Being Tested
-    -------------------------------------
+    **Description of Variables Being Tested**
+
     In this file, we are checking the values of the variable:
 
         tam_B
