@@ -33,7 +33,7 @@ class BasiliskConan(ConanFile):
         default_options.update({opt: value})
 
     # set cmake generator default
-    generator = "None"
+    generator = None
 
     def requirements(self):
         if self.options.opNav:
@@ -76,7 +76,7 @@ class BasiliskConan(ConanFile):
                 print("Specify your own using the -o generator='Name' flag during conan install")
         else:
             self.generator = str(self.options.generator)
-        print("cmake generator set to: " + self.generator)
+        print("cmake generator set to: " + str(self.generator))
 
     def build(self):
         root = os.path.abspath(os.path.curdir)
