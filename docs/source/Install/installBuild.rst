@@ -31,6 +31,7 @@ included to enable recording data for or live-streaming to :ref:`Vizard <Vizard>
 
 The script accepts the following options to customize this process.
 
+.. _buildTable1Label:
 .. list-table:: Options for One-Step Configure/Build Process
     :widths: 15 15 10 60
     :header-rows: 1
@@ -65,16 +66,20 @@ The script accepts the following options to customize this process.
     * - ``buildProject``
       -
       - Not Set
-      - If set, this option will not only create the IDE or make file, but will also compile the project right away
+      - If set, this option will compile the project right away after creating the IDE or make file
     * - ``buildType``
       - Release, Debug
       - Release
       - Sets the build type.  This does not apply to the IDE project like Xcode and Visual Studio which
         control the build type through their interface.
     * - ``generator``
-      - see `here <https://docs.conan.io/en/latest/reference/generators.html>`__
-      - Not Set
-      - If set, the build generator is not automatically selected, but it is set to the generator provided.
+      - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
+      - ``XCode`` (macOS), ``Visual Studio 16 2019`` (Windows), ``None`` (Linux)
+      - If not set the ``cmake`` build generator is automatically selected to be ``XCode`` for macOS,
+        ``Visual Studio 16 2019`` on Windows, and ``None`` for Linux which create a make file on this platform.
+        It can also be set through this
+        flag.  If unsure what generators are supported on your platform, open a terminal window and
+        type ``cmake --help`` to get a list of supported generator strings.
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
@@ -94,7 +99,7 @@ those that seek to build it this way.
 
 Step 1: Installing Basilisk Dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The first command, in its mimimalist form, is::
+The first command, in its minimalist form, is::
 
     conan install . -if dist3/conan --build=missing
 
@@ -129,22 +134,18 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Boolean
       - False
       - Delete the distribution folder before configuring to yield a fresh build
-    * - ``-o generateIdeProject``
-      - Boolean
-      - True
-      - Automatically set the generator to Xcode (macOS) or Visual Studio (Windows)
     * - ``-o buildProject``
       - Boolean
       - False
       - Will build the project executable after the configuration step
-    * - ``-s buildType``
+    * - ``-s build_type``
       - Release, Debug
       - Release
       - Specifies the build type
-    * - ``-g``
-      - see `here <https://docs.conan.io/en/latest/reference/generators.html>`__
-      - Not set
-      - Used to specify a specific generator
+    * - ``-o generator``
+      - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
+      - ``XCode`` (macOS), ``Visual Studio 16 2019`` (Windows), ``None`` (Linux)
+      - Used to specify a specific ``cmake`` generator.  See discussion in Table :ref:`buildTable1Label`.
 
 Thus, using the same build example as in the one-step section, to create a build with ``opNav`` modes enabled,
 but no :ref:`vizInterface`, and using a clean distribution folder, and that is built right away, you could use::
@@ -213,27 +214,40 @@ Windows Examples
     cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Release
     cmake --build . --target ALL_BUILD --config Release
 
-- Example command using x86::
+- Example ``cmake`` commands using x86::
 
-  cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Release
+    cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Release
 
- MSVC Mapping
+  .. list-table:: MSVC Mapping
+     :widths: 25 25
+     :header-rows: 1
 
-    =================  ===============
-    MSVC Product Year  MSVC Version
-    =================  ===============
-    2019               16
-    2017               15.9
-                       15.8
-                       15.7
-                       15.6
-                       15.5
-                       15.4 - 15.3
-                       15.2 - 15.0
-    2015               14
-    2013               12
-    2012               11
-    =================  ===============
+     * - MSVC Product Year
+       - MSVC Version
+     * - 2019
+       - 16
+     * - 2017
+       - 15.9
+     * -
+       - 15.8
+     * -
+       - 15.7
+     * -
+       - 15.6
+     * -
+       - 15.5
+     * -
+       - 15.4 - 15.3
+     * -
+       - 15.2 - 15.0
+     * - 2015
+       - 14
+     * - 2013
+       - 12
+     * - 2012
+       - 11
+
+
 
 Example build commands for Arch x86, MSVC Year 2017, MSVC Version 15::
 
