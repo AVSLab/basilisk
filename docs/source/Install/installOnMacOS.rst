@@ -56,6 +56,7 @@ Install HomeBrew Support Packages
    $ brew install cmake
    $ brew link cmake
 
+You need at least version 3.x or higher.
 
 Setting up the Python Environment
 ---------------------------------
