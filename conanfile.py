@@ -33,7 +33,7 @@ class BasiliskConan(ConanFile):
         default_options.update({opt: value})
 
     # set cmake generator default
-    generator = None
+    generator = "None"
 
     def requirements(self):
         if self.options.opNav:
@@ -86,7 +86,7 @@ class BasiliskConan(ConanFile):
         if self.options.python3:
             self.build_folder += "3"
 
-        cmake = CMake(self, set_cmake_flags=True, generator=self.generator) 
+        cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
         cmake.definitions["USE_PYTHON3"] = self.options.python3
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
