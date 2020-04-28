@@ -6,6 +6,12 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- The new conan based built system might need the conan cache folder ``.conan`` to be deleted and reset.  This is
+  typically in the user's home folder.  After this you need to re-run the conan setup commands::
+
+    $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+    $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+
 - The new build system provides many speed improvements in doing a clean or partial build, but some small changes are
   required to update BSK python simulation scripts to be compatible with the new build system.
   These changes include:
