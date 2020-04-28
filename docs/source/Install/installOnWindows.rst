@@ -22,6 +22,7 @@ In order to run Basilisk, the following software will be necessary:
 Configuration
 -------------
 
+Strongly recommended to stick with default 64-bit installations.
 Decide whether target deployment is 32 (win32) or 64 (x64) bit. Which ever chosen you will need the matching python and software for that architecture.
 
 Configuring Python
@@ -80,9 +81,9 @@ When all the prerequisite installations are complete, the project can be built a
 
         python3 conanfile.py
 
-   This creates the IDE project in ``dist3``.  This script should determine the Visual Studio compiler you are using.
-   You can also specify the generator directly in this build process. For other configure and build options,
-   including running ``cmake`` directly, see :ref:`configureBuild`.
+   This creates the Visual Studio 16 2019 IDE project in ``dist3``.
+   You can also specify the generator directly in this build process and select other versions of Visual Studio.
+   For other configure and build options, including running ``cmake`` directly, see :ref:`configureBuild`.
 
 #. To test your setup you can run one of the :ref:`examples`:
 
