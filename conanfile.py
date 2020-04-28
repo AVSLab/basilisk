@@ -56,7 +56,7 @@ class BasiliskConan(ConanFile):
             if self.options.python3:
                 distPath += "3"
             if os.path.exists(distPath):
-                shutil.rmtree(distPath)
+                shutil.rmtree(distPath, ignore_errors=True)
 
         if self.settings.build_type == "Debug":
             print("Build type is set to Debug. Performance will be significantly lower.")
