@@ -21,17 +21,18 @@ class BasiliskConan(ConanFile):
     build_policy = "missing"
 
     options = { "clean": [True, False],
-                "generateIdeProject": [True, False],
+                "generator": "ANY",
                 "buildProject": [True, False]}
 
     default_options = { "clean": False,
-                        "generateIdeProject": True,
+                        "generator": "",
                         "buildProject": False}
 
     for opt, value in bskModuleOptions.items():
         options.update({opt: [True, False]})
         default_options.update({opt: value})
 
+    # set cmake generator default
     generator = None
 
     def requirements(self):
@@ -64,15 +65,18 @@ class BasiliskConan(ConanFile):
         if self.options.opNav:
             self.options['opencv'].contrib = True
 
-        if self.options.generateIdeProject:
+        if self.options.generator == "":
             # Select default generator supplied to cmake based on os
             if self.settings.os == "Macos":
                 self.generator = "Xcode"
             elif self.settings.os == "Windows":
                 self.generator = "Visual Studio 16 2019"
             else:
-                print("OS not detected, creating a make file for project. ")
-                print("Specify your own using the `-g GENERATOR` flag during conan install")
+                print("Creating a make file for project. ")
+                print("Specify your own using the -o generator='Name' flag during conan install")
+        else:
+            self.generator = str(self.options.generator)
+        print("cmake generator set to: " + self.generator)
 
     def build(self):
         root = os.path.abspath(os.path.curdir)
@@ -131,7 +135,7 @@ if __name__ == "__main__":
     conanCmdString += ' -s build_type=' + str(args.buildType)
     conanCmdString += ' -if ' + buildFolderName
     if args.generator:
-        conanCmdString += ' -g ' + str(args.generator) + ' -o generateIdeProject=False'
+        conanCmdString += ' -o generator="' + str(args.generator) + '"'
     if args.clean:
         conanCmdString += ' -o clean=True'
     if args.buildProject:
