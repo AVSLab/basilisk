@@ -10,6 +10,15 @@ package vizProtobufferMessage;
    
 //A VizMessage should contain all Basilisk Sim messages needed to visualize a single time step
 message VizMessage{
+    
+    message EpochDateTime{
+        int32 year = 1;  //default: 2019
+        int32 month = 2; //default: 1
+        int32 day = 3;   //default: 1
+        int32 hours = 4;    //default: 0
+        int32 minutes = 5; //default: 0
+        double seconds = 6; //default: 0.00
+    }
 
     message TimeStamp{
         int64 frameNumber = 1; //Current message's index
@@ -169,4 +178,5 @@ message VizMessage{
     //repeated cameraImage cameraImages = 5;
     //repeated ImageRequest imageRequests = 6;
     VizSettingsPb settings = 7;
+    EpochDateTime epoch = 8;
 }

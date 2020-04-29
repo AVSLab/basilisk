@@ -36,12 +36,14 @@ namespace protobuf_vizMessage_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[15];
+  static const ::google::protobuf::internal::ParseTable schema[16];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
 };
 void AddDescriptors();
+void InitDefaultsVizMessage_EpochDateTimeImpl();
+void InitDefaultsVizMessage_EpochDateTime();
 void InitDefaultsVizMessage_TimeStampImpl();
 void InitDefaultsVizMessage_TimeStamp();
 void InitDefaultsVizMessage_CelestialBodyImpl();
@@ -73,6 +75,7 @@ void InitDefaultsVizMessage_VizSettingsPb();
 void InitDefaultsVizMessageImpl();
 void InitDefaultsVizMessage();
 inline void InitDefaults() {
+  InitDefaultsVizMessage_EpochDateTime();
   InitDefaultsVizMessage_TimeStamp();
   InitDefaultsVizMessage_CelestialBody();
   InitDefaultsVizMessage_Spacecraft();
@@ -109,6 +112,9 @@ extern VizMessage_CoarseSunSensorDefaultTypeInternal _VizMessage_CoarseSunSensor
 class VizMessage_CustomModel;
 class VizMessage_CustomModelDefaultTypeInternal;
 extern VizMessage_CustomModelDefaultTypeInternal _VizMessage_CustomModel_default_instance_;
+class VizMessage_EpochDateTime;
+class VizMessage_EpochDateTimeDefaultTypeInternal;
+extern VizMessage_EpochDateTimeDefaultTypeInternal _VizMessage_EpochDateTime_default_instance_;
 class VizMessage_KeepOutInCone;
 class VizMessage_KeepOutInConeDefaultTypeInternal;
 extern VizMessage_KeepOutInConeDefaultTypeInternal _VizMessage_KeepOutInCone_default_instance_;
@@ -140,6 +146,140 @@ extern VizMessage_VizSettingsPbDefaultTypeInternal _VizMessage_VizSettingsPb_def
 namespace vizProtobufferMessage {
 
 // ===================================================================
+
+class VizMessage_EpochDateTime : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.EpochDateTime) */ {
+ public:
+  VizMessage_EpochDateTime();
+  virtual ~VizMessage_EpochDateTime();
+
+  VizMessage_EpochDateTime(const VizMessage_EpochDateTime& from);
+
+  inline VizMessage_EpochDateTime& operator=(const VizMessage_EpochDateTime& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  VizMessage_EpochDateTime(VizMessage_EpochDateTime&& from) noexcept
+    : VizMessage_EpochDateTime() {
+    *this = ::std::move(from);
+  }
+
+  inline VizMessage_EpochDateTime& operator=(VizMessage_EpochDateTime&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const VizMessage_EpochDateTime& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const VizMessage_EpochDateTime* internal_default_instance() {
+    return reinterpret_cast<const VizMessage_EpochDateTime*>(
+               &_VizMessage_EpochDateTime_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    0;
+
+  void Swap(VizMessage_EpochDateTime* other);
+  friend void swap(VizMessage_EpochDateTime& a, VizMessage_EpochDateTime& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline VizMessage_EpochDateTime* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  VizMessage_EpochDateTime* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const VizMessage_EpochDateTime& from);
+  void MergeFrom(const VizMessage_EpochDateTime& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(VizMessage_EpochDateTime* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // int32 year = 1;
+  void clear_year();
+  static const int kYearFieldNumber = 1;
+  ::google::protobuf::int32 year() const;
+  void set_year(::google::protobuf::int32 value);
+
+  // int32 month = 2;
+  void clear_month();
+  static const int kMonthFieldNumber = 2;
+  ::google::protobuf::int32 month() const;
+  void set_month(::google::protobuf::int32 value);
+
+  // int32 day = 3;
+  void clear_day();
+  static const int kDayFieldNumber = 3;
+  ::google::protobuf::int32 day() const;
+  void set_day(::google::protobuf::int32 value);
+
+  // int32 hours = 4;
+  void clear_hours();
+  static const int kHoursFieldNumber = 4;
+  ::google::protobuf::int32 hours() const;
+  void set_hours(::google::protobuf::int32 value);
+
+  // double seconds = 6;
+  void clear_seconds();
+  static const int kSecondsFieldNumber = 6;
+  double seconds() const;
+  void set_seconds(double value);
+
+  // int32 minutes = 5;
+  void clear_minutes();
+  static const int kMinutesFieldNumber = 5;
+  ::google::protobuf::int32 minutes() const;
+  void set_minutes(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.EpochDateTime)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::int32 year_;
+  ::google::protobuf::int32 month_;
+  ::google::protobuf::int32 day_;
+  ::google::protobuf::int32 hours_;
+  double seconds_;
+  ::google::protobuf::int32 minutes_;
+  mutable int _cached_size_;
+  friend struct ::protobuf_vizMessage_2eproto::TableStruct;
+  friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_EpochDateTimeImpl();
+};
+// -------------------------------------------------------------------
 
 class VizMessage_TimeStamp : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:vizProtobufferMessage.VizMessage.TimeStamp) */ {
  public:
@@ -176,7 +316,7 @@ class VizMessage_TimeStamp : public ::google::protobuf::Message /* @@protoc_inse
                &_VizMessage_TimeStamp_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    0;
+    1;
 
   void Swap(VizMessage_TimeStamp* other);
   friend void swap(VizMessage_TimeStamp& a, VizMessage_TimeStamp& b) {
@@ -282,7 +422,7 @@ class VizMessage_CelestialBody : public ::google::protobuf::Message /* @@protoc_
                &_VizMessage_CelestialBody_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    1;
+    2;
 
   void Swap(VizMessage_CelestialBody* other);
   friend void swap(VizMessage_CelestialBody& a, VizMessage_CelestialBody& b) {
@@ -431,7 +571,7 @@ class VizMessage_Spacecraft : public ::google::protobuf::Message /* @@protoc_ins
                &_VizMessage_Spacecraft_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    2;
+    3;
 
   void Swap(VizMessage_Spacecraft* other);
   friend void swap(VizMessage_Spacecraft& a, VizMessage_Spacecraft& b) {
@@ -647,7 +787,7 @@ class VizMessage_ReactionWheel : public ::google::protobuf::Message /* @@protoc_
                &_VizMessage_ReactionWheel_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    3;
+    4;
 
   void Swap(VizMessage_ReactionWheel* other);
   friend void swap(VizMessage_ReactionWheel& a, VizMessage_ReactionWheel& b) {
@@ -795,7 +935,7 @@ class VizMessage_Thruster : public ::google::protobuf::Message /* @@protoc_inser
                &_VizMessage_Thruster_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    4;
+    5;
 
   void Swap(VizMessage_Thruster* other);
   friend void swap(VizMessage_Thruster& a, VizMessage_Thruster& b) {
@@ -936,7 +1076,7 @@ class VizMessage_CoarseSunSensor : public ::google::protobuf::Message /* @@proto
                &_VizMessage_CoarseSunSensor_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    5;
+    6;
 
   void Swap(VizMessage_CoarseSunSensor* other);
   friend void swap(VizMessage_CoarseSunSensor& a, VizMessage_CoarseSunSensor& b) {
@@ -1070,7 +1210,7 @@ class VizMessage_StarTracker : public ::google::protobuf::Message /* @@protoc_in
                &_VizMessage_StarTracker_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    6;
+    7;
 
   void Swap(VizMessage_StarTracker* other);
   friend void swap(VizMessage_StarTracker& a, VizMessage_StarTracker& b) {
@@ -1211,7 +1351,7 @@ class VizMessage_CameraConfig : public ::google::protobuf::Message /* @@protoc_i
                &_VizMessage_CameraConfig_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    7;
+    8;
 
   void Swap(VizMessage_CameraConfig* other);
   friend void swap(VizMessage_CameraConfig& a, VizMessage_CameraConfig& b) {
@@ -1396,7 +1536,7 @@ class VizMessage_PointLine : public ::google::protobuf::Message /* @@protoc_inse
                &_VizMessage_PointLine_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    8;
+    9;
 
   void Swap(VizMessage_PointLine* other);
   friend void swap(VizMessage_PointLine& a, VizMessage_PointLine& b) {
@@ -1532,7 +1672,7 @@ class VizMessage_KeepOutInCone : public ::google::protobuf::Message /* @@protoc_
                &_VizMessage_KeepOutInCone_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    9;
+    10;
 
   void Swap(VizMessage_KeepOutInCone* other);
   friend void swap(VizMessage_KeepOutInCone& a, VizMessage_KeepOutInCone& b) {
@@ -1732,7 +1872,7 @@ class VizMessage_StandardCameraSettings : public ::google::protobuf::Message /* 
                &_VizMessage_StandardCameraSettings_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    10;
+    11;
 
   void Swap(VizMessage_StandardCameraSettings* other);
   friend void swap(VizMessage_StandardCameraSettings& a, VizMessage_StandardCameraSettings& b) {
@@ -1903,7 +2043,7 @@ class VizMessage_ActuatorSettings : public ::google::protobuf::Message /* @@prot
                &_VizMessage_ActuatorSettings_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    11;
+    12;
 
   void Swap(VizMessage_ActuatorSettings* other);
   friend void swap(VizMessage_ActuatorSettings& a, VizMessage_ActuatorSettings& b) {
@@ -2052,7 +2192,7 @@ class VizMessage_CustomModel : public ::google::protobuf::Message /* @@protoc_in
                &_VizMessage_CustomModel_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    12;
+    13;
 
   void Swap(VizMessage_CustomModel* other);
   friend void swap(VizMessage_CustomModel& a, VizMessage_CustomModel& b) {
@@ -2261,7 +2401,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
                &_VizMessage_VizSettingsPb_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    13;
+    14;
 
   void Swap(VizMessage_VizSettingsPb* other);
   friend void swap(VizMessage_VizSettingsPb& a, VizMessage_VizSettingsPb& b) {
@@ -2539,7 +2679,7 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
                &_VizMessage_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    14;
+    15;
 
   void Swap(VizMessage* other);
   friend void swap(VizMessage& a, VizMessage& b) {
@@ -2584,6 +2724,7 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // nested types ----------------------------------------------------
 
+  typedef VizMessage_EpochDateTime EpochDateTime;
   typedef VizMessage_TimeStamp TimeStamp;
   typedef VizMessage_CelestialBody CelestialBody;
   typedef VizMessage_Spacecraft Spacecraft;
@@ -2655,6 +2796,15 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::vizProtobufferMessage::VizMessage_VizSettingsPb* mutable_settings();
   void set_allocated_settings(::vizProtobufferMessage::VizMessage_VizSettingsPb* settings);
 
+  // .vizProtobufferMessage.VizMessage.EpochDateTime epoch = 8;
+  bool has_epoch() const;
+  void clear_epoch();
+  static const int kEpochFieldNumber = 8;
+  const ::vizProtobufferMessage::VizMessage_EpochDateTime& epoch() const;
+  ::vizProtobufferMessage::VizMessage_EpochDateTime* release_epoch();
+  ::vizProtobufferMessage::VizMessage_EpochDateTime* mutable_epoch();
+  void set_allocated_epoch(::vizProtobufferMessage::VizMessage_EpochDateTime* epoch);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage)
  private:
 
@@ -2664,6 +2814,7 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraConfig > cameras_;
   ::vizProtobufferMessage::VizMessage_TimeStamp* currenttime_;
   ::vizProtobufferMessage::VizMessage_VizSettingsPb* settings_;
+  ::vizProtobufferMessage::VizMessage_EpochDateTime* epoch_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessageImpl();
@@ -2677,6 +2828,94 @@ class VizMessage : public ::google::protobuf::Message /* @@protoc_insertion_poin
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// VizMessage_EpochDateTime
+
+// int32 year = 1;
+inline void VizMessage_EpochDateTime::clear_year() {
+  year_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_EpochDateTime::year() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.EpochDateTime.year)
+  return year_;
+}
+inline void VizMessage_EpochDateTime::set_year(::google::protobuf::int32 value) {
+  
+  year_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.EpochDateTime.year)
+}
+
+// int32 month = 2;
+inline void VizMessage_EpochDateTime::clear_month() {
+  month_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_EpochDateTime::month() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.EpochDateTime.month)
+  return month_;
+}
+inline void VizMessage_EpochDateTime::set_month(::google::protobuf::int32 value) {
+  
+  month_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.EpochDateTime.month)
+}
+
+// int32 day = 3;
+inline void VizMessage_EpochDateTime::clear_day() {
+  day_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_EpochDateTime::day() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.EpochDateTime.day)
+  return day_;
+}
+inline void VizMessage_EpochDateTime::set_day(::google::protobuf::int32 value) {
+  
+  day_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.EpochDateTime.day)
+}
+
+// int32 hours = 4;
+inline void VizMessage_EpochDateTime::clear_hours() {
+  hours_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_EpochDateTime::hours() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.EpochDateTime.hours)
+  return hours_;
+}
+inline void VizMessage_EpochDateTime::set_hours(::google::protobuf::int32 value) {
+  
+  hours_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.EpochDateTime.hours)
+}
+
+// int32 minutes = 5;
+inline void VizMessage_EpochDateTime::clear_minutes() {
+  minutes_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_EpochDateTime::minutes() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.EpochDateTime.minutes)
+  return minutes_;
+}
+inline void VizMessage_EpochDateTime::set_minutes(::google::protobuf::int32 value) {
+  
+  minutes_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.EpochDateTime.minutes)
+}
+
+// double seconds = 6;
+inline void VizMessage_EpochDateTime::clear_seconds() {
+  seconds_ = 0;
+}
+inline double VizMessage_EpochDateTime::seconds() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.EpochDateTime.seconds)
+  return seconds_;
+}
+inline void VizMessage_EpochDateTime::set_seconds(double value) {
+  
+  seconds_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.EpochDateTime.seconds)
+}
+
+// -------------------------------------------------------------------
+
 // VizMessage_TimeStamp
 
 // int64 frameNumber = 1;
@@ -5600,9 +5839,61 @@ inline void VizMessage::set_allocated_settings(::vizProtobufferMessage::VizMessa
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.settings)
 }
 
+// .vizProtobufferMessage.VizMessage.EpochDateTime epoch = 8;
+inline bool VizMessage::has_epoch() const {
+  return this != internal_default_instance() && epoch_ != NULL;
+}
+inline void VizMessage::clear_epoch() {
+  if (GetArenaNoVirtual() == NULL && epoch_ != NULL) {
+    delete epoch_;
+  }
+  epoch_ = NULL;
+}
+inline const ::vizProtobufferMessage::VizMessage_EpochDateTime& VizMessage::epoch() const {
+  const ::vizProtobufferMessage::VizMessage_EpochDateTime* p = epoch_;
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.epoch)
+  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_EpochDateTime*>(
+      &::vizProtobufferMessage::_VizMessage_EpochDateTime_default_instance_);
+}
+inline ::vizProtobufferMessage::VizMessage_EpochDateTime* VizMessage::release_epoch() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.epoch)
+  
+  ::vizProtobufferMessage::VizMessage_EpochDateTime* temp = epoch_;
+  epoch_ = NULL;
+  return temp;
+}
+inline ::vizProtobufferMessage::VizMessage_EpochDateTime* VizMessage::mutable_epoch() {
+  
+  if (epoch_ == NULL) {
+    epoch_ = new ::vizProtobufferMessage::VizMessage_EpochDateTime;
+  }
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.epoch)
+  return epoch_;
+}
+inline void VizMessage::set_allocated_epoch(::vizProtobufferMessage::VizMessage_EpochDateTime* epoch) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete epoch_;
+  }
+  if (epoch) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      epoch = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, epoch, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  epoch_ = epoch;
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.epoch)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

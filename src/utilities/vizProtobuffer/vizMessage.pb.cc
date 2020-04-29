@@ -20,6 +20,11 @@
 #endif
 // @@protoc_insertion_point(includes)
 namespace vizProtobufferMessage {
+class VizMessage_EpochDateTimeDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_EpochDateTime>
+      _instance;
+} _VizMessage_EpochDateTime_default_instance_;
 class VizMessage_TimeStampDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_TimeStamp>
@@ -97,6 +102,27 @@ class VizMessageDefaultTypeInternal {
 } _VizMessage_default_instance_;
 }  // namespace vizProtobufferMessage
 namespace protobuf_vizMessage_2eproto {
+void InitDefaultsVizMessage_EpochDateTimeImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_EpochDateTime_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_EpochDateTime();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_EpochDateTime::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_EpochDateTime() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_EpochDateTimeImpl);
+}
+
 void InitDefaultsVizMessage_TimeStampImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -413,6 +439,7 @@ void InitDefaultsVizMessageImpl() {
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_Spacecraft();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraConfig();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPb();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_EpochDateTime();
   {
     void* ptr = &::vizProtobufferMessage::_VizMessage_default_instance_;
     new (ptr) ::vizProtobufferMessage::VizMessage();
@@ -426,9 +453,20 @@ void InitDefaultsVizMessage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessageImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[15];
+::google::protobuf::Metadata file_level_metadata[16];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_EpochDateTime, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_EpochDateTime, year_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_EpochDateTime, month_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_EpochDateTime, day_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_EpochDateTime, hours_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_EpochDateTime, minutes_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_EpochDateTime, seconds_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_TimeStamp, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -606,26 +644,29 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, spacecraft_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, cameras_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, settings_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, epoch_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::vizProtobufferMessage::VizMessage_TimeStamp)},
-  { 7, -1, sizeof(::vizProtobufferMessage::VizMessage_CelestialBody)},
-  { 16, -1, sizeof(::vizProtobufferMessage::VizMessage_Spacecraft)},
-  { 30, -1, sizeof(::vizProtobufferMessage::VizMessage_ReactionWheel)},
-  { 41, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
-  { 51, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
-  { 60, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
-  { 70, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
-  { 83, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
-  { 91, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
-  { 105, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
-  { 117, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 129, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
-  { 142, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 167, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 0, -1, sizeof(::vizProtobufferMessage::VizMessage_EpochDateTime)},
+  { 11, -1, sizeof(::vizProtobufferMessage::VizMessage_TimeStamp)},
+  { 18, -1, sizeof(::vizProtobufferMessage::VizMessage_CelestialBody)},
+  { 27, -1, sizeof(::vizProtobufferMessage::VizMessage_Spacecraft)},
+  { 41, -1, sizeof(::vizProtobufferMessage::VizMessage_ReactionWheel)},
+  { 52, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
+  { 62, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
+  { 71, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
+  { 81, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
+  { 94, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
+  { 102, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
+  { 116, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
+  { 128, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
+  { 140, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 153, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 178, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_EpochDateTime_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_TimeStamp_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CelestialBody_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_Spacecraft_default_instance_),
@@ -659,14 +700,14 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 15);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 16);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\310\030\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\364\031\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -674,80 +715,85 @@ void AddDescriptorsImpl() {
       ".VizMessage.Spacecraft\022\?\n\007cameras\030\004 \003(\0132"
       "..vizProtobufferMessage.VizMessage.Camer"
       "aConfig\022A\n\010settings\030\007 \001(\0132/.vizProtobuff"
-      "erMessage.VizMessage.VizSettingsPb\0328\n\tTi"
-      "meStamp\022\023\n\013frameNumber\030\001 \001(\003\022\026\n\016simTimeE"
-      "lapsed\030\002 \001(\001\032W\n\rCelestialBody\022\020\n\010bodyNam"
-      "e\030\001 \001(\t\022\020\n\010position\030\002 \003(\001\022\020\n\010velocity\030\003 "
-      "\003(\001\022\020\n\010rotation\030\004 \003(\001\032\201\003\n\nSpacecraft\022\026\n\016"
-      "spacecraftName\030\001 \001(\t\022\020\n\010position\030\002 \003(\001\022\020"
-      "\n\010velocity\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022G\n\016re"
-      "actionWheels\030\005 \003(\0132/.vizProtobufferMessa"
-      "ge.VizMessage.ReactionWheel\022=\n\tthrusters"
-      "\030\006 \003(\0132*.vizProtobufferMessage.VizMessag"
-      "e.Thruster\022>\n\003CSS\030\007 \003(\01321.vizProtobuffer"
-      "Message.VizMessage.CoarseSunSensor\022C\n\014st"
-      "arTrackers\030\010 \003(\0132-.vizProtobufferMessage"
-      ".VizMessage.StarTracker\022\030\n\020spacecraftSpr"
-      "ite\030\t \001(\t\032\207\001\n\rReactionWheel\022\020\n\010position\030"
-      "\002 \003(\001\022\026\n\016spinAxisVector\030\004 \003(\001\022\022\n\nwheelSp"
-      "eed\030\005 \001(\001\022\023\n\013wheelTorque\030\006 \001(\001\022\020\n\010maxSpe"
-      "ed\030\007 \001(\001\022\021\n\tmaxTorque\030\010 \001(\001\032u\n\010Thruster\022"
-      "\020\n\010position\030\002 \003(\001\022\024\n\014thrustVector\030\004 \003(\001\022"
-      "\025\n\rcurrentThrust\030\005 \001(\001\022\021\n\tmaxThrust\030\006 \001("
-      "\001\022\027\n\017thrusterGroupID\030\007 \001(\005\032b\n\017CoarseSunS"
-      "ensor\022\020\n\010position\030\002 \003(\001\022\024\n\014normalVector\030"
-      "\004 \003(\001\022\023\n\013currentMsmt\030\005 \001(\001\022\022\n\nCSSGroupID"
-      "\030\007 \001(\005\032\202\001\n\013StarTracker\022\020\n\010position\030\002 \003(\001"
-      "\022\020\n\010rotation\030\004 \003(\001\022\031\n\021fieldOfViewHeight\030"
-      "\005 \001(\001\022\030\n\020fieldOfViewWidth\030\006 \001(\001\022\032\n\022starT"
-      "rackerGroupID\030\007 \001(\005\032\253\001\n\014CameraConfig\022\020\n\010"
-      "cameraID\030\001 \001(\003\022\022\n\nparentName\030\002 \001(\t\022\023\n\013fi"
-      "eldOfView\030\003 \001(\001\022\022\n\nresolution\030\004 \003(\003\022\023\n\013c"
-      "ameraPos_B\030\007 \003(\001\022\023\n\013cameraDir_B\030\010 \003(\001\022\022\n"
-      "\nrenderRate\030\t \001(\004\022\016\n\006skybox\030\n \001(\t\032H\n\tPoi"
-      "ntLine\022\024\n\014fromBodyName\030\001 \001(\t\022\022\n\ntoBodyNa"
-      "me\030\002 \001(\t\022\021\n\tlineColor\030\003 \003(\005\032\304\001\n\rKeepOutI"
-      "nCone\022\020\n\010isKeepIn\030\001 \001(\010\022\020\n\010position\030\002 \003("
-      "\001\022\024\n\014normalVector\030\003 \003(\001\022\026\n\016incidenceAngl"
-      "e\030\004 \001(\001\022\022\n\nconeHeight\030\005 \001(\001\022\024\n\014fromBodyN"
-      "ame\030\006 \001(\t\022\022\n\ntoBodyName\030\007 \001(\t\022\021\n\tconeCol"
-      "or\030\010 \003(\003\022\020\n\010coneName\030\t \001(\t\032\245\001\n\026StandardC"
-      "ameraSettings\022\026\n\016spacecraftName\030\001 \001(\t\022\017\n"
-      "\007setMode\030\003 \001(\005\022\023\n\013fieldOfView\030\005 \001(\001\022\022\n\nb"
-      "odyTarget\030\006 \001(\t\022\017\n\007setView\030\007 \001(\005\022\026\n\016poin"
-      "tingVector\030\010 \003(\001\022\020\n\010position\030\t \003(\001\032\270\001\n\020A"
-      "ctuatorSettings\022\026\n\016spacecraftName\030\001 \001(\t\022"
-      "\031\n\021viewThrusterPanel\030\002 \001(\005\022\027\n\017viewThrust"
-      "erHUD\030\003 \001(\005\022\023\n\013viewRWPanel\030\004 \001(\005\022\021\n\tview"
-      "RWHUD\030\005 \001(\005\022\032\n\022showThrusterLabels\030\006 \001(\005\022"
-      "\024\n\014showRWLabels\030\007 \001(\005\032\256\001\n\013CustomModel\022\021\n"
-      "\tmodelPath\030\001 \001(\t\022\031\n\021simBodiesToModify\030\002 "
-      "\003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n"
-      "\005scale\030\005 \003(\001\022\031\n\021customTexturePath\030\006 \001(\t\022"
-      "\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\223"
-      "\006\n\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orb"
-      "itLinesOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022"
-      "\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132"
-      "+.vizProtobufferMessage.VizMessage.Point"
-      "Line\022G\n\016keepOutInCones\030\006 \003(\0132/.vizProtob"
-      "ufferMessage.VizMessage.KeepOutInCone\022X\n"
-      "\026standardCameraSettings\030\007 \003(\01328.vizProto"
-      "bufferMessage.VizMessage.StandardCameraS"
-      "ettings\022L\n\020actuatorSettings\030\n \003(\01322.vizP"
-      "rotobufferMessage.VizMessage.ActuatorSet"
-      "tings\022\016\n\006skybox\030\013 \001(\t\022C\n\014customModels\030\014 "
-      "\003(\0132-.vizProtobufferMessage.VizMessage.C"
-      "ustomModel\022\036\n\026viewCameraBoresightHUD\030\r \001"
-      "(\005\022\031\n\021viewCameraConeHUD\030\016 \001(\005\022\024\n\014showCSL"
-      "abels\030\017 \001(\005\022\037\n\027showCelestialBodyLabels\030\020"
-      " \001(\005\022\034\n\024showSpacecraftLabels\030\021 \001(\005\022\030\n\020sh"
-      "owCameraLabels\030\022 \001(\005\022\026\n\016customGUIScale\030\023"
-      " \001(\001\022\037\n\027defaultSpacecraftSprite\030\024 \001(\t\022\037\n"
-      "\027showSpacecraftAsSprites\030\025 \001(\005\022$\n\034showCe"
-      "lestialBodiesAsSprites\030\026 \001(\005b\006proto3"
+      "erMessage.VizMessage.VizSettingsPb\022>\n\005ep"
+      "och\030\010 \001(\0132/.vizProtobufferMessage.VizMes"
+      "sage.EpochDateTime\032j\n\rEpochDateTime\022\014\n\004y"
+      "ear\030\001 \001(\005\022\r\n\005month\030\002 \001(\005\022\013\n\003day\030\003 \001(\005\022\r\n"
+      "\005hours\030\004 \001(\005\022\017\n\007minutes\030\005 \001(\005\022\017\n\007seconds"
+      "\030\006 \001(\001\0328\n\tTimeStamp\022\023\n\013frameNumber\030\001 \001(\003"
+      "\022\026\n\016simTimeElapsed\030\002 \001(\001\032W\n\rCelestialBod"
+      "y\022\020\n\010bodyName\030\001 \001(\t\022\020\n\010position\030\002 \003(\001\022\020\n"
+      "\010velocity\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\032\201\003\n\nSp"
+      "acecraft\022\026\n\016spacecraftName\030\001 \001(\t\022\020\n\010posi"
+      "tion\030\002 \003(\001\022\020\n\010velocity\030\003 \003(\001\022\020\n\010rotation"
+      "\030\004 \003(\001\022G\n\016reactionWheels\030\005 \003(\0132/.vizProt"
+      "obufferMessage.VizMessage.ReactionWheel\022"
+      "=\n\tthrusters\030\006 \003(\0132*.vizProtobufferMessa"
+      "ge.VizMessage.Thruster\022>\n\003CSS\030\007 \003(\01321.vi"
+      "zProtobufferMessage.VizMessage.CoarseSun"
+      "Sensor\022C\n\014starTrackers\030\010 \003(\0132-.vizProtob"
+      "ufferMessage.VizMessage.StarTracker\022\030\n\020s"
+      "pacecraftSprite\030\t \001(\t\032\207\001\n\rReactionWheel\022"
+      "\020\n\010position\030\002 \003(\001\022\026\n\016spinAxisVector\030\004 \003("
+      "\001\022\022\n\nwheelSpeed\030\005 \001(\001\022\023\n\013wheelTorque\030\006 \001"
+      "(\001\022\020\n\010maxSpeed\030\007 \001(\001\022\021\n\tmaxTorque\030\010 \001(\001\032"
+      "u\n\010Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thrustV"
+      "ector\030\004 \003(\001\022\025\n\rcurrentThrust\030\005 \001(\001\022\021\n\tma"
+      "xThrust\030\006 \001(\001\022\027\n\017thrusterGroupID\030\007 \001(\005\032b"
+      "\n\017CoarseSunSensor\022\020\n\010position\030\002 \003(\001\022\024\n\014n"
+      "ormalVector\030\004 \003(\001\022\023\n\013currentMsmt\030\005 \001(\001\022\022"
+      "\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarTracker\022\020\n\010po"
+      "sition\030\002 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\031\n\021fieldO"
+      "fViewHeight\030\005 \001(\001\022\030\n\020fieldOfViewWidth\030\006 "
+      "\001(\001\022\032\n\022starTrackerGroupID\030\007 \001(\005\032\253\001\n\014Came"
+      "raConfig\022\020\n\010cameraID\030\001 \001(\003\022\022\n\nparentName"
+      "\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022\022\n\nresolutio"
+      "n\030\004 \003(\003\022\023\n\013cameraPos_B\030\007 \003(\001\022\023\n\013cameraDi"
+      "r_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004\022\016\n\006skybox\030"
+      "\n \001(\t\032H\n\tPointLine\022\024\n\014fromBodyName\030\001 \001(\t"
+      "\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tlineColor\030\003 \003(\005\032"
+      "\304\001\n\rKeepOutInCone\022\020\n\010isKeepIn\030\001 \001(\010\022\020\n\010p"
+      "osition\030\002 \003(\001\022\024\n\014normalVector\030\003 \003(\001\022\026\n\016i"
+      "ncidenceAngle\030\004 \001(\001\022\022\n\nconeHeight\030\005 \001(\001\022"
+      "\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBodyName\030\007 \001("
+      "\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010coneName\030\t \001(\t\032\245"
+      "\001\n\026StandardCameraSettings\022\026\n\016spacecraftN"
+      "ame\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023\n\013fieldOfVie"
+      "w\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017\n\007setView\030\007"
+      " \001(\005\022\026\n\016pointingVector\030\010 \003(\001\022\020\n\010position"
+      "\030\t \003(\001\032\270\001\n\020ActuatorSettings\022\026\n\016spacecraf"
+      "tName\030\001 \001(\t\022\031\n\021viewThrusterPanel\030\002 \001(\005\022\027"
+      "\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013viewRWPanel\030\004"
+      " \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022\032\n\022showThrusterL"
+      "abels\030\006 \001(\005\022\024\n\014showRWLabels\030\007 \001(\005\032\256\001\n\013Cu"
+      "stomModel\022\021\n\tmodelPath\030\001 \001(\t\022\031\n\021simBodie"
+      "sToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rotat"
+      "ion\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customTextur"
+      "ePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006sh"
+      "ader\030\010 \001(\005\032\223\006\n\rVizSettingsPb\022\017\n\007ambient\030"
+      "\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026\n\016spacecraf"
+      "tCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npoint"
+      "Lines\030\005 \003(\0132+.vizProtobufferMessage.VizM"
+      "essage.PointLine\022G\n\016keepOutInCones\030\006 \003(\013"
+      "2/.vizProtobufferMessage.VizMessage.Keep"
+      "OutInCone\022X\n\026standardCameraSettings\030\007 \003("
+      "\01328.vizProtobufferMessage.VizMessage.Sta"
+      "ndardCameraSettings\022L\n\020actuatorSettings\030"
+      "\n \003(\01322.vizProtobufferMessage.VizMessage"
+      ".ActuatorSettings\022\016\n\006skybox\030\013 \001(\t\022C\n\014cus"
+      "tomModels\030\014 \003(\0132-.vizProtobufferMessage."
+      "VizMessage.CustomModel\022\036\n\026viewCameraBore"
+      "sightHUD\030\r \001(\005\022\031\n\021viewCameraConeHUD\030\016 \001("
+      "\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027showCelestial"
+      "BodyLabels\030\020 \001(\005\022\034\n\024showSpacecraftLabels"
+      "\030\021 \001(\005\022\030\n\020showCameraLabels\030\022 \001(\005\022\026\n\016cust"
+      "omGUIScale\030\023 \001(\001\022\037\n\027defaultSpacecraftSpr"
+      "ite\030\024 \001(\t\022\037\n\027showSpacecraftAsSprites\030\025 \001"
+      "(\005\022$\n\034showCelestialBodiesAsSprites\030\026 \001(\005"
+      "b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3196);
+      descriptor, 3368);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -764,6 +810,428 @@ struct StaticDescriptorInitializer {
 } static_descriptor_initializer;
 }  // namespace protobuf_vizMessage_2eproto
 namespace vizProtobufferMessage {
+
+// ===================================================================
+
+void VizMessage_EpochDateTime::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_EpochDateTime::kYearFieldNumber;
+const int VizMessage_EpochDateTime::kMonthFieldNumber;
+const int VizMessage_EpochDateTime::kDayFieldNumber;
+const int VizMessage_EpochDateTime::kHoursFieldNumber;
+const int VizMessage_EpochDateTime::kMinutesFieldNumber;
+const int VizMessage_EpochDateTime::kSecondsFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_EpochDateTime::VizMessage_EpochDateTime()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_EpochDateTime();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.EpochDateTime)
+}
+VizMessage_EpochDateTime::VizMessage_EpochDateTime(const VizMessage_EpochDateTime& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&year_, &from.year_,
+    static_cast<size_t>(reinterpret_cast<char*>(&minutes_) -
+    reinterpret_cast<char*>(&year_)) + sizeof(minutes_));
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.EpochDateTime)
+}
+
+void VizMessage_EpochDateTime::SharedCtor() {
+  ::memset(&year_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&minutes_) -
+      reinterpret_cast<char*>(&year_)) + sizeof(minutes_));
+  _cached_size_ = 0;
+}
+
+VizMessage_EpochDateTime::~VizMessage_EpochDateTime() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.EpochDateTime)
+  SharedDtor();
+}
+
+void VizMessage_EpochDateTime::SharedDtor() {
+}
+
+void VizMessage_EpochDateTime::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_EpochDateTime::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_EpochDateTime& VizMessage_EpochDateTime::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_EpochDateTime();
+  return *internal_default_instance();
+}
+
+VizMessage_EpochDateTime* VizMessage_EpochDateTime::New(::google::protobuf::Arena* arena) const {
+  VizMessage_EpochDateTime* n = new VizMessage_EpochDateTime;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_EpochDateTime::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&year_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&minutes_) -
+      reinterpret_cast<char*>(&year_)) + sizeof(minutes_));
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_EpochDateTime::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // int32 year = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &year_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 month = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &month_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 day = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &day_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 hours = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &hours_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 minutes = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(40u /* 40 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &minutes_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double seconds = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(49u /* 49 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &seconds_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.EpochDateTime)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.EpochDateTime)
+  return false;
+#undef DO_
+}
+
+void VizMessage_EpochDateTime::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 year = 1;
+  if (this->year() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->year(), output);
+  }
+
+  // int32 month = 2;
+  if (this->month() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->month(), output);
+  }
+
+  // int32 day = 3;
+  if (this->day() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->day(), output);
+  }
+
+  // int32 hours = 4;
+  if (this->hours() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->hours(), output);
+  }
+
+  // int32 minutes = 5;
+  if (this->minutes() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->minutes(), output);
+  }
+
+  // double seconds = 6;
+  if (this->seconds() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->seconds(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.EpochDateTime)
+}
+
+::google::protobuf::uint8* VizMessage_EpochDateTime::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 year = 1;
+  if (this->year() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->year(), target);
+  }
+
+  // int32 month = 2;
+  if (this->month() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->month(), target);
+  }
+
+  // int32 day = 3;
+  if (this->day() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->day(), target);
+  }
+
+  // int32 hours = 4;
+  if (this->hours() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->hours(), target);
+  }
+
+  // int32 minutes = 5;
+  if (this->minutes() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->minutes(), target);
+  }
+
+  // double seconds = 6;
+  if (this->seconds() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->seconds(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.EpochDateTime)
+  return target;
+}
+
+size_t VizMessage_EpochDateTime::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // int32 year = 1;
+  if (this->year() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->year());
+  }
+
+  // int32 month = 2;
+  if (this->month() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->month());
+  }
+
+  // int32 day = 3;
+  if (this->day() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->day());
+  }
+
+  // int32 hours = 4;
+  if (this->hours() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->hours());
+  }
+
+  // double seconds = 6;
+  if (this->seconds() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // int32 minutes = 5;
+  if (this->minutes() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->minutes());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_EpochDateTime::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_EpochDateTime* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_EpochDateTime>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.EpochDateTime)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.EpochDateTime)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_EpochDateTime::MergeFrom(const VizMessage_EpochDateTime& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.year() != 0) {
+    set_year(from.year());
+  }
+  if (from.month() != 0) {
+    set_month(from.month());
+  }
+  if (from.day() != 0) {
+    set_day(from.day());
+  }
+  if (from.hours() != 0) {
+    set_hours(from.hours());
+  }
+  if (from.seconds() != 0) {
+    set_seconds(from.seconds());
+  }
+  if (from.minutes() != 0) {
+    set_minutes(from.minutes());
+  }
+}
+
+void VizMessage_EpochDateTime::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_EpochDateTime::CopyFrom(const VizMessage_EpochDateTime& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.EpochDateTime)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_EpochDateTime::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_EpochDateTime::Swap(VizMessage_EpochDateTime* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_EpochDateTime::InternalSwap(VizMessage_EpochDateTime* other) {
+  using std::swap;
+  swap(year_, other->year_);
+  swap(month_, other->month_);
+  swap(day_, other->day_);
+  swap(hours_, other->hours_);
+  swap(seconds_, other->seconds_);
+  swap(minutes_, other->minutes_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_EpochDateTime::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
 
 // ===================================================================
 
@@ -8237,6 +8705,8 @@ void VizMessage::InitAsDefaultInstance() {
       ::vizProtobufferMessage::VizMessage_TimeStamp::internal_default_instance());
   ::vizProtobufferMessage::_VizMessage_default_instance_._instance.get_mutable()->settings_ = const_cast< ::vizProtobufferMessage::VizMessage_VizSettingsPb*>(
       ::vizProtobufferMessage::VizMessage_VizSettingsPb::internal_default_instance());
+  ::vizProtobufferMessage::_VizMessage_default_instance_._instance.get_mutable()->epoch_ = const_cast< ::vizProtobufferMessage::VizMessage_EpochDateTime*>(
+      ::vizProtobufferMessage::VizMessage_EpochDateTime::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage::kCurrentTimeFieldNumber;
@@ -8244,6 +8714,7 @@ const int VizMessage::kCelestialBodiesFieldNumber;
 const int VizMessage::kSpacecraftFieldNumber;
 const int VizMessage::kCamerasFieldNumber;
 const int VizMessage::kSettingsFieldNumber;
+const int VizMessage::kEpochFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage::VizMessage()
@@ -8272,13 +8743,18 @@ VizMessage::VizMessage(const VizMessage& from)
   } else {
     settings_ = NULL;
   }
+  if (from.has_epoch()) {
+    epoch_ = new ::vizProtobufferMessage::VizMessage_EpochDateTime(*from.epoch_);
+  } else {
+    epoch_ = NULL;
+  }
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage)
 }
 
 void VizMessage::SharedCtor() {
   ::memset(&currenttime_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&settings_) -
-      reinterpret_cast<char*>(&currenttime_)) + sizeof(settings_));
+      reinterpret_cast<char*>(&epoch_) -
+      reinterpret_cast<char*>(&currenttime_)) + sizeof(epoch_));
   _cached_size_ = 0;
 }
 
@@ -8290,6 +8766,7 @@ VizMessage::~VizMessage() {
 void VizMessage::SharedDtor() {
   if (this != internal_default_instance()) delete currenttime_;
   if (this != internal_default_instance()) delete settings_;
+  if (this != internal_default_instance()) delete epoch_;
 }
 
 void VizMessage::SetCachedSize(int size) const {
@@ -8332,6 +8809,10 @@ void VizMessage::Clear() {
     delete settings_;
   }
   settings_ = NULL;
+  if (GetArenaNoVirtual() == NULL && epoch_ != NULL) {
+    delete epoch_;
+  }
+  epoch_ = NULL;
   _internal_metadata_.Clear();
 }
 
@@ -8402,6 +8883,18 @@ bool VizMessage::MergePartialFromCodedStream(
         break;
       }
 
+      // .vizProtobufferMessage.VizMessage.EpochDateTime epoch = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_epoch()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -8461,6 +8954,12 @@ void VizMessage::SerializeWithCachedSizes(
       7, *this->settings_, output);
   }
 
+  // .vizProtobufferMessage.VizMessage.EpochDateTime epoch = 8;
+  if (this->has_epoch()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, *this->epoch_, output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -8511,6 +9010,13 @@ void VizMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         7, *this->settings_, deterministic, target);
+  }
+
+  // .vizProtobufferMessage.VizMessage.EpochDateTime epoch = 8;
+  if (this->has_epoch()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        8, *this->epoch_, deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -8577,6 +9083,13 @@ size_t VizMessage::ByteSizeLong() const {
         *this->settings_);
   }
 
+  // .vizProtobufferMessage.VizMessage.EpochDateTime epoch = 8;
+  if (this->has_epoch()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->epoch_);
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -8615,6 +9128,9 @@ void VizMessage::MergeFrom(const VizMessage& from) {
   if (from.has_settings()) {
     mutable_settings()->::vizProtobufferMessage::VizMessage_VizSettingsPb::MergeFrom(from.settings());
   }
+  if (from.has_epoch()) {
+    mutable_epoch()->::vizProtobufferMessage::VizMessage_EpochDateTime::MergeFrom(from.epoch());
+  }
 }
 
 void VizMessage::CopyFrom(const ::google::protobuf::Message& from) {
@@ -8646,6 +9162,7 @@ void VizMessage::InternalSwap(VizMessage* other) {
   cameras_.InternalSwap(&other->cameras_);
   swap(currenttime_, other->currenttime_);
   swap(settings_, other->settings_);
+  swap(epoch_, other->epoch_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
