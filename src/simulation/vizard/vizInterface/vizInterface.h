@@ -44,9 +44,9 @@
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */
 typedef struct {
-    int64_t msgID;        //!< [-] message ID associated with source
-    uint64_t lastTimeTag; //!< [ns] The previous read time-tag for msg
-    bool dataFresh;       //!< [-] Flag indicating that new data has been read
+    int64_t msgID = -1;                         //!< [-] message ID associated with source
+    uint64_t lastTimeTag = 0xFFFFFFFFFFFFFFFF;  //!< [ns] The previous read time-tag for msg
+    bool dataFresh = false;                     //!< [-] Flag indicating that new data has been read
 }MsgCurrStatus;
 
 /*! Structure to store a thruster group information. */
