@@ -160,9 +160,9 @@ function(generate_package_libraries INIT_DIRECTORY)
 
         # define build location, IDE generation specifications
         set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
-        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Basilisk)
-        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/Basilisk)
-        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/Basilisk)
+        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+        set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
     endforeach()
 endfunction(generate_package_libraries)
 
@@ -216,7 +216,10 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     foreach(TARGET_FILE ${TARGET_LIST})
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
         get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
-
+        MESSAGE("DEBUG: TARGET FILE: ${TARGET_FILE}")
+        MESSAGE("DEBUG: PARENT DIR: ${PARENT_DIR}")
+        MESSAGE("DEBUG: LIBRARY OUT DIR wo Quotes: ${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
+        MESSAGE(${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR})
         # Collect any external dependencies
         set(CUSTOM_DEPENDENCIES)
         set(CUSTOM_DEPENDENCIES_HANDLED)
@@ -288,9 +291,9 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
         #
         set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}) # Define the location for the .so file
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR})
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR})
+        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") # Define the location for the .so file
+        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
+        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
     endforeach()
 endfunction(generate_package_targets)
 
@@ -397,6 +400,7 @@ endif()
 # TODO: Move the cspice library extension into a custom pyswice CMakeList.txt
 # Manually create list of libraries depending on system
 if(WIN32)
+    MESSAGE("DEBUG: DETECTING WINDOWS")
 	set(library_dependencies
       	${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib
 	)
