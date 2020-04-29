@@ -39,6 +39,8 @@
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
 #include "utilities/bskLogging.h"
+#include "simMessages/epochSimMsg.h"
+#include "utilities/simDefinitions.h"
 
 #define VIZ_MAX_SIZE 100000
 
@@ -223,6 +225,10 @@ public:
     std::string comAddress;                     //!< Communication address to use when connecting to Vizard
     std::string comPortNumber;                  //!< Communication port number to use when connecting to Vizard
     
+    std::string epochMsgName;                   //!< [-] name of the simulation epoch date/time msg
+    MsgCurrStatus epochMsgID;                   //!< [-] ID of the epoch msg
+    EpochSimMsg epochMsg;                       //!< [-] epoch msg data
+
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
 
 
