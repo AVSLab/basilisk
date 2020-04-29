@@ -514,3 +514,12 @@ a spacecraft use a specific sprite representation use::
 
 
 
+Specifying the Simulation Epoch Date and Time Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Vizard can show the both the simulation time that has elapsed, or the mission time.  If now epoch message has been
+set then Basilisk assumes a default January 1, 2019, 00:00:00 epoch time and date.  The simulation time elapsed is
+thus the time since epoch.  To specify a different simulation epoch data and time the :ref:`EpochSimMsg` can be
+setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell ref:`vizInterface` what epoch message to read use::
+
+	viz.epochMsgName = "Epoch_Msg_Name_Used"
+
