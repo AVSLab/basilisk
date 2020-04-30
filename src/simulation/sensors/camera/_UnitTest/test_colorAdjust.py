@@ -16,13 +16,12 @@
 
 # Unit Test Script
 # Module Name:        Camera
-# Author:             Thibaud Teil
-# Creation Date:      March 13, 2019
+# Author:             Lucas Webb and Hanspeter Schaub
+# Creation Date:      April 30, 2020
 
 
 import pytest
 import os, inspect
-import numpy as np
 import colorsys
 import math
 
@@ -57,30 +56,30 @@ except ImportError:
 # Provide a unique test method name, starting with 'test_'.
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("gauss, darkCurrent, saltPepper, cosmic, blurSize", [
-    (0,          0,      0,   0,   0)
-    , (2,          2,      2,   1,   3)
+@pytest.mark.parametrize("HSV", [
+    [0, 0, 0]
+    , [1.0, +20.0, -30.0]
+    , [-1.0, +20.0, -30.0]
+    , [3.14159, +100, -100]
 ])
-
+@pytest.mark.parametrize("BGR", [
+    [0, 0, 0]
+    , [10, 20, 30]
+    , [-10, -30, +50]
+    , [-100, +200, +20]
+])
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
+def test_module(show_plots, HSV, BGR):
     """
         **Validation Test Description**
 
-        This module tests the proper functioning of the camera module. This is done by first ensuring that the reading
-        and writing of the camera parameters are properly executed. The test then corrupts a test image accordingly.
+        This module tests the color shifting capability of the camera module. Multiple HSV and BGR color
+        adjustments are tests on a TV test image.
 
         **Description of Variables Being Tested**
 
-        The camera parameters tested are the camera position MRP and the isOn value for the camera. These ensure that
-        the position is properly written and read. The image is also corrupted with the parameterized test information.
-        This is directly tested by differencing the initial and processed image to see a change.
-        and also ensures that the variables are properly read and that all the openCV functions
-        are executing properly.
-
-        - ``camera_MRP``
-        - ``isON``
-        - ``imageNorm Values``
+        Multiple points on the test images are adjusted in python and compared to the BSK camera module
+        saved image.
 
         The comparative value for the test on the image is 1E-2 which depends on the corruptions but is allowed to me small
         as the relative difference of the images is taken (whereas pixel values can get large).
@@ -91,53 +90,50 @@ def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
 
         The script could benefit from more profound image processing testing. Currently the bulk of the image processing
         is only tested by the result image.
-        """
+    """
     # each test method requires a single assert method to be called
-    image = "mars.jpg"
-    [testResults, testMessage] = cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize)
+    image = "tv_test.png"
+    [testResults, testMessage] = cameraColorTest(image, HSV, BGR)
 
     # Clean up
     imagePath = path + '/' + image
-    savedImage1 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent)  \
-                        + str(saltPepper) + str(cosmic) + str(blurSize) + '0.000000.png'
-    savedImage2 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent)  \
-                        + str(saltPepper) + str(cosmic) + str(blurSize) + '0.500000.png'
+    savedImage = '/'.join(imagePath.split('/')[:-1]) + '/hsv' + str(HSV) + 'bgr' + str(BGR) + '0.000000.png'
     try:
-        os.remove(savedImage1)
-        os.remove(savedImage2)
+        os.remove(savedImage)
     except FileNotFoundError:
         pass
 
     assert testResults < 1, testMessage
 
 
-def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize):
+def cameraColorTest(image, HSV, BGR):
+    """
+    Test method to apply the HSV and BGR image adjustments.
+
+    :param image: image name to load from local folder
+    :param HSV: 3d vector of HSV adjustments
+    :param BGR: 3d vector of BGR adjustments
+
+    """
     # Truth values from python
     imagePath = path + '/' + image
     input_image = Image.open(imagePath)
     input_image.load()
     #################################################
-    corrupted = (gauss>0) or (darkCurrent>0) or (saltPepper>0) or (cosmic>0) or (blurSize>0)
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
     unitTestSim.TotalSim.terminateSimulation()
 
-    bitmapArray = []
-
-    # # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     moduleConfig = camera.Camera()
@@ -151,8 +147,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     moduleConfig.filename = imagePath
     moduleConfig.saveImages = True
     # make each image saved have a unique name for this test case
-    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent)  \
-                        + str(saltPepper) + str(cosmic) + str(blurSize)
+    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/hsv' + str(HSV) + 'bgr' + str(BGR)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -163,70 +158,95 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
                                unitProcessName,
                                moduleConfig.imageInMsgName,
                                inputMessageData)
-
     moduleConfig.cameraIsOn = 1
     moduleConfig.sigma_CB = [0, 0, 1]
 
     # Noise parameters
-    moduleConfig.gaussian = gauss
-    moduleConfig.darkCurrent = darkCurrent
-    moduleConfig.saltPepper = saltPepper
-    moduleConfig.cosmicRays = cosmic
-    moduleConfig.blurParam = blurSize
+    # BGR and HSV are python lists of the form [0, 0, 0]
+    moduleConfig.bgrPercent = camera.IntVector(BGR)
+    moduleConfig.hsv = camera.DoubleVector(HSV)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.cameraOutMsgName, testProcessRate)
-
-    # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
+    unitTestSim.TotalSim.SingleStepProcesses()
 
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
+    corruptedPath = moduleConfig.saveDir + '0.000000.png'
 
-    # Begin the simulation time run set above
-    unitTestSim.ExecuteSimulation()
-
-    # Truth values from python
-    if corrupted:
-        corruptedPath = moduleConfig.saveDir + '0.000000.png'
-    else:
-        corruptedPath = moduleConfig.saveDir + '0.500000.png'
-    output_image = Image.open(corruptedPath)
-
-    isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
-    pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
-
-    #  Error check for corruption
-    err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2))/np.linalg.norm(np.linalg.norm(input_image, axis=2))
-
-    if (err < 1E-2 and corrupted):
+    #   print out error message if test failed
+    if not trueColorAdjust(imagePath, corruptedPath, HSV, BGR):
         testFailCount += 1
-        testMessages.append("Image not corrupted and show be: " + image)
-
-    if (err > 1E-2 and not corrupted):
-        testFailCount += 1
-        testMessages.append("Image corrupted and show not be: " + image)
-
-    #   print out success message if no error were found
-    for i in range(3):
-        if np.abs(pos[-1, i+1] - moduleConfig.sigma_CB[i]) > 1E-10:
-            testFailCount += 1
-            testMessages.append("Test failed position " + image)
-
-    if np.abs(isOnValues[-1, 1] - moduleConfig.cameraIsOn) > 1E-10:
-        testFailCount += 1
-        testMessages.append("Test failed isOn " + image)
+        testMessages.append("Test failed color adjustment  " + image)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
+
+
+# these points correspond to the included 'tv_test.png'
+testPoints = [(100, 300), (250, 300), (450, 300), (600, 300), (700, 300), (950, 300), (1100, 300), (300, 800),
+              (880, 780)]
+
+def rgb_to_hsv(rgb):
+    hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
+    return [hsv[0] * 180., hsv[1] * 255., hsv[2]]
+
+
+def hsv_to_rgb(hsv):
+    rgb = colorsys.hsv_to_rgb(hsv[0]/180., hsv[1]/255., hsv[2]/255.)
+    return [rgb[0] * 255, rgb[1] * 255, rgb[2] * 255]
+
+
+def trueColorAdjust(image, corrupted, HSV, BGR):
+    input_rgb = Image.open(image).load()
+    output = Image.open(corrupted).load()
+
+    for point in testPoints:
+        px = point[0]
+        py = point[1]
+
+        # do HSV adjustment
+        hsv = rgb_to_hsv(input_rgb[px, py])
+        expected = [0, 0, 0]
+        input_degrees = math.degrees(HSV[0])
+        h_360 = (hsv[0] * 2) + input_degrees
+        h_360 -= 360. * math.floor(h_360 * (1. / 360.))
+        h_360 = int(h_360 / 2)
+        if h_360 == 180:
+            h_360 = 0
+        expected[0] = int(h_360)
+
+        for i in range(2):
+            expected[i+1] = int(hsv[i+1] * (HSV[i+1]/100. + 1.))
+            if expected[i+1] < 0:
+                expected[i+1] = 0
+            if expected[i+1] > 255:
+                expected[i+1] = 255
+
+        expectedAfterHSV = hsv_to_rgb(expected)
+        expectedAfterHSV = [int(i) for i in expectedAfterHSV]
+
+        # do BGR adjustment
+        for i in range(3):
+            expected[i] = int((BGR[2 - i] / 100. + 1.) * expectedAfterHSV[i])
+            if expected[i] > 255:
+                expected[i] = 255
+            if expected[i] < 0:
+                expected[i] = 0
+
+        for i in range(3):
+            if abs(int(output[px, py][i]) - expected[i]) > 0:
+                print("Failed HSV at point: px=" + str(px) + " py= + " + str(py))
+                return False
+    print("Passed Color Check")
+    return True
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    cameraTest(False, "mars.jpg", 2, 0, 2, 1, 3)
+    hsvAdjust = [-1.0, 20.0, -30.0]
+    bgrAdjust = [-100, 200, 20]
+    cameraColorTest("tv_test.png", hsvAdjust, bgrAdjust)

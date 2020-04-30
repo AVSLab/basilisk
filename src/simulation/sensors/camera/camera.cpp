@@ -59,7 +59,7 @@ Camera::Camera()
     this->saltPepper = 0;
     this->cosmicRays = 0;
     this->blurParam = 0;
-    this->hsv = std::vector<double>{0, 0, 0};
+    this->hsv = std::vector<double>{0., 0., 0.};
     this->bgrPercent = std::vector<int>{0, 0, 0};
     
     return;
@@ -109,10 +109,9 @@ void Camera::Reset(uint64_t CurrentSimNanos)
  * Can be used to shift the hue, saturation, and brightness of an image.
  * @param cv::Mat source image
  * @param cv::Mat destination of modified image
- * @param std::vector<double> of H,S,V adjustment factors. H (radians) is added, S and V are percent multiplier factors)
  * @return void
  */
-void Camera::hueShift(const cv::Mat mSrc, cv::Mat &mDst, std::vector<double> HSV){
+void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
     cv::Mat hsv;
     cvtColor(mSrc, hsv, cv::COLOR_BGR2HSV);
     
@@ -148,10 +147,9 @@ void Camera::hueShift(const cv::Mat mSrc, cv::Mat &mDst, std::vector<double> HSV
  * Can be used to simulate a sensor with different sensitivities to B, G, and R.
  * @param cv::Mat source image
  * @param cv::Mat destination of modified image
- * @param std::vector<int> of B,G,R scaling factors (percent multipliers)
  * @return void
  */
-void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> BGR){
+void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mBGR, mSrc.type());
     
@@ -323,11 +321,11 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
         float scale = 15;
         AddGaussianNoise(mFilters, mFilters, darkCurrent * scale, 0.0);
     }
-    if (abs(this->hsv[0])+this->hsv[1]+this->hsv[2] != 0) {
-        hueShift(mFilters, mFilters, this->hsv);
+    if (abs(this->hsv[0])+abs(this->hsv[1])+abs(this->hsv[2]) > 0.00001) {
+        HSVAdjust(mFilters, mFilters);
     }
-    if (this->bgrPercent[0]+this->bgrPercent[1]+this->bgrPercent[2] != 0) {
-        BGRAdjustPercent(mFilters, mFilters, this->bgrPercent);
+    if (abs(this->bgrPercent[0])+abs(this->bgrPercent[1])+abs(this->bgrPercent[2]) != 0) {
+        BGRAdjustPercent(mFilters, mFilters);
     }
     if (saltPepper > 0){
         float scale = 0.00002;
@@ -372,7 +370,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     
     cv::Mat imageCV, blurred;
     if (this->saveDir !=""){
-        localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+        localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".png";
     }
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
