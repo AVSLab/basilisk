@@ -79,17 +79,9 @@ def test_module(show_plots, HSV, BGR):
         **Description of Variables Being Tested**
 
         Multiple points on the test images are adjusted in python and compared to the BSK camera module
-        saved image.
+        saved image.  The HSV and BGR color corrections are applied on a series of points in the test image.
+        The integer red, green and blue color values are checked to be identical.
 
-        The comparative value for the test on the image is 1E-2 which depends on the corruptions but is allowed to me small
-        as the relative difference of the images is taken (whereas pixel values can get large).
-
-        The two parameterized test are set with and without corruptions.
-
-        **General Documentation Comments**
-
-        The script could benefit from more profound image processing testing. Currently the bulk of the image processing
-        is only tested by the result image.
     """
     # each test method requires a single assert method to be called
     image = "tv_test.png"
