@@ -247,6 +247,6 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
 # stand-along python script
 #
 if __name__ == "__main__":
-    hsvAdjust = [-1.0, 20.0, -30.0]
-    bgrAdjust = [-100, 200, 20]
+    hsvAdjust = [0, 0, 0.0]
+    bgrAdjust = [-100, 0, 0]
     cameraColorTest("tv_test.png", hsvAdjust, bgrAdjust)
