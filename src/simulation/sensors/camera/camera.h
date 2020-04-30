@@ -21,6 +21,7 @@
 #define _CAMERA_H_
 
 #include <stdint.h>
+#include <math.h>
 #include <Eigen/Dense>
 #include "architecture/messaging/system_messaging.h"
 #include "opencv2/opencv.hpp"
@@ -43,6 +44,8 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
+    void HSVAdjust(const cv::Mat, cv::Mat &mDst);
+    void BGRAdjustPercent(const cv::Mat, cv::Mat &mDst);
     void AddGaussianNoise(const cv::Mat, cv::Mat &mDst, double, double);
     void AddSaltPepper(const cv::Mat, cv::Mat &mDst, float, float);
     void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float, double, int);
@@ -74,6 +77,8 @@ public:
     double saltPepper;    //!< Stuck and Dark pixels probability
     double cosmicRays;        //!< Random cosmic rays (number)
     double blurParam;        //!< Blur over image in pixels
+    std::vector<double> hsv;    //!< (double) HSV color correction, H (-pi/pi) hue shift, S and V are percent multipliers
+    std::vector<int> bgrPercent; //!< (int) BGR color correction values as percent
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
