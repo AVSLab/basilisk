@@ -1,4 +1,6 @@
 ''' '''
+import math
+
 '''
  ISC License
 
@@ -27,6 +29,7 @@
 import pytest
 import sys, os, inspect, time
 import numpy as np
+import colorsys
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -100,7 +103,6 @@ def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
 
 
 def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage):
-
     # Truth values from python
     imagePath = path + '/' + image
     input_image = Image.open(imagePath)
@@ -160,6 +162,8 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     moduleConfig.saltPepper = saltPepper
     moduleConfig.cosmicRays = cosmic
     moduleConfig.blurParam = blurSize
+    moduleConfig.HSV = camera.DoubleVector([0, 0, 0])
+    moduleConfig.RGB = camera.DoubleVector([0, 0, 0])
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.cameraOutMsgName, testProcessRate)
@@ -207,21 +211,191 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
         testFailCount+=1
         testMessages.append("Test failed isOn " + image)
 
+    # Comment this out to keep files after each test for debugging purposes
     # Clean up
-    try:
-        os.remove(path + "/0.000000.jpg")
-        os.remove(path + "/0.500000.jpg")
-    except FileNotFoundError:
-        pass
+    # try:
+    #     os.remove(path + "/0.000000.jpg")
+    #     os.remove(path + "/0.500000.jpg")
+    # except FileNotFoundError:
+    #     pass
+
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
+
+# which = 0 -> test BGR
+# which = 1 - > test HSV
+# can't test both at same time
+def cameraColorTest(image, saveImage, BGR, HSV, which):
+    # Truth values from python
+    imagePath = path + '/' + image
+    input_image = Image.open(imagePath)
+    input_image.load()
+    #################################################
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = camera.Camera()
+    moduleConfig.ModelTag = "cameras"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+    moduleConfig.imageInMsgName = "sample_image"
+    moduleConfig.cameraOutMsgName = "cameraOut"
+    moduleConfig.imageOutMsgName = "out_image"
+    moduleConfig.filename = imagePath
+    moduleConfig.saveImages = 1 if saveImage else 0
+    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/'
+
+    # Create input message and size it because the regular creator of that message
+    # is not part of the test.
+    inputMessageData = camera.CameraImageMsg()
+    inputMessageData.timeTag = int(1E9)
+    inputMessageData.cameraID = 1
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.imageInMsgName,
+                               inputMessageData)
+    moduleConfig.cameraIsOn = 1
+    moduleConfig.sigma_CB = [0, 0, 1]
+
+    # Noise parameters
+    # BGR and HSV are python lists of the form [0, 0, 0]
+    if which == 0:
+        moduleConfig.bgrPercent = camera.IntVector(BGR)
+    elif which == 1:
+        moduleConfig.hsv = camera.DoubleVector(HSV)
+
+    # Setup logging on the test module output message so that we get all the writes to it
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.cameraOutMsgName, testProcessRate)
+    unitTestSim.InitializeSimulation()
+
+    # Set the simulation time.
+    # NOTE: the total simulation time may be longer than this value. The
+    # simulation is stopped at the next logging event on or after the
+    # simulation end time.
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))  # seconds to stop simulation
+
+    # Begin the simulation time run set above
+    unitTestSim.ExecuteSimulation()
+
+    corruptedPath = path + '/' + '0.000000.jpg'
+    output_image = Image.open(corruptedPath)
+
+    #   print out error message if test failed
+    if which == 0:
+        if not testBGR(imagePath, corruptedPath, BGR):
+            testFailCount += 1
+            testMessages.append("Test failed BGR " + image)
+    elif which == 1:
+        if not testHSV(imagePath, corruptedPath, HSV):
+            testFailCount += 1
+            testMessages.append("Test failed HSV " + image)
+
+    # Comment this out to keep files after each test for debugging purposes
+    # Clean up
+    # try:
+    #     os.remove(path + "/0.000000.jpg")
+    #     os.remove(path + "/0.500000.jpg")
+    # except FileNotFoundError:
+    #     pass
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
 
+# these points correspond to the included 'tv_test.png'
+testPoints = [(100, 300), (250, 300), (450, 300), (600, 300), (700, 300), (950, 300), (1100, 300), (300, 800),
+              (880, 780)]
+
+
+def testBGR(image, corrupted, BGR):
+    input_rgb = Image.open(image).load()
+    output = Image.open(corrupted).load()
+
+    for point in testPoints:
+        px = point[0]
+        py = point[1]
+
+        expected = [0, 0, 0]
+        for i in range(3):
+            expected[i] = int((BGR[2-i]/100 + 1) * input_rgb[px, py][i])
+            if expected[i] > 255:
+                expected[i] = 255
+            if expected[i] < 0:
+                expected[i] = 0
+            if abs(output[px, py][i] - expected[i]) > 2:
+                print("Failed BGR at point: ", end="")
+                print(point)
+                return False
+    print("Passed BGR")
+    return True
+
+
+def rgb_to_hsv(rgb):
+    hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
+    return [hsv[0] * 180, hsv[1] * 255, hsv[2]]
+
+
+def hsv_to_rgb(hsv):
+    rgb = colorsys.hsv_to_rgb(hsv[0]/180, hsv[1]/255, hsv[2]/255)
+    return [rgb[0] * 255, rgb[1] * 255, rgb[2] * 255]
+
+
+def testHSV(image, corrupted, HSV):
+    input_rgb = Image.open(image).load()
+    output = Image.open(corrupted).load()
+
+    for point in testPoints:
+        px = point[0]
+        py = point[1]
+
+        hsv = rgb_to_hsv(input_rgb[px, py])
+        expected = [0, 0, 0]
+        input_degrees = math.degrees(HSV[0])
+        h_360 = (hsv[0] * 2) + input_degrees
+        h_360 -= 360. * math.floor(h_360 * (1. / 360.))
+        h_360 = int(h_360 / 2)
+        if h_360 == 180:
+            h_360 = 0
+        expected[0] = h_360
+
+        for i in range(2):
+            expected[i+1] = hsv[i+1] * (HSV[i+1]/100 + 1)
+            if expected[i+1] < 0:
+                expected[i+1] = 0
+            if expected[i+1] > 255:
+                expected[i+1] = 255
+
+        for i in range(3):
+            expected_rgb = hsv_to_rgb(expected)
+            if abs(int(output[px, py][i]) - expected_rgb[i]) > 3:
+                print("Failed HSV at point: ", end="")
+                print(point)
+                return False
+    print("Passed HSV")
+    return True
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    cameraTest(True, "mars.jpg", 2,          0,      2,   1,   3 , True) # Mars image
+    #cameraTest(True, "mars.jpg", 2,          0,      2,   1,   3 , True) # Mars image
+    bgr = [0, 0, 0]
+    hsv = [3, 30, 90]
+    cameraColorTest("tv_test.png", 1, bgr, hsv, 1)

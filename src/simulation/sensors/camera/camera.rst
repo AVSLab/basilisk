@@ -40,16 +40,83 @@ Detailed Module Description
 This modules pulls heavily from the OpenCV library. The methods
 implemented create either:
 
-- Gaussian noise on the image (``gaussian``)
-- Dark Noise (``darkCurrent``)
-- Dead and stuck pixels (``saltPepper``)
-- Random Cosmic rays (``cosmicRays``)
-- Blurring (``blurParam``)
-- HSV color adjustment (``HSV``)
-- RGB percent color adjustment (``RGB
+- Gaussian noise on the image
+- Dark Current
+- Dead and stuck pixels
+- Random Cosmic rays
+- Blurring
+- HSV adjustments
+- BGR adjustments
 
 Doxygen documentation for OpenCV can be found `here <https://docs.opencv.org/4.1.2/>`__.
 
+Overview of Corruptions
+-----------------------
+Gaussian noise is designed to simulate camera sensor noise. This is done by using the addWeighted OpenCV method and
+scaling the noise according to the input parameter. The noise is zero-mean with standard deviation equal to twice the
+gaussian noise parameter. The image is then thresholded at the 6-σ value of the noise parameter in order to keep
+the background dark.
+
+Dark current is due to thermal properties of the CCD or CMOS sensor in use: as electrons are created independently of
+incoming light, they are captured in the pixel potential wells and appear to be a signal. Dark current noise is the
+statistical variation of this phenomenon. In Basilisk, dark current noise is added with a Gaussian noise model with
+zero standard deviation and mean of 15 × D, where D is another input to the module.
+
+Blurring is implemented using the standard OpenCV blur function with size specified by the blur parameter. This type
+of blur is referred to as a box blur. The only requirement is that the blur parameter be an odd number.
+
+Dead and stuck pixels are also implemented as a static perturbation. A dead pixel is a pixel on the sensor that always
+reads black. A stuck pixel is a pixel on the sensor that always reads white. At the initialization of the run, a
+random number generates arbitrary pixel coordinates and either saturates them dark or light.
+The corrupted pixels stay the same throughout the simulation and provide an example of a static artifact.
+
+Cosmic rays are ionized nuclei: 90% being protons, 9% alpha particles, and the rest are heavier nuclei. By hitting the
+camera sensor with relatively high energies, they can saturate a line of pixels and corrupt the image. Cosmic rays are
+modeled in Basilisk by randomly choosing a point on the sensor as well as second point within a maximal distance of the
+first one. The abundance of cosmic rays on an image depend on the shutter speed amongst other parameters, and the
+module allows to toggle the frequency and quantity of such events.
+
+Finally, the module supports directly adjusting either the pixels of the image through the HSV or BGR colorspace. Note
+that OpenCV defaults to the BGR and not RGB colorspace.
+Many camera sensors have different color profiles so being able to adjust the color directly is important. Further,
+this allows for the adjustment of overall brightness and saturation.
+
+To read more about the corruptions and for example pictures see section 5.2 of Thibaud Teil's thesis.
+`Link to Thesis <https://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`__
+
+Because each successive filter is applied on top of the previous, the order in which they are applied is very important.
+Currently Basilisk does not support a custom order with out directly modifying the source code. The order is as follows,
+gaussian noise, blur, dark current, HSV adjust, RGB adjust, salt/pepper, and cosmic rays. This order was determined
+in part by trying to match a simulated image to a real image of mars and also based on what makes sense.
+
+.. list-table:: Order of Corruptions
+    :widths: auto
+    :header-rows: 1
+
+    * - Corruption
+      - Parameters
+      - Notes
+    * - Gaussian Noise
+      - double scaling factor
+      - Adds noise with a mean of 0 and standard deviation of 2 * scaling parameter
+    * - Blur
+      - double blur size
+      - Determines the size of the box blur. Blur size parameter must be odd
+    * - Dark Current
+      - double scaling factor
+      - Adds noise with mean of 15 * scaling factor and standard deviation of 0
+    * - HSV Adjust
+      - vector of three doubles
+      - First parameter is given in radians and determines the hue shift. Second two parameters are scaling factors for saturation and value
+    * - BGR Adjust
+      - vector of three ints
+      - Parameters correspond to scaling factors for blue, green, and red
+    * - Salt/Pepper
+      - double scaling factor
+      - Probability of both stuck and dead pixels is calculated as 0.00002 * scaling parameter
+    * - Cosmic Rays
+      - double number of cosmic rays
+      - Adds the specified number of cosmic rays
 
 User Guide
 ----------

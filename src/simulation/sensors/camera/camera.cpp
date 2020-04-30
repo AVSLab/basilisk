@@ -59,8 +59,8 @@ Camera::Camera()
     this->saltPepper = 0;
     this->cosmicRays = 0;
     this->blurParam = 0;
-    this->hsv = std::vector<int>{0, 0, 0};
-    this->rgbPercent = std::vector<int>{0, 0, 0};
+    this->hsv = std::vector<double>{0, 0, 0};
+    this->bgrPercent = std::vector<int>{0, 0, 0};
     
     return;
 }
@@ -109,10 +109,10 @@ void Camera::Reset(uint64_t CurrentSimNanos)
  * Can be used to shift the hue, saturation, and brightness of an image.
  * @param cv::Mat source image
  * @param cv::Mat destination of modified image
- * @param std::vector<int> of H,S,V adjustment factors. H (-180 to 180) is added, S and V are percent multiplier factors)
+ * @param std::vector<double> of H,S,V adjustment factors. H (radians) is added, S and V are percent multiplier factors)
  * @return void
  */
-void Camera::hueShift(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> HSV){
+void Camera::hueShift(const cv::Mat mSrc, cv::Mat &mDst, std::vector<double> HSV){
     cv::Mat hsv;
     cvtColor(mSrc, hsv, cv::COLOR_BGR2HSV);
     
@@ -121,19 +121,22 @@ void Camera::hueShift(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> HSV){
             // Saturation is hsv.at<Vec3b>(j, i)[1] range: [0-255]
             // Value is hsv.at<Vec3b>(j, i)[2] range: [0-255]
             
-            // hue range: [0-179)
-            hsv.at<cv::Vec3b>(j, i)[0] = (hsv.at<cv::Vec3b>(j, i)[0] + this->hsv[0]) % 180;
-            hsv.at<cv::Vec3b>(j, i)[1] = (hsv.at<cv::Vec3b>(j, i)[1]) * (this->hsv[1]/100. + 1.);
-            hsv.at<cv::Vec3b>(j, i)[2] = (hsv.at<cv::Vec3b>(j, i)[2]) * (this->hsv[2]/100. + 1.);
-
-            // saturate S and V values to [0,255]
+            // convert radians to degrees and multiply by 2
+            // user assumes range hue range is 0-2pi and not 0-180
+            int input_degrees = (int) (this->hsv[0] * R2D);
+            int h_360 = (hsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
+            h_360 -= 360 * std::floor(h_360 * (1. / 360.));
+            h_360 = h_360/2;
+            if(h_360 == 180){ h_360 = 0; }
+            hsv.at<cv::Vec3b>(j, i)[0] = h_360;
+            
+            int values[2];
             for(int k = 1; k < 3; k++){
-                if(hsv.at<cv::Vec3b>(j,i)[k] < 0){
-                    hsv.at<cv::Vec3b>(j,i)[k] = 0;
-                }
-                if(hsv.at<cv::Vec3b>(j,i)[k] > 255){
-                    hsv.at<cv::Vec3b>(j,i)[k] = 255;
-                }
+                values[k] = hsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k]/100. + 1.);
+                // saturate S and V values to [0,255]
+                if(values[k] < 0){ values[k] = 0; }
+                if(values[k] > 255){ values[k] = 255; }
+                hsv.at<cv::Vec3b>(j, i)[k] = values[k];
             }
         }
     }
@@ -141,38 +144,33 @@ void Camera::hueShift(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> HSV){
 }
 
 /*!
- * Adjusts the RGB values of each pixel by a percent value.
- * Can be used to simulate a sensor with different sensitivities to R, G, and B.
+ * Adjusts the BGR values of each pixel by a percent value.
+ * Can be used to simulate a sensor with different sensitivities to B, G, and R.
  * @param cv::Mat source image
  * @param cv::Mat destination of modified image
- * @param std::vector<int> of R,G,B scaling factors (percent multipliers)
+ * @param std::vector<int> of B,G,R scaling factors (percent multipliers)
  * @return void
  */
-void Camera::RGBAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> RGB){
-    cv::Mat mRGB = cv::Mat(mSrc.size(), mSrc.type());
-    mSrc.convertTo(mRGB, mSrc.type());
+void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst, std::vector<int> BGR){
+    cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
+    mSrc.convertTo(mBGR, mSrc.type());
     
-    // RGB values range [0, 255]
+    // BGR values range [0, 255]
     // if value after adjustment is < 0 take 0
     // if value after is > 255 take 255
     for (int j = 0; j < mSrc.rows; j++) {
         for (int i = 0; i < mSrc.cols; i++) {
-            mRGB.at<cv::Vec3b>(j,i)[0] = mRGB.at<cv::Vec3b>(j,i)[0] * (this->rgbPercent[0]/100. + 1.);
-            mRGB.at<cv::Vec3b>(j,i)[1] = mRGB.at<cv::Vec3b>(j,i)[1] * (this->rgbPercent[1]/100. + 1.);
-            mRGB.at<cv::Vec3b>(j,i)[2] = mRGB.at<cv::Vec3b>(j,i)[2] * (this->rgbPercent[2]/100. + 1.);
-            
-            // prevent overflow
+            int values[3];
             for(int k = 0; k < 3; k++){
-                if(mRGB.at<cv::Vec3b>(j,i)[k] < 0){
-                    mRGB.at<cv::Vec3b>(j,i)[k] = 0;
-                }
-                if(mRGB.at<cv::Vec3b>(j,i)[k] > 255){
-                    mRGB.at<cv::Vec3b>(j,i)[k] = 255;
-                }
+                values[k] = (int) (mBGR.at<cv::Vec3b>(j,i)[k] * (this->bgrPercent[k]/100. + 1.));
+                // deal with overflow
+                if(values[k] < 0){ values[k] = 0; }
+                if(values[k] > 255){ values[k] = 255; }
+                mBGR.at<cv::Vec3b>(j,i)[k] = values[k];
             }
         }
     }
-    mRGB.convertTo(mDst, mSrc.type());
+    mBGR.convertTo(mDst, mSrc.type());
 }
 
 /*!
@@ -328,8 +326,8 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
     if (abs(this->hsv[0])+this->hsv[1]+this->hsv[2] != 0) {
         hueShift(mFilters, mFilters, this->hsv);
     }
-    if (this->rgbPercent[0]+this->rgbPercent[1]+this->rgbPercent[2] != 0) {
-        RGBAdjustPercent(mFilters, mFilters, this->rgbPercent);
+    if (this->bgrPercent[0]+this->bgrPercent[1]+this->bgrPercent[2] != 0) {
+        BGRAdjustPercent(mFilters, mFilters, this->bgrPercent);
     }
     if (saltPepper > 0){
         float scale = 0.00002;

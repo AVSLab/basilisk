@@ -43,8 +43,8 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void hueShift(const cv::Mat, cv::Mat &mDst, std::vector<int>);
-    void RGBAdjustPercent(const cv::Mat, cv::Mat &mDst, std::vector<int>);
+    void hueShift(const cv::Mat, cv::Mat &mDst, std::vector<double>);
+    void BGRAdjustPercent(const cv::Mat, cv::Mat &mDst, std::vector<int>);
     void AddGaussianNoise(const cv::Mat, cv::Mat &mDst, double, double);
     void AddSaltPepper(const cv::Mat, cv::Mat &mDst, float, float);
     void AddCosmicRay(const cv::Mat, cv::Mat &mDst, float, double, int);
@@ -76,8 +76,8 @@ public:
     double saltPepper;    //!< Stuck and Dark pixels probability
     double cosmicRays;        //!< Random cosmic rays (number)
     double blurParam;        //!< Blur over image in pixels
-    std::vector<int> hsv;    //!< (int) HSV color correction, H (-180/180) hue shift, S and V are percent multipliers
-    std::vector<int> rgbPercent;
+    std::vector<double> hsv;    //!< (int) HSV color correction, H (-180/180) hue shift, S and V are percent multipliers
+    std::vector<int> bgrPercent;
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
