@@ -19,7 +19,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Added the ability to shift the HSV or BGR colors of :ref:`camera`
 
 Version 1.7.4
 -------------
