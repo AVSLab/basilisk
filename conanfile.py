@@ -142,6 +142,7 @@ if __name__ == "__main__":
         conanCmdString += ' -o buildProject=True'
     for opt, value in bskModuleOptions.items():
         conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
+    conanCmdString += ' -o *:shared=True'
     print("Running this conan command:")
     print(conanCmdString)
     os.system(conanCmdString)
