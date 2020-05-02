@@ -10,11 +10,13 @@ bskModuleOptions = {
     "vizInterface": True,
     "python3": True
 }
+f = open('docs/source/bskVersion.txt', 'r')
+bskVersion = f.read()
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
     homepage = "http://hanspeterschaub.info/basilisk"
-    version = '1.7.2'
+    version = bskVersion
     generators = "cmake_find_package_multi"
     requires = "eigen/3.3.7@conan/stable"
     settings = "os", "compiler", "build_type", "arch"
@@ -107,7 +109,6 @@ class BasiliskConan(ConanFile):
         #self.run("python3 -m pip3 install --user matplotlib")
         #self.run("python3 -m pip3 install --user numpy")
         #self.run("python3 -m pip3 install --user pandas")
-
 
 
 
