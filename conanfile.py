@@ -1,4 +1,4 @@
-import os
+import os, platform
 from datetime import datetime
 from conans import ConanFile, CMake, tools
 import shutil
@@ -71,6 +71,7 @@ class BasiliskConan(ConanFile):
                 self.generator = "Xcode"
             elif self.settings.os == "Windows":
                 self.generator = "Visual Studio 16 2019"
+                self.options["*"].shared = True
             else:
                 print("Creating a make file for project. ")
                 print("Specify your own using the -o generator='Name' flag during conan install")
@@ -142,7 +143,6 @@ if __name__ == "__main__":
         conanCmdString += ' -o buildProject=True'
     for opt, value in bskModuleOptions.items():
         conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
-    conanCmdString += ' -o *:shared=True'
     print("Running this conan command:")
     print(conanCmdString)
     os.system(conanCmdString)
