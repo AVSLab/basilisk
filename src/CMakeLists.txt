@@ -30,9 +30,9 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/conan")
-
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+
+
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
@@ -163,6 +163,10 @@ function(generate_package_libraries INIT_DIRECTORY)
         set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
         set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
         set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+        set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk") 
+        set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+        set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
     endforeach()
 endfunction(generate_package_libraries)
 
@@ -216,10 +220,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     foreach(TARGET_FILE ${TARGET_LIST})
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
         get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
-        MESSAGE("DEBUG: TARGET FILE: ${TARGET_FILE}")
-        MESSAGE("DEBUG: PARENT DIR: ${PARENT_DIR}")
-        MESSAGE("DEBUG: LIBRARY OUT DIR wo Quotes: ${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
-        MESSAGE(${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR})
+        
         # Collect any external dependencies
         set(CUSTOM_DEPENDENCIES)
         set(CUSTOM_DEPENDENCIES_HANDLED)
@@ -280,7 +281,6 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         foreach(LIB ${LIB_DEP_LIST})
             target_link_libraries(${TARGET_NAME} ${LIB}) 
         endforeach()
-        target_link_libraries(${TARGET_NAME} Eigen3::Eigen3)
 
         # TODO: This is a better way to organize the dist olders, but it doesn't adhere to current python import structure
         # Would make (from Basilisk.simulation import SpacecraftPlus) --> (from Basilisk.simulation.dynamics.SpacecraftDynamics import SpacecraftPlus)
@@ -400,7 +400,6 @@ endif()
 # TODO: Move the cspice library extension into a custom pyswice CMakeList.txt
 # Manually create list of libraries depending on system
 if(WIN32)
-    MESSAGE("DEBUG: DETECTING WINDOWS")
 	set(library_dependencies
       	${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib
 	)
