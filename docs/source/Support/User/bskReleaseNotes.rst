@@ -35,6 +35,9 @@ Version |release|
 - The need for folder module ``__init__.py`` files has been removed.  If local python support files should be
   included in the swig'd module, they can be included in the module ``*.i`` file using something like
   ``%pythoncode "parseSRPLookup.py"``.
+- The support files in ``_GeneralModuleFiles`` are now compiled into a library with the parent folder name.  Thus,
+  the ``src/simulation/dynamics/_GeneralModuleFiles`` support files yield a swig'd library ``dynamicsLib``.
+  Similarly, ``src/simulation/environment/_GeneralModuleFiles`` yields ``environmentLib``.
 - Cleaned up small RST documentation issues
 
 Version 1.7.5

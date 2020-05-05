@@ -82,7 +82,12 @@ Version |release|
 
         %include "std_vector.i"
 
-
+- The files in ``_GeneralModuleFiles`` folders are now built into a separate library with the parent folders name
+  plus ``Lib``.
+  This means in the IDE like Xcode and Visual Studio the code in ``_GeneralModuleFiles`` is shown in a folder with
+  this library name.  Thus, for example, code in ``src/simulation/environment/_GeneralModuleFiles``
+  are shown in the IDE folder ``environmentLib`` within the ``environment`` parent folder.  This keeps the BSK
+  folders cleaner and with less duplicated code being displayed.
 
 Version 1.7.5
 -----------------
