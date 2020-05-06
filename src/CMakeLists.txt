@@ -400,6 +400,7 @@ endif()
 # TODO: Move the cspice library extension into a custom pyswice CMakeList.txt
 # Manually create list of libraries depending on system
 if(WIN32)
+    set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")
 	set(library_dependencies
       	${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib
 	)
