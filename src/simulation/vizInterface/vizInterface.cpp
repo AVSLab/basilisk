@@ -51,6 +51,11 @@ VizInterface::VizInterface()
     this->planetNames = {};
 
     this->firstPass = 0;
+    
+    this->comProtocol = "tcp";
+    this->comAddress = "localhost";
+    this->comPortNumber = "5556";
+    
     return;
 }
 
@@ -70,13 +75,13 @@ void VizInterface::SelfInit()
         this->bskImagePtr = NULL;
         this->context = zmq_ctx_new();
         this->requester_socket = zmq_socket(this->context, ZMQ_REQ);
-        zmq_connect(this->requester_socket, "tcp://localhost:5556");
+        zmq_connect(this->requester_socket, (this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber).c_str());
 
         void* message = malloc(4 * sizeof(char));
         memcpy(message, "PING", 4);
         zmq_msg_t request;
         
-        std::cout << "Waiting for Vizard at tcp://localhost:5556" << std::endl;
+        std::cout << "Waiting for Vizard at " + this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber << std::endl;
         
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, this->requester_socket, 0);

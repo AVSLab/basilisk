@@ -23,7 +23,35 @@ Next Vizard presents a panel where the user can select which simulation to visua
    :align: center
    :width: 90 %
 
-To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream`) the socket address, such as ``tcp://localhost:5556``, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
+To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream`) the socket address, which is ``tcp://localhost:5556`` by default, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
+
+The default socket address can be overwritten using the following variables:
+
+.. code-block:: python
+
+    viz = vizInterface.VizInterface()
+    viz.comProtocol     = "tcp"
+    viz.comAddress      = "127.0.0.1"
+    viz.comPortNumber   = "1234"
+
+This example would cause Basilisk to use the socket address ``tcp://127.0.0.1:1234`` to connect to Vizard.
+
+.. list-table:: Vizard Communication Parameters
+    :widths: 10 10 80
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Description
+    * - ``comProtocol``
+      - string
+      - transport protocol to use for the connection. See all protocol options `here <http://api.zeromq.org/3-2:zmq-connect>`.
+    * - ``comAddress``
+      - string
+      - network address to use for the connection.
+    * - ``comPortNumber``
+      - string
+      - port number to use for the connection.
 
 View Modes 
 ----------

@@ -219,6 +219,10 @@ public:
     std::string protoFilename;                  //!< Filename for where to save the protobuff message
     VizSettings settings;                       //!< [-] container for the Viz settings that can be specified from BSK
 
+    std::string comProtocol;                    //!< Communication protocol to use when connecting to Vizard
+    std::string comAddress;                     //!< Communication address to use when connecting to Vizard
+    std::string comPortNumber;                  //!< Communication port number to use when connecting to Vizard
+    
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
 
 
