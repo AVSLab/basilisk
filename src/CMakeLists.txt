@@ -148,10 +148,6 @@ function(generate_package_libraries INIT_DIRECTORY)
             "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
             )
 
-        if(WIN32)
-            set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
-        endif()
-        
         # Add Target
         add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
@@ -405,6 +401,7 @@ endif()
 # Manually create list of libraries depending on system
 if(WIN32)
     set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
 	set(library_dependencies
       	${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib
 	)
