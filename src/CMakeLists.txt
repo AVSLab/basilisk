@@ -148,6 +148,10 @@ function(generate_package_libraries INIT_DIRECTORY)
             "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
             )
 
+        if(WIN32)
+            set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
+        endif()
+        
         # Add Target
         add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
