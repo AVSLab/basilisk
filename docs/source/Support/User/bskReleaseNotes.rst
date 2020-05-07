@@ -20,6 +20,8 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Added the ability to shift the HSV or BGR colors of :ref:`camera`
+- Updated :ref:`vizInterface` to allow the user to set the Vizard direct communication protocol, host name and port
+  number.
 
 Version 1.7.4
 -------------
