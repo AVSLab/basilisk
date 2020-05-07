@@ -50,9 +50,9 @@ tr td p, th.head p {
     float: right;
 }
 
-body, h1, h2, h3, h4, h5 {
+body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-      "Lucida Grande", "Segoe UI";
+      "Lucida Grande", "Segoe UI" !important;
 }
 
 :root {
