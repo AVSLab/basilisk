@@ -129,15 +129,15 @@ function(generate_package_libraries INIT_DIRECTORY)
         get_filename_component(PARENT_DIR ${LIB_DIR} DIRECTORY) # Relative to the source directory (e.g. simulation/power)
         string(FIND ${PARENT_DIR} "/" DIR_NAME_IDX REVERSE)
         math(EXPR DIR_NAME_IDX "${DIR_NAME_IDX} + 1")# "simulation/"
-        string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be (e.g. power)
+        string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be "power"
 
         # Set the library name (ex. dynamicsLib, environmentLib, etc)
         set(LIB_NAME "${PARENT_DIR_NAME}Lib")
 
         # Grab the library source files
         file(GLOB C_FILES
-                "${LIB_DIR}/*.cpp" # SH Base Class
-                "${LIB_DIR}/*.c" # SH Base Class
+                "${LIB_DIR}/*.cpp"
+                "${LIB_DIR}/*.c" 
                 "${LIB_DIR}/*.h"
             )
 
@@ -163,10 +163,17 @@ function(generate_package_libraries INIT_DIRECTORY)
         set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
         set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
         set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
-
+        
+        # Define the location for the executable part of the library (.dll) files (Windows Only) 
+        # https://cmake.org/cmake/help/v3.17/manual/cmake-buildsystem.7.html#output-artifacts for details
         set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk") 
         set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
         set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+        # Define the location of the import library file (.lib) needed for the .dll (Windows Only)
+        set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk") 
+        set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+        set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
     endforeach()
 endfunction(generate_package_libraries)
 
@@ -264,18 +271,14 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
           target_link_libraries(${TARGET_NAME} ${CUSTOM_LIB})
         endforeach()
 
-
-
         target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
         target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file (not located in src)
-
 
         #TODO: V2 change recommended -- messages should be in there own messaging folder at same level as sim/fsw/framework.
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation") # Exposes simMessages, simFswInterfaceMessages for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/fswAlgorithms") # Exposes fswMessages for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles") # Exposes framework files for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../libs") # Exposes third party library include folders
-
 
         # Link all necessary libraries
         foreach(LIB ${LIB_DEP_LIST})
@@ -284,25 +287,27 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
         # TODO: This is a better way to organize the dist olders, but it doesn't adhere to current python import structure
         # Would make (from Basilisk.simulation import SpacecraftPlus) --> (from Basilisk.simulation.dynamics.SpacecraftDynamics import SpacecraftPlus)
-        #set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
-        #set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR}) # Define the location for the .so file
-        #set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR})
-        #set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR})
-
-        #
+        # to do this, set the output directories to ${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR}) 
+        
         set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") # Define the location for the .so file
+
+        # Define the location for the .so / .dylib file
+        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") 
         set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
         set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
+
+        # Define the location for the executable part of the library (.dll) files (Windows Only) 
+        # https://cmake.org/cmake/help/v3.17/manual/cmake-buildsystem.7.html#output-artifacts for details
+        set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") 
+        set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
+        set_target_properties(${LIB_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
+
+        # Define the location of the import library file (.lib) needed for the .dll (Windows Only)
+        set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") 
+        set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
+        set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
     endforeach()
 endfunction(generate_package_targets)
-
-
-
-
-
-
-
 
 
 

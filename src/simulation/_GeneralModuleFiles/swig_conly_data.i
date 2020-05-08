@@ -38,7 +38,7 @@
     for (i = 0; i < PySequence_Length($input); i++) {
         PyObject *o = PySequence_GetItem($input,i);
         if (PyNumber_Check(o)) {
-            temp[i] = (type) PyFloat_AsDouble(o);
+            temp[i] = (std::is_enum<type>::value ? (type)(int) PyFloat_AsDouble(o) : (type)PyFloat_AsDouble(o));
         } else {
             resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
             if (!SWIG_IsOK(resOut)) {
