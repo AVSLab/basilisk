@@ -182,35 +182,50 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
 	set(${ALL_TARGET_LIST} ${SWIG_TARGETS} PARENT_SCOPE)
 endfunction(find_package_targets)
 
-macro(is_cpp_module C_FILES CPP_FILE_EXISTS)
-    # If there are no files, use c++ mode.
-    if(NOT C_FILES)
-        set(${CPP_FILE_EXISTS} 1)
-    endif()
+macro(is_cpp_module C_FILES RUN_CPP_MODE)
+    set(${RUN_CPP_MODE} 0)
 
-    # If there are files and there is a .cpp file, use c++ mode
+    # Check if there are C++ files
+    set(CPP_FILE_EXISTS 0)
     foreach(C_FILE ${C_FILES})
         get_filename_component(FILE_EXT ${C_FILE} EXT)
         string(COMPARE EQUAL ${FILE_EXT} ".cpp" CPP_VAR)
         if(${CPP_VAR})
-            set(${CPP_FILE_EXISTS} ${CPP_VAR})
+            set(CPP_FILE_EXISTS ${CPP_VAR})
             break()
         endif()
     endforeach()
 
-    # If no C++ file found, check if there are any .c files or if the directory is header files only
-    # If headers only, we use c++ mode (this is for the message directories)
-    if(NOT ${CPP_VAR})
-        set(HEADER_FILES_ONLY 1)
+    # If no C++ file found, check if there are any .c files 
+    set(C_FILE_EXISTS 0)
+    if(NOT ${CPP_FILE_EXISTS})
         foreach(C_FILE ${C_FILES})
             get_filename_component(FILE_EXT ${C_FILE} EXT)
-            string(COMPARE EQUAL ${FILE_EXT} ".c" C_VAR)
-            if(${C_VAR})
-                set(HEADER_FILES_ONLY 0)
+            string(COMPARE EQUAL ${FILE_EXT} ".c" C_VAR_BOOL) # found .c files
+            if(C_VAR_BOOL)
+                set(C_FILE_EXISTS 1)
                 break()
             endif()
         endforeach()
-        set(${CPP_FILE_EXISTS} ${HEADER_FILES_ONLY})
+    endif()
+
+    # If no C or C++ files exist -- the directory only contains header files. 
+    # Check if this directory exists within FSWAlgorithms or Simulation
+    set(HEADER_ONLY_IN_SIM 0)
+    if(NOT ${CPP_FILE_EXISTS} AND NOT ${C_FILE_EXISTS})
+        foreach(C_FILE ${C_FILES})
+            get_filename_component(DIRECTORY_VAR ${C_FILE} DIRECTORY)
+            string(FIND ${DIRECTORY_VAR} "fswAlgorithms" FSW_DIR_BOOL) # if the directory contains fswAlgorithms, value FSW_DIR_BOOL is 0
+            if(FSW_DIR_BOOL EQUAL -1)
+                set(HEADER_ONLY_IN_SIM 1)
+                break()
+            endif()
+        endforeach()
+    endif()
+
+    # If there are 1) C++ files, 2) header only files in simulation directory, or 3) no C type files at all: Run swig in C++ mode
+    if(${CPP_FILE_EXISTS} OR ${HEADER_ONLY_IN_SIM} OR NOT C_FILES)
+        set(${RUN_CPP_MODE} 1)
     endif()
 endmacro(is_cpp_module)
 
@@ -249,8 +264,8 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
         set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the .i files
 
-        is_cpp_module("${C_FILES}" CPP_FILE_EXISTS) # Header only directories (message directories) will get set to c mode
-        if(${CPP_FILE_EXISTS})
+        is_cpp_module("${C_FILES}" RUN_CPP_MODE) # Modules that don't contain C++ files or message directories within the fswAgorithms directory shouldn't run C++ mode
+        if(${RUN_CPP_MODE})
             set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
         endif()
 
