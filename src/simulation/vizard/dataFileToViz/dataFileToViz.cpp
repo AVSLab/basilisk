@@ -116,35 +116,20 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 
             std::istringstream iss(line);
             std::vector<int64_t>::iterator it;
-            //! - create all the environment output messages for each spacecraft
+            // create all the state output messages for each spacecraft
             for (it = this->scStateOutMsgIds.begin(); it!=this->scStateOutMsgIds.end(); it++) {
                 SCPlusStatesSimMsg scMsg;
-                double x,y,z, vx, vy, vz;
-                std::string item;
-                const char delimiterString = *this->delimiter.c_str();
 
                 /* zero output message */
                 memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
 
                 /* get inertial position */
-                getline(iss, item, delimiterString);
-                x = stod(item);
-                getline(iss, item, delimiterString);
-                y = stod(item);
-                getline(iss, item, delimiterString);
-                z = stod(item);
-                v3Set(x, y, z, scMsg.r_CN_N);
+                pullVector(&iss, scMsg.r_CN_N);
                 v3Scale(this->convertPosToMeters, scMsg.r_CN_N, scMsg.r_CN_N);
                 v3Copy(scMsg.r_CN_N, scMsg.r_BN_N);
 
                 /* get inertial velocity */
-                getline(iss, item, delimiterString);
-                vx = stod(item);
-                getline(iss, item, delimiterString);
-                vy = stod(item);
-                getline(iss, item, delimiterString);
-                vz = stod(item);
-                v3Set(vx, vy, vz, scMsg.v_CN_N);
+                pullVector(&iss, scMsg.v_CN_N);
                 v3Scale(this->convertPosToMeters, scMsg.v_CN_N, scMsg.v_CN_N);
                 v3Copy(scMsg.v_CN_N, scMsg.v_BN_N);
 
@@ -162,4 +147,20 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
     }
 
     return;
+}
+
+/*! pull a 3-d set of double values from the input stream
+ */
+void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
+    double x,y,z;
+    const char delimiterString = *this->delimiter.c_str();
+    std::string item;
+
+    getline(*iss, item, delimiterString);
+    x = stod(item);
+    getline(*iss, item, delimiterString);
+    y = stod(item);
+    getline(*iss, item, delimiterString);
+    z = stod(item);
+    v3Set(x, y, z, vec);
 }

@@ -37,6 +37,9 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
+private:
+    void pullVector(std::istringstream *iss, double vec[3]);
+
 public:
     std::string dataFileName;                   //!< Name of the simulation data file
     int numSatellites = 1;                      //!< number of satellites being read in, default is 1

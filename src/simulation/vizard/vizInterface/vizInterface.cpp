@@ -586,7 +586,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     {
         /*! Write SCPlus output msg */
         if (scIt->scPlusInMsgID.msgID != -1 && scIt->scPlusInMsgID.dataFresh){
-            printf("HPS: writing protobuffer\n");
             vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
             scp->set_spacecraftname(scIt->spacecraftName);
             for (int i=0; i<3; i++){
