@@ -106,7 +106,6 @@ void VizInterface::CrossInit()
 {
     MessageIdentData msgInfo;
     std::vector<VizSpacecraftData>::iterator scIt;
-
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
         /* Define CSS data input messages */
@@ -587,6 +586,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     {
         /*! Write SCPlus output msg */
         if (scIt->scPlusInMsgID.msgID != -1 && scIt->scPlusInMsgID.dataFresh){
+            printf("HPS: writing protobuffer\n");
             vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
             scp->set_spacecraftname(scIt->spacecraftName);
             for (int i=0; i<3; i++){
@@ -594,7 +594,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_velocity(scIt->scPlusMessage.v_BN_N[i]);
                 scp->add_rotation(scIt->scPlusMessage.sigma_BN[i]);
             }
-            //scPlusInMsgID.dataFresh = false;
+            scIt->scPlusInMsgID.dataFresh = false;
 
             /* Write the SC sprite string */
             scp->set_spacecraftsprite(scIt->spacecraftSprite);
