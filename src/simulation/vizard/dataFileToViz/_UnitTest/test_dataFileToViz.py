@@ -27,6 +27,7 @@
 
 import os
 import pytest
+import numpy as np
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -35,6 +36,7 @@ from Basilisk.simulation import dataFileToViz
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import vizSupport
+from Basilisk.simulation import bskLogging
 
 try:
     from Basilisk.simulation import vizInterface
@@ -45,44 +47,42 @@ except ImportError:
 path = os.path.dirname(os.path.abspath(__file__))
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-# @pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 1e-2)])
+@pytest.mark.parametrize("convertPosUnits", [-1, 1000.])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots):
+def test_module(show_plots, convertPosUnits):
     """
     **Validation Test Description**
 
     This section describes the specific unit tests conducted on this module.
-    The test contains 16 tests and is located at ``test_magnetometer.py``.
-    The success criteria is to match the outputs with the generated truth.
+    The test reads in simulation from `data.txt`, run the module, and compares the Basilisk
+    spacecraft state messages with known values.
 
     Args:
 
-        useNoiseStd (string): Defines if the standard deviation of the magnetometer measurements is used for this
-            parameterized unit test
-        useBias (string): Defines if the bias on the magnetometer measurements is used for this parameterized unit test
-        useMinOut (string): Defines if the minimum bound for the measurement saturation is used for this
-            parameterized unit test
-        useMaxOut (string): Defines if the maximum bound for the measurement saturation is used for this
-            parameterized unit test
-        useScaleFactor (string): Defines if the scaling on the measurement is used for this parameterized unit test
-        errTol (double): Defines the error tolerance for this parameterized unit test
+        convertPosUnits (double): If positive, then this conversion factor is set.  If negative, then the
+            default value of 1000. is checked.
 
     **Description of Variables Being Tested**
 
-    In this file, we are checking the values of the variable:
+    In this file, we are checking the values of the spacecraft state output message for both spacecraft:
 
-    ``tamData[3]``
+    - ``r_BN_N[3]``
+    - ``sigma_BN[3]``
 
     which is pulled from the log data to see if they match with the expected truth values.
 
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots)
+    [testResults, testMessage] = run(show_plots, convertPosUnits, False)
     assert testResults < 1, testMessage
 
-def run(show_plots):
+def run(show_plots, convertPosUnits, verbose):
+
+    if not verbose:
+        bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -93,19 +93,24 @@ def run(show_plots):
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)
-    simulationTime = macros.min2nano(1.0)
+    simulationTime = macros.sec2nano(1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
     testModule = dataFileToViz.DataFileToViz()
     testModule.ModelTag = "testModule"
-    testModule.numSatellites = 1
+    testModule.numSatellites = 2
     # load the data path from the same folder where this python script is
-    testModule.dataFileName = os.path.join(path,  "data.txt")
+    path = os.path.dirname(os.path.abspath(__file__))
+    testModule.dataFileName = os.path.join(path, "data.txt")
     scNames = ["test1", "test2"]
     testModule.scStateOutMsgNames = dataFileToViz.StringVector(scNames)
-    testModule.delimiter = " "
+    testModule.delimiter = ","
+    if convertPosUnits > 0:
+        testModule.convertPosToMeters = convertPosUnits
+    else:
+        convertPosUnits = 1000.
 
     # Add module to the task
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -118,7 +123,7 @@ def run(show_plots):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
+                                              # saveFile=fileName,
                                               scName=scNames)
     if vizFound:
         viz.scData.clear()
@@ -132,7 +137,8 @@ def run(show_plots):
             viz.scData.push_back(scData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    # unitTestSim.TotalSim.logThisMessage(testModule.tamDataOutMsgName, testProcessRate)
+    for msgName in scNames:
+        unitTestSim.TotalSim.logThisMessage(msgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulationAndDiscover()
@@ -143,16 +149,38 @@ def run(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # tamData = unitTestSim.pullMessageLogData(testModule.tamDataOutMsgName + ".OutputData", list(range(3)))
+    pos1 = unitTestSim.pullMessageLogData(scNames[0] + ".r_BN_N", list(range(3)))
+    pos2 = unitTestSim.pullMessageLogData(scNames[1] + ".r_BN_N", list(range(3)))
+    att1 = unitTestSim.pullMessageLogData(scNames[0] + ".sigma_BN", list(range(3)))
+    att2 = unitTestSim.pullMessageLogData(scNames[1] + ".sigma_BN", list(range(3)))
 
-    # if not unitTestSupport.isArrayEqualRelative(tamData[0], trueTam_S, 3, errTol):
-    #     testFailCount += 1
+    # set input data
+    line = [0.1, 6761.48, 1569.01, 905.867, -1.95306, 6.3124, 3.64446, 0.1, 0.2, 0.3, 0, 0, 0,
+                 6761.48, 1569.02, 905.874, -1.95308, 6.31239, 3.64446, -0.1, 0.1, 0.3, 0, 0, 0]
+    pos1In = np.array(line[1:1+3])
+    att1In = np.array(line[7:7+3])
+    pos2In = np.array(line[13:13+3])
+    att2In = np.array(line[19:19+3])
 
-    #   print out success or failure message
-    # if testFailCount == 0:
-    #     print("PASSED: " + testModule.ModelTag)
-    # else:
-    #     print("Failed: " + testModule.ModelTag)
+    if not unitTestSupport.isVectorEqual(pos1[0][1:4], pos1In*convertPosUnits, 0.1):
+        testFailCount += 1
+        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed pos1 check.")
+    if not unitTestSupport.isVectorEqual(pos2[0][1:4], pos2In*convertPosUnits, 0.1):
+        testFailCount += 1
+        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed pos2 check.")
+    if not unitTestSupport.isVectorEqual(att1[0][1:4], att1In, 0.1):
+        testFailCount += 1
+        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed att1 check.")
+    if not unitTestSupport.isVectorEqual(att2[0][1:4], att2In, 0.1):
+        testFailCount += 1
+        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed att2 check.")
+
+    # print out success or failure message
+    if testFailCount == 0:
+        print("PASSED: " + testModule.ModelTag)
+    else:
+        print("Failed: " + testModule.ModelTag)
+        print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -161,6 +189,8 @@ def run(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 False
-               )
+    run(
+         False,     # showplots
+         -1,        # convertPosUnits
+         True       # verbosity
+       )
