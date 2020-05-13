@@ -505,3 +505,7 @@ def checkMethodKeyword(karglist, kwargs):
             print('ERROR: you tried to use an incorrect keyword ' + key + '. Options include:')
             print(karglist)
             exit(1)
+
+# pull out the time column out of a 4xN data list
+def removeTimeFromData(dataList):
+    return (dataList.transpose()[1:len(dataList[0])]).transpose()

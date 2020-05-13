@@ -3,7 +3,8 @@ Executive Summary
 -----------------
 This module reads in simulation data of one or more spacecraft, likely created outside of Basilisk,
 and creates associated Basilisk messages such that :ref:`vizInterface` can stream of save a :ref:`Vizard <vizard>`
-compatible data file.  This makes it possible to use Vizard to illustrate a simulation.
+compatible data file.  This makes it possible to use Vizard to illustrate a simulation.  The use of this module
+is demonstrates in :ref:`scenarioDataToViz`.
 
 Module Assumptions and Limitations
 ----------------------------------
