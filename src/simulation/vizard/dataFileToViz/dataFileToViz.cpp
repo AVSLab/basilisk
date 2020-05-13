@@ -133,6 +133,10 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                 v3Scale(this->convertPosToMeters, scMsg.v_CN_N, scMsg.v_CN_N);
                 v3Copy(scMsg.v_CN_N, scMsg.v_BN_N);
 
+                /* get inertial attitude and rates */
+                pullVector(&iss, scMsg.sigma_BN);
+                pullVector(&iss, scMsg.omega_BN_B);
+
                 /* write spacecraft state message */
                 SystemMessaging::GetInstance()->WriteMessage(*it,
                                                           CurrentSimNanos,
