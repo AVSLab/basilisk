@@ -90,19 +90,17 @@ def run(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)
+    simulationTime = macros.min2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
     testModule = dataFileToViz.DataFileToViz()
     testModule.ModelTag = "testModule"
-    testModule.numSatellites = 2
+    testModule.numSatellites = 1
     # load the data path from the same folder where this python script is
     testModule.dataFileName = os.path.join(path,  "data.txt")
     scNames = ["test1", "test2"]
@@ -137,9 +135,9 @@ def run(show_plots):
     # unitTestSim.TotalSim.logThisMessage(testModule.tamDataOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
-    unitTestSim.InitializeSimulation()
+    unitTestSim.InitializeSimulationAndDiscover()
 
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(simulationTime) 
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -151,10 +149,10 @@ def run(show_plots):
     #     testFailCount += 1
 
     #   print out success or failure message
-    if testFailCount == 0:
-        print("PASSED: " + testModule.ModelTag)
-    else:
-        print("Failed: " + testModule.ModelTag)
+    # if testFailCount == 0:
+    #     print("PASSED: " + testModule.ModelTag)
+    # else:
+    #     print("Failed: " + testModule.ModelTag)
 
     return [testFailCount, ''.join(testMessages)]
 
