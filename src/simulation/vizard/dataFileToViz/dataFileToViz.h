@@ -46,6 +46,7 @@ public:
     std::vector<std::string> scStateOutMsgNames;//!< vector of spacecraft state messages
     std::string delimiter;                      //!< delimiter string that separates data on a line
     double convertPosToMeters;                  //!< conversion factor to meters
+    bool headerLine = true;                     //!< [bool] flag to mark first line as a header
 
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
     uint64_t OutputBufferCount = 2;             //!< number of output buffers for messaging system

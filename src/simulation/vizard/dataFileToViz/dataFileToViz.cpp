@@ -94,6 +94,10 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
     if (this->fileHandle->fail()) {
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: was not able to load the file %s.", this->dataFileName.c_str());
     }
+    if (this->headerLine) {
+        std::string line;
+        getline(*this->fileHandle, line);
+    }
 
     bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz: loaded the file:\n %s.", this->dataFileName.c_str());
 
@@ -116,6 +120,11 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 
             std::istringstream iss(line);
             std::vector<int64_t>::iterator it;
+
+            /* pull time, this is not used in the BSK msg */
+            std::string timeItem;
+            getline(iss, timeItem, (const char) *this->delimiter.c_str());
+
             // create all the state output messages for each spacecraft
             for (it = this->scStateOutMsgIds.begin(); it!=this->scStateOutMsgIds.end(); it++) {
                 SCPlusStatesSimMsg scMsg;
