@@ -42,6 +42,7 @@ DataFileToViz::~DataFileToViz()
     /* close the data file if it is open */
     if(this->fileHandle->is_open()) {
         this->fileHandle->close();
+        bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
     }
 
     return;
@@ -99,7 +100,7 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
         getline(*this->fileHandle, line);
     }
 
-    bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz: loaded the file:\n %s.", this->dataFileName.c_str());
+    bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nloaded the file: %s.", this->dataFileName.c_str());
 
 
     return;
