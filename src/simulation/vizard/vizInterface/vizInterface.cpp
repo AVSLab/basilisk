@@ -593,7 +593,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_velocity(scIt->scPlusMessage.v_BN_N[i]);
                 scp->add_rotation(scIt->scPlusMessage.sigma_BN[i]);
             }
-            scIt->scPlusInMsgID.dataFresh = false;
+//            scIt->scPlusInMsgID.dataFresh = false;
 
             /* Write the SC sprite string */
             scp->set_spacecraftsprite(scIt->spacecraftSprite);
