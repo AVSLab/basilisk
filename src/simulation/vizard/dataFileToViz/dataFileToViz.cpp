@@ -20,6 +20,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/linearAlgebra.h"
+#include "utilities/rigidBodyKinematics.h"
 #include <sstream>
 #include <string>
 
@@ -144,7 +145,31 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                 v3Copy(scMsg.v_CN_N, scMsg.v_BN_N);
 
                 /* get inertial attitude and rates */
-                pullVector(&iss, scMsg.sigma_BN);
+                double att[4];
+                if (this->attitudeType != 1) {
+                    /* 3D attitude coordinate set */
+                    pullVector(&iss, att);
+                } else {
+                    /* 3D attitude coordinate set */
+                    pullVector4(&iss, att);
+                }
+                switch (this->attitudeType) {
+                    case 0:
+                        /* MRPs */
+                        v3Copy(att, scMsg.sigma_BN);
+                        break;
+                    case 1:
+                        /* quaternions (q0, q1, q2, q3) */
+                        EP2MRP(att, scMsg.sigma_BN);
+                        break;
+                    case 2:
+                        /* (3-2-1) Euler Angles */
+                        Euler3212MRP(att, scMsg.sigma_BN);
+                        break;
+                    default:
+                        bskLogger.bskLog(BSK_ERROR, "DataFileToViz: unknown attitudeType encountered: %d", this->attitudeType);
+                        break;
+                }
                 pullVector(&iss, scMsg.omega_BN_B);
 
                 /* write spacecraft state message */
@@ -177,4 +202,22 @@ void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
     getline(*iss, item, delimiterString);
     z = stod(item);
     v3Set(x, y, z, vec);
+}
+
+/*! pull a 4-d set of double values from the input stream
+ */
+void DataFileToViz::pullVector4(std::istringstream *iss, double *vec) {
+    double q0, q1, q2, q3;
+    const char delimiterString = *this->delimiter.c_str();
+    std::string item;
+
+    getline(*iss, item, delimiterString);
+    q0 = stod(item);
+    getline(*iss, item, delimiterString);
+    q1 = stod(item);
+    getline(*iss, item, delimiterString);
+    q2 = stod(item);
+    getline(*iss, item, delimiterString);
+    q3 = stod(item);
+    v4Set(q0, q1, q2, q3, vec);
 }

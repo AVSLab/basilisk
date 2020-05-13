@@ -37,6 +37,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import vizSupport
 from Basilisk.simulation import bskLogging
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 try:
     from Basilisk.simulation import vizInterface
@@ -48,9 +49,10 @@ path = os.path.dirname(os.path.abspath(__file__))
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000.])
+@pytest.mark.parametrize("attType", [-1, 0, 1, 2])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, convertPosUnits):
+def test_module(show_plots, convertPosUnits, attType):
     """
     **Validation Test Description**
 
@@ -62,6 +64,7 @@ def test_module(show_plots, convertPosUnits):
 
         convertPosUnits (double): If positive, then this conversion factor is set.  If negative, then the
             default value of 1000. is checked.
+        attType (int): -1 (use default), 0 (MRP), 1 (quaternion), 2 (3-2-1 Euler Angles)
 
     **Description of Variables Being Tested**
 
@@ -75,10 +78,10 @@ def test_module(show_plots, convertPosUnits):
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, convertPosUnits, False)
+    [testResults, testMessage] = run(show_plots, convertPosUnits, attType, False)
     assert testResults < 1, testMessage
 
-def run(show_plots, convertPosUnits, verbose):
+def run(show_plots, convertPosUnits, attType, verbose):
 
     if not verbose:
         bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -111,6 +114,11 @@ def run(show_plots, convertPosUnits, verbose):
         testModule.convertPosToMeters = convertPosUnits
     else:
         convertPosUnits = 1000.
+    if attType >= 0:
+        testModule.attitudeType = attType
+    numCoord = 3
+    if attType == 1:
+        testModule.dataFileName = os.path.join(path, "data4.txt")
 
     # Add module to the task
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -155,12 +163,24 @@ def run(show_plots, convertPosUnits, verbose):
     att2 = unitTestSim.pullMessageLogData(scNames[1] + ".sigma_BN", list(range(3)))
 
     # set input data
-    line = [0.1, 6761.48, 1569.01, 905.867, -1.95306, 6.3124, 3.64446, 0.1, 0.2, 0.3, 0, 0, 0,
-                 6761.48, 1569.02, 905.874, -1.95308, 6.31239, 3.64446, -0.1, 0.1, 0.3, 0, 0, 0]
-    pos1In = np.array(line[1:1+3])
-    att1In = np.array(line[7:7+3])
-    pos2In = np.array(line[13:13+3])
-    att2In = np.array(line[19:19+3])
+    if attType == 1:
+        line = [0.1, 6761.48, 1569.01, 905.867, -1.95306, 6.3124, 3.64446, 0.182574, 0.365148, 0.547723, 0.730297, 0, 0, 0,
+                6761.48, 1569.02, 905.874, -1.95308, 6.31239, 3.64446, -0.182574, 0.365148, 0.547723, 0.730297, 0, 0, 0]
+        pos1In = np.array(line[1:1 + 3])
+        att1In = rbk.EP2MRP(np.array(line[7:7 + 4]))
+        pos2In = np.array(line[14:14 + 3])
+        att2In = rbk.EP2MRP(np.array(line[20:20 + 4]))
+    else:
+        line = [0.1, 6761.48, 1569.01, 905.867, -1.95306, 6.3124, 3.64446, 0.1, 0.2, 0.3, 0, 0, 0,
+                     6761.48, 1569.02, 905.874, -1.95308, 6.31239, 3.64446, -0.1, 0.1, 0.3, 0, 0, 0]
+        pos1In = np.array(line[1:1+3])
+        att1In = np.array(line[7:7+3])
+        pos2In = np.array(line[13:13+3])
+        att2In = np.array(line[19:19+3])
+
+        if attType == 2:
+            att1In = rbk.euler3212MRP(att1In)
+            att2In = rbk.euler3212MRP(att2In)
 
     if not unitTestSupport.isVectorEqual(pos1[0][1:4], pos1In*convertPosUnits, 0.1):
         testFailCount += 1
@@ -192,5 +212,6 @@ if __name__ == "__main__":
     run(
          False,     # showplots
          -1,        # convertPosUnits
+         1,        # attType (-1 -> default, 0 -> MRP, 1 -> quaternions, 2 -> 3-2-1 Euler Angles)
          True       # verbosity
        )

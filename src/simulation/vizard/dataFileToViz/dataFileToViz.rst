@@ -75,7 +75,11 @@ The module is configurable with the following optional parameters:
      - conversion factor to convert position and velocity measures to meters and meters per second.
    * - ``headerLine``
      - True
-     - Boolean flag if the data file contains a headerline that should be dismissed
+     - Boolean flag if the data file contains a header line that should be dismissed
+   * - ``attitudeType``
+     - 0
+     - Specify the attitude coordinate set used in the data file.  0 - MRP, 1 - quaternions as :math:`(q_0, q_1, q_2, q_3)`,
+       and 2 - (3-2-1) Euler angles in radians
 
 
 
