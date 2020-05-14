@@ -81,7 +81,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 
-def run(show_plots):
+def run(show_plots, attType):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -89,6 +89,22 @@ def run(show_plots):
         show_plots (bool): Determines if the script should display plots
 
     """
+
+    path = os.path.dirname(os.path.abspath(__file__))
+    if attType == 0:
+        dataFileName = os.path.join(path, "data", "scHoldTraj.csv")
+    elif attType == 1:
+        dataFileName = os.path.join(path, "data", "scHoldTraj_quat.csv")
+    else:
+        print("unknown attType variable")
+        exit()
+    file1 = open(dataFileName, 'r')
+    Lines = file1.readlines()
+    t0 = float(Lines[1].split(",")[0])
+    t1 = float(Lines[2].split(",")[0])
+    tN = float(Lines[-1].split(",")[0])
+    timeStepSeconds = t1 - t0
+    simulationTimeSeconds = tN - t0
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -103,8 +119,8 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time step information
-    simulationTimeStep = macros.sec2nano(30.)
-    simulationTime = macros.min2nano(300.)
+    simulationTimeStep = macros.sec2nano(timeStepSeconds)
+    simulationTime = macros.sec2nano(simulationTimeSeconds)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   setup the module to read in the simulation data
@@ -112,9 +128,10 @@ def run(show_plots):
     dataModule.ModelTag = "testModule"
     dataModule.numSatellites = 2
     # load the data path from the same folder where this python script is
-    path = os.path.dirname(os.path.abspath(__file__))
-    dataModule.dataFileName = os.path.join(path, "data", "scHoldTraj.csv")
-    scNames = ["servicer", "satellite"]
+    dataModule.attitudeType = attType
+    dataModule.dataFileName = dataFileName
+
+    scNames = ["target", "servicer"]
     dataModule.scStateOutMsgNames = dataFileToViz.StringVector(scNames)
     dataModule.delimiter = ","
     scSim.AddModelToTask(simTaskName, dataModule)
@@ -221,5 +238,6 @@ def run(show_plots):
 #
 if __name__ == "__main__":
     run(
-        True  # show_plots
+        True,  # show_plots
+        1       # attitude coordinate type, 0 - MRP, 1 - quaternions
     )
