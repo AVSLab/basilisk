@@ -155,6 +155,17 @@ def run(show_plots, attType):
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
                                               saveFile=fileName,
                                               scName=scNames)
+    # load CAD for target spacecraft
+    vizSupport.createCustomModel(viz,
+                                 modelPath=os.path.join(path, "data", "Aura_27.obj"),
+                                 shader=1,
+                                 simBodiesToModify=[scNames[0]],
+                                 scale=[1, 1, 1])
+    # load CAD for servicer spacecraft
+    vizSupport.createCustomModel(viz,
+                                 modelPath=os.path.join(path, "data", "Loral-1300Com-main.obj"),
+                                 simBodiesToModify=[scNames[1]],
+                                 scale=[0.09, 0.09, 0.09])
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
         viz.scData.clear()
