@@ -229,7 +229,7 @@ def run(show_plots, attType):
                  label=r'$\rho_{' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
-    plt.ylabel('Inertial Relative Position [m]')
+    plt.ylabel(r'$\rho_{S/T}$ (Inertial) [m]')
     plt.legend(loc='lower right')
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
