@@ -275,7 +275,7 @@ class gravBodyFactory(object):
 
     def unloadSpiceKernels(self):
         for fileName in self.spiceKernelFileNames:
-            self.spiceObject.unloadSpiceKernel(self.spiceObject.SPICEDataPath, fileName)
+            self.spiceObject.unloadSpiceKernel(fileName, self.spiceObject.SPICEDataPath)
         return
 
 
