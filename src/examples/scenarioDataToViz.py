@@ -153,26 +153,25 @@ def run(show_plots, attType):
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
+                                              # saveFile=fileName,
                                               scName=scNames)
     # load CAD for target spacecraft
     vizSupport.createCustomModel(viz,
                                  modelPath=os.path.join(path, "data", "Aura_27.obj"),
                                  shader=1,
                                  simBodiesToModify=[scNames[0]],
-                                 rotation=[ 180.*macros.D2R, 0.0*macros.D2R, -90.*macros.D2R],
+                                 rotation=[180.*macros.D2R, 0.0*macros.D2R, -90.*macros.D2R],
                                  scale=[1, 1, 1])
     # load CAD for servicer spacecraft
     vizSupport.createCustomModel(viz,
                                  modelPath=os.path.join(path, "data", "Loral-1300Com-main.obj"),
                                  simBodiesToModify=[scNames[1]],
-                                 rotation=[ 0.*macros.D2R, -90.0*macros.D2R, 0.*macros.D2R],
+                                 rotation=[0.*macros.D2R, -90.0*macros.D2R, 0.*macros.D2R],
                                  scale=[0.09, 0.09, 0.09])
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
         viz.scData.clear()
         for item in scNames:
-
             # create a chief spacecraft info container
             scData = vizInterface.VizSpacecraftData()
             scData.spacecraftName = item

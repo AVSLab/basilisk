@@ -35,7 +35,7 @@ The module assumes the data file is in plain text form and the following format:
 - time
 - spacecraft 1 inertial position states
 - spacecraft 1 inertial velocity states
-- spacecraft 1 inertial attitude state in terms of MRPs
+- spacecraft 1 inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles
 - spacecraft 1 inertial angular velocity vector in radians per second
 - repeat on the same line for additional spacecraft
 

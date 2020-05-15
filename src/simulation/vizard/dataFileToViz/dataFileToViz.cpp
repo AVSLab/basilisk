@@ -32,6 +32,9 @@ DataFileToViz::DataFileToViz()
     this->numSatellites = 1;
     this->delimiter = " ";
     this->convertPosToMeters = 1000.;       /* convert km to meters */
+    this->headerLine = true;
+    this->attitudeType = 0;
+    this->OutputBufferCount = 2;
 
     return;
 }
@@ -150,7 +153,7 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                     /* 3D attitude coordinate set */
                     pullVector(&iss, att);
                 } else {
-                    /* 3D attitude coordinate set */
+                    /* 4D attitude coordinate set */
                     pullVector4(&iss, att);
                 }
                 switch (this->attitudeType) {
@@ -181,7 +184,6 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
             }
         } else {
             bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz: reached end of file.");
-//            exit(1);
         }
     }
 

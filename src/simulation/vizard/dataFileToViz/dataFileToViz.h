@@ -43,15 +43,15 @@ private:
 
 public:
     std::string dataFileName;                   //!< Name of the simulation data file
-    int numSatellites = 1;                      //!< number of satellites being read in, default is 1
+    int numSatellites;                          //!< number of satellites being read in, default is 1
     std::vector<std::string> scStateOutMsgNames;//!< vector of spacecraft state messages
     std::string delimiter;                      //!< delimiter string that separates data on a line
     double convertPosToMeters;                  //!< conversion factor to meters
-    bool headerLine = true;                     //!< [bool] flag to mark first line as a header
-    int attitudeType = 0;                       //!< 0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - (3-2-1) Euler angles
+    bool headerLine;                            //!< [bool] flag to mark first line as a header
+    int attitudeType;                            //!< 0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - (3-2-1) Euler angles
 
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
-    uint64_t OutputBufferCount = 2;             //!< number of output buffers for messaging system
+    uint64_t OutputBufferCount;                 //!< number of output buffers for messaging system
 
 
 private:

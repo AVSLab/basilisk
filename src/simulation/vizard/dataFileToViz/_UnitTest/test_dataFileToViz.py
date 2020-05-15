@@ -116,7 +116,6 @@ def run(show_plots, convertPosUnits, attType, verbose):
         convertPosUnits = 1000.
     if attType >= 0:
         testModule.attitudeType = attType
-    numCoord = 3
     if attType == 1:
         testModule.dataFileName = os.path.join(path, "data4.txt")
 
@@ -131,13 +130,12 @@ def run(show_plots, convertPosUnits, attType, verbose):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              # saveFile=fileName,
+                                              saveFile=fileName,
                                               scName=scNames)
     if vizFound:
+        # delete any existing list of vizInterface spacecraft data
         viz.scData.clear()
         for item in scNames:
-            # delete any existing list of vizInterface spacecraft data
-
             # create a chief spacecraft info container
             scData = vizInterface.VizSpacecraftData()
             scData.spacecraftName = item
