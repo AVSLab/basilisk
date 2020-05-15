@@ -160,11 +160,13 @@ def run(show_plots, attType):
                                  modelPath=os.path.join(path, "data", "Aura_27.obj"),
                                  shader=1,
                                  simBodiesToModify=[scNames[0]],
+                                 rotation=[ 180.*macros.D2R, 0.0*macros.D2R, -90.*macros.D2R],
                                  scale=[1, 1, 1])
     # load CAD for servicer spacecraft
     vizSupport.createCustomModel(viz,
                                  modelPath=os.path.join(path, "data", "Loral-1300Com-main.obj"),
                                  simBodiesToModify=[scNames[1]],
+                                 rotation=[ 0.*macros.D2R, -90.0*macros.D2R, 0.*macros.D2R],
                                  scale=[0.09, 0.09, 0.09])
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
