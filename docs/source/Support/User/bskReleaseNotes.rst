@@ -22,6 +22,7 @@ Version |release|
 - Added the ability to shift the HSV or BGR colors of :ref:`camera`
 - Updated :ref:`vizInterface` to allow the user to set the Vizard direct communication protocol, host name and port
   number.
+- fixed an issues in :ref:`simIncludeGravBody` where the method ``unloadSpiceKernels`` had the order of the spice package name and the spice path reversed 😟 
 
 Version 1.7.4
 -------------
