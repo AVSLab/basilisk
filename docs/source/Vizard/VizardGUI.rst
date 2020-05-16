@@ -187,6 +187,28 @@ following image:
    :width: 90 %
 
 
+``Time`` Menu Item
+------------------
+The ``Time`` menu tab contains a range of Vizard time or mission date related option. Some of these items have
+a keyboard short-cut assigned.
+
+.. image:: ../_images/static/vizard-timeMenu.jpg
+   :align: center
+   :width: 90 %
+
+- **Playback in Real time:** This mode syncs up the playback speed to be real time where 1s of simulation time takes
+  1s of real time.  This can be increased or decreased as desired.
+- **Playback at Frame:** This mode plays back each data frame as it arrives.  Thus, the visualization is playing
+  back a data file as fast as it can without skipping any data frames.  If you press the Plus icon then the data
+  playback speed is doubled to 2 by only showing every second frame.  Pressing Plus again doubles once more the data
+  rate to 4 to showing only
+  every 4th data frame.  If you press negative the trend is reversed.  You can slow down the playback as well in this
+  mode in that a data rate of 1/2 means a data frame is held for 2 unit cycles.
+- **Use 24 Hour Clock:** This toggles between a 12 hour clock using `am` and `pm` and a 24 hour clock.
+- **Show Mission/Sim Time:** This toggles the time bar to show either the simulation elapsed time or the mission
+  date and time.  Note that if the Basilisk simulation doesn't set an epoch date than January 1st, 2019, 00:00am
+  is assumed by the simulation.
+
 	
 ``Camera`` Menu Item
 --------------------

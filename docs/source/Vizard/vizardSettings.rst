@@ -28,7 +28,7 @@ If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
 
-Listing of all BSK scriptable Vizard settings
+Listing of all BSK Scriptable Vizard Settings
 ---------------------------------------------
 
 The following list contains the optional Vizard settings that can be
@@ -523,3 +523,4 @@ setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell ref:`vizInterfac
 
 	viz.epochMsgName = "Epoch_Msg_Name_Used"
 
+An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.  
