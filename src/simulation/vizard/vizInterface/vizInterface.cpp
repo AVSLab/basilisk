@@ -545,6 +545,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodiesAsSprites);
         }
 
+        // define if the time should be shown using a 24h clock
+        vizSettings->set_show24hrclock(this->settings.show24hrClock);
+        if (abs(this->settings.show24hrClock)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.show24hrClock);
+        }
+
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();

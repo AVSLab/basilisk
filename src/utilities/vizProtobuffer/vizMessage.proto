@@ -168,7 +168,8 @@ message VizMessage{
         string defaultSpacecraftSprite = 20; // Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
         int32 showSpacecraftAsSprites = 21; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showCelestialBodiesAsSprites =22; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        
+        int32 show24hrClock = 23; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+
     }
 
     TimeStamp currentTime = 1;

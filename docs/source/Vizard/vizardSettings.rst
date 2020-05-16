@@ -102,6 +102,9 @@ default setting for that behavior.
     * - ``showCelestialBodiesAsSprites``
       - (-1,1)
       - Flag to show celestial bodies as sprites if their visual size gets too small
+    * - ``show24hrClock``
+      - (-1,1)
+      - Flag to make mission date/time use a 24h clock instead of a 12h clock with am/pm
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -523,4 +526,4 @@ setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell ref:`vizInterfac
 
 	viz.epochMsgName = "Epoch_Msg_Name_Used"
 
-An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.  
+An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.

@@ -2614,6 +2614,12 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showcelestialbodiesassprites() const;
   void set_showcelestialbodiesassprites(::google::protobuf::int32 value);
 
+  // int32 show24hrClock = 23;
+  void clear_show24hrclock();
+  static const int kShow24HrClockFieldNumber = 23;
+  ::google::protobuf::int32 show24hrclock() const;
+  void set_show24hrclock(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
 
@@ -2638,6 +2644,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showcameralabels_;
   ::google::protobuf::int32 showspacecraftassprites_;
   ::google::protobuf::int32 showcelestialbodiesassprites_;
+  ::google::protobuf::int32 show24hrclock_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -5643,6 +5650,20 @@ inline void VizMessage_VizSettingsPb::set_showcelestialbodiesassprites(::google:
   
   showcelestialbodiesassprites_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showCelestialBodiesAsSprites)
+}
+
+// int32 show24hrClock = 23;
+inline void VizMessage_VizSettingsPb::clear_show24hrclock() {
+  show24hrclock_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::show24hrclock() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.show24hrClock)
+  return show24hrclock_;
+}
+inline void VizMessage_VizSettingsPb::set_show24hrclock(::google::protobuf::int32 value) {
+  
+  show24hrclock_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.show24hrClock)
 }
 
 // -------------------------------------------------------------------

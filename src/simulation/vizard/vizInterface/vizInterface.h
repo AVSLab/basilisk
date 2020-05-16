@@ -182,6 +182,7 @@ typedef struct {
     std::string defaultSpacecraftSprite = "";       //!< Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
     int32_t showSpacecraftAsSprites = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCelestialBodiesAsSprites = 0;      //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t show24hrClock = 0;                     //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 
