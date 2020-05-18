@@ -309,10 +309,13 @@ void SpiceInterface::computePlanetData()
      -# Convert the pos/vel over to meters.
      -# Time stamp the message appropriately
      */
+    int c = 0;
     for(planit = this->planetData.begin(); planit != this->planetData.end(); planit++)
     {
         double lighttime;
         double localState[6];
+        std::string planetFrame = "";
+
         spkezr_c(planit->second.PlanetName, this->J2000Current, this->referenceBase.c_str(),
             "NONE", zeroBase.c_str(), localState, &lighttime);
         memcpy(planit->second.PositionVector, &localState[0], 3*sizeof(double));
@@ -323,8 +326,16 @@ void SpiceInterface::computePlanetData()
             planit->second.VelocityVector[i]*=1000.0;
         }
         planit->second.J2000Current = this->J2000Current;
-        std::string planetFrame = "IAU_";
-        planetFrame += planit->second.PlanetName;
+        if (this->planetFrames.size() > 0) {
+            if (this->planetFrames[c].size() > 0) {
+                /* use custom planet frame name */
+                planetFrame = this->planetFrames[c];
+            }
+        } else {
+            /* use default IAU planet frame name */
+            planetFrame = "IAU_";
+            planetFrame += planit->second.PlanetName;
+        }
         if(planit->second.computeOrient)
         {
             //pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
@@ -338,6 +349,7 @@ void SpiceInterface::computePlanetData()
             
             m66Get33Matrix(1, 0, aux, planit->second.J20002Pfix_dot);
         }
+        c++;
     }
 }
 
