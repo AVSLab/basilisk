@@ -269,6 +269,7 @@ def run(show_plots, orbitCase):
                                               # saveFile=fileName,
                                               gravBodies=gravFactory)
     viz.epochMsgName = magModule.epochInMsgName
+    viz.settings.show24hrClock = 1
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
