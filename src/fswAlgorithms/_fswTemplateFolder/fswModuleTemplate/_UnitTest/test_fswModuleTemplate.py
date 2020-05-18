@@ -129,7 +129,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.dataInMsgName  = "sampleInput"         # update with current values
+    moduleConfig.dataInMsgName = "sampleInput"          # update with current values
     moduleConfig.dataOutMsgName = "sampleOutput"        # update with current values
     moduleConfig.dummy = 1                              # update module parameter with required values
     moduleConfig.dumVector = [1., 2., 3.]
@@ -192,19 +192,19 @@ def fswModuleTestFunction(plotFixture, show_plots):
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                str(moduleOutput[i, 0]*macros.NANO2SEC) +
                                 "sec\n")
 
         # check a scalar double value
-        if not unitTestSupport.isDoubleEqual(variableState[i],dummyTrue[i],accuracy):
+        if not unitTestSupport.isDoubleEqual(variableState[i], dummyTrue[i], accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 variableName + " unit test at t=" +
-                                str(variableState[i,0]*macros.NANO2SEC) +
+                                str(variableState[i, 0]*macros.NANO2SEC) +
                                 "sec\n")
 
     # Note that we can continue to step the simulation however we feel like.
@@ -227,6 +227,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(            # update "subModule" in function name
-               False        # show_plots
+    fswModuleTestFunction(
+               plotFixture,
+               True        # show_plots
     )
