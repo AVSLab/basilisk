@@ -94,7 +94,7 @@ def run(show_plots, attType):
 
     path = os.path.dirname(os.path.abspath(__file__))
     if attType == 0:
-        dataFileName = os.path.join(path, "data", "scHoldTraj.csv")
+        dataFileName = os.path.join(path, "data", "scHoldTraj_MRP.csv")
     elif attType == 1:
         dataFileName = os.path.join(path, "data", "scHoldTraj_quat.csv")
     else:
