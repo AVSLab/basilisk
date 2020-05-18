@@ -36,7 +36,9 @@ which contains both modules.
    :align: center
 
 When the simulation completes several plots are shown for the MRP norm attitude history and the
-inertial relative position vector components.
+inertial relative position vector components.  A servicer spacecraft approaches a target and holds a specific
+target-frame fixed location even while the target itself is slowly rotating.  The servicer and target orientations
+are controlled to be the same to prepare for a final docking maneuver.
 
 Illustration of Simulation Results
 ----------------------------------
