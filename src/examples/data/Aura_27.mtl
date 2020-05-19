@@ -1,0 +1,77 @@
+# Blender MTL File: 'Aura_27.blend'
+# Material Count: 7
+
+newmtl None
+Ns 500
+Ka 0.8 0.8 0.8
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+
+newmtl black_krinkle
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.004896 0.004896 0.004896
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl foil_gold
+Ns 400
+Ka 1.000000 1.000000 1.000000
+Kd 0.619608 0.458824 0.062745
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka texture/foil_gold_ramp.png
+map_bump texture/foil_n.png
+
+
+newmtl foil_silver
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.643260 0.643260 0.643260
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka texture/foil_silver_ramp.png
+map_bump texture/foil_n.png
+
+newmtl shiny_panel
+Ns 700
+Ka 0.500000 0.500000 0.500000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.0
+d 1.000000
+illum 3
+map_Kd texture/panel.jpg
+
+newmtl tex_01
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka texture/foil_silver_ramp.png
+
+newmtl tex_01.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
