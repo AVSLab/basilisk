@@ -38,7 +38,11 @@ which contains both modules.
 When the simulation completes several plots are shown for the MRP norm attitude history and the
 inertial relative position vector components.  A servicer spacecraft approaches a target and holds a specific
 target-frame fixed location even while the target itself is slowly rotating.  The servicer and target orientations
-are controlled to be the same to prepare for a final docking maneuver.
+are controlled to be the same to prepare for a final docking maneuver.  If the data is saved to a Vizard file,
+then the visualization should look like:
+
+.. image:: /_images/static/vizard-DataFile.jpg
+   :align: center
 
 Illustration of Simulation Results
 ----------------------------------
@@ -94,9 +98,9 @@ def run(show_plots, attType):
 
     path = os.path.dirname(os.path.abspath(__file__))
     if attType == 0:
-        dataFileName = os.path.join(path, "data", "scHoldTraj_MRP.csv")
+        dataFileName = os.path.join(path, "data", "scHoldTraj_rotating_MRP.csv")
     elif attType == 1:
-        dataFileName = os.path.join(path, "data", "scHoldTraj_quat.csv")
+        dataFileName = os.path.join(path, "data", "scHoldTraj_rotating_EP.csv")
     else:
         print("unknown attType variable")
         exit()
@@ -133,7 +137,7 @@ def run(show_plots, attType):
     dataModule.attitudeType = attType
     dataModule.dataFileName = dataFileName
 
-    scNames = ["target", "servicer"]
+    scNames = ["servicer", "target"]
     dataModule.scStateOutMsgNames = dataFileToViz.StringVector(scNames)
     dataModule.delimiter = ","
     scSim.AddModelToTask(simTaskName, dataModule)
@@ -155,19 +159,20 @@ def run(show_plots, attType):
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                              # saveFile=fileName,
+                                              saveFile=fileName,
                                               scName=scNames)
+    viz.settings.showSpacecraftLabels = 1
     # load CAD for target spacecraft
     vizSupport.createCustomModel(viz,
                                  modelPath=os.path.join(path, "data", "Aura_27.obj"),
                                  shader=1,
-                                 simBodiesToModify=[scNames[0]],
+                                 simBodiesToModify=[scNames[1]],
                                  rotation=[180.*macros.D2R, 0.0*macros.D2R, -90.*macros.D2R],
                                  scale=[1, 1, 1])
     # load CAD for servicer spacecraft
     vizSupport.createCustomModel(viz,
                                  modelPath=os.path.join(path, "data", "Loral-1300Com-main.obj"),
-                                 simBodiesToModify=[scNames[1]],
+                                 simBodiesToModify=[scNames[0]],
                                  rotation=[0.*macros.D2R, -90.0*macros.D2R, 0.*macros.D2R],
                                  scale=[0.09, 0.09, 0.09])
     if vizFound:
@@ -253,5 +258,5 @@ def run(show_plots, attType):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        1       # attitude coordinate type, 0 - MRP, 1 - quaternions
+        0       # attitude coordinate type, 0 - MRP, 1 - quaternions
     )

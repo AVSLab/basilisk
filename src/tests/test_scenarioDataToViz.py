@@ -28,9 +28,10 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../examples')
 import scenarioDataToViz as testScenario
 
+@pytest.mark.parametrize("attType", [0, 1])
 @pytest.mark.scenarioTest
 
-def test_simplePowerDemo(show_plots):
+def test_simplePowerDemo(show_plots, attType):
     """This function is called by the py.test environment."""
 
     # suppress printing out BSK_INFORMATION states
@@ -41,7 +42,7 @@ def test_simplePowerDemo(show_plots):
 
     # each test method requires a single assert method to be called
     try:
-        figureList = testScenario.run(False)
+        figureList = testScenario.run(False, attType)
 
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
