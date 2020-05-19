@@ -23,7 +23,7 @@ Version |release|
 - Updated :ref:`vizInterface` to allow the user to set the Vizard direct communication protocol, host name and port
   number.
 - fixed an issues in :ref:`simIncludeGravBody` where the method ``unloadSpiceKernels`` had the order of the spice package name and the spice path reversed 😟
-- New module :ref:`dataFileToFiz` that reads in spacecraft simulation states from a text file and converts them into
+- New :ref:`dataFileToViz` that reads in spacecraft simulation states from a text file and converts them into
   BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
 
 Version 1.7.4
