@@ -266,10 +266,11 @@ def run(show_plots, orbitCase):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-                                              # saveFile=fileName,
+                                              saveFile=fileName,
                                               gravBodies=gravFactory)
     viz.epochMsgName = magModule.epochInMsgName
     viz.settings.show24hrClock = 1
+    viz.settings.showDataRateDisplay = 1
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()

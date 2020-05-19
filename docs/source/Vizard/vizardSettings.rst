@@ -105,6 +105,9 @@ default setting for that behavior.
     * - ``show24hrClock``
       - (-1,1)
       - Flag to make mission date/time use a 24h clock instead of a 12h clock with am/pm
+    * - ``showDataRateDisplay``
+      - (-1,1)
+      - Flag to show the data frame rate
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

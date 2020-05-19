@@ -2620,6 +2620,12 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 show24hrclock() const;
   void set_show24hrclock(::google::protobuf::int32 value);
 
+  // int32 showDataRateDisplay = 24;
+  void clear_showdataratedisplay();
+  static const int kShowDataRateDisplayFieldNumber = 24;
+  ::google::protobuf::int32 showdataratedisplay() const;
+  void set_showdataratedisplay(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
 
@@ -2645,6 +2651,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showspacecraftassprites_;
   ::google::protobuf::int32 showcelestialbodiesassprites_;
   ::google::protobuf::int32 show24hrclock_;
+  ::google::protobuf::int32 showdataratedisplay_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -5664,6 +5671,20 @@ inline void VizMessage_VizSettingsPb::set_show24hrclock(::google::protobuf::int3
   
   show24hrclock_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.show24hrClock)
+}
+
+// int32 showDataRateDisplay = 24;
+inline void VizMessage_VizSettingsPb::clear_showdataratedisplay() {
+  showdataratedisplay_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showdataratedisplay() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showDataRateDisplay)
+  return showdataratedisplay_;
+}
+inline void VizMessage_VizSettingsPb::set_showdataratedisplay(::google::protobuf::int32 value) {
+  
+  showdataratedisplay_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showDataRateDisplay)
 }
 
 // -------------------------------------------------------------------

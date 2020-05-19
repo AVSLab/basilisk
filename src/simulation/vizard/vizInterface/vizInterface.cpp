@@ -551,6 +551,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.show24hrClock);
         }
 
+        // define if the data frame rate should be shown
+        vizSettings->set_showdataratedisplay(this->settings.showDataRateDisplay);
+        if (abs(this->settings.showDataRateDisplay)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showDataRateDisplay flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showDataRateDisplay);
+        }
+
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
