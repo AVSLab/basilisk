@@ -23,6 +23,7 @@
 #include "utilities/rigidBodyKinematics.h"
 #include <sstream>
 #include <string>
+#include <string.h>
 
 /*! DataFileToViz Constructor
  */
