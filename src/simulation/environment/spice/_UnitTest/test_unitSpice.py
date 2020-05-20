@@ -140,7 +140,6 @@ def testPlottingFixture(show_plots):
     ("2016 December 20, 00:00:00.0 TDB", "12/20/16" , [2.075411186038260E+08, 3.092173198610598E+07, 8.555251204561792E+06], [4.885421269793877E+06, 1.355125217382336E+08, 5.872015978003684E+07],[5.110736843893399E+05, 5.385860060393942E+05, 2.079481168492821E+05], True)
 ])
 
-# @pytest.mark.parametrize("useMsg", [False, True])
 
 
 # provide a unique test method name, starting with test_
