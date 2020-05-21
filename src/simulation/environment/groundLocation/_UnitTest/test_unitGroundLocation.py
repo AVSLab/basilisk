@@ -158,7 +158,7 @@ def test_rotation(show_plots):
     groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
     groundTarget.maximumRange = 200e3 # meters
     groundTarget.minimumElevation = np.radians(10.)
-    groundTarget.specifyLocation(np.radians(0.), np.radians(-10.), 0.)
+    groundTarget.specifyLocation(np.radians(0.), np.radians(10.), 0.)
     scSim.AddModelToTask(simTaskName, groundTarget)
 
     #   Write out mock planet rotation, spacecraft position messages

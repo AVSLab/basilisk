@@ -97,19 +97,32 @@ def run(show_plots):
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
+    # setup Spice interface for some solar system bodies
+    timeInitString = '2020 MAY 21 18:28:03 (UTC)'
+    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
+                                     , timeInitString
+                                     , spicePlanetNames=["earth"]
+                                     )
+    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
+
     planet = gravFactory.createEarth()
     planet.isCentralBody = True          # ensure this is the central gravitational body
+
+    planet.useSphericalHarmParams=True
+    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
+                                        planet.spherHarm, 2)
     mu = planet.mu
+    # The value 2 indicates that the first two harmonics, exclud
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
     oe.a = astroFunctions.E_radius*1e3 + 418e3
     oe.e = 0.00061
-    oe.i = 51.6435*macros.D2R
+    oe.i = 51.6418*macros.D2R
 
-    oe.Omega = 115.2692*macros.D2R
-    oe.omega = 	30.8953*macros.D2R
-    oe.f     = 350.2539*macros.D2R
+    oe.Omega = 119.2314*macros.D2R
+    oe.omega = 	337.8329*macros.D2R
+    oe.f     = 22.2753*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
@@ -124,14 +137,6 @@ def run(show_plots):
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
-
-    # setup Spice interface for some solar system bodies
-    timeInitString = '2020 MAR 15 12:00:00 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , timeInitString
-                                     , spicePlanetNames=["sun", "earth"]
-                                     )
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
 
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
@@ -210,7 +215,7 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.sec2nano(50*60))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.sec2nano(86400))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     scenarioSim.ExecuteSimulation()
