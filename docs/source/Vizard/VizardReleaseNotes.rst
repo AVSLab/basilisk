@@ -20,6 +20,7 @@ Release Notes
     - add labels to spacecraft and sensor visualization
 
 **Version 1.3.0**
+
 - added option for playback of messages in real time. Real time mode references the system clock and advances
   messages as needed to keep pace with the current sim elapsed time of the message. Real time playback can be
   increased or decreased from 1x with the playback speed controls.
