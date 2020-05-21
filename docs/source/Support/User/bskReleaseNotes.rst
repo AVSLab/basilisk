@@ -26,6 +26,8 @@ Version |release|
 - New :ref:`dataFileToViz` that reads in spacecraft simulation states from a text file and converts them into
   BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
 - Updated :ref:`spice_interface` to allow for optional overriding the IAU planet frame with custom values
+- Updated :ref:`vizInterface` to allow setting ``show24hrClock`` and ``showDataRateDisplay`` flags for Vizard files
+  supported in Vizard v1.3.0 
 
 Version 1.7.4
 -------------
