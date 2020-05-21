@@ -124,10 +124,6 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
-    unitTestSim.TotalSim.terminateSimulation()
 
     bitmapArray = []
 

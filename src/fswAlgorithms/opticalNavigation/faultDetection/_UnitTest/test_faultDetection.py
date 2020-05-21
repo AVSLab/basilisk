@@ -84,10 +84,6 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # This is needed if multiple unit test scripts are run
-    # This create a fresh and consistent simulation environment for each test run
-    unitTestSim.TotalSim.terminateSimulation()
-
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
