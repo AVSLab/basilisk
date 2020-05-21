@@ -28,7 +28,7 @@ If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
 
-Listing of all BSK scriptable Vizard settings
+Listing of all BSK Scriptable Vizard Settings
 ---------------------------------------------
 
 The following list contains the optional Vizard settings that can be
@@ -102,6 +102,12 @@ default setting for that behavior.
     * - ``showCelestialBodiesAsSprites``
       - (-1,1)
       - Flag to show celestial bodies as sprites if their visual size gets too small
+    * - ``show24hrClock``
+      - (-1,1)
+      - Flag to make mission date/time use a 24h clock instead of a 12h clock with am/pm
+    * - ``showDataRateDisplay``
+      - (-1,1)
+      - Flag to show the data frame rate
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -514,3 +520,13 @@ a spacecraft use a specific sprite representation use::
 
 
 
+Specifying the Simulation Epoch Date and Time Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Vizard can show the both the simulation time that has elapsed, or the mission time.  If now epoch message has been
+set then Basilisk assumes a default January 1, 2019, 00:00:00 epoch time and date.  The simulation time elapsed is
+thus the time since epoch.  To specify a different simulation epoch data and time the :ref:`EpochSimMsg` can be
+setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell ref:`vizInterface` what epoch message to read use::
+
+	viz.epochMsgName = "Epoch_Msg_Name_Used"
+
+An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.

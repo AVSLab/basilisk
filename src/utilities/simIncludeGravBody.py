@@ -27,6 +27,7 @@ from Basilisk.utilities import unitTestSupport
 class gravBodyFactory(object):
     def __init__(self, bodyNames=None):
         self.spicePlanetNames = []
+        self.spicePlanetFrames = []
         self.gravBodies = {}
         self.spiceObject = None
         self.spiceKernelFileNames = []
@@ -225,6 +226,9 @@ class gravBodyFactory(object):
                     A list of spice kernel file names including file extension.
                 spicePlanetNames : array_like
                     A list of planet names whose Spice data is loaded, overriding the gravBodies list.
+                spicePlanetFrames : array_like
+                    A list of strings for the planet frame names.  If left empty for a planet, then
+                    "IAU_" + planetName is assumed for the planet frame.
 
             Returns
             -------
@@ -236,7 +240,7 @@ class gravBodyFactory(object):
             try:
                 for fileName in kwargs['spiceKernalFileNames']:
                     self.spiceKernelFileNames.append(fileName)
-            except(TypeError):
+            except TypeError:
                 raise TypeError('spiceKernalFileNames expects a list')
         else:
             self.spiceKernelFileNames.extend(['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
@@ -246,10 +250,18 @@ class gravBodyFactory(object):
             try:
                 for planetName in kwargs['spicePlanetNames']:
                     self.spicePlanetNames.append(planetName)
-            except(TypeError):
+            except TypeError:
                 raise TypeError('spicePlanetNames expects a list')
         else:
             self.spicePlanetNames = list(self.gravBodies.keys())
+
+        self.spicePlanetFrames = []
+        if 'spicePlanetFrames' in kwargs:
+            try:
+                for planetFrame in kwargs['spicePlanetFrames']:
+                    self.spicePlanetFrames.append(planetFrame)
+            except TypeError:
+                raise TypeError('spicePlanetNames expects a list')
 
         self.spiceObject = spice_interface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
@@ -257,6 +269,11 @@ class gravBodyFactory(object):
         self.spiceObject.outputBufferCount = 10000
         self.spiceObject.planetNames = spice_interface.StringVector(self.spicePlanetNames)
         self.spiceObject.UTCCalInit = time
+        if len(self.spicePlanetFrames) > 0:
+            if len(self.spicePlanetFrames) != len(self.spicePlanetNames):
+                print("List arguments spicePlanetFrames and spicePlanetNames must contain the same number of strings.")
+                exit(0)
+            self.spiceObject.planetFrames = spice_interface.StringVector(self.spicePlanetFrames)
 
         for fileName in self.spiceKernelFileNames:
             self.spiceObject.loadSpiceKernel(fileName, path)
@@ -275,7 +292,7 @@ class gravBodyFactory(object):
 
     def unloadSpiceKernels(self):
         for fileName in self.spiceKernelFileNames:
-            self.spiceObject.unloadSpiceKernel(self.spiceObject.SPICEDataPath, fileName)
+            self.spiceObject.unloadSpiceKernel(fileName, self.spiceObject.SPICEDataPath)
         return
 
 

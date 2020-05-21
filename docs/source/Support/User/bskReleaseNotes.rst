@@ -16,15 +16,23 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
-..
-    Version |release|
-    -----------------
-    - text here
+
+Version |release|
+-----------------
+- Added the ability to shift the HSV or BGR colors of :ref:`camera`
+- Updated :ref:`vizInterface` to allow the user to set the Vizard direct communication protocol, host name and port
+  number.
+- fixed an issues in :ref:`simIncludeGravBody` where the method ``unloadSpiceKernels`` had the order of the spice package name and the spice path reversed 😟
+- New :ref:`dataFileToViz` that reads in spacecraft simulation states from a text file and converts them into
+  BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
+- Updated :ref:`spice_interface` to allow for optional overriding the IAU planet frame with custom values
+- Updated :ref:`vizInterface` to allow setting ``show24hrClock`` and ``showDataRateDisplay`` flags for Vizard files
+  supported in Vizard v1.3.0 
 
 Version 1.7.4
 -------------
 - hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that Windows expected,
-but Unix systems didn't need
+  but Unix systems didn't need
 
 Version 1.7.3
 -------------

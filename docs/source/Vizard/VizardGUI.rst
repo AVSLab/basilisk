@@ -23,7 +23,40 @@ Next Vizard presents a panel where the user can select which simulation to visua
    :align: center
    :width: 90 %
 
-To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream`) the socket address, such as ``tcp://localhost:5556``, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
+To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream` with ``liveStream`` set to true) the socket address, which is ``tcp://localhost:5556`` by default, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
+
+The default Vizard communication can be overwritten using the following variables:
+
+.. code-block:: python
+
+    viz = vizInterface.VizInterface()
+    viz.comProtocol     = "tcp"
+    viz.comAddress      = "127.0.0.1"
+    viz.comPortNumber   = "1234"
+
+This example would cause Basilisk to use the socket address ``tcp://127.0.0.1:1234`` to connect to Vizard.
+
+.. list-table:: Vizard Communication Parameters
+    :widths: 10 10 10 70
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Default
+      - Description
+    * - ``comProtocol``
+      - string
+      - ``tcp``
+      - Transport protocol to use for the connection. See all protocol options
+        `here <http://api.zeromq.org/3-2:zmq-connect>`__.
+    * - ``comAddress``
+      - string
+      - ``localhost``
+      - Network address to use for the connection.  This can be either a host name or an IP address.
+    * - ``comPortNumber``
+      - string
+      - ``5556``
+      - Port number to use for the connection.
 
 View Modes 
 ----------
@@ -153,6 +186,31 @@ following image:
    :align: center
    :width: 90 %
 
+
+``Time`` Menu Item
+------------------
+The ``Time`` menu tab contains a range of Vizard time or mission date related option. Some of these items have
+a keyboard short-cut assigned.
+
+.. image:: ../_images/static/vizard-timeMenu.jpg
+   :align: center
+   :width: 90 %
+
+- **Playback in Real time:** This mode syncs up the playback speed to be real time where 1s of simulation time takes
+  1s of real time.  This can be increased or decreased as desired.
+- **Playback at Frame:** This mode plays back each data frame as it arrives.  Thus, the visualization is playing
+  back a data file as fast as it can without skipping any data frames.  If you press the Plus icon then the data
+  playback speed is doubled to 2 by only showing every second frame.  Pressing Plus again doubles once more the data
+  rate to 4 to showing only
+  every 4th data frame.  If you press negative the trend is reversed.  You can slow down the playback as well in this
+  mode in that a data rate of 1/2 means a data frame is held for 2 unit cycles.
+- **Use 24 Hour Clock:** This toggles between a 12 hour clock using `am` and `pm` and a 24 hour clock.
+- **Show Mission/Sim Time:** This toggles the time bar to show either the simulation elapsed time or the mission
+  date and time.  Note that if the Basilisk simulation doesn't set an epoch date than January 1st, 2019, 00:00am
+  is assumed by the simulation.
+- **Show Data Rate**:** This toggle shows the data frame rate.  If this is 1, then every data rate is being shown.
+  If the rate is 2, then only every 2nd data frame is shown.  A data rate of 1/2 means a frame is held for
+  one rendering cycle to slow down the simulation.
 
 	
 ``Camera`` Menu Item

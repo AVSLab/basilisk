@@ -1,31 +1,27 @@
-''' '''
-'''
- ISC License
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Unit Test Script
+# Module Name:        Camera
+# Author:             Thibaud Teil
+# Creation Date:      March 13, 2019
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-'''
-  Unit Test Script
-  Module Name:        Camera
-  Author:             Thibaud Teil
-  Creation Date:      March 13, 2019
-'''
 
 import pytest
-import sys, os, inspect, time
+import os, inspect
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -52,20 +48,20 @@ except ImportError:
     importErr = True
     reasonErr = "Camera not built---check OpenCV option"
 
+
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
 # Uncomment this line if this test has an expected failure, adjust message as needed.
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage", [
-    ("mars.jpg",    0,          0,      0,   0,   0,  True),  # Mars image
-    ("mars.jpg",    2,          2,      2,   1,   3 , True) #Mars image
+@pytest.mark.skipif(importErr, reason=reasonErr)
+@pytest.mark.parametrize("gauss, darkCurrent, saltPepper, cosmic, blurSize", [
+    (0, 0, 0, 0, 0)
+    , (2, 2, 2, 1, 3)
 ])
-
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage):
+def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
     """
         **Validation Test Description**
 
@@ -95,38 +91,46 @@ def test_module(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
         is only tested by the result image.
         """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage)
+    image = "mars.jpg"
+    [testResults, testMessage] = cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize)
+
+    # Clean up
+    imagePath = path + '/' + image
+    savedImage1 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
+                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.000000.png'
+    savedImage2 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
+                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.500000.png'
+    try:
+        os.remove(savedImage1)
+        os.remove(savedImage2)
+    except FileNotFoundError:
+        pass
+
     assert testResults < 1, testMessage
 
 
-def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize, saveImage):
-
+def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize):
     # Truth values from python
     imagePath = path + '/' + image
     input_image = Image.open(imagePath)
     input_image.load()
     #################################################
-    corrupted = (gauss>0) or (darkCurrent>0) or (saltPepper>0) or (cosmic>0) or (blurSize>0)
+    corrupted = (gauss > 0) or (darkCurrent > 0) or (saltPepper > 0) or (cosmic > 0) or (blurSize > 0)
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
-    unitTestSim.TotalSim.terminateSimulation()
 
     bitmapArray = []
 
     # # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     moduleConfig = camera.Camera()
@@ -138,8 +142,10 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     moduleConfig.cameraOutMsgName = "cameraOut"
     moduleConfig.imageOutMsgName = "out_image"
     moduleConfig.filename = imagePath
-    moduleConfig.saveImages = 1 if saveImage else 0
-    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/'
+    moduleConfig.saveImages = True
+    # make each image saved have a unique name for this test case
+    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
+                           + str(saltPepper) + str(cosmic) + str(blurSize)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -152,7 +158,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
                                inputMessageData)
 
     moduleConfig.cameraIsOn = 1
-    moduleConfig.sigma_CB = [0,0,1]
+    moduleConfig.sigma_CB = [0, 0, 1]
 
     # Noise parameters
     moduleConfig.gaussian = gauss
@@ -171,23 +177,24 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
     # Truth values from python
     if corrupted:
-        corruptedPath = path + '/' + '0.000000.jpg'
+        corruptedPath = moduleConfig.saveDir + '0.000000.png'
     else:
-        corruptedPath = path + '/' + '0.500000.jpg'
+        corruptedPath = moduleConfig.saveDir + '0.500000.png'
     output_image = Image.open(corruptedPath)
 
     isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
     pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
 
     #  Error check for corruption
-    err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2))/np.linalg.norm(np.linalg.norm(input_image, axis=2))
+    err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(
+        np.linalg.norm(input_image, axis=2))
 
     if (err < 1E-2 and corrupted):
         testFailCount += 1
@@ -199,20 +206,13 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     #   print out success message if no error were found
     for i in range(3):
-        if np.abs(pos[-1,i+1] - moduleConfig.sigma_CB[i])>1E-10:
-            testFailCount+=1
+        if np.abs(pos[-1, i + 1] - moduleConfig.sigma_CB[i]) > 1E-10:
+            testFailCount += 1
             testMessages.append("Test failed position " + image)
 
-    if np.abs(isOnValues[-1,1] - moduleConfig.cameraIsOn)>1E-10:
-        testFailCount+=1
+    if np.abs(isOnValues[-1, 1] - moduleConfig.cameraIsOn) > 1E-10:
+        testFailCount += 1
         testMessages.append("Test failed isOn " + image)
-
-    # Clean up
-    try:
-        os.remove(path + "/0.000000.jpg")
-        os.remove(path + "/0.500000.jpg")
-    except FileNotFoundError:
-        pass
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -224,4 +224,4 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 # stand-along python script
 #
 if __name__ == "__main__":
-    cameraTest(True, "mars.jpg", 2,          0,      2,   1,   3 , True) # Mars image
+    cameraTest(False, "mars.jpg", 2, 0, 2, 1, 3)

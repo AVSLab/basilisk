@@ -4,10 +4,10 @@
 Basilisk Known Issues
 =====================
 
-..
-    Version |release|
-    -----------------
-    - None
+
+Version |release|
+-----------------
+- None
 
 Version 1.7.4
 -------------

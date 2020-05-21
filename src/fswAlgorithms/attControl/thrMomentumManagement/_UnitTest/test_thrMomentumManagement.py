@@ -148,7 +148,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     # print moduleOutput
 
     # set the filtered output truth states
-    if hsMinCheck is 1:
+    if hsMinCheck == 1:
         trueVector = [
                    [0.0, 0.0, 0.0]
                    ]

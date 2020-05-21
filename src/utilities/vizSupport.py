@@ -32,8 +32,6 @@ from Basilisk import __path__
 bskPath = __path__[0]
 from Basilisk.simulation import spice_interface
 
-sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
-
 # set the string type that works with Python 2 and 3
 try:
   basestring
