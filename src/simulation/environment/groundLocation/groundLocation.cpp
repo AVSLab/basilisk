@@ -201,10 +201,9 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock)
 void GroundLocation::updateInertialPositions()
 {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
-    Eigen::Matrix3d dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
-    // Then, transpose it to get the planet to inertial frame
-    this->dcm_PN = dcm_PN;//dcm_NP.transpose();
+    this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
+    // Then, transpose it to get the planet to inertial frame
     this->r_LP_N = this->dcm_PN.transpose() * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
