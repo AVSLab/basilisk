@@ -39,14 +39,16 @@
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
 #include "utilities/bskLogging.h"
+#include "simMessages/epochSimMsg.h"
+#include "utilities/simDefinitions.h"
 
 #define VIZ_MAX_SIZE 100000
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */
 typedef struct {
-    int64_t msgID;        //!< [-] message ID associated with source
-    uint64_t lastTimeTag; //!< [ns] The previous read time-tag for msg
-    bool dataFresh;       //!< [-] Flag indicating that new data has been read
+    int64_t msgID = -1;                         //!< [-] message ID associated with source
+    uint64_t lastTimeTag = 0xFFFFFFFFFFFFFFFF;  //!< [ns] The previous read time-tag for msg
+    bool dataFresh = false;                     //!< [-] Flag indicating that new data has been read
 }MsgCurrStatus;
 
 /*! Structure to store a thruster group information. */
@@ -180,6 +182,8 @@ typedef struct {
     std::string defaultSpacecraftSprite = "";       //!< Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
     int32_t showSpacecraftAsSprites = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCelestialBodiesAsSprites = 0;      //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t show24hrClock = 0;                     //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32_t showDataRateDisplay = 0;               //!< flag to show data frame rate, 0 (protobuffer default), -1 for false, 1 for true
 }VizSettings;
 
 
@@ -223,6 +227,10 @@ public:
     std::string comAddress;                     //!< Communication address to use when connecting to Vizard
     std::string comPortNumber;                  //!< Communication port number to use when connecting to Vizard
     
+    std::string epochMsgName;                   //!< [-] name of the simulation epoch date/time msg
+    MsgCurrStatus epochMsgID;                   //!< [-] ID of the epoch msg
+    EpochSimMsg epochMsg;                       //!< [-] epoch msg data
+
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
 
 

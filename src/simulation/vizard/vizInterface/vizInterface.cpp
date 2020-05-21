@@ -216,6 +216,16 @@ void VizInterface::CrossInit()
         this->cameraConfMsgId.msgID = -1;
     }
 
+    if (this->epochMsgName.length() > 0) {
+        msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->epochMsgName);
+        if (msgInfo.itemFound) {
+            this->epochMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->epochMsgName,
+                                                                                        sizeof(EpochSimMsg), moduleID);
+        } else {
+            bskLogger.bskLog(BSK_ERROR, "vizInterface: can't find epoch msg %s.", this->epochMsgName.c_str());
+        }
+    }
+
     /* Define Spice input message */
     {
         size_t i=0;
@@ -258,6 +268,15 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     }
 
     this->settings.dataFresh = true;        // reset flag to transmit Vizard settings
+
+    this->epochMsg.year = EPOCH_YEAR;
+    this->epochMsg.month = EPOCH_MONTH;
+    this->epochMsg.day = EPOCH_DAY;
+    this->epochMsg.hours = EPOCH_HOUR;
+    this->epochMsg.minutes = EPOCH_MIN;
+    this->epochMsg.seconds = EPOCH_SEC;
+    this->epochMsgID.dataFresh = true;
+
     return;
 }
 
@@ -363,6 +382,17 @@ void VizInterface::ReadBSKMessages()
         this->cameraConfigMessage = localCameraConfigArray;
     }
 
+    /*! Read incoming epoch msg */
+    if (this->epochMsgID.msgID != -1) {
+        EpochSimMsg epochMsg_Buffer;
+        SingleMessageHeader epochMsgHeader;
+        SystemMessaging::GetInstance()->ReadMessage(this->epochMsgID.msgID, &epochMsgHeader, sizeof(EpochSimMsg), reinterpret_cast<uint8_t*>(&epochMsg_Buffer));
+        if(epochMsgHeader.WriteSize > 0 && epochMsgHeader.WriteClockNanos != this->epochMsgID.lastTimeTag){
+            this->epochMsgID.lastTimeTag = epochMsgHeader.WriteClockNanos;
+            this->epochMsgID.dataFresh = true;
+            this->epochMsg = epochMsg_Buffer;
+        }
+    }
 
     /*! Read BSK Spice constellation msg */
     {
@@ -515,6 +545,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodiesAsSprites);
         }
 
+        // define if the time should be shown using a 24h clock
+        vizSettings->set_show24hrclock(this->settings.show24hrClock);
+        if (abs(this->settings.show24hrClock)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.show24hrClock);
+        }
+
+        // define if the data frame rate should be shown
+        vizSettings->set_showdataratedisplay(this->settings.showDataRateDisplay);
+        if (abs(this->settings.showDataRateDisplay)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showDataRateDisplay flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showDataRateDisplay);
+        }
+
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
@@ -578,6 +620,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     time->set_framenumber(this->FrameNumber);
     time->set_simtimeelapsed(CurrentSimNanos);
     message->set_allocated_currenttime(time);
+
+    /*! write epoch msg */
+    if (this->epochMsgID.dataFresh) {
+        vizProtobufferMessage::VizMessage::EpochDateTime* epoch = new vizProtobufferMessage::VizMessage::EpochDateTime;
+        epoch->set_year(this->epochMsg.year);
+        epoch->set_month(this->epochMsg.month);
+        epoch->set_day(this->epochMsg.day);
+        epoch->set_hours(this->epochMsg.hours);
+        epoch->set_minutes(this->epochMsg.minutes);
+        epoch->set_seconds(this->epochMsg.seconds);
+        message->set_allocated_epoch(epoch);
+        this->epochMsgID.dataFresh = false;
+    }
 
 
     std::vector<VizSpacecraftData>::iterator scIt;

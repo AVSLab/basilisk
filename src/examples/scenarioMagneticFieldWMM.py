@@ -265,7 +265,12 @@ def run(show_plots, orbitCase):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+                                              saveFile=fileName,
+                                              gravBodies=gravFactory)
+    viz.epochMsgName = magModule.epochInMsgName
+    viz.settings.show24hrClock = 1
+    viz.settings.showDataRateDisplay = 1
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()

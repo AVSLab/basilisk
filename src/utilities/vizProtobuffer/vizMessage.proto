@@ -10,6 +10,15 @@ package vizProtobufferMessage;
    
 //A VizMessage should contain all Basilisk Sim messages needed to visualize a single time step
 message VizMessage{
+    
+    message EpochDateTime{
+        int32 year = 1;  //default: 2019
+        int32 month = 2; //default: 1
+        int32 day = 3;   //default: 1
+        int32 hours = 4;    //default: 0
+        int32 minutes = 5; //default: 0
+        double seconds = 6; //default: 0.00
+    }
 
     message TimeStamp{
         int64 frameNumber = 1; //Current message's index
@@ -159,7 +168,9 @@ message VizMessage{
         string defaultSpacecraftSprite = 20; // Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
         int32 showSpacecraftAsSprites = 21; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showCelestialBodiesAsSprites =22; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        
+        int32 show24hrClock = 23; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showDataRateDisplay = 24;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+
     }
 
     TimeStamp currentTime = 1;
@@ -169,4 +180,5 @@ message VizMessage{
     //repeated cameraImage cameraImages = 5;
     //repeated ImageRequest imageRequests = 6;
     VizSettingsPb settings = 7;
+    EpochDateTime epoch = 8;
 }
