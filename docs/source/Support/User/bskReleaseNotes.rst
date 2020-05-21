@@ -25,6 +25,7 @@ Version |release|
 - fixed an issues in :ref:`simIncludeGravBody` where the method ``unloadSpiceKernels`` had the order of the spice package name and the spice path reversed 😟
 - New :ref:`dataFileToViz` that reads in spacecraft simulation states from a text file and converts them into
   BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
+- Updated :ref:`spice_interface` to allow for optional overriding the IAU planet frame with custom values
 
 Version 1.7.4
 -------------

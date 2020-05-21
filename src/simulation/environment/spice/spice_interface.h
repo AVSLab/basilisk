@@ -56,12 +56,13 @@ public:
     std::string zeroBase;                //!< -- Base zero point to use for states
 	std::string timeOutPicture;          //!< -- Optional parameter used to extract time strings
     bool SPICELoaded;                    //!< -- Boolean indicating to reload spice
-    int charBufferSize;    //!< -- avert your eyes we're getting SPICE
+    int charBufferSize;         //!< -- avert your eyes we're getting SPICE
     uint8_t *spiceBuffer;       //!< -- General buffer to pass down to spice
     std::string UTCCalInit;     //!< -- UTC time string for init time
     std::string outputTimePort; //!< -- Output time sampling port name to use
     uint64_t outputBufferCount; //!< -- Number of output buffers to use
     std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
+    std::vector<std::string>planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
     
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
     double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
