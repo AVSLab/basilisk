@@ -19,6 +19,28 @@ Release Notes
     - better support for visualizing multiple spacecraft
     - add labels to spacecraft and sensor visualization
 
+**Version 1.3.0**
+- added option for playback of messages in real time. Real time mode references the system clock and advances
+  messages as needed to keep pace with the current sim elapsed time of the message. Real time playback can be
+  increased or decreased from 1x with the playback speed controls.
+- Real Time or Frame Rate playback options can be selected under the new Time menu
+- playback speed display modified to show the current playback speed relative to real time rather than the old
+  frame rate speed
+- added a data rate display to allow user to see for how many Unity frames a vizMessage is displayed. Data rate
+  display can be toggled under the Time menu or by pressing ‘d’ on the keyboard.
+- added epoch submessage to the vizMessage. If user omits epoch message, a default epoch of January 1, 2019 0h 0m 0s
+  is used
+- epoch message is used to calculate Mission Time display which can be toggled on from Time menu or by pressing
+  ’t’ on the keyboard
+- added vizMessage user setting to show mission time as 24 hr clock. This setting can also be toggled from the Time menu.
+- added vizMessage user setting to show the data rate display
+- updated the playback control sprites and slider for a clean look
+- fixed a bug in the handling of custom model user settings where the Standard shader was not applied during
+  custom model import when specified by user
+- identified issue in custom model import: obj importer will not correctly import materials that were given a
+  numeric name (i.e. “1”) Current workaround is to rename materials in .mtl and .obj files to use non-numeric strings.
+
+
 **Version 1.2.0**
 
 - added 2D sprite representation of spacecraft and celestial bodies to support spacecraft constellation modeling and easier visualization of distant objects
