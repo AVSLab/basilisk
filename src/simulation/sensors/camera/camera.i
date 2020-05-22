@@ -28,6 +28,7 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "stdint.i"
 %include "std_string.i"
+%include "std_vector.i"
 %include "sys_model.h"
 %include "camera.h"
 %include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
