@@ -25,6 +25,14 @@ set_target_properties(SimMessaging PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_
 set_target_properties(SimMessaging PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
 set_target_properties(SimMessaging PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
 
+set_target_properties(SimMessaging PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+set_target_properties(SimMessaging PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
 #Have to copy this file everywhere if we're on Windows.  Ugly kludge, but... Windows!
 if(WIN32)
     file(GLOB moduleContentsList "${CMAKE_BINARY_DIR}/Basilisk/simulation/*"

@@ -14,4 +14,16 @@ if(BUILD_VIZINTERFACE)
     file(GLOB PROTO_SRC "vizMessage.pb.cc" "vizMessage.hpp")
     add_library(protocode ${PROTO_SRC})
     target_link_libraries(protocode protobuf::protobuf)
+
+    set_target_properties(protocode PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+    set_target_properties(protocode PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+    set_target_properties(protocode PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+    set_target_properties(protocode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+    set_target_properties(protocode PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+    set_target_properties(protocode PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+    set_target_properties(protocode PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+    set_target_properties(protocode PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+    set_target_properties(protocode PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
 endif()

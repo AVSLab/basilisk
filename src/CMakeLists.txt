@@ -425,15 +425,6 @@ if(WIN32)
 	set(library_dependencies
       	${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib
 	)
-
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_BINARY_DIR}/bin)
-
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib)
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_BINARY_DIR}/lib)
-
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib)
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_BINARY_DIR}/lib)
         # fix for opencv not finding conan gflags for opencv sfm lib on windows
         # when the finding is fixed, the following line should be removed
         # https://github.com/conan-community/community/issues/210 
