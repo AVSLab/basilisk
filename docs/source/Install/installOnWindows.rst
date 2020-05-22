@@ -42,32 +42,32 @@ command is executed at command line::
 
    C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
 
-Configuring Swig
-~~~~~~~~~~~~~~~~
 
+Install Swig
+~~~~~~~~~~~~
 The standard windows swig version 3 or 4 is suitable for Basilisk (see `Configuration
 Instructions <http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe>`__).
+Download the swig zip file, which includes ``swig.exe`` file, and unzip it into somewhere like ``C:/Program Files/Swig``
 
-- Download the swig zip file, which includes ``swig.exe`` file, and unzip it into somewhere like ``C:/Program Files/Swig``
-- Add swig path into environment variables using the following steps:
+
+Configuring User Variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Add SWIG and Basilisk paths into environment variables using the following steps:
 
   - Right-click on My Computer, Select Properties
   - Under the Advanced tab, Select Environment Variables
-  - Under the System Variables panel, Select Path, and Click Edit
-  - Add the ``swig.exe`` directory to your path
+  - Under the User Variables panel, Select Path, and Click Edit
 
+    - Add the ``swig.exe`` directory to your path
+    - Add the Basilisk library directory (``path2bsk/dist3/Basilisk``) to your path. Here, ``path2bsk`` is replaced with the actual path to the Basilisk folder.
+
+For more information on how to configure the path Variable on Windows see this
+`help <https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/>`__ link.
 Example added path formats::
 
    PYTHON_INCLUDE = C:\Program Files\Python27\include 
    PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
 
-Configuring BSK Library Destination Path
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Add the path to the Basilisk compiled library folder ``path2bsk/dist3/Basilisk`` to your path using the
-above instructions for adding a path variable where ``path2bsk`` is replaced with the actual path to the
-Basilisk folder.  If using depreciated Python 2, then replace ``dist3`` with ``dist``.
-For more information on how to configure the path Variable on Windows see this
-`help <https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/>`__ link.
 
 Install Conan
 ~~~~~~~~~~~~~
