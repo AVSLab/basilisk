@@ -200,16 +200,15 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock)
 
 void GroundLocation::updateInertialPositions()
 {
-    // Update the planet inertial position:
-    Eigen::Matrix3d dcm_NP = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
-    this->dcm_PN = dcm_NP.transpose();
+    // First, get the rotation matrix from the inertial to planet frame from SPICE:
+    this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
-    this->r_LP_N = dcm_NP * this->r_LP_P_Init;
+    // Then, transpose it to get the planet to inertial frame
+    this->r_LP_N = this->dcm_PN.transpose() * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
     //  Stash updated position in the groundState message
     eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateOutMsg.r_LN_N);
-    eigenVector3d2CArray(this->r_LP_N,this->currentGroundStateOutMsg.r_LP_N);
 }
 
 void GroundLocation::computeAccess()
@@ -222,7 +221,8 @@ void GroundLocation::computeAccess()
     std::vector<SCPlusStatesSimMsg>::iterator scStatesMsgIt;
     for(scStatesMsgIt = scStates.begin(), accessMsgIt = accessMsgBuffer.begin(); scStatesMsgIt != scStates.end(); scStatesMsgIt++, accessMsgIt++){
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
-        Eigen::Vector3d r_BL_N = (cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N) - this->r_LP_N;
+        Eigen::Vector3d r_BP_N = cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N;
+        Eigen::Vector3d r_BL_N = r_BP_N - this->r_LP_N;
         auto r_BL_mag = r_BL_N.norm();
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
 

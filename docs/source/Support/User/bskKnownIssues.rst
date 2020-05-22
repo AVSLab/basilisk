@@ -9,12 +9,17 @@ Version |release|
 -----------------
 - None
 
+Version 1.7.5
+-----------------
+- :ref:`groundLocation` was not converting between the planet and inertial frame correctly.  This is now fixed in
+  the later releases.
+
 Version 1.7.4
 -------------
 - None
 
 Version 1.7.3
--------------
+
 - On Windows Basilisk didn't compile due to missing math ``#define`` delaration in ``geodeticConversion.cpp/h``.
   This is fixed in the latest release.
 

@@ -5,7 +5,11 @@ Basilisk Release Notes
 
 .. Note::
 
-    We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples`` folder.  More documentation and tutorial scripts are in development.
+    We are very excited by the great capabilities that this software already has, and plan to be updating this
+    software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also
+    documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation
+    folders ass well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples``
+    folder.  More documentation and tutorial scripts are in development.
 
 .. sidebar:: In Progress Features
 
@@ -16,9 +20,12 @@ Basilisk Release Notes
     - working on a new, faster, more capable, more robust and just plain awesome new build system
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
-
 Version |release|
 -----------------
+- fixed a data frame issue in :ref:`groundLocation`
+
+Version 1.7.5
+-------------
 - Added the ability to shift the HSV or BGR colors of :ref:`camera`
 - Updated :ref:`vizInterface` to allow the user to set the Vizard direct communication protocol, host name and port
   number.
