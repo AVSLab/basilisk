@@ -11,7 +11,8 @@ Version |release|
 
 Version 1.7.5
 -----------------
-- None
+- :ref:`groundLocation` was not converting between the planet and inertial frame correctly.  This is now fixed in
+  the later releases.
 
 Version 1.7.4
 -------------
