@@ -484,7 +484,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sim_synch" SIM_SYNCH_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilities" UTILITIES_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilitiesSelfCheck" UTILITIES_SELF_CHECK_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard/vizInterface" VIZ_INTERFACE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
 
 
 
