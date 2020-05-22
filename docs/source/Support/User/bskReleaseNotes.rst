@@ -5,7 +5,11 @@ Basilisk Release Notes
 
 .. Note::
 
-    We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples`` folder.  More documentation and tutorial scripts are in development.
+    We are very excited by the great capabilities that this software already has, and plan to be updating this
+    software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also
+    documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation
+    folders ass well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples``
+    folder.  More documentation and tutorial scripts are in development.
 
 .. sidebar:: In Progress Features
 
@@ -18,7 +22,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- fixed a data frame issue in :ref:`groundLocation`
 
 Version 1.7.5
 -------------
