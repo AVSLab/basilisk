@@ -61,6 +61,14 @@ Example added path formats::
    PYTHON_INCLUDE = C:\Program Files\Python27\include 
    PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
 
+Configuring BSK Library Destination Path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Add the path to the Basilisk compiled library folder ``path2bsk/dist3/Basilisk`` to your path using the
+above instructions for adding a path variable where ``path2bsk`` is replaced with the actual path to the
+Basilisk folder.  If using depreciated Python 2, then replace ``dist3`` with ``dist``.
+For more information on how to configure the path Variable on Windows see this
+`help <https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/>`__ link.
+
 Install Conan
 ~~~~~~~~~~~~~
 

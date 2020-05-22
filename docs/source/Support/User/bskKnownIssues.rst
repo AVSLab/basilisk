@@ -12,6 +12,7 @@ Version |release|
     $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
     $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 
+- If running Windows the path to the Basilisk library destination folder must be set, see :ref:`installWindows`.
 - The new build system provides many speed improvements in doing a clean or partial build, but some small changes are
   required to update BSK python simulation scripts to be compatible with the new build system.
   These changes include:
