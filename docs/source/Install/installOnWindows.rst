@@ -35,6 +35,7 @@ Python is installed using the Windows installer found on the Python website. Mak
 - ``pytest``
 - ``conan``
 - ``pandas``
+- ``Pillow``
 
 are installed using the Python package
 manager pip (``pip.exe``) which comes default with the Windows Python installer. To install additional Python packages with pip the following

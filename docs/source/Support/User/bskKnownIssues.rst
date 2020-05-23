@@ -89,6 +89,7 @@ Version |release|
   this library name.  Thus, for example, code in ``src/simulation/environment/_GeneralModuleFiles``
   are shown in the IDE folder ``environmentLib`` within the ``environment`` parent folder.  This keeps the BSK
   folders cleaner and with less duplicated code being displayed.
+- A new python package dependency is ``Pillow``.  This is needed for the test scripts for :ref:`camera` to run.
 
 Version 1.7.5
 -----------------

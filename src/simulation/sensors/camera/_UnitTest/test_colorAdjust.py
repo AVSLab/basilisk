@@ -107,6 +107,10 @@ def cameraColorTest(image, HSV, BGR):
     :param BGR: 3d vector of BGR adjustments
 
     """
+    if importErr:
+        print(reasonErr)
+        exit()
+
     # Truth values from python
     imagePath = path + '/' + image
     input_image = Image.open(imagePath)
