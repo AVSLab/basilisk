@@ -46,8 +46,6 @@ Install HomeBrew Support Packages
 #. Install `HomeBrew <http://brew.sh>`__ using a Terminal window and
    pasting the install script from the HomeBrew web site.
 
-   .. Note:: This must be done within a ``bash`` terminal window. The type of terminal emulation is shown on the top of the terminal window. If you are running another terminal type, type ``bash`` to engage the Bash terminal environment. This is just required to install HomeBrew. Once it is installed, you can run all other commands from any terminal type.
-
 #. The new SWIG version 4 is compatible with Basilisk. Install the SWIG software package using::
 
    $ brew install swig
