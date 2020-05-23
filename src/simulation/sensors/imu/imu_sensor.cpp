@@ -80,6 +80,8 @@ ImuSensor::ImuSensor()
     this->prv_PN_out.fill(0.0);
     this->accelScale.fill(1.);
     this->gyroScale.fill(1.);
+    this->sensorPos_B.fill(0.0);
+    this->dcm_PB.setIdentity();
     
     return;
 }
