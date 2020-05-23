@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -18,7 +18,7 @@
 
 '''
 import sys, os, inspect
-import BSKModuleParse as dataParser
+import modulesParser as dataParser
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -58,7 +58,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
             # taskOrderedList[i_task][1] = taskPriority
             # taskOrderedList[i_task][2] = theTask
             taskName = taskOrderedList[i_task][0]
-            if taskName in list(taskActivityDir.keys()):
+            if taskName in taskActivityDir.keys():
                 idxUse = getTaskIndex(TheSim, taskOrderedList[i_task][2].TaskPtr)
                 taskIdxDir.append(idxUse)
                 print(i_task, taskName)
@@ -202,7 +202,8 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
                     return filePath
     # This function appends a module's header string to the global headers list (only if it's not there)
     def createModuleHeaderName(module, headersList):
-        moduleName = module[:len(module) / 2] + '.h'
+        #print(len(module))
+        moduleName = module[:len(module) // 2] + '.h'
         headerPath = findFilePath(moduleName)
         if(headerPath == None):
            return
@@ -267,7 +268,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
             dirList = dir(sysMod)
             parsed_dirList = parseSwigVars(dirList)
             addressDict = evalParsedList(parsed_dirList, module)
-            for k, v in list(addressDict.items()):
+            for k, v in addressDict.items():
                 (methodType, methodCallTime) = checkMethodType(k)
                 dictUse = eval(methodType + '_dict')
                 modelID = findAddressMatch(v, modelTag, dictUse)
@@ -315,6 +316,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     alg_source.write('\n')
     theDataVoid = 'void ' + algNameDataInit + '(' + str_ConfigData + ' *data)'
     alg_source.write(theDataVoid + '{\n')
+    alg_source.write('\tmemset(data, 0x0, sizeof(' + str_ConfigData + '));\n')
     for init in theTaskActivity_initList:
         alg_source.write('\t')
         alg_source.write(init)
@@ -323,7 +325,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
     # Write header file
     ## begin header file
-    defName = 'AVS_FSW_AUTOCODE_'
+    defName = '_FSW_AUTOCODE_'
     alg_header.write('#ifndef ' + defName + '\n' + '#define ' + defName + '\n\n')
     ## define auto-code init data
     for header in theHeadersList:
