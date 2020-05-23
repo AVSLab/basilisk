@@ -7,8 +7,7 @@ import argparse
 # define BSK module option list (option name and default value)
 bskModuleOptions = {
     "opNav": False,
-    "vizInterface": True,
-    "python3": True
+    "vizInterface": True
 }
 f = open('docs/source/bskVersion.txt', 'r')
 bskVersion = f.read()
@@ -54,9 +53,7 @@ class BasiliskConan(ConanFile):
             # clean the distribution folder to start fresh
             self.options.clean = False
             root = os.path.abspath(os.path.curdir)
-            distPath = os.path.join(root, "dist")
-            if self.options.python3:
-                distPath += "3"
+            distPath = os.path.join(root, "dist3")
             if os.path.exists(distPath):
                 shutil.rmtree(distPath, ignore_errors=True)
 
@@ -85,12 +82,9 @@ class BasiliskConan(ConanFile):
         root = os.path.abspath(os.path.curdir)
 
         self.source_folder = os.path.join(root, "src")
-        self.build_folder = os.path.join(root, "dist")
-        if self.options.python3:
-            self.build_folder += "3"
+        self.build_folder = os.path.join(root, "dist3")
 
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
-        cmake.definitions["USE_PYTHON3"] = self.options.python3
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.parallel = True
@@ -125,11 +119,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # set the build destination folder
-    if args.python3:
-        buildFolderName = 'dist3'
-    else:
-        buildFolderName = 'dist'
-        print("Building for Python 2 (depreciated)")
+    buildFolderName = 'dist3'
     buildFolderName += '/conan'
 
     # run conan install

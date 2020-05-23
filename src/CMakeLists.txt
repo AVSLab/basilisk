@@ -40,7 +40,6 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 
 option(BUILD_VIZINTERFACE "Build VizInterface Module" ON)
 option(BUILD_OPNAV "Build OpNav Modules" OFF)
-option(USE_PYTHON3 "Build For Python 3" ON)
 
 
 # HACK: Create Release and Debug directories for conan
@@ -233,11 +232,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     find_package(SWIG REQUIRED)
     include(UseSWIG REQUIRED)
-    if(USE_PYTHON3)
-        find_package(PythonLibs 3 REQUIRED)
-    else()
-        find_package(PythonLibs 2.7 REQUIRED)
-    endif()
+    find_package(PythonLibs 3 REQUIRED)
 
     foreach(TARGET_FILE ${TARGET_LIST})
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
@@ -330,13 +325,8 @@ endfunction(generate_package_targets)
 
 
 # Start of main projection configuration
-if(USE_PYTHON3)
-	find_package(PythonInterp 3 REQUIRED)
-	find_package(PythonLibs 3 REQUIRED)
-else()
-	find_package(PythonInterp 2.7 REQUIRED)
-	find_package(PythonLibs 2.7 REQUIRED)
-endif()
+find_package(PythonInterp 3 REQUIRED)
+find_package(PythonLibs 3 REQUIRED)
 
 #TODO: Remove the global link-libraries call
 find_package(Eigen3 CONFIG REQUIRED)

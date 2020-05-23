@@ -7,7 +7,7 @@
 Setup On Linux
 ==============
 
-The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
+Basilisk requires the use of Python 3.
 
 Software setup
 --------------
@@ -33,9 +33,8 @@ Dependencies
         # Command line installation
         $ apt-get install cmake
 
-#. Python 2.7 / Python 3.x with Pip::
+#. Python 3.x with Pip::
 
-    $ apt-get install python2.7
     $ apt-get install python3.x
 
 #. SWIG: Available using::
@@ -57,14 +56,12 @@ Dependencies
 
 #. Install the required python packages through::
 
-    $ pip3 install --user numpy matplolib pytest pandas
+    $ pip3 install --user numpy matplotlib pytest pandas Pillow
 
 #. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
 Build Process via Terminal
 --------------------------
-
-For Basilisk Python 2 and Python 3 inter-compatability, build using both following instructions then run using preferred python version.
 
 #. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::

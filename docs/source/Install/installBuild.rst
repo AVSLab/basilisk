@@ -25,7 +25,7 @@ code.  From the Basilisk root directory, this is done simply using::
     python3 conanfile.py
 
 This one-line step will use ``conan`` to pull and compile any resource dependencies such a protobuffer, etc. and
-configure the Xcode (macOS) or Visual Studio (Windows) IDE project in the ``dist3`` folder (``dist`` folder for legacy Python 2 use),
+configure the Xcode (macOS) or Visual Studio (Windows) IDE project in the ``dist3`` folder,
 or create the makefile for Linux systems.  By default the build is for Python3 with the support for :ref:`vizInterface`
 included to enable recording data for or live-streaming to :ref:`Vizard <Vizard>`.
 
@@ -53,12 +53,6 @@ The script accepts the following options to customize this process.
         then the dependencies of  ``vizInterface`` are also loaded as some components require the same libraries.
         Note that OpenCL related dependencies can take a while to compile, 10-20minutes is not unusual.  However,
         once install they don't need to be rebuilt unless ``.conan`` is deleted or the dependency changes.
-    * - ``python3``
-      - Boolean
-      - True
-      - (depreciated) Determines if the build is setup for Python 3.  This flag will go away when Python 2
-        support is dropped soon.  If this is False, then the distribution folder is set to ``dist``
-        instead of ``dist3``
     * - ``clean``
       -
       - None
@@ -191,9 +185,6 @@ they are not used, then the shown default behaviors are used.
     * - ``BUILD_OPNAV``
       - ``OFF``
       - will create the OpenCL dependent optical navigation related modules
-    * - ``USE_PYTHON3``
-      - ``ON``
-      - (depreciated) enables Basilisk to be compiled for Python 3
 
 macOS Example
 ~~~~~~~~~~~~~
