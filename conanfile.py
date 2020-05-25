@@ -176,7 +176,7 @@ if __name__ == "__main__":
     for opt, value in bskModuleOptionsBool.items():
         conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
     for opt, value in bskModuleOptionsString.items():
-        if value:
+        if str(vars(args)[opt]):
             conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
     print("Running this conan command:")
     print(conanCmdString)
