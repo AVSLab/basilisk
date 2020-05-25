@@ -57,7 +57,7 @@ class BasiliskConan(ConanFile):
             try:
                 pkg_resources.require(elem)
                 print("Found " + elem)
-            except pkg_resources.DistributionNotFound:
+            except:
                 if self.options.autoKey:
                     choice = self.options.autoKey
                 else:
