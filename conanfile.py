@@ -25,6 +25,7 @@ class BasiliskConan(ConanFile):
     requires = "eigen/3.3.7@conan/stable"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
+    license = "ISC"
 
     options = { "clean": [True, False],
                 "generator": "ANY",
@@ -78,6 +79,15 @@ class BasiliskConan(ConanFile):
                         print(failColor + "Was not able to install " + elem + endColor)
                 else:
                     print(warningColor + "Skipping installing required " + elem + endColor)
+
+        # check the version of Python
+        if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
+            print(warningColor + "Python 3.7 should be used with Basilisk." + endColor)
+            print("You are using Python {}.{}.".format(sys.version_info.major, sys.version_info.minor))
+        else:
+            print(statusColor + "Python {}.{} ".format(sys.version_info.major, sys.version_info.minor)
+                  + " is acceptable for Basilisk" + endColor)
+
         print("\n")
 
     def requirements(self):
