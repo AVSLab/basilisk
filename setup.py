@@ -163,7 +163,7 @@ bskVersion = f.read()
 setup(
     name='Basilisk',
     version=bskVersion,
-    description="Astrodynamic Simulation Library",
+    description="Astrodynamics Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),
     long_description=open('./README.md').read(),
