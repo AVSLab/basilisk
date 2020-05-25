@@ -83,9 +83,11 @@ class BasiliskConan(ConanFile):
         # check the version of Python
         if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
             print(warningColor + "Python 3.7 should be used with Basilisk." + endColor)
-            print("You are using Python {}.{}.".format(sys.version_info.major, sys.version_info.minor))
+            print("You are using Python {}.{}.{}".format(sys.version_info.major,
+                                                         sys.version_info.minor,sys.version_info.micro))
         else:
-            print(statusColor + "Python {}.{} ".format(sys.version_info.major, sys.version_info.minor)
+            print(statusColor + "Python {}.{}.{}".format(sys.version_info.major,
+                                                         sys.version_info.minor, sys.version_info.micro)
                   + " is acceptable for Basilisk" + endColor)
 
         print("\n")
