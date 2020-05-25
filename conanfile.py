@@ -1,21 +1,26 @@
-import os, platform
+import os, sys
 from datetime import datetime
 from conans import ConanFile, CMake, tools
 import shutil
 import argparse
+import pkg_resources
+import subprocess
 
 # define BSK module option list (option name and default value)
-bskModuleOptions = {
+bskModuleOptionsBool = {
     "opNav": False,
     "vizInterface": True
 }
-f = open('docs/source/bskVersion.txt', 'r')
-bskVersion = f.read()
+bskModuleOptionsString = {
+    "autoKey": ""
+}
 
 class BasiliskConan(ConanFile):
+    f = open('docs/source/bskVersion.txt', 'r')
+
     name = "Basilisk"
     homepage = "http://hanspeterschaub.info/basilisk"
-    version = bskVersion
+    version = f.read()
     generators = "cmake_find_package_multi"
     requires = "eigen/3.3.7@conan/stable"
     settings = "os", "compiler", "build_type", "arch"
@@ -29,12 +34,48 @@ class BasiliskConan(ConanFile):
                         "generator": "",
                         "buildProject": False}
 
-    for opt, value in bskModuleOptions.items():
+    for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
+        default_options.update({opt: value})
+    for opt, value in bskModuleOptionsString.items():
+        options.update({opt: "ANY"})
         default_options.update({opt: value})
 
     # set cmake generator default
     generator = None
+
+    def system_requirements(self):
+        required = ['numpy', 'pandas', 'matplotlib', 'pytest', 'Pillow', 'conan<1.25.0']
+        required = [x.lower() for x in required]
+
+        statusColor = '\033[92m'
+        failColor = '\033[91m'
+        warningColor = '\033[93m'
+        endColor = '\033[0m'
+        print(statusColor + "\nChecking Required Python packages:" + endColor)
+        for elem in required:
+            try:
+                pkg_resources.require(elem)
+                print("Found " + elem)
+            except pkg_resources.DistributionNotFound:
+                if self.options.autoKey:
+                    choice = self.options.autoKey
+                else:
+                    choice = input("Required python package " + elem +
+                                   " is missing.\nInstall for user (u), system (s) or cancel(c)? ")
+                installCmd = [sys.executable, "-m", "pip", "install"]
+                if choice in ['s', 'u']:
+                    if choice == 'u':
+                        installCmd.append("--user")
+                    installCmd.append(elem)
+
+                    try:
+                        subprocess.check_call(installCmd)
+                    except subprocess.CalledProcessError:
+                        print(failColor + "Was not able to install " + elem + endColor)
+                else:
+                    print(warningColor + "Skipping installing required " + elem + endColor)
+        print("\n")
 
     def requirements(self):
         if self.options.opNav:
@@ -93,17 +134,12 @@ class BasiliskConan(ConanFile):
         if self.options.buildProject: 
             start = datetime.now()
             if self.generator == "Xcode":
-                # Xcode multithreaded needs specialized arguments
+                # Xcode multi-threaded needs specialized arguments
                 cmake.build(['--', '-jobs', str(tools.cpu_count()), '-parallelizeTargets'])
             else:
                 cmake.build()
-            print("Total Build Time: "+ str(datetime.now()-start))
+            print("Total Build Time: " + str(datetime.now()-start))
         return
-
-        #self.run("python3 -m pip3 install --user matplotlib")
-        #self.run("python3 -m pip3 install --user numpy")
-        #self.run("python3 -m pip3 install --user pandas")
-
 
 
 if __name__ == "__main__":
@@ -113,9 +149,11 @@ if __name__ == "__main__":
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
     parser.add_argument("--buildProject", help="flag to compile the code", action="store_true")
     parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
-    for opt, value in bskModuleOptions.items():
+    for opt, value in bskModuleOptionsBool.items():
         parser.add_argument("--" + opt, help="build modules for " + opt + " behavior", default=value,
                             type=lambda x: (str(x).lower() == 'true'))
+    for opt, value in bskModuleOptionsString.items():
+        parser.add_argument("--" + opt, help="using flag " + opt, default=value)
     args = parser.parse_args()
 
     # set the build destination folder
@@ -132,8 +170,11 @@ if __name__ == "__main__":
         conanCmdString += ' -o clean=True'
     if args.buildProject:
         conanCmdString += ' -o buildProject=True'
-    for opt, value in bskModuleOptions.items():
+    for opt, value in bskModuleOptionsBool.items():
         conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
+    for opt, value in bskModuleOptionsString.items():
+        if value:
+            conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
     print("Running this conan command:")
     print(conanCmdString)
     os.system(conanCmdString)
