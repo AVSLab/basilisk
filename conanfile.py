@@ -50,7 +50,6 @@ class BasiliskConan(ConanFile):
         required = reqFile.read().replace("`", "").replace(",", "").split('\n')
         reqFile.close()
         required = [x.lower() for x in required]
-        print(required)
 
         statusColor = '\033[92m'
         failColor = '\033[91m'
@@ -61,11 +60,11 @@ class BasiliskConan(ConanFile):
             try:
                 pkg_resources.require(elem)
                 print("Found " + statusColor + elem + endColor)
-            except:
+            except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
                 if self.options.autoKey:
                     choice = self.options.autoKey
                 else:
-                    choice = input(warningColor +"Required python package " + elem + " is missing" + endColor +
+                    choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
                                    "\nInstall for user (u), system (s) or cancel(c)? ")
                 installCmd = [sys.executable, "-m", "pip", "install"]
                 if choice in ['s', 'u']:
