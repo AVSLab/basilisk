@@ -14,7 +14,7 @@ Software setup
 In order to run Basilisk, the following software will be necessary:
 
 -  `Cmake <https://cmake.org/>`__ 3.14 or higher
--  `Python <https://www.python.org/downloads/windows/>`__ 3.7 or 2.7
+-  `Python <https://www.python.org/downloads/windows/>`__ 3.7.x
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Visual Studios 15 or Greater
 -  `Swig <http://www.swig.org/download.html>`__ version 3 or 4
@@ -28,21 +28,8 @@ Decide whether target deployment is 32 (win32) or 64 (x64) bit. Which ever chose
 Configuring Python
 ~~~~~~~~~~~~~~~~~~
 
-Python is installed using the Windows installer found on the Python website. Make sure to choose the correct installer for your architecture. The Additional required Python packages
-
-- ``numpy``
-- ``matplotlib``
-- ``pytest``
-- ``conan``
-- ``pandas``
-- ``Pillow``
-
-are installed using the Python package
-manager pip (``pip.exe``) which comes default with the Windows Python installer. To install additional Python packages with pip the following
-command is executed at command line::
-
-   C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
-
+Python is installed using the Windows installer found on the Python website. Make sure to choose the correct
+installer for your architecture.
 
 Install Swig
 ~~~~~~~~~~~~
@@ -70,15 +57,22 @@ Example added path formats::
    PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
 
 
-Install Conan
-~~~~~~~~~~~~~
+Installing required python support packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Go to the `Conan Website <https://conan.io/downloads.html>`__ and download the windows installer. Proceed with installation. If it asks to be added to the PATH, allow it to add itself to the PATH.  The ``conan`` environment is setup using::
+-  Basilisk uses conan for package managing. In order to do so, users
+   must install conan and set the remote repositories for libraries:::
 
-    $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-    $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+       $ pip3 install conan
+       $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+       $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 
+- The following python packages are the minimum required packages for Basilisk.  They are installed and checked
+  for the correction version in the steps below.
 
+  - .. include:: ../bskRequirements.txt
+
+-  `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability, including ``pytest`` to run an automated test suite of unit and integrated tests.
 
 Build Project Process via Terminal
 ----------------------------------
@@ -93,6 +87,9 @@ When all the prerequisite installations are complete, the project can be built a
    This creates the Visual Studio 16 2019 IDE project in ``dist3``.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.
    For other configure and build options, including running ``cmake`` directly, see :ref:`configureBuild`.
+   This process will verify that the minimum required Basilisk python packages are installed, and that
+   the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
+   folder.
 
 #. To test your setup you can run one of the :ref:`examples`:
 

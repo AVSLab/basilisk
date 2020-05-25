@@ -16,11 +16,11 @@ bskModuleOptionsString = {
 }
 
 class BasiliskConan(ConanFile):
-    f = open('docs/source/bskVersion.txt', 'r')
-
     name = "Basilisk"
     homepage = "http://hanspeterschaub.info/basilisk"
+    f = open('docs/source/bskVersion.txt', 'r')
     version = f.read()
+    f.close()
     generators = "cmake_find_package_multi"
     requires = "eigen/3.3.7@conan/stable"
     settings = "os", "compiler", "build_type", "arch"
@@ -45,24 +45,27 @@ class BasiliskConan(ConanFile):
     generator = None
 
     def system_requirements(self):
-        required = ['numpy', 'pandas', 'matplotlib', 'pytest', 'Pillow', 'conan<1.25.0']
+        reqFile = open('docs/source/bskRequirements.txt', 'r')
+        required = reqFile.read().replace("`", "").replace(",", "").split('\n')
+        reqFile.close()
         required = [x.lower() for x in required]
+        print(required)
 
         statusColor = '\033[92m'
         failColor = '\033[91m'
         warningColor = '\033[93m'
         endColor = '\033[0m'
-        print(statusColor + "\nChecking Required Python packages:" + endColor)
+        print("\nChecking Required Python packages:")
         for elem in required:
             try:
                 pkg_resources.require(elem)
-                print("Found " + elem)
+                print("Found " + statusColor + elem + endColor)
             except:
                 if self.options.autoKey:
                     choice = self.options.autoKey
                 else:
-                    choice = input("Required python package " + elem +
-                                   " is missing.\nInstall for user (u), system (s) or cancel(c)? ")
+                    choice = input(warningColor +"Required python package " + elem + " is missing" + endColor +
+                                   "\nInstall for user (u), system (s) or cancel(c)? ")
                 installCmd = [sys.executable, "-m", "pip", "install"]
                 if choice in ['s', 'u']:
                     if choice == 'u':

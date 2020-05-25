@@ -1,0 +1,6 @@
+``pandas``,
+``numpy``,
+``matplotlib``,
+``pytest``,
+``conan<1.25.0``,
+``Pillow``

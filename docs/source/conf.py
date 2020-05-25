@@ -24,16 +24,13 @@ import datetime
 now = datetime.datetime.now()
 f = open('bskVersion.txt', 'r')
 bskVersion = f.read()
+f.close()
 
 project = u'Basilisk'
 copyright = str(now.year) + u', Autonomous Vehicle Systems (AVS) Laboratory'
 author = u'AVS Lab'
-
-# The short X.Y version
-
 release = bskVersion
 version = u'version ' + release
-# The full version, including alpha/beta/rc tags
 
 
 # -- General configuration ---------------------------------------------------

@@ -39,7 +39,6 @@ To install Python 3 on macOS there are two common options:
 #. Install python 3 through the `HomeBrew <http://brew.sh>`__ package management system. The site has the
    command line to install homebrew from a terminal window using ``brew install python3``.
 
-
 Install HomeBrew Support Packages
 ---------------------------------
 
@@ -103,19 +102,20 @@ must be setup within the terminal environment.
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  From the terminal window, install the required Python packages using pip3 for Python 3::
-
-       $ pip3 install --user numpy matplotlib pandas Pillow
-
 -  Basilisk uses conan for package managing. In order to do so, users
    must install conan and set the remote repositories for libraries:::
 
-       $ pip3 install --user conan==1.24.1
+       $ pip3 install --user conan
        $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 
    Note that ``conan`` version 1.25.x has issues on macOS where it doesn't properly link system frameworks.  Stick
    with 1.24.x for now.
+
+- The following python packages are the minimum required packages for Basilisk.  They are installed and checked
+  for the correction version in the steps below.
+
+  - .. include:: ../bskRequirements.txt
 
 -  `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability, including ``pytest`` to run an automated test suite of unit and integrated tests.
 
@@ -131,6 +131,9 @@ When all the prerequisite installations are complete, the project can be built a
 
    For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
    ``dist3``.
+   This process will verify that the minimum required Basilisk python packages are installed, and that
+   the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
+   folder.
 
   .. Note:: If you wish to use the another version of python 3 configure the Python paths in :ref:`customPython`
 

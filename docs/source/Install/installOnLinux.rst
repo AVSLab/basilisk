@@ -7,16 +7,17 @@
 Setup On Linux
 ==============
 
-Basilisk requires the use of Python 3.
-
 Software setup
 --------------
 
 In order to run Basilisk, the following software will be necessary. This document outline how to install this support software.
 
 -  `Cmake <https://cmake.org/>`__ 3.x or higher
--  `Python <https://www.python.org/>`__ 3.7.x
-   (``numpy``, ``matplotlib``, ``pytest``, ``conan``, ``pandas``, ``Pillow``)
+-  `Python <https://www.python.org/>`__ 3.7.x.  The following python package dependencies are automatically
+   checked and installed in the steps below.
+
+   - .. include:: ../bskRequirements.txt
+
 -  `SWIG <http://www.swig.org/>`__ (version 3 or 4)
 -  `GCC <https://gcc.gnu.org/>`__
 
@@ -45,7 +46,7 @@ Dependencies
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
-#. A install of Conan. Install with pip, an example is below::
+#. Install Conan using pip, an example is below::
 
        $ pip3 install --user conan
 
@@ -53,10 +54,6 @@ Dependencies
 
        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
        $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
-
-#. Install the required python packages through::
-
-    $ pip3 install --user numpy matplotlib pytest pandas Pillow
 
 #. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
@@ -69,6 +66,9 @@ Build Process via Terminal
         python3 conanfile.py
 
    For other configure and build options, see :ref:`configureBuild`.
+   This process will verify that the minimum required Basilisk python packages are installed, and that
+   the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
+   folder.
 
 #. Next, move to the distribution folder to build using a makefile::
 

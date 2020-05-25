@@ -74,6 +74,11 @@ The script accepts the following options to customize this process.
         It can also be set through this
         flag.  If unsure what generators are supported on your platform, open a terminal window and
         type ``cmake --help`` to get a list of supported generator strings.
+    * - ``autoKey``
+      - String 's' or 'u'
+      - Empty
+      - This is used to automatically respond to the python packaging installation requests to install the
+        package for the user (u) or system (s).
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
@@ -120,10 +125,6 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Boolean
       - False
       - Include the `OpenCV <https://opencv.org>`__ library dependent Basilisk modules.
-    * - ``-o python3``
-      - Boolean
-      - True
-      - (depreciated) Determines if the build is setup for Python 3.
     * - ``-o clean``
       - Boolean
       - False
@@ -140,6 +141,11 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
       - ``XCode`` (macOS), ``Visual Studio 16 2019`` (Windows), ``None`` (Linux)
       - Used to specify a specific ``cmake`` generator.  See discussion in Table :ref:`buildTable1Label`.
+    * - ``-o autoKey``
+      - String 's' or 'u'
+      - Empty
+      - This is used to automatically respond to the python packaging installation requests to install the
+        package for the user (u) or system (s).
 
 Thus, using the same build example as in the one-step section, to create a build with ``opNav`` modes enabled,
 but no :ref:`vizInterface`, and using a clean distribution folder, and that is built right away, you could use::
