@@ -16,6 +16,7 @@ Note that the file structure in the Documentation section mirrors that of the Ba
    Quick-Start
    Support
    Documentation/index
+   tools/index
    Forum
 
 .. toctree::
