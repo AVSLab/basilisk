@@ -37,7 +37,7 @@ def run_auto_wrapper():
     taskActivityDir["feedbackControlTask"] = str(0)
 
     # Define the path where the C++ wrapper classes will be stored
-    outputPath = os.path.dirname(os.path.abspath(filename)) + "/wraps"
+    outputPath = os.path.dirname(os.path.abspath(filename)) + "/outputFiles"
     empty_wraps_folder(outputPath=outputPath)
 
     # Run the auto-wrapper

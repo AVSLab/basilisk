@@ -38,7 +38,7 @@ def run_auto_setter():
     taskActivityDir["feedbackControlTask"] = str(0)
 
     # Define the path where the C++ wrapper classes will be stored
-    output_path = os.path.dirname(os.path.abspath(filename)) + "/sets"
+    output_path = os.path.dirname(os.path.abspath(filename)) + "/outputFiles"
     empty_sets_folder(outputPath=output_path)
 
     # Pick names for your output C data

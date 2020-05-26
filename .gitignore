@@ -32,6 +32,7 @@ src/utilities/MonteCarlo/__init__.py
 src/utilities/vizProtobuffer/__init__.py
 tools/fswAuto/autosetter/sets/*
 tools/fswAuto/autowrapper/wraps/*
+**/outputFiles/*
 
 *.fdb_latexmk
 *.fls

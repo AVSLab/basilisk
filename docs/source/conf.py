@@ -242,6 +242,7 @@ class fileCrawler():
                     "Support" in dirs_in_dir[i] or \
                     "cmake" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
+                    "outputFiles" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
