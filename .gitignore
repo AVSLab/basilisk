@@ -26,6 +26,7 @@ cmake-build*/*
 *.gz
 *.toc
 src/cmake-build-debug/*
+tools/fswAuto/autosetter/sets/*
 
 *.fdb_latexmk
 *.fls
