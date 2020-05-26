@@ -1,9 +1,9 @@
-from mpy_cpp_wrapper import CppWrapperClass
+from mpyCppWrapper import CppWrapperClass
 import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-sys.path.append(path + '/../fsw_examples/')
-from desktopFSW_sim import DesktopFSW
+sys.path.append(path + '/../fswExamples/')
+from desktopFswSim import DesktopFSW
 
 
 def empty_wraps_folder(outputPath):

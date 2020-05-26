@@ -2,8 +2,8 @@ import sys, os
 path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(path + '/../')
 from Basilisk.utilities import (SimulationBaseClass, macros)
-from desktopFSW_models import FSWModels
-from fsw_plotter import FSWPlotter
+from desktopFswModels import FSWModels
+from fswPlotter import FSWPlotter
 
 
 class DesktopFSW(SimulationBaseClass.SimBaseClass):
