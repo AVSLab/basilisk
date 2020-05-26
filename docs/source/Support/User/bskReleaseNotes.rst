@@ -22,7 +22,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- updated :ref:`imuSensor` to initialize all class variables in the constructor
+- updated :ref:`imu_sensor` to initialize all class variables in the constructor
 - fixed a data frame issue in :ref:`groundLocation`
 
 Version 1.7.5
