@@ -482,6 +482,7 @@ if rebuild:
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizInterface")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/examples")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/utilities")
+    breathe_projects_source = fileCrawler.run("../../tools")
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)
 else:
