@@ -1,5 +1,5 @@
-from config_util import CreateRWAClass
-import fsw_classes
+from configUtil import CreateRWAClass
+import fswClasses
 
 
 class FSWModels(object):
@@ -7,7 +7,7 @@ class FSWModels(object):
             # Create a sim module as an empty container
             self.simBasePath = masterSim.simBasePath
             # Instantiate C classes
-            fsw = fsw_classes.FSWClasses(masterSim)
+            fsw = fswClasses.FSWClasses(masterSim)
             self.VehConfigData, self.VehConfigDataWrap = fsw.vehConfigDataClass()
             self.rwConfigData, self.rwConfigWrap = fsw.rwConfigDataClass()
             self.inertial3DData, self.inertial3DWrap = fsw.inertial3DClass()

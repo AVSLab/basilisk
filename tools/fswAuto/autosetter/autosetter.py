@@ -1,8 +1,8 @@
 import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-sys.path.append(path + '/../fsw_examples/')
-from desktopFSW_sim import DesktopFSW
+sys.path.append(path + '/../fswExamples/')
+from desktopFswSim import DesktopFSW
 
 import methodsParser
 
@@ -42,7 +42,7 @@ def run_auto_setter():
     empty_sets_folder(outputPath=output_path)
 
     # Pick names for your output C data
-    outputFileName = 'FSW_autoset'
+    outputFileName = 'fswAutoset'
     str_ConfigData = 'config_data'
 
     # Run the auto-setter
