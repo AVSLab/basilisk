@@ -11,6 +11,7 @@ docs/build
 docs/source/Documentation/*
 docs/source/_images/Scenarios/*
 docs/source/breathe.data
+docs/source/tools/*
 src/tests/scenarios/data
 xml/*
 *.swp
