@@ -201,7 +201,6 @@ if __name__ == "__main__":
         if str(vars(args)[opt]):
             conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
     for opt, value in bskModuleOptionsFlag.items():
-        print(str(vars(args)[opt]))
         if vars(args)[opt]:
             conanCmdString += ' -o ' + opt + '=True'
     print(statusColor + "Running this conan command:" + endColor)
