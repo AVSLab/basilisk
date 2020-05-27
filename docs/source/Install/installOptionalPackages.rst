@@ -7,11 +7,13 @@
 Installing Optional Packages
 ============================
 
+Listing of All Optional Packages
+--------------------------------
 This page contains all the optional python packages that can be included to unlock additional Basilisk
 features or utilities.  For convenience the complete set of optional packages, including any constraints on
-acceptable versions, are listed here
+acceptable versions, are listed here:
 
-- .. include:: ../bskPkgOptions.txt
+    .. include:: ../bskPkgOptions.txt
 
 To automatically ensure that the system has all optional packages installed, use the ``allOptPkg``
 flag as discussed in :ref:`configureBuild`.
@@ -50,8 +52,12 @@ or replace 8 with the number of cores your computer has available
 
 Creating the Sphinx Basilisk Documentation
 ------------------------------------------
-Go to :ref:`createHtmlDocumentation` to learn what associated python packages and tools are required.
+Go to :ref:`createHtmlDocumentation` to learn what associated python tools are required.
+The following python packages must be installed via ``pip``::
 
+    pip3 install --user sphinx sphinx_rtd_theme breathe recommonmark
+
+See the list at the top of this page for what versions of these packages are acceptable.
 
 Graphing via datashader
 -----------------------
