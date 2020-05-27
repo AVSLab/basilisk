@@ -16,7 +16,7 @@ In order to run Basilisk, the following software will be necessary. This documen
 -  `Python <https://www.python.org/>`__ 3.7.x.  The following python package dependencies are automatically
    checked and installed in the steps below.
 
-   - .. include:: ../bskRequirements.txt
+   - .. include:: ../bskPkgRequired.txt
 
 -  `SWIG <http://www.swig.org/>`__ (version 3 or 4)
 -  `GCC <https://gcc.gnu.org/>`__

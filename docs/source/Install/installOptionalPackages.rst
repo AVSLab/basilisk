@@ -7,6 +7,15 @@
 Installing Optional Packages
 ============================
 
+This page contains all the optional python packages that can be included to unlock additional Basilisk
+features or utilities.  For convenience the complete set of optional packages, including any constraints on
+acceptable versions, are listed here
+
+- .. include:: ../bskPkgOptions.txt
+
+To automatically ensure that the system has all optional packages installed, use the ``allOptPkg``
+flag as discussed in :ref:`configureBuild`.
+
 Running unit and integrated tests via ``pytest``
 ------------------------------------------------
 

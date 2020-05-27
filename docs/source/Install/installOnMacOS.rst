@@ -115,7 +115,7 @@ Installing required python support packages
 - The following python packages are the minimum required packages for Basilisk.  They are installed and checked
   for the correction version in the steps below.
 
-  - .. include:: ../bskRequirements.txt
+  - .. include:: ../bskPkgRequired.txt
 
 -  `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability, including ``pytest`` to run an automated test suite of unit and integrated tests.
 

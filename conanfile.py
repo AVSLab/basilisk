@@ -5,6 +5,7 @@ import shutil
 import argparse
 import pkg_resources
 import subprocess
+import itertools
 
 # define BSK module option list (option name and default value)
 bskModuleOptionsBool = {
@@ -14,6 +15,16 @@ bskModuleOptionsBool = {
 bskModuleOptionsString = {
     "autoKey": ""
 }
+bskModuleOptionsFlag = {
+    "clean": False,
+    "allOptPkg": False,
+    "buildProject": False
+}
+
+statusColor = '\033[92m'
+failColor = '\033[91m'
+warningColor = '\033[93m'
+endColor = '\033[0m'
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
@@ -27,13 +38,8 @@ class BasiliskConan(ConanFile):
     build_policy = "missing"
     license = "ISC"
 
-    options = { "clean": [True, False],
-                "generator": "ANY",
-                "buildProject": [True, False]}
-
-    default_options = { "clean": False,
-                        "generator": "",
-                        "buildProject": False}
+    options = {"generator": "ANY"}
+    default_options = {"generator": ""}
 
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
@@ -41,22 +47,30 @@ class BasiliskConan(ConanFile):
     for opt, value in bskModuleOptionsString.items():
         options.update({opt: "ANY"})
         default_options.update({opt: value})
+    for opt, value in bskModuleOptionsFlag.items():
+        options.update({opt: [True, False]})
+        default_options.update({opt: value})
 
     # set cmake generator default
     generator = None
 
     def system_requirements(self):
-        reqFile = open('docs/source/bskRequirements.txt', 'r')
+        reqFile = open('docs/source/bskPkgRequired.txt', 'r')
         required = reqFile.read().replace("`", "").replace(",", "").split('\n')
         reqFile.close()
-        required = [x.lower() for x in required]
+        pkgList = [x.lower() for x in required]
+        checkStr = "Required"
 
-        statusColor = '\033[92m'
-        failColor = '\033[91m'
-        warningColor = '\033[93m'
-        endColor = '\033[0m'
-        print("\nChecking Required Python packages:")
-        for elem in required:
+        if self.options.allOptPkg:
+            optFile = open('docs/source/bskPkgOptions.txt', 'r')
+            optionalPkgs = optFile.read().replace("`", "").replace(",", "").split('\n')
+            optFile.close()
+            optionalPkgs = [x.lower() for x in optionalPkgs]
+            pkgList += optionalPkgs
+            checkStr += " and All Optional"
+
+        print("\nChecking " + checkStr + " Python packages:")
+        for elem in pkgList:
             try:
                 pkg_resources.require(elem)
                 print("Found " + statusColor + elem + endColor)
@@ -77,7 +91,7 @@ class BasiliskConan(ConanFile):
                     except subprocess.CalledProcessError:
                         print(failColor + "Was not able to install " + elem + endColor)
                 else:
-                    print(warningColor + "Skipping installing required " + elem + endColor)
+                    print(warningColor + "Skipping installing " + elem + endColor)
 
         # check the version of Python
         if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
@@ -161,13 +175,14 @@ if __name__ == "__main__":
     # define the optional arguments
     parser.add_argument("--generator", help="cmake generator")
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
-    parser.add_argument("--buildProject", help="flag to compile the code", action="store_true")
-    parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
+    # parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
     for opt, value in bskModuleOptionsBool.items():
         parser.add_argument("--" + opt, help="build modules for " + opt + " behavior", default=value,
                             type=lambda x: (str(x).lower() == 'true'))
     for opt, value in bskModuleOptionsString.items():
-        parser.add_argument("--" + opt, help="using flag " + opt, default=value)
+        parser.add_argument("--" + opt, help="using string option for " + opt, default=value)
+    for opt, value in bskModuleOptionsFlag.items():
+        parser.add_argument("--" + opt, help="using flag option for " + opt, action="store_true")
     args = parser.parse_args()
 
     # set the build destination folder
@@ -180,21 +195,21 @@ if __name__ == "__main__":
     conanCmdString += ' -if ' + buildFolderName
     if args.generator:
         conanCmdString += ' -o generator="' + str(args.generator) + '"'
-    if args.clean:
-        conanCmdString += ' -o clean=True'
-    if args.buildProject:
-        conanCmdString += ' -o buildProject=True'
     for opt, value in bskModuleOptionsBool.items():
         conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
     for opt, value in bskModuleOptionsString.items():
         if str(vars(args)[opt]):
             conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
-    print("Running this conan command:")
+    for opt, value in bskModuleOptionsFlag.items():
+        print(str(vars(args)[opt]))
+        if vars(args)[opt]:
+            conanCmdString += ' -o ' + opt + '=True'
+    print(statusColor + "Running this conan command:" + endColor)
     print(conanCmdString)
     os.system(conanCmdString)
 
     # run conan build
     cmakeCmdString = 'conan build . -if ' + buildFolderName
-    print("Running cmake:")
+    print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
     os.system(cmakeCmdString)

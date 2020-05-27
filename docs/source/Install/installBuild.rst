@@ -56,11 +56,11 @@ The script accepts the following options to customize this process.
     * - ``clean``
       -
       - None
-      - If option is set, this forces the distribution folder ``dist3`` to be deleted to create a fresh setup and build
+      - If flag is set, this forces the distribution folder ``dist3`` to be deleted to create a fresh setup and build
     * - ``buildProject``
       -
       - Not Set
-      - If set, this option will compile the project right away after creating the IDE or make file
+      - If flag is set, this option will compile the project right away after creating the IDE or make file
     * - ``buildType``
       - Release, Debug
       - Release
@@ -79,6 +79,10 @@ The script accepts the following options to customize this process.
       - Empty
       - This is used to automatically respond to the python packaging installation requests to install the
         package for the user (u) or system (s).
+    * - ``allOptPkg``
+      -
+      - None
+      - If flag is set the all optional Basilisk python package depenencies are installed
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
@@ -146,6 +150,10 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Empty
       - This is used to automatically respond to the python packaging installation requests to install the
         package for the user (u) or system (s).
+    * - ``-o allOptPkg``
+      - Boolean
+      - False
+      - Install all of the optional Basilisk python package dependencies
 
 Thus, using the same build example as in the one-step section, to create a build with ``opNav`` modes enabled,
 but no :ref:`vizInterface`, and using a clean distribution folder, and that is built right away, you could use::
