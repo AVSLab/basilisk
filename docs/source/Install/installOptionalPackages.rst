@@ -39,6 +39,10 @@ After installing this utility you now run the multi-threaded version of
 or replace 8 with the number of cores your computer has available
 
 
+Creating the Sphinx Basilisk Documentation
+------------------------------------------
+Go to :ref:`createHtmlDocumentation` to learn what associated python packages and tools are required.
+
 
 Graphing via datashader
 -----------------------

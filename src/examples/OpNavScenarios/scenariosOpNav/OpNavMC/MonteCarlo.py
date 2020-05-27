@@ -62,7 +62,7 @@ ns2min = 1/60.*1E-9
 mpl.rcParams.update({'font.size' : 8 })
 #seaborn-colorblind, 'seaborn-paper', 'bmh', 'tableau-colorblind10', 'seaborn-deep', 'myStyle', 'aiaa'
 
-plt.style.use("myStyle")
+# plt.style.use("myStyle")
 params = {'axes.labelsize': 8,'axes.titlesize':8, 'legend.fontsize': 8, 'xtick.labelsize': 7, 'ytick.labelsize': 7, 'text.usetex': True}
 mpl.rcParams.update(params)
 
