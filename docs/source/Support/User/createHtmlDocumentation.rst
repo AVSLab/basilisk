@@ -39,3 +39,10 @@ Finally, type the following command to build the HTML documenation::
 
 The final html documenation folder is stored in ``docs/build/html``.
 
+To clean out the sphinx generated documents and folder use::
+
+    make clean
+
+To open the HTML index file and view the documentation in the browser use::
+
+    make view
