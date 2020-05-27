@@ -39,6 +39,13 @@ Version |release|
   the ``src/simulation/dynamics/_GeneralModuleFiles`` support files yield a swig'd library ``dynamicsLib``.
   Similarly, ``src/simulation/environment/_GeneralModuleFiles`` yields ``environmentLib``.
 - Cleaned up small RST documentation issues
+- Updated the install process to check automatically for required python packages.  They are not available,
+  then the user is prompted to install for user, for the system or cancel.
+- Updated the install process to allow a user selectable checking of all optional python packages
+  through ``allOptBsk`` flag
+- fixed memory issue in the :ref:`camera`
+- Updated the HTML documentation process to provide tools to clean out the auto-generated documentation,
+  as well as to open the HTML output from the command line
 
 Version 1.7.5
 -------------
