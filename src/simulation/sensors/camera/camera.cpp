@@ -128,8 +128,8 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
             h_360 = h_360/2;
             if(h_360 == 180){ h_360 = 0; }
             hsv.at<cv::Vec3b>(j, i)[0] = h_360;
-            
-            int values[2];
+
+            int values[3];
             for(int k = 1; k < 3; k++){
                 values[k] = hsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k]/100. + 1.);
                 // saturate S and V values to [0,255]
