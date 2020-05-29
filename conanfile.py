@@ -21,6 +21,7 @@ bskModuleOptionsFlag = {
     "buildProject": False
 }
 
+os.system("")       # this statement is needed to enable Windows to print ANSI codes in the Terminal
 statusColor = '\033[92m'
 failColor = '\033[91m'
 warningColor = '\033[93m'
