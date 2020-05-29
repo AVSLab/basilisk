@@ -53,19 +53,24 @@ For more information on how to configure the path Variable on Windows see this
 `help <https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/>`__ link.
 Example added path formats::
 
-   PYTHON_INCLUDE = C:\Program Files\Python27\include 
-   PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
+   PYTHON_INCLUDE = C:\Program Files\Python37\include
+   PYTHON_LIB = C:\Program Files\Python37\libs\python37.lib
 
 
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Basilisk uses conan for package managing. In order to do so, users
-   must install conan and set the remote repositories for libraries:::
+- Basilisk uses conan for package managing. In order to do so, users
+  must install conan and set the remote repositories for libraries:::
 
        $ pip3 install conan
        $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+
+  .. warning::
+
+     Don't use the ``conan`` binary installed from the `conan web site <https://conan.io/downloads.html>`__.
+     This causes several issues with the current build system.
 
 - The following python packages are the minimum required packages for Basilisk.  They are installed and checked
   for the correction version in the steps below.
