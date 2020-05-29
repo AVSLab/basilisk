@@ -21,7 +21,11 @@ bskModuleOptionsFlag = {
     "buildProject": False
 }
 
-os.system("")       # this statement is needed to enable Windows to print ANSI codes in the Terminal
+# this statement is needed to enable Windows to print ANSI codes in the Terminal
+# see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
+os.system("")
+
+# define the print color codes
 statusColor = '\033[92m'
 failColor = '\033[91m'
 warningColor = '\033[93m'
