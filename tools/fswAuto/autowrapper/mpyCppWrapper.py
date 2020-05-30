@@ -6,6 +6,11 @@ import warnings
 
 
 class CppWrapperClass(object):
+    """
+        This is the main class handling instrospection of the C modules.
+        It generates the C++ wrapper classes (with callbacks to the C algorithms and
+        setters and getters for the C module variables.
+    """
     def __init__(self, TheSim, taskActivityDir, simTag, outputPath):
         self.output_store_path = outputPath
         self.wrapper_template = CppWrapClassTemplate()
@@ -50,7 +55,7 @@ class CppWrapperClass(object):
         return -1
 
     def areTasksInSimTaskList(self, taskActivityDir, TheSim):
-        print( 'TASKS BEING PARSED: ')
+        print('TASKS BEING PARSED: ')
         taskIdxDir = []
         taskOrderedList = []
         for procIdx in range(0, len(TheSim.TotalSim.processList)):
@@ -321,6 +326,9 @@ class CppWrapperClass(object):
 
 
 class SwigNamer(object):
+    """
+        Class to handler creation of setters and getters (i.e. SWIG functionality)
+    """
     def __init__(self, field_name):
         self.config_str = "this->config_data.%s" % field_name
         self.input_str = "new_%s" % field_name
@@ -330,6 +338,9 @@ class SwigNamer(object):
 
 
 class MpyWrapCodeTemplate(object):
+    """
+        Template class defining the glue-code to include in the MicroPython C++ Wrapper source
+    """
     def __init__(self, model_tag, algs_dict, class_name, hpp_line):
         self.wrap_name = 'wrap_%s' % model_tag
         self.class_name = class_name
@@ -384,6 +395,9 @@ class MpyWrapCodeTemplate(object):
 
 
 class CppWrapClassTemplate(object):
+    """
+        Template class defining the C++ wrapper class
+    """
     def __init__(self):
         self.str_class_algs = ""
         self.str_class_swig = ""
