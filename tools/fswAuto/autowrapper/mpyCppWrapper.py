@@ -9,7 +9,7 @@ class CppWrapperClass(object):
     """
         This is the main class handling instrospection of the C modules.
         It generates the C++ wrapper classes (with callbacks to the C algorithms and
-        setters and getters for the C module variables.
+        setters and getters for the C module variables) and it also generates the MicroPython integration patch.
     """
     def __init__(self, TheSim, taskActivityDir, simTag, outputPath):
         self.output_store_path = outputPath
