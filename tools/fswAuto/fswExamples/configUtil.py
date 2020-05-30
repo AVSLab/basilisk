@@ -4,6 +4,9 @@ from Basilisk.fswAlgorithms import fswMessages
 
 
 def create_rw_lists():
+    """
+        Create RW lists containing Gs (spinning axis) data and Js (inertia) data
+    """
     RWAGsMatrix = []
     RWAJsList = []
     wheelJs = 50.0 / (6000.0 / 60.0 * math.pi * 2.0)
@@ -35,6 +38,9 @@ def create_rw_lists():
 
 
 def CreateRWAClass():
+    """
+        Create Dynamics RW class and initialize it
+    """
     RWAGsMatrix, RWAJsList = create_rw_lists()
     rwClass = fswMessages.RWConstellationFswMsg()
     rwPointerList = list()
@@ -52,6 +58,9 @@ def CreateRWAClass():
 
 
 def CreateRWAClassDyn():
+    """
+        Create FSW RW Config class and initialize it
+    """
     RWAGsMatrix, RWAJsList = create_rw_lists()
     rwConfigData = fswMessages.RWArrayConfigFswMsg()
     gsList = np.zeros(3 * fswMessages.MAX_EFF_CNT)

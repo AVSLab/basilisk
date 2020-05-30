@@ -4,6 +4,9 @@ from plotter import Plotter
 
 
 class FSWPlotter(Plotter):
+    """
+        Class for plotting results of a FSW simulation run
+    """
     def __init__(self, time_scale=macros.NANO2MIN, add_titles=True, plots_path=None, name="fsw"):
         super(FSWPlotter, self).__init__(time_scale, add_titles, name)
         self.plots_path = plots_path

@@ -4,6 +4,9 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 
 class Plotter(object):
+    """
+        Class defining common Basilisk plots
+    """
     def __init__(self, time_scale=macros.NANO2MIN, add_titles=True, name=""):
         self.plotter_name = name + "_"
         self.figure_names = list()

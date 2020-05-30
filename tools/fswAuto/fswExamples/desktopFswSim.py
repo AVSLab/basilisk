@@ -7,6 +7,9 @@ from fswPlotter import FSWPlotter
 
 
 class DesktopFSW(SimulationBaseClass.SimBaseClass):
+    """
+        Class defining the FSW scenario
+    """
     def __init__(self):
         SimulationBaseClass.SimBaseClass.__init__(self)  # Create a sim module as an empty container
         self.modeRequest = 'None'
