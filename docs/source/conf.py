@@ -242,6 +242,7 @@ class fileCrawler():
                     "Support" in dirs_in_dir[i] or \
                     "cmake" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
+                    "outputFiles" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
@@ -479,9 +480,10 @@ if rebuild:
     # adjust the fileCrawler path to a local folder to just build a sub-system
     breathe_projects_source = fileCrawler.run(officialSrc)
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_fswTemplateFolder")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizInterface")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard/vizInterface")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/examples")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/utilities")
+    breathe_projects_source = fileCrawler.run("../../tools")
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)
 else:
