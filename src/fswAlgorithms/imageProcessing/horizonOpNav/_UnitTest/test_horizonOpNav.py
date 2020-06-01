@@ -6,7 +6,7 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms.horizonOpNav import horizonOpNav
+from Basilisk.fswAlgorithms import horizonOpNav
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 import os, inspect

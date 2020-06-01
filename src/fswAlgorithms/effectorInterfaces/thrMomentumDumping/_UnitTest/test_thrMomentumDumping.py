@@ -39,7 +39,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms.thrMomentumDumping import thrMomentumDumping            # import the module that is to be tested
+from Basilisk.fswAlgorithms import thrMomentumDumping            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 

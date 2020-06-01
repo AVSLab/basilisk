@@ -26,8 +26,8 @@ import os,errno
 import numpy as np
 import matplotlib as mpl
 from datetime import datetime, timedelta
-from Basilisk.simulation.simMessages import simMessages
-from Basilisk.pyswice import pyswice
+from Basilisk.simulation import simMessages
+from Basilisk.topLevelModules import pyswice
 
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)

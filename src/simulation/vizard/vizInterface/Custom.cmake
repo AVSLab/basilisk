@@ -1,0 +1,8 @@
+if(BUILD_VIZINTERFACE)
+  include(usingZMQ)
+  include(usingProtobuf)
+  list(APPEND CUSTOM_DEPENDENCIES protocode)
+else()
+  MESSAGE("SKIPPED: ${TARGET_NAME}")
+  set(CUSTOM_DEPENDENCIES_HANDLED 1)
+endif()

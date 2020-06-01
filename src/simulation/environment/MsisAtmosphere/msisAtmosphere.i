@@ -23,8 +23,13 @@
    #include "msisAtmosphere.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
 %include "sys_model.h"
+%include "swig_eigen.i"
+%include "std_vector.i"
 %include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "msisAtmosphere.h"
 #include "nrlmsise-00.h"
@@ -32,6 +37,8 @@
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/atmoPropsSimMsg.h"
 %include "../../simMessages/swDataSimMsg.h"
+%include "swig_conly_data.i"
+
 
 GEN_SIZEOF(AtmoPropsSimMsg)
 GEN_SIZEOF(SpicePlanetStateSimMsg)

@@ -21,12 +21,17 @@ if(NOT WIN32)
 endif()
 target_include_directories(SimMessaging PUBLIC "${CMAKE_SOURCE_DIR}/simulation")
 #target_include_directories(SimMessaging PUBLIC "${CMAKE_SOURCE_DIR}/fswAlgorithms")
-set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
-set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
-set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+set_target_properties(SimMessaging PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+set_target_properties(SimMessaging PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+set_target_properties(SimMessaging PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
 
 #Have to copy this file everywhere if we're on Windows.  Ugly kludge, but... Windows!
 if(WIN32)

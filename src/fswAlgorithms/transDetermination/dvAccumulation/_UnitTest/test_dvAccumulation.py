@@ -5,8 +5,8 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms.dvAccumulation import dvAccumulation
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import dvAccumulation
+from Basilisk.fswAlgorithms import fswMessages
 from numpy import random
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename

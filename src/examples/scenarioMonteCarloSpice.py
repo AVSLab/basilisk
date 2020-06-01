@@ -68,7 +68,8 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk import pyswice
+from Basilisk.topLevelModules import pyswice
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
 from Basilisk.simulation import spacecraftPlus
 
@@ -130,7 +131,7 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         startCalendarTime = '2012 APR 29 15:18:14.907 (UTC)'
         zeroBase = 'Sun'
         integFrame = 'j2000'
-        stateOut = pyswice.spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
+        stateOut = spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
         print(stateOut)
 
 def run():

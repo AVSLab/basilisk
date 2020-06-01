@@ -21,7 +21,12 @@
    #include "alg_contain.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
+%include "swig_conly_data.i"
+%include "std_string.i"
 
 %feature("copyctor");
 %include "sys_model.h"

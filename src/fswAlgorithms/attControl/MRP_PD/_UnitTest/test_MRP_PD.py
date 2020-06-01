@@ -31,7 +31,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms.MRP_PD import MRP_PD  # import the module that is to be tested
+from Basilisk.fswAlgorithms import MRP_PD  # import the module that is to be tested
 from Basilisk.utilities import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

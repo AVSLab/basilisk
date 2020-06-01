@@ -18,10 +18,9 @@
 
 '''
 
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
-from Basilisk.pyswice.pyswice_spk_utilities import spkRead
-from Basilisk.pyswice import pyswice
+
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
+from Basilisk.topLevelModules import pyswice
 
 from Basilisk import __path__
 bskPath = __path__[0]

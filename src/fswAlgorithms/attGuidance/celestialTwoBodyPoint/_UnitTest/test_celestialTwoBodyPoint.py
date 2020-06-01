@@ -30,10 +30,10 @@ import numpy as np
 from numpy import linalg as la
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.alg_contain import alg_contain
+from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms.celestialTwoBodyPoint import celestialTwoBodyPoint  # module that is to be tested
-from Basilisk.fswAlgorithms.cheby_pos_ephem import cheby_pos_ephem  # module that creates needed input
+from Basilisk.fswAlgorithms import celestialTwoBodyPoint  # module that is to be tested
+from Basilisk.fswAlgorithms import cheby_pos_ephem  # module that creates needed input
 from Basilisk.utilities import macros
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.utilities import RigidBodyKinematics as rbk

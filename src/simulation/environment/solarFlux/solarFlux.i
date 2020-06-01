@@ -22,11 +22,16 @@
    #include "simMessages/solarFluxSimMsg.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
 
+%include "std_string.i"
 %include "sys_model.h"
 %include "solarFlux.h"
 %include "simMessages/solarFluxSimMsg.h"
+%include "swig_conly_data.i"
+
 
 GEN_SIZEOF(SolarFluxSimMsg)
 

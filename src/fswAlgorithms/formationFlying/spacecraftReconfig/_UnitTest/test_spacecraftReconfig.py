@@ -33,7 +33,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.fswAlgorithms.spacecraftReconfig import spacecraftReconfig  # import the module that is to be tested
+from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

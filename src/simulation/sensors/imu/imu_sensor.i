@@ -21,8 +21,13 @@
    #include "imu_sensor.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "swig_conly_data.i"
 
+%include "std_string.i"
+%include "swig_eigen.i"
 %include "sys_model.h"
 %include "imu_sensor.h"
 %include "simMessages/scPlusStatesSimMsg.h"

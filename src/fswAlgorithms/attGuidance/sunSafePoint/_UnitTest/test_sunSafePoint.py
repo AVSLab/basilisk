@@ -41,8 +41,8 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.sunSafePoint import sunSafePoint                   # import the module that is to be tested
-from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.fswAlgorithms import sunSafePoint                   # import the module that is to be tested
+from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import macros as mc
 
 

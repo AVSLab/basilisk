@@ -20,10 +20,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "vizInterface.h"
 %}
 
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
 %include "swig_conly_data.i"
-%include "swig_common_model.i"
+%include "swig_eigen.i"
 
 %include "sys_model.h"
+%include "std_vector.i"
 
 // Instantiate templates used by example
 namespace std {

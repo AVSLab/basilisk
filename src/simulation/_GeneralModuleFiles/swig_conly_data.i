@@ -16,6 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
+%module swig_conly_data
+
 %include "stdint.i"
 %define ARRAYASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
@@ -35,7 +38,7 @@
     for (i = 0; i < PySequence_Length($input); i++) {
         PyObject *o = PySequence_GetItem($input,i);
         if (PyNumber_Check(o)) {
-            temp[i] = (type) PyFloat_AsDouble(o);
+            temp[i] = (type)PyFloat_AsDouble(o);
         } else {
             resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
             if (!SWIG_IsOK(resOut)) {
@@ -220,6 +223,7 @@ def protectSetAttr(self, name, value):
 
 def protectAllClasses(moduleType):
     import inspect
+    import sys
     clsmembers = inspect.getmembers(sys.modules[__name__], inspect.isclass)
     for member in clsmembers:
         try:

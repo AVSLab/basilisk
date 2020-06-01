@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
-findAndCreateSwigModules("")
+#findAndCreateSwigModules("") Not confident what this was doing
 
-if (USE_PROTOBUFFERS)
+
+if (BUILD_VIZINTERFACE)
 	message(STATUS "Generating Protobuffers")
 	add_subdirectory("vizProtobuffer")
 endif()

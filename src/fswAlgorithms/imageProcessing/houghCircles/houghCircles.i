@@ -21,12 +21,18 @@
    #include "houghCircles.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
 %include "stdint.i"
+%include "std_string.i"
 %include "sys_model.h"
 %include "houghCircles.h"
-%include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+%include "../../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "../../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+%include "swig_conly_data.i"
+
 GEN_SIZEOF(CirclesOpNavMsg)
 GEN_SIZEOF(CameraImageMsg)
 

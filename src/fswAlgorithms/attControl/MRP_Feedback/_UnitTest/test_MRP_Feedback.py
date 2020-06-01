@@ -40,8 +40,8 @@ import numpy as np
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import fswMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -86,7 +86,7 @@ def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailabili
             integralLimit (float): value of the integral limit
             useRwAvailability (string): Flag to not use RW availabillity (``NO``), use the availability
                message and turn on the RW devices (``ON``) and use the message and turn off the devices (``OFF``)
-        """
+    """
 
     # each test method requires a single assert method to be called
 

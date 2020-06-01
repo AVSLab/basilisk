@@ -6,7 +6,7 @@ The purpose of this folder is to provide a Basilisk module template.  While this
 
 A module folder can contain a series of related module folders.  By adding a ``*.rst`` file to this folder the purpose of a folder can be documented.  The ``*.rst`` file name should be the same as the parent folder.
 
-The sub-folder called “_GeneralModuleFiles” contains support *.c/h files that are used by all modules.  As a minimum, a file is required that defines the Module specific output message type
+The sub-folder called ``_GeneralModuleFiles`` contains support *.c/h files that are used by all modules.  As a minimum, a file is required that defines the Module specific output message type
 
 
 Usage

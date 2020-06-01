@@ -21,7 +21,10 @@
    #include "keplerianOrbit.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "swig_eigen.i"
 
 %include "keplerianOrbit.h"
 

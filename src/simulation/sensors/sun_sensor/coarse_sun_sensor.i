@@ -21,7 +21,11 @@
    #include "coarse_sun_sensor.h"
 %}
 
-%include "swig_common_model.i"
+%include "swig_conly_data.i"
+%include "swig_eigen.i"
+%include "std_vector.i"
+%include "std_string.i"
+%feature("copyctor");
 
 namespace std {
     %template(CSSVector) vector<CoarseSunSensor>;
@@ -29,6 +33,7 @@ namespace std {
 
 %include "sys_model.h"
 %include "coarse_sun_sensor.h"
+
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/cssRawDataSimMsg.h"

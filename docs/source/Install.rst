@@ -12,13 +12,12 @@ Install
    :maxdepth: 1
    :caption: Contents:
    
+   Install/pullCloneBSK
    Install/installOnLinux
    Install/installOnMacOS
    Install/installOnWindows
-   Install/pullCloneBSK
-   Install/InstallWithCmakeOptions
+   Install/installBuild
    Install/installOptionalPackages
-   Install/installPowerUserTips
    Install/customPython
 
 

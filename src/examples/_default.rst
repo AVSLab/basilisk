@@ -176,16 +176,16 @@ Optical Navigation Simulations
    :maxdepth: 1
 
    BSK OpNav Sim  <OpNavScenarios/BSK_OpNav>
-   Hough Circles for Pointing and Orbit Determination  <OpNavScenarios/scenarios/scenario_OpNavAttOD>
-   Limb-based method for Pointing and Orbit Determination  <OpNavScenarios/scenarios/scenario_OpNavAttODLimb>
-   CNN for Pointing and Orbit Determination   <OpNavScenarios/scenarios/scenario_CNNAttOD>
-   Simultaneously run two OpNav methods  <OpNavScenarios/scenarios/scenario_DoubleOpNavOD>
-   Perform fault detection with two OpNav methods  <OpNavScenarios/scenarios/scenario_faultDetOpNav>
-   Orbit Determination with Hough Circles  <OpNavScenarios/scenarios/scenario_OpNavOD>
-   Orbit Determination with Limb-based method   <OpNavScenarios/scenarios/scenario_OpNavODLimb>
-   Pointing with Hough Circles  <OpNavScenarios/scenarios/scenario_OpNavPoint>
-   Pointing with Limb-based method   <OpNavScenarios/scenarios/scenario_OpNavPointLimb>
-   Filter Heading measurements  <OpNavScenarios/scenarios/scenario_OpNavHeading>
+   Hough Circles for Pointing and Orbit Determination  <OpNavScenarios/scenariosOpNav/scenario_OpNavAttOD>
+   Limb-based method for Pointing and Orbit Determination  <OpNavScenarios/scenariosOpNav/scenario_OpNavAttODLimb>
+   CNN for Pointing and Orbit Determination   <OpNavScenarios/scenariosOpNav/scenario_CNNAttOD>
+   Simultaneously run two OpNav methods  <OpNavScenarios/scenariosOpNav/scenario_DoubleOpNavOD>
+   Perform fault detection with two OpNav methods  <OpNavScenarios/scenariosOpNav/scenario_faultDetOpNav>
+   Orbit Determination with Hough Circles  <OpNavScenarios/scenariosOpNav/scenario_OpNavOD>
+   Orbit Determination with Limb-based method   <OpNavScenarios/scenariosOpNav/scenario_OpNavODLimb>
+   Pointing with Hough Circles  <OpNavScenarios/scenariosOpNav/scenario_OpNavPoint>
+   Pointing with Limb-based method   <OpNavScenarios/scenariosOpNav/scenario_OpNavPointLimb>
+   Filter Heading measurements  <OpNavScenarios/scenariosOpNav/scenario_OpNavHeading>
 
 
 

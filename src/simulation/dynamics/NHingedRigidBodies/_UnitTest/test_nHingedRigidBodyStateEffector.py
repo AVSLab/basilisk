@@ -54,18 +54,18 @@ success criteria.  Each scenario checks the conservation of orbital angular mome
 energy, the conservation of rotational angular momentum and the conservation of rotational energy.
 
 
-Test Parameters:
------------
+**Test Parameters:**
+
 - testCase: [string]
     defines whether or not the gravity is included in this test.
 
-Description of Variables Being Tested
--------------------------------------
+**Description of Variables Being Tested**
+
 This test checks the conservation of the spacecraft orbital angular momentum, the rotational angular momentum, \
 the orbital energy and the rotational energy.
 
-Test Descriptions:
-------------------
+**Test Descriptions:**
+
 testCase == 'Gravity'
 In this test the simulation is placed into orbit around Earth with point gravity and has no damping in \
 the hinged rigid bodies.

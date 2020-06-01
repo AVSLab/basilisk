@@ -44,3 +44,5 @@ GEN_SIZEOF(CmdTorqueBodyIntMsg);
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+
+%pythoncode "_UnitTest/Support/Results_thrForceMapping.py"

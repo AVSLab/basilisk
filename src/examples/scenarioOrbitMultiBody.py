@@ -113,8 +113,8 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import vizSupport
 
 # Used to get the location of supporting data.
-from Basilisk import pyswice
-from Basilisk.pyswice.pyswice_spk_utilities import spkRead
+from Basilisk.topLevelModules import pyswice
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk import __path__
 bskPath = __path__[0]
 

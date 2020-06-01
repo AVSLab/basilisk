@@ -130,7 +130,7 @@ def run(show_plots, convertPosUnits, attType, verbose):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
+                                              # saveFile=fileName,
                                               scName=scNames)
     if vizFound:
         # delete any existing list of vizInterface spacecraft data

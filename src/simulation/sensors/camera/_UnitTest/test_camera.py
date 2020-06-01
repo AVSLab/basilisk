@@ -110,6 +110,10 @@ def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
 
 
 def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize):
+    if importErr:
+        print(reasonErr)
+        exit()
+
     # Truth values from python
     imagePath = path + '/' + image
     input_image = Image.open(imagePath)

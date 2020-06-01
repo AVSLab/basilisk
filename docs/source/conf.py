@@ -24,16 +24,13 @@ import datetime
 now = datetime.datetime.now()
 f = open('bskVersion.txt', 'r')
 bskVersion = f.read()
+f.close()
 
 project = u'Basilisk'
 copyright = str(now.year) + u', Autonomous Vehicle Systems (AVS) Laboratory'
 author = u'AVS Lab'
-
-# The short X.Y version
-
 release = bskVersion
 version = u'version ' + release
-# The full version, including alpha/beta/rc tags
 
 
 # -- General configuration ---------------------------------------------------
@@ -51,7 +48,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'sphinx.ext.inheritance_diagram',
+    # 'sphinx.ext.inheritance_diagram',
     "sphinx_rtd_theme",
     'recommonmark',
     'breathe'
@@ -405,7 +402,7 @@ class fileCrawler():
                             name += str(self.counter)
                             self.counter += 1
                         lines += """.. autodoxygenfile:: """ + module_file + """\n   :project: """ + name + """\n\n"""
-                        lines += """.. inheritance-diagram:: """ + module_file + """\n\n"""
+                        # lines += """.. inheritance-diagram:: """ + module_file + """\n\n"""
 
                 if self.newFiles:
                     with open(os.path.join(path,  c_file_basename + ".rst"), "w") as f:
@@ -422,14 +419,15 @@ class fileCrawler():
 
         for py_file in sorted(py_file_paths):
             fileName = os.path.basename(py_file)
-            fileName = fileName[:fileName.rfind('.')]
-            lines = ".. _"+ fileName + ":\n\n"
-            lines += fileName + "\n" + "=" * len(fileName) + "\n\n"
-            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
-            lines += """.. automodule:: """ + fileName + """\n   :members:\n   :show-inheritance:\n\n"""
-            if self.newFiles:
-                with open(path+"/"+fileName+".rst", "w") as f:
-                    f.write(lines)
+            if fileName not in ["__init__.py"]:
+                fileName = fileName[:fileName.rfind('.')]
+                lines = ".. _"+ fileName + ":\n\n"
+                lines += fileName + "\n" + "=" * len(fileName) + "\n\n"
+                lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+                lines += """.. automodule:: """ + fileName + """\n   :members:\n   :show-inheritance:\n\n"""
+                if self.newFiles:
+                    with open(path+"/"+fileName+".rst", "w") as f:
+                        f.write(lines)
 
         return sources
 

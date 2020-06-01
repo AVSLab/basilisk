@@ -5,7 +5,7 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms.ephem_nav_converter import ephem_nav_converter
+from Basilisk.fswAlgorithms import ephem_nav_converter
 from Basilisk.utilities import astroFunctions
 
 import os, inspect

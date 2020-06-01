@@ -18,6 +18,7 @@ xml/*
 lastfailed
 .idea
 **/AutoTex/
+**/AutoTeX/
 cmake-build*/*
 *.aux
 *.log
@@ -25,10 +26,11 @@ cmake-build*/*
 *.gz
 *.toc
 src/cmake-build-debug/*
-
+supportData/*/__init__.py
+src/utilities/MonteCarlo/__init__.py
+src/utilities/vizProtobuffer/__init__.py
 *.fdb_latexmk
 *.fls
 
 **/tests/report/
-
-*~
+**/__pycache__/

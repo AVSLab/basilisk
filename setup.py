@@ -163,18 +163,18 @@ bskVersion = f.read()
 setup(
     name='Basilisk',
     version=bskVersion,
-    description="Astrodynamic Simulation Library",
+    description="Astrodynamics Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),
     long_description=open('./README.md').read(),
     author_email='basilisk-info@colorado.edu',
     url='https://hanspeterschaub.info/basilisk/',
     package_dir={'': package_dir},
-    install_requires=[
-        'matplotlib',
-        'numpy',
-        'pandas'
-    ],
+    # install_requires=[
+    #     'matplotlib',
+    #     'numpy',
+    #     'pandas'
+    # ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'flake8'],
     cmdclass={

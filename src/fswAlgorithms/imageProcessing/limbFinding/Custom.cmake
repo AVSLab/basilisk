@@ -1,0 +1,6 @@
+if(BUILD_OPNAV)
+  include(usingOpenCV)
+else()
+  MESSAGE("SKIPPED: ${TARGET_NAME}")
+  set(CUSTOM_DEPENDENCIES_HANDLED 1)
+endif()

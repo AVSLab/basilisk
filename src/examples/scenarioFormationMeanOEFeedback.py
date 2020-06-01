@@ -37,9 +37,6 @@ extForceTorque module.
 .. image:: /_images/static/test_scenarioFormationMeanOEFeedback.svg
    :align: center
 
-::
-
-
 
 Illustration of Simulation Results
 ----------------------------------

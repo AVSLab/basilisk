@@ -28,13 +28,13 @@ sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
 import SunLineOEKF_test_utilities as FilterPlots
-from Basilisk.fswAlgorithms.okeefeEKF import okeefeEKF
+from Basilisk.fswAlgorithms import okeefeEKF
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.alg_contain import alg_contain
-from Basilisk.fswAlgorithms.cssComm import cssComm
+from Basilisk.simulation import alg_contain
+from Basilisk.fswAlgorithms import cssComm
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
 
 def setupFilterData(filterObject):

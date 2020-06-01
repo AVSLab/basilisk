@@ -74,7 +74,8 @@ class Controller:
 
     @staticmethod
     def load(runDirectory):
-        """ Load a previously completed MonteCarlo simulation
+        """
+        Load a previously completed MonteCarlo simulation
         Args:
             The path to the MonteCarlo.data file that contains the archived MonteCarlo run
         """
@@ -91,7 +92,9 @@ class Controller:
             return data
 
     def setExecutionFunction(self, newModule):
-        """ Set an execution function that executes a simulation instance.
+        """
+        Set an execution function that executes a simulation instance.
+
         Args:
             executionFunction: (sim: SimulationBaseClass) => None
                 A function with one parameter, a simulation instance.
@@ -102,7 +105,9 @@ class Controller:
         self.simParams.executionFunction = newModule
 
     def setConfigureFunction(self, newModule):
-        """ Set an execution function that executes a simulation instance.
+        """
+        Set an execution function that executes a simulation instance.
+
         Args:
             executionFunction: (sim: SimulationBaseClass) => None
                 A function with one parameter, a simulation instance.
@@ -113,7 +118,9 @@ class Controller:
         self.simParams.configureFunction = newModule
 
     def setSimulationFunction(self, newObject):
-        """ Set the function that creates the simulation instance.
+        """
+        Set the function that creates the simulation instance.
+
         Args:
             creationFunction: () => SimulationBaseClass
                 A function with no parameters, that returns a simulation instance.
@@ -121,7 +128,9 @@ class Controller:
         self.simParams.creationFunction = newObject
 
     def setShouldDisperseSeeds(self, seedDisp):
-        """ Disperse the RNG seeds of each run in the MonteCarlo
+        """
+        Disperse the RNG seeds of each run in the MonteCarlo
+
         Args:
             seedDisp: bool
                 Whether to disperse the RNG seeds in each run of the simulation
@@ -129,7 +138,9 @@ class Controller:
         self.simParams.shouldDisperseSeeds = seedDisp
 
     def setExecutionCount(self, newCount):
-        """ Set the number of runs for the MonteCarlo simulation
+        """
+        Set the number of runs for the MonteCarlo simulation
+
         Args:
             newCount: int
                 The number of runs to use for the simulation
@@ -137,7 +148,9 @@ class Controller:
         self.executionCount = newCount
 
     def addDispersion(self, disp):
-        """ Add a dispersion to the simulation.
+        """
+        Add a dispersion to the simulation.
+
         Args:
             disp: Dispersion
                 The dispersion to add to the simulation.
@@ -145,7 +158,9 @@ class Controller:
         self.simParams.dispersions.append(disp)
 
     def addRetentionPolicy(self, policy):
-        """ Add a retention policy to the simulation.
+        """
+        Add a retention policy to the simulation.
+
         Args:
             disp: RetentionPolicy
                 The retention policy to add to the simulation.
@@ -154,7 +169,9 @@ class Controller:
         self.simParams.retentionPolicies.append(policy)
 
     def setThreadCount(self, threads):
-        """ Set the number of threads to use for the monte carlo simulation
+        """
+        Set the number of threads to use for the monte carlo simulation
+
         Args:
             threads: int
                 Number of threads to execute the montecarlo run on.
@@ -162,7 +179,9 @@ class Controller:
         self.numProcess = threads
 
     def setVerbose(self, verbose):
-        """ Use verbose output for this MonteCarlo run
+        """
+        Use verbose output for this MonteCarlo run
+
         Args:
             verbose: bool
                 Whether to print verbose information during this MonteCarlo sim.
@@ -170,7 +189,9 @@ class Controller:
         self.simParams.verbose = verbose
 
     def setDispMagnitudeFile(self, magnitudes):
-        """ Save .txt with the magnitude of each dispersion in % or sigma away from mean
+        """
+        Save .txt with the magnitude of each dispersion in % or sigma away from mean
+
         Args:
             magnitudes: bool
                 Whether to save extra files for analysis.
@@ -181,7 +202,9 @@ class Controller:
         self.simParams.shouldArchiveParameters = shouldArchiveParameters
 
     def setArchiveDir(self, dirName):
-        """ Set-up archives for this MonteCarlo run
+        """
+        Set-up archives for this MonteCarlo run
+
         Args:
             dirName: string
                 The name of the directory to archive runs in.
@@ -192,14 +215,18 @@ class Controller:
         self.simParams.filename = self.archiveDir
 
     def setVarCast(self, varCast):
-        """ Set the variable type to downcast the data to
+        """
+        Set the variable type to downcast the data to
+
         :param varCast: 'float', 'integer', 'signed', 'unsigned' (see pandas.to_numeric documentation)
         :return:
         """
         self.varCast = varCast
 
     def setICDir(self, dirName):
-        """ Set-up archives containing IC data
+        """
+        Set-up archives containing IC data
+
         Args:
             dirName: string
                 The name of the directory to archive runs in.
@@ -210,7 +237,9 @@ class Controller:
         self.simParams.icfilename = self.icDirectory
 
     def setICRunFlag(self, bool):
-        """ Set the number of threads to use for the monte carlo simulation
+        """
+        Set the number of threads to use for the monte carlo simulation
+
         Args:
             threads: int
                 Number of threads to execute the montecarlo run on.
@@ -218,7 +247,9 @@ class Controller:
         self.ICrunFlag = bool
 
     def getRetainedData(self, case):
-        """ Get the data that was retained for a run, or list of runs.
+        """
+        Get the data that was retained for a run, or list of runs.
+
         Args:
             cases: int The desired case to get data from.
         Returns:
@@ -234,7 +265,9 @@ class Controller:
             return data
 
     def getRetainedDatas(self, cases):
-        """ Get the data that was retained for a list of runs.
+        """
+        Get the data that was retained for a list of runs.
+
         Args:
             cases: int[] The desired cases to get data from.
         Returns:
@@ -245,7 +278,9 @@ class Controller:
             yield self.getRetainedData(case)  # call this method recursively, yielding the result
 
     def getParameters(self, caseNumber):
-        """ Get the parameters used for a particular run of the montecarlo
+        """
+        Get the parameters used for a particular run of the montecarlo
+
         Args:
             caseNumber: int
                 The number of the run to get the parameters used for.
@@ -266,7 +301,9 @@ class Controller:
             return dispersions
 
     def reRunCases(self, caseList):
-        """ Rerun some cases from a MonteCarlo run. Does not run in parallel
+        """
+        Rerun some cases from a MonteCarlo run. Does not run in parallel
+
         Args:
             caseList: int[]
                 The list of runs to repeat, a list of numbers.
@@ -312,7 +349,9 @@ class Controller:
         return failed
 
     def runInitialConditions(self, caseList):
-        """ Run initial conditions given in a file
+        """
+        Run initial conditions given in a file
+
         Args:
             caseList: int[]
                 The list of runs to repeat, a list of numbers.
@@ -438,7 +477,9 @@ class Controller:
         return failed
 
     def generateICSims(self, caseList):
-        ''' Generator function to clone a baseSimulation for IC run
+        '''
+        Generator function to clone a baseSimulation for IC run
+
         Args:
             baseSimulation: SimulationParams
                 A base simulation to clone.
@@ -474,7 +515,9 @@ class Controller:
             yield simParams
 
     def generateSims(self, simNumList):
-        ''' Generator function to clone a baseSimulation
+        '''
+        Generator function to clone a baseSimulation
+
         Args:
             baseSimulation: SimulationParams
                 A base simulation to clone.
@@ -496,9 +539,12 @@ class Controller:
             yield simClone
 
     def executeCallbacks(self, rng=None, retentionPolicies=[]):
-        """ Execute retention policy callbacks after running a monteCarlo sim.
-        rng: A list of simulations to execute callbacks on
-        retentionPolicies: the retention policies to execute
+        """
+        Execute retention policy callbacks after running a monteCarlo sim.
+
+        Args:
+            rng: A list of simulations to execute callbacks on
+            retentionPolicies: the retention policies to execute
         """
 
         if rng is None:
@@ -513,7 +559,9 @@ class Controller:
                 retentionPolicy.executeCallback(data)
 
     def executeSimulations(self):
-        ''' Execute simulations in parallel
+        '''
+        Execute simulations in parallel
+
         Args: None
         Returns:
             failed: int[]
@@ -638,6 +686,7 @@ class Controller:
 class SimulationParameters():
     '''
     This class represents the run parameters for a simulation, with information including
+
      - a function that creates the simulation
      - a function that executes the simulation
      - the dispersions to use on that simulation
@@ -681,7 +730,9 @@ class SimulationExecutor:
 
     @classmethod
     def __call__(cls, params):
-        ''' In each worker process, we execute this function (by calling this object)
+        '''
+        In each worker process, we execute this function (by calling this object)
+
         Args:
             params [simParams, data out queue]:
                 A SimulationParameters object for the simulation to be executed and the output data queue
@@ -812,7 +863,9 @@ class SimulationExecutor:
 
     @staticmethod
     def disperseSeeds(simInstance):
-        """  disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds
+        """
+        disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds
+
         Args:
             simInstance: SimulationBaseClass
                 A basilisk simulation to set random seeds on
@@ -845,7 +898,9 @@ class SimulationExecutor:
 
     @staticmethod
     def populateSeeds(simInstance, modifications):
-        """  only populate the RNG seeds of all the tasks in the sim
+        """
+        only populate the RNG seeds of all the tasks in the sim
+        
         Args:
             simInstance: SimulationBaseClass
                 A basilisk simulation to set random seeds on

@@ -26,10 +26,10 @@ import numpy as np
 import pytest
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.alg_contain import alg_contain
-from Basilisk.fswAlgorithms.sunlineSEKF import sunlineSEKF
-from Basilisk.fswAlgorithms.cssComm import cssComm
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.simulation import alg_contain
+from Basilisk.fswAlgorithms import sunlineSEKF
+from Basilisk.fswAlgorithms import cssComm
+from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import macros, RigidBodyKinematics
 import SunLineSEKF_test_utilities as FilterPlots
 

@@ -7,6 +7,17 @@
 Installing Optional Packages
 ============================
 
+Listing of All Optional Packages
+--------------------------------
+This page contains all the optional python packages that can be included to unlock additional Basilisk
+features or utilities.  For convenience the complete set of optional packages, including any constraints on
+acceptable versions, are listed here:
+
+    .. include:: ../bskPkgOptions.txt
+
+To automatically ensure that the system has all optional packages installed, use the ``allOptPkg``
+flag as discussed in :ref:`configureBuild`.
+
 Running unit and integrated tests via ``pytest``
 ------------------------------------------------
 
@@ -39,6 +50,14 @@ After installing this utility you now run the multi-threaded version of
 or replace 8 with the number of cores your computer has available
 
 
+Creating the Sphinx Basilisk Documentation
+------------------------------------------
+Go to :ref:`createHtmlDocumentation` to learn what associated python tools are required.
+The following python packages must be installed via ``pip``::
+
+    pip3 install --user sphinx sphinx_rtd_theme breathe recommonmark
+
+See the list at the top of this page for what versions of these packages are acceptable.
 
 Graphing via datashader
 -----------------------
@@ -104,8 +123,3 @@ following::
                             [(1, False),
                              (2, False)])
 
-Protobuffers
-------------
-
-To use Google Protobuffers in a C++ context by building the source, please follow the following documentation
-`here <https://github.com/google/protobuf/blob/master/src/>`__. To use Google Protobuffers as a pre-built library, download the release from `here <https://github.com/google/protobuf/releases>`__.

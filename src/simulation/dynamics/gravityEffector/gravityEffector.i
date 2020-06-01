@@ -22,13 +22,20 @@
    #include "../_GeneralModuleFiles/gravityEffector.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "sys_model.h"
 #pragma SWIG nowarn=362
 %include "../_GeneralModuleFiles/gravityEffector.h"
+
+%include "std_vector.i"
 
 namespace std {
     %template(GravBodyVector) vector<GravBodyData *>;
@@ -38,4 +45,6 @@ namespace std {
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+
+%pythoncode "gravCoeffOps.py"
 

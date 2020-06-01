@@ -21,13 +21,19 @@
    #include "spice_interface.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "swig_conly_data.i"
+%include "std_string.i"
+%include "std_vector.i"
 
 %include "sys_model.h"
 %include "simMessages/spicePlanetStateSimMsg.h"
 %include "simMessages/spiceTimeSimMsg.h"
 %include "spice_interface.h"
 %include "../../simMessages/epochSimMsg.h"
+
 
 GEN_SIZEOF(SpicePlanetStateSimMsg);
 GEN_SIZEOF(SpiceTimeSimMsg);

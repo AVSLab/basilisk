@@ -21,7 +21,10 @@
    #include "clock_synch.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
 
 %include "sys_model.h"
 %include "clock_synch.h"

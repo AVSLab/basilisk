@@ -36,9 +36,9 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms.tamComm import tamComm
+from Basilisk.fswAlgorithms import tamComm
 from Basilisk.utilities import macros
-from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.simulation import simFswInterfaceMessages
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -49,14 +49,14 @@ from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
     """
-    Validation Test Description
-    ---------------------------
+    **Validation Test Description**
+
     This section describes the specific unit tests conducted on this module. \
-    The test contains 1 test and is located at 'test_tamComm.py'. \
+    The test contains 1 test and is located at ``test_tamComm.py``. \
     The success criteria is to match the outputs with the generated truth.
 
-    Description of Variables Being Tested
-    -------------------------------------
+    **Description of Variables Being Tested**
+
     In this file, we are checking the values of the variable:
 
         tam_B

@@ -22,7 +22,10 @@
 %}
 
 %include "bskLogging.h"
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
 
 %pythoncode %{
 import sys

@@ -8,6 +8,8 @@ as how to code up C or C++ Basilisk modules.
 .. toctree::
    :maxdepth: 2
 
+   Support/bskReleaseNotes
+   Support/bskKnownIssues
    Support/User
    Support/Coder
 

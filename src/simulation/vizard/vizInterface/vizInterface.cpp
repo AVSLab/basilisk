@@ -19,7 +19,6 @@
 #include <iostream>
 #include <cstdio>
 #include <architecture/messaging/system_messaging.h>
-#include <zmq.h>
 
 #include "vizInterface.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"

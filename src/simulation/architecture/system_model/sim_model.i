@@ -33,6 +33,7 @@
 %include "carrays.i"
 %include "exception.i"
 %include "cdata.i"
+%include "swig_eigen.i"
 
 %array_functions(double, doubleArray);
 %array_functions(long, longArray);

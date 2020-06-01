@@ -4,19 +4,20 @@
 
 .. _installLinux:
 
-Installing On Linux
-===================
-
-The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
+Setup On Linux
+==============
 
 Software setup
 --------------
 
 In order to run Basilisk, the following software will be necessary. This document outline how to install this support software.
 
--  `Cmake <https://cmake.org/>`__
--  `Python <https://www.python.org/>`__ 3.7.x OR Python 2.7
-   (``numpy``, ``matplotlib``, ``pytest``, ``conan``, ``pandas``)
+-  `Cmake <https://cmake.org/>`__ 3.x or higher
+-  `Python <https://www.python.org/>`__ 3.7.x.  The following python package dependencies are automatically
+   checked and installed in the steps below.
+
+   - .. include:: ../bskPkgRequired.txt
+
 -  `SWIG <http://www.swig.org/>`__ (version 3 or 4)
 -  `GCC <https://gcc.gnu.org/>`__
 
@@ -33,57 +34,55 @@ Dependencies
         # Command line installation
         $ apt-get install cmake
 
-#. Python 2.7 / Python 3.x with Pip::
+#. Python 3.x with Pip::
 
-    $ apt-get install python2.7
     $ apt-get install python3.x
 
 #. SWIG: Available using::
 
-    $ apt-get install swig3.0
+    $ apt-get install swig
 
 #. A C/C++ Compiler: This is included by default with most Linux systems (``gcc``), but is necessary to build Basilisk.
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
-#. A install of Conan. Install with pip, an example is below::
+#. Install Conan using pip, an example is below::
 
-       $ pip3 install conan
-
-Build Process via Terminal
---------------------------
-
-For Basilisk Python 2 and Python 3 inter-compatability, build using both following instructions then run using preferred python version.
-
-#. First step is to create the destination directory.  This is ``dist3`` for Python 3 and ``dist`` for Python 2::
-
-       $ mkdir dist3
-       $ cd dist3
+       $ pip3 install --user conan
 
 #. Setup Conan Repositories. These can be consolidated into a private conan server `conan getting started docs <https://docs.conan.io/en/latest/introduction.html>`__::
 
        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
        $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
 
-#. CMake here in the build directory with Unix Makefiles, where the source code is located at: ``../src``::
+#. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
-    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src
+Build Process via Terminal
+--------------------------
 
-   The ``CMAKE_BUILD_TYPE`` argument can be changed to ``Debug`` as well, but the run-time performance will be significantly slower.
+#. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
+   from the root Basilisk folder use::
+
+        python3 conanfile.py
+
+   For other configure and build options, see :ref:`configureBuild`.
+   This process will verify that the minimum required Basilisk python packages are installed, and that
+   the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
+   folder.
+
+#. Next, move to the distribution folder to build using a makefile::
+
+        cd dist3
 
 #. Can do a multi core make by running ``make -j<number of cores +1>`` such as ``make -j5``.
 
-#. More information is available on Basilisk ``cmake`` :ref:`flag options <cmakeOptions>`.
-
 #. To test your setup you can run one of the :ref:`examples`:
 
-   -  For example, in the terminal window, make ``basilisk/src/examples/`` the
+   -  For example, in the terminal window, switch ``/src/examples/`` to the
       current directory.
    -  Run one of the example scripts, such as::
 
        $ python3 scenarioBasicOrbit.py
-
-
 
 
 

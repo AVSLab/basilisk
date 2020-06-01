@@ -31,15 +31,14 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.alg_contain import alg_contain
+from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.thrForceMapping import thrForceMapping
+from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.simulation import simFswInterfaceMessages
 
-from .Support import Results_thrForceMapping
 import numpy as np
 
 
@@ -73,7 +72,8 @@ def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetri
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster,use2ndLoop):
+def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis,
+                      saturateThrusters, misconfigThruster,use2ndLoop):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -285,7 +285,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     if useDVThruster and numControlAxis == 3:
         return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for dv thrusters (only two axes controllable)
 
-    results = Results_thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
+    results = thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
                                          vehicleConfigOut.CoM_B, rcsLocationData,
                                          rcsDirectionData, moduleConfig.thrForceSign,
                                          moduleConfig.thrForcMag, moduleConfig.angErrThresh,

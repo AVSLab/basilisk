@@ -33,9 +33,22 @@ The following Frequency Answer Questions are general and not operating system sp
 
 #. How do I perform a clean build of Basilisk?
 
+   IDE’s like X-Code provide a “clean” function. This will remove some compiled code, but in Basilisk it does not get rid of all the SWIG’d code, and there can be compiler warnings related to the last CMAKE settings used.
 
-    IDE’s like X-Code provide a “clean” function. This will remove some compiled code, but in Basilisk it does not get rid of all the SWIG’d code, and there can be compiler warnings related to the last CMAKE settings used. To really have a clean clean build, you can
+   To do a basic clean build that will cover most odd cases, you can do this manually by
 
      - delete the folder of ``dist3`` or ``dist`` and create a new folder with that name
-     - delete any CMake cache
-     - delete the ``.conan`` directory in your home folder. Now when you run CMAke it will pull a fresh copy of any required libraries and proceed to build freshly minted version of Basilisk.
+     - follow the regular configure and build instruction in :ref:`configureBuild`
+
+   You can also use the ``clean`` flag in the instruction at :ref:`configureBuild` to do a clean and configure all in one.
+
+   To really have a clean clean build you want to get rid of the `.conan` file that stores the dependencies
+   for Basilisk.  To do this you
+
+     - delete the `.conan` folder in your home directory
+     - fresly setup the conan package from the install instructions using::
+
+        $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+
+     - follow the regular build instructions in :ref:`configureBuild` using the ``clean`` flag

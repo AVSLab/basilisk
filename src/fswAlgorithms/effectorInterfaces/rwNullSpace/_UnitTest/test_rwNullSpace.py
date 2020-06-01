@@ -5,9 +5,9 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms.rwNullSpace import rwNullSpace
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
-from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.fswAlgorithms import rwNullSpace
+from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import simFswInterfaceMessages
 import pytest
 import numpy as np
 import os, inspect

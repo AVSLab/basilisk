@@ -28,7 +28,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.pyswice import pyswice
+from Basilisk.topLevelModules import pyswice
 from Basilisk import __path__
 bskPath = __path__[0]
 
