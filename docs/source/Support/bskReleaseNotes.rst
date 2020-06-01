@@ -21,7 +21,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Added a new folder ``tools/fswAuto`` that contains :ref:`Folder_tools` to migrate BSK simulations and modules to C-code
 
 Version 1.8.0
 -------------
