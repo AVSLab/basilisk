@@ -6,6 +6,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.0
+-------------
 - The new conan based built system might need the conan cache folder ``.conan`` to be deleted and reset.  This is
   typically in the user's home folder.  After this you need to re-run the conan setup commands::
 

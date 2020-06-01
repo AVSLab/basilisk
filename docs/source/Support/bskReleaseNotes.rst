@@ -21,6 +21,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.0
+-------------
 - updated :ref:`imu_sensor` to initialize all class variables in the constructor
 - fixed a data frame issue in :ref:`groundLocation`
 - first iteration of the CMake refactor completed. The refactor updates the project CMakeList to
@@ -64,8 +68,8 @@ Version 1.7.4
 - hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that
   Windows expected, but Unix systems didn't need
 
-Version 1.7.3
--------------
+**Version 1.7.3**
+
 - updated :ref:`scenarioFormationMeanOEFeedback` and :ref:`scenarioFormationReconfig` to increase
   the orbit altitude to not hit the Earth. Also, added code that can be enabled to record the
   simulation parameters for Vizard.
