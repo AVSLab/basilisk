@@ -26,16 +26,11 @@
 #
 
 
-import sys, os, inspect
+import sys
 import pytest
 import subprocess
 from pathlib import Path
 import shutil
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
-sys.path.append(path + '/../../tools')
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -56,7 +51,7 @@ def test_toolsFolder(show_plots, toolCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    pathFile = Path(os.getcwd()).parents[1] / "tools" / toolCase
+    pathFile = Path(__file__).parents[2] / "tools" / toolCase
 
     shellCmd = [sys.executable, pathFile]
     try:
