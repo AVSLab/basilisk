@@ -234,10 +234,12 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             truthVector[i] = truthVector[i] * (
                     1.0 - np.e ** (-truthVector[i] ** 2.0 / kelly))  # apply kelly factor, note: no albedo
         truthVector[i] = truthVector[i] * visibilityFactor * sunDistanceFactor  # account for eclipse effects
+        truthVector[i] += albedoValue  # apply albedo
         truthVector[i] += bias  # apply bias
     for i in range(len(angles)):
         if angles[i] > fov and angles[i] < (2 * np.pi - fov):  # first, trim to fov
             truthVector[i] = 0.0
+            truthVector[i] += albedoValue  # apply albedo
             truthVector[i] += bias
     truthVector = truthVector * scaleFactor
     for i in range(len(truthVector)):
