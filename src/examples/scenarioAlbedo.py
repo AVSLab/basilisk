@@ -37,7 +37,7 @@ Simulation Scenario Setup Details
 ---------------------------------
 A simulation process is created which contains both the spacecraft simulation module,
 as well as one albedo module from :ref:`albedo` module using CSS configuration.
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module.
+The dynamics simulation is setup using :ref:`SpacecraftPlus`.
 The CSS module is created using :ref:`coarse_sun_sensor`.
 The input message name sunPositionInMsgName specifies an input message that contains the sun's position.
 
@@ -70,9 +70,9 @@ Multiple planets can be added to the albedo module through::
 based on the albedo model to be used for the planet. Note that this commands should be repeated for adding multiple
 planets. However, the albedo module gives a summed albedo value at the instrument not a vector of values corresponding
 to each planet. The albedo module is created using one of the albedo models, e.g.
-:ref:`ALBEDO_DATA`
+``ALBEDO_DATA``
 which is based on the albedo coefficient data using the specified fileName and dataPath, and
-:ref:`ALBEDO_AVG`
+``ALBEDO_AVG``
 which is a model based on an average albedo value that can be specified with ``ALB_avg`` variable,
 and used for any planet. If ``ALB_avg`` is not specified albedo module uses the default value defined for each planet.
 

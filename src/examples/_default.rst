@@ -110,6 +110,13 @@ Ground Station on Planet Surface
 
    Satellite Communicating to Earth Ground Station <scenarioGroundDownlink>
 
+Planet Albedo
+^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   Albedo CSS simulation about Multiple Celestial Objects <scenarioAlbedo>
+
 
 Spacecraft Sensors
 ------------------

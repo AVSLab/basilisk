@@ -53,25 +53,25 @@ utilize the spacecraft body :math:`B`, instrument body :math:`I`, sun :math:`S`,
 incremental area :math:`dA` on the planet.
 
 .. math:: \mathbf{r}_{BP} = \mathbf{r}_{BN} - \mathbf{r}_{PN}
-    :label: eq:1
+    :label: eq:albedo:1
 
 .. math:: \mathbf{r}_{IB} = \mathbf{r}_{IN} - \mathbf{r}_{BN}
-    :label: eq:2
+    :label: eq:albedo:2
 
 .. math:: \mathbf{r}_{IP} = \mathbf{r}_{IB} + \mathbf{r}_{BP}
-    :label: eq:3
+    :label: eq:albedo:3
 
 .. math:: \mathbf{r}_{SP} = \mathbf{r}_{SN} - \mathbf{r}_{PN}
-    :label: eq:4
+    :label: eq:albedo:4
 
 .. math:: \mathbf{r}_{IdA} = \mathbf{r}_{IP} - \mathbf{r}_{dAP}
-    :label: eq:5
+    :label: eq:albedo:5
 
 .. math:: \mathbf{r}_{SdA} = \mathbf{r}_{SP} - \mathbf{r}_{dAP}
-    :label: eq:6
+    :label: eq:albedo:6
 
 The previous two equations provide the sun's and instrument's position with respect to the incremental area using
-Eq. :eq:`eq:1` - :eq:`eq:4` and :math:`\mathbf{r}_{dAP}`, which is transformed from latitude and longitude of the
+Eq. :eq:`eq:albedo:1` - :eq:`eq:albedo:4` and :math:`\mathbf{r}_{dAP}`, which is transformed from latitude and longitude of the
 grid points.
 
 Sunlit Field of View Area
@@ -80,13 +80,13 @@ In determining the illuminated area within the instrument's fov, :math:`f_1`, :m
 are computed as shown below,
 
 .. math:: f_1 = \frac{\mathbf{r}_{dAP}}{| \mathbf{r}_{dAP}|} \cdot \frac{\mathbf{r}_{SdA}}{| \mathbf{r}_{SdA}|}
-    :label: eq:7
+    :label: eq:albedo:7
 
 .. math:: f_2 = \frac{\mathbf{r}_{dAP}}{| \mathbf{r}_{dAP}|} \cdot \frac{\mathbf{r}_{IdA}}{| \mathbf{r}_{IdA}|}
-    :label: eq:8
+    :label: eq:albedo:8
 
 .. math:: f_3 = \hat{n}_N \cdot \frac{-\mathbf{r}_{IdA}}{| \mathbf{r}_{IdA}|}
-    :label: eq:9
+    :label: eq:albedo:9
 
 Here :math:`\hat{n}_N` indicates the unit normal vector of the instrument in inertial frame. :math:`f_1 > 0` presents
 the sunlit :math:`f_2 > 0` presents the instrument's maximum fov, :math:`f_3 > \cos(fov)` presents the instrument's
@@ -108,7 +108,7 @@ Albedo Value
 Albedo flux ratio can be calculated as,
 
 .. math:: \text{albedoAtInstrument} = ALB \frac{f_1 \cdot f_2 \cdot f_3 \cdot d_{Area}}{\pi \cdot |\mathbf{r}_{IdA}|^2}
-    :label: eq:10
+    :label: eq:albedo:10
 
 where :math:`d_{Area}` is the area of the incremental area, :math:`ALB` is the albedo coefficient. There are albedo models
 based on an average albedo value and albedo data. The existing data files are placed under
@@ -124,7 +124,7 @@ The Mars' albedo data is obtained from `TES instrument <http://www.mars.asu.edu/
 and converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolutions.
 
 ``shadowFactorAtdA`` is optional to be calculated with eclipseCase being True or can be assigned
-directly by the user with eclipseCase False. It is used as a multiplication term in Eq. :eq:`eq:10`, if defined.
+directly by the user with eclipseCase False. It is used as a multiplication term in Eq. :eq:`eq:albedo:10`, if defined.
 Therefore, when using albedo output on an instrument, it should be used after the shadow factor multiplication of the
 instrument, if exists.
 
@@ -185,9 +185,9 @@ where albedo average value is calculated automatically based on the given planet
       albModule.addPlanetandAlbedoAverageModel(planetName, ALB_avg, numLat, numLon)
 
 where the user can set the albedo average value. Number of latitude/longitude can also be specified or set to a negative
-value to let default values being used instead (:math:`numLat = 180` and :math:`numLon = 360`). The default values can
+value to let default values being used instead (``numLat = 180`` and ``numLon = 360``). The default values can
 be changed by the user as well.
-For "ALBEDO_DATA" case,
+For ``ALBEDO_DATA`` case,
 
 .. code-block:: python
 
