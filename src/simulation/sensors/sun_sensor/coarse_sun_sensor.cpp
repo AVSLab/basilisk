@@ -37,6 +37,7 @@ CoarseSunSensor::CoarseSunSensor()
 //    this->CallCounts = 0;
     this->sunInMsgID = -1;
     this->stateInMsgID = -1;
+    this->albedoInMsgId = -1;
     this->sunEclipseInMsgId = -1;
     this->stateInMsgName = "inertial_state_output";
     this->sunInMsgName = "sun_planet_data";
@@ -61,6 +62,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->theta = 0.0;
     v3SetZero(this->B2P321Angles);
     this->r_B.fill(0.0);
+    this->r_PB_B.fill(0.0);
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->outputBufferCount = 2;
@@ -168,6 +170,13 @@ void CoarseSunSensor::CrossInit()
                                                                                      sizeof(EclipseSimMsg),
                                                                                      moduleID);
     }
+
+    /* reading in the albedo message is optional.  It only gets used if this message is successfully suscribed.  */
+    if (this->albedoInMsgName.length() > 0) {
+        this->albedoInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->albedoInMsgName,
+                                                                                sizeof(AlbedoSimMsg),
+                                                                                moduleID);
+    }
     
     //! - If either messages is not valid, send a warning message
     if(this->sunInMsgID < 0 || this->stateInMsgID < 0) {
@@ -179,14 +188,14 @@ void CoarseSunSensor::CrossInit()
 void CoarseSunSensor::readInputMessages()
 {
     SingleMessageHeader localHeader;
-
+    auto messagingSystem = SystemMessaging::GetInstance();
     //! - Zero ephemeris information
     memset(&this->sunData, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&this->stateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(this->sunInMsgID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->sunInMsgID, &localHeader,
+        messagingSystem->ReadMessage(this->sunInMsgID, &localHeader,
                                                     sizeof(SpicePlanetStateSimMsg),
                                                     reinterpret_cast<uint8_t*> (&this->sunData),
                                                     this->moduleID);
@@ -194,16 +203,24 @@ void CoarseSunSensor::readInputMessages()
     //! - If we have a valid state ID, read vehicle state ephemeris message
     if(this->stateInMsgID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgID, &localHeader,
+        messagingSystem->ReadMessage(this->stateInMsgID, &localHeader,
                                                     sizeof(SCPlusStatesSimMsg),
                                                     reinterpret_cast<uint8_t*> (&this->stateCurrent),
                                                     this->moduleID);
     }
+    //! - If we have a valid eclipse ID, read eclipse message
     if(this->sunEclipseInMsgId >= 0) {
-        SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgId, &localHeader,
+        messagingSystem->ReadMessage(this->sunEclipseInMsgId, &localHeader,
                                                     sizeof(EclipseSimMsg),
                                                     reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor),
                                                     this->moduleID);
+    }
+    //! - If we have a valid albedo ID, read albedo message
+    if (this->albedoInMsgId >= 0) {
+        AlbedoSimMsg albMsgData;
+        messagingSystem->ReadMessage(this->albedoInMsgId, &localHeader, sizeof(AlbedoSimMsg),
+            reinterpret_cast<uint8_t*> (&albMsgData), this->moduleID);
+        this->albedoValue = albMsgData.albedoAtInstrument;
     }
 }
 
@@ -257,13 +274,10 @@ void CoarseSunSensor::computeTrueOutput()
     // apply sun distance factor (adjust based on flux at current distance from sun)
     // Also apply shadow factor. Basically, correct the intensity of the light.
     this->directValue = this->directValue*this->sunDistanceFactor*this->sunVisibilityFactor.shadowFactor;
+    // Adding albedo value (if defined by the user)
+    if (this->albedoValue > 0.0){        
+        this->directValue = this->directValue + this->albedoValue;}
     this->trueValue = this->directValue;
-    
-    //! - Albedo is forced to zero for now. Note that "albedo value" must be the cosine response due to albedo intensity and direction. It can then be stacked on top of the
-    //! - sun cosine curve
-    //this->albedoValue = 0.0;
-    //this->directValue = this->directValue + this->albedoValue
-    //this->trueValue = this->directValue
 }
 
 /*! This method takes the true observed cosine value (directValue) and converts 
@@ -313,9 +327,9 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
     localMessage.OutputData = this->sensedValue;
     //! - Write the outgoing message to the architecture
     SystemMessaging::GetInstance()->WriteMessage(this->cssDataOutMsgID, Clock,
-                                                 sizeof(CSSRawDataSimMsg),
-                                                 reinterpret_cast<uint8_t *> (&localMessage),
-                                                 this->moduleID);
+        sizeof(CSSRawDataSimMsg),
+        reinterpret_cast<uint8_t*> (&localMessage),
+        this->moduleID);
 }
 
 /*! This method is called at a specified rate by the architecture.  It makes the 

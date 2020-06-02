@@ -20,6 +20,7 @@
 %module simMessages
 %{
 #include "accessSimMsg.h"
+#include "albedoSimMsg.h"
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
 #include "eclipseSimMsg.h"
@@ -72,6 +73,8 @@ namespace std {
 
 %include "accessSimMsg.h"
 GEN_SIZEOF(AccessSimMsg)
+%include "albedoSimMsg.h"
+GEN_SIZEOF(AlbedoSimMsg)
 %include "boreAngleSimMsg.h"
 GEN_SIZEOF(AngOffValuesSimMsg)
 %include "cssRawDataSimMsg.h"

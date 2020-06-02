@@ -26,6 +26,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
+#include "simMessages/albedoSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "utilities/gauss_markov.h"
 #include "utilities/saturate.h"
@@ -48,9 +49,9 @@ class CoarseSunSensor: public SysModel {
 public:
     CoarseSunSensor();
     ~CoarseSunSensor();
-    
-    void CrossInit(); //!< @brief method for initializing cross dependencies
+
     void SelfInit();  //!< @brief method for initializing own messages
+    void CrossInit(); //!< @brief method for initializing cross dependencies
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
     void setBodyToPlatformDCM(double yaw, double pitch, double roll); //!< @brief utility method to configure the platform DCM
@@ -66,7 +67,8 @@ public:
     std::string sunInMsgName;                    //!< [-] Message name for sun data
     std::string stateInMsgName;                  //!< [-] Message name for spacecraft state */
     std::string cssDataOutMsgName;                  //!< [-] Message name for CSS output data */
-    std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
+    std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message */
+    std::string albedoInMsgName;            //!< [-] Message name for albedo message */
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
@@ -75,13 +77,14 @@ public:
     Eigen::Vector3d     nHat_B;              //!< [-] css unit direction vector in body frame components
     Eigen::Vector3d     sHat_B;              //!< [-] unit vector to sun in B
     double              directValue;            //!< [-] direct solar irradiance measurement
-    double              albedoValue;            //!< [-] albedo irradiance measurement
+    double              albedoValue = -1.0;            //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
     double              sensedValue;            //!< [-] total measurement including perturbations
     double              trueValue;              //!< [-] total measurement without perturbations
     double              kellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
     Eigen::Vector3d     r_B;
+    Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame 
     double              senBias;                //!< [-] Sensor bias value
     double              senNoiseStd;            //!< [-] Sensor noise value
     uint64_t            outputBufferCount;      //!< [-] number of output msgs stored
@@ -96,6 +99,7 @@ private:
     int64_t stateInMsgID;                       //!< [-] Connect to input time message
     int64_t cssDataOutMsgID;                       //!< [-] Connect to output CSS data
     int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
+    int64_t albedoInMsgId;                     //!< [-] Connect to input albedo message
     SpicePlanetStateSimMsg sunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg stateCurrent;           //!< [-] Current SSBI-relative state
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
