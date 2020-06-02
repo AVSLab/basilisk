@@ -73,6 +73,8 @@ def test_unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitAlbedo(show_plots, planetCase, modelType, useEclipse)
     assert testResults < 1, testMessage
+
+
 def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     __tracebackhide__ = True
     testFailCount = 0

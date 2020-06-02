@@ -112,7 +112,7 @@ Albedo flux ratio can be calculated as,
 
 where :math:`d_{Area}` is the area of the incremental area, :math:`ALB` is the albedo coefficient. There are albedo models
 based on an average albedo value and albedo data. The existing data files are placed under
-:ref:`../supportData/AlbedoData` as .csv file format consisting :math:`ALB` matrix. The number of rows represent the
+``Basilisk/supportData/AlbedoData`` as ``.csv`` file format consisting :math:`ALB` matrix. The number of rows represent the
 :math:`numLat`, number of latitude (between -90 to 90 deg) and columns represent the :math:`numLon`, number of longitude
 (between -180 to 180 deg).
 
@@ -123,7 +123,7 @@ conditions.
 The Mars' albedo data is obtained from `TES instrument <http://www.mars.asu.edu/data/tes_albedo/>`__ as VICAR format
 and converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolutions.
 
-:math:`shadowFactorAtdA` is optional to be calculated with eclipseCase being True or can be assigned
+``shadowFactorAtdA`` is optional to be calculated with eclipseCase being True or can be assigned
 directly by the user with eclipseCase False. It is used as a multiplication term in Eq. :eq:`eq:10`, if defined.
 Therefore, when using albedo output on an instrument, it should be used after the shadow factor multiplication of the
 instrument, if exists.

@@ -36,7 +36,7 @@
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/geodeticConversion.h"
-#include "utilities/linearalgebra.h"
+#include "utilities/linearAlgebra.h"
 // Sim Messages
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
@@ -45,7 +45,7 @@
 
 typedef class Config {
 public:
-    double fov;              //!< [rad] instrument's field of view half angle
+    double fov = -1;         //!< [rad] instrument's field of view half angle
     Eigen::Vector3d nHat_B;  //!< [-] unit normal of the instrument (spacecraft body)
     Eigen::Vector3d r_IB_B;  //!< [m] instrument's misalignment wrt spacecraft's body frame
 } instConfig_t;

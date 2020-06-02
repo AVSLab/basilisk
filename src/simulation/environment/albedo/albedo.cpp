@@ -86,7 +86,7 @@ void Albedo::addInstrumentConfig(std::string instInMsgName, instConfig_t configM
     tmpAlbMsgName = this->ModelTag + "_" + std::to_string(this->instInMsgNames.size() - 1) + "_data";
     this->albOutMsgNames.push_back(tmpAlbMsgName);
     //! - Do a sanity check and push fov back to the vector (if not defined, use the default value.)
-    if (configMsg.fov == NULL) {
+    if (configMsg.fov < 0.0) {
         this->fovs.push_back(this->fov_default);
     } else if (configMsg.fov >= 0.0) { this->fovs.push_back(configMsg.fov); }
     else {
@@ -577,15 +577,11 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateSimMsg planetMs
     auto r_SP_N = this->r_SN_N - this->r_PN_N;
     //! - Vectors related to spacecraft
     auto r_BP_N = this->r_BN_N - this->r_PN_N;        //! - [m] spacecraft's position wrt planet (inertial)
-    auto r_SB_N = this->r_SN_N - this->r_BN_N;        //! - [m] sun's position wrt spacecraft (inertial)
-    auto sHat_SB_N = r_SB_N / r_SB_N.norm();          //! - [-] sun direction vector from sc (inertial)
-    auto sHat_SB_B = dcm_BN * sHat_SB_N;              //! - [-] sun direction vector from sc (body frame)
     //! - Vectors related to instrument
     auto r_IB_N = dcm_BN.transpose() * r_IB_B;        //! - [m] instrument's position vector wrt spacecraft (inertial)
     auto r_IP_N = r_IB_N + r_BP_N;                    //! - [m] instrument's position vector wrt planet (inertial)
     this->rHat_PI_N = -r_IP_N / r_IP_N.norm();        //! - [-] direction vector from instrument to planet (inertial)
     auto r_SI_N = r_SP_N - r_IP_N;                    //! - [m] sun's position wrt instrument (inertial)
-    auto sHat_SI_N = r_SI_N / r_SI_N.norm();          //! - [-] sun direction vector from instrument (inertial)
     //! - Calculate the authalic radius, if the polar radius available
     double t[3], t_aut[3], e, RA_planet, shadowFactorAtdA;
     if (this->RP_planets.at(idx) > 0.0) {
