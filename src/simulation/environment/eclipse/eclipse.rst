@@ -55,13 +55,13 @@ Determining States
 The initial step in the eclipse module is to obtain the celestial bodies' state data and transform them into usable terms. The relationships shown below remove the dependency on relating position to the inertial frame :math:`N` and instead utilize the planet :math:`P`, spacecraft body :math:`B`, and helio :math:`H` frames.
 
 .. math:: \mathbf{s}_{P/H} = \mathbf{r}_{N/H} - \mathbf{r}_{N/P}
-    :label: eq:1
+    :label: eq:elipse:1
 
 .. math:: \mathbf{r}_{B/H} = \mathbf{r}_{N/H} - \mathbf{r}_{N/B}
-    :label: eq:2
+    :label: eq:elipse:2
 
 .. math:: \mathbf{s}_{P/B} = \mathbf{r}_{N/B} - \mathbf{r}_{N/P}
-    :label: eq:3
+    :label: eq:elipse:3
 
 The previous three equations provide coordinates for the sun with respect to both the occulting planet and occulted spacecraft as well as the spacecraft's position with respect to the planet, respectively. The parameters on the right side of these equations come from the input state data where :math:`\mathbf{r}_{N/H}`, :math:`\mathbf{r}_{N/P}`, and :math:`\mathbf{r}_{N/B}` are the sun, planet, and spacecraft positions in the inertial frame.
 
@@ -73,40 +73,40 @@ Eclipse Conditions
 When analyzing the conical shadow model, there are critical distances and conical dimensions that must be considered. These parameters are determined by first knowing the planet's equatorial radius :math:`r_P`, which is used to solve for the angles of the shadow cones. Angles :math:`f_1` and :math:`f_2` are computed as shown below, where the subscript 1 relates to the cone of the penumbra and 2 relates to the umbra.
 
 .. math:: f_1 = \frac{\arcsin(r_H + r_P)}{| \mathbf{s}_{P/H}|}
-    :label: eq:7
+    :label: eq:elipse:7
 
 .. math:: f_2 = \frac{\arcsin(r_H - r_P)}{| \mathbf{s}_{P/H}|}
-    :label: eq:8
+    :label: eq:elipse:8
 
 Here :math:`r_H` indicates the equatorial radius of the sun, which is 695000 km. Both the sun and planet radii must be input in terms of meters.
 
-As shown by :ref:`ConShad`, the fundamental plane is perpendicular to the shadow axis and coincident with the spacecraft body. The distance between the plane-axis intersection and the center of the planet is given by :math:`s_0` as shown by Eq. :eq:`eq:9`.
+As shown by :ref:`ConShad`, the fundamental plane is perpendicular to the shadow axis and coincident with the spacecraft body. The distance between the plane-axis intersection and the center of the planet is given by :math:`s_0` as shown by Eq. :eq:`eq:elipse:9`.
 
 .. math:: s_0 = \frac{-\mathbf{s}_{P/B} \cdot \mathbf{s}_{P/H}}{| \mathbf{s}_{P/H}|}
-    :label: eq:9
+    :label: eq:elipse:9
 
 
 
 This distance and the shadow cone angles can now be used to determine the distances, :math:`c_1` and :math:`c_2`, between the fundamental plane and the cones' vertices :math:`V_1` and :math:`V_2`. These are calculated as follows:
 
 .. math:: c_1 = s_0 + \frac{r_P}{\sin(f_1)}
-    :label: eq:10
+    :label: eq:elipse:10
 
 .. math:: c_2 = s_0 - \frac{r_P}{\sin(f_2)}
-    :label: eq:11
+    :label: eq:elipse:11
 
-As shown in Eq. :eq:`eq:12` and :eq:`eq:13`, these are then used to find the radii, :math:`l_1` and :math:`l_2`, of the shadow cones in the fundamental plane.
+As shown in Eq. :eq:`eq:elipse:12` and :eq:`eq:elipse:13`, these are then used to find the radii, :math:`l_1` and :math:`l_2`, of the shadow cones in the fundamental plane.
 
 .. math:: l_1 = c_1 \tan(f_1)
-    :label: eq:12
+    :label: eq:elipse:12
 
 .. math:: l_2 = c_2 \tan(f_2)
-    :label: eq:13
+    :label: eq:elipse:13
 
 Finding these parameters provides insight into the type of eclipse that the spacecraft is experiencing. To determine the type, it is useful to compare the cone radii to the distance between the spacecraft and the shadow axis, which is given by :math:`l`.
 
 .. math:: l = \sqrt{|\mathbf{s}_{P/B}|^2 - s^2_0}
-    :label: eq:14
+    :label: eq:elipse:14
 
 Total and annular eclipses both require the spacecraft to be relatively close to the shadow axis, where :math:`|l|<| l_2|`. The difference between these two types is that the planet is closer to the spacecraft for a total eclipse (:math:`c_2 < 0`) than during an annular eclipse (:math:`c_2 > 0`). If the spacecraft is further from the shadow axis but still within a cone radius (:math:`|l|<| l_1|`), it is experiencing a partial eclipse.
 
@@ -116,13 +116,13 @@ Percent Shadow
 With the eclipse type determined, the shadow fraction can now be found. To find the shadow fraction, the apparent radii of the sun and planet and the apparent separation of both bodies are needed. These are given, respectively, by :math:`a`, :math:`b`, and :math:`c` in the equations below.
 
 .. math:: a = \arcsin(\frac{r_H}{| \mathbf{r}_{B/H}|})
-    :label: eq:15
+    :label: eq:elipse:15
 
 .. math:: b = \arcsin(\frac{r_P}{| \mathbf{s}_{P/B}|})
-    :label: eq:16
+    :label: eq:elipse:16
 
 .. math:: c = \arccos(\frac{-\mathbf{s}_{P/B} \cdot \mathbf{r}_{B/H}}{| \mathbf{s}_{P/B}| | \mathbf{r}_{B/H}|})
-    :label: eq:17
+    :label: eq:elipse:17
 
 :ref:`FigDisk` below illustrates the overlapping disk model that represents the occultation, where the solid orange line indicates the sun and the dotted blue line indicates the planet.
 
@@ -149,23 +149,23 @@ Shadow Fraction = \frac{A_P}{A_H}
 Partial Eclipse ($c < a+ b$)
 """"""""""""""""""""""""""""
 
-For a partial eclipse, the occulted area is given by Eq. :eq:`eq:19`.
+For a partial eclipse, the occulted area is given by Eq. :eq:`eq:elipse:19`.
 
 .. math:: A = a^2 \arccos(\frac{x}{a}) + b^2 \arccos(\frac{c-x}{b}) - cy
-    :label: eq:19
+    :label: eq:elipse:19
 
-Parameters :math:`a`, :math:`b`, and :math:`c` are those calculated previously in Eq. :eq:`eq:15`, :eq:`eq:16`, and :eq:`eq:17`. The values :math:`x` and :math:`y` are given by the following equations.
+Parameters :math:`a`, :math:`b`, and :math:`c` are those calculated previously in Eq. :eq:`eq:elipse:15`, :eq:`eq:elipse:16`, and :eq:`eq:elipse:17`. The values :math:`x` and :math:`y` are given by the following equations.
 
 .. math:: x = \frac{c^2 + a^2 - b^2}{2c}
-    :label: eq:20
+    :label: eq:elipse:20
 
 .. math:: y = \sqrt{a^2 - x^2}
-    :label: eq:21
+    :label: eq:elipse:21
 
 Like with the annular partial eclipse, the shadow factor for this type is the ratio between the occulted area and the sun's apparent area. This is given by the equation below.
 
 .. math:: \text{Shadow Fraction} = 1 - \frac{A}{\pi a^2}
-    :label: eq:22
+    :label: eq:elipse:22
 
 
 Module Assumptions and Limitations
