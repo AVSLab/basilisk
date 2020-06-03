@@ -8,7 +8,7 @@ Basilisk Release Notes
     We are very excited by the great capabilities that this software already has, and plan to be updating this
     software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also
     documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation
-    folders ass well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples``
+    folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples``
     folder.  More documentation and tutorial scripts are in development.
 
 .. sidebar:: In Progress Features
@@ -25,6 +25,7 @@ Version |release|
 - Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
   also if multiple celestial bodies are setup.
 - New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`
+- Made the RST HTML document creation work on Windows as well (see :ref:`createHtmlDocumentation`)
 
 Version 1.8.0
 -------------
