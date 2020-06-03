@@ -61,7 +61,7 @@ creates this block of math.
 To create a numbered equation you need to add a label::
 
     .. math::
-        :label: eq-firstLaw
+        :label: eq-fswModule-firstLaw
 
         a = b^2
 
@@ -72,7 +72,9 @@ which creates this
 
     a = b^2
 
-This label can be referenced using ``:eq:`eq-firstLaw``` to cite Eq. :eq:`eq-firstLaw`.
+This label can be referenced using ``:eq:`eq-fswModule-firstLaw``` to cite Eq. :eq:`eq-fswModule-firstLaw`.
+Note that these label names must be unique across all of the Basilisk RST documentation.  It is encouraged to use
+a module-unique naming scheme.
 
 To do bold math, we can't use the popular ``\bm`` command.  Instead, we can use ``{\bf u}`` (regular letters) or
 ``\pmb \omega`` (greek letters).  The following math is an example of this showing both bold and un-bold letters

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2020, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,36 +16,29 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module coarse_sun_sensor
+%module albedo
 %{
-   #include "coarse_sun_sensor.h"
+   #include "albedo.h"
 %}
 
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
-%include "std_vector.i"
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+
 %include "std_string.i"
-%feature("copyctor");
-
-namespace std {
-    %template(CSSVector) vector<CoarseSunSensor>;
-}
-
+%include "std_vector.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
 %include "sys_model.h"
-%include "coarse_sun_sensor.h"
+%include "albedo.h"
 
+%include "../../simMessages/albedoSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/cssRawDataSimMsg.h"
-%include "../../simMessages/albedoSimMsg.h"
-%include "../../simMessages/eclipseSimMsg.h"
-%include "../../simFswInterfaceMessages/cssArraySensorIntMsg.h"
-GEN_SIZEOF(CSSRawDataSimMsg);
-GEN_SIZEOF(AlbedoSimMsg);
-GEN_SIZEOF(EclipseSimMsg);
-GEN_SIZEOF(CSSArraySensorIntMsg);
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
+
+GEN_SIZEOF(AlbedoSimMsg)
+GEN_SIZEOF(SpicePlanetStateSimMsg)
+GEN_SIZEOF(SCPlusStatesSimMsg)
 
 %pythoncode %{
 import sys
