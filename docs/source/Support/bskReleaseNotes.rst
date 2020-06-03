@@ -25,6 +25,7 @@ Version |release|
 - Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
   also if multiple celestial bodies are setup.
 - New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`
+- Made the RST HTML document creation work on Windows as well (see :ref:`createHtmlDocumentation`)
 
 Version 1.8.0
 -------------
