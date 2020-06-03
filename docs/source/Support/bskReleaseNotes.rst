@@ -22,6 +22,9 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Added a new folder ``tools/fswAuto`` that contains :ref:`Folder_tools` to migrate BSK simulations and modules to C-code
+- Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
+  also if multiple celestial bodies are setup.
+- New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`
 
 Version 1.8.0
 -------------
