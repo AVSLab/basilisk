@@ -58,7 +58,6 @@ Albedo::Albedo()
     this->albedoAtInstrument = -1.0;
     this->numLon = 360;
     this->numLat = 180;
-    this->r_IB_B_default.fill(0.0);
     this->nHat_B_default = { 1.0, 0.0, 0.0 };
     this->fov_default = 90. * D2R;
     this->OutputBufferCount = 2;
@@ -76,6 +75,17 @@ Albedo::~Albedo()
     return;
 }
 
+Config::Config() {
+    this->fov = -1.0;
+    this->nHat_B.fill(0.0);
+    this->r_IB_B.fill(0.0);
+    return;
+}    
+
+Config::~Config() {
+    return;
+}
+
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function)
  @return void
  */
@@ -88,26 +98,20 @@ void Albedo::addInstrumentConfig(std::string instInMsgName, instConfig_t configM
     //! - Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (configMsg.fov < 0.0) {
         this->fovs.push_back(this->fov_default);
-    } else if (configMsg.fov >= 0.0) { this->fovs.push_back(configMsg.fov); }
+        bskLogger.bskLog(BSK_WARNING, "Albedo Module (addInstrumentConfig): For the instrument (%s)'s half field of view angle (fov), the default value is used.", instInMsgName.c_str());
+    } 
     else {
-    bskLogger.bskLog(BSK_ERROR, "Albedo Module (addInstrumentConfig): Instrument (%s)'s half field of view angle (fov) cannot be negative!", instInMsgName.c_str());
-    return;
+        this->fovs.push_back(configMsg.fov);
     }
-    //! - Push r_IB_B back to the vector (if not defined, use the default value.)
-    if (!sizeof(configMsg.r_IB_B)) {
-        this->r_IB_Bs.push_back(this->r_IB_B_default);
-    }
-    else { this->r_IB_Bs.push_back(configMsg.r_IB_B); }
+    //! - Push r_IB_B back to the vector
+    this->r_IB_Bs.push_back(configMsg.r_IB_B);
     //! - Do a sanity check and push nHat_B back to the vector (if not defined, use the default value.)
-    if (!sizeof(configMsg.nHat_B)) {
-        this->nHat_Bs.push_back(this->nHat_B_default);
-    }
-    else if (!configMsg.nHat_B.isZero()) {
+    if (!configMsg.nHat_B.isZero()) {
         this->nHat_Bs.push_back(configMsg.nHat_B / configMsg.nHat_B.norm());
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (addInstrumentConfig): Instrument (%s)'s unit normal vector (nHat_B) elements cannot be all zero!", instInMsgName.c_str());
-        return;
+        this->nHat_Bs.push_back(nHat_B_default);
+        bskLogger.bskLog(BSK_WARNING, "Albedo Module (addInstrumentConfig): For the instrument (%s)'s unit normal vector (nHat_B), the default vector is used.", instInMsgName.c_str());
     }
     return;
 }
@@ -121,23 +125,23 @@ void Albedo::addInstrumentConfig(std::string instInMsgName, double fov, Eigen::V
     this->instInMsgNames.push_back(instInMsgName);
     tmpAlbMsgName = this->ModelTag + "_" + std::to_string(this->instInMsgNames.size() - 1) + "_data";
     this->albOutMsgNames.push_back(tmpAlbMsgName);
-    //! - Do a sanity check and push fov back to the vector
-    if (fov >= 0.0) {
-        this->fovs.push_back(fov);        
+    //! - Do a sanity check and push fov back to the vector (if not defined, use the default value.)
+    if (fov < 0.0) {
+        this->fovs.push_back(this->fov_default);
+        bskLogger.bskLog(BSK_WARNING, "Albedo Module (addInstrumentConfig): Instrument (%s)'s half field of view angle (fov) cannot be negative, the default value is used instead.", instInMsgName.c_str());
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (addInstrumentConfig): Instrument (%s)'s half field of view angle (fov) cannot be negative!", instInMsgName.c_str());
-        return;
+        this->fovs.push_back(fov);
     }
     //! - Push r_IB_B back to the vector
     this->r_IB_Bs.push_back(r_IB_B);
-    //! - Do a sanity check and push nHat_B back to the vector
+    //! - Do a sanity check and push nHat_B back to the vector (if not defined, use the default value.)
     if (!nHat_B.isZero()) {
         this->nHat_Bs.push_back(nHat_B / nHat_B.norm());
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (addInstrumentConfig): Instrument (%s)'s unit normal vector (nHat_B) elements cannot be all zero!", instInMsgName.c_str());
-        return;
+        this->nHat_Bs.push_back(nHat_B_default);
+        bskLogger.bskLog(BSK_WARNING, "Albedo Module (addInstrumentConfig): Instrument (%s)'s unit normal vector (nHat_B) cannot be composed of all zeros, the default vector is used instead.", instInMsgName.c_str());
     }      
     return;
 }

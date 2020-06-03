@@ -45,7 +45,9 @@
 
 typedef class Config {
 public:
-    double fov = -1;         //!< [rad] instrument's field of view half angle
+    Config();
+    ~Config();
+    double fov;              //!< [rad] instrument's field of view half angle
     Eigen::Vector3d nHat_B;  //!< [-] unit normal of the instrument (spacecraft body)
     Eigen::Vector3d r_IB_B;  //!< [m] instrument's misalignment wrt spacecraft's body frame
 } instConfig_t;
@@ -80,7 +82,6 @@ public:
     std::string spacecraftStateInMsgName;       //!< message name for spacecraft data
     BSKLogger bskLogger;                        //!< BSK Logging    
     int numLat, numLon;                         //!< [-] number of latitude and longitude grid points
-    Eigen::Vector3d r_IB_B_default;             //!< [m] default value for instrument's misalignment wrt spacecraft's body frame
     Eigen::Vector3d nHat_B_default;             //!< [-] default value for unit normal of the instrument (spacecraft body)
     double fov_default;                         //!< [rad] default value for instrument's field of view half angle
     bool eclipseCase;                           //!< consider eclipse at dA, if true
