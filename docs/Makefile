@@ -2,8 +2,14 @@
 #
 
 # You can set these variables from the command line.
+ifeq ($(OS),Windows_NT)
+    # windows specific code
+    SPHINXBUILD = py -3 -m sphinx
+else
+    # unix/macOS specific code
+    SPHINXBUILD = python3 -m sphinx
+endif
 SPHINXOPTS    =
-SPHINXBUILD   = python3 -m sphinx
 SOURCEDIR     = source
 BUILDDIR      = build
 
@@ -11,14 +17,23 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-clean:
-	-rm -rf $(BUILDDIR)
-	-rm -rf $(SOURCEDIR)/Documentation
-	-rm -rf $(SOURCEDIR)/breathe.data
-	-rm -rf $(SOURCEDIR)/tools
+ifeq ($(OS),Windows_NT)
+	clean:
+		-del /s $(BUILDDIR)
+		-del /s $(SOURCEDIR)\Documentation
+		-del /s $(SOURCEDIR)\breathe.data
+		-del /s $(SOURCEDIR)\tools
+else
+	clean:
+		-rm -rf $(BUILDDIR)
+		-rm -rf $(SOURCEDIR)/Documentation
+		-rm -rf $(SOURCEDIR)/breathe.data
+		-rm -rf $(SOURCEDIR)/tools
+endif
 
 view:
-	open build/html/index.html
+	    # works on macOS
+		open build/html/index.html
 	
 .PHONY: help Makefile
 
