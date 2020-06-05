@@ -28,9 +28,3 @@ linear algebra calculations.  Rigid body kinematics calculations are supported t
 library.
 
 If you think you are done and would like to contribute this module to the Basilisk repository, be sure to study the :ref:`bskModuleCheckoutList` to complete all required check-out tasks.
-
-
-.. warning::
-
-    If your module is using the Eigen library, the IDE like Xcode might show you false warnings about
-    ``<Eigen/Dense>`` not being found.  The project still compiles.
