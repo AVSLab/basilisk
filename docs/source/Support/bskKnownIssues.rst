@@ -97,6 +97,9 @@ Version 1.8.0
   are shown in the IDE folder ``environmentLib`` within the ``environment`` parent folder.  This keeps the BSK
   folders cleaner and with less duplicated code being displayed.
 - A new python package dependency is ``Pillow``.  This is needed for the test scripts for :ref:`camera` to run.
+- In Xcode the build will complain that it can't find the ``<Eigen/Dense>`` library.  The code compiles ok.  The work
+  around this conan issue is to run the build twice, once for Debug and once for Release.  At that point it can
+  be run just once.
 
 Version 1.7.5
 -----------------
