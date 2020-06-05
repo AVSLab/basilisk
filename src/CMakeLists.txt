@@ -324,7 +324,7 @@ find_package(PythonLibs 3 REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 # The following lines are necessary to prevent Xcode from issuing a warning about Eigen not being within the search path.
 # Related to Eigen being a header only library.
-if(${Eigen3_INCLUDE_DIRS_DEBUG})
+if(DEFINED Eigen3_INCLUDE_DIRS_DEBUG)
     set(DIRECTORIES "$<$<CONFIG:Debug>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
                                      "$<$<CONFIG:Release>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
                                      "$<$<CONFIG:RelWithDebInfo>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
