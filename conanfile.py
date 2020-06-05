@@ -132,7 +132,7 @@ class BasiliskConan(ConanFile):
                 shutil.rmtree(distPath, ignore_errors=True)
 
         if self.settings.build_type == "Debug":
-            print("Build type is set to Debug. Performance will be significantly lower.")
+            print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
         # Install additional opencv methods
         if self.options.opNav:

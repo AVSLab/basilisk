@@ -26,6 +26,8 @@ Version |release|
   also if multiple celestial bodies are setup.
 - New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`
 - Made the RST HTML document creation work on Windows as well (see :ref:`createHtmlDocumentation`)
+- Fixed the conan issues where the IDE only saw the Debug path of the Eigen library, not the Release path.
+  This gets rid of false warnings in Xcode that ``<Eigen/Dense>`` could not be found.
 
 Version 1.8.0
 -------------
