@@ -42,14 +42,6 @@ option(BUILD_VIZINTERFACE "Build VizInterface Module" ON)
 option(BUILD_OPNAV "Build OpNav Modules" OFF)
 
 
-# HACK: Create Release and Debug directories for conan
-# Conan hasn't fixed this issue yet, this removes warnings
-
-foreach (library ${CONAN_LIB_DIRS})
-   file(MAKE_DIRECTORY "${library}/Release")
-   file(MAKE_DIRECTORY "${library}/Debug")
-endforeach(library)
-
 
 
 #! create_symlinks : create symlinks to support files in source rather than keeping them in dist
@@ -330,7 +322,21 @@ find_package(PythonLibs 3 REQUIRED)
 
 #TODO: Remove the global link-libraries call
 find_package(Eigen3 CONFIG REQUIRED)
-get_target_property(VAR Eigen3::Eigen3 INTERFACE_INCLUDE_DIRECTORIES)
+# The following lines are necessary to prevent Xcode from issuing a warning about Eigen not being within the search path.
+# Related to Eigen being a header only library.
+if(${Eigen3_INCLUDE_DIRS_DEBUG})
+    set(DIRECTORIES "$<$<CONFIG:Debug>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
+                                     "$<$<CONFIG:Release>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
+                                     "$<$<CONFIG:RelWithDebInfo>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
+                                     "$<$<CONFIG:MinSizeRel>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
+                                     )
+else()
+    set(DIRECTORIES "$<$<CONFIG:Debug>:${Eigen3_INCLUDE_DIRS_RELEASE}>"
+                                     "$<$<CONFIG:Release>:${Eigen3_INCLUDE_DIRS_RELEASE}>"
+                                     "$<$<CONFIG:RelWithDebInfo>:${Eigen3_INCLUDE_DIRS_RELEASE}>"
+                                     "$<$<CONFIG:MinSizeRel>:${Eigen3_INCLUDE_DIRS_RELEASE}>")
+endif()
+set_property(TARGET Eigen3::Eigen3 PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${DIRECTORIES})
 link_libraries(Eigen3::Eigen3)
 
 
