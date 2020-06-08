@@ -10,7 +10,9 @@ Version |release|
 
 Version 1.8.1
 -------------
-- None
+- When deleting ``.conan`` and doing a build with ``opNav`` set to true, the required dependencies can't be found
+  on the repo on the first install run.  Running it again makes it work.  This is fixed in the next release to run
+  properly on the first try.
 
 Version 1.8.0
 -------------
