@@ -48,13 +48,13 @@ Requirements:
 """
 
 import BSK_OpNav
-SimBase = BSK_OpNav.BSKSim(1,1)
+SimBase = BSK_OpNav.BSKSim(1, 1)
 if os.path.exists(SimBase.vizPath) == False:
-    pytestmark = pytest.mark.skip(reason= "Vizard App not found: modify app in examples/OpNavScenarios/BSK_masters")
+    pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_masters")
 
 try:
     from Basilisk.simulation import vizInterface, camera
-    from Basilisk.fswAlgorithms import houghCircles, limbFinding #,centerRadiusCNN
+    from Basilisk.fswAlgorithms import houghCircles, limbFinding, centerRadiusCNN
 except ImportError:
     pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use OpenCV, ZMQ, and Protobuffers in build")
 
@@ -70,7 +70,7 @@ except ImportError:
     , ('scenario_OpNavODLimb')
     , ('scenario_OpNavPoint')
     , ('scenario_OpNavPointLimb')
-    # , ('scenario_CNNAttOD')
+    , ('scenario_CNNAttOD')
 ])
 
 @pytest.mark.scenarioTest
