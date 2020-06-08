@@ -59,13 +59,30 @@ class BasiliskConan(ConanFile):
     # set cmake generator default
     generator = None
 
+    # ensure conan repo info is setup
+    print("\nChecking conan repo settings:")
+    try:
+        consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
+        conanRepos = ["conan-community https://api.bintray.com/conan/conan-community/conan",
+                      "bincrafters https://api.bintray.com/conan/bincrafters/public-conan"]
+        for item in conanRepos:
+            if item in consoleReturn:
+                print("Found: " + statusColor + item + endColor)
+            else:
+                print("Configuring: " + warningColor + item + endColor)
+                cmdString = ["conan", "remote", "add"] + item.split(" ")
+                subprocess.check_call(cmdString)
+    except:
+        print("conan: " + failColor + "Error configuring conan repo information." + endColor)
+    print("\n")
+
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
         required = reqFile.read().replace("`", "").replace(",", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
-        checkStr = "Required"
 
+        checkStr = "Required"
         if self.options.allOptPkg:
             optFile = open('docs/source/bskPkgOptions.txt', 'r')
             optionalPkgs = optFile.read().replace("`", "").replace(",", "").split('\n')
@@ -78,7 +95,7 @@ class BasiliskConan(ConanFile):
         for elem in pkgList:
             try:
                 pkg_resources.require(elem)
-                print("Found " + statusColor + elem + endColor)
+                print("Found: " + statusColor + elem + endColor)
             except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
                 if self.options.autoKey:
                     choice = self.options.autoKey
@@ -99,6 +116,7 @@ class BasiliskConan(ConanFile):
                     print(warningColor + "Skipping installing " + elem + endColor)
 
         # check the version of Python
+        print("\nChecking Python version:")
         if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
             print(warningColor + "Python 3.7 should be used with Basilisk." + endColor)
             print("You are using Python {}.{}.{}".format(sys.version_info.major,
