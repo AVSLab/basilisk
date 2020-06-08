@@ -103,11 +103,11 @@ Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Basilisk uses conan for package managing. In order to do so, users
-   must install conan and set the remote repositories for libraries:::
+   must install conan::
 
        $ pip3 install --user conan
-       $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
-       $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+
+   The conan repositories information is automatically setup by ``conanfile.py``.
 
    Note that ``conan`` version 1.25.x has issues on macOS where it doesn't properly link system frameworks.  Stick
    with 1.24.x for now.

@@ -51,7 +51,7 @@ def test_toolsFolder(show_plots, toolCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    pathFile = Path(__file__).parents[2] / "tools" / toolCase
+    pathFile = Path(__file__).parents[2] / "externalTools" / toolCase
 
     shellCmd = [sys.executable, pathFile]
     try:

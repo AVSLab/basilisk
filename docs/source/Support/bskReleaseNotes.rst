@@ -21,13 +21,15 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- Added a new folder ``tools/fswAuto`` that contains :ref:`Folder_tools` to migrate BSK simulations and modules to C-code
+- Added a new folder ``externalTools/fswAuto`` that contains :ref:`Folder_externalTools` to migrate BSK simulations and modules to C-code
 - Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
   also if multiple celestial bodies are setup.
 - New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`
 - Made the RST HTML document creation work on Windows as well (see :ref:`createHtmlDocumentation`)
 - Fixed the conan issues where the IDE only saw the Debug path of the Eigen library, not the Release path.
   This gets rid of false warnings in Xcode that ``<Eigen/Dense>`` could not be found.
+- updated the installer script to automatically set the ``conan`` repo information.  This removes one more step
+  from the installation process.
 
 Version 1.8.0
 -------------

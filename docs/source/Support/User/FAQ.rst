@@ -46,9 +46,4 @@ The following Frequency Answer Questions are general and not operating system sp
    for Basilisk.  To do this you
 
      - delete the `.conan` folder in your home directory
-     - fresly setup the conan package from the install instructions using::
-
-        $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
-        $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-
      - follow the regular build instructions in :ref:`configureBuild` using the ``clean`` flag
