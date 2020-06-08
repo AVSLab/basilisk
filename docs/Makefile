@@ -17,19 +17,11 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-ifeq ($(OS),Windows_NT)
-	clean:
-		-del /s $(BUILDDIR)
-		-del /s $(SOURCEDIR)\Documentation
-		-del /s $(SOURCEDIR)\breathe.data
-		-del /s $(SOURCEDIR)\tools
-else
-	clean:
-		-rm -rf $(BUILDDIR)
-		-rm -rf $(SOURCEDIR)/Documentation
-		-rm -rf $(SOURCEDIR)/breathe.data
-		-rm -rf $(SOURCEDIR)/tools
-endif
+clean :
+	-rm -rf $(BUILDDIR)
+	-rm -rf $(SOURCEDIR)/Documentation
+	-rm -rf $(SOURCEDIR)/breathe.data
+	-rm -rf $(SOURCEDIR)/externalTools
 
 view:
 	    # works on macOS
