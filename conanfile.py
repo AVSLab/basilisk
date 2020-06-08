@@ -59,23 +59,6 @@ class BasiliskConan(ConanFile):
     # set cmake generator default
     generator = None
 
-    # ensure conan repo info is setup
-    print("\nChecking conan repo settings:")
-    try:
-        consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
-        conanRepos = ["conan-community https://api.bintray.com/conan/conan-community/conan",
-                      "bincrafters https://api.bintray.com/conan/bincrafters/public-conan"]
-        for item in conanRepos:
-            if item in consoleReturn:
-                print("Found: " + statusColor + item + endColor)
-            else:
-                print("Configuring: " + warningColor + item + endColor)
-                cmdString = ["conan", "remote", "add"] + item.split(" ")
-                subprocess.check_call(cmdString)
-    except:
-        print("conan: " + failColor + "Error configuring conan repo information." + endColor)
-    print("\n")
-
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
         required = reqFile.read().replace("`", "").replace(",", "").split('\n')
@@ -169,6 +152,24 @@ class BasiliskConan(ConanFile):
         else:
             self.generator = str(self.options.generator)
         print("cmake generator set to: " + str(self.generator))
+
+    def config_options(self):
+        # ensure conan repo info is setup
+        print("\nChecking conan repo settings:")
+        try:
+            consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
+            conanRepos = ["conan-community https://api.bintray.com/conan/conan-community/conan",
+                          "bincrafters https://api.bintray.com/conan/bincrafters/public-conan"]
+            for item in conanRepos:
+                if item in consoleReturn:
+                    print("Found: " + statusColor + item + endColor)
+                else:
+                    print("Configuring: " + warningColor + item + endColor)
+                    cmdString = ["conan", "remote", "add"] + item.split(" ")
+                    subprocess.check_call(cmdString)
+        except:
+            print("conan: " + failColor + "Error configuring conan repo information." + endColor)
+        print("\n")
 
     def build(self):
         root = os.path.abspath(os.path.curdir)
