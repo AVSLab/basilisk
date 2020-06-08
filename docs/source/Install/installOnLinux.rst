@@ -50,10 +50,7 @@ Dependencies
 
        $ pip3 install --user conan
 
-#. Setup Conan Repositories. These can be consolidated into a private conan server `conan getting started docs <https://docs.conan.io/en/latest/introduction.html>`__::
-
-       $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-       $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+   The conan repositories information is automatically setup by ``conanfile.py``.
 
 #. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
