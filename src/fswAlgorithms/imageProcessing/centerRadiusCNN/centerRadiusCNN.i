@@ -25,8 +25,11 @@
 from Basilisk.simulation.swig_common_model import *
 %}
 %include "stdint.i"
+%include "std_string.i"
+%include "swig_conly_data.i"
 %include "sys_model.h"
 %include "centerRadiusCNN.h"
+
 %include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 %include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
 GEN_SIZEOF(CirclesOpNavMsg)
