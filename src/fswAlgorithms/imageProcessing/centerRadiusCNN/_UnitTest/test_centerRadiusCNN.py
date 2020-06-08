@@ -59,9 +59,9 @@ except ImportError:
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, saveImage", [
-                    ("mars.jpg",  False), #Mars image
-                   ("mars2.jpg",   False), # Mars images
-                   ("mars3.jpg", False)  # Mars images
+                    ("mars.jpg", False),
+                   ("mars2.jpg", False),
+                   ("mars3.jpg", False)
 ])
 
 # update "module" in this function name to reflect the module name
