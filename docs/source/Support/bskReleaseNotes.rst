@@ -21,6 +21,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.1
+-------------
 - Added a new folder ``externalTools/fswAuto`` that contains :ref:`Folder_externalTools` to migrate BSK simulations and modules to C-code
 - Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
   also if multiple celestial bodies are setup.
@@ -72,7 +76,7 @@ Version 1.7.5
   supported in Vizard v1.3.0 
 
 Version 1.7.4
--------------
+
 - hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that
   Windows expected, but Unix systems didn't need
 

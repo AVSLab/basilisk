@@ -8,6 +8,10 @@ Version |release|
 -----------------
 - text here
 
+Version 1.8.1
+-------------
+- None
+
 Version 1.8.0
 -------------
 - The new conan based built system might need the conan cache folder ``.conan`` to be deleted and reset.  This is
