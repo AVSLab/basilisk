@@ -28,6 +28,8 @@ Version |release|
 - Made the RST HTML document creation work on Windows as well (see :ref:`createHtmlDocumentation`)
 - Fixed the conan issues where the IDE only saw the Debug path of the Eigen library, not the Release path.
   This gets rid of false warnings in Xcode that ``<Eigen/Dense>`` could not be found.
+- updated the installer script to automatically set the ``conan`` repo information.  This removes one more step
+  from the installation process.
 
 Version 1.8.0
 -------------
