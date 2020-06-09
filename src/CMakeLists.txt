@@ -247,6 +247,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
                 "${PARENT_DIR}/*.c"
                 "${PARENT_DIR}/*.cpp"
                 "${PARENT_DIR}/*.h"
+                "${PARENT_DIR}/*.cmake"
                 "${PARENT_DIR}/*.rst")
 
         set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the .i files
