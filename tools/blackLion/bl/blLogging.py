@@ -4,7 +4,7 @@ import logging.handlers
 import zmq
 from zmq.log.handlers import PUBHandler
 import socket
-from utilities import TcpProtocol, IpcProtocol
+from blUtilities import (TcpProtocol, IpcProtocol)
 
 
 def add_logger_pub(name, transport_type, port=""):

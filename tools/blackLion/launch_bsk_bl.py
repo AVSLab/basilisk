@@ -1,5 +1,9 @@
-from bl.utilities import Bootstrapper
-import os
+from bl.blUtilities import Bootstrapper
+import sys, os, inspect
+
+#filename = inspect.getframeinfo(inspect.currentframe()).filename
+#path = os.path.dirname(os.path.abspath(filename))
+#sys.path.append(path + '/../../../Basilisk/modules')
 
 
 class BSK_Bootstrapper(Bootstrapper):
@@ -24,9 +28,9 @@ class BSK_Bootstrapper(Bootstrapper):
 
 def launch_bsk_sims(boot_strap, local_path):
     #boot_strap.add_local_node(node_name="bsk_dyn_node", file_name="BSK_DynNode.py", path=local_path+"/bsk_node/")
-    #boot_strap.add_local_node(node_name="bsk_fsw_node", file_name="BSK_FSWNode.py", path=local_path+"/bsk_node/")
+    boot_strap.add_local_node(node_name="bsk_fsw_node", file_name="fswScenarioclass.py", path=local_path+"/bskNode/")
     boot_strap.add_local_node(node_name="py_listener", file_name="listener.py", path=local_path + "/bl/")
-
+    #boot_strap.add_external_node(node_name="bsk_fsw")
 
 
 if __name__ == "__main__":

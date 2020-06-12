@@ -15,6 +15,8 @@ except:
 class ListenerRouter(object):
     def __init__(self):
         self.localSubscriptions = set()
+        self.localSubscriptions.add("adcs_config_data")
+        self.localSubscriptions.add("nom_att_guid_out")
 
     def collect_localRouteMessages(self):
         self.localSubscriptions.add("wheelTorques")

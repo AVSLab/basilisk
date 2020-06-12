@@ -20,7 +20,7 @@
 import sys, os
 import zmq
 import constants
-import utilities
+import blUtilities
 import blLogging
 
 
@@ -77,8 +77,8 @@ class MasterController(object):
         self.frame_length = 0
         self.dataExchangeRecord = {}  # dictionary with keys= msg_name, values = CentralDataExchangeObject's
 
-        self.backend_protocol = utilities.TcpProtocol(host_name=self.host_name)
-        self.frontend_protocol = utilities.TcpProtocol(host_name=self.host_name)
+        self.backend_protocol = blUtilities.TcpProtocol(host_name=self.host_name)
+        self.frontend_protocol = blUtilities.TcpProtocol(host_name=self.host_name)
         self.bind_backend()
         self.bind_frontend()
 
