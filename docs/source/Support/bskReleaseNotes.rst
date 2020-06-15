@@ -21,7 +21,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Updated documentation and ``CMakeLists.txt`` to required 3.14 or higher
 
 Version 1.8.1
 -------------
