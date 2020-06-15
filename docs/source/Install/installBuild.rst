@@ -89,6 +89,12 @@ clean distribution folder, and that is built right away, you could use::
 
     python3 conanfile.py --clean --buildProject --opNav True --vizInterface False
 
+.. warning::
+
+    If you switch between building for release (default) and debug, you must re-run this command again.  Otherwise
+    you will not have the correct conan dependencies included for your build type.  In the IDE like Xcode, for
+    example, if you do a regular build you are building for debug, not for release.  Thus, be mindful of how
+    you are building the code.
 
 Configuring and Building with ``conan`` Commands
 ------------------------------------------------
