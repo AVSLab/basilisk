@@ -131,7 +131,12 @@ When all the prerequisite installations are complete, the project can be built a
 
    For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
    ``dist3``.
-   This process will verify that the minimum required Basilisk python packages are installed, and that
+
+   .. Warning:: Note that the default configuration is building for Release.  When you open the project in XCode, note
+        that you need to build for profiling.  Otherwise you get errors about not being able to find appropriate
+        conan installed libraries.
+
+   The ``python3 conanfile.py`` process will verify that the minimum required Basilisk python packages are installed, and that
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
    folder.
 
