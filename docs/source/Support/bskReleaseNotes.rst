@@ -25,7 +25,8 @@ Version |release|
 - Updated how ``openCV`` is included to avoid false Xcode warnings about the library not being installed
 - Added CNN module for image processing as well as a pre-trained model
   (read by the module) that allows to extract center and apparent diameter from Mars
-  images. Module and model found in :ref:`centerRadiusCNN`
+  images. Module and model found in :ref:`centerRadiusCNN`.  Note that for now this module is only built
+  on macOS systems.  As we are able to test on other platforms we will include it there too.
 
 Version 1.8.1
 -------------
