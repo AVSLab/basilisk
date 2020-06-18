@@ -13,6 +13,8 @@ Version 1.8.1
 - When deleting ``.conan`` and doing a build with ``opNav`` set to true, the required dependencies can't be found
   on the repo on the first install run.  Running it again makes it work.  This is fixed in the next release to run
   properly on the first try.
+- If ``openCV`` is conan installed for Release only the Xcode would give false error messages that it can't
+  find the library.  This is now fixed in the current release.
 
 Version 1.8.0
 -------------

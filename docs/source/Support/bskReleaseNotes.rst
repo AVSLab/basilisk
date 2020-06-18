@@ -22,6 +22,7 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Updated documentation and ``CMakeLists.txt`` to required 3.14 or higher
+- Updated how ``openCV`` is included to avoid false Xcode warnings about the library not being installed
 
 Version 1.8.1
 -------------
