@@ -49,7 +49,7 @@ try:
     from Basilisk.fswAlgorithms import centerRadiusCNN
 except ImportError:
     importErr = True
-    reasonErr = "CenterRadiusCNN not built---check OpenCV option"
+    reasonErr = "CenterRadiusCNN not built---check opNav option"
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -180,4 +180,7 @@ def cnnTest(show_plots, image, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
+    if importErr:
+        print(reasonErr)
+        exit(1)
     cnnTest(True, "mars.jpg", True) # mars images

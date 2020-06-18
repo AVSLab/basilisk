@@ -37,7 +37,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/OpNavScenarios/scenarios')
+sys.path.append(path + '/../examples/OpNavScenarios/scenariosOpNav')
 sys.path.append(path + '/../examples/OpNavScenarios/')
 
 r"""
@@ -52,26 +52,36 @@ SimBase = BSK_OpNav.BSKSim(1, 1)
 if os.path.exists(SimBase.vizPath) == False:
     pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_masters")
 
+testScripts = [
+    'scenario_DoubleOpNavOD'
+    , 'scenario_faultDetOpNav'
+    , 'scenario_OpNavAttOD'
+    , 'scenario_OpNavAttODLimb'
+    , 'scenario_OpNavHeading'
+    , 'scenario_OpNavOD'
+    , 'scenario_OpNavODLimb'
+    , 'scenario_OpNavPoint'
+    , 'scenario_OpNavPointLimb'
+]
+
+
 try:
     from Basilisk.simulation import vizInterface, camera
-    from Basilisk.fswAlgorithms import houghCircles, limbFinding, centerRadiusCNN
+    from Basilisk.fswAlgorithms import houghCircles, limbFinding
 except ImportError:
-    pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use OpenCV, ZMQ, and Protobuffers in build")
+    pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use opNav behavior in build")
+
+try:
+    from Basilisk.fswAlgorithms import centerRadiusCNN
+    testScripts.append('scenario_CNNAttOD')
+except ImportError:
+    pass
+
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("bskSimCase", [
-     ('scenario_DoubleOpNavOD')
-    , ('scenario_faultDetOpNav')
-    , ('scenario_OpNavAttOD')
-    , ('scenario_OpNavAttODLimb')
-    , ('scenario_OpNavHeading')
-    , ('scenario_OpNavOD')
-    , ('scenario_OpNavODLimb')
-    , ('scenario_OpNavPoint')
-    , ('scenario_OpNavPointLimb')
-    , ('scenario_CNNAttOD')
-])
+@pytest.mark.parametrize("bskSimCase", testScripts)
 
 @pytest.mark.scenarioTest
 

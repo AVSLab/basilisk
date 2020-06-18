@@ -1,4 +1,4 @@
-if(BUILD_OPNAV)
+if(BUILD_OPNAV AND APPLE)
   include(usingOpenCV)
 
   if(UNIX AND NOT APPLE)

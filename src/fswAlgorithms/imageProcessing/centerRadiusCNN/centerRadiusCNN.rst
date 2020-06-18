@@ -3,6 +3,11 @@ Executive Summary
 This module implements any convolutional neural for image processing. More precisely, the module uploads a trained model
 and reads it using the OpenCV library. This module is then used on an image in order to extract a radius and center.
 
+.. note::
+
+    This module currently is set to only compile on a macOS system because of lack of testing ability on other
+    platforms.
+
 Module Assumptions and Limitations
 ----------------------------------
 The module's assumptions are limited to the model it uploads. The training and performance of this module is not
