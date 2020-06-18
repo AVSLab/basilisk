@@ -68,7 +68,7 @@ To create a numbered equation you need to add a label::
 which creates this
 
 .. math::
-    :label: eq-firstLaw
+    :label: eq-fswModule-firstLaw
 
     a = b^2
 
