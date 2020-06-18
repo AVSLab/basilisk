@@ -286,7 +286,7 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
     for(int i = 0; i < std::round(num); i++){
         /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about 5 rays per image*/
         /*! Currently length is limited to 50 pixels*/
-        AddCosmicRay(mCosmic, mCosmic, 1/(std::pow(num,2)+0.02), i+1, 50);
+        AddCosmicRay(mCosmic, mCosmic, 1/(std::pow(num,2)), i+1, 50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
@@ -315,6 +315,7 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
     }
     if(blurparam > 0){
         int blurSize = std::round(blurparam);
+        if (blurSize%2 == 0){blurSize+=1;}
         blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1 , -1));
     }
     if(darkCurrent > 0){
