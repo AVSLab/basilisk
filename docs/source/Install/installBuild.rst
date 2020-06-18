@@ -271,14 +271,3 @@ Example build commands forArch x64, MSVC Year 2019, MSVC Version 16::
     cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Release
 
 
-FAQ for Build System
---------------------
-
-- I am trying to edit a Basilisk module that uses ``opNav`` features and the ``openCV`` dependency.  The IDE
-  like Xcode keeps giving false warning that ``openCV`` related libraries can't be found, but the project still
-  successfully compiles and Basilisk scripts run.
-
-    - This is related to setting up the Xcode project and dependencies to build for release, but the IDE is looking
-      for debug libraries for ``openCV``.  The current work-around is to once run the configure script with
-      ``buildType`` set to ``Debug``.  This way both set of conan dependencies are configures and the false
-      warnings go away.  Not ideal, but this only has to be done once.
