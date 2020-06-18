@@ -49,5 +49,4 @@ To use the standalone 3D Visualization, download the [Vizard](https://hanspeters
 
 ### Who do I talk to? ###
 
-- <mailto:basilisk-info@colorado.edu> - Use this email to request information about Basilisk, ask to be added as a test user, or provide suggestions
-- <mailto:basilisk-bug@colorado.edu> - Use this email to send us info on bugs or issues.
+There is a [Basilisk Google Forum](https://groups.google.com/forum/embed/?place=forum%2Fbasilisk-forum) where you can post questions and answers.
