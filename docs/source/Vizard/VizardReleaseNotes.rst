@@ -9,15 +9,26 @@ Release Notes
 
     - Adding star tracker configuration visualization
     - Adding coarse sun sensor configuration visualization
-    - Add ability to place the location of the standard camera relative to spacecraft
-    - Visualizing the standard camera within the 3D window
-    - Better automatic simulation data usage monitoring
     - general GUI enhancements
     - dynamic texture rendering
     - articulating CAD models
     - fuel tank visualization
-    - better support for visualizing multiple spacecraft
-    - add labels to spacecraft and sensor visualization
+    - add support for visualizing relative orbit trajectories
+    - micro-thruster visualization support
+
+
+**Version 1.4.0**
+
+- keyboard camera rate controls now with hot-keys for zooming in and out (``[`` or ``]``),
+  pan left and right (``←`` or ``→``),
+  tilt up and down (``↑`` and ``↓``), roll left and right (``<`` or ``>``).  Pressing these keys
+  multiple times increases or decreases the camera rate
+- hot-key ``s`` to stop all camera rates toggled with hot-keys
+- hot-key help panel (press ``h`` to show or use button under view menu)
+- removed time display button under Time menu because we now use hot keys
+- switched to 3 quality levels for viz app (Fast, Good, and Beautiful) and confirmed that shadows are showing up in Beautiful even on the AVS model.  The Beautiful mode requires a good graphics card to yield a good frame rate.
+- added flashlight to camera, still toggled by ``L``, useful to illuminate spacecraft when in shadow of a planet
+- fixed sun threshold bug that caused mesh not to show up from some angles
 
 **Version 1.3.0**
 
