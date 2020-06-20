@@ -15,7 +15,11 @@ When starting up the Vizard software the user is presented with a resolution and
 
 .. image:: ../_images/static/vizard-img0.jpg
    :align: center
-   :scale: 50 %
+   :scale: 40 %
+
+Note the 3 quality settings that you can choose.  Fast mode does not render shadows but does basic shading.  Good mode
+casts shadows but also needs a better graphics card.  Beautiful mode casts the best shadows.
+
 	
 Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
 
@@ -186,6 +190,32 @@ following image:
    :align: center
    :width: 90 %
 
+Hot-Key Directory
+^^^^^^^^^^^^^^^^^
+The key ``h`` will open up a help panel showing all the hot-keys that are available.  This includes a
+camera-centric flashlight model with ``L``, or ways to engage constant camera rates, or stopping all
+camera rates with ``s``, etc.
+
+.. image:: ../_images/static/vizard-HotKey.jpg
+   :align: center
+   :width: 90 %
+
+Labels
+^^^^^^
+This allows you to turn on labels for spacecraft, planets, even actuators such as thrusters etc.
+
+.. image:: ../_images/static/vizard-Labels.jpg
+   :align: center
+   :width: 90 %
+
+
+Model Inventory
+^^^^^^^^^^^^^^^
+Brings up a panel to edit and modify the 3D CAD models that are used by a spacecraft or a planet.
+
+.. image:: ../_images/static/vizard-sprites.jpg
+   :align: center
+   :width: 90 %
 
 ``Time`` Menu Item
 ------------------
