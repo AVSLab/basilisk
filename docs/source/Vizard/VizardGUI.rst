@@ -17,8 +17,10 @@ When starting up the Vizard software the user is presented with a resolution and
    :align: center
    :scale: 40 %
 
-Note the 3 quality settings that you can choose.  Fast mode does not render shadows but does basic shading.  Good mode
-casts shadows but also needs a better graphics card.  Beautiful mode casts the best shadows.
+Note the 3 quality settings that you can choose.  `Fast` mode does not render shadows but does basic shading.  It is
+convenient on older computers or when render speed is essential.  `Good` mode
+casts good quality shadows, but does not do any full-screen anti-aliasing.  `Beautiful` mode casts the best
+shadows and includes 2x anti-aliasing.
 
 	
 Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
