@@ -45,7 +45,10 @@ LimbFinding::LimbFinding()
 }
 
 
-/*! @brief This method creates the module output message of type [LimbOpNavMsg](\ref LimbOpNavMsg).
+/*! @brief
+ \verbatim embed:rst
+    This method creates the module output message of type :ref:`LimbOpNavMsg`.
+ \endverbatim
  @return void
  */
 

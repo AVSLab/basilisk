@@ -29,7 +29,11 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method sets up the module output message of type [RateCmdFswMsg](\ref RateCmdFswMsg).
+/*!
+ \verbatim embed:rst
+    This method sets up the module output message of type :ref:`RateCmdFswMsg`.
+ \endverbatim
+
  @return void
  @param configData The configuration data associated with this module
  */

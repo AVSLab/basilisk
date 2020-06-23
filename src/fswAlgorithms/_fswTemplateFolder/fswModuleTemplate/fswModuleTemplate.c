@@ -33,11 +33,15 @@
 #include "simulation/utilities/linearAlgebra.h"
 
 
-/*! This method initializes the configData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.
+    It checks to ensure that the inputs are sane and then creates the
+    output message of type :ref:`FswModuleTemplateFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
 {
@@ -49,9 +53,13 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
                                                moduleID);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- Nothing else should be happening in this function.
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    It's primary function is to link the input messages that were created elsewhere.
+    Nothing else should be happening in this function.  The subscribed message is
+    of type :ref:`FswModuleTemplateFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */

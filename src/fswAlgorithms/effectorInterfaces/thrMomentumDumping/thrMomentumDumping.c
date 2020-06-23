@@ -28,8 +28,10 @@
 #include <stdio.h>
 
 
-/*! This method initializes the configData for this module.  It creates a single output message of type
- [THRArrayOnTimeCmdIntMsg](\ref THRArrayOnTimeCmdIntMsg).
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.  It creates a single output message of type :ref:`THRArrayOnTimeCmdIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */
@@ -42,8 +44,11 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t m
                                                moduleID);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It links to 3 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg), [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg) and [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    It links to 3 required input messages of type :ref:`THRArrayCmdForceFswMsg`, :ref:`THRArrayConfigFswMsg` and :ref:`CmdTorqueBodyIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */

@@ -31,9 +31,12 @@
 #include <string.h>
 #include <math.h>
 
-/*! @brief This method initializes the configData for this module.
- It creates the
- output message [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg)
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.
+    It creates the
+    output message :ref:`CmdTorqueBodyIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */
@@ -45,14 +48,17 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, i
 
 }
 
-/*! This method performs the second stage of initialization for this module.
- Its primary function is to link the input messages that were created elsewhere. The required
- input messages are the attitude tracking error message of type [AttGuidFswMsg](\ref AttGuidFswMsg)
- the vehicle configuration message of type [VehicleConfigFswMsg](\ref VehicleConfigFswMsg),
- and the rate command message of type [RateCmdFswMsg](\ref RateCmdFswMsg).
- Optional messages are the RW configuration message of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg),
- the RW speed message of type [RWSpeedIntMsg](\ref RWSpeedIntMsg)
- and the RW availability message of type [RWAvailabilityFswMsg](\ref RWAvailabilityFswMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    Its primary function is to link the input messages that were created elsewhere. The required
+    input messages are the attitude tracking error message of type :ref:`AttGuidFswMsg`
+    the vehicle configuration message of type :ref:`VehicleConfigFswMsg`,
+    and the rate command message of type :ref:`RateCmdFswMsg`.
+    Optional messages are the RW configuration message of type :ref:`RWArrayConfigFswMsg`,
+    the RW speed message of type :ref:`RWSpeedIntMsg`
+    and the RW availability message of type :ref:`RWAvailabilityFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */

@@ -27,7 +27,10 @@
 #include "simulation/utilities/linearAlgebra.h"
 
 
-/*! This method creates the module output message of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg).
+/*!
+ \verbatim embed:rst
+    This method creates the module output message of type :ref:`THRArrayCmdForceFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData

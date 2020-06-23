@@ -32,8 +32,11 @@
 
 
 
-/*! This method initializes the configData for this module.  It creates a single output message of type
- [THRArrayOnTimeCmdIntMsg](\ref THRArrayOnTimeCmdIntMsg).
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.  It creates a single output message of type
+    :ref:`THRArrayOnTimeCmdIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */
@@ -46,9 +49,12 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modul
                                                moduleID);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It links to 2 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg)
- and [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    It links to 2 required input messages of type :ref:`THRArrayCmdForceFswMsg`
+    and :ref:`THRArrayConfigFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */

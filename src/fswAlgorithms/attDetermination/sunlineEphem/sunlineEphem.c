@@ -23,7 +23,10 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 
-/*! This method sets up the module output message of type [NavAttIntMsg](\ref NavAttIntMsg)
+/*!
+ \verbatim embed:rst
+    This method sets up the module output message of type :ref:`NavAttIntMsg`
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */
@@ -36,11 +39,14 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 }
 
 
-/*! This method performs the second stage of initialization for this module.
- Its primary function is to link the input messages that were created elsewhere.  The required
- input messages are the sun ephemeris message of type [EphemerisIntMsg](\ref EphemerisIntMsg),
- the spacecraft translational navigation message of type [NavTransIntMsg](\ref NavTransIntMsg)
- and the spacecraft attitude navigation message of type [NavAttIntMsg](\ref NavAttIntMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    Its primary function is to link the input messages that were created elsewhere.  The required
+    input messages are the sun ephemeris message of type :ref:`EphemerisIntMsg`,
+    the spacecraft translational navigation message of type :ref:`NavTransIntMsg`
+    and the spacecraft attitude navigation message of type :ref:`NavAttIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */

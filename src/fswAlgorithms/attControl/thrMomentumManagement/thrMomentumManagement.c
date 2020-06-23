@@ -28,8 +28,11 @@
 #include <string.h>
 
 
-/*! This method initializes the configData for this module.  It creates a single output message of type
- [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg).
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.  It creates a single output message of type
+    :ref:`CmdTorqueBodyIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */
@@ -44,9 +47,12 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
 
 }
 
-/*! This method performs the second stage of initialization for this module.
- It links to 2 required input messages of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg) and
- [RWSpeedIntMsg](\ref RWSpeedIntMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    It links to 2 required input messages of type :ref:`RWArrayConfigFswMsg` and
+    :ref:`RWSpeedIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  */
