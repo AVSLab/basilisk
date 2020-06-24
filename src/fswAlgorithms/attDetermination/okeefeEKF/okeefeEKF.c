@@ -204,7 +204,7 @@ void sunlineTimeUpdate(okeefeEKFConfig *configData, double updateTime)
 	configData->dt = updateTime - configData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(configData->omega, configData->dt, configData->dynMat);
+    sunlineDynMatrixOkeefe(configData->omega, configData->dt, configData->dynMat);
     sunlineStateSTMProp(configData->dynMat, configData->dt, configData->omega, configData->state, configData->prev_states, configData->stateTransition);
     sunlineRateCompute(configData->state, configData->dt, configData->prev_states, configData->omega);
 
@@ -328,7 +328,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF], dou
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void sunlineDynMatrix(double omega[SKF_N_STATES_HALF], double dt, double *dynMat)
+void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double *dynMat)
 {
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double negskewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -357,13 +357,13 @@ void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime)
     configData->numObs = (size_t) numObsInt;
     
     /*! - Compute the Kalman Gain. */
-    sunlineKalmanGain(configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
+    sunlineKalmanGainOkeefe(configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
     
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance, we update with a CKF in order to bring down the covariance. */
     
     if (vMaxAbs(configData->covar, SKF_N_STATES_HALF*SKF_N_STATES_HALF) > configData->eKFSwitch){
     /*! - Compute the update with a CKF */
-    sunlineCKFUpdate(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
+    sunlineCKFUpdateOkeefe(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
     }
     else{
 //    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
@@ -384,7 +384,7 @@ void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime)
  @param covar Pointer to the covariance after update
  */
 
-void sunlineCKFUpdate(double xBar[SKF_N_STATES_HALF], double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double qObsVal, int numObsInt, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_HALF], double *x, double *covar)
+void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF], double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double qObsVal, int numObsInt, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_HALF], double *x, double *covar)
 {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[SKF_N_STATES_HALF];
     double eye[SKF_N_STATES_HALF*SKF_N_STATES_HALF], kH[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
@@ -543,7 +543,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], size_t numCSS, double
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void sunlineKalmanGain(double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_HALF], double qObsVal, int numObsInt, double *kalmanGain)
+void sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_HALF], double qObsVal, int numObsInt, double *kalmanGain)
 {
     double hObsT[SKF_N_STATES_HALF*MAX_N_CSS_MEAS];
     double covHT[SKF_N_STATES_HALF*MAX_N_CSS_MEAS];
