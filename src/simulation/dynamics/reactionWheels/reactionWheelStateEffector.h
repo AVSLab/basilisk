@@ -41,7 +41,7 @@
 
 
 
-
+/*! @brief reaction wheel state effector class */
 class ReactionWheelStateEffector:  public SysModel, public StateEffector {
 public:
     ReactionWheelStateEffector();
@@ -56,7 +56,7 @@ public:
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
 	void SelfInit();
 	void CrossInit();
-	void addReactionWheel(RWConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}
+	void addReactionWheel(RWConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}  //!< class method
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
@@ -68,13 +68,13 @@ public:
 	std::string InputCmds;                                      //!< -- message used to read command inputs
 	std::string OutputDataString;                               //!< -- port to use for output data
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
-	std::vector<RWCmdSimMsg> NewRWCmds;                        //!< -- Incoming attitude commands
-	RWSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
-    std::string nameOfReactionWheelOmegasState;
-    std::string nameOfReactionWheelThetasState;
-	size_t numRW;
-	size_t numRWJitter;
-  BSKLogger bskLogger;                      //!< -- BSK Logging
+	std::vector<RWCmdSimMsg> NewRWCmds;                         //!< -- Incoming attitude commands
+	RWSpeedIntMsg outputStates;                                 //!< (-) Output data from the reaction wheels
+    std::string nameOfReactionWheelOmegasState;                 //!< class variable
+    std::string nameOfReactionWheelThetasState;                 //!< class variable
+	size_t numRW;                                               //!< number of reaction wheels
+	size_t numRWJitter;                                         //!< number of RW with jitter
+    BSKLogger bskLogger;                                        //!< -- BSK Logging
 
 private:
 	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW
@@ -84,11 +84,11 @@ private:
 	RWArrayTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
 
-	StateData *hubSigma;
-	StateData *hubOmega;
-	StateData *hubVelocity;
-	StateData *OmegasState;
-	StateData *thetasState;
+	StateData *hubSigma;                                        //!< class variable
+	StateData *hubOmega;                                        //!< class variable
+	StateData *hubVelocity;                                     //!< class variable
+	StateData *OmegasState;                                     //!< class variable
+	StateData *thetasState;                                     //!< class variable
 
 };
 

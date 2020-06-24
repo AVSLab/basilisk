@@ -185,6 +185,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
 
 /*! This method is evaluates the centered dipole magnetic field model.
  @param msg magnetic field message structure
+ @param currentTime current time (s)
  @return void
  */
 void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime)
@@ -228,7 +229,6 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
 
 
 /*! Performs memory cleanup necessary for magnetic field models
- @param msg magnetic field message structure
  @return void
  */
 void MagneticFieldWMM::cleanupEarthMagFieldModel()

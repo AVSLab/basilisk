@@ -20,15 +20,11 @@
 #ifndef SUN_HEADING_EST_MESSAGE_H
 #define SUN_HEADING_EST_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 /*! @brief Structure used to define the sun heading estimator output */
 typedef struct {
     double sHatBdy[3];      //!< -- unit vector to the sun in ADCS body frame 
 }SunHeadingEstFswMsg;
 
-/* @} */
 
 #endif

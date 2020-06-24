@@ -28,6 +28,7 @@
 /*! This method initializes the configData for theCSS WLS estimator.
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
+ @param moduleID The module identifier
  */
 void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
 {
@@ -44,6 +45,7 @@ void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
+ @param moduleID The module identifier
  */
 void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
 {
@@ -61,6 +63,7 @@ void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
@@ -159,6 +162,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     int64_t moduleID)
@@ -279,7 +283,9 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
 /*! This method propagates a sunline state vector forward in time.  Note 
     that the calling parameter is updated in place to save on data copies.
 	@return void
-	@param stateInOut The state that is propagated
+    @param stateInOut The state that is propagated
+    @param b_Vec b vector
+    @param dt time step (s)
 */
 void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 {
@@ -640,9 +646,7 @@ int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
 /*! This method computes the dcms necessary for the switch between the two frames.
  It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.
  @return void
- @param covarBar The time updated covariance
- @param hObs The H matrix filled with the observations
- @param s2_B Pointer to the second frame vector
+ @param bVec_B Pointer to b vector
  @param states Pointer to the states
  @param covar Pointer to the covariance
  */

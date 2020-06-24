@@ -44,6 +44,7 @@
  output message
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
 {
@@ -59,6 +60,7 @@ void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
 {
@@ -72,6 +74,8 @@ void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the MRP steering control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -83,6 +87,7 @@ void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, i
  @return void
  @param configData The configuration data associated with the attitude tracking simple module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID)
 {

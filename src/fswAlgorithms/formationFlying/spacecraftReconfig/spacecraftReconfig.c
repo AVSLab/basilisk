@@ -150,6 +150,7 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
  @param configData The configuration data associated with the module
  @param chiefTransMsg chief's position and velocity
  @param deputyTransMsg deputy's position and velocity
+ @param attRefInMsg target attitude
  @param thrustConfigMsg thruster's config information
  @param attRefMsg target attitude
  @param thrustOnMsg thruster on time

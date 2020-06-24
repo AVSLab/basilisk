@@ -22,15 +22,11 @@
 
 //#include "macroDefinitions.h"
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 //! @brief Simulated TAM Sensor output message definition.
 typedef struct {
 	double tam_S[3];    //!< [T] Magnetic field measurements in sensor frame
 }TAMSensorIntMsg;
 
-/*! @} */
 
 #endif

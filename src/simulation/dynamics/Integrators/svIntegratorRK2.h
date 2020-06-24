@@ -24,13 +24,13 @@
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include <stdint.h>
 
-
+/*! @brief 2nd order Runge-Kutta integrator */
 class svIntegratorRK2 : public StateVecIntegrator
 {
 public:
-    svIntegratorRK2(DynamicObject* dyn);
+    svIntegratorRK2(DynamicObject* dyn); //!< class method
     virtual ~svIntegratorRK2();
-    virtual void integrate(double currentTime, double timeStep);
+    virtual void integrate(double currentTime, double timeStep); //!< class method
     
 };
 

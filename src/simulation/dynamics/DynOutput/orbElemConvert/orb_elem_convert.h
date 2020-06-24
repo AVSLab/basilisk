@@ -29,7 +29,7 @@
 
 
 
-
+/*! @brief orbit element converter module class */
 class OrbElemConvert: public SysModel {
 public:
     OrbElemConvert();
@@ -48,8 +48,8 @@ public:
     double v_N[3];                    //!< m/s Current velocity vector (inertial)
     double mu;                        //!< -- Current grav param (inertial)
     classicElements CurrentElem;      //!< -- Current orbital elements
-    SCPlusStatesSimMsg statesIn;
-    SpicePlanetStateSimMsg planetIn;
+    SCPlusStatesSimMsg statesIn;      //!< -- spacecraft state message
+    SpicePlanetStateSimMsg planetIn;  //!< -- planet state message
     std::string StateString;          //!< -- port to use for conversion
     std::string OutputDataString;     //!< -- port to use for output data
     uint64_t OutputBufferCount;       //!< -- Count on number of buffers to output
@@ -58,11 +58,11 @@ public:
     bool Elements2Cart;               //!< -- Flag saying which direction to go
 	bool useEphemFormat;              //!< -- Flag indicating whether to use state or ephem
     bool inputsGood;                  //!< -- flag indicating that inputs are good
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;              //!< -- BSK Logging
 
 private:
-    int64_t StateInMsgID;              // -- MEssage ID for incoming data
-    int64_t StateOutMsgID;             // -- Message ID for outgoing data
+    int64_t StateInMsgID;              //!< -- MEssage ID for incoming data
+    int64_t StateOutMsgID;             //!<  -- Message ID for outgoing data
 };
 
 

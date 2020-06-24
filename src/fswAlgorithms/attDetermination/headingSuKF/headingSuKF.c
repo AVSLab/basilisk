@@ -30,6 +30,7 @@
  output message
  @return void
  @param configData The configuration data associated with the heading estimator
+ @param moduleID The module identifier
  */
 void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
@@ -46,6 +47,7 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the heading filter
+ @param moduleID The module identifier
  */
 void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
@@ -66,6 +68,7 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the heading estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
@@ -140,6 +143,7 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the heading estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     int64_t moduleID)
@@ -250,7 +254,9 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
 /*! This method propagates a heading state vector forward in time.  Note
     that the calling parameter is updated in place to save on data copies.
 	@return void
-	@param stateInOut The state that is propagated
+    @param stateInOut The state that is propagated
+    @param b_Vec pointer to b vector
+    @param dt time step
 */
 void headingStateProp(double *stateInOut, double *b_Vec, double dt)
 {
@@ -536,9 +542,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
 /*! This method computes the dcms necessary for the switch between the two frames.
  It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.
  @return void
- @param covarBar The time updated covariance
- @param hObs The H matrix filled with the observations
- @param s2_B Pointer to the second frame vector
+ @param bVec_B Pointer to b-vector
  @param states Pointer to the states
  @param covar Pointer to the covariance
  */

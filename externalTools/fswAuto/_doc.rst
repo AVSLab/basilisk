@@ -42,7 +42,7 @@ The expected output are the C++ wrapper classes of the C FSW modules and the Mic
 in a fresh local directory named ``outputFiles``.
 
 ``fsw_examples`` Directory
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 This directory contains the FSW simulation defining the modules upon which the ``autosetter.py`` and ``autowrapper.py``
 will operate: ``desktopFswSim.py``. All the other scripts in the directory are helper scripts to set up the FSW
 simulation.

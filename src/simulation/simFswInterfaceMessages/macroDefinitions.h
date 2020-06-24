@@ -20,9 +20,6 @@
 #ifndef SIM_FSW_MACROS_H
 #define SIM_FSW_MACROS_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 #define MAX_CIRCLE_NUM 10
 #define MAX_LIMB_PNTS 2000
 #define MAX_EFF_CNT 36
@@ -36,7 +33,6 @@
 #define RECAST2x2       (double (*)[2])
 #define SEC2HOUR        1./3600.
 
-/* @} */
 
 
 #endif

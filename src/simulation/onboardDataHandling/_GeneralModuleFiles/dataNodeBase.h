@@ -28,6 +28,7 @@
 #include "simFswInterfaceMessages/deviceStatusIntMsg.h"
 #include "simMessages/dataStorageStatusSimMsg.h"
 
+/*! @brief data node base class */
 class DataNodeBase: public SysModel {
 public:
     DataNodeBase();
@@ -42,27 +43,27 @@ protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg, double currentTime)=0; //!< Virtual void method used to compute module-wise data usage/generation.
-    virtual void customSelfInit(){};//! Custom output input reading method.  This allows a child class to add additional functionality.
-    virtual void customCrossInit(){}; //! Custom subscription method, similar to customSelfInit.
-    virtual void customReset(uint64_t CurrentClock){}; //! Custom Reset method, similar to customSelfInit.
-    virtual void customWriteMessages(uint64_t CurrentClock){};//! custom Write method, similar to customSelfInit.
-    virtual bool customReadMessages(){return true;} //! Custom read method, similar to customSelfInit; returns `true' by default.
+    virtual void customSelfInit();
+    virtual void customCrossInit();   
+    virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
+    virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.
+    virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
 public:
     std::string nodeDataOutMsgName; //!< Message name for the node's output message
     std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
     double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
-    char nodeDataName[128]; //! Name of the data node consuming or generating data.
+    char nodeDataName[128]; //!< Name of the data node consuming or generating data.
     uint64_t dataStatus; //!< Device data mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
 protected:
-    int64_t nodeDataOutMsgId;
-    int64_t nodeStatusInMsgId;
-    DataNodeUsageSimMsg nodeDataMsg;
-    DeviceStatusIntMsg nodeStatusMsg;
+    int64_t nodeDataOutMsgId;           //!< class variable
+    int64_t nodeStatusInMsgId;          //!< class variable
+    DataNodeUsageSimMsg nodeDataMsg;    //!< class variable
+    DeviceStatusIntMsg nodeStatusMsg;   //!< class variable
 
 private:
-    uint64_t outputBufferCount;
+    uint64_t outputBufferCount;         //!< class variable
 };
 
 #endif //BASILISK_DATANODEBASE_H

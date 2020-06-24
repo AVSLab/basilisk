@@ -21,12 +21,8 @@
 #define BASILISK_POWERSTORAGESTATUSSIMMSG_H
 
 
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief Message to store current battery stored charge, maximum charge, and received power.*/
-
 typedef struct{
     double storageLevel; //!< [W-s] Battery stored charge in Watt-hours.
     double storageCapacity; //!< [W-s] Maximum battery storage capacity.

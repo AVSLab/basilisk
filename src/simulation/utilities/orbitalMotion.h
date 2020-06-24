@@ -23,9 +23,6 @@
 
 #define N_DEBYE_PARAMETERS 37
 
-/*! \addtogroup Sim Utility Group
- * @{
- */
 
 /* Celestial object being orbited */
 typedef enum {
@@ -62,6 +59,7 @@ typedef struct {
 	double rApoap;    //!< Radius if apoapsis (extra)
 } classicElements;
 
+/*! equinoctial elment struct definition */
 typedef struct {
     double a;   //!< semi-major axis
     double P1;  //!< e*sin(omega+Omega)
@@ -104,5 +102,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/*! @} */
 #endif

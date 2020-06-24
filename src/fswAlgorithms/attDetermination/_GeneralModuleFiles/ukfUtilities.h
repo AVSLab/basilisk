@@ -25,9 +25,6 @@
 
 #define UKF_MAX_DIM 20
 
-/*! \defgroup ukfUtilities
- * @{
- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +51,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

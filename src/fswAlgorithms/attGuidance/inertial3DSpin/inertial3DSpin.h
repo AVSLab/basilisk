@@ -31,8 +31,8 @@
  */
 typedef struct {
     /* declare module private variables */
-    double sigma_RN[3];
-    double omega_spin[3];
+    double sigma_RN[3];                              /*!< MPR of reference frame relative to inertial N frame */
+    double omega_spin[3];                            /*!< angular velocity spin vector */
     uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];        /*!< Name of the outgoing guidance reference message */

@@ -53,7 +53,7 @@ typedef struct {
     int32_t inputSecID;                             //!< (-) ID for the secondary constraint message*/
     
     /* Output attitude reference data to send */
-    AttRefFswMsg attRefOut;
+    AttRefFswMsg attRefOut;                         //!< (-) copy of output reference frame message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 }celestialTwoBodyPointConfig;

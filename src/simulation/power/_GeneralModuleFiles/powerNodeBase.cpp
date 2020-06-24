@@ -175,3 +175,45 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
 
     return;
 }
+
+
+
+/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
+ @return void
+ */
+void PowerNodeBase::customSelfInit()
+{
+    return;
+}
+
+/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
+ @return void
+ */
+void PowerNodeBase::customCrossInit()
+{
+    return;
+}
+
+/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+ @return void
+ */
+void PowerNodeBase::customReset(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! custom Write method, similar to customSelfInit.
+ @return void
+ */
+void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! Custom read method, similar to customSelfInit; returns `true' by default.
+ @return void
+ */
+bool PowerNodeBase::customReadMessages()
+{
+    return true;
+}

@@ -23,9 +23,6 @@
 #include <Eigen/Dense>
 #include <vector>
 
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief enumeration definiting the types of VSCMG modes */ 
 enum VSCMGModels { vscmgBalancedWheels, vscmgJitterSimple, vscmgJitterFullyCoupled };
@@ -35,15 +32,15 @@ enum VSCMGModels { vscmgBalancedWheels, vscmgJitterSimple, vscmgJitterFullyCoupl
 typedef struct {
 	VSCMGModels VSCMGModel;     //!< [-], Type of imbalance model to use
 	Eigen::Vector3d rGB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
-	Eigen::Vector3d gsHat0_B;
+	Eigen::Vector3d gsHat0_B;   //!< module variable
 	Eigen::Vector3d gsHat_B;	//!< [-] spin axis unit vector in body frame
-	Eigen::Vector3d gtHat0_B;
-	Eigen::Vector3d gtHat_B;
-	Eigen::Vector3d ggHat_B;
+	Eigen::Vector3d gtHat0_B;   //!< module variable
+	Eigen::Vector3d gtHat_B;    //!< module variable
+	Eigen::Vector3d ggHat_B;    //!< module variable
 	Eigen::Vector3d w2Hat0_B;	//!< [-] initial torque axis unit vector in body frame
-	Eigen::Vector3d w2Hat_B;
+	Eigen::Vector3d w2Hat_B;    //!< module variable
     Eigen::Vector3d w3Hat0_B;	//!< [-] initial gimbal axis unit vector in body frame
-	Eigen::Vector3d w3Hat_B;
+	Eigen::Vector3d w3Hat_B;    //!< module variable
     double massV;               //!< [kg]
 	double massG;               //!< [kg]
 	double massW;               //!< [kg]
@@ -64,14 +61,14 @@ typedef struct {
 	double IV1;              	//!< [kg-m^2]
 	double IV2;          		//!< [kg-m^2]
 	double IV3;                 //!< [kg-m^2]
-	double rhoG;
-	double rhoW;
+	double rhoG;                //!< module variable
+	double rhoW;                //!< module variable
     double U_s;                 //!< [kg-m], static imbalance
     double U_d;                 //!< [kg-m^2], dynamic imbalance
-	Eigen::Vector3d rGcG_G;
+	Eigen::Vector3d rGcG_G;     //!< module variable
     double d;                	//!< [m], wheel center of mass offset from wheel frame origin
-	double l;
-	double L;
+	double l;                   //!< module variable
+	double L;                   //!< module variable
     double u_s_current;         //!< [N-m], current motor torque
     double u_s_max = -1.0;      //!< [N-m], Max torque
     double u_s_min;             //!< [N-m], Min torque
@@ -85,41 +82,40 @@ typedef struct {
 	double gammaDot_max;        //!< [rad/s], max wheel speed
 	double gimbalLinearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
 
-	Eigen::Matrix3d IGPntGc_B;
-    Eigen::Matrix3d IWPntWc_B;
-	Eigen::Matrix3d IPrimeGPntGc_B;
-	Eigen::Matrix3d IPrimeWPntWc_B;
-	Eigen::Vector3d rGcG_B;
-	Eigen::Vector3d rGcB_B;
-    Eigen::Vector3d rWcB_B;
-	Eigen::Vector3d rWcG_B;
-	Eigen::Matrix3d rTildeGcB_B;
-    Eigen::Matrix3d rTildeWcB_B;
-	Eigen::Vector3d rPrimeGcB_B;
-    Eigen::Vector3d rPrimeWcB_B;
-	Eigen::Matrix3d rPrimeTildeGcB_B;
-	Eigen::Matrix3d rPrimeTildeWcB_B;
+	Eigen::Matrix3d IGPntGc_B;  //!< module variable
+    Eigen::Matrix3d IWPntWc_B;  //!< module variable
+	Eigen::Matrix3d IPrimeGPntGc_B;     //!< module variable
+	Eigen::Matrix3d IPrimeWPntWc_B;     //!< module variable
+	Eigen::Vector3d rGcG_B;     //!< module variable
+	Eigen::Vector3d rGcB_B;     //!< module variable
+    Eigen::Vector3d rWcB_B;     //!< module variable
+	Eigen::Vector3d rWcG_B;     //!< module variable
+	Eigen::Matrix3d rTildeGcB_B;        //!< module variable
+    Eigen::Matrix3d rTildeWcB_B;        //!< module variable
+	Eigen::Vector3d rPrimeGcB_B;        //!< module variable
+    Eigen::Vector3d rPrimeWcB_B;        //!< module variable
+	Eigen::Matrix3d rPrimeTildeGcB_B;   //!< module variable
+	Eigen::Matrix3d rPrimeTildeWcB_B;   //!< module variable
 
 	Eigen::Vector3d aOmega; //!< [-], parameter used in coupled jitter back substitution
 	Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution
 	double cOmega;          //!< [-], parameter used in coupled jitter back substitution
-	double dOmega;
-	double eOmega;
-	Eigen::Vector3d agamma;
-	Eigen::Vector3d bgamma;
-	double cgamma;
-	double dgamma;
-	double egamma;
-	Eigen::Vector3d p;
-	Eigen::Vector3d q;
-	double s;
+	double dOmega;          //!< module variable
+	double eOmega;          //!< module variable
+	Eigen::Vector3d agamma; //!< module variable
+	Eigen::Vector3d bgamma; //!< module variable
+	double cgamma;          //!< module variable
+	double dgamma;          //!< module variable
+	double egamma;          //!< module variable
+	Eigen::Vector3d p;      //!< module variable
+	Eigen::Vector3d q;      //!< module variable
+	double s;               //!< module variable
 
-	double gravityTorqueWheel_s;
-	double gravityTorqueGimbal_g;
+	double gravityTorqueWheel_s;    //!< module variable
+	double gravityTorqueGimbal_g;   //!< module variable
 }VSCMGConfigSimMsg;
 
 
-/* @} */
 
 
 #endif

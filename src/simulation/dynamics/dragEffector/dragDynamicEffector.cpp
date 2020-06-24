@@ -99,12 +99,12 @@ bool DragDynamicEffector::ReadInputs()
 
 }
 
-/*! This method is used to link the dragEffector to the hub attitude and velocity,
-which are required for calculating drag forces and torques.
- @return void
- @param currentTime The current simulation time converted to a double
+/*!
+    This method is used to link the dragEffector to the hub attitude and velocity,
+    which are required for calculating drag forces and torques.
+    @return void
+    @param states simulation states
  */
-
 void DragDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
 	this->hubVelocity = states.getStateObject("hubVelocity");

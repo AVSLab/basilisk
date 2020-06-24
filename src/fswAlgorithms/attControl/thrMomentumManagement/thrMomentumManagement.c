@@ -35,7 +35,8 @@
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The module identifier
+*/
 void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
     
@@ -55,6 +56,7 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
@@ -69,6 +71,8 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, in
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -90,6 +94,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {

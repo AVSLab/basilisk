@@ -30,6 +30,7 @@
  \endverbatim
  @return void
  @param configData The configuration data associated with RW null space model
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
@@ -45,6 +46,7 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the sun safe ACS control
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {

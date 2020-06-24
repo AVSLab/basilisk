@@ -20,9 +20,6 @@
 #ifndef _IMU_SENSOR_BODY_MESSAGE_H
 #define _IMU_SENSOR_BODY_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 /*! @brief Output structure for IMU structure in vehicle body frame*/
 typedef struct {
@@ -32,6 +29,5 @@ typedef struct {
     double AngVelBody[3];       //!< r/s Angular velocity in platform body
 }IMUSensorBodyFswMsg;
 
-/* @} */
 
 #endif

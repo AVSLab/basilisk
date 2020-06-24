@@ -35,6 +35,7 @@
  output message
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
 {
@@ -49,6 +50,7 @@ void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *confi
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
 {
@@ -62,6 +64,8 @@ void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *conf
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the MRP steering control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -80,6 +84,7 @@ void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configDa
  @return void
  @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime,
     int64_t moduleID)

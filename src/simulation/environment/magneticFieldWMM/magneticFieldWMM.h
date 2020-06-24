@@ -34,7 +34,7 @@
 #include "utilities/bskLogging.h"
 #include <time.h>
 
-
+/*! @brief magnetic field WMM class */
 class MagneticFieldWMM:  public MagneticFieldBase {
 public:
     MagneticFieldWMM();

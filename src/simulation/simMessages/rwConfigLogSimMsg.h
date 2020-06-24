@@ -22,10 +22,6 @@
 
 #include "rwConfigSimMsg.h"
 
-/*! \defgroup simMessages
- *  @{
- */
-
 
 /*! @brief Structure used to define the individual RW configuration data message*/
 typedef struct {
@@ -53,7 +49,6 @@ typedef struct {
     RWModels RWModel;           //!< [-], Type of imbalance model to use
 }RWConfigLogSimMsg;
 
-/* @} */
 
 
 #endif

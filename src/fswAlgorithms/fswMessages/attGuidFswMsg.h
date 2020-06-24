@@ -20,9 +20,6 @@
 #ifndef ATT_GUID_MESSAGE_H
 #define ATT_GUID_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
@@ -33,6 +30,5 @@ typedef struct {
     double domega_RN_B[3];      //!< [r/s2] Reference frame inertial body acceleration of R relative to N in B frame components */
 }AttGuidFswMsg;
 
-/* @} */
 
 #endif

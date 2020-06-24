@@ -29,6 +29,7 @@
  output message
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
+ @param moduleID The module identifier
  */
 void SelfInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID)
 {
@@ -48,6 +49,7 @@ void SelfInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
+ @param moduleID The module identifier
  */
 void CrossInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID)
 {
@@ -65,6 +67,7 @@ void CrossInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
@@ -123,6 +126,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
     int64_t moduleID)
@@ -232,10 +236,13 @@ void sunlineTimeUpdate(sunlineEKFConfig *configData, double updateTime)
 
 
 /*! This method propagates a sunline state vector forward in time.  Note
- that the calling parameter is updated in place to save on data copies.
- This also updates the STM using the dynamics matrix.
+    that the calling parameter is updated in place to save on data copies.
+    This also updates the STM using the dynamics matrix.
 	@return void
-	@param stateInOut,
+    @param dynMat
+    @param dt
+    @param stateInOut
+    @param stateTransition
  */
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
 {
@@ -487,8 +494,9 @@ void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double cov
  @param states
  @param numCSS The total number of CSS
  @param cssSensorCos The list of the measurements from the CSSs
- @param sensorUse Thresh The Threshold below which the measuremnts are not read
+ @param sensorUseThresh Thresh The Threshold below which the measuremnts are not read
  @param cssNHat_B The normals vector for each of the CSSs
+ @param CBias Array of sensor biases
  @param obs Pointer to the observations
  @param yMeas Pointer to the innovation
  @param numObs Pointer to the number of observations
@@ -528,7 +536,6 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
  @param covarBar The time updated covariance
  @param hObs The H matrix filled with the observations
  @param qObsVal The observation noise
- @param states Pointer to the states
  @param numObs The number of observations
  @param kalmanGain Pointer to the Kalman Gain
  */

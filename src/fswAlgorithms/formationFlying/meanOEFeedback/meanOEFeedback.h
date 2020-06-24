@@ -30,12 +30,12 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    char chiefTransInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t chiefTransInMsgID;
-    char deputyTransInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t deputyTransInMsgID;
-    char forceOutMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t forceOutMsgID;
+    char chiefTransInMsgName[MAX_STAT_MSG_LENGTH];  //!< msg name
+    int32_t chiefTransInMsgID;                      //!< msg ID
+    char deputyTransInMsgName[MAX_STAT_MSG_LENGTH]; //!< msg name
+    int32_t deputyTransInMsgID;                     //!< msg ID
+    char forceOutMsgName[MAX_STAT_MSG_LENGTH];      //!< msg name
+    int32_t forceOutMsgID;                          //!< msg ID
     double K[36];               //!< Lyapunov Gain (6*6)
     double targetDiffOeMean[6];   //!< target mean orbital element difference
     uint8_t oeType;            //!< 0: classic (default), 1: equinoctial

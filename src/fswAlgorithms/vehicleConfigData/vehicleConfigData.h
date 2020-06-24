@@ -26,16 +26,6 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
 
-/*! \defgroup vehicleConfigData
- * @{
- */
-
-
-
-
-
-
-
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
@@ -57,6 +47,5 @@ void CrossInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleI
 }
 #endif
 
-/*! @} */
 
 #endif

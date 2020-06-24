@@ -43,6 +43,7 @@
 #include "simMessages/albedoSimMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
+/*!< albedo instrument configuration class */
 typedef class Config {
 public:
     Config();
@@ -52,6 +53,7 @@ public:
     Eigen::Vector3d r_IB_B;  //!< [m] instrument's misalignment wrt spacecraft's body frame
 } instConfig_t;
 
+/*! @brief albedo class */
 class Albedo : public SysModel {
 public:
     Albedo();
@@ -81,7 +83,8 @@ public:
     std::string sunPositionInMsgName;           //!< message name for sun data
     std::string spacecraftStateInMsgName;       //!< message name for spacecraft data
     BSKLogger bskLogger;                        //!< BSK Logging    
-    int numLat, numLon;                         //!< [-] number of latitude and longitude grid points
+    int numLat;                                 //!< [-] number of latitude grid points
+    int numLon;                                 //!< [-] number of longitude grid points
     Eigen::Vector3d nHat_B_default;             //!< [-] default value for unit normal of the instrument (spacecraft body)
     double fov_default;                         //!< [rad] default value for instrument's field of view half angle
     bool eclipseCase;                           //!< consider eclipse at dA, if true

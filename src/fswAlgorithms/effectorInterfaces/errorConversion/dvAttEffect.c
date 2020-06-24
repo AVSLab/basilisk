@@ -28,6 +28,7 @@
  output message
  @return void
  @param configData The configuration data associated with the sun safe control
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 {
@@ -49,6 +50,7 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the sun safe ACS control
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 {
@@ -81,6 +83,7 @@ void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the sun safe ACS control
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
     int64_t moduleID)

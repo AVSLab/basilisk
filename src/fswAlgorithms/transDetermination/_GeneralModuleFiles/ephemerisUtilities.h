@@ -22,9 +22,6 @@
 
 #include <stdint.h>
 
-/*! \defgroup ephemerisUtilities
- * @{
- */
 
 #ifdef __cplusplus
 extern "C" {

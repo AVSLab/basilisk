@@ -4,12 +4,13 @@
    contain the root `toctree` directive.
 
 Quick-Start
-====================================
+===========
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
+   Quick-Start/index
 
 
 Coming soon! For now, please refer to the ``src/examples`` directory discussed in :ref:`examples`.

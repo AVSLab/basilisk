@@ -20,9 +20,6 @@
 #ifndef ATT_STATE_MESSAGE_H
 #define ATT_STATE_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 /*! @brief Structure used to define the output euler set for attitude reference generation */
@@ -31,6 +28,5 @@ typedef struct {
     double rate[3];           //!< []   3D attitude rate coordinate set.  These rate coordinates can be either omega (in rad/sec) or attitude coordiante rates with appropriate units
 }AttStateFswMsg;
 
-/* @} */
 
 #endif

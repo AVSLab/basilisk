@@ -26,6 +26,7 @@
     It initializes the output messages in the messaging system.
  @return void
  @param configData The configuration data associated with the Nav aggregation interface
+ @param moduleID The Basilisk module identifier
  */
 void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 {
@@ -45,6 +46,7 @@ void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
     and saves the ID.
  @return void
  @param configData The configuration data associated with the aggregate nav interface
+ @param moduleID The Basilisk module identifier
  */
 void CrossInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 {
@@ -186,6 +188,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
  @return void
  @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID)
 {

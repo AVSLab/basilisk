@@ -29,6 +29,7 @@
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
@@ -49,6 +50,7 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
@@ -69,6 +71,8 @@ void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -79,6 +83,7 @@ void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {

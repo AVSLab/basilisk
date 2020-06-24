@@ -34,7 +34,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief visual camera class */
 class Camera: public SysModel {
 public:
     Camera();

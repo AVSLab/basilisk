@@ -21,9 +21,6 @@
 #define _ST_HW_OUTPUT_
 #include <stdint.h>
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 /*! @brief Output structure for ST structure in vehicle body frame*/
 typedef struct {
@@ -31,6 +28,5 @@ typedef struct {
     double qInrtl2Case[4];          //!< [-] Quaternion to go from the inertial to case
 }STSensorIntMsg;
 
-/*! @} */
 
 #endif

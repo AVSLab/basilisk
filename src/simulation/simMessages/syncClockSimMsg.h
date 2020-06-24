@@ -20,9 +20,6 @@
 #ifndef SYNC_CLOCK_MESSAGE_H
 #define SYNC_CLOCK_MESSAGE_H
 
-/*! \defgroup simMessages
- *  @{
- */
 
 //! @brief Output diagnostic structure used for analyzing how the synch is performing.
 typedef struct {
@@ -31,7 +28,6 @@ typedef struct {
     uint64_t overrunCounter;    //!< (-) Indicator of how many times we've missed the synch frame
 }SynchClockSimMsg;
 
-/* @} */
 
 
 #endif

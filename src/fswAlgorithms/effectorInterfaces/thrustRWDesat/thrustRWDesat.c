@@ -99,6 +99,7 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the RW desat logic
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
     int64_t moduleID)
@@ -220,6 +221,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 /*! This method resets the configData for the thruster-based RW desat module.
 @return void
 @param configData The configuration data associated with the thruster desat
+@param callTime The clock time at which the function was called (nanoseconds)
 @param moduleID The module ID associated with configData
 */
 void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID)

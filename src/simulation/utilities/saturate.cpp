@@ -35,10 +35,12 @@ Saturate::~Saturate()
 {
 }
 
-/*! This method should be used as the standard way to saturate an output. It will also be utilized by
-    other utilities
- @return workingStates (vector of saturated states
-*/
+/*!
+    @brief This method should be used as the standard way to saturate an output. It will also be utilized by
+other utilities
+    @param unsaturatedStates a vector of the unsaturated states
+    @return saturatedStates
+ */
 Eigen::VectorXd Saturate::saturate(Eigen::VectorXd unsaturatedStates)
 {
     Eigen::VectorXd workingStates;
@@ -51,3 +53,11 @@ Eigen::VectorXd Saturate::saturate(Eigen::VectorXd unsaturatedStates)
 
 }
 
+/*!
+    @brief sets upper and lower bounds for each state
+    @param bounds one row for each state. lower bounds in left column, upper in right column
+    @return void
+ */
+void Saturate::setBounds(Eigen::MatrixXd bounds) {
+    this->stateBounds = bounds;
+}

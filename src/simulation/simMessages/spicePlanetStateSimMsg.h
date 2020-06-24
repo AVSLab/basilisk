@@ -20,9 +20,6 @@
 #ifndef SpicePlanetState_H
 #define SpicePlanetState_H
 
-/*! \defgroup simMessages
- *  @{
- */
 
 #define MAX_BODY_NAME_LENGTH 64
 
@@ -37,6 +34,5 @@ typedef struct {
     char PlanetName[MAX_BODY_NAME_LENGTH];        //!< -- Name of the planet for the state
 }SpicePlanetStateSimMsg;
 
-/* @} */
 
 #endif

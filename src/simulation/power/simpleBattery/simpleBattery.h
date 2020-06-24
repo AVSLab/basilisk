@@ -27,7 +27,7 @@
 #include "utilities/bskLogging.h"
 
 
-
+/*! @brief simple battery class */
 class SimpleBattery: public PowerStorageBase {
 
 public:

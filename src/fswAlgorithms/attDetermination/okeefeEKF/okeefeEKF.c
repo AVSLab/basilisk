@@ -29,6 +29,7 @@
  output message
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
+ @param moduleID The module identifier
  */
 void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
 {
@@ -48,6 +49,7 @@ void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
+ @param moduleID The module identifier
  */
 void CrossInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
 {
@@ -64,6 +66,7 @@ void CrossInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
@@ -122,6 +125,7 @@ void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     int64_t moduleID)
@@ -373,7 +377,7 @@ void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime)
  @param kalmanGain The computed Kalman Gain
  @param covarBar The time updated covariance
  @param qObsVal The observation noise
- @param numObs The amount of CSSs that get measurements
+ @param numObsInt The amount of CSSs that get measurements
  @param yObs The y vector after receiving the measurements
  @param hObs The H matrix filled with the observations
  @param x Pointer to the state error for modification
@@ -433,7 +437,7 @@ void sunlineCKFUpdate(double xBar[SKF_N_STATES_HALF], double kalmanGain[SKF_N_ST
  @param kalmanGain The computed Kalman Gain
  @param covarBar The time updated covariance
  @param qObsVal The observation noise
- @param numObs The amount of CSSs that get measurements
+ @param numObsInt The amount of CSSs that get measurements
  @param yObs The y vector after receiving the measurements
  @param hObs The H matrix filled with the observations
  @param states Pointer to the states
@@ -494,12 +498,13 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double
  @param states
  @param numCSS The total number of CSS
  @param cssSensorCos The list of the measurements from the CSSs
- @param sensorUse Thresh The Threshold below which the measuremnts are not read
+ @param sensorUseThresh Thresh The Threshold below which the measuremnts are not read
  @param cssNHat_B The normals vector for each of the CSSs
  @param obs Pointer to the observations
  @param yMeas Pointer to the innovation
  @param numObs Pointer to the number of observations
  @param measMat Point to the H measurement matrix
+ @param CBias Vector of biases
  */
 
 void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], size_t numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double CBias[MAX_NUM_CSS_SENSORS], double *obs, double *yMeas, int *numObs, double *measMat)
@@ -534,8 +539,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], size_t numCSS, double
  @param covarBar The time updated covariance
  @param hObs The H matrix filled with the observations
  @param qObsVal The observation noise
- @param states Pointer to the states
- @param numObs The number of observations
+ @param numObsInt The number of observations
  @param kalmanGain Pointer to the Kalman Gain
  */
 

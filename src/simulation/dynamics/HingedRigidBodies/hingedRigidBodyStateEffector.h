@@ -28,7 +28,7 @@
 #include "simMessages/hingedRigidBodySimMsg.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief hinged rigid body state effector class */
 class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     double mass;                     //!< [kg] mass of hinged rigid body
@@ -88,7 +88,7 @@ public:
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to HRBs
-    void prependSpacecraftNameToStates();
+    void prependSpacecraftNameToStates(); //!< class method
 };
 
 

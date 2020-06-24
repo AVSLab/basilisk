@@ -34,6 +34,7 @@
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
@@ -51,6 +52,7 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t m
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
@@ -74,6 +76,8 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t 
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -127,6 +131,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {

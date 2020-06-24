@@ -27,7 +27,7 @@
 #include "simMessages/syncClockSimMsg.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief clock sync model class */
 class ClockSynch: public SysModel {
 public:
     ClockSynch();

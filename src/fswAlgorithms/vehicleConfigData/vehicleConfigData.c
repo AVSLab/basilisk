@@ -26,6 +26,7 @@
     It initializes the output message in the messaging system.
  @return void
  @param configData The configuration data associated with the vehcle config interface
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
@@ -40,6 +41,7 @@ void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID
     data interface.  No operations are performed here currently.
  @return void
  @param configData The configuration data associated with the veh config interface
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
@@ -70,6 +72,7 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
  @return void
  @param configData The configuration data associated with the veh config module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
 {

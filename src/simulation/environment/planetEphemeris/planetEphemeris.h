@@ -29,7 +29,7 @@
 #include <Eigen/Dense>
 
 
-
+/*! @brief planet ephemeris class */
 class PlanetEphemeris: public SysModel {
 public:
     PlanetEphemeris();

@@ -27,7 +27,7 @@
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief spherical pendulum state effector model */
 class SphericalPendulum :
 	public StateEffector, public SysModel, public FuelSlosh
 {

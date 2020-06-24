@@ -22,9 +22,6 @@
 
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 /*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
@@ -32,7 +29,6 @@ typedef struct {
 	double gimbalTorque[MAX_EFF_CNT];	//!< [N-m] VSCMG gimbal torque array
 }VSCMGArrayTorqueIntMsg;
 
-/*! @} */
 
 
 

@@ -20,16 +20,12 @@
 #ifndef SIM_TAM_DATA_MESSAGE_H
 #define SIM_TAM_DATA_MESSAGE_H
 
-/*! \defgroup simMessages
- *  @{
- */
 
 //!@brief TAM raw data output message definition.
 typedef struct {
     double OutputData[3];       //!< TAM measurement output 
 }TAMDataSimMsg;
 
-/* @} */
 
 
 #endif

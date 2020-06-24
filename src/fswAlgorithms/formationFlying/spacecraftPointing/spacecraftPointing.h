@@ -43,7 +43,7 @@ typedef struct {
     int32_t chiefPositionInMsgID;                       /*!< -- ID for the incoming chief position message */
     int32_t deputyPositionInMsgID;                      /*!< -- ID for the incoming deputy position message */
     uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
-    AttRefFswMsg attReferenceOutBuffer;
+    AttRefFswMsg attReferenceOutBuffer;                 //!< output msg copy
     BSKLogger *bskLogger;                             //!< BSK Logging
 }spacecraftPointingConfig;
 

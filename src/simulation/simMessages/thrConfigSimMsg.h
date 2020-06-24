@@ -25,9 +25,6 @@
 #include "thrOperationSimMsg.h"
 #include "thrTimePairSimMsg.h"
 
-/*! \defgroup simMessages
- *  @{
- */
 
 //! @brief Container for overall thruster configuration data for single thruster
 /*! This structure is used to define the overall configuration of an entire
@@ -50,6 +47,5 @@ typedef struct {
     char label[10];                                 //!< [-], label name of the TH device being simulated
 }THRConfigSimMsg;
 
-/* @} */
 
 #endif

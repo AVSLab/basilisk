@@ -35,9 +35,9 @@ SysModelTask::SysModelTask()
 }
 /*! A construction option that allows the user to set some task parameters.
  Note that the only required argument is InputPeriod.
- @param uint64_t InputPeriod The amount of nanoseconds between calls to this Task.
- @param uint64_t InputDelay How long to delay the input by in nanoseconds
- @param uint64_t FirstStartTime The offset in nanoseconds in a given frame to start the Task with.
+ @param InputPeriod The amount of nanoseconds between calls to this Task.
+ @param InputDelay How long to delay the input by in nanoseconds
+ @param FirstStartTime The offset in nanoseconds in a given frame to start the Task with.
  */
 SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t InputDelay,
                                  uint64_t FirstStartTime)
@@ -94,7 +94,7 @@ void SysModelTask::CrossInitTaskList()
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
  * See sys_model_task.h for related method ResetTask()
  @return void
- @param uint64_t CurrentSimTime The time to start at after reset
+ @param CurrentSimTime The time to start at after reset
 */
 void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 {
@@ -131,8 +131,8 @@ void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
 /*! This method adds a new model into the Task list.  Note that the Priority
  parameter is option as it defaults to -1 (lowest, latest)
  @return void
- @param SysModel* NewModel The new model that we are adding to the Task
- @param int32_t Priority The selected priority of the model being added (highest goes first)
+ @param NewModel The new model that we are adding to the Task
+ @param Priority The selected priority of the model being added (highest goes first)
  */
 void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 {
@@ -160,7 +160,7 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
    It attempts to keep the same offset relative to the original offset that
    was specified at task creation.
  @return void
- @param uint64_t newPeriod The period that the task should run at going forward
+ @param newPeriod The period that the task should run at going forward
  */
 void SysModelTask::updatePeriod(uint64_t newPeriod)
 {

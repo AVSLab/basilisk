@@ -20,9 +20,6 @@
 #ifndef epochSimMsg_h
 #define epochSimMsg_h
 
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief Structure used to define the the epoch date and time message */
 typedef struct {
@@ -34,6 +31,5 @@ typedef struct {
     double seconds;             //!< seconds, double
 }EpochSimMsg;
 
-/* @} */
 
 #endif /* epochSimMsg_h */

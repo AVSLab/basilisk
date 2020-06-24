@@ -24,11 +24,11 @@
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include <stdint.h>
 
-
+/*! @brief Euler integrator */
 class svIntegratorEuler : public StateVecIntegrator
 {
 public:
-    svIntegratorEuler(DynamicObject* dyn);
+    svIntegratorEuler(DynamicObject* dyn); //!< class method
     virtual ~svIntegratorEuler();
     virtual void integrate(double currentTime, double timeStep);
     

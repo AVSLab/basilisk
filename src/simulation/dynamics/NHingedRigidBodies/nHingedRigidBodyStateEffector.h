@@ -56,6 +56,7 @@ struct HingedPanel {
     Eigen::Matrix3d ISPrimePntS_B;   //!< [kg-m^2/s] time body derivative IPntS in body frame components
 };
 
+/*! @brief NHingedRigidBodyStateEffector class */
 class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     std::string NHingedRigidBodyOutMsgName; //!< -- state output message name
@@ -65,7 +66,7 @@ public:
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
     Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
-    void addHingedPanel(HingedPanel NewPanel) {PanelVec.push_back(NewPanel);}
+    void addHingedPanel(HingedPanel NewPanel) {PanelVec.push_back(NewPanel);} //!< class method
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:

@@ -23,6 +23,7 @@
 #include "onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
 #include "utilities/bskLogging.h"
 
+/*! @brief simple data transmitter class */
 class SimpleTransmitter: public DataNodeBase {
 public:
     SimpleTransmitter();
@@ -37,16 +38,16 @@ private:
 public:
     double packetSize; //!< Size of packet to downklink (bytes)
     int numBuffers; //!< Number of buffers the transmitter can access
-    std::vector<std::string> storageUnitMsgNames; //!< Vector of data node input message names
-    std::vector<std::int64_t> storageUnitMsgIds;
-    std::vector<DataStorageStatusSimMsg> storageUnitMsgs;
-    BSKLogger bskLogger;
+    std::vector<std::string> storageUnitMsgNames;           //!< Vector of data node input message names
+    std::vector<std::int64_t> storageUnitMsgIds;            //!< class variable
+    std::vector<DataStorageStatusSimMsg> storageUnitMsgs;   //!< class variable
+    BSKLogger bskLogger;                                    //!< class variable
 
 private:
     double packetTransmitted; //!< Amount of packet downlinked (bytes)
     double currentTimestep; //!< Current timestep tracked for data packet integration
     double previousTime; //!< Previous timestep tracked for data packet integration
-    std::vector<dataInstance> storedData; //! Vector of data. Represents the makeup of the data buffer. Created from input messages.
+    std::vector<dataInstance> storedData; //!< Vector of data. Represents the makeup of the data buffer. Created from input messages.
 };
 
 

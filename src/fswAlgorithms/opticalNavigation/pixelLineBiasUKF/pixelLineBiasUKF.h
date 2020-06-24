@@ -47,7 +47,7 @@ typedef struct {
     char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
     char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
     
-    int moduleId; 
+    int moduleId; //!< module ID
     
     size_t numStates;             //!< [-] Number of states for this filter
     size_t countHalfSPs;          //!< [-] Number of sigma points over 2

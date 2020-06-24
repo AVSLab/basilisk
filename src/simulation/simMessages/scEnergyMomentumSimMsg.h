@@ -20,9 +20,6 @@
 #ifndef SC_ENERGY_MOMENTUM_MESSAGE_H
 #define SC_ENERGY_MOMENTUM_MESSAGE_H
 
-/*! \defgroup simMessages
- *  @{
- */
 
 
 /*! @brief This structure is used in the messaging system to communicate what the
@@ -34,7 +31,6 @@ typedef struct {
     double spacecraftRotAngMomPntC_N[3];        //!< [kg m^2/s] Total rotational angular momentum about C in N frame components
 }SCEnergyMomentumSimMsg;
 
-/* @} */
 
 
 

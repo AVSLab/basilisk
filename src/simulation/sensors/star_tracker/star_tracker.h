@@ -31,7 +31,7 @@
 #include "utilities/bskLogging.h"
 
 
-
+/*! @brief star tracker class */
 class StarTracker: public SysModel {
 public:
     StarTracker();

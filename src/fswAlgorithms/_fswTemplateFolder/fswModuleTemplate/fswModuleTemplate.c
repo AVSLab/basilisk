@@ -62,7 +62,8 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The module identifier
+*/
 void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
 {
     /*! - Get the ID of the subscribed input message */
@@ -77,7 +78,9 @@ void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mo
  message output buffer should be cleared.
  @return void
  @param configData The configuration data associated with the module
- */
+ @param callTime [ns] time the method is called
+ @param moduleID The module identifier
+*/
 void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - reset any required variables */
@@ -91,7 +94,8 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
- */
+ @param moduleID The module identifier
+*/
 void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t            timeOfMsgWritten;

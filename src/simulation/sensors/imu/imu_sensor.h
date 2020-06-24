@@ -33,7 +33,7 @@
 #include "utilities/bskLogging.h"
 
 
-
+/*! @brief IMU sensor class */
 class ImuSensor: public SysModel {
 public:
     ImuSensor();
@@ -62,13 +62,13 @@ public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */
     std::string OutputDataMsg;          /*!< Message name for CSS output data */
     Eigen::Vector3d sensorPos_B;              /*!< [m] IMU sensor location in body */
-    Eigen::Matrix3d dcm_PB;                /// -- Transform from body to platform
-    Eigen::Vector3d senRotBias;               /// [r/s] Rotational Sensor bias value
-    Eigen::Vector3d senTransBias;             /// [m/s2] Translational acceleration sen bias
-	double senRotMax;					/// [r/s] Gyro saturation value
-	double senTransMax;					/// [m/s2] Accelerometer saturation value
-    uint64_t OutputBufferCount;         /// -- number of output msgs stored
-    bool NominalReady;                  /// -- Flag indicating that system is in run
+    Eigen::Matrix3d dcm_PB;                //!< -- Transform from body to platform
+    Eigen::Vector3d senRotBias;               //!< [r/s] Rotational Sensor bias value
+    Eigen::Vector3d senTransBias;             //!< [m/s2] Translational acceleration sen bias
+	double senRotMax;					//!< [r/s] Gyro saturation value
+	double senTransMax;					//!< [m/s2] Accelerometer saturation value
+    uint64_t OutputBufferCount;         //!< -- number of output msgs stored
+    bool NominalReady;                  //!< -- Flag indicating that system is in run
     Eigen::Matrix3d PMatrixAccel;   //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
 	Eigen::Matrix3d AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
 	Eigen::Vector3d walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
@@ -81,39 +81,39 @@ public:
     IMUSensorIntMsg trueValues;         //!< [-] total measurement without perturbations
     IMUSensorIntMsg sensedValues;       //!< [-] total measurement including perturbations
     
-    Eigen::Vector3d accelScale;         //! (-) scale factor for acceleration axes
-    Eigen::Vector3d gyroScale;          //! (-) scale factors for acceleration axes
+    Eigen::Vector3d accelScale;         //!< (-) scale factor for acceleration axes
+    Eigen::Vector3d gyroScale;          //!< (-) scale factors for acceleration axes
     
-    Discretize aDisc;                  //!  (-) instance of discretization utility for linear acceleration
-    Discretize oDisc;                  //!  (-) instance of idscretization utility for angular rate
-    Saturate aSat;                     //!  (-) instance of saturate utility for linear acceleration
-    Saturate oSat;                     //!  (-) instance of saturate utility for angular rate
+    Discretize aDisc;                  //!<  (-) instance of discretization utility for linear acceleration
+    Discretize oDisc;                  //!<  (-) instance of idscretization utility for angular rate
+    Saturate aSat;                     //!<  (-) instance of saturate utility for linear acceleration
+    Saturate oSat;                     //!<  (-) instance of saturate utility for angular rate
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    int64_t InputStateID;               /// -- Connect to input time message
-    int64_t OutputDataID;               /// -- Connect to output CSS data
-    uint64_t PreviousTime;              /// -- Timestamp from previous frame
-    int64_t numStates;                  /// -- Number of States for Gauss Markov Models
-    SCPlusStatesSimMsg StatePrevious;   /// -- Previous state to delta in IMU
-    SCPlusStatesSimMsg StateCurrent;    /// -- Current SSBI-relative state
-    GaussMarkov errorModelAccel;        ///!< [-] Gauss-markov error states
-    GaussMarkov errorModelGyro;         ///!< [-] Gauss-markov error states
+    int64_t InputStateID;               //!< -- Connect to input time message
+    int64_t OutputDataID;               //!< -- Connect to output CSS data
+    uint64_t PreviousTime;              //!< -- Timestamp from previous frame
+    int64_t numStates;                  //!< -- Number of States for Gauss Markov Models
+    SCPlusStatesSimMsg StatePrevious;   //!< -- Previous state to delta in IMU
+    SCPlusStatesSimMsg StateCurrent;    //!< -- Current SSBI-relative state
+    GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
+    GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
     
-    Eigen::MRPd previous_sigma_BN;              /// -- sigma_BN from the previous spacecraft message
-    Eigen::MRPd current_sigma_BN;               /// -- sigma_BN from the most recent spacecraft message
-    Eigen::Vector3d previous_omega_BN_B;        /// -- omega_BN_B from the previous spacecraft message
-    Eigen::Vector3d current_omega_BN_B;         /// -- omega_BN_B from the current spacecraft message
-    Eigen::Vector3d current_nonConservativeAccelpntB_B; /// -- nonConservativeAccelpntB_B from the current message
-    Eigen::Vector3d current_omegaDot_BN_B;      /// -- omegaDot_BN_B from the curret spacecraft message
-    Eigen::Vector3d previous_TotalAccumDV_BN_B; /// -- TotalAccumDV_BN_B from the previous spacecraft message
-    Eigen::Vector3d current_TotalAccumDV_BN_B; /// -- TotalAccumDV_BN_B from the current spacecraft message
+    Eigen::MRPd previous_sigma_BN;              //!< -- sigma_BN from the previous spacecraft message
+    Eigen::MRPd current_sigma_BN;               //!< -- sigma_BN from the most recent spacecraft message
+    Eigen::Vector3d previous_omega_BN_B;        //!< -- omega_BN_B from the previous spacecraft message
+    Eigen::Vector3d current_omega_BN_B;         //!< -- omega_BN_B from the current spacecraft message
+    Eigen::Vector3d current_nonConservativeAccelpntB_B; //!< -- nonConservativeAccelpntB_B from the current message
+    Eigen::Vector3d current_omegaDot_BN_B;      //!< -- omegaDot_BN_B from the curret spacecraft message
+    Eigen::Vector3d previous_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the previous spacecraft message
+    Eigen::Vector3d current_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the current spacecraft message
     
-    Eigen::Vector3d accel_SN_P_out;             /// -- rDotDot_SN_P for either next method or output messages
-    Eigen::Vector3d DV_SN_P_out;                /// -- time step deltaV for either next method or output messages
-    Eigen::Vector3d omega_PN_P_out;             /// -- omega_PN_P for either next method or output messages
-    Eigen::Vector3d prv_PN_out;                 /// -- time step PRV_PN for either next method or output messages
+    Eigen::Vector3d accel_SN_P_out;             //!< -- rDotDot_SN_P for either next method or output messages
+    Eigen::Vector3d DV_SN_P_out;                //!< -- time step deltaV for either next method or output messages
+    Eigen::Vector3d omega_PN_P_out;             //!< -- omega_PN_P for either next method or output messages
+    Eigen::Vector3d prv_PN_out;                 //!< -- time step PRV_PN for either next method or output messages
 };
 
 

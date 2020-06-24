@@ -50,8 +50,8 @@ typedef struct {
     /* declare module IO interfaces */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the RWArrayConfigFswMsg input message
     int32_t rwParamsInMsgId;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
-    char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t vehConfigInMsgId;
+    char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];   //!< [-] name of vehicle configuration message
+    int32_t vehConfigInMsgId;                       //!< [-] ID for the vehicle configuration message
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< [-] The name of the RWs availability message
     int32_t rwAvailInMsgId;                         //!< [-] ID for the incoming  RWs availability data
     

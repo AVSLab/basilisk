@@ -21,13 +21,8 @@
 #define BASILISK_POWERNODEUSAGESIMMSG_H
 
 
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief Message for reporting the power consumed produced or consumed by a module.*/
-
-
 typedef struct{
     double netPower; //!< [W] Power usage by the message writer; positive for sources, negative for sinks
 }PowerNodeUsageSimMsg;

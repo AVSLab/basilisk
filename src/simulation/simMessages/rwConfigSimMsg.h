@@ -22,9 +22,6 @@
 
 #include <Eigen/Dense>
 
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief enumeration definiting the types of RW modes */ 
 enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
@@ -62,17 +59,16 @@ typedef struct {
     Eigen::Vector3d aOmega;     //!< [-], parameter used in coupled jitter back substitution
     Eigen::Vector3d bOmega;     //!< [-], parameter used in coupled jitter back substitution
     double cOmega = 0.0;        //!< [-], parameter used in coupled jitter back substitution
-    Eigen::Matrix3d IRWPntWc_B;
-    Eigen::Matrix3d IPrimeRWPntWc_B;
-    Eigen::Vector3d rWcB_B;
-    Eigen::Matrix3d rTildeWcB_B;
-    Eigen::Vector3d rPrimeWcB_B;
-    Eigen::Vector3d w2Hat_B;
-    Eigen::Vector3d w3Hat_B;
+    Eigen::Matrix3d IRWPntWc_B;         //!< RW inertia about point Wc in B frame components
+    Eigen::Matrix3d IPrimeRWPntWc_B;    //!< RW inertia B-frame derivative
+    Eigen::Vector3d rWcB_B;             //!< position of Wc relative to B in B-frame components
+    Eigen::Matrix3d rTildeWcB_B;        //!< tilde matrix of r_WcB_B
+    Eigen::Vector3d rPrimeWcB_B;        //!< B-frame derivative of r_WcB_B
+    Eigen::Vector3d w2Hat_B;            //!< unit vector
+    Eigen::Vector3d w3Hat_B;            //!< unit vector
     char label[10];             //!< [-], label name of the RW device being simulated
 }RWConfigSimMsg;
 
-/* @} */
 
 
 #endif

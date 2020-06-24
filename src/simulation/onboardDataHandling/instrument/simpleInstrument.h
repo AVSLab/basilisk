@@ -22,6 +22,7 @@
 
 #include "onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
 
+/*! @brief simple instrument data handling class */
 class SimpleInstrument: public DataNodeBase {
 
 public:

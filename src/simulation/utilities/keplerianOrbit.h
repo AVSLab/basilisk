@@ -23,12 +23,6 @@
 #include "../dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include <utilities/orbitalMotion.h>
 
-/*! \addtogroup Sim Utility Group
- *  This group contains the simulation utilities that are used globally on the
- *  simulation side of the software.  Note that FSW should not generally use
- *  these utilities once we reach a CDR level of maturity on a project.
- * @{
- */
 
 //! @brief The KeplerianOrbit class represents an elliptical orbit and provides a coherent set of
 //! common outputs such as position and velocity, orbital period, semi-parameter, etc. It uses the
@@ -39,39 +33,40 @@ public:
     KeplerianOrbit(classicElements oe, GravBodyData* planet);
     KeplerianOrbit(const KeplerianOrbit &orig);
     ~KeplerianOrbit();
-    
-    Eigen::Vector3d r_BP_P(){return this->position_BP_P;};
-    Eigen::Vector3d v_BP_P(){return this->velocity_BP_P;};
-    Eigen::Vector3d h_BP_P(){return this->orbital_angular_momentum_P;};
-    double M(){return this->mean_anomaly;};
-    double n(){return this->mean_motion;};
-    double P(){return this->orbital_period;};
-    double f(){return this->true_anomaly;};
-    double fDot(){return this->true_anomaly_rate;};
-    double RAAN(){return this->right_ascension;};
-    double omega(){return this->argument_of_periapsis;};
-    double i(){return this->inclination;};
-    double e(){return this->eccentricity;};
-    double a(){return this->semi_major_axis;};
-    double h(){return this->h_BP_P().norm();};
-    double Energy(){return this->orbital_energy;};
-    double r(){return this->r_BP_P().norm();};
-    double v(){return this->v_BP_P().norm();};
-    double r_a(){return this->r_apogee;};
-    double r_p(){return this->r_perigee;};
-    double fpa(){return this->flight_path_angle;};
-    double E(){return this->eccentric_anomaly;};
-    double p(){return this->semi_parameter;};
-    double rDot(){return this->radial_rate;};
-    double c3(){return this->v_infinity;};
+
+
+    Eigen::Vector3d r_BP_P();              //!< body position vector relative to planet
+    Eigen::Vector3d v_BP_P();              //!< body velocity vector relative to planet
+    Eigen::Vector3d h_BP_P(); //!< angular momentum of body relative to planet
+    double M();
+    double n();
+    double P();
+    double f();
+    double fDot();
+    double RAAN();
+    double omega();
+    double i();
+    double e();
+    double a();
+    double h();
+    double Energy();
+    double r();
+    double v();
+    double r_a();
+    double r_p();
+    double fpa();
+    double E();
+    double p();
+    double rDot();
+    double c3();
     classicElements oe();
     void set_planet(GravBodyData* plt);
-    void set_a(double a){this->semi_major_axis = a; this->change_orbit();};
-    void set_e(double e){this->eccentricity = e; this->change_orbit();};
-    void set_i(double i){this->inclination = i; this->change_orbit();};
-    void set_omega(double omega){this->argument_of_periapsis = omega; this->change_orbit();};
-    void set_RAAN(double RAAN){this->right_ascension = RAAN; this->change_orbit();};
-    void set_f(double f){this->true_anomaly = f; this->change_f();};
+    void set_a(double a);
+    void set_e(double e);
+    void set_i(double i);
+    void set_omega(double omega);
+    void set_RAAN(double RAAN);
+    void set_f(double f);
     
 private:
     GravBodyData* planet;
@@ -103,4 +98,3 @@ private:
     void change_f();
 };
 
-/*! @} */

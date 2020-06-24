@@ -200,7 +200,7 @@ SysInterface::~SysInterface()
 
 /*!
  * Add an existing interface, but resets the destination and source to -1
- * @param InterfaceDataExchange* newInterface
+ * @param newInterface
  * @return void
  */
 void SysInterface::addNewInterface(InterfaceDataExchange * newInterface)
@@ -222,9 +222,9 @@ void SysInterface::addNewInterface(InterfaceDataExchange * newInterface)
 /*!
  * Create a new interface from "from" process to "to" process.
  * Auto-names the interface if the name provided is "".
- * @param std::string from process to read messages from
- * @param std::string to process to copy messages to
- * @param std::string intName name of this new interface
+ * @param from process to read messages from
+ * @param to process to copy messages to
+ * @param intName name of this new interface
  * @return void
  */
 void SysInterface::addNewInterface(std::string from, std::string to, std::string intName)
@@ -271,7 +271,7 @@ void SysInterface::connectInterfaces()
 /*!
  * Routes messages. Only if the interface is active. If interfaces are not
  * linked, then they are connected first.
- * @param int64_t processBuffer not used
+ * @param processBuffer not used
  * @return void
  */
 void SysInterface::routeInputs(int64_t processBuffer)

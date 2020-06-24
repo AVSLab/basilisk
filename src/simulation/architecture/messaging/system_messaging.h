@@ -28,9 +28,6 @@
 #include "architecture/messaging/blank_storage.h"
 #include "utilities/bsk_Print.h"
 
-/*! \addtogroup SimArchGroup
- * @{
- */
 
 #define MAX_MESSAGE_SIZE 512
 
@@ -39,16 +36,16 @@
  * it's kind of like an key to a message
  */
 typedef struct {
-    char MessageName[MAX_MESSAGE_SIZE];  //! -- Fix the max length of a message name
-    char messageStruct[MAX_MESSAGE_SIZE]; //! -- Fix the max length of message struct names
-    uint64_t UpdateCounter;  //! -- Number of times this message has been updated
-    uint32_t CurrentReadBuffer;  //! -- current buffer to read the message from
-    uint32_t MaxNumberBuffers;  //! -- Max buffers this message will have
-    uint64_t MaxMessageSize;  //! -- Maximum allowable message size in bytes
-    uint64_t CurrentReadSize;  //! -- Current size available for reading
-    uint64_t CurrentReadTime;  //! [ns] Current time of last read
-    uint64_t StartingOffset;  //! -- Starting offset in the storage buffer
-    int64_t previousPublisher;  //! (-) The module who last published the message
+    char MessageName[MAX_MESSAGE_SIZE];  //!< -- Fix the max length of a message name
+    char messageStruct[MAX_MESSAGE_SIZE]; //!< -- Fix the max length of message struct names
+    uint64_t UpdateCounter;  //!< -- Number of times this message has been updated
+    uint32_t CurrentReadBuffer;  //!< -- current buffer to read the message from
+    uint32_t MaxNumberBuffers;  //!< -- Max buffers this message will have
+    uint64_t MaxMessageSize;  //!< -- Maximum allowable message size in bytes
+    uint64_t CurrentReadSize;  //!< -- Current size available for reading
+    uint64_t CurrentReadTime;  //!< [ns] Current time of last read
+    uint64_t StartingOffset;  //!< -- Starting offset in the storage buffer
+    int64_t previousPublisher;  //!< (-) The module who last published the message
 }MessageHeaderData;
 
 /*!
@@ -56,52 +53,52 @@ typedef struct {
  * physically with the message data.
  */
 typedef struct {
-    uint64_t WriteClockNanos;  //! ns Time that message was written into buffer
-    uint64_t WriteSize;  //! -- Number of bytes that were written to buffer
+    uint64_t WriteClockNanos;  //!< ns Time that message was written into buffer
+    uint64_t WriteSize;  //!< -- Number of bytes that were written to buffer
 }SingleMessageHeader;
 
 /*!
  * Used to store permissions info for messages.
  */
 typedef struct {
-    std::set<int64_t> accessList;  //! (-) List of modules who are allowed to read/write message
-    bool publishedHere;            //! (-) Indicator about whether or not the message is published in this proc. buffer
+    std::set<int64_t> accessList;  //!< (-) List of modules who are allowed to read/write message
+    bool publishedHere;            //!< (-) Indicator about whether or not the message is published in this proc. buffer
 }AllowAccessData;
 
 /*!
  * Not sure yet how this is different than AllowAccessData
  */
 typedef struct {
-    std::set<std::pair<long int, long int>> exchangeList; //! (-) history of write/read pairs for message
+    std::set<std::pair<long int, long int>> exchangeList; //!< (-) history of write/read pairs for message
 }MessageExchangeData;
 
 /*!
  * Basically the container for a single process buffer
  */
 typedef struct {
-    std::string bufferName;  //! (-) Name of this process buffer for application access
-    BlankStorage messageStorage;  //! (-) The storage buffer associated with this process
-    std::vector<AllowAccessData> pubData;  //! (-) Entry of publishers for each message ID
-    std::vector<AllowAccessData> subData;  //! (-) Entry of subscribers for each message ID
-    std::vector<MessageExchangeData> exchangeData;  //! [-] List of write/read pairs
+    std::string bufferName;  //!< (-) Name of this process buffer for application access
+    BlankStorage messageStorage;  //!< (-) The storage buffer associated with this process
+    std::vector<AllowAccessData> pubData;  //!< (-) Entry of publishers for each message ID
+    std::vector<AllowAccessData> subData;  //!< (-) Entry of subscribers for each message ID
+    std::vector<MessageExchangeData> exchangeData;  //!< [-] List of write/read pairs
 }MessageStorageContainer;
 
 /*!
  * another header/key to a message
  */
 typedef struct {
-    std::string bufferName;  //! (-) String associated with the message buffer
-    int64_t processBuffer;  //! (-) Buffer ID for where this message originally lives
-    int64_t itemID;  //! (-) ID associated with request
-    bool itemFound;  //! (-) Indicator of whether the buffer was found
+    std::string bufferName;  //!< (-) String associated with the message buffer
+    int64_t processBuffer;  //!< (-) Buffer ID for where this message originally lives
+    int64_t itemID;  //!< (-) ID associated with request
+    bool itemFound;  //!< (-) Indicator of whether the buffer was found
 }MessageIdentData;
 
+/*! @brief system messaging class */
 #ifdef _WIN32
 class __declspec( dllexport) SystemMessaging
 #else
 class SystemMessaging
 #endif
-
 {
     
 public:
@@ -148,15 +145,14 @@ private:
     SystemMessaging& operator =(SystemMessaging const &){return(*this);};
     
 private:
-    static SystemMessaging *TheInstance;
-    std::vector<MessageStorageContainer *> dataBuffers;
-    MessageStorageContainer *messageStorage; // this is a pointer to the currently selected message buffer above
-    uint64_t WriteFails;  //! the number of times we tried to write invalidly
-    uint64_t ReadFails;  //! the number of times we tried to read invalidly
-    uint64_t CreateFails;  //! the number of times we tried to create invalidly
-    int64_t nextModuleID;  //! the next module ID to give out when a module comes online
+    static SystemMessaging *TheInstance;        //!< instance of system messaging
+    std::vector<MessageStorageContainer *> dataBuffers;  //!< data buffer vector
+    MessageStorageContainer *messageStorage; //!< this is a pointer to the currently selected message buffer above
+    uint64_t WriteFails;  //!< the number of times we tried to write invalidly
+    uint64_t ReadFails;  //!< the number of times we tried to read invalidly
+    uint64_t CreateFails;  //!< the number of times we tried to create invalidly
+    int64_t nextModuleID;  //!< the next module ID to give out when a module comes online
 };
 
-/* @} */
 
 #endif /* _SystemMessaging_H_ */

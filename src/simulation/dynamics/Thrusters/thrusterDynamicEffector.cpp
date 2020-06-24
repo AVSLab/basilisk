@@ -50,7 +50,7 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     return;
 }
 
-/*! The destructor.*/
+/*! The destructor. */
 ThrusterDynamicEffector::~ThrusterDynamicEffector()
 {
     
@@ -340,7 +340,7 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
  time to determine what state and force the thruster should be in.
  @return void
  @param CurrentThruster Pointer to the configuration data for a given thruster
- @param CurrentTime The current simulation clock time converted to a double
+ @param currentTime The current simulation clock time converted to a double
  */
 void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThruster,
                                                   double currentTime)
@@ -399,7 +399,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThrust
  to the ramp profile.
  @return void
  @param CurrentThruster Pointer to the configuration data for a given thruster
- @param CurrentTime The current simulation clock time converted to a double
+ @param currentTime The current simulation clock time converted to a double
  */
 void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThruster,
                                                   double currentTime)

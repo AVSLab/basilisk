@@ -38,6 +38,7 @@ extern "C" {
 }
 
 
+/*! @brief MSIS athomsphere model */
 class MsisAtmosphere: public AtmosphereBase {
 public:
     MsisAtmosphere();
@@ -54,9 +55,9 @@ private:
     void customSetEpochFromVariable();
 
 public:
-    int epochDoy;                       //!< [day] Day-of-Year at epoch
-    std::string epochInMsgName;
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    int epochDoy;                               //!< [day] Day-of-Year at epoch
+    std::string epochInMsgName;                 //!< epoch input msg name
+    BSKLogger bskLogger;                        //!< -- BSK Logging
 
 
 private:

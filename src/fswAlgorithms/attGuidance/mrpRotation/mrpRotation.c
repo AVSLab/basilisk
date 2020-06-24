@@ -188,9 +188,9 @@ void computeTimeStep(mrpRotationConfig *configData, uint64_t callTime)
  associated with a rotation defined in terms of an initial MRP set and a constant angular velocity vector
  @return void
  @param configData The configuration data associated with the mrpRotation module
- @param sigma_R0N[3] The input reference attitude using MRPs
- @param omega_R0N_N[3] The input reference frame angular rate vector
- @param domega_R0N_N[3] The input reference frame angular acceleration vector
+ @param sigma_R0N The input reference attitude using MRPs
+ @param omega_R0N_N The input reference frame angular rate vector
+ @param domega_R0N_N The input reference frame angular acceleration vector
  @param attRefOut The output message copy
  */
 void computeMRPRotationReference(mrpRotationConfig *configData,

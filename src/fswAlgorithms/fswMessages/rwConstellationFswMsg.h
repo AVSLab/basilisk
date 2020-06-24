@@ -23,17 +23,13 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "rwConfigElementFswMsg.h"
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 /*! @brief Message used to define an array of RW FSW configurations  */
 typedef struct {
-    int numRW;
+    int numRW;                                          //!< [-] number of RWs
     RWConfigElementFswMsg reactionWheels[MAX_EFF_CNT];  //!< [-] array of the reaction wheels 
 }RWConstellationFswMsg;
 
-/* @} */
 
 #endif

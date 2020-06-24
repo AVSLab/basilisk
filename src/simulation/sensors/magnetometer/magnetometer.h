@@ -31,7 +31,7 @@
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
-
+/*! @brief magnetometer class */
 class Magnetometer : public SysModel {
 public:
     Magnetometer();

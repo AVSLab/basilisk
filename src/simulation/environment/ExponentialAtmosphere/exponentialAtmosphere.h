@@ -31,7 +31,7 @@
 #include "../_GeneralModuleFiles/atmosphereBase.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief exponential atmosphere model */
 class ExponentialAtmosphere:  public AtmosphereBase {
 public:
     ExponentialAtmosphere();

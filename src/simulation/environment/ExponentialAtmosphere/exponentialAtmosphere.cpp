@@ -44,6 +44,7 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
 
 /*! This method is evaluates the centered dipole magnetic field model.
  @param msg magnetic field message structure
+ @param currentTime current time (s)
  @return void
  */
 void ExponentialAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime)

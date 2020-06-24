@@ -41,7 +41,7 @@ SimpleTransmitter::~SimpleTransmitter(){
 
 /*! Adds a dataStorageStatusSimMsg name to be accessed by transmitter.
  @return void
- @param tmpScMsgName A spacecraft state message name.
+ @param tmpStorageUnitMsgName A spacecraft state message name.
  */
 void SimpleTransmitter::addStorageUnitToTransmitter(std::string tmpStorageUnitMsgName){
     this->storageUnitMsgNames.push_back(tmpStorageUnitMsgName);

@@ -27,14 +27,8 @@
 #include <Eigen/Dense>
 #include "utilities/bskLogging.h"
 
-/*! \addtogroup Sim Utility Group
- *  This group contains the simulation utilities that are used globally on the
- *  simulation side of the software.  Note that FSW should not generally use
- *  these utilities once we reach a CDR level of maturity on a project.
- * @{
- */
 
-/*! This module is used to apply a second-order bounded Gauss-Markov random walk
+/*! @brief This module is used to apply a second-order bounded Gauss-Markov random walk
     on top of an upper level process.  The intent is that the caller will perform
     the set methods (setUpperBounds, setNoiseMatrix, setPropMatrix) as often as
     they need to, call computeNextState, and then call getCurrentState cyclically
@@ -44,7 +38,7 @@ class GaussMarkov
     
 public:
     GaussMarkov();
-    GaussMarkov(uint64_t size, uint64_t newSeed = 0x1badcad1);
+    GaussMarkov(uint64_t size, uint64_t newSeed = 0x1badcad1); //!< class constructor
     ~GaussMarkov();
     void computeNextState();
 
@@ -85,6 +79,5 @@ private:
     uint64_t numStates;             //!< -- Number of states to generate noise for
 };
 
-/*! @} */
 
 #endif /* _GaussMarkov_HH_ */

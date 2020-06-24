@@ -108,10 +108,10 @@ bool SphericalHarmonics::initializeParameters()
 ///---------------------------------Main Interface----------------------------///
 /*!
  @brief Use to compute the field in position pos, given in a body frame.
- @param[in] pos Position in which the field is to be computed.
- @param[in] degree used to compute the field.
- @param[out] acc Vector including the computed field.
- @param[in] include_zero_degree Boolean that determines whether the zero-degree term is included.
+ @param pos_Pfix Position in which the field is to be computed.
+ @param degree used to compute the field.
+ @return acc Vector including the computed field.
+ @param include_zero_degree Boolean that determines whether the zero-degree term is included.
  */
 Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix, unsigned int degree,
     bool include_zero_degree)
@@ -317,6 +317,11 @@ void GravBodyData::registerProperties(DynParamManager& statesIn)
     return;
 }
 
+/*!
+ compute the gravitational acceleration
+ @param r_I inertial position vector
+ @param simTimeNanos simulation time (ns)
+ */
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     uint64_t simTimeNanos)
 {
@@ -349,12 +354,20 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     return(gravOut);
 }
 
+/*!
+ compute potential energy
+ @param r_I inertial position vector
+ */
 double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
 {
     double gravPotentialEnergyOut  = -this->mu/r_I.norm();
     return gravPotentialEnergyOut;
 }
 
+/*!
+ load ephemeris information
+ @param moduleID
+ */
 void GravBodyData::loadEphemeris(int64_t moduleID)
 {
     bool msgRead;
@@ -402,7 +415,11 @@ void GravityEffector::CrossInit()
     }
 }
 
-void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
+/*!
+ update state
+ @param currentSimNanos
+ */
+void GravityEffector::UpdateState(uint64_t currentSimNanos)
 {
     //! - Updates the grav body planet ephemerides
     std::vector<GravBodyData *>::iterator it;
@@ -413,10 +430,14 @@ void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
             this->centralBody = (*it);
         }
     }
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
     return;
 }
 
+/*!
+ write output message
+ @param currentSimNanos
+*/
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
     if (this->centralBodyOutMsgId > 0) {
@@ -434,6 +455,10 @@ void GravityEffector::prependSpacecraftNameToStates()
     return;
 }
 
+/*!
+ register properties
+ @param statesIn simulation states
+*/
 void GravityEffector::registerProperties(DynParamManager& statesIn)
 {
     Eigen::Vector3d gravInit;
@@ -455,9 +480,10 @@ void GravityEffector::linkInStates(DynParamManager& statesIn)
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
 }
 
-/*!Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
-@params r_cF_N is position of center of mass of s/c wrt frame it is stored/integrated in in spacecraft
-@params rDot_cF_N is the derivative of above
+/*!
+    Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
+    @param r_cF_N is position of center of mass of s/c wrt frame it is stored/integrated in in spacecraft
+    @param rDot_cF_N is the derivative of above
 */
 void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N)
 {
@@ -500,9 +526,10 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
     
     *this->gravProperty = rDotDot_cF_N;
 }
-/*!Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
- @params r_BF_N is position of body frame of s/c wrt frame it is stored/integrated in in spacecraft
- @params rDot_BF_N is the derivative of above
+/*!
+    Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
+    @param r_BF_N is position of body frame of s/c wrt frame it is stored/integrated in in spacecraft
+    @param rDot_BF_N is the derivative of above
  */
 void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N)
 {
@@ -518,9 +545,9 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
         *this->inertialVelocityProperty = rDot_BF_N;
     }
 }
-/*!Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
- @params r_cF_N is position of center of mass of s/c wrt frame it is stored/integrated in in spacecraft
- @params rDot_cF_N is the derivative of above
+/*!
+    compute planet position eiht Euler integration
+    @param bodyData planet data
  */
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *bodyData)
 {

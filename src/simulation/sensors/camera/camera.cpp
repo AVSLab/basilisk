@@ -97,7 +97,7 @@ Camera::~Camera()
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param this The configuration data associated with the module
+ @param CurrentSimNanos current time (ns)
  */
 void Camera::Reset(uint64_t CurrentSimNanos)
 {
@@ -107,8 +107,8 @@ void Camera::Reset(uint64_t CurrentSimNanos)
 /*!
  * Adjusts the HSV values of each pixel.
  * Can be used to shift the hue, saturation, and brightness of an image.
- * @param cv::Mat source image
- * @param cv::Mat destination of modified image
+ * @param mSrc source image
+ * @param mDst destination of modified image
  * @return void
  */
 void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
@@ -145,8 +145,8 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
 /*!
  * Adjusts the BGR values of each pixel by a percent value.
  * Can be used to simulate a sensor with different sensitivities to B, G, and R.
- * @param cv::Mat source image
- * @param cv::Mat destination of modified image
+ * @param mSrc source image
+ * @param mDst destination of modified image
  * @return void
  */
 void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
@@ -174,10 +174,10 @@ void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
 /*!
  * Adds gaussian noise to an image.
  * Can be used to add color noise and dark current.
- * @param cv::Mat source image
- * @param cv::Mat destination of modified image
- * @param double mean pixel value
- * @param double standard deviation of pixel value
+ * @param mSrc source image
+ * @param mDst destination of modified image
+ * @param Mean mean pixel value
+ * @param StdDev standard deviation of pixel value
  * @return void
  */
 void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, double StdDev)
@@ -196,10 +196,10 @@ void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, do
 
 /*!
  * Adds dead and hot pixels to an image.
- * @param cv::Mat source image
- * @param cv::Mat destination of modified image
- * @param float probability of dead pixels
- * @param float probability of hot pixels
+ * @param mSrc source image
+ * @param mDst destination of modified image
+ * @param pa probability of dead pixels
+ * @param pb probability of hot pixels
  * @return void
  */
 void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb){
@@ -241,11 +241,11 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
 
 /*!
  * Adds a cosmic ray to an image. The ray is modelled as a single pixel wide white line.
- * @param cv::Mat source image
- * @param cv::Mat destination of modified image
- * @param float probability of getting a ray each frame
- * @param double if adding multiple rays pass in the number of each to guarantee a random ray
- * @param int max length of cosmic ray
+ * @param mSrc source image
+ * @param mDst destination of modified image
+ * @param probThreshhold probability of getting a ray each frame
+ * @param randOffset if adding multiple rays pass in the number of each to guarantee a random ray
+ * @param maxSize max length of cosmic ray
  * @return void
  */
 void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
@@ -275,9 +275,9 @@ void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhol
 /*!
  * Adds a user specified number of cosmic rays to an image. Rays are modelled as a single pixel wide white line.
  * The maximum length is hard-coded as 50 pixels.
- * @param cv::Mat source image
- * @param cv::Mat destination of modified image
- * @param double number of cosmic rays to be added
+ * @param mSrc source image
+ * @param mDst destination of modified image
+ * @param num number of cosmic rays to be added
  * @return void
  */
 void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
@@ -294,13 +294,13 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
 /*!
  * Applys all of the various pertubations to an image with user specified levels.
  * Each parameter is a double scaling actor. A parameter of 0 will result in the respective perturbation not being applied.
- * @param cv::Mat source image
- * @param cv::Mat destination of modified image
- * @param double scaling factor for gaussian noise
- * @param double scaling factor for dark current
- * @param double scaling factor for hot and dead pixels
- * @param double number of cosmic rays to add
- * @param double size of blur to apply
+ * @param mSource source image
+ * @param mDst destination of modified image
+ * @param gaussian scaling factor for gaussian noise
+ * @param darkCurrent scaling factor for dark current
+ * @param saltPepper scaling factor for hot and dead pixels
+ * @param cosmicRays number of cosmic rays to add
+ * @param blurparam size of blur to apply
  * @return void
  */
 void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam){

@@ -36,7 +36,7 @@
 #include "../simulation/utilities/bskLogging.h"
 
 
-
+/*! @brief visual planet tracking with Hough circles */
 class HoughCircles: public SysModel {
 public:
     HoughCircles();

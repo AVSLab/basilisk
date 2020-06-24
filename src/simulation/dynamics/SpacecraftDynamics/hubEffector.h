@@ -26,6 +26,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
 
+/*! @brief spaecraft hub effector class */
 class HubEffector : public StateEffector {
 public:
     double mHub;                         //!< [kg] mass of the hub
@@ -36,7 +37,7 @@ public:
     std::string nameOfHubOmega;          //!< -- Identifier for hub omegaBN_B states
     Eigen::Vector3d r_BcB_B;             //!< [m] vector from point B to CoM of hub in B frame components
     Eigen::Matrix3d IHubPntBc_B;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
-    BackSubMatrices hubBackSubMatrices;
+    BackSubMatrices hubBackSubMatrices;  //!< class method
     Eigen::Vector3d r_CN_NInit;          //!< [m] Initial position of the spacecraft wrt to base
     Eigen::Vector3d v_CN_NInit;          //!< [m/s Initial velocity of the spacecraft wrt base
     Eigen::Vector3d sigma_BNInit;        //!< -- Initial attitude of the spacecraft wrt base
@@ -53,7 +54,7 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Add contributions to energy and momentum
     void modifyStates(double integTime); //!< -- Method to switch MRPs
-    void prependSpacecraftNameToStates();
+    void prependSpacecraftNameToStates(); //!< class method
 
 private:
     Eigen::Vector3d r_BcP_P;             //!< [m] vector from point B to CoM of hub in B frame components

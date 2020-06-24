@@ -71,7 +71,8 @@ the Eigen matrix ahead of time so that the internal map call has enough
 information to ingest the C array.
 @return Eigen::MatrixXd
 @param inArray The input array (row-major)
-@param outMat The output Eigen matrix
+@param nRows
+@param nCols
 */
 Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols)
 {
@@ -85,7 +86,6 @@ Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols)
 in order to save an unnecessary conversion between types
 @return Eigen::Vector3d
 @param inArray The input array (row-major)
-@param outMat The output Eigen matrix
 */
 Eigen::Vector3d cArray2EigenVector3d(double *inArray)
 {
@@ -96,7 +96,6 @@ Eigen::Vector3d cArray2EigenVector3d(double *inArray)
 in order to save an unnecessary conversion between types
 @return Eigen::Matrix3d
 @param inArray The input array (row-major)
-@param outMat The output Eigen matrix
 */
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
 {

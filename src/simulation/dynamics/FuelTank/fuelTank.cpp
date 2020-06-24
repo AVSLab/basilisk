@@ -81,6 +81,10 @@ void FuelTank::CrossInit()
     return;
 }
 
+/*! set fuel tank model
+ @return void
+ @param model fuel tank model type
+ */
 void FuelTank::setTankModel(FuelTankModelTypes model){
 	fuelTankModel = FuelTankModels[model];
 

@@ -21,9 +21,6 @@
 #ifndef DV_BURN_CMD_MESSAGE_H
 #define DV_BURN_CMD_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 /*! @brief Input burn command structure used to configure the burn*/
@@ -34,6 +31,5 @@ typedef struct {
     uint64_t burnStartTime;  //!< [ns]  The commanded time to start the burn
 }DvBurnCmdFswMsg;
 
-/* @} */
 
 #endif

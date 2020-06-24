@@ -49,12 +49,12 @@ typedef struct {
 	double state[SKF_N_STATES_HALF];        /*!< [-] State estimate for time TimeTag*/
     double prev_states[SKF_N_STATES_HALF];        /*!< [-] State estimate for previous time TimeTag*/
     double omega[SKF_N_STATES_HALF];        /*!< [-] Rotation rate vector*/
-    double x[SKF_N_STATES_HALF];             /*! [-] State errors */
-    double xBar[SKF_N_STATES_HALF];            /*! [-] Current time updated mean state estimate*/
+    double x[SKF_N_STATES_HALF];             /*!< [-] State errors */
+    double xBar[SKF_N_STATES_HALF];            /*!< [-] Current time updated mean state estimate*/
 	double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF];         /*!< [-] Time updated covariance */
 	double covar[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] covariance */
     double stateTransition[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] covariance */
-    double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS];    /* Kalman Gain */
+    double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS];    /*!< Kalman Gain */
 
     double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] Dynamics Matrix, A */
     double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_HALF];        /*!< [-] Measurement Matrix, H*/

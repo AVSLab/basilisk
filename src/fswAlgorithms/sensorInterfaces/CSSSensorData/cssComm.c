@@ -27,6 +27,7 @@
  output message
  @return void
  @param configData The configuration data associated with the CSS sensor interface
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
 {
@@ -40,6 +41,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
 {
@@ -51,6 +53,8 @@ void CrossInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the guidance module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -83,6 +87,7 @@ void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t
  @return void
  @param configData The configuration data associated with the CSS interface
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
     int64_t moduleID)

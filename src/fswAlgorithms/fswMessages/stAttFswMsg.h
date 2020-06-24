@@ -20,9 +20,6 @@
 #ifndef ST_ATTITUDE_MESSAGE_H
 #define ST_ATTITUDE_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 /*! @brief Output structure for ST attitude measurement in vehicle body frame*/
 typedef struct {
@@ -30,6 +27,5 @@ typedef struct {
     double MRP_BdyInrtl[3];     //!< [-] MRP estimate of inertial to body transformation
 }STAttFswMsg;
 
-/* @} */
 
 #endif

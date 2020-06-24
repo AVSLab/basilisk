@@ -28,6 +28,7 @@
  output message
  @return void
  @param configData The configuration data associated with the celestial body guidance
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     int64_t moduleID)
@@ -46,6 +47,7 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
  created elsewhere.
  @return void
  @param configData The configuration data associated with the attitude maneuver guidance
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     int64_t moduleID)
@@ -82,6 +84,7 @@ void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64
  @return void
  @param configData The configuration data associated with the celestial body guidance
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
                                   uint64_t callTime, int64_t moduleID)
@@ -99,6 +102,8 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
  primary celestial body and, if applicable, the second one, and computes the relative state vectors
  necessary to create the restricted 2-body pointing reference frame.
  @return void
+ @param configData The configuration data associated with the celestial body guidance
+ @param moduleID The ID associated with the configData
  */
 void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleID)
 {

@@ -34,7 +34,8 @@
  output message
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The module identifier
+*/
 void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
@@ -47,7 +48,8 @@ void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The module identifier
+*/
 void CrossInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
@@ -59,7 +61,9 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the MRP steering control
- */
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
+*/
 void Reset_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
@@ -70,7 +74,8 @@ void Reset_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, int64
  @return void
  @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
- */
+ @param moduleID The module identifier
+*/
 void Update_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {

@@ -39,6 +39,7 @@
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
 {
@@ -61,6 +62,7 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, i
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
 {
@@ -95,6 +97,8 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the servo rate control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -132,6 +136,7 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
  @return void
  @param configData The configuration data associated with the servo rate control
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime,
     int64_t moduleID)

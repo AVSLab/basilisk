@@ -17,6 +17,9 @@
 
  */
 
+/// \cond DO_NOT_DOCUMENT
+
+
 #ifndef _BSK_LOG_
 #define _BSK_LOG_
 
@@ -42,6 +45,7 @@ void printDefaultLogLevel();
 void setDefaultLogLevel(logLevel_t logLevel);
 logLevel_t getDefaultLogLevel();
 
+/*! BSK logging class */
 class BSKLogger
 {
     public:
@@ -84,3 +88,5 @@ EXTERN void _printLogLevel(BSKLogger*);
 EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
 EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
 #endif
+
+/// \endcond

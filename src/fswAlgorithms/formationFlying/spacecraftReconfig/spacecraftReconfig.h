@@ -41,19 +41,19 @@ typedef struct {
 typedef struct {
     /* declare module IO interfaces */
     // in
-    char chiefTransInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t chiefTransInMsgID;
-    char deputyTransInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t deputyTransInMsgID;
-    char thrustConfigInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t thrustConfigInMsgID;
-    char attRefInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t attRefInMsgID;
+    char chiefTransInMsgName[MAX_STAT_MSG_LENGTH];      //!< msg name
+    int32_t chiefTransInMsgID;                          //!< msg ID
+    char deputyTransInMsgName[MAX_STAT_MSG_LENGTH];     //!< msg name
+    int32_t deputyTransInMsgID;                         //!< msg ID
+    char thrustConfigInMsgName[MAX_STAT_MSG_LENGTH];    //!< msg name
+    int32_t thrustConfigInMsgID;                        //!< msg ID
+    char attRefInMsgName[MAX_STAT_MSG_LENGTH];          //!< msg name
+    int32_t attRefInMsgID;                              //!< msg ID
     // out
-    char attRefOutMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t attRefOutMsgID;
-    char onTimeOutMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t onTimeOutMsgID; //!< central body gravity constant
+    char attRefOutMsgName[MAX_STAT_MSG_LENGTH];         //!< msg name
+    int32_t attRefOutMsgID;                             //!< msg ID
+    char onTimeOutMsgName[MAX_STAT_MSG_LENGTH];         //!< msg name
+    int32_t onTimeOutMsgID;                             //!< msg ID
     double mu;  //!< [m^3/s^2] gravity constant of planet being orbited
     double attControlTime; //!< [s] attitude control margin time (time necessary to change sc's attitude)
     double targetClassicOED[6]; //!< target classic orital element difference, SMA should be normalized
@@ -62,7 +62,7 @@ typedef struct {
     double tCurrent; //!< [s] timer
     uint64_t prevCallTime; //!< [ns]
     uint8_t thrustOnFlag; //!< thrust control
-    spacecraftReconfigConfigBurnInfo dvArray[3];
+    spacecraftReconfigConfigBurnInfo dvArray[3];    //!< array of burns
 }spacecraftReconfigConfig;
 
 #ifdef __cplusplus

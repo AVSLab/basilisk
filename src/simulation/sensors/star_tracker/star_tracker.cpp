@@ -48,6 +48,9 @@ StarTracker::~StarTracker()
     return;
 }
 
+/*!
+    link messages
+ */
 bool StarTracker::LinkMessages()
 {
     this->inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
@@ -57,6 +60,9 @@ bool StarTracker::LinkMessages()
     return(inputStateID >= 0);
 }
 
+/*!
+    self initialization
+ */
 void StarTracker::SelfInit()
 {
     int numStates = 3;
@@ -81,11 +87,17 @@ void StarTracker::SelfInit()
     this->errorModel.setUpperBounds(this->walkBounds);
 }
 
+/*!
+    cross initialization
+ */
 void StarTracker::CrossInit()
 {
     messagesLinked = this->LinkMessages();
 }
 
+/*!
+    read input messages
+ */
 void StarTracker::readInputMessages()
 {
     SingleMessageHeader localHeader;
@@ -104,6 +116,9 @@ void StarTracker::readInputMessages()
     }
 }
 
+/*!
+   compute sensor errors
+ */
 void StarTracker::computeSensorErrors()
 {
     this->errorModel.setPropMatrix(this->AMatrix);
@@ -111,6 +126,9 @@ void StarTracker::computeSensorErrors()
     this->navErrors = this->errorModel.getCurrentState();
 }
 
+/*!
+   apply sensor errors
+ */
 void StarTracker::applySensorErrors()
 {
     double sigmaSensed[3];
@@ -120,6 +138,11 @@ void StarTracker::applySensorErrors()
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
 
+/*!
+    compute quaternion from MRPs
+    @param sigma
+    @param sensorValues
+ */
 void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
 {
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
@@ -129,19 +152,27 @@ void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
     C2EP(dcm_CN, sensorValues->qInrtl2Case);
 }
 
+/*!
+    compute true output values
+ */
 void StarTracker::computeTrueOutput()
 {
     this->trueValues.timeTag = this->sensorTimeTag;
     this->computeQuaternion(this->scState.sigma_BN, &this->trueValues);
 }
 
-
+/*!
+    write output messages
+ */
 void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     SystemMessaging::GetInstance()->WriteMessage(this->outputStateID, CurrentSimNanos,
                                                  sizeof(STSensorIntMsg), reinterpret_cast<uint8_t *>(&this->sensedValues), this->moduleID);
 }
 
+/*!
+    update module states
+ */
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();

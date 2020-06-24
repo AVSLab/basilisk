@@ -20,10 +20,6 @@
 #ifndef VEHICLE_CONFIG_MESSAGE_H
 #define VEHICLE_CONFIG_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
-
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
@@ -32,6 +28,5 @@ typedef struct {
     uint32_t CurrentADCSState;    //!< [-] Current ADCS state for subsystem
 }VehicleConfigFswMsg;
 
-/* @} */
 
 #endif

@@ -22,9 +22,6 @@
 #define _AVSEIGENSUPPORT_
 #include <Eigen/Dense>
 
-/*! \addtogroup Sim Utility Group
-* @{
-*/
 
 //!@brief General conversion between any Eigen matrix and output array
 void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray);

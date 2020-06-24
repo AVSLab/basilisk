@@ -28,7 +28,7 @@
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
-
+/*! @brief RW voltage interface class */
 class RWVoltageInterface: public SysModel {
 public:
     RWVoltageInterface();

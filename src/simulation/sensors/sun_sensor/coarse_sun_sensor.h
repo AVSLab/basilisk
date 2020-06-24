@@ -44,7 +44,7 @@ typedef enum {
     MAX_CSSFAULT
 } CSSFaultState_t;
 
-
+/*! @brief coarse sun sensor class */
 class CoarseSunSensor: public SysModel {
 public:
     CoarseSunSensor();
@@ -59,7 +59,7 @@ public:
     void computeSunData(); //!< @brief method to get the sun vector information
     void computeTrueOutput(); //!< @brief method to compute the true sun-fraction of CSS
     void applySensorErrors(); //!< @brief method to set the actual output of the sensor with scaling/kelly
-    void scaleSensorValues();
+    void scaleSensorValues();  //!< scale the sensor values
     void applySaturation();     //!< apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
     
@@ -83,7 +83,7 @@ public:
     double              trueValue;              //!< [-] total measurement without perturbations
     double              kellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
-    Eigen::Vector3d     r_B;
+    Eigen::Vector3d     r_B;                    //!< [m] position vector in body frame
     Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame 
     double              senBias;                //!< [-] Sensor bias value
     double              senNoiseStd;            //!< [-] Sensor noise value

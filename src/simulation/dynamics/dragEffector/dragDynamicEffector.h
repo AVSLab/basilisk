@@ -43,12 +43,12 @@ typedef struct {
     Eigen::Vector3d comOffset;               //!< m distance from center of mass to center of projected area
 }DragBaseData;
 
-
+/*! @brief drag dynamic effector */
 class DragDynamicEffector: public SysModel, public DynamicEffector {
 public:
     DragDynamicEffector();
     ~DragDynamicEffector();
-    void linkInStates(DynParamManager& states);
+    void linkInStates(DynParamManager& states);             //!< class method
     void computeForceTorque(double integTime);
     void SelfInit();
     void CrossInit();

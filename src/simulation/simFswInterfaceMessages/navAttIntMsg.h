@@ -20,9 +20,6 @@
 #ifndef NAV_ATT_MESSAGE_H
 #define NAV_ATT_MESSAGE_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
     double timeTag;          //!< [s]   Current vehicle time-tag associated with measurements*/
@@ -31,6 +28,5 @@ typedef struct {
     double vehSunPntBdy[3];  //!<       Current sun pointing vector in body frame
 }NavAttIntMsg;
 
-/*! @} */
 
 #endif

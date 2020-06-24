@@ -90,7 +90,7 @@ void GravityGradientEffector::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method adds planet names to a vector.
- @param std::string planetName The planet name
+ @param planetName The planet name
  @return void
  */
 void GravityGradientEffector::addPlanetName(std::string planetName)

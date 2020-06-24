@@ -25,7 +25,7 @@
 
 
 
-
+/*! @brief simple power sink class */
 class SimplePowerSink: public PowerNodeBase {
 
 public:

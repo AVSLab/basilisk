@@ -24,9 +24,6 @@
 #include "cssUnitConfigFswMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 /*! @brief Structure used to contain the configuration information for
@@ -36,6 +33,5 @@ typedef struct {
     CSSUnitConfigFswMsg cssVals[MAX_NUM_CSS_SENSORS];   //!< [-] constellation of CSS elements
 }CSSConfigFswMsg;
 
-/* @} */
 
 #endif

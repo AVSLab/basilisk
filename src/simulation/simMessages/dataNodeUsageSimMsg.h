@@ -20,15 +20,11 @@
 #ifndef BASILISK_DATANODEUSAGESIMMSG_H
 #define BASILISK_DATANODEUSAGESIMMSG_H
 
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief Message for reporting the science or telemetry data produced or consumed by a module.*/
-
 typedef struct{
     //std::string dataName; //!< Data name
-    char dataName[128];
+    char dataName[128];     //!< data name
     double baudRate; //!< [bits/s] Data usage by the message writer; positive for data generators, negative for data sinks
 }DataNodeUsageSimMsg;
 

@@ -25,6 +25,7 @@
 #include "simMessages/accessSimMsg.h"
 #include "utilities/bskLogging.h"
 
+/*! @brief space to ground data transmitter class */
 class SpaceToGroundTransmitter: public DataNodeBase {
 public:
     SpaceToGroundTransmitter();
@@ -40,19 +41,19 @@ private:
 public:
     double packetSize; //!< Size of packet to downklink (bytes)
     int numBuffers; //!< Number of buffers the transmitter can access
-    std::vector<std::string> storageUnitMsgNames; //!< Vector of data node input message names
-    std::vector<std::int64_t> storageUnitMsgIds;
-    std::vector<std::string> groundLocationAccessMsgNames;
-    std::vector<std::int64_t> groundLocationAccessMsgIds;
-    std::vector<DataStorageStatusSimMsg> storageUnitMsgs;
-    uint64_t hasAccess;
-    BSKLogger bskLogger;
+    std::vector<std::string> storageUnitMsgNames;           //!< Vector of data node input message names
+    std::vector<std::int64_t> storageUnitMsgIds;            //!< class variable
+    std::vector<std::string> groundLocationAccessMsgNames;  //!< class variable
+    std::vector<std::int64_t> groundLocationAccessMsgIds;   //!< class variable
+    std::vector<DataStorageStatusSimMsg> storageUnitMsgs;   //!< class variable
+    uint64_t hasAccess;                                     //!< class variable
+    BSKLogger bskLogger;                                    //!< class variable
 
 private:
     double packetTransmitted; //!< Amount of packet downlinked (bytes)
     double currentTimestep; //!< Current timestep tracked for data packet integration
     double previousTime; //!< Previous timestep tracked for data packet integration
     std::vector<dataInstance> storedData; //! Vector of data. Represents the makeup of the data buffer. Created from input messages.
-    std::vector<AccessSimMsg> groundLocationAccessMsgs;
+    std::vector<AccessSimMsg> groundLocationAccessMsgs; //!< class variable
 };
 #endif //BASILISK_SPACETOGROUNDTRANSMITTER_H

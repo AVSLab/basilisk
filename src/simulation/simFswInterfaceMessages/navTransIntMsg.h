@@ -20,9 +20,6 @@
 #ifndef NAV_TRANS_MESSAGE_H
 #define NAV_TRANS_MESSAGE_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 /*! @brief Structure used to define the output definition for translatoin guidance*/
 typedef struct {
@@ -32,6 +29,5 @@ typedef struct {
     double vehAccumDV[3];    //!< [m/s] Total accumulated delta-velocity for s/c
 }NavTransIntMsg;
 
-/*! @} */
 
 #endif

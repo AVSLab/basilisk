@@ -56,6 +56,7 @@ void ExtPulsedTorque::CrossInit()
     return;
 }
 
+/*! link the states */
 void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
 {
     return;
@@ -63,7 +64,7 @@ void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
 
 
 /*! This module does not write any output messages.
- @param CurrentClock The current time used for time-stamping the message
+ @param currentClock The current time used for time-stamping the message
  @return void
  */
 void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
@@ -106,6 +107,8 @@ void ExtPulsedTorque::computeForceTorque(double integTime)
     return;
 }
 
+/*! Module update method
+ */
 void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos)
 {
     return;

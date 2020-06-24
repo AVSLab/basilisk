@@ -32,14 +32,14 @@
 
 
 
-
+/*! @brief dual hinged rigid body state effector */
 class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
-    void registerStates(DynParamManager& statesIn);
-    void linkInStates(DynParamManager& states);
-    void updateEffectorMassProps(double integTime);
+    void registerStates(DynParamManager& statesIn);     //!< class method
+    void linkInStates(DynParamManager& states);         //!< class method
+    void updateEffectorMassProps(double integTime);     //!< class method
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations

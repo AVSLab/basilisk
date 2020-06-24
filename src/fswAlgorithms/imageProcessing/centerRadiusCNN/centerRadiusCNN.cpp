@@ -83,7 +83,7 @@ CenterRadiusCNN::~CenterRadiusCNN()
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param this The configuration data associated with the module
+ @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
 {

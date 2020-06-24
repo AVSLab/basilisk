@@ -123,118 +123,131 @@ typedef enum {
     ALL
 } MAGenum_Comp;
 
+/*! structure definition */
 typedef struct {
-    double EditionDate;
-    double epoch; /*Base time of Geomagnetic model epoch (yrs)*/
-    char ModelName[32];
-    double *Main_Field_Coeff_G; /* C - Gauss coefficients of main geomagnetic model (nT) Index is (n * (n + 1) / 2 + m) */
-    double *Main_Field_Coeff_H; /* C - Gauss coefficients of main geomagnetic model (nT) */
-    double *Secular_Var_Coeff_G; /* CD - Gauss coefficients of secular geomagnetic model (nT/yr) */
-    double *Secular_Var_Coeff_H; /* CD - Gauss coefficients of secular geomagnetic model (nT/yr) */
-    int nMax; /* Maximum degree of spherical harmonic model */
-    int nMaxSecVar; /* Maximum degree of spherical harmonic secular model */
-    int SecularVariationUsed; /* Whether or not the magnetic secular variation vector will be needed by program*/
-    double CoefficientFileEndDate; 
+    double EditionDate;  //!< variable
+    double epoch; /*!< Base time of Geomagnetic model epoch (yrs)*/
+    char ModelName[32]; //!< variable
+    double *Main_Field_Coeff_G; /*!< C - Gauss coefficients of main geomagnetic model (nT) Index is (n * (n + 1) / 2 + m) */
+    double *Main_Field_Coeff_H; /*!< C - Gauss coefficients of main geomagnetic model (nT) */
+    double *Secular_Var_Coeff_G; /*!< CD - Gauss coefficients of secular geomagnetic model (nT/yr) */
+    double *Secular_Var_Coeff_H; /*!< CD - Gauss coefficients of secular geomagnetic model (nT/yr) */
+    int nMax; /*!< Maximum degree of spherical harmonic model */
+    int nMaxSecVar; /*!< Maximum degree of spherical harmonic secular model */
+    int SecularVariationUsed; /*!< Whether or not the magnetic secular variation vector will be needed by program*/
+    double CoefficientFileEndDate; //!< variable
     
 } MAGtype_MagneticModel;
 
+/*! structure definition */
 typedef struct {
-    double a; /*semi-major axis of the ellipsoid*/
-    double b; /*semi-minor axis of the ellipsoid*/
-    double fla; /* flattening */
-    double epssq; /*first eccentricity squared */
-    double eps; /* first eccentricity */
-    double re; /* mean radius of  ellipsoid*/
+    double a; /*!< semi-major axis of the ellipsoid*/
+    double b; /*!< semi-minor axis of the ellipsoid*/
+    double fla; /*!< flattening */
+    double epssq; /*!< first eccentricity squared */
+    double eps; /*!< first eccentricity */
+    double re; /*!< mean radius of  ellipsoid*/
 } MAGtype_Ellipsoid;
 
+/*! structure definition */
 typedef struct {
-    double lambda; /* longitude */
-    double phi; /* geodetic latitude */
-    double HeightAboveEllipsoid; /* height above the ellipsoid (HaE) */
-    double HeightAboveGeoid; /* (height above the EGM96 geoid model ) */
-    int UseGeoid;
+    double lambda; /*!< longitude */
+    double phi; /*!< geodetic latitude */
+    double HeightAboveEllipsoid; /*!< height above the ellipsoid (HaE) */
+    double HeightAboveGeoid; /*!< (height above the EGM96 geoid model ) */
+    int UseGeoid;       //!< variable
 } MAGtype_CoordGeodetic;
 
+/*! structure definition */
 typedef struct {
-    double lambda; /* longitude*/
-    double phig; /* geocentric latitude*/
-    double r; /* distance from the center of the ellipsoid*/
+    double lambda; /*!< longitude*/
+    double phig; /*!< geocentric latitude*/
+    double r; /*!< distance from the center of the ellipsoid*/
 } MAGtype_CoordSpherical;
 
+/*! structure definition */
 typedef struct {
-    int Year;
-    int Month;
-    int Day;
-    double DecimalYear; /* decimal years */
+    int Year;   //!< variable
+    int Month;  //!< variable
+    int Day;    //!< variable
+    double DecimalYear; /*!< decimal years */
 } MAGtype_Date;
 
+/*! structure definition */
 typedef struct {
-    double *Pcup; /* Legendre Function */
-    double *dPcup; /* Derivative of Legendre fcn */
+    double *Pcup; /*!< Legendre Function */
+    double *dPcup; /*!< Derivative of Legendre fcn */
 } MAGtype_LegendreFunction;
 
+/*! structure definition */
 typedef struct {
-    double Bx; /* North */
-    double By; /* East */
-    double Bz; /* Down */
+    double Bx; /*!< North */
+    double By; /*!< East */
+    double Bz; /*!< Down */
 } MAGtype_MagneticResults;
 
+/*! structure definition */
 typedef struct {
-    double *RelativeRadiusPower; /* [earth_reference_radius_km / sph. radius ]^n  */
-    double *cos_mlambda; /*cp(m)  - cosine of (m*spherical coord. longitude)*/
-    double *sin_mlambda; /* sp(m)  - sine of (m*spherical coord. longitude) */
+    double *RelativeRadiusPower; /*!< [earth_reference_radius_km / sph. radius ]^n  */
+    double *cos_mlambda; /*!< cp(m)  - cosine of (m*spherical coord. longitude)*/
+    double *sin_mlambda; /*!< sp(m)  - sine of (m*spherical coord. longitude) */
 } MAGtype_SphericalHarmonicVariables;
 
+/*! structure definition */
 typedef struct {
-    double Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/
-    double Incl; /*2. Angle between the magnetic field vector and the horizontal plane, positive down*/
-    double F; /*3. Magnetic Field Strength*/
-    double H; /*4. Horizontal Magnetic Field Strength*/
-    double X; /*5. Northern component of the magnetic field vector*/
-    double Y; /*6. Eastern component of the magnetic field vector*/
-    double Z; /*7. Downward component of the magnetic field vector*/
-    double GV; /*8. The Grid Variation*/
-    double Decldot; /*9. Yearly Rate of change in declination*/
-    double Incldot; /*10. Yearly Rate of change in inclination*/
-    double Fdot; /*11. Yearly rate of change in Magnetic field strength*/
-    double Hdot; /*12. Yearly rate of change in horizontal field strength*/
-    double Xdot; /*13. Yearly rate of change in the northern component*/
-    double Ydot; /*14. Yearly rate of change in the eastern component*/
-    double Zdot; /*15. Yearly rate of change in the downward component*/
-    double GVdot; /*16. Yearly rate of change in grid variation*/
+    double Decl; /*!< 1. Angle between the magnetic field vector and true north, positive east*/
+    double Incl; /*!< 2. Angle between the magnetic field vector and the horizontal plane, positive down*/
+    double F; /*!< 3. Magnetic Field Strength*/
+    double H; /*!< 4. Horizontal Magnetic Field Strength*/
+    double X; /*!< 5. Northern component of the magnetic field vector*/
+    double Y; /*!< 6. Eastern component of the magnetic field vector*/
+    double Z; /*!<7. Downward component of the magnetic field vector*/
+    double GV; /*!< 8. The Grid Variation*/
+    double Decldot; /*!< 9. Yearly Rate of change in declination*/
+    double Incldot; /*!< 10. Yearly Rate of change in inclination*/
+    double Fdot; /*!< 11. Yearly rate of change in Magnetic field strength*/
+    double Hdot; /*!< 12. Yearly rate of change in horizontal field strength*/
+    double Xdot; /*!< 13. Yearly rate of change in the northern component*/
+    double Ydot; /*!< 14. Yearly rate of change in the eastern component*/
+    double Zdot; /*!< 15. Yearly rate of change in the downward component*/
+    double GVdot; /*!< 16. Yearly rate of change in grid variation*/
 } MAGtype_GeoMagneticElements;
 
+/*! structure definition */
 typedef struct {
-    int NumbGeoidCols; /* 360 degrees of longitude at 15 minute spacing */
-    int NumbGeoidRows; /* 180 degrees of latitude  at 15 minute spacing */
-    int NumbHeaderItems; /* min, max lat, min, max long, lat, long spacing*/
-    int ScaleFactor; /* 4 grid cells per degree at 15 minute spacing  */
-    float *GeoidHeightBuffer;
-    int NumbGeoidElevs;
-    int Geoid_Initialized; /* indicates successful initialization */
-    int UseGeoid; /*Is the Geoid being used?*/
+    int NumbGeoidCols; /*!< 360 degrees of longitude at 15 minute spacing */
+    int NumbGeoidRows; /*!< 180 degrees of latitude  at 15 minute spacing */
+    int NumbHeaderItems; /*!< min, max lat, min, max long, lat, long spacing*/
+    int ScaleFactor; /*!< 4 grid cells per degree at 15 minute spacing  */
+    float *GeoidHeightBuffer; //!< variable
+    int NumbGeoidElevs; //!< variable
+    int Geoid_Initialized; /*!< indicates successful initialization */
+    int UseGeoid; /*!< Is the Geoid being used?*/
 } MAGtype_Geoid;
 
+/*! structure definition */
 typedef struct {
-    int UseGradient;
-    MAGtype_GeoMagneticElements GradPhi; /* phi */
-    MAGtype_GeoMagneticElements GradLambda; /* lambda */
-    MAGtype_GeoMagneticElements GradZ;            
+    int UseGradient;    //!< variable
+    MAGtype_GeoMagneticElements GradPhi; /*!< phi */
+    MAGtype_GeoMagneticElements GradLambda; /*!< lambda */
+    MAGtype_GeoMagneticElements GradZ; //!< variable
 } MAGtype_Gradient;
 
+/*! structure definition */
 typedef struct {
-    char Longitude[40];
-    char Latitude[40];
+    char Longitude[40];     //!< variable
+    char Latitude[40];      //!< variable
 } MAGtype_CoordGeodeticStr;
 
+/*! structure definition */
 typedef struct {
-    double Easting; /* (X) in meters*/
-    double Northing; /* (Y) in meters */
-    int Zone; /*UTM Zone*/
-    char HemiSphere;
-    double CentralMeridian;
-    double ConvergenceOfMeridians;
-    double PointScale;
+    double Easting; /*!< (X) in meters*/
+    double Northing; /*!< (Y) in meters */
+    int Zone; /*!< UTM Zone*/
+    char HemiSphere;            //!< variable
+    double CentralMeridian;     //!< variable
+    double ConvergenceOfMeridians;  //!< variable
+    double PointScale;          //!< variable
 } MAGtype_UTMParameters;
 
 enum PARAMS {

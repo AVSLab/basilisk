@@ -20,9 +20,6 @@
 #ifndef OPNAV_FILTER_MESSAGE_H
 #define OPNAV_FILTER_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 #define ODUKF_N_STATES 6
 #define ODUKF_N_MEAS 3
@@ -38,6 +35,5 @@ typedef struct {
     int numObs;                                 //!< [-] Valid observation count for this frame
 }OpNavFilterFswMsg;
 
-/* @} */
 
 #endif

@@ -26,9 +26,6 @@
 #include "_GeneralModuleFiles/sys_interface.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/bskLogging.h"
-/*! \addtogroup SimArchGroup
- * @{
- */
 
 //! Structure that contains the information needed to call a Task
 typedef struct {
@@ -44,29 +41,29 @@ class SysProcess
     
 public:
     SysProcess();
-    SysProcess(std::string messageContainer);
+    SysProcess(std::string messageContainer); //!< class method
     ~SysProcess();
-    void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1);
-    void selfInitProcess();
-    void crossInitProcess();
-    void resetProcess(uint64_t currentTime);
-    void reInitProcess();
-    void enableProcess() {this->processActive = true;}
-    void disableProcess() {this->processActive = false;}
-    void scheduleTask(ModelScheduleEntry & taskCall);
-    void selectProcess()
-    {SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);}
-    void setProcessName(std::string newName){this->processName = newName;}
-    std::string getProcessName() { return(processName);}
-    uint64_t getNextTime() { return(this->nextTaskTime);}
-    void singleStepNextTask(uint64_t currentNanos);
-    bool processEnabled() {return this->processActive;}
-    void addInterfaceRef(SysInterface *newInt) {this->intRefs.push_back(newInt);}
-	void changeTaskPeriod(std::string taskName, uint64_t newPeriod);
-    void setPriority(int64_t newPriority) {this->processPriority = newPriority;}
-    void routeInterfaces();
-    void disableAllTasks();
-    void enableAllTasks();
+    void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
+    void selfInitProcess(); //!< class method
+    void crossInitProcess(); //!< class method
+    void resetProcess(uint64_t currentTime); //!< class method
+    void reInitProcess(); //!< class method
+    void enableProcess() {this->processActive = true;} //!< class method
+    void disableProcess() {this->processActive = false;} //!< class method
+    void scheduleTask(ModelScheduleEntry & taskCall); //!< class method
+    void selectProcess() //!< class method
+    {SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);} //!< class method
+    void setProcessName(std::string newName){this->processName = newName;} //!< class method
+    std::string getProcessName() { return(processName);} //!< class method
+    uint64_t getNextTime() { return(this->nextTaskTime);} //!< class method
+    void singleStepNextTask(uint64_t currentNanos); //!< class method
+    bool processEnabled() {return this->processActive;} //!< class method
+    void addInterfaceRef(SysInterface *newInt) {this->intRefs.push_back(newInt);} //!< class method
+	void changeTaskPeriod(std::string taskName, uint64_t newPeriod); //!< class method
+    void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
+    void routeInterfaces(); //!< class method
+    void disableAllTasks(); //!< class method
+    void enableAllTasks(); //!< class method
     
 public:
     std::vector<SysInterface*> intRefs;  //!< -- Interface references to move data to process
@@ -80,5 +77,4 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
-/*! @} */
 #endif /* _SysProcess_H_ */
