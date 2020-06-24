@@ -32,6 +32,7 @@ Version |release|
   images.  Note that for now this module is only built
   on macOS systems.  As we are able to test on other platforms we will include it there too.
 - Added :ref:`scenario_CNNAttOD` to illustrate the use of the CNN-based image processing
+- Added support for Vizard v1.4.0 scripting
 
 Version 1.8.1
 -------------

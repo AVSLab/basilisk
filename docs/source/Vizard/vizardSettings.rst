@@ -88,7 +88,7 @@ default setting for that behavior.
       - (-1,1)
       - flag to show (1) or hide (-1) the camera labels
     * - ``customGUIScale``
-      - pos. integer
+      - pos. double
       - GUI scaling factor, default is -1 which uses Vizard default.
     * - ``defaultSpacecraftSprite``
       - string
@@ -108,6 +108,12 @@ default setting for that behavior.
     * - ``showDataRateDisplay``
       - (-1,1)
       - Flag to show the data frame rate
+    * - ``keyboardAngularRate``
+      - pos. double
+      - [rad/sec] controls the angular rate at which the camera rotates with keyboard hot-keys.
+    * - ``keyboardZoomRate``
+      - pos. double
+      - Non-dimensional speed at which the camera zooms in and out with hot-keys.
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

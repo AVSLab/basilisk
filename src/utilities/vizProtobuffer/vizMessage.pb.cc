@@ -636,6 +636,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showcelestialbodiesassprites_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, show24hrclock_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showdataratedisplay_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, keyboardangularrate_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, keyboardzoomrate_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -664,7 +666,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 128, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
   { 140, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
   { 153, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 180, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 182, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -709,7 +711,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\250\032\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\337\032\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -772,7 +774,7 @@ void AddDescriptorsImpl() {
       "sToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rotat"
       "ion\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021customTextur"
       "ePath\030\006 \001(\t\022\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006sh"
-      "ader\030\010 \001(\005\032\307\006\n\rVizSettingsPb\022\017\n\007ambient\030"
+      "ader\030\010 \001(\005\032\376\006\n\rVizSettingsPb\022\017\n\007ambient\030"
       "\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026\n\016spacecraf"
       "tCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npoint"
       "Lines\030\005 \003(\0132+.vizProtobufferMessage.VizM"
@@ -793,10 +795,11 @@ void AddDescriptorsImpl() {
       "ite\030\024 \001(\t\022\037\n\027showSpacecraftAsSprites\030\025 \001"
       "(\005\022$\n\034showCelestialBodiesAsSprites\030\026 \001(\005"
       "\022\025\n\rshow24hrClock\030\027 \001(\005\022\033\n\023showDataRateD"
-      "isplay\030\030 \001(\005b\006proto3"
+      "isplay\030\030 \001(\005\022\033\n\023keyboardAngularRate\030\031 \001("
+      "\001\022\030\n\020keyboardZoomRate\030\032 \001(\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3420);
+      descriptor, 3475);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -7732,6 +7735,8 @@ const int VizMessage_VizSettingsPb::kShowSpacecraftAsSpritesFieldNumber;
 const int VizMessage_VizSettingsPb::kShowCelestialBodiesAsSpritesFieldNumber;
 const int VizMessage_VizSettingsPb::kShow24HrClockFieldNumber;
 const int VizMessage_VizSettingsPb::kShowDataRateDisplayFieldNumber;
+const int VizMessage_VizSettingsPb::kKeyboardAngularRateFieldNumber;
+const int VizMessage_VizSettingsPb::kKeyboardZoomRateFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
@@ -7761,8 +7766,8 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
     defaultspacecraftsprite_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.defaultspacecraftsprite_);
   }
   ::memcpy(&ambient_, &from.ambient_,
-    static_cast<size_t>(reinterpret_cast<char*>(&showdataratedisplay_) -
-    reinterpret_cast<char*>(&ambient_)) + sizeof(showdataratedisplay_));
+    static_cast<size_t>(reinterpret_cast<char*>(&keyboardzoomrate_) -
+    reinterpret_cast<char*>(&ambient_)) + sizeof(keyboardzoomrate_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
 }
 
@@ -7770,8 +7775,8 @@ void VizMessage_VizSettingsPb::SharedCtor() {
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&showdataratedisplay_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(showdataratedisplay_));
+      reinterpret_cast<char*>(&keyboardzoomrate_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(keyboardzoomrate_));
   _cached_size_ = 0;
 }
 
@@ -7822,8 +7827,8 @@ void VizMessage_VizSettingsPb::Clear() {
   skybox_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&showdataratedisplay_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(showdataratedisplay_));
+      reinterpret_cast<char*>(&keyboardzoomrate_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(keyboardzoomrate_));
   _internal_metadata_.Clear();
 }
 
@@ -8134,6 +8139,34 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
+      // double keyboardAngularRate = 25;
+      case 25: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(201u /* 201 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &keyboardangularrate_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double keyboardZoomRate = 26;
+      case 26: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(209u /* 209 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &keyboardzoomrate_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -8290,6 +8323,16 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(24, this->showdataratedisplay(), output);
   }
 
+  // double keyboardAngularRate = 25;
+  if (this->keyboardangularrate() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(25, this->keyboardangularrate(), output);
+  }
+
+  // double keyboardZoomRate = 26;
+  if (this->keyboardzoomrate() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(26, this->keyboardzoomrate(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -8439,6 +8482,16 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
   // int32 showDataRateDisplay = 24;
   if (this->showdataratedisplay() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(24, this->showdataratedisplay(), target);
+  }
+
+  // double keyboardAngularRate = 25;
+  if (this->keyboardangularrate() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(25, this->keyboardangularrate(), target);
+  }
+
+  // double keyboardZoomRate = 26;
+  if (this->keyboardzoomrate() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(26, this->keyboardzoomrate(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -8621,11 +8674,21 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
         this->show24hrclock());
   }
 
+  // double keyboardAngularRate = 25;
+  if (this->keyboardangularrate() != 0) {
+    total_size += 2 + 8;
+  }
+
   // int32 showDataRateDisplay = 24;
   if (this->showdataratedisplay() != 0) {
     total_size += 2 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->showdataratedisplay());
+  }
+
+  // double keyboardZoomRate = 26;
+  if (this->keyboardzoomrate() != 0) {
+    total_size += 2 + 8;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -8712,8 +8775,14 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   if (from.show24hrclock() != 0) {
     set_show24hrclock(from.show24hrclock());
   }
+  if (from.keyboardangularrate() != 0) {
+    set_keyboardangularrate(from.keyboardangularrate());
+  }
   if (from.showdataratedisplay() != 0) {
     set_showdataratedisplay(from.showdataratedisplay());
+  }
+  if (from.keyboardzoomrate() != 0) {
+    set_keyboardzoomrate(from.keyboardzoomrate());
   }
 }
 
@@ -8762,7 +8831,9 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   swap(showspacecraftassprites_, other->showspacecraftassprites_);
   swap(showcelestialbodiesassprites_, other->showcelestialbodiesassprites_);
   swap(show24hrclock_, other->show24hrclock_);
+  swap(keyboardangularrate_, other->keyboardangularrate_);
   swap(showdataratedisplay_, other->showdataratedisplay_);
+  swap(keyboardzoomrate_, other->keyboardzoomrate_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

@@ -556,6 +556,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showDataRateDisplay flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showDataRateDisplay);
         }
 
+        // define the keyboard driven camera rates
+        vizSettings->set_keyboardangularrate(this->settings.keyboardAngularRate*R2D);
+        vizSettings->set_keyboardzoomrate(this->settings.keyboardZoomRate);
+
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
