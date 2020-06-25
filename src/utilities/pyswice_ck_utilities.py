@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 
 import sys, os, inspect #Don't worry about this, standard stuff plus file discovery
@@ -30,19 +28,22 @@ import numpy
 from Basilisk.utilities import RigidBodyKinematics
 
 def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
-    '''
+    """
     Purpose: Creates a CK kernel from a timeArray, MRPArray, and an avArray. Assumes that the SCLK is furnshed
-        ***NOTE: time stamps for the timeArray, MRPrray, and avArray must line up exactly!!***
-    :param handle: What you would like the CK file to be named **NOTE: Must be in double quotes and end in .bc**
-        ex: "moikernel.bc"
-    :param time: numpy array of time stamps in nanoseonds
-    :param MRPArray: array of modified rodrigues parameters in column order x,y, z
-    :param avArray:array of angular velocities about 3 axis in column order x,y, z
+
+    .. warning::
+
+        time stamps for the timeArray, MRPArray, and avArray must line up exactly!!
+
+    :param handle: What you would like the CK file to be named. Note, it must be in double quotes and end in .bc, ex: "moikernel.bc"
+    :param time: numpy array of time stamps in nanoseconds
+    :param MRPArray: array of modified Rodriguez parameters in column order x, y, z
+    :param avArray: array of angular velocities about 3 axis in column order x, y, z
     :param startSeg: the SCLK time that the file begins at in UTC Gregorian ex: 'FEB 01,2021  12:00:55.9999 (UTC)'
     :param sc: spacecraft ID ex:-62
     :param rf: reference frame ex:"J2000"
     :return:
-    '''
+    """
     try:
         os.remove(handle)
     except OSError:
@@ -88,20 +89,19 @@ def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
     return
 
 def ckRead(time, SCID=-62, rf="J2000"):
-    '''
+    """
     Purpose: Read information out of a CK Kernel for a single instance and returns a quaternion array
-        and an angular velocity array
-    ***NOTE: Assumes that SCLK and CK kernels are already loaded using furnsh because pyswice gets mad when loading the
-    same files over and over again. ***
-    :param time: Should be in UTC Gregorian, and passed in as a string
-                    ex: 'FEB 01,2021  14:00:55.9999 (UTC)'
+    and an angular velocity array
+
+    .. warning::
+
+        Assumes that SCLK and CK kernels are already loaded using furnsh because pyswice gets mad when loading the same files over and over again.
+
+    :param time: Should be in UTC Gregorian, and passed in as a string, ex: 'FEB 01,2021  14:00:55.9999 (UTC)'
     :param SCID: Spacecraft ID -- Default: -62
-    :param rf: is a character string which specifies the
-              reference frame of the segment. Reference Frame, ex: "J2000"
+    :param rf: is a character string which specifies the, reference frame of the segment. Reference Frame, ex: "J2000"
     :return: None
-    Created by R. A. Mamich                           22 June, 2016
-                                LASP-EMM-ADC
-    '''
+    """
     #Getting time into usable format
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(time, et)

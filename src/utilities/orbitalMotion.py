@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 
 # import required modules:
@@ -58,10 +57,9 @@ tolerance = 1e-15
 
 AU = 149597870.693  # astronomical unit in units of kilometers #
 D2R = (np.pi / 180.)
-"""
-Gravitational Constants mu = G*m, where m is the planet of the attracting planet.  All units are km^3/s^2.
-Values are obtained from SPICE kernels in http://naif.jpl.nasa.gov/pub/naif/generic_kernels/
-"""
+
+# Gravitational Constants mu = G*m, where m is the planet of the attracting planet.  All units are km^3/s^2.
+# Values are obtained from SPICE kernels in http://naif.jpl.nasa.gov/pub/naif/generic_kernels/
 MU_SUN = 132712440023.310
 MU_MERCURY = 22032.080
 MU_VENUS = 324858.599
@@ -74,10 +72,8 @@ MU_URANUS = 5794559.128
 MU_NEPTUNE = 6836534.065
 MU_PLUTO = 983.055
 
-"""
-planet information for major solar system bodies. Units are in km.
-data taken from http://nssdc.gsfc.nasa.gov/planetary/planets.html
-"""
+# planet information for major solar system bodies. Units are in km.
+# data taken from http://nssdc.gsfc.nasa.gov/planetary/planets.html
 # Sun #
 REQ_SUN = 695000.  # km #
 
@@ -166,15 +162,13 @@ E_PLUTO = 0.24880766
 
 def E2f(Ecc, e):
     """
-    Function: E2f
-    Purpose: Maps eccentric anomaly angles into true anomaly angles
-        This function requires the orbit to be either circular or
-        non-rectilinar elliptic orbit
-    Inputs:
-        Ecc = eccentric anomaly (rad)
-        e = eccentric (0 <= e < 1)
-    Outputs:
-        f = true anomaly (rad)
+    Maps eccentric anomaly angles into true anomaly angles
+    This function requires the orbit to be either circular or
+    non-rectilinear elliptic orbit
+
+    :param Ecc: eccentric anomaly (rad)
+    :param e: eccentric (0 <= e < 1)
+    :return: f, true anomaly (rad)
     """
     if e >= 0.0 and e < 1.0:
         f = 2.0 * math.atan2(math.sqrt(1.0 + e) * math.sin(Ecc / 2.0), math.sqrt(1.0 - e) * math.cos(Ecc / 2.0))
@@ -184,15 +178,13 @@ def E2f(Ecc, e):
 
 def E2M(Ecc, e):
     """
-    Function: E2M
-    Purpose: Maps the eccentric anomaly angle into the corresponding
-        mean elliptic anomaly angle.  Both 2D and 1D elliptic
-        orbit are allowed.
-    Inputs:
-        Ecc = eccentric anomaly (rad)
-        e = eccentricity (0 <= e < 1)
-    Outputs:
-        M = mean elliptic anomaly (rad)
+    Maps the eccentric anomaly angle into the corresponding
+    mean elliptic anomaly angle.  Both 2D and 1D elliptic
+    orbit are allowed.
+
+    :param Ecc: eccentric anomaly (rad)
+    :param e: eccentricity (0 <= e < 1)
+    :return: M, mean elliptic anomaly (rad)
     """
     if e >= 0.0 and e < 1.0:
         M = Ecc - e * math.sin(Ecc)
@@ -202,15 +194,13 @@ def E2M(Ecc, e):
 
 def f2E(f, e):
     """
-    Function: f2E
-    Purpose: Maps true anomaly angles into eccentric anomaly angles.
-        This function requires the orbit to be either circular or
-        non-rectilinar elliptic orbit.
-    Inputs:
-        f = true anomaly angle (rad)
-        e = eccentricity (0 <= e < 1)
-    Outputs:
-        Ecc = eccentric anomaly (rad)
+    Maps true anomaly angles into eccentric anomaly angles.
+    This function requires the orbit to be either circular or
+    non-rectilinear elliptic orbit.
+
+    :param f: true anomaly angle (rad)
+    :param e: eccentricity (0 <= e < 1)
+    :return: Ecc, eccentric anomaly (rad)
     """
     if e >= 0.0 and e < 1.0:
         Ecc = 2.0 * math.atan2(math.sqrt(1.0 - e) * math.sin(f / 2.0), math.sqrt(1.0 + e) * math.cos(f / 2.0))
@@ -220,14 +210,12 @@ def f2E(f, e):
 
 def f2H(f, e):
     """
-    Function: f2H
-    Purpose: Maps true anomaly angles into hyperbolic anomaly angles.
-        This function requires the orbit to be hyperbolic
-    Inputs:
-        f = true anomaly angle (rad)
-        e = eccentricity (e > 1)
-    Outputs:
-        H = hyperbolic anomaly (rad)
+    Maps true anomaly angles into hyperbolic anomaly angles.
+    This function requires the orbit to be hyperbolic
+
+    :param f: true anomaly angle (rad)
+    :param e: eccentricity (e > 1)
+    :return:  H, hyperbolic anomaly (rad)
     """
     if e > 1.0:
         H = 2.0 * math.atanh(math.sqrt((e - 1.0) / (e + 1.0)) * math.tan(f / 2.0))
@@ -237,14 +225,12 @@ def f2H(f, e):
 
 def H2f(H, e):
     """
-    Function: H2f
-    Purpose: Maps hyperbolic anomaly angles into true anomaly angles.
-        This function requires the orbit to be hyperbolic
-    Inputs:
-        H = hyperbolic anomaly (rad)
-        e = eccentricity (e > 1)
-    Outputs:
-        f = true anomaly angle (rad)
+    Maps hyperbolic anomaly angles into true anomaly angles.
+    This function requires the orbit to be hyperbolic
+
+    :param H: hyperbolic anomaly (rad)
+    :param e: eccentricity (e > 1)
+    :return: f, true anomaly angle (rad)
     """
     if e > 1.0:
         f = 2.0 * math.atan(math.sqrt((e + 1.0) / (e - 1.0)) * math.tanh(H / 2.0))
@@ -254,14 +240,12 @@ def H2f(H, e):
 
 def H2N(H, e):
     """
-    Function: H2N
-    Purpose: Maps the hyperbolic anomaly angle H into the corresponding
-        mean hyperbolic anomaly angle N.
-    Inputs:
-        H = hyperbolic anomaly (rad)
-        e = eccentricity (e > 1)
-    Outputs:
-        N = mean hyperbolic anomaly (rad)
+    Maps the hyperbolic anomaly angle H into the corresponding
+    mean hyperbolic anomaly angle N.
+
+    :param H: hyperbolic anomaly (rad)
+    :param e: eccentricity (e > 1)
+    :return: N, mean hyperbolic anomaly (rad)
     """
     if e > 1.0:
         N = e * math.sinh(H) - H
@@ -271,14 +255,13 @@ def H2N(H, e):
 
 def M2E(M, e):
     """
-    Purpose: Maps the mean elliptic anomaly angle into the corresponding
-        eccentric anomaly angle.  Both 2D and 1D elliptic
-        orbit are allowed.
-    Inputs:
-        M = mean elliptic anomaly (rad)
-        e = eccentricity (0 <= e < 1)
-    Outputs:
-        Ecc = eccentric anomaly (rad)
+    Maps the mean elliptic anomaly angle into the corresponding
+    eccentric anomaly angle.  Both 2D and 1D elliptic
+    orbit are allowed.
+
+    :param M: mean elliptic anomaly (rad)
+    :param e: eccentricity (0 <= e < 1)
+    :return: Ecc, eccentric anomaly (rad)
     """
     dE = 10.0 * eps
     E1 = M
@@ -298,14 +281,12 @@ def M2E(M, e):
 
 def N2H(N, e):
     """
-    Function: N2H
-    Purpose: Maps the mean hyperbolic anomaly angle N into the corresponding
-            hyperbolic anomaly angle H.
-    Inputs:
-        N = mean hyperbolic anomaly (rad)
-        e = eccentricity (e > 1)
-    Outputs:
-        H = hyperbolic anomaly (rad)
+    Maps the mean hyperbolic anomaly angle N into the corresponding
+    hyperbolic anomaly angle H.
+
+    :param N: mean hyperbolic anomaly (rad)
+    :param e: eccentricity (e > 1)
+    :return: H, hyperbolic anomaly (rad)
     """
     dH = 10.0 * eps
     H1 = N
@@ -324,38 +305,44 @@ def N2H(N, e):
 
 def elem2rv_parab(mu, elements):
     """
-    Function: elem2rv
-    Purpose: Translates the orbit elements
-        a   - semi-major axis           (km)
-        e   - eccentricity
-        i   - inclination               (rad)
-        AN  - ascending node            (rad)
-        AP  - argument of periapses     (rad)
-        f   - true anomaly angle        (rad)
+    Translates the orbit elements:
+
+    === ========================= =======
+    a   semi-major axis           km
+    e   eccentricity
+    i   inclination               rad
+    AN  ascending node            rad
+    AP  argument of periapses     rad
+    f   true anomaly angle        rad
+    === ========================= =======
+
     to the inertial Cartesian position and velocity vectors.
     The attracting body is specified through the supplied
     gravitational constant mu (units of km^3/s^2).
 
     The code can handle the following cases:
+
+    ================== ============  ===========   =======================
         circular:       e = 0           a > 0
         elliptical-2D:  0 < e < 1       a > 0
         elliptical-1D:  e = 1           a > 0        f = Ecc. Anom. here
         parabolic:      e = 1           rp = -a
         hyperbolic:     e > 1           a < 0
+    ================== ============  ===========   =======================
 
-    Note: to handle the parabolic case and distinguish it form the
+    .. note::
+
+        To handle the parabolic case and distinguish it form the
         rectilinear elliptical case, instead of passing along the
         semi-major axis a in the "a" input slot, the negative radius
         at periapses is supplied.  Having "a" be negative and e = 1
         is a then a unique identified for the code for the parabolic
         case.
-    Inputs:
-        mu = gravitational parameter
-        elements = orbital elements
-    Outputs:
-        rVec = position vector
-        vVec = velocity vector
-        """
+
+    :param mu: gravitational parameter
+    :param elements: orbital elements
+    :return:   rVec = position vector, vVec = velocity vector
+    """
     # map classical elements structure into local variables #
     a = elements.a
     e = elements.e
@@ -407,24 +394,25 @@ def elem2rv_parab(mu, elements):
 
 def elem2rv(mu, elements):
     """
-    Function: elem2rv
-    Purpose: Translates the orbit elements
-            a   - semi-major axis           (km)
-            e   - eccentricity
-            i   - inclination               (rad)
-            AN  - ascending node            (rad)
-            AP  - argument of periapses     (rad)
-            f   - true anomaly angle        (rad)
+    Translates the orbit elements:
+
+    === ========================= =======
+    a   semi-major axis           km
+    e   eccentricity
+    i   inclination               rad
+    AN  ascending node            rad
+    AP  argument of periapses     rad
+    f   true anomaly angle        rad
+    === ========================= =======
+
     to the inertial Cartesian position and velocity vectors.
     The attracting body is specified through the supplied
     gravitational constant mu (units of km^3/s^2).
 
-    Inputs:
-        mu = gravitational parameter
-        elements = orbital elements
-    Outputs:
-        rVec = position vector
-        vVec = velocity vector
+    :param mu: gravitational parameter
+    :param elements: orbital elements
+    :return:   rVec, position vector
+    :return:   vVec, velocity vector
     """
     rVec = np.zeros(3)
     vVec = np.zeros(3)
@@ -465,47 +453,55 @@ def elem2rv(mu, elements):
 
 def rv2elem_parab(mu, rVec, vVec):
     """
-    Function: rv2elem
-    Purpose: Translates the orbit elements inertial Cartesian position
-        vector rVec and velocity vector vVec into the corresponding
-        classical orbit elements where
-            a   - semi-major axis           (km)
-            e   - eccentricity
-            i   - inclination               (rad)
-            AN  - ascending node            (rad)
-            AP  - argument of periapses     (rad)
-            f   - true anomaly angle        (rad)
-                if the orbit is rectilinear, then this will be the
-                eccentric or hyperbolic anomaly
-        The attracting body is specified through the supplied
-        gravitational constant mu (units of km^3/s^2).
+    Translates the orbit elements inertial Cartesian position
+    vector rVec and velocity vector vVec into the corresponding
+    classical orbit elements where
 
-        The code can handle the following cases:
-            circular:       e = 0           a > 0
-            elliptical-2D:  0 < e < 1       a > 0
-            elliptical-1D:  e = 1           a > 0
-            parabolic:      e = 1           a = -rp
-            hyperbolic:     e > 1           a < 0
+    === ========================= =======
+    a   semi-major axis             km
+    e   eccentricity
+    i   inclination                 rad
+    AN  ascending node              rad
+    AP  argument of periapses       rad
+    f   true anomaly angle          rad
+    === ========================= =======
 
-        For the parabolic case the semi-major axis is not defined.
-        In this case -rp (radius at periapses) is returned instead
-        of a.  For the circular case, the AN and AP are ill-defined,
-        along with the associated ie and ip unit direction vectors
-        of the perifocal frame. In this circular orbit case, the
-        unit vector ie is set equal to the normalized inertial
-        position vector ir.
-    Inputs:
-        mu = gravitational parameter
-        rVec = position vector
-        vVec = velocity vector
-    Outputs:
-        elements = orbital elements
+    If the orbit is rectilinear, then f will be the eccentric or hyperbolic anomaly
 
-    TODO: (SAO) Modify this code to return true longitude of periapsis
+    The attracting body is specified through the supplied
+    gravitational constant mu (units of km^3/s^2).
+
+    The code can handle the following cases:
+
+    ============== ============= ===========
+    circular:       e = 0           a > 0
+    elliptical-2D:  0 < e < 1       a > 0
+    elliptical-1D:  e = 1           a > 0
+    parabolic:      e = 1           a = -rp
+    hyperbolic:     e > 1           a < 0
+    ============== ============= ===========
+
+    For the parabolic case the semi-major axis is not defined.
+    In this case -rp (radius at periapses) is returned instead
+    of a.  For the circular case, the AN and AP are ill-defined,
+    along with the associated ie and ip unit direction vectors
+    of the perifocal frame. In this circular orbit case, the
+    unit vector ie is set equal to the normalized inertial
+    position vector ir.
+
+    :param   mu:  gravitational parameter
+    :param   rVec:  position vector
+    :param   vVec: velocity vector
+    :return: orbital elements
+
+
+    Todo: Modify this code to return true longitude of periapsis
     (non-circular, equatorial), argument of latitude (circular, inclined),
     and true longitude (circular, equatorial) when appropriate instead of
     simply zeroing out omega and Omega
+
     """
+
     dum = np.zeros(3)
     dum2 = np.zeros(3)
     ie = np.zeros(3)
@@ -597,26 +593,28 @@ def rv2elem_parab(mu, rVec, vVec):
 
 def rv2elem(mu, rVec, vVec):
     """
-    Function: rv2elem
-    Purpose: Translates the orbit elements inertial Cartesian position
-        vector rVec and velocity vector vVec into the corresponding
-        classical orbit elements where
-            a   - semi-major axis           (km)
-            e   - eccentricity
-            i   - inclination               (rad)
-            AN  - ascending node            (rad)
-            AP  - argument of periapses     (rad)
-            f   - true anomaly angle        (rad)
-                if the orbit is rectilinear, then this will be the
-                eccentric or hyperbolic anomaly
-        The attracting body is specified through the supplied
-        gravitational constant mu (units of km^3/s^2).
-    Inputs:
-        mu = gravitational parameter
-        rVec = position vector
-        vVec = velocity vector
-    Outputs:
-        elements = orbital elements
+    Translates the orbit elements inertial Cartesian position
+    vector rVec and velocity vector vVec into the corresponding
+    classical orbit elements where
+
+    === ========================= =======
+    a   semi-major axis           km
+    e   eccentricity
+    i   inclination               rad
+    AN  ascending node            rad
+    AP  argument of periapses     rad
+    f   true anomaly angle        rad
+    === ========================= =======
+
+    If the orbit is rectilinear, then this will be the eccentric or hyperbolic anomaly
+
+    The attracting body is specified through the supplied
+    gravitational constant mu (units of km^3/s^2).
+
+    :param mu:  gravitational parameter
+    :param rVec: position vector
+    :param vVec: velocity vector
+    :return:  orbital elements
     """
     hVec = [0.0] * 3
     v3 = [0.0] * 3
@@ -724,17 +722,17 @@ def rv2elem(mu, rVec, vVec):
 
 def atmosphericDensity(alt):
     """
-     * Function: atmosphericDensity
-     * Purpose: This program computes the atmospheric density based on altitude
-     *   supplied by user.  This function uses a curve fit based on
-     *   atmospheric data from the Standard Atmosphere 1976 Data. This
-     *   function is valid for altitudes ranging from 100km to 1000km.
-     *
-     *   Note: This code can only be applied to spacecraft orbiting the Earth
-     * Inputs:
-     *   alt = altitude in km
-     * Outputs:
-     *   density = density at the given altitude in kg/m^3
+    This program computes the atmospheric density based on altitude
+    supplied by user.  This function uses a curve fit based on
+    atmospheric data from the Standard Atmosphere 1976 Data. This
+    function is valid for altitudes ranging from 100km to 1000km.
+
+    .. note::
+
+        This code can only be applied to spacecraft orbiting the Earth
+
+    :param alt: altitude in km
+    :return:  density at the given altitude in kg/m^3
     """
     # Smooth exponential drop-off after 1000 km #
     if alt > 1000.:
@@ -755,15 +753,13 @@ def atmosphericDensity(alt):
 
 def debyeLength(alt):
     """
-     * Function: debyeLength
-     * Purpose: This program computes the debyeLength length for a given
-     *   altitude and is valid for altitudes ranging
-     *   from 200 km to GEO (35000km).  However, all values above
-     *   1000 km are HIGHLY speculative at this point.
-     * Inputs:
-     *   alt = altitude in km
-     * Outputs:
-     *   debye = debye length given in m
+    This program computes the debyeLength length for a given
+    altitude and is valid for altitudes ranging
+    from 200 km to GEO (35000km).  However, all values above
+    1000 km are HIGHLY speculative at this point.
+
+    :param alt: altitude in km
+    :return: debye length given in m
     """
     X = [200.0, 250.0, 300.0, 350.0, 400., 450., 500., 550., 600., 650., 700., 750., 800., 850.,
          900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450.,
@@ -796,21 +792,18 @@ def debyeLength(alt):
 
 def atmosphericDrag(Cd, A, m, rvec, vvec):
     """
-     * Function: atmosphericDrag
-     * Purpose: This program computes the atmospheric drag acceleration
-     *   vector acting on a spacecraft.
-     *   Note the acceleration vector output is inertial, and is
-     *   only valid for altitudes up to 1000 km.
-     *   Afterwards the drag force is zero. Only valid for Earth.
-     * Inputs:
-     *   Cd = drag coefficient of the spacecraft
-     *   A = cross-sectional area of the spacecraft in m^2
-     *   m = mass of the spacecraft in kg
-     *   rvec = Inertial position vector of the spacecraft in km  [x;y;z]
-     *   vvec = Inertial velocity vector of the spacecraft in km/s [vx;vy;vz]
-     * Outputs:
-     *   advec = The inertial acceleration vector due to atmospheric
-     *             drag in km/sec^2
+     This program computes the atmospheric drag acceleration
+     vector acting on a spacecraft.
+     Note the acceleration vector output is inertial, and is
+     only valid for altitudes up to 1000 km.
+     Afterwards the drag force is zero. Only valid for Earth.
+
+     :param Cd:  drag coefficient of the spacecraft
+     :param A: cross-sectional area of the spacecraft in m^2
+     :param m: mass of the spacecraft in kg
+     :param rvec: Inertial position vector of the spacecraft in km  [x;y;z]
+     :param vvec: Inertial velocity vector of the spacecraft in km/s [vx;vy;vz]
+     :return: The inertial acceleration vector due to atmospheric drag in km/sec^2
     """
     # find the altitude and velocity #
     r = la.norm(rvec)
@@ -840,32 +833,25 @@ def atmosphericDrag(Cd, A, m, rvec, vvec):
 
 def jPerturb(rvec, num, planet):
     """
-     * Function: jPerturb
-     * Purpose: Computes the J2_EARTH-J6_EARTH zonal graviational perturbation
-     *   accelerations.
-     * Inputs:
-     *   rvec = Cartesian Position vector in kilometers [x;y;z].
-     *   num = Corresponds to which J components to use,
-     *       must be an integer between 2 and 6.
-     *       (note: Additive- 2 corresponds to J2_EARTH while 3 will
-     *       correspond to J2_EARTH + J3_EARTH)
-     *   planet:
+    Computes the J2_EARTH-J6_EARTH zonal gravitational perturbation
+    accelerations.
+
+    :param rvec: Cartesian Position vector in kilometers [x;y;z].
+    :param num: Corresponds to which J components to use,
+                must be an integer between 2 and 6.
+                (note: Additive- 2 corresponds to J2_EARTH while 3 will
+                correspond to J2_EARTH + J3_EARTH)
+    :param planet: planet variable, can be
                  CELESTIAL_MERCURY
                  CELESTIAL_VENUS
                  CELESTIAL_EARTH
                  CELESTIAL_MOON
                  CELESTIAL_MARS
-                 *CELESTIAL_PHOBOS
-                 *CELESTIAL_DEIMOS
                  CELESTIAL_JUPITER
-                 *CELESTIAL_SATURN
                  CELESTIAL_URANUS
                  CELESTIAL_NEPTUNE
-                 *CELESTIAL_PLUTO
-                 *CELESTIAL_SUN
-     * Outputs:
-     *   ajtot = The total acceleration vector due to the J
-     *             perturbations in km/sec^2 [accelx;accely;accelz]
+    :return: ajtot, The total acceleration vector due to the J
+                    perturbations in km/sec^2 [accelx;accely;accelz]
     """
 
     ajtot = np.zeros(3)
@@ -993,26 +979,23 @@ def jPerturb(rvec, num, planet):
 
 def solarRad(A, m, sunvec):
     """
-     * Function: solarRad
-     * Purpose: Computes the inertial solar radiation force vectors
-     *   based on cross-sectional Area and mass of the spacecraft
-     *   and the position vector of the planet to the sun.
-     *   Note: It is assumed that the solar radiation pressure decreases
-     *   quadratically with distance from sun (in AU)
-     *
-     *   Solar Radiation Equations obtained from
-     *   Earth Space and Planets Journal Vol. 51, 1999 pp. 979-986
-     * Inputs:
-     *   A = Cross-sectional area of the spacecraft that is facing
-     *             the sun in m^2.
-     *   m = The mass of the spacecraft in kg.
-     *   sunvec = Position vector to the Sun in units of AU.
-     *             Earth has a distance of 1 AU.
-     * Outputs:
-     *   arvec = The inertial acceleration vector due to the effects
-     *       of Solar Radiation pressure in km/sec^2.  The vector
-     *       components of the output are the same as the vector
-     *       components of the sunvec input vector.
+    Computes the inertial solar radiation force vectors
+    based on cross-sectional Area and mass of the spacecraft
+    and the position vector of the planet to the sun.
+
+    .. note::
+
+        It is assumed that the solar radiation pressure decreases quadratically with distance from sun (in AU)
+
+    Solar Radiation Equations obtained from
+    Earth Space and Planets Journal Vol. 51, 1999 pp. 979-986
+
+    :param A: Cross-sectional area of the spacecraft that is facing the sun in m^2.
+    :param m: The mass of the spacecraft in kg.
+    :param sunvec: Position vector to the Sun in units of AU. Earth has a distance of 1 AU.
+    :return:   arvec, The inertial acceleration vector due to the effects of Solar Radiation pressure in km/sec^2.  The vector
+               components of the output are the same as the vector
+               components of the sunvec input vector.
     """
     # Solar Radiation Flux #
     flux = 1372.5398
@@ -1041,12 +1024,19 @@ def v3Normalize(v):
 
 
 def clMeanOscMap(req, J2, oe, oep, sign):
-    # Classical orbital elements = (a,e,i,Omega,omega,f)
-    # First-order J2 Mapping Between Mean and Osculating Orbital Elements
-    # sgn=1:mean to osc, sgn=-1:osc to mean
-    # Analytical Mechanics of Space Systems
-    # Hanspeter Schaub, John L. Junkins, 4th edition.
-    # [m] or [km] should be the same both for req and elements.a
+    """
+    First-order J2 Mapping Between Mean and Osculating Orbital Elements
+
+    Analytical Mechanics of Space Systems, Hanspeter Schaub, John L. Junkins, 4th edition.
+    [m] or [km] should be the same both for req and elements.a
+
+    :param req: equatorial radius
+    :param J2:
+    :param oe: classical orbit element set
+    :param oep:
+    :param sign: sgn=1:mean to osc, sgn=-1:osc to mean
+
+    """
     a       = oe.a
     e       = oe.e
     i       = oe.i
@@ -1123,9 +1113,14 @@ def clMeanOscMap(req, J2, oe, oep, sign):
 
 
 def clElem2eqElem(elements_cl, elements_eq):
-    # conversion
-    # from classical orbital elements (a,e,i,Omega,omega,f)
-    # to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)
+    """
+    conversion
+    from classical orbital elements (a,e,i,Omega,omega,f)
+    to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)
+
+    :param elements_cl: classical elements
+    :return: elements_eq, equinoctial elements
+    """
     elements_eq.a  = elements_cl.a
     elements_eq.P1 = elements_cl.e * math.sin(elements_cl.Omega + elements_cl.omega)
     elements_eq.P2 = elements_cl.e * math.cos(elements_cl.Omega + elements_cl.omega)

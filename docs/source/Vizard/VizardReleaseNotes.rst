@@ -83,7 +83,7 @@ Release Notes
 - labels can also be toggled by type by using newly added fields in the Protobuffers vizMessage
 - revamped startup screen and file browser appearance to follow the general Vizard application design themes
 
-**Version 1.0.0**🍾🍾🍾🍾
+**Version 1.0.0** 🍾🍾🍾🍾
 
 - Support for various screen sizes, including retina support on macOS
 - Added support to show the boresight of a camera model (both instrument and standard cameras)

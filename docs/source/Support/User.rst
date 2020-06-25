@@ -9,8 +9,6 @@ The following support documents are for the Basilisk user who is seeking general
 .. toctree::
    :maxdepth: 2
 
-   User/bskReleaseNotes
-   User/bskKnownIssues
    User/FAQ
    User/FAQmacOS
    User/FAQwindows
