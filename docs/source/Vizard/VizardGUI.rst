@@ -134,6 +134,16 @@ axes being modeled.
    :width: 90 %
 
 
+``File`` Menu Item
+------------------
+
+Settings Panel
+^^^^^^^^^^^^^^
+This panel provides access to some system defaults:
+
+- ambient brightness
+- keyboard controlled camera angular rate
+- keyboard controlled camera zoom rate
 
 ``View`` Menu Item
 ------------------
@@ -172,10 +182,6 @@ becomes solid.
 .. image:: ../_images/static/vizard-ImgCones.jpg
    :align: center
    :width: 90 %
-
-Adjust Brightness
-^^^^^^^^^^^^^^^^^
-This option allows the user to increase or decrease the ambient lighting of the Vizard Simulation.
 
 Adjust GUI Scale
 ^^^^^^^^^^^^^^^^^

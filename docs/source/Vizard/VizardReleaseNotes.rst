@@ -29,6 +29,8 @@ Release Notes
 - switched to 3 quality levels for viz app (Fast, Good, and Beautiful) and confirmed that shadows are showing up in Beautiful even on the AVS model.  The Beautiful mode requires a good graphics card to yield a good frame rate.
 - added flashlight to camera, still toggled by ``L``, useful to illuminate spacecraft when in shadow of a planet
 - fixed sun threshold bug that caused mesh not to show up from some angles
+- new timeline slider bar that live updates the rendered view
+- new ``File/Settings`` option to bring up a settings panel to change system default values
 
 **Version 1.3.0**
 
