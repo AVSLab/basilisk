@@ -1,8 +1,11 @@
+import sys, os
+path = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(path + '/../')
+from blackLion import workerProcess, constants
+
 import zmq
-import workerProcess
 from zmq.eventloop import ioloop
 import binascii
-import constants
 import argparse
 import warnings
 
@@ -17,25 +20,8 @@ class ListenerRouter(object):
         self.localSubscriptions = set()
 
     def collect_localRouteMessages(self):
-        self.localSubscriptions.add("LSB_css1_packet")
-        self.localSubscriptions.add("LSB_css2_packet")
-        # self.localSubscriptions.add("coarse_time_masterRead")
-        # self.localSubscriptions.add("IPCoutbound_cmds")
-        # self.localSubscriptions.add("IPCinbound_hk")
-        # self.localSubscriptions.add("telem_desc0")
-        # self.localSubscriptions.add("black_lion_message_channel")
-        # self.localSubscriptions.add("IPCoutbound_cmds_to_store")
-        # self.localSubscriptions.add("rw1_torque_cmd")
-        # self.localSubscriptions.add("rw2_torque_cmd")
-        # self.localSubscriptions.add("rw3_torque_cmd")
-        # self.localSubscriptions.add("rw4_torque_cmd")
-        # self.localSubscriptions.add("reactionwheel_output_states")
-        # self.localSubscriptions.add("viz_interface_msg")
-        # self.localSubscriptions.add("viz_message")
-        # self.localSubscriptions.add("um_fifo_data_in")
-        # self.localSubscriptions.add("um_fifo_data_out")
-        # self.localSubscriptions.add("acs_thruster_cmds")
-        # self.localSubscriptions.add("dv_thruster_cmds")
+        self.localSubscriptions.add("reactionwheel_output_states")
+        self.localSubscriptions.add("viz_interface_msg")
         return self.localSubscriptions
 
     def routeMessage(self, packet_type, payload_size, payload):
