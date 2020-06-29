@@ -21,9 +21,11 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
+#include "utilities/avsEigenSupport.h"
 #include <sstream>
 #include <string>
 #include <string.h>
+#include <vector>
 
 /*! DataFileToViz Constructor
  */
@@ -58,9 +60,9 @@ DataFileToViz::~DataFileToViz()
 void DataFileToViz::SelfInit()
 {
     int64_t msgId;
-    std::vector<std::string>::iterator it;
 
-    //! - create all the environment output messages for each spacecraft
+    // create all the environment output messages for each spacecraft
+    std::vector<std::string>::iterator it;
     for (it = this->scStateOutMsgNames.begin(); it!=this->scStateOutMsgNames.end(); it++) {
         msgId = SystemMessaging::GetInstance()->CreateNewMessage(*it,
                                                                 sizeof(SCPlusStatesSimMsg),
@@ -68,8 +70,30 @@ void DataFileToViz::SelfInit()
                                                                 "SCPlusStatesSimMsg",
                                                                 moduleID);
         this->scStateOutMsgIds.push_back(msgId);
+
     }
-    
+
+    // create thruster output messages
+    if (this->thrMsgDataSC.size() > 0) {
+        std::vector <std::vector <ThrClusterMap>>::iterator thrMsgData;
+        for (thrMsgData = this->thrMsgDataSC.begin(); thrMsgData!=this->thrMsgDataSC.end(); thrMsgData++) {
+
+            std::vector<ThrClusterMap>::iterator thrSet;
+            for (thrSet = (*thrMsgData).begin(); thrSet!=(*thrMsgData).end(); thrSet++) {
+
+                for (int idx = 0; idx<thrSet->thrCount; idx++) {
+                    std::string thrMsgName = "thruster_" + thrSet->thrTag + "_" + std::to_string(idx) + "_data";
+                    msgId = SystemMessaging::GetInstance()->CreateNewMessage(thrMsgName,
+                                                                            sizeof(THROutputSimMsg),
+                                                                            this->OutputBufferCount,
+                                                                            "THROutputSimMsg",
+                                                                            moduleID);
+                    this->thrMsgIds.push_back(msgId);
+                }
+            }
+        }
+    }
+
     return;
 }
 
@@ -95,6 +119,33 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: numSatellites must the same size as scStateOutMsgNames vector.");
     }
 
+    /* check thruster states */
+    if (this->thrMsgDataSC.size() > 0) {
+
+        /* evaluate total number of thrusters */
+        int numThr = 0;
+        std::vector <std::vector <ThrClusterMap>>::iterator thrMsgData;
+        for (thrMsgData = this->thrMsgDataSC.begin(); thrMsgData!=this->thrMsgDataSC.end(); thrMsgData++) {
+            std::vector<ThrClusterMap>::iterator thrSet;
+            for (thrSet = (*thrMsgData).begin(); thrSet!=(*thrMsgData).end(); thrSet++) {
+                numThr += thrSet->thrCount;
+            }
+        }
+
+        /* check vector dimensions */
+        if (numThr != this->thrPosList.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrPosList must the same size as the number of thrusters.");
+        }
+
+        if (numThr != this->thrDirList.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrDirList must the same size as the number of thrusters.");
+        }
+
+        if (numThr != this->thrForceMaxList.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrForceMaxList must the same size as the number of thrusters.");
+        }
+    }
+
     /* open the data file*/
     this->fileHandle = new std::ifstream(this->dataFileName);
     if (this->fileHandle->fail()) {
@@ -111,6 +162,39 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
+/*!
+ Add a thruster 3d position vector to the list of thruster locations
+ */
+void DataFileToViz::appendThrPos(double pos_B[3])
+{
+    this->thrPosList.push_back(cArray2EigenVector3d(pos_B));
+}
+
+/*!
+ Add a thruster 3d unit direction vector to the list of thruster locations.  The input vectors gets normalized before being added to the list.
+ */
+void DataFileToViz::appendThrDir(double dir_B[3])
+{
+    this->thrDirList.push_back(cArray2EigenVector3d(dir_B));
+}
+
+/*!
+ Add a thruster maximum force value to the list of thrusters.
+ */
+void DataFileToViz::appendThrForceMax(double forceMax)
+{
+    this->thrForceMaxList.push_back(forceMax);
+}
+
+/*!
+ Add a thruster cluster map for each spacecraft
+*/
+void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData)
+{
+    this->thrMsgDataSC.push_back(thrMsgData);
+}
+
+
 
 /*! Update this module at the task rate
  @param CurrentSimNanos The current sim time
@@ -119,6 +203,8 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 {
     /* ensure that a file was opened */
     if (this->fileHandle->is_open()) {
+        int thrCounter = 0;
+        int scCounter = 0;
 
         /* read in next line*/
         std::string line;
@@ -182,6 +268,41 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                                                           sizeof(SCPlusStatesSimMsg),
                                                           reinterpret_cast<uint8_t*>(&scMsg),
                                                           moduleID);
+
+                /* check if thruster states are provided */
+                if (this->thrMsgDataSC.size() > 0) {
+
+                    std::vector<ThrClusterMap>::iterator thrSet;
+                    std::string item;
+                    double forceValue;
+                    const char delimiterString = *this->delimiter.c_str();
+
+                    for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
+                        for (int idx = 0; idx<thrSet->thrCount; idx++) {
+                            getline(iss, item, delimiterString);
+                            forceValue = stod(item);
+
+                            THROutputSimMsg thrMsg;
+                            /* zero output message */
+                            memset(&thrMsg, 0x0, sizeof(THROutputSimMsg));
+
+                            /* fill out the thruster state message */
+                            thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
+                            thrMsg.thrustForce = forceValue;
+                            eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
+                            eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
+
+                            SystemMessaging::GetInstance()->WriteMessage(this->thrMsgIds[thrCounter],
+                                                                        CurrentSimNanos,
+                                                                        sizeof(THROutputSimMsg),
+                                                                        reinterpret_cast<uint8_t*>(&thrMsg),
+                                                                        moduleID);
+                            thrCounter++;
+                        }
+                    }
+                }
+
+                scCounter++;
             }
         } else {
             bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz: reached end of file.");
