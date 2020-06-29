@@ -48,11 +48,12 @@ except ImportError:
 path = os.path.dirname(os.path.abspath(__file__))
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000.])
 @pytest.mark.parametrize("attType", [-1, 0, 1, 2])
 @pytest.mark.parametrize("checkThruster", [0, 1])
 
-# update "module" in this function name to reflect the module name
+
 def test_module(show_plots, convertPosUnits, attType, checkThruster):
     """
     **Validation Test Description**
@@ -66,6 +67,7 @@ def test_module(show_plots, convertPosUnits, attType, checkThruster):
         convertPosUnits (double): If positive, then this conversion factor is set.  If negative, then the
             default value of 1000. is checked.
         attType (int): -1 (use default), 0 (MRP), 1 (quaternion), 2 (3-2-1 Euler Angles)
+        checkThruster (bool): flag to check for sim with thrusters
 
     **Description of Variables Being Tested**
 
@@ -73,6 +75,7 @@ def test_module(show_plots, convertPosUnits, attType, checkThruster):
 
     - ``r_BN_N[3]``
     - ``sigma_BN[3]``
+    - ``thrustForce``
 
     which is pulled from the log data to see if they match with the expected truth values.
 
