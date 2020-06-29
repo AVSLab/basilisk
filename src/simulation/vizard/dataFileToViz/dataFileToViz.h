@@ -24,7 +24,7 @@
 #include <fstream>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/bskLogging.h"
-#include "../vizInterface/vizStructures.h"
+#include "../_GeneralModuleFiles/vizStructures.h"
 #include <Eigen/Dense>
 
 

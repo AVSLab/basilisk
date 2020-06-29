@@ -41,7 +41,7 @@
 #include "utilities/bskLogging.h"
 #include "simMessages/epochSimMsg.h"
 #include "utilities/simDefinitions.h"
-#include "vizStructures.h"
+#include "../_GeneralModuleFiles/vizStructures.h"
 
 #define VIZ_MAX_SIZE 100000
 

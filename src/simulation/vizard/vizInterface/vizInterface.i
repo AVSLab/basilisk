@@ -18,7 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %module vizInterface
 %{
    #include "vizInterface.h"
-   #include "vizStructures.h"
+   #include "../_GeneralModuleFiles/vizStructures.h"
 %}
 
 %pythoncode %{
@@ -43,7 +43,7 @@ namespace std {
 }
 
 %include "vizInterface.h"
-%include "vizStructures.h"
+%include "../_GeneralModuleFiles/vizStructures.h"
 %include "simFswInterfaceMessages/cameraConfigMsg.h"
 GEN_SIZEOF(ThrClusterMap);
 
