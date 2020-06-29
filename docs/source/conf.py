@@ -480,7 +480,7 @@ if rebuild:
     # adjust the fileCrawler path to a local folder to just build a sub-system
     breathe_projects_source = fileCrawler.run(officialSrc)
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_fswTemplateFolder")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard/vizInterface")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/examples")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/utilities")
     breathe_projects_source = fileCrawler.run("../../externalTools")
