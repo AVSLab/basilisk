@@ -113,7 +113,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     vB2N = [-1.95308, 6.31239, 3.64446]
     betaB2N = [-0.182574, 0.365148, 0.547723, 0.730297]
     sigmaB2N = [-0.1, 0.1, 0.3]
-    dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) +  ".txt"
+    dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) + ".txt"
     delimiter = ","
     fDataFile = open(dataFileName, "w+")
     for i in range(0, int(simTimeSeconds/dtSeconds)+1):
@@ -248,6 +248,18 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     # Setup logging on the test module output message so that we get all the writes to it
     for msgName in scNames:
         unitTestSim.TotalSim.logThisMessage(msgName, testProcessRate)
+    if checkThruster:
+        thrMsgName = []
+        for i in range(numACS1):
+            thrMsgName.append("thruster_" + thrModelTagAdcs1 + "_" + str(i) + "_data")
+        for i in range(numDV1):
+            thrMsgName.append("thruster_" + thrModelTagDv1 + "_" + str(i) + "_data")
+        for i in range(numACS2):
+            thrMsgName.append("thruster_" + thrModelTagAdcs2 + "_" + str(i) + "_data")
+        for i in range(numDV2):
+            thrMsgName.append("thruster_" + thrModelTagDv2 + "_" + str(i) + "_data")
+        for name in thrMsgName:
+            unitTestSim.TotalSim.logThisMessage(name, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulationAndDiscover()
@@ -262,6 +274,10 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     pos2 = unitTestSim.pullMessageLogData(scNames[1] + ".r_BN_N", list(range(3)))
     att1 = unitTestSim.pullMessageLogData(scNames[0] + ".sigma_BN", list(range(3)))
     att2 = unitTestSim.pullMessageLogData(scNames[1] + ".sigma_BN", list(range(3)))
+    if checkThruster:
+        thrData = []
+        for name in thrMsgName:
+            thrData.append(unitTestSim.pullMessageLogData(name + ".thrustForce", list(range(1))))
 
     # set input data
     pos1In = np.array(rB1N)
@@ -289,6 +305,22 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     if not unitTestSupport.isVectorEqual(att2[0][1:4], att2In, 0.1):
         testFailCount += 1
         testMessages.append("FAILED: " + testModule.ModelTag + " Module failed att2 check.")
+    if checkThruster:
+        if not unitTestSupport.isDoubleEqualRelative(thrData[0][0][1], th1ACS, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th1ACS check.")
+        if not unitTestSupport.isDoubleEqualRelative(thrData[1][0][1], th1DV, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th1ACS check.")
+        if not unitTestSupport.isDoubleEqualRelative(thrData[2][0][1], th2ACS, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th2ACS check.")
+        if not unitTestSupport.isDoubleEqualRelative(thrData[3][0][1], th2DV, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th2DV (1st) check.")
+        if not unitTestSupport.isDoubleEqualRelative(thrData[4][0][1], th2DV, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th2DV (2nd) check.")
 
     # print out success or failure message
     if testFailCount == 0:
