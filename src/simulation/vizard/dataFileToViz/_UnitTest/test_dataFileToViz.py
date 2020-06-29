@@ -116,7 +116,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) + ".txt"
     delimiter = ","
     fDataFile = open(dataFileName, "w+")
-    for i in range(0, int(simTimeSeconds/dtSeconds)+1):
+    for i in range(0, int(simTimeSeconds/dtSeconds)+2):
         t = round(i*dtSeconds, 4)
 
         # sc1
@@ -127,7 +127,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
             lineString += str(sigmaB1N)[1:-1] + delimiter
         lineString += str(omega)[1:-1] + delimiter
         if checkThruster:
-            th1ACS = 10.
+            th1ACS = 1.
             th1DV = 100.
             numACS1 = 1
             numDV1 = 1
@@ -141,7 +141,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
             lineString += str(sigmaB2N)[1:-1] + delimiter
         lineString += str(omega)[1:-1]
         if checkThruster:
-            th2ACS = 20.
+            th2ACS = 2.
             th2DV = 200.
             numACS2 = 1
             numDV2 = 2
@@ -184,13 +184,13 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
         testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList1))
 
         # set ACS thruster position and direction states
-        testModule.appendThrPos([0, 0, 3.])
-        testModule.appendThrDir([0, 0, 1])
+        testModule.appendThrPos([0, 0, 3.])  # thr location in B frame, meters
+        testModule.appendThrDir([0, 0, -1])  # thr force direction
         testModule.appendThrForceMax(th1ACS)
 
         # set DV thruster position and direction states
         testModule.appendThrPos([0., 0., -3.])
-        testModule.appendThrDir([0, 0, -1])
+        testModule.appendThrDir([0, 0, 1])
         testModule.appendThrForceMax(th1DV)
 
 
@@ -210,15 +210,15 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
 
         # set ACS thruster position and direction states
         testModule.appendThrPos([0, 0, 3.])
-        testModule.appendThrDir([0, 0, 1])
+        testModule.appendThrDir([0, 0, -1])
         testModule.appendThrForceMax(th2ACS)
 
         # set DV thruster position and direction states
         testModule.appendThrPos([0., 0., -3.])
-        testModule.appendThrDir([0, 0, -1])
+        testModule.appendThrDir([0, 0, 1])
         testModule.appendThrForceMax(th2DV)
-        testModule.appendThrPos([0., 1., -3.])
-        testModule.appendThrDir([0, 0, -1])
+        testModule.appendThrPos([0., 2., -3.])
+        testModule.appendThrDir([0, 0, 1])
         testModule.appendThrForceMax(th2DV)
 
     # Add module to the task
@@ -233,16 +233,16 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
                                               saveFile=fileName,
-                                              # thrDevices=[(thSetAdcs.thrCount, thSetAdcs.thrTag), (thSetDv.thrCount, thSetDv.thrTag)],
                                               scName=scNames)
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
         viz.scData.clear()
-        for item in scNames:
+        for item, thList in zip(scNames, [thList1, thList2]):
             # create a chief spacecraft info container
             scData = vizInterface.VizSpacecraftData()
             scData.spacecraftName = item
             scData.scPlusInMsgName = item
+            scData.thrMsgData = vizInterface.VizThrConfig(thList)
             viz.scData.push_back(scData)
 
     # Setup logging on the test module output message so that we get all the writes to it
