@@ -113,7 +113,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     vB2N = [-1.95308, 6.31239, 3.64446]
     betaB2N = [-0.182574, 0.365148, 0.547723, 0.730297]
     sigmaB2N = [-0.1, 0.1, 0.3]
-    dataFileName = "data.txt"
+    dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) +  ".txt"
     delimiter = ","
     fDataFile = open(dataFileName, "w+")
     for i in range(0, int(simTimeSeconds/dtSeconds)+1):
