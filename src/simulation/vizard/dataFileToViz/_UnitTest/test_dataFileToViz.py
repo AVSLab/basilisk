@@ -51,7 +51,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000.])
 @pytest.mark.parametrize("attType", [-1, 0, 1, 2])
-@pytest.mark.parametrize("checkThruster", [0, 1])
+@pytest.mark.parametrize("checkThruster", [False, True])
 
 
 def test_module(show_plots, convertPosUnits, attType, checkThruster):
@@ -67,7 +67,7 @@ def test_module(show_plots, convertPosUnits, attType, checkThruster):
         convertPosUnits (double): If positive, then this conversion factor is set.  If negative, then the
             default value of 1000. is checked.
         attType (int): -1 (use default), 0 (MRP), 1 (quaternion), 2 (3-2-1 Euler Angles)
-        checkThruster (bool): flag to check for sim with thrusters
+        checkThruster (bool): flag to check for simumlation data with thrusters
 
     **Description of Variables Being Tested**
 
