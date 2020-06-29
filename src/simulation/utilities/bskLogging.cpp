@@ -94,7 +94,7 @@ void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
         va_list args;
         va_start (args, info);
         vsnprintf(formatMessage, sizeof(formatMessage), info, args);
-        printf("Message Level: %s, Message: %s\n", targetLevelStr, formatMessage);
+        printf("%s: %s\n", targetLevelStr, formatMessage);
     }
 }
 
