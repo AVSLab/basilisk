@@ -235,18 +235,24 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
+                                              # saveFile=fileName,
                                               scName=scNames)
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
         viz.scData.clear()
-        for item, thList in zip(scNames, [thList1, thList2]):
+        scCounter = 0
+        for item in scNames:
             # create a chief spacecraft info container
             scData = vizInterface.VizSpacecraftData()
             scData.spacecraftName = item
             scData.scPlusInMsgName = item
-            scData.thrMsgData = vizInterface.VizThrConfig(thList)
+            if verbose:     # run this if the script is called using python3, not pytest
+                if scCounter == 0:
+                    scData.thrMsgData = vizInterface.VizThrConfig(thList1)
+                else:
+                    scData.thrMsgData = vizInterface.VizThrConfig(thList2)
             viz.scData.push_back(scData)
+            scCounter += 1
 
     # Setup logging on the test module output message so that we get all the writes to it
     for msgName in scNames:
@@ -349,5 +355,5 @@ if __name__ == "__main__":
          -1,        # convertPosUnits
          0,        # attType (-1 -> default, 0 -> MRP, 1 -> quaternions, 2 -> 3-2-1 Euler Angles)
          True,      # checkThruster
-         True       # verbosity
+         True       # verbose
        )
