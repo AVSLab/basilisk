@@ -242,24 +242,24 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         rwSc1MsgList = ["data_rw0_test1", "data_rw1_test1"]
         testModule.appendRwMsgNames(dataFileToViz.StringVector(rwSc1MsgList))
         # RW 1
-        testModule.appendRwPos([1, 0, 0])
+        testModule.appendRwPos([0, 0, 0])
         testModule.appendRwDir([1, 0, 0])
         testModule.appendOmegaMax(3000.*macros.RPM)
-        testModule.appendUMax(1.0)
+        testModule.appendUMax(0.5)
         # RW2
-        testModule.appendRwPos([-1, 0, 0])
-        testModule.appendRwDir([-1, 0, 0])
+        testModule.appendRwPos([0, 0, 0])
+        testModule.appendRwDir([0, 1, 0])
         testModule.appendOmegaMax(3000.*macros.RPM)
-        testModule.appendUMax(1.0)
+        testModule.appendUMax(0.5)
 
         # SC2
         rwSc2MsgList = ["data_rw0_test2"]
         testModule.appendRwMsgNames(dataFileToViz.StringVector(rwSc2MsgList))
         # RW 1
-        testModule.appendRwPos([0, 1, 0])
+        testModule.appendRwPos([0, 0, 0])
         testModule.appendRwDir([0, 1, 0])
         testModule.appendOmegaMax(3000.*macros.RPM)
-        testModule.appendUMax(1.0)
+        testModule.appendUMax(0.5)
 
     # Add module to the task
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -288,6 +288,13 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
                     scData.thrMsgData = vizInterface.VizThrConfig(thList1)
                 else:
                     scData.thrMsgData = vizInterface.VizThrConfig(thList2)
+            if checkRW:
+                if scCounter == 0:
+                    scData.numRW = len(rwSc1MsgList)
+                    scData.rwInMsgName = vizInterface.StringVector(rwSc1MsgList)
+                else:
+                    scData.numRW = len(rwSc2MsgList)
+                    scData.rwInMsgName = vizInterface.StringVector(rwSc2MsgList)
             viz.scData.push_back(scData)
             scCounter += 1
 

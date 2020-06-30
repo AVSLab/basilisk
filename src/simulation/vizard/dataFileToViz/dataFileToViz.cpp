@@ -391,8 +391,14 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                             RWConfigLogSimMsg rwOutMsg;
                             memset(&rwOutMsg, 0x0, sizeof(RWConfigLogSimMsg));
 
+                            /* create RW message */
                             rwOutMsg.Omega = pullScalar(&iss);
+                            rwOutMsg.Omega_max = this->rwOmegaMaxList[rwCounter];
                             rwOutMsg.u_current = pullScalar(&iss);
+                            rwOutMsg.u_max = this->rwUMaxList[rwCounter];
+                            eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
+                            eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
+                            std::cout << rwOutMsg.gsHat_B[0] << std::endl;
 
                             SystemMessaging::GetInstance()->WriteMessage(this->rwMsgIds[rwCounter],
                                                                         CurrentSimNanos,
