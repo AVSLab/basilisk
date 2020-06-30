@@ -33,11 +33,11 @@ User Guide
 The module assumes the data file is in plain text form and the following format:
 
 - time
-- inertial position states
-- inertial velocity states
-- inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles
-- inertial angular velocity vector in radians per second
-- (optional) thruster force values
+- inertial position states (m)
+- inertial velocity states (m/s)
+- inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles (rad)
+- inertial angular velocity vector in radians per second (rad/s)
+- (optional) thruster force values (N)
 - repeat on the same line for additional spacecraft
 
 The required module parameters are listed in the following table.
