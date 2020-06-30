@@ -42,10 +42,17 @@ public:
     void appendThrDir(double dir_B[3]);
     void appendThrForceMax(double);
     void appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData);
+    void appendRwMsgNames(std::vector <std::string> rwMsgNameList);
+    void appendRwPos(double pos_B[3]);
+    void appendRwDir(double dir_B[3]);
+    void appendOmegaMax(double);
+    void appendUMax(double);
+
 
 private:
     void pullVector(std::istringstream *iss, double *);
     void pullVector4(std::istringstream *iss, double *);
+    double pullScalar(std::istringstream *iss);
 
 public:
     std::string dataFileName;                   //!< Name of the simulation data file
@@ -56,10 +63,8 @@ public:
     bool headerLine;                            //!< [bool] flag to mark first line as a header
     int attitudeType;                           //!< 0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - (3-2-1) Euler angles
 
-    std::vector <std::vector <ThrClusterMap>> thrMsgDataSC;  //!< (Optional) vector of sets fo thruster cluster mapping info
-    std::vector <Eigen::Vector3d> thrPosList;   //!< [m] vector of thrust positions
-    std::vector <Eigen::Vector3d> thrDirList;   //!< [-] vector of thrust unit direction vectors in B-frame components
-    std::vector <double> thrForceMaxList;       //!< [-] vector of thrust maximum force values
+    std::vector <std::vector <ThrClusterMap>> thrMsgDataSC;  //!< (Optional) vector of sets of thruster cluster mapping info
+    std::vector <std::vector <std::string>> rwMsgOutNamesSC; //!< (Optional) vector of sets of RW msg names, each entry is per SC
 
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
     uint64_t OutputBufferCount;                 //!< number of output buffers for messaging system
@@ -68,7 +73,15 @@ public:
 private:
     std::vector<int64_t>  scStateOutMsgIds;     //!< vector of spacecraft module output message IDs
     std::vector<int64_t>  thrMsgIds;            //!< vector of thruster module output message IDs
+    std::vector<int64_t>  rwMsgIds;             //!< vector of RW output message IDs
     std::ifstream *fileHandle;                  //!< file handle to the simulation data input file
+    std::vector <Eigen::Vector3d> thrPosList;   //!< [m] vector of thrust positions
+    std::vector <Eigen::Vector3d> thrDirList;   //!< [-] vector of thrust unit direction vectors in B-frame components
+    std::vector <double> thrForceMaxList;       //!< [-] vector of thrust maximum force values
+    std::vector <Eigen::Vector3d> rwPosList;    //!< [m] vector of RW positions
+    std::vector <Eigen::Vector3d> rwDirList;    //!< [-] vector of RW sprin axis unit direction vectors in B-frame components
+    std::vector <double> rwOmegaMaxList;        //!< [r/s] vector of RW maximum spin rate values
+    std::vector <double> rwUMaxList;            //!< [N] vector of RW maximum motor torque values values
 };
 
 #endif /* VIZ_DATAFILETOVIZ_H */
