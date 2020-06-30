@@ -24,6 +24,7 @@ Version |release|
 - Updated :ref:`dataFileToViz` to include the ability to read thruster force values.  The spacecraft can have
   multiple thruster sets, and this works for multiple spacecraft as well.  See :ref:`test_dataFileToViz` for an
   example on how to set this up.
+- Updated :ref:`dataFileToViz` to include support for reaction wheel data.
 - Updated documentation and ``CMakeLists.txt`` to required 3.14 or higher
 - Updated how ``openCV`` is included to avoid false Xcode warnings about the library not being installed
 - Added :ref:`centerRadiusCNN` for doing CNN-based image processing as well as a pre-trained model
