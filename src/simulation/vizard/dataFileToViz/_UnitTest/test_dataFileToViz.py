@@ -52,9 +52,10 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000])
 @pytest.mark.parametrize("attType", [-1, 0, 1, 2])
 @pytest.mark.parametrize("checkThruster", [False, True])
+@pytest.mark.parametrize("checkRW", [False, True])
 
 
-def test_module(show_plots, convertPosUnits, attType, checkThruster):
+def test_module(show_plots, convertPosUnits, attType, checkThruster, checkRW):
     """
     **Validation Test Description**
 
@@ -67,7 +68,8 @@ def test_module(show_plots, convertPosUnits, attType, checkThruster):
         convertPosUnits (double): If positive, then this conversion factor is set.  If negative, then the
             default value of 1000. is checked.
         attType (int): -1 (use default), 0 (MRP), 1 (quaternion), 2 (3-2-1 Euler Angles)
-        checkThruster (bool): flag to check for simumlation data with thrusters
+        checkThruster (bool): flag to check for simulation data with thrusters
+        checkRW (bool): flag to check for simulation data with RW information
 
     **Description of Variables Being Tested**
 
@@ -82,10 +84,10 @@ def test_module(show_plots, convertPosUnits, attType, checkThruster):
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, convertPosUnits, attType, checkThruster, False)
+    [testResults, testMessage] = run(show_plots, convertPosUnits, attType, checkThruster, checkRW, False)
     assert testResults < 1, testMessage
 
-def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
+def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
 
     if not verbose:
         bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -116,7 +118,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     vB2N = [-1.95308, 6.31239, 3.64446]
     betaB2N = [-0.182574, 0.365148, 0.547723, 0.730297]
     sigmaB2N = [-0.1, 0.1, 0.3]
-    dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) + ".txt"
+    dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) + str(checkRW) + ".txt"
     dataFileName = os.path.join(path, dataFileName)
     delimiter = ","
     fDataFile = open(dataFileName, "w+")
@@ -136,6 +138,13 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
             numACS1 = 1
             numDV1 = 1
             lineString += str(th1ACS) + delimiter + str(th1DV) + delimiter
+        if checkRW:
+            Omega1sc1 = 100.*macros.RPM
+            u1sc1 = 0.1
+            Omega2sc1 = 500. * macros.RPM
+            u2sc1 = -0.1
+            lineString += str(Omega1sc1) + delimiter + str(u1sc1) + delimiter
+            lineString += str(Omega2sc1) + delimiter + str(u2sc1) + delimiter
 
         # sc2
         lineString += str(rB2N)[1:-1] + delimiter + str(vB2N)[1:-1] + delimiter
@@ -150,6 +159,10 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
             numACS2 = 1
             numDV2 = 2
             lineString += delimiter + str(th2ACS) + delimiter + str(th2DV) + delimiter + str(th2DV)
+        if checkRW:
+            Omega1sc2 = 1000.*macros.RPM
+            u1sc2 = 0.3
+            lineString += delimiter + str(Omega1sc2) + delimiter + str(u1sc2)
 
         lineString += '\n'
         fDataFile.write(lineString)
@@ -224,6 +237,30 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
         testModule.appendThrDir([0, 0, 1])
         testModule.appendThrForceMax(th2DV)
 
+    if checkRW:
+        # SC1
+        rwSc1MsgList = ["data_rw0_test1", "data_rw1_test1"]
+        testModule.appendRwMsgNames(dataFileToViz.StringVector(rwSc1MsgList))
+        # RW 1
+        testModule.appendRwPos([0, 0, 0])
+        testModule.appendRwDir([1, 0, 0])
+        testModule.appendOmegaMax(3000.*macros.RPM)
+        testModule.appendUMax(0.5)
+        # RW2
+        testModule.appendRwPos([0, 0, 0])
+        testModule.appendRwDir([0, 1, 0])
+        testModule.appendOmegaMax(3000.*macros.RPM)
+        testModule.appendUMax(0.5)
+
+        # SC2
+        rwSc2MsgList = ["data_rw0_test2"]
+        testModule.appendRwMsgNames(dataFileToViz.StringVector(rwSc2MsgList))
+        # RW 1
+        testModule.appendRwPos([0, 0, 0])
+        testModule.appendRwDir([0, 1, 0])
+        testModule.appendOmegaMax(3000.*macros.RPM)
+        testModule.appendUMax(0.5)
+
     # Add module to the task
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
@@ -235,7 +272,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              # saveFile=fileName,
+                                              saveFile=fileName,
                                               scName=scNames)
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
@@ -246,11 +283,18 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
             scData = vizInterface.VizSpacecraftData()
             scData.spacecraftName = item
             scData.scPlusInMsgName = item
-            if verbose:     # run this if the script is called using python3, not pytest
+            if checkThruster:
                 if scCounter == 0:
                     scData.thrMsgData = vizInterface.VizThrConfig(thList1)
                 else:
                     scData.thrMsgData = vizInterface.VizThrConfig(thList2)
+            if checkRW:
+                if scCounter == 0:
+                    scData.numRW = len(rwSc1MsgList)
+                    scData.rwInMsgName = vizInterface.StringVector(rwSc1MsgList)
+                else:
+                    scData.numRW = len(rwSc2MsgList)
+                    scData.rwInMsgName = vizInterface.StringVector(rwSc2MsgList)
             viz.scData.push_back(scData)
             scCounter += 1
 
@@ -269,6 +313,10 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
             thrMsgName.append("thruster_" + thrModelTagDv2 + "_" + str(i) + "_data")
         for name in thrMsgName:
             unitTestSim.TotalSim.logThisMessage(name, testProcessRate)
+    if checkRW:
+        unitTestSim.TotalSim.logThisMessage(rwSc1MsgList[0], testProcessRate)
+        unitTestSim.TotalSim.logThisMessage(rwSc1MsgList[1], testProcessRate)
+        unitTestSim.TotalSim.logThisMessage(rwSc2MsgList[0], testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulationAndDiscover()
@@ -287,6 +335,13 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
         thrData = []
         for name in thrMsgName:
             thrData.append(unitTestSim.pullMessageLogData(name + ".thrustForce", list(range(1))))
+    if checkRW:
+        rw1Sc1OmegaData = unitTestSim.pullMessageLogData(rwSc1MsgList[0] + ".Omega", list(range(1)))
+        rw1Sc1uData = unitTestSim.pullMessageLogData(rwSc1MsgList[0] + ".u_current", list(range(1)))
+        rw2Sc1OmegaData = unitTestSim.pullMessageLogData(rwSc1MsgList[1] + ".Omega", list(range(1)))
+        rw2Sc1uData = unitTestSim.pullMessageLogData(rwSc1MsgList[1] + ".u_current", list(range(1)))
+        rw1Sc2OmegaData = unitTestSim.pullMessageLogData(rwSc2MsgList[0] + ".Omega", list(range(1)))
+        rw1Sc2uData = unitTestSim.pullMessageLogData(rwSc2MsgList[0] + ".u_current", list(range(1)))
 
     # set input data
     pos1In = np.array(rB1N)
@@ -330,6 +385,25 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
         if not unitTestSupport.isDoubleEqualRelative(thrData[4][0][1], th2DV, 0.001):
             testFailCount += 1
             testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th2DV (2nd) check.")
+    if checkRW:
+        if not unitTestSupport.isDoubleEqualRelative(rw1Sc1OmegaData[0][1], Omega1sc1, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed Omega1sc1 check.")
+        if not unitTestSupport.isDoubleEqualRelative(rw1Sc1uData[0][1], u1sc1, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed u1sc1 check.")
+        if not unitTestSupport.isDoubleEqualRelative(rw2Sc1OmegaData[0][1], Omega2sc1, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed Omega1sc1 check.")
+        if not unitTestSupport.isDoubleEqualRelative(rw2Sc1uData[0][1], u2sc1, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed u1sc1 check.")
+        if not unitTestSupport.isDoubleEqualRelative(rw1Sc2OmegaData[0][1], Omega1sc2, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed Omega1sc2 check.")
+        if not unitTestSupport.isDoubleEqualRelative(rw1Sc2uData[0][1], u1sc2, 0.001):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed u1sc2 check.")
 
     # print out success or failure message
     if testFailCount == 0:
@@ -354,6 +428,7 @@ if __name__ == "__main__":
          False,     # showplots
          -1,        # convertPosUnits
          0,        # attType (-1 -> default, 0 -> MRP, 1 -> quaternions, 2 -> 3-2-1 Euler Angles)
-         True,      # checkThruster
+         False,      # checkThruster
+         True,      # checkRW
          True       # verbose
        )

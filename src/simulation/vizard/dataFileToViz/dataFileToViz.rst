@@ -33,11 +33,12 @@ User Guide
 The module assumes the data file is in plain text form and the following format:
 
 - time
-- inertial position states
-- inertial velocity states
-- inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles
-- inertial angular velocity vector in radians per second
-- (optional) thruster force values
+- inertial position states (m)
+- inertial velocity states (m/s)
+- inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles (rad)
+- inertial angular velocity vector in radians per second (rad/s)
+- (optional) thruster force values (N)
+- (optional) RW Speed :math:`\Omega` (rad/s) and RW motor torque :math:`u_s` (N)
 - repeat on the same line for additional spacecraft
 
 The required module parameters are listed in the following table.
@@ -86,7 +87,14 @@ The module is configurable with the following optional parameters:
      - vector of spacecraft thruster configuration vectors.  Each element contains a ThrClusterMap container
        (defined in :ref:`vizStructures`).
        This allows for each spacecraft to have distinct sets of thrusters to be included.
-       See :ref:`test_dataFileToViz` for an example on how to configure for thruster information.
+       See :ref:`test_dataFileToViz` for an example on how to configure for thruster information.  You add thruster
+       location, thrust force direction and maximum thrust values using ``appendThrPos()``, ``appendThrDir`` and
+       ``appendThrForceMax``.
+   * - ``appendRwMsgNames()``
+     - empty
+     - Add a list of RW message names for a spacecraft.  Repeat for multiple spacecraft.  Add the RW location,
+       spin axis, maximum spin rate and maximum motor torque through the methods ``appendRwPos``, ``appendRwDir``,
+       ``appendOmegaMax`` and ``appendUMax``.
 
 
 

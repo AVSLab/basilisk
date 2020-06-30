@@ -94,6 +94,22 @@ void DataFileToViz::SelfInit()
         }
     }
 
+    // create RW output messages
+    if (this->rwMsgOutNamesSC.size() > 0) {
+        std::vector <std::vector <std::string>>::iterator sc;
+        for (sc = this->rwMsgOutNamesSC.begin(); sc!=this->rwMsgOutNamesSC.end(); sc++) {
+            std::vector <std::string>::iterator name;
+            for (name = (*sc).begin(); name!=(*sc).end(); name++) {
+                msgId = SystemMessaging::GetInstance()->CreateNewMessage(*name,
+                                                                        sizeof(RWConfigLogSimMsg),
+                                                                        this->OutputBufferCount,
+                                                                        "RWConfigLogSimMsg",
+                                                                        moduleID);
+                this->rwMsgIds.push_back(msgId);
+            }
+        }
+    }
+
     return;
 }
 
@@ -146,6 +162,37 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
         }
     }
 
+    /* check RW states */
+    if (this->rwMsgOutNamesSC.size() > 0) {
+
+        if (this->numSatellites != (int) this->rwMsgOutNamesSC.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwMsgOutNamesSC size must be equal to numSatellites");
+        }
+
+        int numRW = 0;
+        std::vector <std::vector <std::string>>::iterator nameList;
+        for (nameList = this->rwMsgOutNamesSC.begin(); nameList != this->rwMsgOutNamesSC.end(); nameList++) {
+            numRW += (int) (*nameList).size();
+        }
+
+        /* check vector dimensions */
+        if (numRW != (int) this->rwPosList.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwPosList must the same size as the total number of RWs.");
+        }
+
+        if (numRW != (int) this->rwDirList.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwDirList must the same size as the total number of RWs.");
+        }
+
+        if (numRW != (int) this->rwOmegaMaxList.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwOmegaMaxList must the same size as the total number of RWs.");
+        }
+
+        if (numRW != (int) this->rwUMaxList.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwUMaxList must the same size as the total number of RWs.");
+        }
+    }
+
     /* open the data file*/
     this->fileHandle = new std::ifstream(this->dataFileName);
     if (this->fileHandle->fail()) {
@@ -171,10 +218,11 @@ void DataFileToViz::appendThrPos(double pos_B[3])
 }
 
 /*!
- Add a thruster 3d unit direction vector to the list of thruster locations.  The input vectors gets normalized before being added to the list.
+ Add a thruster 3d unit direction vector to the list.  The input vectors gets normalized before being added to the list.
  */
 void DataFileToViz::appendThrDir(double dir_B[3])
 {
+    v3Normalize(dir_B, dir_B);
     this->thrDirList.push_back(cArray2EigenVector3d(dir_B));
 }
 
@@ -194,6 +242,47 @@ void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData)
     this->thrMsgDataSC.push_back(thrMsgData);
 }
 
+/*!
+ Add a RW output msg list for each spacecraft
+*/
+void DataFileToViz::appendRwMsgNames(std::vector <std::string> rwMsgNameList)
+{
+    this->rwMsgOutNamesSC.push_back(rwMsgNameList);
+}
+
+
+/*!
+ Add a RW maximum motor torque value to the list
+ */
+void DataFileToViz::appendUMax(double uMax)
+{
+    this->rwUMaxList.push_back(uMax);
+}
+
+/*!
+ Add a RW wheel rate value to the list
+ */
+void DataFileToViz::appendOmegaMax(double OmegaMax)
+{
+    this->rwOmegaMaxList.push_back(OmegaMax);
+}
+
+/*!
+ Add a thruster 3d position vector to the list of thruster locations
+ */
+void DataFileToViz::appendRwPos(double pos_B[3])
+{
+    this->rwPosList.push_back(cArray2EigenVector3d(pos_B));
+}
+
+/*!
+ Add a RW spin axis unit direction vector to the list.  The input vectors gets normalized before being added to the list.
+ */
+void DataFileToViz::appendRwDir(double dir_B[3])
+{
+    v3Normalize(dir_B, dir_B);
+    this->rwDirList.push_back(cArray2EigenVector3d(dir_B));
+}
 
 
 /*! Update this module at the task rate
@@ -204,6 +293,7 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
     /* ensure that a file was opened */
     if (this->fileHandle->is_open()) {
         int thrCounter = 0;
+        int rwCounter = 0;
         int scCounter = 0;
 
         /* read in next line*/
@@ -211,13 +301,12 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
         if (getline(*this->fileHandle, line)) {
 
             std::istringstream iss(line);
-            std::vector<int64_t>::iterator it;
 
             /* pull time, this is not used in the BSK msg */
-            std::string timeItem;
-            getline(iss, timeItem, (const char) *this->delimiter.c_str());
+            pullScalar(&iss);
 
             // create all the state output messages for each spacecraft
+            std::vector<int64_t>::iterator it;
             for (it = this->scStateOutMsgIds.begin(); it!=this->scStateOutMsgIds.end(); it++) {
                 SCPlusStatesSimMsg scMsg;
 
@@ -273,20 +362,13 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                 if (this->thrMsgDataSC.size() > 0) {
 
                     std::vector<ThrClusterMap>::iterator thrSet;
-                    std::string item;
-                    double forceValue;
-                    const char delimiterString = *this->delimiter.c_str();
-
                     for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
                         for (uint32_t idx = 0; idx<thrSet->thrCount; idx++) {
-                            getline(iss, item, delimiterString);
-                            forceValue = stod(item);
-
                             THROutputSimMsg thrMsg;
 
                             /* fill out the thruster state message */
                             thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
-                            thrMsg.thrustForce = forceValue;
+                            thrMsg.thrustForce = pullScalar(&iss);
                             eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
                             eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
 
@@ -296,6 +378,35 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                                                                         reinterpret_cast<uint8_t*>(&thrMsg),
                                                                         moduleID);
                             thrCounter++;
+                        }
+                    }
+                }
+
+                /* check if RW states are provided */
+                if (this->rwMsgOutNamesSC.size() > 0) {
+                    if (this->rwMsgOutNamesSC[scCounter].size() > 0) {
+                        std::vector<std::string>::iterator rwDevice;
+                        for( rwDevice =this->rwMsgOutNamesSC[scCounter].begin(); rwDevice != this->rwMsgOutNamesSC[scCounter].end(); rwDevice++) {
+
+                            RWConfigLogSimMsg rwOutMsg;
+                            memset(&rwOutMsg, 0x0, sizeof(RWConfigLogSimMsg));
+
+                            /* create RW message */
+                            rwOutMsg.Omega = pullScalar(&iss);
+                            rwOutMsg.Omega_max = this->rwOmegaMaxList[rwCounter];
+                            rwOutMsg.u_current = pullScalar(&iss);
+                            rwOutMsg.u_max = this->rwUMaxList[rwCounter];
+                            eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
+                            eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
+                            std::cout << rwOutMsg.gsHat_B[0] << std::endl;
+
+                            SystemMessaging::GetInstance()->WriteMessage(this->rwMsgIds[rwCounter],
+                                                                        CurrentSimNanos,
+                                                                        sizeof(RWConfigLogSimMsg),
+                                                                        reinterpret_cast<uint8_t*>(&rwOutMsg),
+                                                                        moduleID);
+
+                            rwCounter++;
                         }
                     }
                 }
@@ -314,15 +425,9 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
  */
 void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
     double x,y,z;
-    const char delimiterString = *this->delimiter.c_str();
-    std::string item;
-
-    getline(*iss, item, delimiterString);
-    x = stod(item);
-    getline(*iss, item, delimiterString);
-    y = stod(item);
-    getline(*iss, item, delimiterString);
-    z = stod(item);
+    x = pullScalar(iss);
+    y = pullScalar(iss);
+    z = pullScalar(iss);
     v3Set(x, y, z, vec);
 }
 
@@ -330,16 +435,21 @@ void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
  */
 void DataFileToViz::pullVector4(std::istringstream *iss, double *vec) {
     double q0, q1, q2, q3;
+    q0 = pullScalar(iss);
+    q1 = pullScalar(iss);
+    q2 = pullScalar(iss);
+    q3 = pullScalar(iss);
+    v4Set(q0, q1, q2, q3, vec);
+}
+
+
+/*! pull a double from the input stream
+*/
+double DataFileToViz::pullScalar(std::istringstream *iss) {
     const char delimiterString = *this->delimiter.c_str();
     std::string item;
 
     getline(*iss, item, delimiterString);
-    q0 = stod(item);
-    getline(*iss, item, delimiterString);
-    q1 = stod(item);
-    getline(*iss, item, delimiterString);
-    q2 = stod(item);
-    getline(*iss, item, delimiterString);
-    q3 = stod(item);
-    v4Set(q0, q1, q2, q3, vec);
+
+    return stod(item);
 }
