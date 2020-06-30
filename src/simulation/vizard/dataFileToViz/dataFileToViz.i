@@ -31,6 +31,13 @@ from Basilisk.simulation.swig_common_model import *
 
 
 %include "dataFileToViz.h"
+%include "../_GeneralModuleFiles//vizStructures.h"
+
+// Instantiate templates used by example
+namespace std {
+    %template(VizThrConfig) vector<ThrClusterMap>;
+}
+
 
 %pythoncode %{
 import sys

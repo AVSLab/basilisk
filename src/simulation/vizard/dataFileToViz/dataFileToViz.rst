@@ -33,10 +33,11 @@ User Guide
 The module assumes the data file is in plain text form and the following format:
 
 - time
-- spacecraft 1 inertial position states
-- spacecraft 1 inertial velocity states
-- spacecraft 1 inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles
-- spacecraft 1 inertial angular velocity vector in radians per second
+- inertial position states
+- inertial velocity states
+- inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles
+- inertial angular velocity vector in radians per second
+- (optional) thruster force values
 - repeat on the same line for additional spacecraft
 
 The required module parameters are listed in the following table.
@@ -80,6 +81,12 @@ The module is configurable with the following optional parameters:
      - 0
      - Specify the attitude coordinate set used in the data file.  0 - MRP, 1 - quaternions as :math:`(q_0, q_1, q_2, q_3)`,
        and 2 - (3-2-1) Euler angles in radians
+   * - ``thrMsgDataSC``
+     - empty
+     - vector of spacecraft thruster configuration vectors.  Each element contains a ThrClusterMap container
+       (defined in :ref:`vizStructures`).
+       This allows for each spacecraft to have distinct sets of thrusters to be included.
+       See :ref:`test_dataFileToViz` for an example on how to configure for thruster information.
 
 
 

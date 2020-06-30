@@ -166,7 +166,7 @@ void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
     this->storageStatusMsg.storageLevel = this->storedDataSum;
 
     //! - Loop through stored data and copy over to the output message
-    for(int i = 0; i < this->storedData.size(); i++){
+    for(uint64_t i = 0; i < this->storedData.size(); i++){
         strncpy(this->storageStatusMsg.storedDataName[i], this->storedData[i].dataInstanceName, sizeof(this->storageStatusMsg.storedDataName[i]));
         this->storageStatusMsg.storedData[i] = this->storedData[i].dataInstanceSum;
     }
@@ -232,7 +232,7 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageSimMsg *tmpNodeMsg){
     int index = -1;
 
     // Loop through storedData. If dataName is found, set index = i
-    for (int i = 0; i < this->storedData.size(); i++){
+    for (uint64_t i = 0; i < this->storedData.size(); i++){
         if (strcmp(this->storedData[i].dataInstanceName, tmpNodeMsg->dataName) == 0){
             index = i;
         }

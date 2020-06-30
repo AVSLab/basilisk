@@ -106,8 +106,6 @@ void RadiationPressure::linkInStates(DynParamManager& statesIn)
  */
 void RadiationPressure::readInputMessages()
 {
-    bool succesfulRead;
-
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader localHeader;
     memset(&localHeader, 0x0, sizeof(localHeader));
@@ -115,7 +113,7 @@ void RadiationPressure::readInputMessages()
     if(this->sunEphmInMsgId >= 0)
     {
         memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetStateSimMsg));
-        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
+        SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
     }
     
     memset(&localHeader, 0x0, sizeof(localHeader));

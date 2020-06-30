@@ -672,7 +672,7 @@ def run(show_plots, useDVThrusters):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     viz = vizSupport.enableUnityVisualization(scSim, dynTaskName,  dynProcessName,
-                                              gravBodies = gravFactory,
+                                              gravBodies=gravFactory,
                                               # saveFile=fileName,
                                               thrDevices=[(thFactory.getNumOfDevices(), thrModelTag)],
                                               scName=[scObject.ModelTag]

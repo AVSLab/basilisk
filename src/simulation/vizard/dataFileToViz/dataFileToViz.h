@@ -24,6 +24,8 @@
 #include <fstream>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/bskLogging.h"
+#include "../_GeneralModuleFiles/vizStructures.h"
+#include <Eigen/Dense>
 
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
@@ -36,6 +38,10 @@ public:
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
+    void appendThrPos(double pos_B[3]);
+    void appendThrDir(double dir_B[3]);
+    void appendThrForceMax(double);
+    void appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData);
 
 private:
     void pullVector(std::istringstream *iss, double *);
@@ -48,14 +54,20 @@ public:
     std::string delimiter;                      //!< delimiter string that separates data on a line
     double convertPosToMeters;                  //!< conversion factor to meters
     bool headerLine;                            //!< [bool] flag to mark first line as a header
-    int attitudeType;                            //!< 0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - (3-2-1) Euler angles
+    int attitudeType;                           //!< 0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - (3-2-1) Euler angles
+
+    std::vector <std::vector <ThrClusterMap>> thrMsgDataSC;  //!< (Optional) vector of sets fo thruster cluster mapping info
+    std::vector <Eigen::Vector3d> thrPosList;   //!< [m] vector of thrust positions
+    std::vector <Eigen::Vector3d> thrDirList;   //!< [-] vector of thrust unit direction vectors in B-frame components
+    std::vector <double> thrForceMaxList;       //!< [-] vector of thrust maximum force values
 
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
     uint64_t OutputBufferCount;                 //!< number of output buffers for messaging system
 
 
 private:
-    std::vector<int64_t>  scStateOutMsgIds;     //!< vector of module output message IDs
+    std::vector<int64_t>  scStateOutMsgIds;     //!< vector of spacecraft module output message IDs
+    std::vector<int64_t>  thrMsgIds;            //!< vector of thruster module output message IDs
     std::ifstream *fileHandle;                  //!< file handle to the simulation data input file
 };
 

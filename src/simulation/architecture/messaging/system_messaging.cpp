@@ -88,7 +88,7 @@ void SystemMessaging::selectMessageBuffer(int64_t bufferUse)
     std::vector<MessageStorageContainer*>::iterator it;
     it = this->dataBuffers.begin();
 
-    if(bufferUse >= this->dataBuffers.size())
+    if(bufferUse >= (int64_t) this->dataBuffers.size())
     {
         BSK_PRINT(MSG_ERROR,"You've attempted to access a message buffer that does not exist. Yikes.");
         this->messageStorage = *this->dataBuffers.begin();

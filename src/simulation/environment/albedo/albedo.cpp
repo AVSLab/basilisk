@@ -531,9 +531,9 @@ void Albedo::evaluateAlbedoModel(int idx)
         this->ALB[idx] = std::vector < std::vector < double > >(numLat, std::vector < double >(numLon, 0.0));
 
         //! - Albedo coefficients (2d array) from string array to double
-        for (size_t i = 0; i < numLat; ++i)
+        for (auto i = 0; i < numLat; ++i)
         {
-            for (size_t j = 0; j < numLon; ++j)
+            for (auto j = 0; j < numLon; ++j)
             {
                 this->ALB[idx][i][j] = atof(array[i][j].c_str()); // Lat: -90 to +90 deg, Lon: -180 to +180 deg
             }
@@ -601,6 +601,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateSimMsg planetMs
     }
     else {
         RA_planet = this->REQ_planets.at(idx);
+        v3SetZero(t_aut);
     }
     //! - Spacecraft's lla position (lat [rad], lon[rad], alti[m])
     auto LLA_B = PCI2LLA(r_BP_N, planetMsg.J20002Pfix, RA_planet);

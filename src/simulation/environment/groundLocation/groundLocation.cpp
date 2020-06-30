@@ -20,6 +20,7 @@
 #include "groundLocation.h"
 #include "architecture/messaging/system_messaging.h"
 #include "../utilities/avsEigenSupport.h"
+#include "../utilities/linearAlgebra.h"
 
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
@@ -35,10 +36,8 @@ GroundLocation::GroundLocation()
     this->currentGroundStateOutMsgName = "";
     this->currentGroundStateOutMsgId = -1;
 
-    for(int i=0; i<4; i++){
-        this->currentGroundStateOutMsg.r_LN_N[i]=0;
-        this->currentGroundStateOutMsg.r_LP_N[i]=0;
-    }
+    v3SetZero(this->currentGroundStateOutMsg.r_LN_N);
+    v3SetZero(this->currentGroundStateOutMsg.r_LP_N);
 
 
     this->planetRadius = REQ_EARTH*1e3;
