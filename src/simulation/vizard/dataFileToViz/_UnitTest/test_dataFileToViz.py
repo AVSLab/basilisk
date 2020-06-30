@@ -49,7 +49,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-@pytest.mark.parametrize("convertPosUnits", [-1, 1000.])
+@pytest.mark.parametrize("convertPosUnits", [-1, 1000])
 @pytest.mark.parametrize("attType", [-1, 0, 1, 2])
 @pytest.mark.parametrize("checkThruster", [False, True])
 

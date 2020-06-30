@@ -422,7 +422,7 @@ std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::st
 {
     std::set<std::pair<long int, long int>> returnPairs;
     bool messageFound = false;
-    for(int64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
+    for(uint64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
     {
         if(procList.find((uint64_t)i) == procList.end() && procList.size() > 0)
         {

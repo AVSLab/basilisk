@@ -81,7 +81,7 @@ void DataFileToViz::SelfInit()
             std::vector<ThrClusterMap>::iterator thrSet;
             for (thrSet = (*thrMsgData).begin(); thrSet!=(*thrMsgData).end(); thrSet++) {
 
-                for (int idx = 0; idx<thrSet->thrCount; idx++) {
+                for (uint32_t idx = 0; idx<thrSet->thrCount; idx++) {
                     std::string thrMsgName = "thruster_" + thrSet->thrTag + "_" + std::to_string(idx) + "_data";
                     msgId = SystemMessaging::GetInstance()->CreateNewMessage(thrMsgName,
                                                                             sizeof(THROutputSimMsg),
@@ -115,7 +115,7 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
     if (this->dataFileName.length() == 0) {
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: dataFileName must be an non-empty string.");
     }
-    if (this->numSatellites != this->scStateOutMsgNames.size()) {
+    if (this->numSatellites != (int) this->scStateOutMsgNames.size()) {
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: numSatellites must the same size as scStateOutMsgNames vector.");
     }
 
@@ -133,15 +133,15 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
         }
 
         /* check vector dimensions */
-        if (numThr != this->thrPosList.size()) {
+        if (numThr != (int) this->thrPosList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrPosList must the same size as the number of thrusters.");
         }
 
-        if (numThr != this->thrDirList.size()) {
+        if (numThr != (int) this->thrDirList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrDirList must the same size as the number of thrusters.");
         }
 
-        if (numThr != this->thrForceMaxList.size()) {
+        if (numThr != (int) this->thrForceMaxList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrForceMaxList must the same size as the number of thrusters.");
         }
     }
@@ -278,13 +278,11 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                     const char delimiterString = *this->delimiter.c_str();
 
                     for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
-                        for (int idx = 0; idx<thrSet->thrCount; idx++) {
+                        for (uint32_t idx = 0; idx<thrSet->thrCount; idx++) {
                             getline(iss, item, delimiterString);
                             forceValue = stod(item);
 
                             THROutputSimMsg thrMsg;
-                            /* zero output message */
-                            memset(&thrMsg, 0x0, sizeof(THROutputSimMsg));
 
                             /* fill out the thruster state message */
                             thrMsg.maxThrust = this->thrForceMaxList[thrCounter];

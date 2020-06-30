@@ -157,7 +157,7 @@ void VizInterface::CrossInit()
             rwStatus.dataFresh = false;
             rwStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
             bool rwMsgNameSet = scIt->rwInMsgName.size();
-            for (size_t idx = 0; idx < scIt->numRW; idx++)
+            for (size_t idx = 0; idx < (size_t) scIt->numRW; idx++)
             {
                 std::string tmpWheelMsgName;
                 if (rwMsgNameSet == false) {
@@ -187,7 +187,7 @@ void VizInterface::CrossInit()
             scIt->numThr = 0;
             for (thrIt= scIt->thrMsgData.begin(); thrIt != scIt->thrMsgData.end(); thrIt++)
             {
-                for(int idx=0; idx < thrIt->thrCount; idx++) {
+                for(uint32_t idx=0; idx < thrIt->thrCount; idx++) {
                     std::string tmpThrustMsgName = "thruster_" + thrIt->thrTag + "_" + std::to_string(idx) + "_data";
                     msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpThrustMsgName);
                     if (msgInfo.itemFound) {
@@ -302,7 +302,7 @@ void VizInterface::ReadBSKMessages()
 
         /* Read BSK RW constellation msg */
         {
-        for (size_t idx=0;idx< scIt->numRW; idx++)
+        for (size_t idx=0;idx< (size_t) scIt->numRW; idx++)
         {
             if (scIt->rwInMsgID[idx].msgID != -1){
             RWConfigLogSimMsg localRWArray;
@@ -319,7 +319,7 @@ void VizInterface::ReadBSKMessages()
 
          /* Read incoming Thruster constellation msg */
         {
-        for (size_t idx=0;idx< scIt->numThr; idx++){
+        for (size_t idx=0;idx< (size_t) scIt->numThr; idx++){
             if (scIt->thrMsgID[idx].msgID != -1){
                 THROutputSimMsg localThrusterArray;
                 SingleMessageHeader localThrusterHeader;
@@ -653,7 +653,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             scp->set_spacecraftsprite(scIt->spacecraftSprite);
 
             /*! Write RW output msg */
-            for (size_t idx =0; idx < scIt->numRW; idx++)
+            for (size_t idx =0; idx < (size_t) scIt->numRW; idx++)
             {
                 if (scIt->rwInMsgID[idx].msgID != -1 && scIt->rwInMsgID[idx].dataFresh){
                     vizProtobufferMessage::VizMessage::ReactionWheel* rwheel = scp->add_reactionwheels();
@@ -670,7 +670,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
 
             /*! Write Thr output msg */
-            for (size_t idx =0; idx < scIt->numThr; idx++)
+            for (size_t idx =0; idx < (size_t) scIt->numThr; idx++)
             {
                 if (scIt->thrMsgID[idx].msgID != -1 && scIt->thrMsgID[idx].dataFresh){
                     vizProtobufferMessage::VizMessage::Thruster* thr = scp->add_thrusters();
