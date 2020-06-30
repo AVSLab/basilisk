@@ -116,7 +116,7 @@ def sunline_individual_test():
     dynMat = okeefeEKF.new_doubleArray(3*3)
     for i in range(9):
         okeefeEKF.doubleArray_setitem(dynMat, i, 0.0)
-    okeefeEKF.sunlineDynMatrix(inputOmega, dt, dynMat)
+    okeefeEKF.sunlineDynMatrixOkeefe(inputOmega, dt, dynMat)
 
     DynOut = []
     for i in range(NUMSTATES*NUMSTATES):
@@ -279,7 +279,7 @@ def sunline_individual_test():
     for i in range(8 * NUMSTATES):
         okeefeEKF.doubleArray_setitem(Kalman, i, 0.)
 
-    okeefeEKF.sunlineKalmanGain(covar, h, noise, numObs, Kalman)
+    okeefeEKF.sunlineKalmanGainOkeefe(covar, h, noise, numObs, Kalman)
 
     KalmanOut = []
     for i in range(8 * NUMSTATES):
@@ -390,7 +390,7 @@ def sunline_individual_test():
         for j in range(NUMSTATES):
             okeefeEKF.doubleArray_setitem(covarMat, i + j, 0.)
 
-    okeefeEKF.sunlineCKFUpdate(xbar, KGain, covar, noise, numObs, inputY, h, stateError, covarMat)
+    okeefeEKF.sunlineCKFUpdateOkeefe(xbar, KGain, covar, noise, numObs, inputY, h, stateError, covarMat)
 
     covarOut = []
     errorOut = []
