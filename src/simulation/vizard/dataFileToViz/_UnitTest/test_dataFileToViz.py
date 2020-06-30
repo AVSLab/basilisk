@@ -117,6 +117,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     betaB2N = [-0.182574, 0.365148, 0.547723, 0.730297]
     sigmaB2N = [-0.1, 0.1, 0.3]
     dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) + ".txt"
+    dataFileName = os.path.join(path, dataFileName)
     delimiter = ","
     fDataFile = open(dataFileName, "w+")
     for i in range(0, int(simTimeSeconds/dtSeconds)+2):
@@ -159,8 +160,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, verbose):
     testModule.ModelTag = "testModule"
     testModule.numSatellites = 2
     # load the data path from the same folder where this python script is
-    path = os.path.dirname(os.path.abspath(__file__))
-    testModule.dataFileName = os.path.join(path, dataFileName)
+    testModule.dataFileName = dataFileName
     scNames = ["test1", "test2"]
     testModule.scStateOutMsgNames = dataFileToViz.StringVector(scNames)
     testModule.delimiter = delimiter
