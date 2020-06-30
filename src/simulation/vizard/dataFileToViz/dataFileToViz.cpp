@@ -398,7 +398,6 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                             rwOutMsg.u_max = this->rwUMaxList[rwCounter];
                             eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
                             eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
-                            std::cout << rwOutMsg.gsHat_B[0] << std::endl;
 
                             SystemMessaging::GetInstance()->WriteMessage(this->rwMsgIds[rwCounter],
                                                                         CurrentSimNanos,
