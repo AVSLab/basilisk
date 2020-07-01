@@ -12,6 +12,6 @@ Quick-Start
 
 
 
-Coming soon! For now, please refer to the ``src/examples`` directory.
+Coming soon! For now, please refer to the ``src/examples`` directory discussed in :ref:`examples`.
 
 
