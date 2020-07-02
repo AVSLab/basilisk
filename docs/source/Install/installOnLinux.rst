@@ -41,13 +41,13 @@ Dependencies
        $ apt-get install python3
 
        # Package development process library to facilitate packaging Python packages
-       $ apt-get install python-setuptools
+       $ apt-get install python3-setuptools
 
        # Tkinter
-       $ apt-get install python-tk
+       $ apt-get install python3-tk
 
        # Python PIP
-       $ apt-get install python-pip
+       $ apt-get install python3-pip
 
 #. SWIG: Available using::
 
