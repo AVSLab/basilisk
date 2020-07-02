@@ -26,17 +26,28 @@ Dependencies
 
 .. Note:: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies. Some distributions of Linux will use other package management commands such as ``yum``, ``dnf``, of ``pgk``.
 
-#. CMake: Available using CMake-GUI or CMake over the command line::
+#. On a new Linux system various developer packages and support libraries are requried::
 
-        # GUI installation
-        $ apt-get install cmake-gui
+       # Update current software
+       $ apt-get update
 
-        # Command line installation
-        $ apt-get install cmake
+       # Get GIT for source code version control
+       # apt-get install git
 
-#. Python 3.x with Pip::
+       # Helpful for Debian systems -  all packages need to compile such as gcc and g++ compilers and other utils.
+       $ apt-get install build-essential
 
-    $ apt-get install python3.x
+       # Install Python 3
+       $ apt-get install python3
+
+       # Package development process library to facilitate packaging Python packages
+       $ apt-get install python-setuptools
+
+       # Tkinter
+       $ apt-get install python-tk
+
+       # Python PIP
+       $ apt-get install python-pip
 
 #. SWIG: Available using::
 
@@ -51,6 +62,14 @@ Dependencies
        $ pip3 install --user conan
 
    The conan repositories information is automatically setup by ``conanfile.py``.
+
+#. CMake: You can install cmake using pip3.  This makes it easy to overcome limitations of which version of ``cmake``
+   the ``apt-get`` command provides::
+
+       $ pip3 install --user cmake
+
+#. Note, if you choose to install python packages local in your user directory ``.local`` folder, be sure to add
+   ``~/.local/bin`` to your ``PATH`` variable.
 
 #. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
@@ -81,30 +100,3 @@ Build Process via Terminal
 
        $ python3 scenarioBasicOrbit.py
 
-
-
-Other packages some distributions of Linux may need
----------------------------------------------------
-
-::
-
-       # Update current software
-       $ apt-get update
-
-       # Helpful for Debian systems -  all packages need to compile such as gcc and g++ compilers and other utils.
-       $ apt-get install build-essential
-
-       # Installing the header files for the Python C API
-       $ apt-get install python-dev 
-
-       # Package development process library to facilitate packaging Python packages
-       $ apt-get install python-setuptools
-
-       # Tkinter
-       $ apt-get install python-tk 
-
-       # Python PIP
-       $ apt-get install python-pip
-
-       # Python pytest
-       $ pip install pytest
