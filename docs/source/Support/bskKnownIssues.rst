@@ -6,7 +6,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- text here
+- On Linux and Windows the ``vizInterface`` module is not properly linking, and thus any saving to Vizard binaries
+  is not working on these platforms.  For now this feature only works on BSK v1.7.x.
+- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.  The code compiles,
+  but auto-completion etc. doesn't work in that module.
 
 Version 1.8.1
 -------------
@@ -15,6 +18,10 @@ Version 1.8.1
   properly on the first try.
 - If ``openCV`` is conan installed for Release only the Xcode would give false error messages that it can't
   find the library.  This is now fixed in the current release.
+- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.  The code compiles,
+  but auto-completion etc. doesn't work in that module.
+- On Linux and Windows the ``vizInterface`` module is not properly linking, and thus any saving to Vizard binaries
+  is not working on these platforms
 
 Version 1.8.0
 -------------
