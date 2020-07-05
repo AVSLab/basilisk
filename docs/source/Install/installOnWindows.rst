@@ -6,6 +6,12 @@
 Setup On Windows
 ================
 
+.. warning::
+
+    The :ref:`vizInterface` and ``opNav`` related modules are not currently working with the Basilisk 1.8.x build
+    system.  If you need this functionality, then please use Basilisk version 1.7.x for now.
+
+
 The following was developed using Windows 7 and Visual Studio Community 2017 or 2019. The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
 
 Software setup
