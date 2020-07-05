@@ -31,6 +31,8 @@ Release Notes
 - fixed sun threshold bug that caused mesh not to show up from some angles
 - new timeline slider bar that live updates the rendered view
 - new ``File/Settings`` option to bring up a settings panel to change system default values
+- very cool new ray-traced shadows.  You need the medium or highest graphics setting to see these. It is even
+  possible to cast shadows onto nearby spacecraft.
 
 **Version 1.3.0**
 

@@ -118,13 +118,13 @@ Version 1.8.0
   around this conan issue is to run the build twice, once for Debug and once for Release.  At that point it can
   be run just once.
 
-Version 1.7.5
------------------
+**Version 1.7.5**
+
 - :ref:`groundLocation` was not converting between the planet and inertial frame correctly.  This is now fixed in
   the later releases.
 
-Version 1.7.4
--------------
+**Version 1.7.4**
+
 - None
 
 Version 1.7.3

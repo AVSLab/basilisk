@@ -16,7 +16,6 @@ Basilisk Release Notes
     - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
     - GPU based methods to evaluate solar radiation pressure forces and torques
     - atmospheric drag evaluation using multi-faceted spacecraft model
-    - upgrading :ref:`vizInterface` to support showing info panels and HUD multiple spacecraft with thruster
     - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
 
 Version |release|
@@ -74,8 +73,8 @@ Version 1.8.0
 - Updated the HTML documentation process to provide tools to clean out the auto-generated documentation,
   as well as to open the HTML output from the command line
 
-Version 1.7.5
--------------
+**Version 1.7.5**
+
 - Added the ability to shift the HSV or BGR colors of :ref:`camera`
 - Updated :ref:`vizInterface` to allow the user to set the Vizard direct communication protocol, host name and port
   number.

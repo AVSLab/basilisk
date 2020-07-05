@@ -9,8 +9,8 @@ Setup On Linux
 
 .. warning::
 
-    The :ref:`vizInterface` and ``opNav`` related modules are not currently working with the Basilisk 1.8.x build
-    system.  If you need this functionality, then please use Basilisk version 1.7.x for now.
+    On Linux the :ref:`vizInterface` and ``opNav`` related modules are not currently working with the Basilisk 1.8.x
+    build system.  If you need this functionality, then please use Basilisk version 1.7.x for now.
 
 Software setup
 --------------
