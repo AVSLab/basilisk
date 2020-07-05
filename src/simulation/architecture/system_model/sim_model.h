@@ -27,11 +27,6 @@
 #include "utilities/message_logger.h"
 #include "utilities/bskLogging.h"
 
-/*! \addtogroup SimArchGroup Simulation Architecture Classes
- *  This architecture group contains the source used to drive/schedule/interface
- *  with the simulation.
- * @{
- */
 
 typedef enum varAccessType {
     messageBuffer = 0,
@@ -51,7 +46,7 @@ public:
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void PrintSimulatedMessageData();  //!< Print out all messages that have been created
     void addNewProcess(SysProcess *newProc);
-    uint64_t IsMsgCreated(std::string MessageName);
+    uint64_t IsMsgCreated(std::string MessageName); //!< is message created 
     uint64_t GetWriteData(std::string MessageName, uint64_t MaxSize,
                           void *MessageData, VarAccessType logType = messageBuffer,
                           uint64_t LatestOffset=0);  //!< Grab a particular MessageName with MaxSize limited
@@ -82,5 +77,4 @@ public:
     messageLogger messageLogs;  //!< -- Message log data
 };
 
-/*! @} */
 #endif /* _SimModel_H_ */

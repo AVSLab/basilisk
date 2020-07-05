@@ -49,12 +49,12 @@ typedef struct {
 	double timeTag;                /*!< [s]  Time tag for state/covar */
 
 	double state[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
-    double x[SKF_N_STATES];             /*! State errors */
-    double xBar[SKF_N_STATES];            /*! [-] Current mean time updated state estimate*/
+    double x[SKF_N_STATES];             /*!< State errors */
+    double xBar[SKF_N_STATES];            /*!< [-] Current mean time updated state estimate*/
 	double covarBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
 	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
     double stateTransition[SKF_N_STATES*SKF_N_STATES];        /*!< [-] State Transtion Matrix */
-    double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS];    /* Kalman Gain */
+    double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS];    /*!< Kalman Gain */
 
     double dynMat[SKF_N_STATES*SKF_N_STATES];        /*!< [-] Dynamics Matrix, A */
     double measMat[MAX_N_CSS_MEAS*SKF_N_STATES];        /*!< [-] Measurement Matrix H*/

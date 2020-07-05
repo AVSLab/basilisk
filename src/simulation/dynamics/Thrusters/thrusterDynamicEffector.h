@@ -35,7 +35,7 @@
 
 
 
-
+/*! @brief thruster dynamic effector class */
 class ThrusterDynamicEffector: public SysModel, public DynamicEffector {
 public:
     ThrusterDynamicEffector();
@@ -58,8 +58,8 @@ public:
     
 
 public:
-    int stepsInRamp;
-    std::vector<THRConfigSimMsg> thrusterData;  //!< -- Thruster information
+    int stepsInRamp;                               //!< class variable
+    std::vector<THRConfigSimMsg> thrusterData;      //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
     std::string inputProperties;                   //!< [-] The mass properties of the spacecraft
     uint64_t thrusterOutMsgNameBufferCount;        //!< -- Count on number of buffers to output
@@ -69,8 +69,8 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
 	double thrFactorToTime(THRConfigSimMsg *thrData,
 		std::vector<THRTimePairSimMsg> *thrRamp);
-	StateData *hubSigma;
-    StateData *hubOmega;
+	StateData *hubSigma;                           //!< class variable
+    StateData *hubOmega;                           //!< class varaible
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:

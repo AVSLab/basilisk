@@ -23,16 +23,14 @@
 #include <string>
 #include <stdint.h>
 
-/*! \addtogroup SimArchGroup Simulation Architecture Classes
- * @{
- */
 
+/*! @brief Simulation System Model Class */
 class SysModel
 {
     
 public:
     SysModel();
-    SysModel(const SysModel &obj);
+    SysModel(const SysModel &obj);  //!< constructor definition
     virtual ~SysModel();
     virtual void SelfInit();  //!< -- initialize the module, create messages
     virtual void CrossInit();  //!< -- link to other modules' messages and any necessary init based on them
@@ -47,6 +45,5 @@ public:
     int64_t moduleID;  //!< -- Module ID for this module  (handed out by messaging system)
 };
 
-/* @} */
 
 #endif /* _SYS_MODEL_H_ */

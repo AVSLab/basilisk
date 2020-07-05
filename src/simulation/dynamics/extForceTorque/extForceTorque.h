@@ -29,7 +29,7 @@
 
 
 
-
+/*! @brief external force and torque dynamic efector class */
 class ExtForceTorque: public SysModel, public DynamicEffector{
 public:
     ExtForceTorque();
@@ -37,9 +37,9 @@ public:
 
     void SelfInit();
     void CrossInit();
-    void UpdateState(uint64_t CurrentSimNanos);
-    void linkInStates(DynParamManager& statesIn);
-    void writeOutputMessages(uint64_t currentClock);
+    void UpdateState(uint64_t CurrentSimNanos);         //!< class method
+    void linkInStates(DynParamManager& statesIn);       //!< class method
+    void writeOutputMessages(uint64_t currentClock);    //!< class method
     void readInputMessages();
     void computeForceTorque(double integTime);
 

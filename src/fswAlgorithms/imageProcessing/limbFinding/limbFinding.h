@@ -35,7 +35,7 @@
 
 
 
-
+/*! @brief visual limb finding module */
 class LimbFinding: public SysModel {
 public:
     LimbFinding();

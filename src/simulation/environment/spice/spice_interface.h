@@ -31,7 +31,7 @@
 #include "utilities/bskLogging.h"
 
 
-
+/*! @brief spice interface class */
 class SpiceInterface: public SysModel {
 public:
     SpiceInterface();
@@ -40,7 +40,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
-	std::string getCurrentTimeString();
+	std::string getCurrentTimeString();         //!< class method
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
@@ -48,7 +48,7 @@ public:
     void computeGPSData();
     void computePlanetData();
     void writeOutputMessages(uint64_t CurrentClock);
-    void clearKeeper();
+    void clearKeeper();                         //!< class method
     
 public:
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data

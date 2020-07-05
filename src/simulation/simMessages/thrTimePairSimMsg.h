@@ -20,9 +20,6 @@
 #ifndef SIM_THRUSTER_PAIR_H
 #define SIM_THRUSTER_PAIR_H
 
-/*! \defgroup simMessages
- *  @{
- */
 
 
 //! @brief Container for time/value pairs for ramp on and ramp off profiles.
@@ -34,8 +31,6 @@ typedef struct {
     double IspFactor;                    //!< [s] fraction specific impulse
     double TimeDelta;                    //!< [s] Time delta from start of event
 }THRTimePairSimMsg;
-
-/* @} */
 
 
 #endif

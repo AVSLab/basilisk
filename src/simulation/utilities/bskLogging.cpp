@@ -17,13 +17,17 @@
 
  */
 
+/// \cond DO_NOT_DOCUMENT
+
 #include <stdio.h>
 #include <stdarg.h>
 #include "utilities/bskLogging.h"
 
 logLevel_t LogLevel = BSK_DEBUG;
 
-/*! This method sets the default logging verbosity */
+/*! This method sets the default logging verbosity
+    @param logLevel
+ */
 void setDefaultLogLevel(logLevel_t logLevel)
 {
     LogLevel = logLevel;
@@ -57,13 +61,16 @@ BSKLogger::BSKLogger()
     this->_logLevel = getDefaultLogLevel();
 }
 
-/*! The constructor initialises the logger for a module and uses a user defined verbostiy level for logging */
+/*! The constructor initialises the logger for a module and uses a user defined verbostiy level for logging
+    @param logLevel
+ */
 BSKLogger::BSKLogger(logLevel_t logLevel)
 {
     this->_logLevel = logLevel;
 }
 
-/*! This method changes the logging verbosity after construction */
+/*! This method changes the logging verbosity after construction
+ */
 void BSKLogger::setLogLevel(logLevel_t logLevel)
 {
     this->_logLevel = logLevel;
@@ -84,6 +91,8 @@ int BSKLogger::getLogLevel()
 
 /*! This method logs information. The current behavior is to simply print out the message and the targeted logging level.
     This should be the main method called in user code.
+    @param targetLevel
+    @param info
 */
 void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
 {
@@ -115,7 +124,10 @@ EXTERN void _printLogLevel(BSKLogger* bskLogger)
     bskLogger->printLogLevel();
 }
 
-/*! This method changes the logging verbosity after construction */
+/*! This method changes the logging verbosity after construction
+    @param bskLogger
+    @param logLevel
+ */
 EXTERN void _setLogLevel(BSKLogger* bskLogger, logLevel_t logLevel)
 {
     bskLogger->setLogLevel(logLevel);
@@ -128,3 +140,5 @@ EXTERN void _bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
 {
     bskLogger->bskLog(logLevel, info);
 }
+
+/// \endcond

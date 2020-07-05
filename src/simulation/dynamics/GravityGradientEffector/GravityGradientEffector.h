@@ -33,7 +33,7 @@
 
 
 
-
+/*! @brief gravity gradient gradient module */
 class GravityGradientEffector: public SysModel, public DynamicEffector {
 public:
     GravityGradientEffector();

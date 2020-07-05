@@ -25,7 +25,7 @@
 #include "utilities/bskLogging.h"
 
 
-
+/*! @brief external pulsed torque module class */
 class ExtPulsedTorque: public SysModel, public DynamicEffector{
 public:
     ExtPulsedTorque();

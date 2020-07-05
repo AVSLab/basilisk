@@ -30,6 +30,7 @@
  output message
  @return void
  @param configData The configuration data associated with the spacecraft pointing module
+ @param moduleID The Basilisk module identifier
  */
 void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
@@ -46,6 +47,7 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t m
  created elsewhere.
  @return void
  @param configData The configuration data associated with the spacecraft pointing module
+ @param moduleID The Basilisk module identifier
  */
 void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
@@ -60,6 +62,8 @@ void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t 
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the pointing module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -100,6 +104,7 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t cal
  @return void
  @param configData The configuration data associated with the spacecraft pointing module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
     int64_t moduleID)

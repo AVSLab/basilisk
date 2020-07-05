@@ -1,8 +1,8 @@
-``sphinx<3.0``,
-``breathe<4.0``,
-``sphinx_rtd_theme``,
-``recommonmark``,
-``pytest-xdist``,
-``pytest-html``,
-``datashader``,
+``sphinx``
+``breathe``
+``sphinx_rtd_theme``
+``recommonmark``
+``pytest-xdist``
+``pytest-html``
+``datashader``
 ``holoviews``

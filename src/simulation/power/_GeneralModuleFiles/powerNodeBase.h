@@ -31,7 +31,7 @@
 #include "simFswInterfaceMessages/deviceStatusIntMsg.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief power node base class */
 class PowerNodeBase: public SysModel  {
 public:
     PowerNodeBase();
@@ -46,11 +46,11 @@ protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages(); 
     virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
-    virtual void customSelfInit(){};//! Custom output input reading method.  This allows a child class to add additional functionality.
-    virtual void customCrossInit(){}; //! Custom subscription method, similar to customSelfInit.
-    virtual void customReset(uint64_t CurrentClock){}; //! Custom Reset method, similar to customSelfInit.
-    virtual void customWriteMessages(uint64_t CurrentClock){};//! custom Write method, similar to customSelfInit.
-    virtual bool customReadMessages(){return true;} //! Custom read method, similar to customSelfInit; returns `true' by default.
+    virtual void customSelfInit();//!< Custom output input reading method.  This allows a child class to add additional functionality.
+    virtual void customCrossInit(); //!< Custom subscription method, similar to customSelfInit.
+    virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
+    virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.
+    virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
 public:
     std::string nodePowerOutMsgName; //!< Message name for the node's output message
@@ -60,12 +60,12 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 protected:
-    int64_t nodePowerOutMsgId;
-    int64_t nodeStatusInMsgId;
-    PowerNodeUsageSimMsg nodePowerMsg;
-    DeviceStatusIntMsg nodeStatusMsg;
-    double currentPowerConsumption;
-    double previousTime; //! Previous time used for integration
+    int64_t nodePowerOutMsgId;                  //!< class variable
+    int64_t nodeStatusInMsgId;                  //!< class variable
+    PowerNodeUsageSimMsg nodePowerMsg;          //!< class variable
+    DeviceStatusIntMsg nodeStatusMsg;           //!< class variable
+    double currentPowerConsumption;             //!< class variable
+    double previousTime; //!< Previous time used for integration
 
 private:
     uint64_t outputBufferCount;

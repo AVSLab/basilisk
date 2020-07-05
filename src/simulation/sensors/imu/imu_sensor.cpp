@@ -86,6 +86,9 @@ ImuSensor::ImuSensor()
     return;
 }
 
+/*!
+    set body orientation DCM relative to platform
+ */
 void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
     this->dcm_PB = eigenM1(roll)*eigenM2(pitch)*eigenM3(yaw);
@@ -98,6 +101,9 @@ ImuSensor::~ImuSensor()
     return;
 }
 
+/*!
+ self initialization
+ */
 void ImuSensor::SelfInit()
 {
 
@@ -152,6 +158,9 @@ void ImuSensor::SelfInit()
     return;
 }
 
+/*!
+ cross initialization
+ */
 void ImuSensor::CrossInit()
 {
     this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
@@ -164,6 +173,9 @@ void ImuSensor::CrossInit()
     return;
 }
 
+/*!
+    read input messages
+ */
 void ImuSensor::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
@@ -183,6 +195,9 @@ void ImuSensor::readInputMessages()
     return;
 }
 
+/*!
+    write output messages
+ */
 void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
     IMUSensorIntMsg LocalOutput;
@@ -198,6 +213,9 @@ void ImuSensor::writeOutputMessages(uint64_t Clock)
     return;
 }
 
+/*!
+    set LSB values
+ */
 void ImuSensor::setLSBs(double LSBa, double LSBo)
 {
     this->aDisc.setLSB(Eigen::Vector3d(LSBa, LSBa, LSBa));
@@ -206,12 +224,19 @@ void ImuSensor::setLSBs(double LSBa, double LSBo)
     
 }
 
+/*!
+    set Carry error value
+ */
 void ImuSensor::setCarryError(bool aCarry, bool oCarry)
 {
     this->aDisc.setCarryError(aCarry);
     this->oDisc.setCarryError(oCarry);
     return;
 }
+
+/*!
+    set round direction value
+ */
 void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound){
     
     this->aDisc.setRoundDirection(aRound);
@@ -220,6 +245,10 @@ void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRou
     return;
 }
 
+/*!
+    apply sensor direction
+    @param CurrentTime
+ */
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
 
@@ -240,14 +269,25 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     return;
 }
 
+/*!
+    set o saturation bounds
+    @param oSatBounds
+ */
 void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds){
     this->oSat.setBounds(oSatBounds);
 }
 
+/*!
+    set a saturation bounds
+    @param aSatBounds
+ */
 void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds){
     this->aSat.setBounds(aSatBounds);
 }
 
+/*!
+    scale truth method
+ */
 void ImuSensor::scaleTruth()
 {
     this->omega_PN_P_out = this->omega_PN_P_out.cwiseProduct(this->gyroScale);
@@ -257,6 +297,9 @@ void ImuSensor::scaleTruth()
     return;
 }
 
+/*!
+    apply sensor errors
+ */
 void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 {
     Eigen::Vector3d OmegaErrors; //angular noise plus bias
@@ -276,6 +319,9 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     return;
 }
 
+/*!
+ compute sensor errors
+ */
 void ImuSensor::computeSensorErrors()
 {
 	this->errorModelAccel.setPropMatrix(this->AMatrixAccel);
@@ -288,7 +334,9 @@ void ImuSensor::computeSensorErrors()
     return;
 }
 
-
+/*!
+    apply sensor saturation
+ */
 void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
 	double  dt = (CurrentTime - PreviousTime)*1.0E-9;
@@ -311,10 +359,12 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
     return;
 }
 
-/*This function gathers actual spacecraft attitude from the spacecraftPlus output message.
- It then differences the state attitude between this time and the last time the IMU was called
- to get a DR (delta radians or delta rotation) The angular rate is retrieved directly from the
- spacecraftPlus output message and passed through to theother IMU functions which add noise, etc. */
+/*!
+    This function gathers actual spacecraft attitude from the spacecraftPlus output message.
+    It then differences the state attitude between this time and the last time the IMU was called
+    to get a DR (delta radians or delta rotation) The angular rate is retrieved directly from the
+    spacecraftPlus output message and passed through to theother IMU functions which add noise, etc.
+ */
 void ImuSensor::computePlatformDR()
 {
     double dcm_P2P1_cArray[9]; //dcm_P2P1 as cArray for C2PRV conversion
@@ -333,11 +383,14 @@ void ImuSensor::computePlatformDR()
     return;
 }
 
-/*This functions gathers actual spacecraft velocity from the spacecraftPlus output message.
- It then differences the velocity between this time and the last time the IMU was called to get a
- DV (delta velocity). The acceleration of the spacecraft in the body frame is gathered directly from the spacecraftPlus
- output message. Then, it is converted to the platform frame and rotational terms are added to it
- to account for CoM offset of the platform frame. */
+/*!
+    This functions gathers actual spacecraft velocity from the spacecraftPlus output message.
+    It then differences the velocity between this time and the last time the IMU was called to get a
+    DV (delta velocity). The acceleration of the spacecraft in the body frame is gathered directly from the spacecraftPlus
+    output message. Then, it is converted to the platform frame and rotational terms are added to it
+    to account for CoM offset of the platform frame.
+    @param CurrentTime
+ */
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 {
     //Calculate "instantaneous" linear acceleration
@@ -356,6 +409,10 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     return;
 }
 
+/*!
+    update module states
+    @param CurrentSimNanos current time (ns)
+ */
 void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();

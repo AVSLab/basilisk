@@ -30,6 +30,7 @@
  output message
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
+ @param moduleID The module identifier
  */
 void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 {
@@ -49,6 +50,7 @@ void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
+ @param moduleID The module identifier
  */
 void CrossInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 {
@@ -65,6 +67,7 @@ void CrossInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
@@ -126,6 +129,7 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
     int64_t moduleID)
@@ -260,7 +264,11 @@ void sunlineTimeUpdate(sunlineSEKFConfig *configData, double updateTime)
  that the calling parameter is updated in place to save on data copies.
  This also updates the STM using the dynamics matrix.
 	@return void
-	@param stateInOut,
+	@param stateInOut
+    @param dynMat
+    @param bVec
+    @param dt time step
+    @param stateTransition
  */
 void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
 {
@@ -300,6 +308,7 @@ void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH],
  configure data and updates this A matrix pointer called dynMat
  @return void
  @param states Updated states
+ @param bVec b vector
  @param dt Time step
  @param dynMat Pointer to the Dynamic Matrix
  */
@@ -490,7 +499,7 @@ void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], do
  @param states
  @param numCSS The total number of CSS
  @param cssSensorCos The list of the measurements from the CSSs
- @param sensorUse Thresh The Threshold below which the measuremnts are not read
+ @param sensorUseThresh Thresh The Threshold below which the measuremnts are not read
  @param cssNHat_B The normals vector for each of the CSSs
  @param obs Pointer to the observations
  @param yMeas Pointer to the innovation
@@ -530,7 +539,6 @@ void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], size_t numCSS, doub
  @param covarBar The time updated covariance
  @param hObs The H matrix filled with the observations
  @param qObsVal The observation noise
- @param states Pointer to the states
  @param numObs The number of observations
  @param kalmanGain Pointer to the Kalman Gain
  */
@@ -573,9 +581,7 @@ void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH],
 /*! This method computes the dcms necessary for the switch between the two frames.
  It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.
  @return void
- @param covarBar The time updated covariance
- @param hObs The H matrix filled with the observations
- @param s2_B Pointer to the second frame vector
+ @param bVec_B Pointer to b vector
  @param states Pointer to the states
  @param covar Pointer to the covariance
  */

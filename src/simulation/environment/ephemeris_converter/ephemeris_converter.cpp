@@ -78,6 +78,10 @@ void EphemerisConverter::CrossInit()
     messagesLinked = LinkMessages();
 }
 
+/*!
+    convert ephemeris data
+    @param clockNow
+ */
 void EphemerisConverter::convertEphemData(uint64_t clockNow)
 {
     std::map<int64_t, IDEphemerisSimMsg>::iterator it;
@@ -113,6 +117,10 @@ void EphemerisConverter::readInputMessages()
     
 }
 
+/*!
+    write output message
+    @param CurrentSimNanos time in nano-seconds
+ */
 void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
 {
 
@@ -127,6 +135,11 @@ void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
 
 }
 
+
+/*!
+    update module states
+    @param CurrentSimNanos time in nano-seconds
+ */
 void EphemerisConverter::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();

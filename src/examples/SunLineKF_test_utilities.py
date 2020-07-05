@@ -28,7 +28,16 @@ import matplotlib.pyplot as plt
 
 
 def StateErrorCovarPlot(x, Pflat, FilterType, show_plots, saveFigures):
+    """
+    Support method to plot the state error covariances
 
+    :param x: states
+    :param Pflat: Variable
+    :param FilterType: specifies the filter type
+    :param show_plots: flag
+    :param saveFigures: flag
+    :return:
+    """
     nstates = int(np.sqrt(len(Pflat[0,:])-1))
 
     P = np.zeros([len(Pflat[:,0]),nstates,nstates])

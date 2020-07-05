@@ -73,14 +73,14 @@ class BasiliskConan(ConanFile):
 
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
-        required = reqFile.read().replace("`", "").replace(",", "").split('\n')
+        required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
 
         checkStr = "Required"
         if self.options.allOptPkg:
             optFile = open('docs/source/bskPkgOptions.txt', 'r')
-            optionalPkgs = optFile.read().replace("`", "").replace(",", "").split('\n')
+            optionalPkgs = optFile.read().replace("`", "").split('\n')
             optFile.close()
             optionalPkgs = [x.lower() for x in optionalPkgs]
             pkgList += optionalPkgs

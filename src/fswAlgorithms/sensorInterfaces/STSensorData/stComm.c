@@ -28,6 +28,7 @@
  output message
  @return void
  @param configData The configuration data associated with the ST sensor interface
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
 {
@@ -42,6 +43,7 @@ void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the ST interface
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
 {
@@ -67,6 +69,7 @@ void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the ST interface
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t moduleID)
 {

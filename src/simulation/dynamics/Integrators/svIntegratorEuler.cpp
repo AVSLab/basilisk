@@ -33,6 +33,12 @@ svIntegratorEuler::~svIntegratorEuler()
     return;
 }
 
+/*!
+ Euler Integration
+ @param currentTime time (s)
+ @param timeStep integraiton time step (s)
+ @return void
+ */
 void svIntegratorEuler::integrate(double currentTime, double timeStep)
 {
 	StateVector stateOut;

@@ -479,6 +479,9 @@ if rebuild:
         shutil.rmtree(officialDoc)
     # adjust the fileCrawler path to a local folder to just build a sub-system
     breathe_projects_source = fileCrawler.run(officialSrc)
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/fswMessages")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/simFswInterfaceMessages")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_fswTemplateFolder")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/examples")

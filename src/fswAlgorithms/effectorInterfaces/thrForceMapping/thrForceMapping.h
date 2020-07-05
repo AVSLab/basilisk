@@ -45,7 +45,7 @@ typedef struct {
     uint32_t numControlAxes;                        //!< []      counter indicating how many orthogonal axes are controlled
     uint32_t numThrusters;                          //!< []      The number of thrusters available on vehicle
     double outTorqAngErr;                           //!< [r]     Angular error of effector torque
-    double thrForcMag[MAX_EFF_CNT];
+    double thrForcMag[MAX_EFF_CNT];                 //!<         vector of thruster force magnitudes
 
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output thruster force message

@@ -44,6 +44,7 @@ MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
 
 /*! This method is evaluates the centered dipole magnetic field model.
  @param msg magnetic field message structure
+ @param currentTime current time (s)
  @return void
  */
 void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime)

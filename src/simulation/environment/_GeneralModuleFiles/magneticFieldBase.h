@@ -30,7 +30,7 @@
 #include "simMessages/magneticFieldSimMsg.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief magnetic field base class */
 class MagneticFieldBase: public SysModel  {
 public:
     MagneticFieldBase();
@@ -46,7 +46,7 @@ protected:
     bool readMessages();
     void updateLocalMagField(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState);
-    virtual void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime) = 0;
+    virtual void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime) = 0; //!< class method
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);

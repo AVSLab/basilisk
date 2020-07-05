@@ -27,7 +27,10 @@
 #include "simulation/utilities/linearAlgebra.h"
 
 
-/*! This method creates the module output message of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg).
+/*!
+ \verbatim embed:rst
+    This method creates the module output message of type :ref:`THRArrayCmdForceFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
@@ -69,6 +72,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *configData, int64_t module
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)

@@ -43,7 +43,7 @@ typedef struct {
     double noise[3*3];                        //!< [-] Per axis noise on the ST
 }STMessage;
 
-/*! @breif Structure to gather the ST messages and content */
+/*! @brief Structure to gather the ST messages and content */
 typedef struct {
     int numST;                                  //!< Number of Star Trackers
     STMessage STMessages[MAX_ST_VEH_COUNT];     //!< [-] Decoded MIRU data for both camera heads
@@ -97,10 +97,10 @@ typedef struct {
 	double qNoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];       //!< [-] process noise matrix
 	double sQnoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];      //!< [-] cholesky of Qnoise
 
-    double IInv[3][3];
+    double IInv[3][3];       //!< [(kg m^2)^-1] inverse of inertia tensor
 
     uint32_t numUsedGyros;   //!< -- Number of currently active CSS sensors
-    uint32_t firstPassComplete;
+    uint32_t firstPassComplete; //!< flag
     double sigma_BNOut[3];   //!< [-] Output MRP
     double omega_BN_BOut[3]; //!< [r/s] Body rate output data
     double timeTagOut;       //!< [s] Output time-tag information

@@ -29,6 +29,7 @@
     the ephemeris model
  @return void
  @param configData The configuration data associated with the ephemeris model
+ @param moduleID The Basilisk module identifier
  */
 void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
@@ -39,6 +40,7 @@ void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 /*! This method initializes the input time correlation factor structure
  @return void
  @param configData The configuration data associated with the ephemeris model
+ @param moduleID The Basilisk module identifier
  */
 void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
@@ -54,6 +56,7 @@ void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                          int64_t moduleID)
@@ -94,6 +97,7 @@ void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int64_t moduleID)
 {

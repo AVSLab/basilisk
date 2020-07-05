@@ -29,6 +29,7 @@
  output message
  @return void
  @param configData The configuration data associated with the attitude tracking error module
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
@@ -43,6 +44,7 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t modul
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with the attitude tracking error module
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
@@ -59,6 +61,8 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t modu
 /*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the attitude tracking error module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -98,9 +102,10 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
 
 /*! This method performs the attitude computations in order to extract the error.
  @return void
+ @param sigma_R0R Reference frame state
  @param nav The spacecraft attitude information
  @param ref The reference attitude
- @param configData The configuration data associated with the attitude tracking error module
+ @param attGuidOut Output attitude guidance message
  */
 void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg ref, AttGuidFswMsg *attGuidOut){
     double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */

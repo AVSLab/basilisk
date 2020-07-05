@@ -24,7 +24,7 @@
 #include "dynParamManager.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief dynamic effector class */
 class DynamicEffector {
 public:
     DynamicEffector();                      //!< -- Constructor

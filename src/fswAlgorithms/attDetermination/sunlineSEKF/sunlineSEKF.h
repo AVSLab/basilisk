@@ -50,12 +50,12 @@ typedef struct {
     double switchTresh;             /*!< [-]  Cosine of angle between singularity and S-frame. If close to 1, the threshold for switching frames is lower. If closer to 0.5 singularity is more largely avoided but switching is more frequent  */
 
 	double state[EKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
-    double x[EKF_N_STATES_SWITCH];             /*! State errors */
-    double xBar[EKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
+    double x[EKF_N_STATES_SWITCH];             /*!< State errors */
+    double xBar[EKF_N_STATES_SWITCH];            /*!< [-] Current mean state estimate*/
 	double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
 	double covar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] covariance */
     double stateTransition[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] State transition Matrix */
-    double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];    /* Kalman Gain */
+    double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];    /*!< Kalman Gain */
 
     double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix, A */
     double measMat[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix, H*/

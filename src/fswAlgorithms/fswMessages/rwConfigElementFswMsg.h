@@ -21,10 +21,6 @@
 #define _RW_CONFIG_ELEMENT_MESSAGE_H
 
 
-/*! \defgroup fswMessages
- *  @{
- */
-
 
 /*! @brief Message used to define a single FSW RW configuration message */
 typedef struct {
@@ -33,6 +29,5 @@ typedef struct {
     double uMax;                //!< [Nm]   maximum RW motor torque
 }RWConfigElementFswMsg;
 
-/* @} */
 
 #endif

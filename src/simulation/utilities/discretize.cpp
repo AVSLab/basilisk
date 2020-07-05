@@ -51,6 +51,7 @@ Discretize::~Discretize()
 //void setLSBByBits(uint8_t numBits, double min, double max);
 
 /*!@brief Sets the round direction (toZero, fromZero, near) for discretization
+ @param direction
  @return void*/
 void Discretize::setRoundDirection(roundDirection_t direction){
     
@@ -61,7 +62,7 @@ void Discretize::setRoundDirection(roundDirection_t direction){
 
 
 /*!@brief Discretizes the given truth vector according to a least significant bit (binSize)
- @param newBounds the bounds to put on the random walk states
+ @param undiscretizedVector
  @return vector of discretized values*/
 Eigen::VectorXd Discretize::discretize(Eigen::VectorXd undiscretizedVector){
     

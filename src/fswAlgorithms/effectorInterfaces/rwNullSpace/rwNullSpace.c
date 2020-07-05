@@ -24,9 +24,13 @@
 #include <string.h>
 #include <math.h>
 
-/*! @brief This method creates the module output message of type [RWArrayTorqueIntMsg](\ref RWArrayTorqueIntMsg).
+/*!
+ \verbatim embed:rst
+    This method creates the module output message of type :ref:`RWArrayTorqueIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with RW null space model
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
@@ -42,16 +46,14 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the sun safe ACS control
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
-    /*! -# Get ID for the RW control torque message [RWArrayTorqueIntMsg](\ref RWArrayTorqueIntMsg) */
     configData->inputRWCmdsID = subscribeToMessage(configData->inputRWCommands,
         sizeof(RWArrayTorqueIntMsg), moduleID);
-	/*! -# Get ID for the RW speeds message [RWSpeedIntMsg](\ref RWSpeedIntMsg) */
 	configData->inputSpeedsID = subscribeToMessage(configData->inputRWSpeeds,
 		sizeof(RWSpeedIntMsg), moduleID);
-    /*! -# Get ID for the RW configuration message [RWConstellationFswMsg](\ref RWConstellationFswMsg) */
     configData->inputRWConfID = subscribeToMessage(configData->inputRWConfigData,
         sizeof(RWConstellationFswMsg), moduleID);
 

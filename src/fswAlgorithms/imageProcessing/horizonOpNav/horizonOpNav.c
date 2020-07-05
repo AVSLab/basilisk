@@ -281,7 +281,6 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
  @return void
  @param inMat The input matrix to decompose
  @param nRow  The number of rows
- @param nRow  The number of columns
  @param Q     The output Q matrix (numbLimb x 3)
  @param R     The output R matrix (3 x 3)
  */

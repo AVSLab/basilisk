@@ -103,6 +103,13 @@ bool FacetDragDynamicEffector::ReadInputs()
     return(dataGood);
 }
 
+/*!
+    add a facet
+    @param area
+    @param dragCoeff
+    @param B_normal_hat
+    @param B_location
+ */
 void FacetDragDynamicEffector::addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location){
 	this->scGeometry.facetAreas.push_back(area);
 	this->scGeometry.facetCoeffs.push_back(dragCoeff);
@@ -114,7 +121,7 @@ void FacetDragDynamicEffector::addFacet(double area, double dragCoeff, Eigen::Ve
 /*! This method is used to link the dragEffector to the hub attitude and velocity,
 which are required for calculating drag forces and torques.
  @return void
- @param currentTime The current simulation time converted to a double
+ @param states dynamic parameter states
  */
 
 void FacetDragDynamicEffector::linkInStates(DynParamManager& states){

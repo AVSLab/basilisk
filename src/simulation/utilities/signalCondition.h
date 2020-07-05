@@ -21,10 +21,7 @@
 #define _SIGNAL_CONDITION_H_
 
 
-/*! \addtogroup Sim Utility Group
- * @{
- */
-
+/*! struct definition */
 typedef struct {
     double hStep;         /*!< [s]      filter time step (assumed to be fixed) */
     double omegCutoff;    /*!< [rad/s]  Cutoff frequency for the filter        */
@@ -41,5 +38,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/*! @} */
+
 #endif

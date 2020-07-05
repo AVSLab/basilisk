@@ -20,9 +20,6 @@
 #ifndef SIM_VSCMG_CMD_H
 #define SIM_VSCMG_CMD_H
 
-/*! \defgroup simMessages
- *  @{
- */
 
 
 /*! @brief Structure used to define the individual RW motor torque command message*/
@@ -31,7 +28,6 @@ typedef struct {
 	double u_g_cmd; //!< [Nm] torque command for individual gimbal
 }VSCMGCmdSimMsg;
 
-/* @} */
 
 
 #endif

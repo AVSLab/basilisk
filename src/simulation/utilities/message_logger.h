@@ -25,10 +25,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/bskLogging.h"
 
-/*! \addtogroup SimArchGroup
- * @{
- */
-
+/*! struct definition */
 typedef struct {
     std::string messageName;    //!< -- The message name associated with the log
     int64_t messageID;          //!< -- The message ID associated with the log
@@ -52,7 +49,7 @@ typedef struct {
 	   uint64_t dataBufferSize
 	   uint8_t *dataBuffer of length dataBufferSize*/
 
-//! The top-level container for an entire simulation
+//! @brief The top-level container for an entire simulation
 class messageLogger
 {
 public:
@@ -64,10 +61,10 @@ public:
     void logAllMessages();
     bool readLog(MessageIdentData & messageID, SingleMessageHeader *dataHeader,
                  uint64_t maxBytes, uint8_t *msgPayload, uint64_t currentOffset=0);
-    uint64_t getLogCount(int64_t processID, int64_t messageID);
-    void clearLogs();
-	void archiveLogsToDisk(std::string outFileName);
-	void loadArchiveFromDisk(std::string inFileName);
+    uint64_t getLogCount(int64_t processID, int64_t messageID); //!< class method
+    void clearLogs();  //!< clears the log
+	void archiveLogsToDisk(std::string outFileName);  //!< class method
+	void loadArchiveFromDisk(std::string inFileName); //!< class method
     
 public:
     uint64_t initBufferSize; //!< Default buffer size fo message log storage
@@ -77,5 +74,4 @@ private:
     bool allLogsLinked; //!< Indicator of whether or not messages are all linked
 };
 
-/*! @} */
 #endif /* _MessageLogger_H_ */

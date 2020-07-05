@@ -68,6 +68,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID)

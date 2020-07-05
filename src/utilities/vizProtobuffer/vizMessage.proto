@@ -170,6 +170,8 @@ message VizMessage{
         int32 showCelestialBodiesAsSprites =22; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 show24hrClock = 23; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showDataRateDisplay = 24;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double keyboardAngularRate = 25; // [deg/sec] Value of less than/equal to zero to use viz default
+        double keyboardZoomRate = 26; // Value of less than/equal to zero to use viz default
 
     }
 

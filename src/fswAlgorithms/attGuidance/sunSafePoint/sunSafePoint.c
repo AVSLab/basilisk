@@ -29,6 +29,7 @@
  output message
  @return void
  @param configData The configuration data associated with the sun safe guidance
+ @param moduleID The Basilisk module identifier
  */
 void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
@@ -45,6 +46,7 @@ void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the sun safe attitude guidance
+ @param moduleID The Basilisk module identifier
  */
 void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
@@ -60,6 +62,8 @@ void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the guidance module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -93,7 +97,8 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
  @return void
  @param configData The configuration data associated with the sun safe attitude guidance
  @param callTime The clock time at which the function was called (nanoseconds)
- */
+ @param moduleID The Basilisk module identifier
+*/
 void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {

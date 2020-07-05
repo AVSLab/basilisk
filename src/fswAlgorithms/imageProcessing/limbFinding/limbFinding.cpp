@@ -45,7 +45,10 @@ LimbFinding::LimbFinding()
 }
 
 
-/*! @brief This method creates the module output message of type [LimbOpNavMsg](\ref LimbOpNavMsg).
+/*! @brief
+ \verbatim embed:rst
+    This method creates the module output message of type :ref:`LimbOpNavMsg`.
+ \endverbatim
  @return void
  */
 
@@ -75,7 +78,7 @@ LimbFinding::~LimbFinding()
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param this The configuration data associated with the module
+ @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void LimbFinding::Reset(uint64_t CurrentSimNanos)
 {

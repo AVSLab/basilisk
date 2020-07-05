@@ -30,7 +30,7 @@
 
 
 
-
+/*! @brief simple solar panel class */
 class SimpleSolarPanel: public PowerNodeBase {
 
 public:

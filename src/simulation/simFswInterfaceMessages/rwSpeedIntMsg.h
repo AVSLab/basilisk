@@ -21,9 +21,6 @@
 #define RW_SPEED_MESSAGE_STRUCT_H
 
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 #include "macroDefinitions.h"
 
@@ -34,6 +31,5 @@ typedef struct {
     double wheelThetas[MAX_EFF_CNT];                //!< rad The current angle of the RW if jitter is enabled
 }RWSpeedIntMsg;
 
-/*! @} */
 
 #endif

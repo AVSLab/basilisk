@@ -112,9 +112,10 @@ class CppWrapperClass(object):
     def evalParsedList(self, list, module):
         """
             Second Parsing Method: Collects all the SwigPyObjects present in the list.
-            Only the methods SelfInit_(...), CrossInit_(...), Update_(...) and Restart_(...) are wrapped by Swig
-            in the .i files. Therefore they are the only SwigPyObjects.
-            Returns a dictionary D = {method, address}
+            Only the methods ``SelfInit_(...)``, ``CrossInit_(...)``, ``Update_(...)`` and ``Restart_(...)``
+            are wrapped by Swig in the ``.i`` files. Therefore they are the only ``SwigPyObjects``.
+
+        :return: a dictionary D = {method, address}
         """
         addressDict = {}
         for methodName in list:
@@ -127,7 +128,8 @@ class CppWrapperClass(object):
     def checkMethodType(self, methodName):
         """
             This function checks the method type of the input and returns the corresponding strings.
-            @:returns methodName: name of the model data algorithm
+
+        :return: methodName: name of the model data algorithm
         """
         str_selfInit = 'SelfInit'
         str_crossInit = 'CrossInit'
@@ -154,11 +156,11 @@ class CppWrapperClass(object):
             the corresponding model wrap.
             If there's a match, returns the ID of the model.
             Otherwise, an ugly error is raised and the whole program quits.
-            :param: addressVal: address of the model data algorithm.
-            :param: modelTagKey: modelTag = key with which to search in "dict".
-            :param: dict: wrap algorithms' address dictionary in which to look for a match.
-                    dict[modelTagKey][0] = model wrap algorithm address.
-                    dict[modelTagKey][1] = model ID
+
+        :param addressVal: address of the model data algorithm.
+        :param modelTagKey: modelTag = key with which to search in ``dict``.
+        :param dict: wrap algorithms' address dictionary in which to look for a match. For example, use dict[modelTagKey][0] = model wrap algorithm address or dict[modelTagKey][1] = model ID
+
         """
         try:
             address = dict[modelTagKey][0]

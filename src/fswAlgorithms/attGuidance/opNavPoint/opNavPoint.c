@@ -29,6 +29,7 @@
  output message
  @return void
  @param configData The configuration data associated with the opNav guidance
+ @param moduleID The Basilisk module identifier
  */
 void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
@@ -45,6 +46,7 @@ void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the opNav attitude guidance
+ @param moduleID The Basilisk module identifier
  */
 void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
@@ -61,6 +63,8 @@ void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the guidance module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -95,6 +99,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
  @return void
  @param configData The configuration data associated with the opNav attitude guidance
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     int64_t moduleID)

@@ -31,6 +31,7 @@
  It creates the output message.
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
@@ -45,7 +46,8 @@ void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The ID associated with the configData
+*/
 void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
@@ -74,6 +76,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID
  @return void
  @param configData The configuration data associated with the module
  @param callTime Sim time in nanos
+ @param moduleID The ID associated with the configData
  */
 void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -96,6 +99,7 @@ void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, i
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID)
 {

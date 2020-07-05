@@ -68,6 +68,7 @@ void ClockSynch::CrossInit()
 }
 
 /*! Reset the module variables.
+    @param currentSimNanos
     @return void
 */
 void ClockSynch::Reset(uint64_t currentSimNanos)
@@ -84,7 +85,7 @@ void ClockSynch::Reset(uint64_t currentSimNanos)
 	do the init on the first pass instead of the init routines so that we don't 
 	have a big lag between initialization and runtime which messes up our clocking.
     @return void
-    @param CurrentSimNanos The clock time associated with the model call
+    @param currentSimNanos The clock time associated with the model call
 */
 void ClockSynch::UpdateState(uint64_t currentSimNanos)
 {

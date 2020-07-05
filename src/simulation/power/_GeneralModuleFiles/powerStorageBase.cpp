@@ -194,7 +194,7 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
 
 /*! Implements readMessages, integratePowerStatus, and writeMessages for the rest of the sim.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
 void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
 {
@@ -211,4 +211,45 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
     this->writeMessages(currentSimNanos);
 
     return;
+}
+
+
+/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
+ @return void
+ */
+void PowerStorageBase::customSelfInit()
+{
+    return;
+}
+
+/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
+ @return void
+ */
+void PowerStorageBase::customCrossInit()
+{
+    return;
+}
+
+/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+ @return void
+ */
+void PowerStorageBase::customReset(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! custom Write method, similar to customSelfInit.
+ @return void
+ */
+void PowerStorageBase::customWriteMessages(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! Custom read method, similar to customSelfInit; returns `true' by default.
+ @return void
+ */
+bool PowerStorageBase::customReadMessages()
+{
+    return true;
 }

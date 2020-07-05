@@ -32,10 +32,14 @@
 
 
 
-/*! This method initializes the configData for this module.  It creates a single output message of type
- [THRArrayOnTimeCmdIntMsg](\ref THRArrayOnTimeCmdIntMsg).
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.  It creates a single output message of type
+    :ref:`THRArrayOnTimeCmdIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
@@ -46,11 +50,15 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modul
                                                moduleID);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It links to 2 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg)
- and [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    It links to 2 required input messages of type :ref:`THRArrayCmdForceFswMsg`
+    and :ref:`THRArrayConfigFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
@@ -67,6 +75,8 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modu
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -96,6 +106,7 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {

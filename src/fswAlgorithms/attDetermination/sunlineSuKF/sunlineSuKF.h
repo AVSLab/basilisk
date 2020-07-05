@@ -32,7 +32,8 @@
 
 
 
-
+/*! structure containing the fitting parameters
+ */
 typedef struct {
     double cssRelScale;                          //!< Relative scale factor for this CSS
     double cssKellPow;                           //!< CSS kelly estimate power

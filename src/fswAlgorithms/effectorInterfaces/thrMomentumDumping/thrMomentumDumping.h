@@ -31,7 +31,8 @@
 
 
 
-
+/*! @brief thruster force momentum dumping module configuration message
+ */
 typedef struct {
     /* declare module private variables */
     int32_t     thrDumpingCounter;                      //!<        counter to specify after how many contro period a thruster firing should occur.

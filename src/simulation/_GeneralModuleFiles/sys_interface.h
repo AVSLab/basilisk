@@ -24,9 +24,6 @@
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
 #include "utilities/bskLogging.h"
-/*! \addtogroup SimArchGroup Simulation Architecture Classes
- * @{
- */
 
 /*!
  * This struct is dual purpose. The comments in-line describe the use as it is in
@@ -82,9 +79,9 @@ public:
     void addNewInterface(std::string from, std::string to, std::string intName="");
     void addNewInterface(InterfaceDataExchange  *newInterface);
     //void addPassToCurrent(std::string messagePass);
-    void enableInterface() { interfaceActive = true; }
-    void disableInterface() { interfaceActive = false; }
-    virtual void routeInputs(int64_t processBuffer);
+    void enableInterface() { interfaceActive = true; } //!< enable interface method
+    void disableInterface() { interfaceActive = false; } //!< disable interface method
+    virtual void routeInputs(int64_t processBuffer); //!< route inputs method
     void discoverAllMessages();
     void connectInterfaces();
     
@@ -97,5 +94,4 @@ private:
     InterfaceDataExchange *currentInterface;        //!< (-) allows user to get/set msgs for single int
 };
 
-/*! @} */
 #endif /* _SysInterface_H_ */

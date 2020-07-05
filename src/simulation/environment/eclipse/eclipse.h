@@ -31,7 +31,7 @@
 #include "utilities/bskLogging.h"
 
 
-
+/*! @brief eclipse model class */
 class Eclipse: public SysModel {
 public:
     Eclipse();
@@ -41,7 +41,7 @@ public:
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
-    std::string addPositionMsgName(std::string msgName);
+    std::string addPositionMsgName(std::string msgName); 
     void addPlanetName(std::string planetName);
     
 public:

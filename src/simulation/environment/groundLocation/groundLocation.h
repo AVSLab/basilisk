@@ -33,6 +33,7 @@
 #include "utilities/astroConstants.h"
 #include "utilities/bskLogging.h"
 
+/*! @brief ground location class */
 class GroundLocation:  public SysModel {
 public:
     GroundLocation();
@@ -54,9 +55,9 @@ public:
     double planetRadius; //!< [m] Planet radius in meters.
     double minimumElevation; //!< [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees equivalent.
     double maximumRange; //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
-    std::string planetInMsgName;
-    std::string currentGroundStateOutMsgName;
-    std::vector<std::string> accessOutMsgNames;
+    std::string planetInMsgName;                //!< msg name
+    std::string currentGroundStateOutMsgName;   //!< msg name
+    std::vector<std::string> accessOutMsgNames; //!< msg name
     Eigen::Vector3d r_LP_P_Init; //!< [m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation.
     BSKLogger bskLogger;         //!< -- BSK Logging
 

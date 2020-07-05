@@ -281,16 +281,12 @@ class Controller:
         """
         Get the parameters used for a particular run of the montecarlo
 
-        Args:
-            caseNumber: int
-                The number of the run to get the parameters used for.
-        Returns:
-            A dictionary of the parameters of the simulation
-            For example:
-            {
-                "keyForSim": parameterValue,
-                'TaskList[0].TaskModels[0].RNGSeed': 1674764759
-            }
+        :param caseNumber: The number of the run to get the parameters used for.
+        :type caseNumber: int
+
+        :return: A dictionary of the parameters of the simulation
+                 For example:
+                 {"keyForSim": parameterValue, 'TaskList[0].TaskModels[0].RNGSeed': 1674764759}
         """
         if self.ICrunFlag:
             filename = self.icDirectory + "run" + str(caseNumber) + ".json"
@@ -455,7 +451,7 @@ class Controller:
                 finally:
                     pool.join()
 
-        # If the data was archiving, close the queue. 
+        # If the data was archiving, close the queue.
         if self.archiveDir is not None and self.archiveDir != self.icDirectory:
             while not self.dataOutQueue.empty():
                time.sleep(1)
@@ -559,14 +555,12 @@ class Controller:
                 retentionPolicy.executeCallback(data)
 
     def executeSimulations(self):
-        '''
+        """
         Execute simulations in parallel
 
-        Args: None
-        Returns:
-            failed: int[]
-                A list of the indices of all failed simulation runs.
-        '''
+        :return: failed: int[]
+                 A list of the indices of all failed simulation runs.
+        """
 
         if self.simParams.verbose:
             print("Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess))
@@ -716,16 +710,16 @@ class SimulationParameters():
 
 
 class SimulationExecutor:
-    '''
+    """
     This class is used to execute a simulation in a worker thread.
-    To use, create an instance of this class, and then call the instance with the simulation parameters to run them in.
+    To use, create an instance of this class, and then call the instance with the simulation parameters to run them in::
 
-    executor = SimulationExecutor()
-    simParams = SimulationParameters()
-    successFlag = executor(simParams)
+        executor = SimulationExecutor()
+        simParams = SimulationParameters()
+        successFlag = executor(simParams)
 
     This class can be used to execute a simulation on a different thread, by using this class as the processes target.
-    '''
+    """
     #
 
     @classmethod
@@ -864,24 +858,20 @@ class SimulationExecutor:
     @staticmethod
     def disperseSeeds(simInstance):
         """
-        disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds
+        Disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds.
+        Example return dictionary::
 
-        Args:
-            simInstance: SimulationBaseClass
-                A basilisk simulation to set random seeds on
-        Returns:
-            statement: string
-                A dictionary with the random seeds that should be applied to the sim:
-                Example:
-                ""
-                {
-                    '.TaskList[0].TaskModels[1]': 1934586,
-                    '.TaskList[0].TaskModels[2]': 3450093,
-                    '.TaskList[1].TaskModels[0]': 2221934,
-                    '.TaskList[2].TaskModels[0]': 1123244
-                }
-                ""
-        """
+             {
+                '.TaskList[0].TaskModels[1]': 1934586,
+                '.TaskList[0].TaskModels[2]': 3450093,
+                '.TaskList[1].TaskModels[0]': 2221934,
+                '.TaskList[2].TaskModels[0]': 1123244
+             }
+
+        :param simInstance: A basilisk simulation to set random seeds on
+        :type simInstance: SimulationBaseClass
+        :return: A dictionary with the random seeds that should be applied to the sim
+                        """
 
         randomSeeds = {}
         for i, task in enumerate(simInstance.TaskList):
@@ -900,7 +890,7 @@ class SimulationExecutor:
     def populateSeeds(simInstance, modifications):
         """
         only populate the RNG seeds of all the tasks in the sim
-        
+
         Args:
             simInstance: SimulationBaseClass
                 A basilisk simulation to set random seeds on

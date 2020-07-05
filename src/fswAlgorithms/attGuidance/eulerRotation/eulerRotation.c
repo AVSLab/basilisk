@@ -179,9 +179,8 @@ void computeTimeStep(eulerRotationConfig *configData, uint64_t callTime)
 
 /*! @brief This function computes the analytical derivative of the B_inv matrix for the 3-2-1 Euler Angle set.
  @return void
- @param configData The configuration data associated with the mrpRotation module
- @param angleSet[3] 321 Euler angles
- @param angleRates[3] The 321 Euler angle rates
+ @param angleSet 321 Euler angles
+ @param angleRates The 321 Euler angle rates
  @param B_inv_deriv the inv(B) matrix for 321 Euler angles
  */
 void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3])
@@ -213,9 +212,9 @@ void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], d
  associated with a rotation defined in terms of an initial euler angle set and a constant euler angle rate
  @return void
  @param configData The configuration data associated with the mrpRotation module
- @param sigma_R0N[3] The input reference attitude using MRPs
- @param omega_R0N_N[3] The input reference frame angular rate vector
- @param domega_R0N_N[3] The input reference frame angular acceleration vector
+ @param sigma_R0N The input reference attitude using MRPs
+ @param omega_R0N_N The input reference frame angular rate vector
+ @param domega_R0N_N The input reference frame angular acceleration vector
  @param attRefOut The output message copy
  */
 void computeEulerRotationReference(eulerRotationConfig *configData,

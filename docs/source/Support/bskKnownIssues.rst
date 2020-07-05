@@ -6,7 +6,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- text here
+- On Linux and Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
+  Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
+- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.  The code compiles,
+  but auto-completion etc. doesn't work in that module.
 
 Version 1.8.1
 -------------
@@ -15,6 +18,10 @@ Version 1.8.1
   properly on the first try.
 - If ``openCV`` is conan installed for Release only the Xcode would give false error messages that it can't
   find the library.  This is now fixed in the current release.
+- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.  The code compiles,
+  but auto-completion etc. doesn't work in that module.
+- On Linux and Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
+  Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
 
 Version 1.8.0
 -------------
@@ -25,6 +32,8 @@ Version 1.8.0
     $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 
 - If running Windows the path to the Basilisk library destination folder must be set, see :ref:`installWindows`.
+- On Linux and Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
+  Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
 - If running Windows, be sure to use ``pip install conan`` to get conan, and don't download the binary installer,
   see :ref:`installWindows`.   The binary installer causes several issues with this new build system in that
   it contains its own copy of Python, and thus checking for required python packages does work.
@@ -109,13 +118,13 @@ Version 1.8.0
   around this conan issue is to run the build twice, once for Debug and once for Release.  At that point it can
   be run just once.
 
-Version 1.7.5
------------------
+**Version 1.7.5**
+
 - :ref:`groundLocation` was not converting between the planet and inertial frame correctly.  This is now fixed in
   the later releases.
 
-Version 1.7.4
--------------
+**Version 1.7.4**
+
 - None
 
 Version 1.7.3

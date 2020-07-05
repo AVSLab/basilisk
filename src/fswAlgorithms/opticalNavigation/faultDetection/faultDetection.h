@@ -29,7 +29,7 @@
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
 
-
+/*! @brief Module data structure */
 typedef struct {
     char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
     char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message

@@ -20,9 +20,6 @@
 #ifndef FSW_RW_TORQUE_H
 #define FSW_RW_TORQUE_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
@@ -33,6 +30,5 @@ typedef struct {
     double motorTorque[MAX_EFF_CNT];     //!< [Nm] RW motor torque array
 }RWArrayTorqueIntMsg;
 
-/*! @} */
 
 #endif

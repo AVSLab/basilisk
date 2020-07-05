@@ -35,15 +35,16 @@
 
 
 
-
+/*! @brief spacecraft geometry data */
 typedef struct {
-  std::vector<double> facetAreas;
-  std::vector<double> facetCoeffs;
-  std::vector<Eigen::Vector3d> facetNormals_B;
-  std::vector<Eigen::Vector3d> facetLocations_B;
+  std::vector<double> facetAreas;                   //!< vector of facet areas
+  std::vector<double> facetCoeffs;                  //!< vector of facet coefficients
+  std::vector<Eigen::Vector3d> facetNormals_B;      //!< vector of facet normals
+  std::vector<Eigen::Vector3d> facetLocations_B;    //!< vector of facet locations
 }SpacecraftGeometryData;
 
 
+/*! @brief faceted atmospheric drag dynamic effector */
 class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
 public:
 
@@ -54,11 +55,11 @@ public:
     void computeForceTorque(double integTime);
     void SelfInit();
     void CrossInit();
-    void Reset(uint64_t CurrentSimNanos);
+    void Reset(uint64_t CurrentSimNanos);               //!< class method
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
-    void setDensityMessage(std::string newDensMessage);
+    void setDensityMessage(std::string newDensMessage); //!< class method
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
 private:
@@ -66,14 +67,14 @@ private:
     void plateDrag();
     void updateDragDir();
 public:
-    uint64_t numFacets;
+    uint64_t numFacets;                             //!< number of facets
     std::string atmoDensInMsgName;                  //!< -- message used to read command inputs
     std::string navAttInMsgName;                    //!< -- message used to read command inputs
     StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d v_hat_B;
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    Eigen::Vector3d v_hat_B;                        //!< class variable
+    BSKLogger bskLogger;                            //!< -- BSK Logging
 
 private:
     int64_t densInMsgId;                            //!< -- Message ID for incoming data

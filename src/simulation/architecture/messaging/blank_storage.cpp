@@ -44,7 +44,7 @@ BlankStorage::~BlankStorage()
 
 /*!
  * Initialize a BlankStorage with some non-blank storage
- * @param BlankStorage& mainCopy
+ * @param mainCopy copy of BlankStorage
  */
 BlankStorage::BlankStorage(const BlankStorage &mainCopy)
 {
@@ -73,7 +73,7 @@ void BlankStorage::ClearStorage()
 /*!
  * Copy StorageBuffer data into a new block of memory of size NewVolume
  * Also delete the old memory block
- * @param uint64_t NewVolume total volume in bytes of StorageBuffer to increase to
+ * @param NewVolume total volume in bytes of StorageBuffer to increase to
  * @return void
  */
 void BlankStorage::IncreaseStorage(uint64_t NewVolume)

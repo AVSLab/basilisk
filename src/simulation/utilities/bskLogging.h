@@ -17,6 +17,8 @@
 
  */
 
+
+
 #ifndef _BSK_LOG_
 #define _BSK_LOG_
 
@@ -35,6 +37,8 @@ typedef enum {
 extern logLevel_t LogLevel;
 void printDefaultLogLevel();
 
+/// \cond DO_NOT_DOCUMENT
+
 #ifdef __cplusplus
 #include <map>
 #include <string>
@@ -42,6 +46,7 @@ void printDefaultLogLevel();
 void setDefaultLogLevel(logLevel_t logLevel);
 logLevel_t getDefaultLogLevel();
 
+/*! BSK logging class */
 class BSKLogger
 {
     public:
@@ -83,4 +88,9 @@ EXTERN void _BSKLogger_d(BSKLogger*);
 EXTERN void _printLogLevel(BSKLogger*);
 EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
 EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
+
+
+/// \endcond
+
 #endif
+

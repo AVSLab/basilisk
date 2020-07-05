@@ -32,14 +32,14 @@
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
-    NavAttIntMsg msgStorage; /*! [-] Local buffer to store nav message*/
+    NavAttIntMsg msgStorage; /*!< [-] Local buffer to store nav message*/
 }AggregateAttInput;
 
 /*! structure containing the translational navigation message name, ID and local buffer*/
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
-    NavTransIntMsg msgStorage; /*! [-] Local buffer to store nav message*/
+    NavTransIntMsg msgStorage; /*!< [-] Local buffer to store nav message*/
 }AggregateTransInput;
 
 /*! @brief Top level structure for the aggregagted navigation message module.  */

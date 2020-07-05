@@ -20,9 +20,6 @@
 #ifndef hingedRigidBodySimMsg_h
 #define hingedRigidBodySimMsg_h
 
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief Structure used to define the individual Hinged Rigid Body  data message*/
 typedef struct {
@@ -30,6 +27,5 @@ typedef struct {
     double thetaDot;                //!< [rad/s], panel angular displacement rate
 }HingedRigidBodySimMsg;
 
-/* @} */
 
 #endif /* hingedRigidBodySimMsg_h */

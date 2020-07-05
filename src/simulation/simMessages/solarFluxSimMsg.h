@@ -20,15 +20,11 @@
 #ifndef solarFluxSimMsg_h
 #define solarFluxSimMsg_h
 
-/*! \defgroup simMessages
- *  @{
- */
 
 //!@brief Solar flux message definition.
 typedef struct {
     double flux;  //!< [W/m2] at s/c position
 }SolarFluxSimMsg;
 
-/* @} */
 
 #endif /* solarFluxSimMsg_h */

@@ -24,7 +24,7 @@
 #include "power/_GeneralModuleFiles/powerStorageBase.h"
 #include "../../simMessages/powerStorageStatusSimMsg.h"
 
-
+/*! @brief simple power monitor class */
 class SimplePowerMonitor: public PowerStorageBase {
 
 public:

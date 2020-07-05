@@ -23,14 +23,8 @@
 #include <stdint.h>
 #include <Eigen/Dense>
 
-/*! \addtogroup Sim Utility Group
- *  This group contains the simulation utilities that are used globally on the 
- *  simulation side of the software.  Note that FSW should not generally use  
- *  these utilities once we reach a CDR level of maturity on a project.
- * @{
- */
 
-/*! This module is used to apply a second-order bounded Gauss-Markov random walk 
+/*! @brief This module is used to apply a second-order bounded Gauss-Markov random walk 
     on top of an upper level process.  The intent is that the caller will perform 
     the set methods (setUpperBounds, setNoiseMatrix, setPropMatrix) as often as 
     they need to, call computeNextState, and then call getCurrentState cyclically
@@ -40,12 +34,9 @@ class Saturate
     
 public:
     Saturate();
-    Saturate(int64_t size);
+    Saturate(int64_t size);     //!< class constructor 
     ~Saturate();
-    void setBounds(Eigen::MatrixXd bounds) {this->stateBounds = bounds;}
-    /*!@brief sets upper and lower bounds for each state
-       @param bounds. one row for each state. lower bounds in left column, upper in right column
-       @return void*/
+    void setBounds(Eigen::MatrixXd bounds);
     Eigen::VectorXd saturate(Eigen::VectorXd unsaturatedStates);
     /*!@brief Saturates the given unsaturated states
        @param unsaturated States, a vector of the unsaturated states
@@ -56,6 +47,5 @@ private:
     Eigen::MatrixXd stateBounds;    //!< -- one row for each state. lower bounds in left column, upper in right column
 };
 
-/*! @} */
 
 #endif /* _saturate_HH_ */

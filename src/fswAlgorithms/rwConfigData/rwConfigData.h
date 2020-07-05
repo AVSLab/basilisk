@@ -28,17 +28,12 @@
 #include <stdint.h>
 
 
-/*! \defgroup rwConfigData
- * @{
- */
-
-
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    RWConstellationFswMsg rwConstellation; /* struct to populate input RW config parameters in structural S frame */
-    RWArrayConfigFswMsg  rwConfigParamsOut; /* struct to populate ouput RW config parameters in body B frame */
+    RWConstellationFswMsg rwConstellation; /*!< struct to populate input RW config parameters in structural S frame */
+    RWArrayConfigFswMsg  rwConfigParamsOut; /*!< struct to populate ouput RW config parameters in body B frame */
     /* declare module IO interfaces */
     char rwConstellationInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConstellationFswMsg input message*/
     int32_t rwConstellationInMsgID;                      /*!< [-] ID for the RWConstellationFswMsg incoming message */
@@ -64,6 +59,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

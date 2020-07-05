@@ -20,9 +20,6 @@
 #ifndef ATT_REF_MESSAGE_H
 #define ATT_REF_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 /*! @brief Structure used to define the output definition for attitude reference generation */
@@ -32,6 +29,5 @@ typedef struct {
     double domega_RN_N[3];      //!< [r/s2] Reference frame inertial acceleration of  R relative to N in N frame components
 }AttRefFswMsg;
 
-/* @} */
 
 #endif

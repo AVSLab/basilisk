@@ -20,9 +20,6 @@
 #ifndef INERTIAL_FILTER_MESSAGE_H
 #define INERTIAL_FILTER_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 #define AKF_N_STATES 6
@@ -37,6 +34,5 @@ typedef struct {
     int numObs;                                 //!< [-] Valid observation count for this frame
 }InertialFilterFswMsg;
 
-/* @} */
 
 #endif

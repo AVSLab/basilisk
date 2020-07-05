@@ -19,20 +19,16 @@
 
 #ifndef ACCESSSIMMSG_H
 #define ACCESSSIMMSG_H
-/*! \defgroup simMessages
- *  @{
- */
 
 /*! @brief Message that defines access to spacecraft from a groundLocation, providing access, range, and elevation with
  * repect to a ground location.
  */
 typedef struct {
-    uint64_t hasAccess;//! [-] 1 when the writer has access to a spacecraft; 0 otherwise.
-    double slantRange;//! [m] Range from a location to the spacecraft.
-    double elevation;//! [rad] Elevation angle for a given spacecraft.
-    double azimuth; //! [rad] Azimuth angle for a spacecraft.
+    uint64_t hasAccess;//!< [-] 1 when the writer has access to a spacecraft; 0 otherwise.
+    double slantRange;//!< [m] Range from a location to the spacecraft.
+    double elevation;//!< [rad] Elevation angle for a given spacecraft.
+    double azimuth; //!< [rad] Azimuth angle for a spacecraft.
 }AccessSimMsg;
 
-/* @} */
 
 #endif /* accessSimMsg.h */

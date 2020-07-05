@@ -20,9 +20,6 @@
 #ifndef FUEL_SLOSH_H
 #define FUEL_SLOSH_H
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
 
 //Fuel tank models
@@ -39,6 +36,5 @@ public:
     double fuelMassDot = 0.0;              //!< [kg/s] mass depletion rate of fuelSlosh particle
 };
 
-/* @} */
 
 #endif /* FUEL_SLOSH_H */

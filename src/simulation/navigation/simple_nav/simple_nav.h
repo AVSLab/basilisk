@@ -30,6 +30,7 @@
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 
+/*! @brief simple navigation module class */
 class SimpleNav: public SysModel {
 public:
     SimpleNav();

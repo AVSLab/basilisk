@@ -31,7 +31,7 @@
 #define BASILISK_SIMPOWERSTORAGEBASE_H
 
 
-
+/*! @brief power storage base class */
 class PowerStorageBase: public SysModel  {
 public:
     PowerStorageBase();
@@ -48,11 +48,11 @@ protected:
     void integratePowerStatus(double currentTime); //!< Integrates the net power given the current time using a simple Euler method.
     double sumAllInputs(); //!< Sums over the input power consumption messages.
     virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg) = 0; //!< Virtual function to represent power storage computation or losses.
-    virtual void customSelfInit(){};//!Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
-    virtual void customCrossInit(){};//! Custom CrossInit() method, similar to customSelfInit.
-    virtual void customReset(uint64_t CurrentClock){}; //! Custom Reset() method, similar to customSelfInit.
-    virtual void customWriteMessages(uint64_t currentSimNanos){}; //! Custom Write() method, similar to customSelfInit.
-    virtual bool customReadMessages(){return true;};//! Custom Read() method, similar to customSelfInit.
+    virtual void customSelfInit();//!< Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
+    virtual void customCrossInit();//!< Custom CrossInit() method, similar to customSelfInit.
+    virtual void customReset(uint64_t CurrentClock); //!< Custom Reset() method, similar to customSelfInit.
+    virtual void customWriteMessages(uint64_t currentSimNanos); //!< Custom Write() method, similar to customSelfInit.
+    virtual bool customReadMessages();//!< Custom Read() method, similar to customSelfInit.
 
 public:
     std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of power node input message names
@@ -61,15 +61,15 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 protected:
-    std::vector<std::int64_t> nodePowerUseMsgIds;
-    int64_t batPowerOutMsgId;
-    PowerStorageStatusSimMsg storageStatusMsg;
-    std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
-    double previousTime; //! Previous time used for integration
-    double currentTimestep;//! [s] Timestep duration in seconds.
+    std::vector<std::int64_t> nodePowerUseMsgIds;               //!< class variable
+    int64_t batPowerOutMsgId;                                   //!< class variable
+    PowerStorageStatusSimMsg storageStatusMsg;                  //!< class variable
+    std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;             //!< class variable
+    double previousTime; //!< Previous time used for integration
+    double currentTimestep;//!< [s] Timestep duration in seconds.
     double storedCharge; //!< [W-s] Stored charge in Watt-hours.
     double currentPowerSum;//!< [W] Current net power.
-    uint64_t outputBufferCount;
+    uint64_t outputBufferCount; //!< class variable
 
 };
 

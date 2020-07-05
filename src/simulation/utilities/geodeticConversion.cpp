@@ -55,7 +55,8 @@ Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetRad){
 }
 
 /*! Converts from a planet-centered inertial coordinates to latitutde/longitude/altitude (LLA) coordinates given a planet radius and rotation matrix.
-@param pcpfPosition : [m] Position vector in PCPF coordinates
+@param pciPosition : [m] Position vector in PCPF coordinates
+@param J20002Pfix : planet DCM
 @param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
 @return llaPosition: Final position in latitude/longitude/altitude coordinates
   [0] : [rad] latitude above planetary equator

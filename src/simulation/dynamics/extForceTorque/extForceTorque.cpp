@@ -90,7 +90,7 @@ void ExtForceTorque::linkInStates(DynParamManager& statesIn)
 
 
 /*! This module does not write any output messages.
- @param CurrentClock The current time used for time-stamping the message
+ @param currentClock The current time used for time-stamping the message
  @return void
  */
 void ExtForceTorque::writeOutputMessages(uint64_t currentClock)

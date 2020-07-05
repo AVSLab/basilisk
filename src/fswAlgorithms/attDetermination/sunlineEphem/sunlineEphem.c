@@ -23,9 +23,13 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 
-/*! This method sets up the module output message of type [NavAttIntMsg](\ref NavAttIntMsg)
+/*!
+ \verbatim embed:rst
+    This method sets up the module output message of type :ref:`NavAttIntMsg`
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
@@ -36,13 +40,17 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 }
 
 
-/*! This method performs the second stage of initialization for this module.
- Its primary function is to link the input messages that were created elsewhere.  The required
- input messages are the sun ephemeris message of type [EphemerisIntMsg](\ref EphemerisIntMsg),
- the spacecraft translational navigation message of type [NavTransIntMsg](\ref NavTransIntMsg)
- and the spacecraft attitude navigation message of type [NavAttIntMsg](\ref NavAttIntMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    Its primary function is to link the input messages that were created elsewhere.  The required
+    input messages are the sun ephemeris message of type :ref:`EphemerisIntMsg`,
+    the spacecraft translational navigation message of type :ref:`NavTransIntMsg`
+    and the spacecraft attitude navigation message of type :ref:`NavAttIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
@@ -63,6 +71,8 @@ void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -73,6 +83,7 @@ void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {

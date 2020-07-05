@@ -28,6 +28,7 @@
 /*! This method creates the two moduel output messages.
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
+ @param moduleId The module identifier
  */
 void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
@@ -43,6 +44,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 /*! This method performs the second stage of initialization for the inertial filter.  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
+ @param moduleId The module identifier
  */
 void CrossInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
@@ -71,6 +73,7 @@ void CrossInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleId The module identifier
  */
 void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                       int64_t moduleId)
@@ -162,6 +165,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 /*! This method reads in the messages from all available star trackers and orders them with respect to time of measurement
  @return void
  @param configData The configuration data associated with the CSS estimator
+ @param moduleId The module identifier
  */
 void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
 {
@@ -207,6 +211,7 @@ void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleId The module identifier
  */
 void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     int64_t moduleId)
@@ -358,7 +363,9 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 /*! This method propagates a inertial state vector forward in time.  Note 
     that the calling parameter is updated in place to save on data copies.
 	@return void
-	@param stateInOut The state that is propagated
+    @param configData The configuration data associated with this module
+    @param stateInOut The state that is propagated
+    @param dt Time step (s)
 */
 void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt)
 {
@@ -529,6 +536,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     have to be updated otherwise.
  @return void
  @param configData The configuration data associated with the CSS estimator
+ @param currentST current star tracker state
 
  */
 void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
@@ -573,6 +581,7 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
     main data structure for use in the propagation routines.
  @return void
  @param configData The configuration data associated with the CSS estimator
+ @param prevTime [s] Previous time step
  @param propTime The time that we need to fix the filter to (seconds)
  @param gyrData The gyro measurements that we are going to accumulate forward into time
  */
@@ -648,7 +657,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
  updates the state/covariance with that information.
  @return void
  @param configData The configuration data associated with the CSS estimator
- @param updateTime The time that we need to fix the filter to (seconds)
+ @param currentST Current star tracker state
  */
 int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
 {

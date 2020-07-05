@@ -62,9 +62,9 @@ SystemMessaging* SystemMessaging::GetInstance()
 }
 
 /*!
- *
- * @return int64_t bufferCount
- * @param std::string bufferName
+  Attach Storeage to Bucket
+  @return int64_t bufferCount
+  @param  bufferName
  */
 int64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
 {
@@ -81,7 +81,7 @@ int64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
 /*! This method selects which message buffer is being read from when
  * messageStorage is referenced
  * @return void
- * @param uint64_t bufferUse
+ * @param bufferUse
  */
 void SystemMessaging::selectMessageBuffer(int64_t bufferUse)
 {
@@ -101,7 +101,7 @@ void SystemMessaging::selectMessageBuffer(int64_t bufferUse)
 /*!
  * This method records the current number of messages in the messageStorage space
  * @return void
- * @param int64_t MessageCount
+ * @param MessageCount
  */
 void SystemMessaging::SetNumMessages(int64_t MessageCount)
 {
@@ -145,8 +145,8 @@ void SystemMessaging::clearMessaging()
 
 /*! This method gets the number of messages in the selected or requested buffer
  *
- * @param int32_t bufferSelect
- * @return int64_t CurrentMessageCount
+ * @param  bufferSelect
+ * @return CurrentMessageCount
  */
 int64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
 {
@@ -195,11 +195,11 @@ uint64_t SystemMessaging::GetCurrentSize()
 
 /*!
  * This method creates a new message within the currently selected buffer.
- * @param std::string MessageName The name of the message
- * @param uint64_t MaxSize The size of the message
- * @param uint64_t NumMessageBuffers The number of buffers to create for the message
- * @param std::string messageStruct The name of the struct
- * @param int64_t moduleID The id of the requesting module
+ * @param MessageName The name of the message
+ * @param MaxSize The size of the message
+ * @param NumMessageBuffers The number of buffers to create for the message
+ * @param messageStruct The name of the struct
+ * @param moduleID The id of the requesting module
  * @return uint64_t (GetMessageCount - 1), the assigned message ID
  */
 int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
@@ -304,9 +304,9 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
 
 /*!
  * This method subscribes a module to a message (but what does that mean different than read rights?)
- * @param std::string messageName name of the message to sub to
- * @param uint64_t messageSize size in bytes of message
- * @param int64_t moduleID ID of the requesting module
+ * @param messageName name of the message to sub to
+ * @param messageSize size in bytes of message
+ * @param moduleID ID of the requesting module
  * @return int64_t messageID
  */
 int64_t SystemMessaging::subscribeToMessage(std::string messageName,
@@ -331,8 +331,8 @@ int64_t SystemMessaging::subscribeToMessage(std::string messageName,
 
 /*!
  * This message gives the requesting module write rights if the module and message are valid
- * @param int64_t messageID the ID of the message to write to
- * @param int64_t moduleID The ID of the requesting module
+ * @param messageID the ID of the message to write to
+ * @param moduleID The ID of the requesting module
  * @return bool rightsObtained True if access was granted, else false
  */
 bool SystemMessaging::obtainWriteRights(int64_t messageID, int64_t moduleID)
@@ -353,8 +353,8 @@ bool SystemMessaging::obtainWriteRights(int64_t messageID, int64_t moduleID)
 
 /*!
  * this method gives the requesting module permission to read the requested message
- * @param int64_t messageID The message to get read rights to
- * @param int64_t moduleID The requesting module
+ * @param messageID The message to get read rights to
+ * @param moduleID The requesting module
  * @return bool rightsObtained True if rights granted, else false
  */
 bool SystemMessaging::obtainReadRights(int64_t messageID, int64_t moduleID)
@@ -374,7 +374,7 @@ bool SystemMessaging::obtainReadRights(int64_t messageID, int64_t moduleID)
 
 /*!
  *  This method checks ALL message buffers for a message with the given name
- * @param std::string messageName
+ * @param messageName
  * @return MessageIdentData dataFound A chunk of info about the message including whether it was found or not
  */
 MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
@@ -409,11 +409,11 @@ MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
 
 /*!
  * This method writes data to an already-created message if the requester has the right to
- * @param in64_t MessageID The message to write to
- * @param uint64_t ClockTimeNanos The time to say the message was written in ns since sim start
- * @param uint64_t MsgSize Size of the message
- * @param void* MsgPayload The data in the message
- * @param int64_t moduleID The requester ID
+ * @param MessageID The message to write to
+ * @param ClockTimeNanos The time to say the message was written in ns since sim start
+ * @param MsgSize Size of the message
+ * @param MsgPayload The data in the message
+ * @param moduleID The requester ID
  * @return bool -- whether or not the message was written
  */
 bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
@@ -478,9 +478,10 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
  buffers without having to re-write the same code.  Kind of overkill, but
  there you go.
  @param MsgBuffer The base address of the message buffer we are reading
- @param MsgBytes The maximum number of bytes for a given message type
+ @param maxMsgBytes The maximum number of bytes for a given message type
  @param CurrentOffset The message count that we want to ready out
  @param DataHeader The message header that we are writing out to
+ @param maxReadBytes The maximum number of read bytes
  @param OutputBuffer The output message buffer we are writing out to
  @return void
  */
@@ -499,12 +500,12 @@ void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes
 
 /*!
  * This method reads a message. A warning is thrown if the requester isn't supposed to be reading this message.
- * @param int64_t MessageID  ID of the message to read
- * @param SingleMessageHeader* DataHeader Message header pointer to put message header data into
- * @param uint64_t MaxBytes The maximum number of bytes to read into MsgPayload
- * @param void* MsgPayload A pointer to memory to toss the message data into
- * @param int64_t moduleID The module requesting a read
- * @param uint64_t CurrentOffset
+ * @param MessageID  ID of the message to read
+ * @param DataHeader Message header pointer to put message header data into
+ * @param MaxBytes The maximum number of bytes to read into MsgPayload
+ * @param MsgPayload A pointer to memory to toss the message data into
+ * @param moduleID The module requesting a read
+ * @param CurrentOffset
  * @return bool -- Whether the message was read successfully or not
  */
 bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
@@ -574,8 +575,8 @@ void SystemMessaging::PrintAllMessageData()
 
 /*!
  * This method returns the MessageHeaderData for a MessageID in the bufferSelect buffer
- * @param int64_t MessageID The message to query for the header
- * @param int32_t bufferSelect The buffer to query for the message
+ * @param MessageID The message to query for the header
+ * @param bufferSelect The buffer to query for the message
  * @return MessageHeaderdata* MsgHdr The data requested
  */
 MessageHeaderData* SystemMessaging::FindMsgHeader(int64_t MessageID, int32_t bufferSelect)
@@ -601,7 +602,7 @@ MessageHeaderData* SystemMessaging::FindMsgHeader(int64_t MessageID, int32_t buf
 
 /*!
  *  This message prints MessageHeaderData information for the requested MessageID
- * @param int64_t MessageID The message to query
+ * @param MessageID The message to query
  * @return void
  */
 void SystemMessaging::PrintMessageStats(int64_t MessageID)
@@ -618,8 +619,8 @@ void SystemMessaging::PrintMessageStats(int64_t MessageID)
 
 /*!
  * Finds the message name for the requested message in the selected buffer
- * @param int64_t MessageID The message to query for the name
- * @param int32_t bufferSelect The buffer to query for the message
+ * @param MessageID The message to query for the name
+ * @param bufferSelect The buffer to query for the message
  * @return std::string MessageName The name of the six fingered man
  */
 std::string SystemMessaging::FindMessageName(int64_t MessageID, int32_t bufferSelect)
@@ -635,8 +636,8 @@ std::string SystemMessaging::FindMessageName(int64_t MessageID, int32_t bufferSe
 
 /*!
  * This message takes a MessageName and gives a message ID
- * @param std::string MessageName The name to query for the ID
- * @param int32_t bufferSelect The buffer to query for the name
+ * @param MessageName The name to query for the ID
+ * @param bufferSelect The buffer to query for the name
  * @return int64_t -- the message ID
  */
 int64_t SystemMessaging::FindMessageID(std::string MessageName, int32_t bufferSelect)
@@ -664,7 +665,7 @@ int64_t SystemMessaging::checkoutModuleID()
 
 /*!
  * This method finds a buffer given a name
- * @param std::string bufferName
+ * @param bufferName
  * @return MessageStorageContainer* -- a pointer to the buffer. Or, return -1 if not found.
  */
 int64_t SystemMessaging::findMessageBuffer(std::string bufferName)
@@ -723,7 +724,7 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
 
 /*!
  * This message gets the exchangeData for a given messageID
- * @param int64_t messageID
+ * @param messageID
  * @return std::set<std::pair<long int, long int>> exchangeList
  */
 std::set<std::pair<long int, long int>>

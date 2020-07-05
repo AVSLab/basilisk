@@ -27,7 +27,7 @@
 
 
 
-
+/*! @brief reaction wheel power class */
 class ReactionWheelPower: public PowerNodeBase {
 
 public:

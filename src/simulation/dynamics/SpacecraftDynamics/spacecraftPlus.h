@@ -36,6 +36,7 @@
 
 
 
+/*! @brief spacecraftPlus dynamic effector */
 class SpacecraftPlus : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
@@ -49,7 +50,7 @@ public:
     double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
-    BackSubMatrices backSubContributions;
+    BackSubMatrices backSubContributions;//!< class variable
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
     Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components

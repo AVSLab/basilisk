@@ -24,15 +24,11 @@
 #include "fswUtilities/fswDefinitions.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
-/*! \defgroup fswMessages
- * @{
- */
 
 /*! @brief Array with availability of RW */
 typedef struct {
     FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];  //!< The current state of the wheel
 }RWAvailabilityFswMsg;
 
-/*! @} */
 
 #endif

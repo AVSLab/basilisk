@@ -23,11 +23,8 @@
 #include <stdint.h>
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
-/*! \defgroup fswMessages
- *  @{
- */
 
-
+/*! @brief RW array configuration FSW msg */
 typedef struct{
     double GsMatrix_B[3*MAX_EFF_CNT];   //!< [-]    The RW spin axis matrix in body frame components 
     double JsList[MAX_EFF_CNT];         //!< [kgm2] The spin axis inertia for RWs
@@ -35,6 +32,5 @@ typedef struct{
     double uMax[MAX_EFF_CNT];           //!< [Nm]   The maximum RW motor torque
 }RWArrayConfigFswMsg;
 
-/* @} */
 
 #endif

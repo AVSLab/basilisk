@@ -29,7 +29,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief dynamic object class */
 class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors

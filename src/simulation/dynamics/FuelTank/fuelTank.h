@@ -36,6 +36,7 @@
 
 
 //Fuel tank models
+/*! fuel tank model structure */
 struct FuelTankModel {
 	double propMassInit;                               //!< [kg] Initial propellant mass in tank
 	Eigen::Vector3d r_TcT_TInit;                       //!< [m] Initial position vector from B to tank point in B frame comp.
@@ -44,8 +45,8 @@ struct FuelTankModel {
 	Eigen::Vector3d r_TcT_T;                           //!< [m] position vector from B to tank point in B frame comp.
 	Eigen::Vector3d rPrime_TcT_T;                      //!< [m/s] Derivative of position vector from B to tank point in B frame comp.
 	Eigen::Vector3d rPPrime_TcT_T;                     //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
-	virtual void computeTankProps(double mFuel) = 0;
-	virtual void computeTankPropDerivs(double mFuel, double mDotFuel) = 0;
+	virtual void computeTankProps(double mFuel) = 0;    //!< class method
+	virtual void computeTankPropDerivs(double mFuel, double mDotFuel) = 0; //!< class method
 	FuelTankModel() {
 		propMassInit = 0.0;
 		r_TcT_TInit.setZero();
@@ -54,6 +55,7 @@ struct FuelTankModel {
     }
 };
 
+/*! fuel tank constant volume structure */
 struct FuelTankModelConstantVolume_t :
 	public FuelTankModel
 {
@@ -71,6 +73,7 @@ struct FuelTankModelConstantVolume_t :
 	}
 };
 
+/*! fuel tank constant density structure */
 struct FuelTankModelConstantDensity_t :
 	public FuelTankModel
 {
@@ -90,6 +93,7 @@ struct FuelTankModelConstantDensity_t :
 	}
 };
 
+/*! fuel tank model emptying structure */
 struct FuelTankModelEmptying_t :
 	public FuelTankModel
 {
@@ -172,6 +176,7 @@ struct FuelTankModelEmptying_t :
 	}
 };
 
+/*! @brief fuel tank model structure for a uniform burn */
 struct FuelTankModelUniformBurn_t :
 	public FuelTankModel
 {
@@ -193,6 +198,7 @@ struct FuelTankModelUniformBurn_t :
 	}
 };
 
+/*! @brief fuel tank model structure for a centrifugal burn */
 struct FuelTankModelCentrifugalBurn_t :
 	public FuelTankModel
 {
@@ -227,14 +233,15 @@ enum FuelTankModelTypes {
 	TANK_MODEL_LAST_MODEL,
 };
 
-extern FuelTankModelConstantVolume_t FuelTankModelConstantVolume;
-extern FuelTankModelConstantDensity_t FuelTankModelConstantDensity;
-extern FuelTankModelEmptying_t FuelTankModelEmptying;
-extern FuelTankModelUniformBurn_t FuelTankModelUniformBurn;
-extern FuelTankModelCentrifugalBurn_t FuelTankModelCentrifugalBurn;
+extern FuelTankModelConstantVolume_t FuelTankModelConstantVolume; //!< fuel tank variable
+extern FuelTankModelConstantDensity_t FuelTankModelConstantDensity; //!< fuel tank variable
+extern FuelTankModelEmptying_t FuelTankModelEmptying; //!< fuel tank variable
+extern FuelTankModelUniformBurn_t FuelTankModelUniformBurn; //!< fuel tank variable
+extern FuelTankModelCentrifugalBurn_t FuelTankModelCentrifugalBurn; //!< fuel tank variable
 
-extern FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL];
+extern FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL];  //!< fuel tank variable
 
+/*! @brief fuel tank model class */
 class FuelTank :
 	public StateEffector, public SysModel
 {

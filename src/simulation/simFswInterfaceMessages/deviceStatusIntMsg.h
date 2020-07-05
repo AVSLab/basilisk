@@ -20,9 +20,6 @@
 #ifndef BASILISK_DEVICESTATUSINTMSG_H
 #define BASILISK_DEVICESTATUSINTMSG_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 enum deviceState {On = 1, Off = 0};
 
@@ -32,6 +29,5 @@ typedef struct{
 }DeviceStatusIntMsg;
 //dataNodeStatusIntMsg
 //uint64_t dataStatus
-/*! @} */
 
 #endif //BASILISK_DEVICESTATUSINTMSG_H

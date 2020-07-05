@@ -47,7 +47,7 @@ typedef struct {
 typedef struct {
     char posFitOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output navigation message for pos/vel*/
     char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
-    ChebyEphemRecord ephArray[MAX_CHEB_RECORDS]; /*! [-] Array of Chebyshev records for ephemeris*/
+    ChebyEphemRecord ephArray[MAX_CHEB_RECORDS]; /*!< [-] Array of Chebyshev records for ephemeris*/
 
     int32_t posFitOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
     int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/

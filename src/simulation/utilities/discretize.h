@@ -24,12 +24,6 @@
 #include <stdint.h>
 #include <Eigen/Dense>
 
-/*! \addtogroup Sim Utility Group
- *  This group contains the simulation utilities that are used globally on the 
- *  simulation side of the software.  Note that FSW should not generally use  
- *  these utilities once we reach a CDR level of maturity on a project.
- * @{
- */
 
 typedef enum {
     TO_ZERO,
@@ -47,24 +41,30 @@ public:
     Discretize(uint8_t numStates);
     ~Discretize();
 //    void setLSBByBits(uint8_t numBits, double min, double max);
-    /*!@brief Method determines the size of an output data bin (bit-value) making sure that zero is
-     a possible output and giving proportionate numbers of bits to the size of max and min void*/
-    void setLSB(Eigen::VectorXd givenLSB) {this->LSB = givenLSB;}
+//    /*!@brief Method determines the size of an output data bin (bit-value) making sure that zero is
+//     a possible output and giving proportionate numbers of bits to the size of max and min void*/
+
     /*!@brief Avoid calculating bit value (bin size) and just set it because a resolution is known
+       @param givenLSB
        @return void*/
+    void setLSB(Eigen::VectorXd givenLSB) {this->LSB = givenLSB;}
+
     void setRoundDirection(roundDirection_t direction);
+
     /*!@brief Sets the round direction (toZero, fromZero, near) for discretization
-       @return void*/
-    void setCarryError(bool carryErrorIn){this->carryError = carryErrorIn;}
-    /*!@brief Sets the round direction (toZero, fromZero, near) for discretization
+     @param carryErrorIn
      @return void*/
-    Eigen::VectorXd discretize(Eigen::VectorXd undiscretizedVector);
+    void setCarryError(bool carryErrorIn){this->carryError = carryErrorIn;}
+
     /*!@brief Discretizes the given truth vector according to a least significant bit (binSize)
-       @param newBounds the bounds to put on the random walk states
+       @param undiscretizedVector
        @return vector of discretized values*/
-    Eigen::VectorXd getDiscretizationErrors(){return(this->discErrors);}
+    Eigen::VectorXd discretize(Eigen::VectorXd undiscretizedVector);
+
     /*!@brief Get the discretization errors
      @return the errors due to discretization in a corresponding vector*/
+    Eigen::VectorXd getDiscretizationErrors(){return(this->discErrors);}
+
     Eigen::VectorXd LSB;                //!< -- size of bin, bit value, least significant bit
     
 private:
@@ -74,6 +74,5 @@ private:
     bool carryError;                    //!< -- true if discError should be added next time around, false if not.
 };
 
-/*! @} */
 
 #endif /* _discretize_HH_ */

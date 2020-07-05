@@ -22,9 +22,6 @@
 #ifndef _ACC_DATA_MESSAGE_H
 #define _ACC_DATA_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 /*! @brief Structure used to define accelerometer package data */
 typedef struct {
@@ -34,6 +31,5 @@ typedef struct {
     BSKLogger *bskLogger;   //!< BSK Logging
 }AccPktDataFswMsg;
 
-/* @} */
 
 #endif

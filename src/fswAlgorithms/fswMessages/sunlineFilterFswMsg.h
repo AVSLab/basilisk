@@ -20,9 +20,6 @@
 #ifndef SUNLINE_FILTER_MESSAGE_H
 #define SUNLINE_FILTER_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 #define SKF_N_STATES 6
 #define SKF_N_STATES_SWITCH 6
@@ -41,6 +38,5 @@ typedef struct {
     int numObs;                                 //!< [-] Valid observation count for this frame
 }SunlineFilterFswMsg;
 
-/* @} */
 
 #endif

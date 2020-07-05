@@ -29,10 +29,15 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method sets up the module output message of type [RateCmdFswMsg](\ref RateCmdFswMsg).
+/*!
+ \verbatim embed:rst
+    This method sets up the module output message of type :ref:`RateCmdFswMsg`.
+ \endverbatim
+
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The module identifier
+*/
 void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
@@ -45,7 +50,8 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
  Its primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The module identifier
+*/
 void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID from the input guidance message */
@@ -57,7 +63,9 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the MRP steering control
- */
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
+*/
 void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
@@ -68,6 +76,7 @@ void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, int64
  @return void
  @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime,
     int64_t moduleID)

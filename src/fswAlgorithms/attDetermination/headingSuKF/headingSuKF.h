@@ -30,6 +30,7 @@
 #include "simulation/utilities/bskLogging.h"
 
 
+/*! @brief Top level structure for the SuKF heading module data */
 typedef struct {
     char opnavOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
@@ -52,7 +53,7 @@ typedef struct {
     double noiseSF;               /*!< [-]  Scale factor for noise */
     
     double bVec_B[HEAD_N_STATES];       /*!< [-] current vector of the b frame used to make frame */
-    double switchTresh;             /*!< [-]  Threshold for switching frames */
+    double switchTresh;                 /*!< [-]  Threshold for switching frames */
     
     double stateInit[HEAD_N_STATES_SWITCH];    /*!< [-] State to initialize filter to*/
     double state[HEAD_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
@@ -61,13 +62,13 @@ typedef struct {
 	double wC[2 * HEAD_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 
 	double sBar[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
-    double covarInit[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];        /*!< [-] covariance to init to*/
+    double covarInit[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];    /*!< [-] covariance to init to*/
 	double covar[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];        /*!< [-] covariance */
-    double xBar[HEAD_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
+    double xBar[HEAD_N_STATES_SWITCH];                              /*!< [-] Current mean state estimate*/
 
-	double obs[OPNAV_MEAS];          /*!< [-] Observation vector for frame*/
-	double yMeas[OPNAV_MEAS*(2*HEAD_N_STATES_SWITCH+1)];        /*!< [-] Measurement model data */
-    double postFits[OPNAV_MEAS];  /*!< [-] PostFit residuals */
+	double obs[OPNAV_MEAS];                                         /*!< [-] Observation vector for frame*/
+	double yMeas[OPNAV_MEAS*(2*HEAD_N_STATES_SWITCH+1)];            /*!< [-] Measurement model data */
+    double postFits[OPNAV_MEAS];                                    /*!< [-] PostFit residuals */
     
 	double SP[(2*HEAD_N_STATES_SWITCH+1)*HEAD_N_STATES_SWITCH];     /*!< [-]    sigma point matrix */
 
@@ -79,7 +80,7 @@ typedef struct {
 
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttIntMsg outputHeading;   /*!< -- Output heading estimate data */
-    OpNavFswMsg opnavInBuffer;
+    OpNavFswMsg opnavInBuffer;  /*!< -- message buffer */
     
     int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/

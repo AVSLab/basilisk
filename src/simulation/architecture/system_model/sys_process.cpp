@@ -30,9 +30,9 @@ SysProcess :: SysProcess()
     this->disableProcess();
 }
 /*! Make a process AND attach a storage bucket with the provided name. Give
- * the process the same name.
- @return void
- @param std::string messagecontainer The amount of nanoseconds between calls to this Task.
+    the process the same name.
+    @return void
+    @param messageContainer The amount of nanoseconds between calls to this Task.
  */
 SysProcess::SysProcess(std::string messageContainer)
 {
@@ -88,7 +88,7 @@ void SysProcess::crossInitProcess()
 /*! This method resets each task and associated model-set inside the process
     ensuring that all parameters go back to their default state.
     @return void
-    @param uint64_t currentTime Current simulation time in ns that reset is occurring at
+    @param currentTime Current simulation time in ns that reset is occurring at
 */
 void SysProcess::resetProcess(uint64_t currentTime)
 {
@@ -169,11 +169,11 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     this->nextTaskTime = it->NextTaskStart;
 }
 
-/*! This method adds a new task into the T\task list.  Note that
+/*! This method adds a new task into the Task list.  Note that
  * taskPriority parameter is option as it defaults to -1 (lowest)
  @return void
- @param SysModelTask* newTask The new task that we are adding to the list
- @param int32_t taskPriority The selected priority of the task being added
+ @param newTask The new task that we are adding to the list
+ @param taskPriority The selected priority of the task being added
  */
 void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
 {
@@ -191,7 +191,7 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  the caller will set the correct parameters in the calling argument and that
  the simulation will faithfully schedule it.
  @return void
- @param ModelScheduleEntry& taskCall Pointer to a struct that contains start time and task handle.
+ @param taskCall Pointer to a struct that contains start time and task handle.
  */
 void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
 {
@@ -258,8 +258,8 @@ void SysProcess::enableAllTasks()
 /*! This method updates a specified task's period once it locates that task 
     in the list.  It will warn the user if a task is not found.
     @return void
-	@param std::string taskName The name of the task you want to change period of
-	@param uint64_t newPeriod the new number of nanoseconds you want between calls
+	@param taskName The name of the task you want to change period of
+	@param newPeriod the new number of nanoseconds you want between calls
 */
 void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 {

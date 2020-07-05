@@ -26,7 +26,8 @@
 /*! This method creates the two moduel output messages.
  @return void
  @param configData The configuration data associated with the OD filter
- */
+ @param moduleId The ID associated with the configData
+*/
 void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 {
     /*! - Create a navigation message to be used for control */
@@ -41,6 +42,7 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 /*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with the OD filter
+ @param moduleId The ID associated with the configData
  */
 void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 {
@@ -55,6 +57,7 @@ void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
  @return void
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleId The ID associated with the configData
  */
 void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                        int64_t moduleId)
@@ -135,6 +138,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleId The ID associated with the configData
  */
 void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                         int64_t moduleId)
@@ -228,7 +232,9 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
 /*! This method propagates a relative OD state vector forward in time.  Note
  that the calling parameter is updated in place to save on data copies.
  @return void
+ @param configData The configuration data associated with the OD filter
  @param stateInOut The state that is propagated
+ @param dt Time step (s)
  */
 void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
 {
@@ -273,6 +279,8 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
 /*! Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here.
  @return double Next state
  @param state The starting state
+ @param muPlanet Planet gravity constant
+ @param stateDeriv State derivative vector
  */
 void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *stateDeriv)
 {
@@ -435,7 +443,6 @@ void relODuKFMeasModel(RelODuKFConfig *configData)
  updates the state/covariance with that information.
  @return void
  @param configData The configuration data associated with the OD filter
- @param updateTime The time that we need to fix the filter to (seconds)
  */
 int relODuKFMeasUpdate(RelODuKFConfig *configData)
 {

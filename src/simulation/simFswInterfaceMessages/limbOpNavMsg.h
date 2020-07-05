@@ -22,9 +22,6 @@
 
 #include "macroDefinitions.h"
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 /*! @brief Structure used to define the message containing planet limb data for opNav*/
 typedef struct {
@@ -36,7 +33,6 @@ typedef struct {
     double limbPoints[2*MAX_LIMB_PNTS];          //!< -- [-] (x, y) in pixels of the limb points*/
 }LimbOpNavMsg;
 
-/*! @} */
 
 #endif
 

@@ -46,9 +46,12 @@ DataNodeBase::~DataNodeBase()
     return;
 }
 
-/*! SelfInit creates a DataNodeUsageSimMsg using the provided message output name.
+/*!
+ \verbatim embed:rst
+    SelfInit creates a :ref:`DataNodeUsageSimMsg` using the provided message output name.
+ \endverbatim
  @return void
-*/
+ */
 void DataNodeBase::SelfInit()
 {
     this->nodeDataOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->nodeDataOutMsgName, sizeof(DataNodeUsageSimMsg),this->outputBufferCount, "DataNodeUsageSimMsg",this->moduleID);
@@ -170,3 +173,46 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
     this->writeMessages(CurrentSimNanos);
     return;
 }
+
+
+/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
+ @return void
+ */
+void DataNodeBase::customSelfInit()
+{
+    return;
+}
+
+/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
+ @return void
+ */
+void DataNodeBase::customCrossInit()
+{
+    return;
+}
+
+/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+ @return void
+ */
+void DataNodeBase::customReset(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! custom Write method, similar to customSelfInit.
+ @return void
+ */
+void DataNodeBase::customWriteMessages(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! Custom read method, similar to customSelfInit; returns `true' by default.
+ @return void
+ */
+bool DataNodeBase::customReadMessages()
+{
+    return true;
+}
+
+

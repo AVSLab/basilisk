@@ -25,9 +25,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <math.h>
 #include <Eigen/Dense>
 
-/*! \addtogroup Sim Utility Group
- * @{
- */
 
 /*! @brief Collection of utility functions for converting in/out of planet-centric reference frames.
 

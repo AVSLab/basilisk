@@ -26,6 +26,7 @@
 /*! This method initializes the configData for theCSS WLS estimator.
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
+ @param moduleID The module identifier
  */
 void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
@@ -42,6 +43,7 @@ void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
+ @param moduleID The module identifier
  */
 void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
@@ -57,6 +59,8 @@ void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the guidance module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -168,6 +172,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     int64_t moduleID)

@@ -33,7 +33,10 @@
 
 
 
-/*! This method creates the module output message of type [AttRefFswMsg](\ref AttRefFswMsg).
+/*!
+ \verbatim embed:rst
+    This method creates the module output message of type :ref:`AttRefFswMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
@@ -47,8 +50,11 @@ void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
                                                moduleID);
 }
 
-/*! This method performs the second stage of initialization
- interface.  This module has two messages to subscribe to of type [EphemerisIntMsg](\ref EphemerisIntMsg) and [NavTransIntMsg](\ref NavTransIntMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization
+    interface.  This module has two messages to subscribe to of type :ref:`EphemerisIntMsg` and :ref:`NavTransIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
@@ -70,6 +76,7 @@ void CrossInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
 /*! This method performs the module reset capability.  This module has no actions.
  @return void
  @param configData The configuration data associated with this module
+ @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
 void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)

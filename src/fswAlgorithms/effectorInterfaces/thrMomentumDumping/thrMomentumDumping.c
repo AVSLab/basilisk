@@ -28,10 +28,13 @@
 #include <stdio.h>
 
 
-/*! This method initializes the configData for this module.  It creates a single output message of type
- [THRArrayOnTimeCmdIntMsg](\ref THRArrayOnTimeCmdIntMsg).
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.  It creates a single output message of type :ref:`THRArrayOnTimeCmdIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
@@ -42,10 +45,14 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t m
                                                moduleID);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It links to 3 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg), [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg) and [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    It links to 3 required input messages of type :ref:`THRArrayCmdForceFswMsg`, :ref:`THRArrayConfigFswMsg` and :ref:`CmdTorqueBodyIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
@@ -69,6 +76,8 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t 
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -122,6 +131,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {

@@ -29,6 +29,7 @@
  output message
  @return void
  @param configData The configuration data associated with the delta-V maneuver guidance
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
 {
@@ -46,6 +47,7 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t mod
  created elsewhere.
  @return void
  @param configData The configuration data associated with the attitude maneuver guidance
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
 {
@@ -64,6 +66,7 @@ void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t mo
  @return void
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
  */
 void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
     int64_t moduleID)

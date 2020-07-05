@@ -683,8 +683,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
     dataframe.
 
 
-    Table headers
-    -------------
+    **Table headers**
 
     To print nice column headers, supply the second argument (`headers`):
 
@@ -706,8 +705,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
     Bob    M         19
 
 
-    Column alignment
-    ----------------
+    **Column alignment**
 
     `tabulate` tries to detect column types automatically, and aligns
     the values properly. By default it aligns decimal points of the
@@ -717,8 +715,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
     (only for `numalign`), and None (to disable alignment).
 
 
-    Table formats
-    -------------
+    **Table formats**
 
     `floatfmt` is a format specification used for columns which
     contain numeric data with a decimal point.
@@ -736,7 +733,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
 
     Various plain-text table formats (`tablefmt`) are supported:
     'plain', 'simple', 'grid', 'pipe', 'orgtbl', 'rst', 'mediawiki',
-     'latex', and 'latex_booktabs'. Variable `tabulate_formats` contains the list of
+    'latex', and 'latex_booktabs'. Variable `tabulate_formats` contains the list of
     currently supported formats.
 
     "plain" format doesn't use any pseudographics to draw tables,

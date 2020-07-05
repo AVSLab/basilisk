@@ -26,6 +26,7 @@
 /*! This method creates the two moduel output messages.
  @return void
  @param configData The configuration data associated with the OD filter
+ @param moduleId The ID associated with the configData
  */
 void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
@@ -41,6 +42,7 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t modul
 /*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with the OD filter
+ @param moduleId The ID associated with the configData
  */
 void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
@@ -56,6 +58,7 @@ void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t modu
  @return void
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleId The ID associated with the configData
  */
 void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                        int64_t moduleId)
@@ -136,6 +139,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
  @return void
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleId The ID associated with the configData
  */
 void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                         int64_t moduleId)
@@ -236,7 +240,9 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
 /*! This method propagates a relative OD state vector forward in time.  Note
  that the calling parameter is updated in place to save on data copies.
  @return void
+ @param configData The configuration data associated with the OD filter
  @param stateInOut The state that is propagated
+ @param dt Time step (s)
  */
 void relODStateProp(PixelLineBiasUKFConfig *configData, double *stateInOut, double dt)
 {
@@ -281,6 +287,8 @@ void relODStateProp(PixelLineBiasUKFConfig *configData, double *stateInOut, doub
 /*! Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here.
  @return double Next state
  @param state The starting state
+ @param muPlanet planet gravity constant
+ @param stateDeriv derivative of state set
  */
 void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlanet, double *stateDeriv)
 {
@@ -500,7 +508,6 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
  updates the state/covariance with that information.
  @return void
  @param configData The configuration data associated with the OD filter
- @param updateTime The time that we need to fix the filter to (seconds)
  */
 int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
 {

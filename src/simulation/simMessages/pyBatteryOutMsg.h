@@ -23,9 +23,6 @@
 #include <string>
 #include <stdint.h>
 
-/*! \defgroup simMessages
- *  @{
- */
 
 //! @brief Container for all battery output data
 /*! This structure contains all data output by the python battery module*/
@@ -41,6 +38,5 @@ typedef struct {
     double batteryVoltage;                      //!< [V] total voltage across battery
 }PyBatteryOutMsg;
 
-/* @} */
 
 #endif

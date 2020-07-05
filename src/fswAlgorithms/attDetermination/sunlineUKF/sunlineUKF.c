@@ -30,6 +30,7 @@
  output message
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
+ @param moduleID The module identifier
  */
 void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
 {
@@ -49,7 +50,8 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
  created elsewhere.
  @return void
  @param configData The configuration data associated with the CSS interface
- */
+ @param moduleID The module identifier
+*/
 void CrossInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
 {
     /*! - Find the message ID for the coarse sun sensor data message */
@@ -66,6 +68,7 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
@@ -150,6 +153,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
     int64_t moduleID)
@@ -226,7 +230,8 @@ void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
 /*! This method propagates a sunline state vector forward in time.  Note 
     that the calling parameter is updated in place to save on data copies.
 	@return void
-	@param stateInOut The state that is propagated
+    @param stateInOut The state that is propagated
+    @param dt Time step (s)
 */
 void sunlineStateProp(double *stateInOut, double dt)
 {

@@ -220,7 +220,9 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method computes the fraction of sunlight given an eclipse.
- @param std::string msgName
+ @param planetRadius
+ @param r_HB_N
+ @param s_BP_N
  @return double fractionShadow The eclipse shadow fraction.
  */
 double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N)
@@ -252,14 +254,13 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     return shadowFraction;
 }
 
-/*! This method adds spacecraft state data message names to a vector, creates
- a new unique output message name for the eclipse data message and returns
- this to the user so that they may assign the eclipse message name to other 
- modules requiring eclipse data.
- @param std::string msgName The message name for the spacecraft state data
- for which to compute the eclipse data.
- @return std::string newEclipseMsgName The unique eclipse data msg name
- associated with the given input state message name.
+/*!
+    This method adds spacecraft state data message names to a vector, creates
+    a new unique output message name for the eclipse data message and returns
+    this to the user so that they may assign the eclipse message name to other
+    modules requiring eclipse data.
+    @param msgName The message name for the spacecraft state data for which to compute the eclipse data.
+    @return std::string newEclipseMsgName The unique eclipse data msg name associated with the given input state message name.
  */
 std::string Eclipse::addPositionMsgName(std::string msgName)
 {
@@ -271,7 +272,7 @@ std::string Eclipse::addPositionMsgName(std::string msgName)
 }
 
 /*! This method adds planet state data message names to a vector.
- @param std::string planetName The planet name
+ @param planetName The planet name
  @return void
  */
 void Eclipse::addPlanetName(std::string planetName)
@@ -311,10 +312,8 @@ void Eclipse::addPlanetName(std::string planetName)
 }
 
 /*! This method return planet radii.
- @param std::string planetSpiceName The planet name according
- to the spice NAIF Integer ID codes.
- @return double  The equatorial radius in metres
- associated with the given planet name.
+ @param  planetSpiceName The planet name according to the spice NAIF Integer ID codes.
+ @return double  The equatorial radius in metres associated with the given planet name.
  */
 double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
 {

@@ -27,7 +27,7 @@
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief linear spring mass damper state effector class */
 class LinearSpringMassDamper :
 	public StateEffector, public SysModel, public FuelSlosh
 {

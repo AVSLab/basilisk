@@ -23,12 +23,9 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
-/*! \defgroup thrustGroupData
- *  @{
- */
 
 
- /* @brief Sub structure that contains all of the configuration data and output
+/*! @brief Sub structure that contains all of the configuration data and output
     information for a single thruster group.  There can be several thruster 
     groups available in a single control scheme.
 */
@@ -43,6 +40,5 @@ typedef struct {
     THRArrayOnTimeCmdIntMsg cmdRequests; /*!< - The array of on-time command requests sent to thrusters*/
 }ThrustGroupData;
 
-/*! @} */
 
 #endif

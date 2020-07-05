@@ -24,9 +24,6 @@
 #include <stdint.h>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/bskLogging.h"
-/*! \addtogroup SimArchGroup
- * @{
- */
 
 //! Structure used to pair a model and its requested priority
 typedef struct {
@@ -41,17 +38,17 @@ class SysModelTask
 public:
     SysModelTask();
     SysModelTask(uint64_t InputPeriod, uint64_t InputDelay=0,
-                   uint64_t FirstStartTime=0);
+                   uint64_t FirstStartTime=0); //!< class method
     ~SysModelTask();
-    void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
-    void SelfInitTaskList();
-    void CrossInitTaskList();
-    void ExecuteTaskList(uint64_t CurrentSimTime);
-	void ResetTaskList(uint64_t CurrentSimTime);
-    void ResetTask() {this->NextStartTime = this->FirstTaskTime;}
-	void enableTask() {this->taskActive = true;}
-	void disableTask() {this->taskActive = false;}
-    void updatePeriod(uint64_t newPeriod);
+    void AddNewObject(SysModel *NewModel, int32_t Priority = -1); //!< class method
+    void SelfInitTaskList(); //!< class method
+    void CrossInitTaskList(); //!< class method
+    void ExecuteTaskList(uint64_t CurrentSimTime); //!< class method
+	void ResetTaskList(uint64_t CurrentSimTime); //!< class method
+    void ResetTask() {this->NextStartTime = this->FirstTaskTime;} //!< class method
+	void enableTask() {this->taskActive = true;} //!< class method
+	void disableTask() {this->taskActive = false;} //!< class method
+    void updatePeriod(uint64_t newPeriod); //!< class method
     
 public:
     std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
@@ -65,5 +62,4 @@ public:
   BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
-/*! @} */
 #endif /* _SysModelTask_H_ */

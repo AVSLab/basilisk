@@ -27,9 +27,6 @@
 #include "simMessages/boreAngleSimMsg.h"
 #include "utilities/bskLogging.h"
 
-/*! \addtogroup SimModelGroup
- * @{
- */
 
 /*! @brief A class to perform a range of boresight related calculations.
  The module
@@ -71,6 +68,5 @@ private:
     int64_t AngOutMsgID;              // (-) Message ID for outgoing data
 };
 
-/*! @} */
 
 #endif

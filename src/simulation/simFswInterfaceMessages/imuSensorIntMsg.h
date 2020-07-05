@@ -20,9 +20,6 @@
 #ifndef _IMU_SENSOR_MESSAG_H
 #define _IMU_SENSOR_MESSAG_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 //! @brief Simulated IMU Sensor output message definition.
 typedef struct{
@@ -32,6 +29,5 @@ typedef struct{
     double AngVelPlatform[3];       //!< r/s Angular velocity in platform frame
 }IMUSensorIntMsg;
 
-/*! @} */
 
 #endif

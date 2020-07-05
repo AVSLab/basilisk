@@ -27,6 +27,7 @@
     It initializes the output message in the messaging system.
  @return void
  @param configData The configuration data associated with the Nav aggregation interface
+ @param moduleID The Basilisk module identifier
  */
 void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
@@ -39,6 +40,7 @@ void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
     and saves the ID.
  @return void
  @param configData The configuration data associated with the aggregate nav interface
+ @param moduleID The Basilisk module identifier
  */
 void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
@@ -84,7 +86,7 @@ void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
     }
 }
 
-/*////////////////////////////////////////////////////Experimenting QuickSort START////////////////*/
+/* Experimenting QuickSort START */
 void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q){
     AccPktDataFswMsg t;
     t=*p;
@@ -151,7 +153,7 @@ void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
         }
     }
 }
-/*////////////////////////////////////////////////////Experimenting QuickSort END////////////////*/
+/* Experimenting QuickSort END */
 
 
 /*! This method takes the navigation message snippets created by the various
@@ -160,6 +162,7 @@ void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
  @return void
  @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, int64_t moduleID)
 {

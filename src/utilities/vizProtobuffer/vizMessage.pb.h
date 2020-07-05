@@ -2620,11 +2620,23 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 show24hrclock() const;
   void set_show24hrclock(::google::protobuf::int32 value);
 
+  // double keyboardAngularRate = 25;
+  void clear_keyboardangularrate();
+  static const int kKeyboardAngularRateFieldNumber = 25;
+  double keyboardangularrate() const;
+  void set_keyboardangularrate(double value);
+
   // int32 showDataRateDisplay = 24;
   void clear_showdataratedisplay();
   static const int kShowDataRateDisplayFieldNumber = 24;
   ::google::protobuf::int32 showdataratedisplay() const;
   void set_showdataratedisplay(::google::protobuf::int32 value);
+
+  // double keyboardZoomRate = 26;
+  void clear_keyboardzoomrate();
+  static const int kKeyboardZoomRateFieldNumber = 26;
+  double keyboardzoomrate() const;
+  void set_keyboardzoomrate(double value);
 
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
@@ -2651,7 +2663,9 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showspacecraftassprites_;
   ::google::protobuf::int32 showcelestialbodiesassprites_;
   ::google::protobuf::int32 show24hrclock_;
+  double keyboardangularrate_;
   ::google::protobuf::int32 showdataratedisplay_;
+  double keyboardzoomrate_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -5685,6 +5699,34 @@ inline void VizMessage_VizSettingsPb::set_showdataratedisplay(::google::protobuf
   
   showdataratedisplay_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showDataRateDisplay)
+}
+
+// double keyboardAngularRate = 25;
+inline void VizMessage_VizSettingsPb::clear_keyboardangularrate() {
+  keyboardangularrate_ = 0;
+}
+inline double VizMessage_VizSettingsPb::keyboardangularrate() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.keyboardAngularRate)
+  return keyboardangularrate_;
+}
+inline void VizMessage_VizSettingsPb::set_keyboardangularrate(double value) {
+  
+  keyboardangularrate_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.keyboardAngularRate)
+}
+
+// double keyboardZoomRate = 26;
+inline void VizMessage_VizSettingsPb::clear_keyboardzoomrate() {
+  keyboardzoomrate_ = 0;
+}
+inline double VizMessage_VizSettingsPb::keyboardzoomrate() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.keyboardZoomRate)
+  return keyboardzoomrate_;
+}
+inline void VizMessage_VizSettingsPb::set_keyboardzoomrate(double value) {
+  
+  keyboardzoomrate_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.keyboardZoomRate)
 }
 
 // -------------------------------------------------------------------

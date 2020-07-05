@@ -22,9 +22,6 @@
 
 #include <Eigen/Dense>
 
-/*! \defgroup simMessages
- *  @{
- */
 
 
 /*! This structure is used in the messaging system to communicate what the
@@ -39,6 +36,5 @@ typedef struct {
     double thrusterDirection[3] = {0};   //!< -- Unit vector of thruster pointing
 }THROutputSimMsg;
 
-/* @} */
 
 #endif

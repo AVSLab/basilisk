@@ -38,7 +38,7 @@
 
 
 
-
+/*! @brief VSCMG state effector class */
 class VSCMGStateEffector:  public SysModel, public StateEffector {
 public:
     VSCMGStateEffector();
@@ -48,7 +48,7 @@ public:
     void updateEffectorMassProps(double integTime);
 	void SelfInit();
 	void CrossInit();
-	void AddVSCMG(VSCMGConfigSimMsg *NewVSCMG) {VSCMGData.push_back(*NewVSCMG);}
+	void AddVSCMG(VSCMGConfigSimMsg *NewVSCMG) {VSCMGData.push_back(*NewVSCMG);} //!< class method
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
@@ -66,12 +66,12 @@ public:
     uint64_t OutputBufferCount; 				//!< -- Count on number of buffers to output
 	std::vector<VSCMGCmdSimMsg> NewVSCMGCmds; 	//!< -- Incoming torque commands
 	VSCMGSpeedIntMsg outputStates; 				//!< (-) Output data from the VSCMGs
-    std::string nameOfVSCMGOmegasState;
-    std::string nameOfVSCMGThetasState;
-	std::string nameOfVSCMGGammasState;
-	std::string nameOfVSCMGGammaDotsState;
-	int numVSCMG;
-	int numVSCMGJitter;
+    std::string nameOfVSCMGOmegasState;         //!< class variable
+    std::string nameOfVSCMGThetasState;         //!< class variable
+	std::string nameOfVSCMGGammasState;         //!< class variable
+	std::string nameOfVSCMGGammaDotsState;      //!< class variable
+	int numVSCMG;                               //!< class variable
+	int numVSCMGJitter;                         //!< class variable
   BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
@@ -82,13 +82,13 @@ private:
 	VSCMGArrayTorqueIntMsg IncomingCmdBuffer; 	//!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                  	//!< -- Time for previous valid thruster firing
 
-	StateData *hubSigma;
-	StateData *hubOmega;
-	StateData *hubVelocity;
-	StateData *OmegasState;
-	StateData *thetasState;
-	StateData *gammasState;
-	StateData *gammaDotsState;
+	StateData *hubSigma;                        //!< class variable
+	StateData *hubOmega;                        //!< class variable
+	StateData *hubVelocity;                     //!< class variable
+	StateData *OmegasState;                     //!< class variable
+	StateData *thetasState;                     //!< class variable
+	StateData *gammasState;                     //!< class variable
+	StateData *gammaDotsState;                  //!< class variable
 
 };
 

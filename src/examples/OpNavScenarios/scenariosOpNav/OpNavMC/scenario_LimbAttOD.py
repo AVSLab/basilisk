@@ -41,7 +41,7 @@ import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../../plotting')
+sys.path.append(path + '/../../plottingOpNav')
 import OpNav_Plotting as BSK_plt
 
 # Create your own scenario child class

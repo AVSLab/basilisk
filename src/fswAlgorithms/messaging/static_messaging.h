@@ -25,9 +25,6 @@
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
 
-/*! \defgroup messaging
- * @{
- */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,6 +44,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif

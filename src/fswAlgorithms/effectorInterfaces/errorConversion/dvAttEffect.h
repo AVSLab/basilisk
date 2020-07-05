@@ -34,6 +34,7 @@
 #define MAX_NUM_THR_GROUPS 4
 
 
+/*! @brief effective thruster pair structure */
 typedef struct {
     double onTime;              /*!< s   The requested on time for this thruster*/
     uint32_t thrustIndex;       /*!< -  The actual thruster index associated with on-time*/

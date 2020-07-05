@@ -28,7 +28,7 @@
 #include "simMessages/atmoPropsSimMsg.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief atmospheric density base class */
 class AtmosphereBase: public SysModel  {
 public:
     AtmosphereBase();
@@ -44,7 +44,7 @@ protected:
     bool readMessages();
     void updateLocalAtmosphere(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState);
-    virtual void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime) = 0;
+    virtual void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime) = 0;     //!< class method
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);

@@ -28,16 +28,17 @@
 #include <stdint.h>
 
 
+/*! @brief DV executation data structure */
 typedef struct {
     uint32_t burnExecuting;    /*!< [-] Flag indicating whether burn is executing*/
     uint32_t burnComplete;     /*!< [-] Flag indicating whether the burn is complete */
 }dvExecutionData;
 
-/*! @brief Top level structure for the nominal delta-V guidance*/
+/*! @brief Top level structure for the nominal delta-V guidance */
 typedef struct {
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output message*/
-    char inputNavDataName[MAX_STAT_MSG_LENGTH]; /*<! [-] The name of the incoming attitude command*/
-    char inputBurnDataName[MAX_STAT_MSG_LENGTH];/*<! [-] Input message that configures the vehicle burn*/
+    char inputNavDataName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the incoming attitude command*/
+    char inputBurnDataName[MAX_STAT_MSG_LENGTH];/*!< [-] Input message that configures the vehicle burn*/
     char outputThrName[MAX_STAT_MSG_LENGTH]; /*!< [-] Output thruster message name */
     double dvInit[3];        /*!< (m/s) DV reading off the accelerometers at burn start*/
     uint32_t burnExecuting;  /*!< (-) Flag indicating whether the burn is in progress or not*/

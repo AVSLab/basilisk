@@ -458,7 +458,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 
 /*! This method is here to write the output message structure into the specified
  message.
- @param CurrentClock The current time used for time-stamping the message
+ @param integTimeNanos The current time used for time-stamping the message
  @return void
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)

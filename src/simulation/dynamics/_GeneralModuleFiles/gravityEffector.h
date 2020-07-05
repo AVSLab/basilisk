@@ -29,20 +29,21 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "utilities/bskLogging.h"
 
+/*! @brief spherical harmonics class */
 class SphericalHarmonics
 {
 public:
-    double maxDeg;        //! [-] Maximum degree of the spherical harmonics
-    double radEquator;    //! [-] Reference radius for the planet
-    double muBody;        //! [-] Gravitation parameter for the planet
+    double maxDeg;        //!< [-] Maximum degree of the spherical harmonics
+    double radEquator;    //!< [-] Reference radius for the planet
+    double muBody;        //!< [-] Gravitation parameter for the planet
     
-    std::vector<std::vector<double>> cBar;  //! [-] C coefficient set
-    std::vector<std::vector<double>> sBar;  //! [-] S coefficient set
-    std::vector<std::vector<double>> aBar;  //! [-] Normalized 'derived' Assoc. Legendre
-    std::vector<std::vector<double>> n1;    //! [-] What am I
-    std::vector<std::vector<double>> n2;    //! [-] What am I
-    std::vector<std::vector<double>> nQuot1;//! [-] What am I
-    std::vector<std::vector<double>> nQuot2;//! [-] What am I
+    std::vector<std::vector<double>> cBar;  //!< [-] C coefficient set
+    std::vector<std::vector<double>> sBar;  //!< [-] S coefficient set
+    std::vector<std::vector<double>> aBar;  //!< [-] Normalized 'derived' Assoc. Legendre
+    std::vector<std::vector<double>> n1;    //!< [-] What am I
+    std::vector<std::vector<double>> n2;    //!< [-] What am I
+    std::vector<std::vector<double>> nQuot1;//!< [-] What am I
+    std::vector<std::vector<double>> nQuot2;//!< [-] What am I
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
@@ -50,11 +51,11 @@ public:
 
     SphericalHarmonics();
     ~SphericalHarmonics();
-    bool initializeParameters();            //! [-] configure all spher-harm based on inputs
-    double getK(const unsigned int degree);
+    bool initializeParameters();            //!< [-] configure all spher-harm based on inputs
+    double getK(const unsigned int degree); //!< class method
     Eigen::Vector3d computeField(const Eigen::Vector3d pos_Pfix, unsigned int degree,
                                                      bool include_zero_degree);
-    bool harmReady();
+    bool harmReady();                       //!< class variable
     
 };
 
@@ -79,7 +80,7 @@ public:
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
-    void registerProperties(DynParamManager& statesIn);
+    void registerProperties(DynParamManager& statesIn);  //!< class method
 
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
@@ -91,7 +92,7 @@ public:
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
     SpicePlanetStateSimMsg localPlanet;//!< [-]   Class storage of ephemeris info from scheduled portion
-    SingleMessageHeader localHeader;//!  [-]      Header information for ephemeris storage
+    SingleMessageHeader localHeader;//!< [-]      Header information for ephemeris storage
     std::string bodyInMsgName;      //!<          Gravitational body name
     std::string outputMsgName;      //!<          Ephemeris information relative to display frame
     std::string planetEphemName;    //!<          Ephemeris name for the planet
@@ -108,44 +109,44 @@ public:
 };
 
 
-
+/*! @brief gravity effector class */
 class GravityEffector : public SysModel {
 public:
     GravityEffector();
     ~GravityEffector();
-    void SelfInit();
-    void CrossInit();
+    void SelfInit(); //!< class method
+    void CrossInit(); //!< class method
     void UpdateState(uint64_t CurrentSimNanos);
-    void linkInStates(DynParamManager& statesIn);
+    void linkInStates(DynParamManager& statesIn); //!< class method
     void registerProperties(DynParamManager& statesIn);
     void computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
     void updateEnergyContributions(Eigen::Vector3d r_CN_N, double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
-    void setGravBodies(std::vector<GravBodyData *> gravBodies);
-    void addGravBody(GravBodyData* gravBody);
-    void prependSpacecraftNameToStates();
+    void setGravBodies(std::vector<GravBodyData *> gravBodies); //!< class method
+    void addGravBody(GravBodyData* gravBody); //!< class method
+    void prependSpacecraftNameToStates(); //!< class method
     
 private:
-    Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);
-    void writeOutputMessages(uint64_t currentSimNanos);
+    Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData); //!< class method
+    void writeOutputMessages(uint64_t currentSimNanos); //!< class method
     
 public:
-    std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
-    std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times
-    std::vector<GravBodyData*> gravBodies;         //! [-] Vector of bodies we feel gravity from
+    std::string vehicleGravityPropName;            //!< [-] Name of the vehicle mass state
+    std::string systemTimeCorrPropName;            //!< [-] Name of the correlation between times
+    std::vector<GravBodyData*> gravBodies;         //!< [-] Vector of bodies we feel gravity from
     GravBodyData* centralBody;         //!<  Central body
-    std::string inertialPositionPropName;           //! [-] Name of the inertial position property
-    std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
-    std::string nameOfSpacecraftAttachedTo;         //! [-] Name of the s/c this gravity model is attached to
+    std::string inertialPositionPropName;           //!< [-] Name of the inertial position property
+    std::string inertialVelocityPropName;           //!< [-] Name of the inertial velocity property
+    std::string nameOfSpacecraftAttachedTo;         //!< [-] Name of the s/c this gravity model is attached to
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
-    Eigen::MatrixXd *timeCorr;                      //! [-] Time correlation property
-    int64_t centralBodyOutMsgId;                //! [-] Id for the central body spice data output message
-    std::string centralBodyOutMsgName;              //! [-] Unique name for the central body spice data output message
-    Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
-    Eigen::MatrixXd *inertialVelocityProperty;             //! [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *gravProperty;                  //!< [-] g_N property for output
+    Eigen::MatrixXd *timeCorr;                      //!< [-] Time correlation property
+    int64_t centralBodyOutMsgId;                //!< [-] Id for the central body spice data output message
+    std::string centralBodyOutMsgName;              //!< [-] Unique name for the central body spice data output message
+    Eigen::MatrixXd *inertialPositionProperty;             //!< [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *inertialVelocityProperty;             //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
 
 };
 

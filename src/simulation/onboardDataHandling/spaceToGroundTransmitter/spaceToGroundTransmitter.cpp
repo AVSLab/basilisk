@@ -40,13 +40,17 @@ SpaceToGroundTransmitter::~SpaceToGroundTransmitter(){
 
 /*! Adds a dataStorageStatusSimMsg name to be accessed by transmitter.
  @return void
- @param tmpScMsgName A spacecraft state message name.
+ @param tmpStorageUnitMsgName A spacecraft state message name.
  */
 void SpaceToGroundTransmitter::addStorageUnitToTransmitter(std::string tmpStorageUnitMsgName){
     this->storageUnitMsgNames.push_back(tmpStorageUnitMsgName);
     return;
 }
 
+/*! Adds a msg name to ground location access list
+    @return void
+    @param tmpAccessMsgName input name.
+*/
 void SpaceToGroundTransmitter::addAccessMsgToTransmitter(std::string tmpAccessMsgName){
     this->groundLocationAccessMsgNames.push_back(tmpAccessMsgName);
     return;
@@ -121,6 +125,8 @@ bool SpaceToGroundTransmitter::customReadMessages(){
 }
 
 /*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
+ @param dataUsageSimMsg
+ @param currentTime
 */
 void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg, double currentTime){
 

@@ -20,10 +20,7 @@
 #ifndef AtmoPropsSimMsg_H
 #define AtmoPropsSimMsg_H
 
-/*! \defgroup simMessages
- *  @{
- */
-
+/*! atmospheric property message definition */
 typedef struct {
     double neutralDensity;                      //!< kg/m^3 Local neutral particle density
     double localTemp;                           //!< K Local avg particle temperature

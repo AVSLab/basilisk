@@ -20,9 +20,6 @@
 #ifndef EPHEMERIS_OUTPUT_H
 #define EPHEMERIS_OUTPUT_H
 
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
 
 /*! @brief Message structure used to write ephemeris states out to other modules*/
 typedef struct {
@@ -31,6 +28,5 @@ typedef struct {
     double timeTag;                 //!< [s] vehicle Time-tag for state
 }EphemerisIntMsg;
 
-/*! @} */
 
 #endif

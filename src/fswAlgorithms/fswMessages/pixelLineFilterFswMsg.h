@@ -20,9 +20,6 @@
 #ifndef PIXLINE_FILTER_MESSAGE_H
 #define PIXLINE_FILTER_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 #define PIXLINE_N_STATES 9
 #define PIXLINE_DYN_STATES 6
@@ -39,6 +36,5 @@ typedef struct {
     int numObs;                                         //!< [-] Valid observation count for this frame
 }PixelLineFilterFswMsg;
 
-/* @} */
 
 #endif

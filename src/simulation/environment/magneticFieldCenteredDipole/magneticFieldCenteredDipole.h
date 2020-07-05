@@ -31,7 +31,7 @@
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 #include "utilities/bskLogging.h"
 
-
+/*! @brief magnetic field centered dipole class */
 class MagneticFieldCenteredDipole:  public MagneticFieldBase {
 public:
     MagneticFieldCenteredDipole();

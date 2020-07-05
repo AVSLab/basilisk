@@ -21,9 +21,6 @@
 #define SIM_THRUSTER_OPERATION_H
 #include <stdint.h>
 
-/*! \defgroup simMessages
- *  @{
- */
 
 
 //! @brief Container for current operational data of a given thruster
@@ -46,6 +43,5 @@ typedef struct {
 }THROperationSimMsg;
 
 
-/* @} */
 
 #endif

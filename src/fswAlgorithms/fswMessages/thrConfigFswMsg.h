@@ -20,9 +20,6 @@
 #ifndef FSW_THR_CONFIG_MESSAGE_H
 #define FSW_THR_CONFIG_MESSAGE_H
 
-/*! \defgroup fswMessages
- *  @{
- */
 
 
 /*! @brief Single Thruster configuration message */
@@ -32,6 +29,5 @@ typedef struct {
     double maxThrust;			//!< [N] Max thrust
 }THRConfigFswMsg;
 
-/* @} */
 
 #endif

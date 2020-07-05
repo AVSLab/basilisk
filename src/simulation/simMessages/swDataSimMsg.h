@@ -16,14 +16,11 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*! \defgroup simMessages
- *  @{
- */
 
 #ifndef BASILISK_SWDATASIMMSG_H
 #define BASILISK_SWDATASIMMSG_H
 
-
+/*! SW data message definition */
 typedef struct {
   double dataValue;                      //!< kg/m^3 Local neutral particle density
 }SwDataSimMsg;

@@ -22,7 +22,7 @@ Overview
 The OpNav Monte-Carlo python scripts provides the capability to run Monte-Carlo simulations using a OpNav scenario.
 This script contains the dispersions applied, the plotting methods used, and the number of desired runs.
 
-This script calls OpNavScenarios/OpNavMC/scenario_OpNavAttOD.py (or others) in order to generate the simulations.
+This script calls OpNavScenarios/OpNavMC/scenario_OpNavAttODMC.py (or others) in order to generate the simulations.
 The script can be called by running::
 
     python3 MonteCarlo.py
@@ -33,7 +33,7 @@ The script can be called by running::
 import os
 import inspect
 # import scenario_LimbAttOD as scenario
-import scenario_OpNavAttOD as scenario
+import scenario_OpNavAttODMC as scenario
 from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import csv, subprocess, signal

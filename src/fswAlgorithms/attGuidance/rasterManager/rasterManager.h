@@ -35,21 +35,21 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* Declare module private variables */
-    double scanningAngles[3 * MAX_RASTER_SET];
-    double scanningRates[3 * MAX_RASTER_SET];
-    double rasterTimes[MAX_RASTER_SET];
-    int numRasters;
-    int scanSelector;
+    double scanningAngles[3 * MAX_RASTER_SET];      /*!< array of scanning angles */
+    double scanningRates[3 * MAX_RASTER_SET];       /*!< array of scanning rates */
+    double rasterTimes[MAX_RASTER_SET];             /*!< array of raster times*/
+    int numRasters;                                 /*!< number of raster points */
+    int scanSelector;                               /*!< scan selector variable*/
     int32_t mnvrActive;      /*!< [-] Flag indicating if we are maneuvering */
     int32_t mnvrComplete;    /*!< (-) Helpful flag indicating if the current maneuver is complete*/
     //uint64_t currentMnvrTime;
-    uint64_t mnvrStartTime;
+    uint64_t mnvrStartTime;                         /*!< maneuver start time */
     /* Declare module IO interfaces */
     char        AttStateOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the output message containing the
                                                                  commanded attitude references states  */
     int32_t     AttStateOutMsgID;                           /*!< [-] ID for the outgoing attitude state message */
     /* Output attitude reference data to send */
-    AttStateFswMsg attOutSet;
+    AttStateFswMsg attOutSet;                         //!< output message copy
     BSKLogger *bskLogger;                             //!< BSK Logging
 }rasterManagerConfig;
 

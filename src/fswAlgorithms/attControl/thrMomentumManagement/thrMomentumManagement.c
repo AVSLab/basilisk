@@ -28,11 +28,15 @@
 #include <string.h>
 
 
-/*! This method initializes the configData for this module.  It creates a single output message of type
- [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg).
+/*!
+ \verbatim embed:rst
+    This method initializes the configData for this module.  It creates a single output message of type
+    :ref:`CmdTorqueBodyIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The module identifier
+*/
 void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
     
@@ -44,11 +48,15 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
 
 }
 
-/*! This method performs the second stage of initialization for this module.
- It links to 2 required input messages of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg) and
- [RWSpeedIntMsg](\ref RWSpeedIntMsg).
+/*!
+ \verbatim embed:rst
+    This method performs the second stage of initialization for this module.
+    It links to 2 required input messages of type :ref:`RWArrayConfigFswMsg` and
+    :ref:`RWSpeedIntMsg`.
+ \endverbatim
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The module identifier
  */
 void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
@@ -63,6 +71,8 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, in
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -84,6 +94,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identifier
  */
 void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
