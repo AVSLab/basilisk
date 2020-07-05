@@ -20,6 +20,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.2
+-------------
 - Updated :ref:`dataFileToViz` to include the ability to read thruster force values.  The spacecraft can have
   multiple thruster sets, and this works for multiple spacecraft as well.  See :ref:`test_dataFileToViz` for an
   example on how to set this up.
