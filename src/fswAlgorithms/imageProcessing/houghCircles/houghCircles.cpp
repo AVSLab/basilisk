@@ -138,7 +138,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 
     circleBuffer.timeTag = this->sensorTimeTag;
     circleBuffer.cameraID = imageBuffer.cameraID;
-    for( size_t i = 0; i < this->expectedCircles && i<circles.size(); i++ )
+    for( int i = 0; i < this->expectedCircles && i<(int) circles.size(); i++ )
     {
         circleBuffer.circlesCenters[2*i] = circles[i][0];
         circleBuffer.circlesCenters[2*i+1] = circles[i][1];
