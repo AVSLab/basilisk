@@ -100,11 +100,11 @@ def run(show_plots):
     return
 
 def displayPlots(data, retentionPolicy):
-    wheelSpeeds = data["messages"]["reactionwheel_output_states.wheelSpeeds"]
+    states = data["messages"]["att_guidance.sigma_BR"]
     plt.figure(1)
-    plt.plot(wheelSpeeds[:,0], wheelSpeeds[:,1],
-             wheelSpeeds[:,0], wheelSpeeds[:,2],
-             wheelSpeeds[:,0], wheelSpeeds[:,3])
+    plt.plot(states[:,0], states[:,1],
+             states[:,0], states[:,2],
+             states[:,0], states[:,3])
 
 
 
