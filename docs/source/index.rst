@@ -19,6 +19,8 @@ Architecture
     **License:** `ISC Open Source
     License  <https://en.wikipedia.org/wiki/ISC_license>`__
 
+    **Platforms:** macOS, Linux and Windows
+
     **Status:** |version|
 
 The Basilisk astrodynamics software architecture is being designed to be
