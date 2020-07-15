@@ -62,6 +62,7 @@ message VizMessage{
         double currentThrust = 5;
         double maxThrust = 6;
         int32 thrusterGroupID = 7;
+        repeated int32 color = 8; //Send desired RGBA as values between 0 and 255
     }
 
     message CoarseSunSensor{
@@ -107,7 +108,7 @@ message VizMessage{
         double coneHeight = 5; //sets height of visible cone (asthetic only, does not impact function)
         string fromBodyName = 6; //body to attach cone onto
         string toBodyName = 7; //detect changes in this bodies impingement on cone
-        repeated int64 coneColor = 8; //Send desired RGBA as values between 0 and 255
+        repeated int32 coneColor = 8; //Send desired RGBA as values between 0 and 255
         string coneName = 9; //If unspecified, viz will autogenerate name
     }
     
@@ -172,6 +173,7 @@ message VizMessage{
         int32 showDataRateDisplay = 24;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         double keyboardAngularRate = 25; // [deg/sec] Value of less than/equal to zero to use viz default
         double keyboardZoomRate = 26; // Value of less than/equal to zero to use viz default
+        repeated int32 defaultThrusterColor = 27; //Send desired RGBA as values between 0 and 255
 
     }
 

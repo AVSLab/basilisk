@@ -1006,6 +1006,18 @@ class VizMessage_Thruster : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::RepeatedField< double >*
       mutable_thrustvector();
 
+  // repeated int32 color = 8;
+  int color_size() const;
+  void clear_color();
+  static const int kColorFieldNumber = 8;
+  ::google::protobuf::int32 color(int index) const;
+  void set_color(int index, ::google::protobuf::int32 value);
+  void add_color(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      color() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_color();
+
   // double currentThrust = 5;
   void clear_currentthrust();
   static const int kCurrentThrustFieldNumber = 5;
@@ -1032,6 +1044,8 @@ class VizMessage_Thruster : public ::google::protobuf::Message /* @@protoc_inser
   mutable int _position_cached_byte_size_;
   ::google::protobuf::RepeatedField< double > thrustvector_;
   mutable int _thrustvector_cached_byte_size_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > color_;
+  mutable int _color_cached_byte_size_;
   double currentthrust_;
   double maxthrust_;
   ::google::protobuf::int32 thrustergroupid_;
@@ -1743,16 +1757,16 @@ class VizMessage_KeepOutInCone : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::RepeatedField< double >*
       mutable_normalvector();
 
-  // repeated int64 coneColor = 8;
+  // repeated int32 coneColor = 8;
   int conecolor_size() const;
   void clear_conecolor();
   static const int kConeColorFieldNumber = 8;
-  ::google::protobuf::int64 conecolor(int index) const;
-  void set_conecolor(int index, ::google::protobuf::int64 value);
-  void add_conecolor(::google::protobuf::int64 value);
-  const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
+  ::google::protobuf::int32 conecolor(int index) const;
+  void set_conecolor(int index, ::google::protobuf::int32 value);
+  void add_conecolor(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
       conecolor() const;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_conecolor();
 
   // string fromBodyName = 6;
@@ -1823,7 +1837,7 @@ class VizMessage_KeepOutInCone : public ::google::protobuf::Message /* @@protoc_
   mutable int _position_cached_byte_size_;
   ::google::protobuf::RepeatedField< double > normalvector_;
   mutable int _normalvector_cached_byte_size_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int64 > conecolor_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > conecolor_;
   mutable int _conecolor_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr frombodyname_;
   ::google::protobuf::internal::ArenaStringPtr tobodyname_;
@@ -2508,6 +2522,18 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel >&
       custommodels() const;
 
+  // repeated int32 defaultThrusterColor = 27;
+  int defaultthrustercolor_size() const;
+  void clear_defaultthrustercolor();
+  static const int kDefaultThrusterColorFieldNumber = 27;
+  ::google::protobuf::int32 defaultthrustercolor(int index) const;
+  void set_defaultthrustercolor(int index, ::google::protobuf::int32 value);
+  void add_defaultthrustercolor(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      defaultthrustercolor() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_defaultthrustercolor();
+
   // string skybox = 11;
   void clear_skybox();
   static const int kSkyboxFieldNumber = 11;
@@ -2626,17 +2652,17 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   double keyboardangularrate() const;
   void set_keyboardangularrate(double value);
 
-  // int32 showDataRateDisplay = 24;
-  void clear_showdataratedisplay();
-  static const int kShowDataRateDisplayFieldNumber = 24;
-  ::google::protobuf::int32 showdataratedisplay() const;
-  void set_showdataratedisplay(::google::protobuf::int32 value);
-
   // double keyboardZoomRate = 26;
   void clear_keyboardzoomrate();
   static const int kKeyboardZoomRateFieldNumber = 26;
   double keyboardzoomrate() const;
   void set_keyboardzoomrate(double value);
+
+  // int32 showDataRateDisplay = 24;
+  void clear_showdataratedisplay();
+  static const int kShowDataRateDisplayFieldNumber = 24;
+  ::google::protobuf::int32 showdataratedisplay() const;
+  void set_showdataratedisplay(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
@@ -2647,6 +2673,8 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_StandardCameraSettings > standardcamerasettings_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_ActuatorSettings > actuatorsettings_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CustomModel > custommodels_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > defaultthrustercolor_;
+  mutable int _defaultthrustercolor_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr skybox_;
   ::google::protobuf::internal::ArenaStringPtr defaultspacecraftsprite_;
   double ambient_;
@@ -2664,8 +2692,8 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showcelestialbodiesassprites_;
   ::google::protobuf::int32 show24hrclock_;
   double keyboardangularrate_;
-  ::google::protobuf::int32 showdataratedisplay_;
   double keyboardzoomrate_;
+  ::google::protobuf::int32 showdataratedisplay_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -3667,6 +3695,36 @@ inline void VizMessage_Thruster::set_thrustergroupid(::google::protobuf::int32 v
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.Thruster.thrusterGroupID)
 }
 
+// repeated int32 color = 8;
+inline int VizMessage_Thruster::color_size() const {
+  return color_.size();
+}
+inline void VizMessage_Thruster::clear_color() {
+  color_.Clear();
+}
+inline ::google::protobuf::int32 VizMessage_Thruster::color(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.Thruster.color)
+  return color_.Get(index);
+}
+inline void VizMessage_Thruster::set_color(int index, ::google::protobuf::int32 value) {
+  color_.Set(index, value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.Thruster.color)
+}
+inline void VizMessage_Thruster::add_color(::google::protobuf::int32 value) {
+  color_.Add(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.Thruster.color)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+VizMessage_Thruster::color() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.Thruster.color)
+  return color_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+VizMessage_Thruster::mutable_color() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.Thruster.color)
+  return &color_;
+}
+
 // -------------------------------------------------------------------
 
 // VizMessage_CoarseSunSensor
@@ -4459,31 +4517,31 @@ inline void VizMessage_KeepOutInCone::set_allocated_tobodyname(::std::string* to
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.KeepOutInCone.toBodyName)
 }
 
-// repeated int64 coneColor = 8;
+// repeated int32 coneColor = 8;
 inline int VizMessage_KeepOutInCone::conecolor_size() const {
   return conecolor_.size();
 }
 inline void VizMessage_KeepOutInCone::clear_conecolor() {
   conecolor_.Clear();
 }
-inline ::google::protobuf::int64 VizMessage_KeepOutInCone::conecolor(int index) const {
+inline ::google::protobuf::int32 VizMessage_KeepOutInCone::conecolor(int index) const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.KeepOutInCone.coneColor)
   return conecolor_.Get(index);
 }
-inline void VizMessage_KeepOutInCone::set_conecolor(int index, ::google::protobuf::int64 value) {
+inline void VizMessage_KeepOutInCone::set_conecolor(int index, ::google::protobuf::int32 value) {
   conecolor_.Set(index, value);
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.KeepOutInCone.coneColor)
 }
-inline void VizMessage_KeepOutInCone::add_conecolor(::google::protobuf::int64 value) {
+inline void VizMessage_KeepOutInCone::add_conecolor(::google::protobuf::int32 value) {
   conecolor_.Add(value);
   // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.KeepOutInCone.coneColor)
 }
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
 VizMessage_KeepOutInCone::conecolor() const {
   // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.KeepOutInCone.coneColor)
   return conecolor_;
 }
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 VizMessage_KeepOutInCone::mutable_conecolor() {
   // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.KeepOutInCone.coneColor)
   return &conecolor_;
@@ -5727,6 +5785,36 @@ inline void VizMessage_VizSettingsPb::set_keyboardzoomrate(double value) {
   
   keyboardzoomrate_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.keyboardZoomRate)
+}
+
+// repeated int32 defaultThrusterColor = 27;
+inline int VizMessage_VizSettingsPb::defaultthrustercolor_size() const {
+  return defaultthrustercolor_.size();
+}
+inline void VizMessage_VizSettingsPb::clear_defaultthrustercolor() {
+  defaultthrustercolor_.Clear();
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::defaultthrustercolor(int index) const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterColor)
+  return defaultthrustercolor_.Get(index);
+}
+inline void VizMessage_VizSettingsPb::set_defaultthrustercolor(int index, ::google::protobuf::int32 value) {
+  defaultthrustercolor_.Set(index, value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterColor)
+}
+inline void VizMessage_VizSettingsPb::add_defaultthrustercolor(::google::protobuf::int32 value) {
+  defaultthrustercolor_.Add(value);
+  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterColor)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+VizMessage_VizSettingsPb::defaultthrustercolor() const {
+  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterColor)
+  return defaultthrustercolor_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+VizMessage_VizSettingsPb::mutable_defaultthrustercolor() {
+  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterColor)
+  return &defaultthrustercolor_;
 }
 
 // -------------------------------------------------------------------
