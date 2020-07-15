@@ -20,7 +20,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Removed old ``CMakeLists.txt`` files that are no longer needed
 
 Version 1.8.2
 -------------
