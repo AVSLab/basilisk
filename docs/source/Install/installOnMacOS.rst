@@ -112,6 +112,11 @@ Installing required python support packages
    Note that ``conan`` version 1.25.x has issues on macOS where it doesn't properly link system frameworks.  Stick
    with 1.24.x for now.
 
+   .. warning::
+
+      If you are upgrading from a version of Basilisk prior to 1.8.0, be sure to delete the ``.conan`` folder in your
+      home directory to create a clean copy compatible with the current build system.
+
 - The following python packages are the minimum required packages for Basilisk.  They are installed and checked
   for the correction version in the steps below.
 
