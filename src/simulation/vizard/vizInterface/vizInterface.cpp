@@ -560,6 +560,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_keyboardangularrate(this->settings.keyboardAngularRate*R2D);
         vizSettings->set_keyboardzoomrate(this->settings.keyboardZoomRate);
 
+        // add default thrust plume color
+        if (this->settings.defaultThrusterColor[0] >= 0) {
+            for (int i=0; i<4; i++){
+                vizSettings->add_defaultthrustercolor(this->settings.defaultThrusterColor[i]);
+            }
+        } 
+
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();

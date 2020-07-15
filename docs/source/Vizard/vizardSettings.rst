@@ -114,6 +114,10 @@ default setting for that behavior.
     * - ``keyboardZoomRate``
       - pos. double
       - Non-dimensional speed at which the camera zooms in and out with hot-keys.
+    * - ``defaultThrusterColor``
+      - int(4)
+      - RGBA color values between (0,255).  Default values of -1 makes Vizard use the default thruster plume color
+        You can use ``vizSupport.toRGBA255("red")`` to convert common color names to RGBA values.
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

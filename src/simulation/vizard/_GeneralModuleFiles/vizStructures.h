@@ -158,6 +158,7 @@ typedef struct {
     int32_t showDataRateDisplay = 0;               //!< flag to show data frame rate, 0 (protobuffer default), -1 for false, 1 for true
     double  keyboardAngularRate = -1.0;            //!< [rad/sec] Rotation rate of camera keyboard rates per click.  Value of less than/equal to zero to use viz default
     double  keyboardZoomRate = -1.0;               //!< Value for speed at which the camera zooms in or out.  Value of less than/equal to zero to use viz default
+    int defaultThrusterColor[4] = {-1};            //!< Default thruster plume color RGBA values
 }VizSettings;
 
 

@@ -58,7 +58,7 @@ def toRGBA255(color):
         if not isinstance(color, list):
             print('ERROR: color must be a 4D array of integers')
             exit(1)
-        if max(color) > 255 or min(color)<0:
+        if max(color) > 255 or min(color) < 0:
             print('ERROR: color values must be between [0,255]')
             exit(1)
         answer = color
