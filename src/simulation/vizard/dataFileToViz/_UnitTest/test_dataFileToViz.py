@@ -272,7 +272,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
+                                              # saveFile=fileName,
                                               scName=scNames)
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
@@ -428,7 +428,7 @@ if __name__ == "__main__":
          False,     # showplots
          -1,        # convertPosUnits
          0,        # attType (-1 -> default, 0 -> MRP, 1 -> quaternions, 2 -> 3-2-1 Euler Angles)
-         False,      # checkThruster
-         True,      # checkRW
+         True,      # checkThruster
+         False,      # checkRW
          True       # verbose
        )
