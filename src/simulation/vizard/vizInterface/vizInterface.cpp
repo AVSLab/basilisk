@@ -193,6 +193,12 @@ void VizInterface::CrossInit()
                     if (msgInfo.itemFound) {
                         thrStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), moduleID);
                         scIt->thrMsgID.push_back(thrStatus);
+                        ThrClusterMap thrInfo;
+                        thrInfo.thrTag = thrIt->thrTag;
+                        for (int k=0; k<4; k++){
+                            thrInfo.color[k] = thrIt->color[k];
+                        }
+                        scIt->thrInfo.push_back(thrInfo);
                         scIt->numThr++;
                     } else {
                         thrStatus.msgID = -1;
@@ -687,6 +693,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     vizProtobufferMessage::VizMessage::Thruster* thr = scp->add_thrusters();
                     thr->set_maxthrust(scIt->thrOutputMessage[idx].maxThrust);
                     thr->set_currentthrust(scIt->thrOutputMessage[idx].thrustForce);
+                    thr->set_thrustertag(scIt->thrInfo[idx].thrTag);
+                    if (scIt->thrInfo[idx].color[0] >= 0) {
+                        for (int i=0; i<4; i++) {
+                            thr->add_color(scIt->thrInfo[idx].color[i]);
+                        }
+                    } 
                     for (int i=0; i<3; i++){
                         thr->add_position(scIt->thrOutputMessage[idx].thrusterLocation[i]);
                         thr->add_thrustvector(scIt->thrOutputMessage[idx].thrusterDirection[i]);

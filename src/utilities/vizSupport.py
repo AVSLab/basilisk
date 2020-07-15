@@ -765,6 +765,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
             thSet = vizInterface.ThrClusterMap()
             thSet.thrCount = thClusterInfo[0]
             thSet.thrTag = thClusterInfo[1]
+            if len(thClusterInfo) == 3:
+                thSet.color = toRGBA255(thClusterInfo[2])
             thList.append(thSet)
         scData.thrMsgData = vizInterface.VizThrConfig(thList)
 

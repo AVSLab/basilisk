@@ -27,6 +27,7 @@ typedef struct {
 typedef struct {
     std::string thrTag;   //!< [-] ModelTag associated with the thruster grouping
     uint32_t    thrCount; //!< [-] Number of thrusters used in this thruster group
+    int color[4] = {-1};  //!< [-] RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
 
 /*! Vizard setting structure to define a pointing line feature.  This is used to draw a colored
@@ -112,6 +113,7 @@ typedef struct {
 
     std::vector<MsgCurrStatus> rwInMsgID;                       //!< [-] (Private) ID of the incoming rw data
     std::vector<MsgCurrStatus> thrMsgID;                        //!< [-] (Private) ID of the incoming thruster data
+    std::vector<ThrClusterMap> thrInfo;                         //!< [-] (Private) thruster tagging info
     MsgCurrStatus starTrackerInMsgID;                           //!< [-] (Private) ID of the incoming Star Tracker data
     MsgCurrStatus scPlusInMsgID;                                //!< [-] (Private) ID of the incoming SCPlus data
     MsgCurrStatus cssDataInMsgId;                               //!< [-] (Private) ID of the incoming css data

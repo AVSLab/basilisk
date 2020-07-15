@@ -190,11 +190,13 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         thSetAdcs1 = dataFileToViz.ThrClusterMap()
         thSetAdcs1.thrCount = numACS1
         thSetAdcs1.thrTag = thrModelTagAdcs1
+        thSetAdcs1.color = vizSupport.toRGBA255("red")
 
         thrModelTagDv1 = scNames[0] + "_dv"
         thSetDV1 = dataFileToViz.ThrClusterMap()
         thSetDV1.thrCount = numDV1
         thSetDV1.thrTag = thrModelTagDv1
+        thSetDV1.color = vizSupport.toRGBA255("blue")
 
         thList1 = [thSetAdcs1, thSetDV1]
         testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList1))
