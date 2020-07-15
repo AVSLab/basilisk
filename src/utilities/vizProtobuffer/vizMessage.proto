@@ -61,8 +61,9 @@ message VizMessage{
         repeated double thrustVector = 4;
         double currentThrust = 5;
         double maxThrust = 6;
-        int32 thrusterGroupID = 7;
-        repeated int32 color = 8; //Send desired RGBA as values between 0 and 255
+        //int32 thrusterGroupID = 7;
+        string thrusterTag = 8;
+        repeated int32 color = 9; //Send desired RGBA as values between 0 and 255
     }
 
     message CoarseSunSensor{

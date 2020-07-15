@@ -517,7 +517,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_Thruster, thrustvector_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_Thruster, currentthrust_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_Thruster, maxthrust_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_Thruster, thrustergroupid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_Thruster, thrustertag_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_Thruster, color_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, _internal_metadata_),
@@ -713,7 +713,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\215\033\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\211\033\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -743,67 +743,66 @@ void AddDescriptorsImpl() {
       "\020\n\010position\030\002 \003(\001\022\026\n\016spinAxisVector\030\004 \003("
       "\001\022\022\n\nwheelSpeed\030\005 \001(\001\022\023\n\013wheelTorque\030\006 \001"
       "(\001\022\020\n\010maxSpeed\030\007 \001(\001\022\021\n\tmaxTorque\030\010 \001(\001\032"
-      "\204\001\n\010Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thrust"
+      "\200\001\n\010Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thrust"
       "Vector\030\004 \003(\001\022\025\n\rcurrentThrust\030\005 \001(\001\022\021\n\tm"
-      "axThrust\030\006 \001(\001\022\027\n\017thrusterGroupID\030\007 \001(\005\022"
-      "\r\n\005color\030\010 \003(\005\032b\n\017CoarseSunSensor\022\020\n\010pos"
-      "ition\030\002 \003(\001\022\024\n\014normalVector\030\004 \003(\001\022\023\n\013cur"
-      "rentMsmt\030\005 \001(\001\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013S"
-      "tarTracker\022\020\n\010position\030\002 \003(\001\022\020\n\010rotation"
-      "\030\004 \003(\001\022\031\n\021fieldOfViewHeight\030\005 \001(\001\022\030\n\020fie"
-      "ldOfViewWidth\030\006 \001(\001\022\032\n\022starTrackerGroupI"
-      "D\030\007 \001(\005\032\253\001\n\014CameraConfig\022\020\n\010cameraID\030\001 \001"
-      "(\003\022\022\n\nparentName\030\002 \001(\t\022\023\n\013fieldOfView\030\003 "
-      "\001(\001\022\022\n\nresolution\030\004 \003(\003\022\023\n\013cameraPos_B\030\007"
-      " \003(\001\022\023\n\013cameraDir_B\030\010 \003(\001\022\022\n\nrenderRate\030"
-      "\t \001(\004\022\016\n\006skybox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fr"
-      "omBodyName\030\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\t"
-      "lineColor\030\003 \003(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isK"
-      "eepIn\030\001 \001(\010\022\020\n\010position\030\002 \003(\001\022\024\n\014normalV"
-      "ector\030\003 \003(\001\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nc"
-      "oneHeight\030\005 \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n"
-      "\ntoBodyName\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\005\022\020\n\010"
-      "coneName\030\t \001(\t\032\245\001\n\026StandardCameraSetting"
-      "s\022\026\n\016spacecraftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001"
-      "(\005\022\023\n\013fieldOfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 "
-      "\001(\t\022\017\n\007setView\030\007 \001(\005\022\026\n\016pointingVector\030\010"
-      " \003(\001\022\020\n\010position\030\t \003(\001\032\270\001\n\020ActuatorSetti"
-      "ngs\022\026\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrus"
-      "terPanel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022"
-      "\023\n\013viewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022"
-      "\032\n\022showThrusterLabels\030\006 \001(\005\022\024\n\014showRWLab"
-      "els\030\007 \001(\005\032\256\001\n\013CustomModel\022\021\n\tmodelPath\030\001"
-      " \001(\t\022\031\n\021simBodiesToModify\030\002 \003(\t\022\016\n\006offse"
-      "t\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001"
-      "\022\031\n\021customTexturePath\030\006 \001(\t\022\025\n\rnormalMap"
-      "Path\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\234\007\n\rVizSettin"
-      "gsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 "
-      "\001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanetCSo"
-      "n\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProtobu"
-      "fferMessage.VizMessage.PointLine\022G\n\016keep"
-      "OutInCones\030\006 \003(\0132/.vizProtobufferMessage"
-      ".VizMessage.KeepOutInCone\022X\n\026standardCam"
-      "eraSettings\030\007 \003(\01328.vizProtobufferMessag"
-      "e.VizMessage.StandardCameraSettings\022L\n\020a"
-      "ctuatorSettings\030\n \003(\01322.vizProtobufferMe"
-      "ssage.VizMessage.ActuatorSettings\022\016\n\006sky"
-      "box\030\013 \001(\t\022C\n\014customModels\030\014 \003(\0132-.vizPro"
-      "tobufferMessage.VizMessage.CustomModel\022\036"
-      "\n\026viewCameraBoresightHUD\030\r \001(\005\022\031\n\021viewCa"
-      "meraConeHUD\030\016 \001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022"
-      "\037\n\027showCelestialBodyLabels\030\020 \001(\005\022\034\n\024show"
-      "SpacecraftLabels\030\021 \001(\005\022\030\n\020showCameraLabe"
-      "ls\030\022 \001(\005\022\026\n\016customGUIScale\030\023 \001(\001\022\037\n\027defa"
-      "ultSpacecraftSprite\030\024 \001(\t\022\037\n\027showSpacecr"
-      "aftAsSprites\030\025 \001(\005\022$\n\034showCelestialBodie"
-      "sAsSprites\030\026 \001(\005\022\025\n\rshow24hrClock\030\027 \001(\005\022"
-      "\033\n\023showDataRateDisplay\030\030 \001(\005\022\033\n\023keyboard"
-      "AngularRate\030\031 \001(\001\022\030\n\020keyboardZoomRate\030\032 "
-      "\001(\001\022\034\n\024defaultThrusterColor\030\033 \003(\005b\006proto"
-      "3"
+      "axThrust\030\006 \001(\001\022\023\n\013thrusterTag\030\010 \001(\t\022\r\n\005c"
+      "olor\030\t \003(\005\032b\n\017CoarseSunSensor\022\020\n\010positio"
+      "n\030\002 \003(\001\022\024\n\014normalVector\030\004 \003(\001\022\023\n\013current"
+      "Msmt\030\005 \001(\001\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarT"
+      "racker\022\020\n\010position\030\002 \003(\001\022\020\n\010rotation\030\004 \003"
+      "(\001\022\031\n\021fieldOfViewHeight\030\005 \001(\001\022\030\n\020fieldOf"
+      "ViewWidth\030\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 "
+      "\001(\005\032\253\001\n\014CameraConfig\022\020\n\010cameraID\030\001 \001(\003\022\022"
+      "\n\nparentName\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022"
+      "\022\n\nresolution\030\004 \003(\003\022\023\n\013cameraPos_B\030\007 \003(\001"
+      "\022\023\n\013cameraDir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001("
+      "\004\022\016\n\006skybox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBo"
+      "dyName\030\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tline"
+      "Color\030\003 \003(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepI"
+      "n\030\001 \001(\010\022\020\n\010position\030\002 \003(\001\022\024\n\014normalVecto"
+      "r\030\003 \003(\001\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeH"
+      "eight\030\005 \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoB"
+      "odyName\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\005\022\020\n\010cone"
+      "Name\030\t \001(\t\032\245\001\n\026StandardCameraSettings\022\026\n"
+      "\016spacecraftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023"
+      "\n\013fieldOfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022"
+      "\017\n\007setView\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001"
+      "\022\020\n\010position\030\t \003(\001\032\270\001\n\020ActuatorSettings\022"
+      "\026\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrusterP"
+      "anel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013v"
+      "iewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022\032\n\022s"
+      "howThrusterLabels\030\006 \001(\005\022\024\n\014showRWLabels\030"
+      "\007 \001(\005\032\256\001\n\013CustomModel\022\021\n\tmodelPath\030\001 \001(\t"
+      "\022\031\n\021simBodiesToModify\030\002 \003(\t\022\016\n\006offset\030\003 "
+      "\003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021"
+      "customTexturePath\030\006 \001(\t\022\025\n\rnormalMapPath"
+      "\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\234\007\n\rVizSettingsPb"
+      "\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022"
+      "\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 "
+      "\001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProtobuffer"
+      "Message.VizMessage.PointLine\022G\n\016keepOutI"
+      "nCones\030\006 \003(\0132/.vizProtobufferMessage.Viz"
+      "Message.KeepOutInCone\022X\n\026standardCameraS"
+      "ettings\030\007 \003(\01328.vizProtobufferMessage.Vi"
+      "zMessage.StandardCameraSettings\022L\n\020actua"
+      "torSettings\030\n \003(\01322.vizProtobufferMessag"
+      "e.VizMessage.ActuatorSettings\022\016\n\006skybox\030"
+      "\013 \001(\t\022C\n\014customModels\030\014 \003(\0132-.vizProtobu"
+      "fferMessage.VizMessage.CustomModel\022\036\n\026vi"
+      "ewCameraBoresightHUD\030\r \001(\005\022\031\n\021viewCamera"
+      "ConeHUD\030\016 \001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027s"
+      "howCelestialBodyLabels\030\020 \001(\005\022\034\n\024showSpac"
+      "ecraftLabels\030\021 \001(\005\022\030\n\020showCameraLabels\030\022"
+      " \001(\005\022\026\n\016customGUIScale\030\023 \001(\001\022\037\n\027defaultS"
+      "pacecraftSprite\030\024 \001(\t\022\037\n\027showSpacecraftA"
+      "sSprites\030\025 \001(\005\022$\n\034showCelestialBodiesAsS"
+      "prites\030\026 \001(\005\022\025\n\rshow24hrClock\030\027 \001(\005\022\033\n\023s"
+      "howDataRateDisplay\030\030 \001(\005\022\033\n\023keyboardAngu"
+      "larRate\030\031 \001(\001\022\030\n\020keyboardZoomRate\030\032 \001(\001\022"
+      "\034\n\024defaultThrusterColor\030\033 \003(\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3521);
+      descriptor, 3517);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -3107,7 +3106,7 @@ const int VizMessage_Thruster::kPositionFieldNumber;
 const int VizMessage_Thruster::kThrustVectorFieldNumber;
 const int VizMessage_Thruster::kCurrentThrustFieldNumber;
 const int VizMessage_Thruster::kMaxThrustFieldNumber;
-const int VizMessage_Thruster::kThrusterGroupIDFieldNumber;
+const int VizMessage_Thruster::kThrusterTagFieldNumber;
 const int VizMessage_Thruster::kColorFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -3127,16 +3126,21 @@ VizMessage_Thruster::VizMessage_Thruster(const VizMessage_Thruster& from)
       color_(from.color_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  thrustertag_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.thrustertag().size() > 0) {
+    thrustertag_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.thrustertag_);
+  }
   ::memcpy(&currentthrust_, &from.currentthrust_,
-    static_cast<size_t>(reinterpret_cast<char*>(&thrustergroupid_) -
-    reinterpret_cast<char*>(&currentthrust_)) + sizeof(thrustergroupid_));
+    static_cast<size_t>(reinterpret_cast<char*>(&maxthrust_) -
+    reinterpret_cast<char*>(&currentthrust_)) + sizeof(maxthrust_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.Thruster)
 }
 
 void VizMessage_Thruster::SharedCtor() {
+  thrustertag_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&currentthrust_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&thrustergroupid_) -
-      reinterpret_cast<char*>(&currentthrust_)) + sizeof(thrustergroupid_));
+      reinterpret_cast<char*>(&maxthrust_) -
+      reinterpret_cast<char*>(&currentthrust_)) + sizeof(maxthrust_));
   _cached_size_ = 0;
 }
 
@@ -3146,6 +3150,7 @@ VizMessage_Thruster::~VizMessage_Thruster() {
 }
 
 void VizMessage_Thruster::SharedDtor() {
+  thrustertag_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void VizMessage_Thruster::SetCachedSize(int size) const {
@@ -3180,9 +3185,10 @@ void VizMessage_Thruster::Clear() {
   position_.Clear();
   thrustvector_.Clear();
   color_.Clear();
+  thrustertag_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&currentthrust_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&thrustergroupid_) -
-      reinterpret_cast<char*>(&currentthrust_)) + sizeof(thrustergroupid_));
+      reinterpret_cast<char*>(&maxthrust_) -
+      reinterpret_cast<char*>(&currentthrust_)) + sizeof(maxthrust_));
   _internal_metadata_.Clear();
 }
 
@@ -3262,33 +3268,35 @@ bool VizMessage_Thruster::MergePartialFromCodedStream(
         break;
       }
 
-      // int32 thrusterGroupID = 7;
-      case 7: {
+      // string thrusterTag = 8;
+      case 8: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(56u /* 56 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &thrustergroupid_)));
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_thrustertag()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->thrustertag().data(), static_cast<int>(this->thrustertag().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.Thruster.thrusterTag"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // repeated int32 color = 8;
-      case 8: {
+      // repeated int32 color = 9;
+      case 9: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, this->mutable_color())));
         } else if (
             static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(64u /* 64 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(72u /* 72 & 0xFF */)) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 66u, input, this->mutable_color())));
+                 1, 74u, input, this->mutable_color())));
         } else {
           goto handle_unusual;
         }
@@ -3349,14 +3357,19 @@ void VizMessage_Thruster::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->maxthrust(), output);
   }
 
-  // int32 thrusterGroupID = 7;
-  if (this->thrustergroupid() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->thrustergroupid(), output);
+  // string thrusterTag = 8;
+  if (this->thrustertag().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->thrustertag().data(), static_cast<int>(this->thrustertag().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.Thruster.thrusterTag");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      8, this->thrustertag(), output);
   }
 
-  // repeated int32 color = 8;
+  // repeated int32 color = 9;
   if (this->color_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(8, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    ::google::protobuf::internal::WireFormatLite::WriteTag(9, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
     output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
         _color_cached_byte_size_));
   }
@@ -3415,15 +3428,21 @@ void VizMessage_Thruster::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->maxthrust(), target);
   }
 
-  // int32 thrusterGroupID = 7;
-  if (this->thrustergroupid() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->thrustergroupid(), target);
+  // string thrusterTag = 8;
+  if (this->thrustertag().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->thrustertag().data(), static_cast<int>(this->thrustertag().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.Thruster.thrusterTag");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->thrustertag(), target);
   }
 
-  // repeated int32 color = 8;
+  // repeated int32 color = 9;
   if (this->color_size() > 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      8,
+      9,
       ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
       target);
     target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
@@ -3482,7 +3501,7 @@ size_t VizMessage_Thruster::ByteSizeLong() const {
     total_size += data_size;
   }
 
-  // repeated int32 color = 8;
+  // repeated int32 color = 9;
   {
     size_t data_size = ::google::protobuf::internal::WireFormatLite::
       Int32Size(this->color_);
@@ -3498,6 +3517,13 @@ size_t VizMessage_Thruster::ByteSizeLong() const {
     total_size += data_size;
   }
 
+  // string thrusterTag = 8;
+  if (this->thrustertag().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->thrustertag());
+  }
+
   // double currentThrust = 5;
   if (this->currentthrust() != 0) {
     total_size += 1 + 8;
@@ -3506,13 +3532,6 @@ size_t VizMessage_Thruster::ByteSizeLong() const {
   // double maxThrust = 6;
   if (this->maxthrust() != 0) {
     total_size += 1 + 8;
-  }
-
-  // int32 thrusterGroupID = 7;
-  if (this->thrustergroupid() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->thrustergroupid());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -3547,14 +3566,15 @@ void VizMessage_Thruster::MergeFrom(const VizMessage_Thruster& from) {
   position_.MergeFrom(from.position_);
   thrustvector_.MergeFrom(from.thrustvector_);
   color_.MergeFrom(from.color_);
+  if (from.thrustertag().size() > 0) {
+
+    thrustertag_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.thrustertag_);
+  }
   if (from.currentthrust() != 0) {
     set_currentthrust(from.currentthrust());
   }
   if (from.maxthrust() != 0) {
     set_maxthrust(from.maxthrust());
-  }
-  if (from.thrustergroupid() != 0) {
-    set_thrustergroupid(from.thrustergroupid());
   }
 }
 
@@ -3585,9 +3605,9 @@ void VizMessage_Thruster::InternalSwap(VizMessage_Thruster* other) {
   position_.InternalSwap(&other->position_);
   thrustvector_.InternalSwap(&other->thrustvector_);
   color_.InternalSwap(&other->color_);
+  thrustertag_.Swap(&other->thrustertag_);
   swap(currentthrust_, other->currentthrust_);
   swap(maxthrust_, other->maxthrust_);
-  swap(thrustergroupid_, other->thrustergroupid_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
