@@ -21,6 +21,11 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Removed old ``CMakeLists.txt`` files that are no longer needed
+- Improved the build process for Linux such that ``vizInterface`` and ``opNav`` related modules are available
+  again in Basilisk python scripts.  Thus Linux users can use 1.8.x onwards and still use these enhanced features.
+  The similar issue on the Windows platorm is not resolved yet.
+- Updated setup instructions to remind the user to delete ``.conan`` folder if upgrading from a BSK version
+  prior to 1.8.0
 
 Version 1.8.2
 -------------

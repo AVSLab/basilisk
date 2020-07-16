@@ -79,6 +79,11 @@ Installing required python support packages
      Don't use the ``conan`` binary installed from the `conan web site <https://conan.io/downloads.html>`__.
      This causes several issues with the current build system.
 
+  .. warning::
+
+      If you are upgrading from a version of Basilisk prior to 1.8.0, be sure to delete the ``.conan`` folder in your
+      home directory to create a clean copy compatible with the current build system.
+
 - The following python packages are the minimum required packages for Basilisk.  They are installed and checked
   for the correction version in the steps below.
 

@@ -1,4 +1,5 @@
 import os, sys
+import platform
 from datetime import datetime
 from conans import ConanFile, CMake, tools
 import shutil
@@ -57,6 +58,23 @@ class BasiliskConan(ConanFile):
 
     # set cmake generator default
     generator = None
+
+    # make sure conan is configured to use the libstdc++11 by default
+    print(statusColor + "Checking conan configuration:" + endColor)
+    if platform.system() != "Darwin":
+        try:
+            subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=DEVNULL)
+        except:
+            pass
+
+        if platform.system() == "Linux":
+            try:
+                subprocess.check_output(["conan", "profile", "update",
+                                         "settings.compiler.libcxx=libstdc++11", "default"])
+                print("Configuring: " + statusColor + "use libstdc++11 by default" + endColor)
+
+            except:
+                pass
 
     try:
         consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
@@ -163,7 +181,7 @@ class BasiliskConan(ConanFile):
                 print("Specify your own using the -o generator='Name' flag during conan install")
         else:
             self.generator = str(self.options.generator)
-        print("cmake generator set to: " + str(self.generator))
+        print("cmake generator set to: " + statusColor + str(self.generator) + endColor)
 
 
     def build(self):
