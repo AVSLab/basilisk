@@ -1,4 +1,5 @@
 import os, sys
+import platform
 from datetime import datetime
 from conans import ConanFile, CMake, tools
 import shutil
@@ -59,20 +60,21 @@ class BasiliskConan(ConanFile):
     generator = None
 
     # make sure conan is configured to use the libstdc++11 by default
-    print(statusColor + "Checking conan configuration." + endColor)
-    if sys.platform == "linux":
+    print(statusColor + "Checking conan configuration:" + endColor)
+    if platform.system() != "Darwin":
         try:
             subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=DEVNULL)
         except:
             pass
 
-        try:
-            subprocess.check_output(["conan", "profile", "update",
-                                     "settings.compiler.libcxx=libstdc++11", "default"])
-            print("Configuring: " + statusColor + "use libstdc++11 by default" + endColor)
+        if platform.system() == "Linux":
+            try:
+                subprocess.check_output(["conan", "profile", "update",
+                                         "settings.compiler.libcxx=libstdc++11", "default"])
+                print("Configuring: " + statusColor + "use libstdc++11 by default" + endColor)
 
-        except:
-            pass
+            except:
+                pass
 
     try:
         consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
