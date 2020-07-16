@@ -60,7 +60,7 @@ class BasiliskConan(ConanFile):
 
     # make sure conan is configured to use the libstdc++11 by default
     print(statusColor + "Checking conan configuration." + endColor)
-    if sys.platform != "darwin":
+    if sys.platform == "linux":
         try:
             subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=DEVNULL)
         except:
