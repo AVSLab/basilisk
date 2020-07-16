@@ -165,7 +165,7 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
         if vizFound:
             viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
                                                       gravBodies=self.DynModels.gravFactory,
-                                                      saveFile=filename)
+                                                      saveFile=__file__)
             scData = vizInterface.VizSpacecraftData()
             viz.scData.clear()
             # first spacecraft uses all the default msg names

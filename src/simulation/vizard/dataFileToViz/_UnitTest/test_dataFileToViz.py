@@ -46,7 +46,6 @@ except ImportError:
     vizFound = False
 
 path = os.path.dirname(os.path.abspath(__file__))
-fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000])
@@ -274,7 +273,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              # saveFile=fileName,
+                                              saveFile=__file__,
                                               scName=scNames)
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
