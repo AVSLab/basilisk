@@ -279,6 +279,8 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         # delete any existing list of vizInterface spacecraft data
         viz.scData.clear()
         scCounter = 0
+        if checkThruster:
+            viz.settings.defaultThrusterColor = vizSupport.toRGBA255("yellow")
         for item in scNames:
             # create a chief spacecraft info container
             scData = vizInterface.VizSpacecraftData()
