@@ -540,3 +540,32 @@ setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell ref:`vizInterfac
 	viz.epochMsgName = "Epoch_Msg_Name_Used"
 
 An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.
+
+
+Specifying Reaction Wheel (RW) Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The simplest method to include the RW states of a one more spacecraft in the Vizard data file is to
+call ``vizSupport.enableUnityVisualization``
+with the ``numRW`` specified to be the number of RW being modeled.  This can be a single integer if each spacecraft
+contains the same number of RW devices, or a list of integers with the number of RW specified for each spacecraft.
+:ref:`vizInterface` will seek the RW messages
+assuming default RW state message naming.  This method is illustrated in the :ref:`scenarioAttitudeFeedbackRW` script.
+
+If custom RW state output messages are used, then the ``scData.rwInMsgName`` can be specified directly.  This case
+is employed in the test script :ref:`test_dataFileToViz`.
+
+Specifying Thruster Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using default names the thruster states can be included in the Vizard data by calling
+``vizSupport.enableUnityVisualization`` with the ``thrDevices`` argument.  This is a list of ``ThrClusterMap`` states
+needed by :ref:`vizInterface`.  Each list entry should contain:
+
+- number of thrusters in a group
+- thruster group tag string
+- (optional) color value to be used by the thruster plume illustration
+
+The illustration of thrusters is shown in the example script :ref:`scenarioAttitudeFeedback2T_TH`.
+
+The thruster information for each spacecraft can also be set directly by specifying the ``sc.thrMsgData``
+as demonstrated in :ref:`test_dataFileToViz`.
+
