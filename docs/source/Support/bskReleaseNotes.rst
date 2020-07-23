@@ -27,6 +27,7 @@ Version |release|
 - Updated setup instructions to remind the user to delete ``.conan`` folder if upgrading from a BSK version
   prior to 1.8.0
 - Added support for Vizard 1.4.1 that allows setting default and thruster group plume colors.
+- Added a video gallery page to the Vizard documentation section
 
 Version 1.8.2
 -------------
