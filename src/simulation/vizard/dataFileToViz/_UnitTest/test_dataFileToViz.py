@@ -153,7 +153,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
             lineString += str(sigmaB2N)[1:-1] + delimiter
         lineString += str(omega)[1:-1]
         if checkThruster:
-            th2ACS = 2.
+            th2ACS = 0.001
             th2DV = 200.
             numACS2 = 1
             numDV2 = 2
