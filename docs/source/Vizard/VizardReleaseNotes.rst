@@ -16,6 +16,19 @@ Release Notes
     - add support for visualizing relative orbit trajectories
     - micro-thruster visualization support
 
+**Version 1.4.1**
+
+- The vizMessage thruster default and individual color settings are supported. You can also change the
+  default color setting in Settings panel and scale the length of the thruster plumes (make them half
+  as long, double, etc.).
+- The thruster panel now properly labels the thruster groups
+- The size of the thrust plumes is scaled to maxThrust until the maxThrust value is equal to or less
+  than 0.01N. All micro-thrusters below 0.01N in size are visualized as a very small thrust puff/plume.
+- This update also contains the ellipticity for all the celestial bodies we currently support.
+- Fixed a small bug in the Keep Out/In Cones. If you modified an existing cone and changed it’s type
+  (from Out to In or In to Out) the coneViolation flag was not reset so you could end up seeing erroneous
+  results until the state update was triggered. Now whenever an existing cone is modified that flag is reset.
+
 
 **Version 1.4.0**
 
