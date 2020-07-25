@@ -175,6 +175,7 @@ message VizMessage{
         double keyboardAngularRate = 25; // [deg/sec] Value of less than/equal to zero to use viz default
         double keyboardZoomRate = 26; // Value of less than/equal to zero to use viz default
         repeated int32 defaultThrusterColor = 27; //Send desired RGBA as values between 0 and 255
+        double defaultThrusterPlumeLifeScalar = 28; // Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
 
     }
 

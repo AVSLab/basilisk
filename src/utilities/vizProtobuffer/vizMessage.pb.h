@@ -2672,6 +2672,12 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showdataratedisplay() const;
   void set_showdataratedisplay(::google::protobuf::int32 value);
 
+  // double defaultThrusterPlumeLifeScalar = 28;
+  void clear_defaultthrusterplumelifescalar();
+  static const int kDefaultThrusterPlumeLifeScalarFieldNumber = 28;
+  double defaultthrusterplumelifescalar() const;
+  void set_defaultthrusterplumelifescalar(double value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
 
@@ -2702,6 +2708,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   double keyboardangularrate_;
   double keyboardzoomrate_;
   ::google::protobuf::int32 showdataratedisplay_;
+  double defaultthrusterplumelifescalar_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -5862,6 +5869,20 @@ inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 VizMessage_VizSettingsPb::mutable_defaultthrustercolor() {
   // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterColor)
   return &defaultthrustercolor_;
+}
+
+// double defaultThrusterPlumeLifeScalar = 28;
+inline void VizMessage_VizSettingsPb::clear_defaultthrusterplumelifescalar() {
+  defaultthrusterplumelifescalar_ = 0;
+}
+inline double VizMessage_VizSettingsPb::defaultthrusterplumelifescalar() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterPlumeLifeScalar)
+  return defaultthrusterplumelifescalar_;
+}
+inline void VizMessage_VizSettingsPb::set_defaultthrusterplumelifescalar(double value) {
+  
+  defaultthrusterplumelifescalar_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterPlumeLifeScalar)
 }
 
 // -------------------------------------------------------------------
