@@ -161,6 +161,7 @@ typedef struct {
     double  keyboardAngularRate = -1.0;            //!< [rad/sec] Rotation rate of camera keyboard rates per click.  Value of less than/equal to zero to use viz default
     double  keyboardZoomRate = -1.0;               //!< Value for speed at which the camera zooms in or out.  Value of less than/equal to zero to use viz default
     int defaultThrusterColor[4] = {-1};            //!< Default thruster plume color RGBA values
+    double  defaultThrusterPlumeLifeScalar = 1.0; //!< Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
 }VizSettings;
 
 

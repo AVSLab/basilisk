@@ -118,6 +118,10 @@ default setting for that behavior.
       - int(4)
       - RGBA color values between (0,255).  Default values of -1 makes Vizard use the default thruster plume color
         You can use ``vizSupport.toRGBA255("red")`` to convert common color names to RGBA values.
+    * - ``defaultThrusterPlumeLifeScalar``
+      - double
+      - Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all thruster plumes,
+        >1 will increase lengths of all thruster plumes
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -565,6 +569,8 @@ needed by :ref:`vizInterface`.  Each list entry should contain:
 - (optional) color value to be used by the thruster plume illustration
 
 The illustration of thrusters is shown in the example script :ref:`scenarioAttitudeFeedback2T_TH`.
+
+Note that if the maximum force of a thruster is less than 0.01N (i.e. a micro-thruster), then the plume length is held the same as with a 0.01N thruster.  Otherwise the micro-thruster plumes would not be visible.
 
 The thruster information for each spacecraft can also be set directly by specifying the ``sc.thrMsgData``
 as demonstrated in :ref:`test_dataFileToViz`.
