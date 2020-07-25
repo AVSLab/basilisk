@@ -27,6 +27,7 @@ typedef struct {
 typedef struct {
     std::string thrTag;   //!< [-] ModelTag associated with the thruster grouping
     uint32_t    thrCount; //!< [-] Number of thrusters used in this thruster group
+    int color[4] = {-1};  //!< [-] RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
 
 /*! Vizard setting structure to define a pointing line feature.  This is used to draw a colored
@@ -112,6 +113,7 @@ typedef struct {
 
     std::vector<MsgCurrStatus> rwInMsgID;                       //!< [-] (Private) ID of the incoming rw data
     std::vector<MsgCurrStatus> thrMsgID;                        //!< [-] (Private) ID of the incoming thruster data
+    std::vector<ThrClusterMap> thrInfo;                         //!< [-] (Private) thruster tagging info
     MsgCurrStatus starTrackerInMsgID;                           //!< [-] (Private) ID of the incoming Star Tracker data
     MsgCurrStatus scPlusInMsgID;                                //!< [-] (Private) ID of the incoming SCPlus data
     MsgCurrStatus cssDataInMsgId;                               //!< [-] (Private) ID of the incoming css data
@@ -158,6 +160,8 @@ typedef struct {
     int32_t showDataRateDisplay = 0;               //!< flag to show data frame rate, 0 (protobuffer default), -1 for false, 1 for true
     double  keyboardAngularRate = -1.0;            //!< [rad/sec] Rotation rate of camera keyboard rates per click.  Value of less than/equal to zero to use viz default
     double  keyboardZoomRate = -1.0;               //!< Value for speed at which the camera zooms in or out.  Value of less than/equal to zero to use viz default
+    int defaultThrusterColor[4] = {-1};            //!< Default thruster plume color RGBA values
+    double  defaultThrusterPlumeLifeScalar = 1.0; //!< Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
 }VizSettings;
 
 

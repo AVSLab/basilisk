@@ -112,7 +112,7 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
         #                                     gravBodies=self.DynModels.gravFactory,
-        #                                     saveFile=filename)
+        #                                     saveFile=__file__)
 
     def configure_initial_conditions(self):
         print('%s: configure_initial_conditions' % self.name)

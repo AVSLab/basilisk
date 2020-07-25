@@ -46,7 +46,6 @@ except ImportError:
     vizFound = False
 
 path = os.path.dirname(os.path.abspath(__file__))
-fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000])
@@ -154,7 +153,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
             lineString += str(sigmaB2N)[1:-1] + delimiter
         lineString += str(omega)[1:-1]
         if checkThruster:
-            th2ACS = 2.
+            th2ACS = 0.001
             th2DV = 200.
             numACS2 = 1
             numDV2 = 2
@@ -190,11 +189,13 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         thSetAdcs1 = dataFileToViz.ThrClusterMap()
         thSetAdcs1.thrCount = numACS1
         thSetAdcs1.thrTag = thrModelTagAdcs1
+        thSetAdcs1.color = vizSupport.toRGBA255("red")
 
         thrModelTagDv1 = scNames[0] + "_dv"
         thSetDV1 = dataFileToViz.ThrClusterMap()
         thSetDV1.thrCount = numDV1
         thSetDV1.thrTag = thrModelTagDv1
+        thSetDV1.color = vizSupport.toRGBA255("blue")
 
         thList1 = [thSetAdcs1, thSetDV1]
         testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList1))
@@ -272,12 +273,14 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
+                                              # saveFile=__file__,
                                               scName=scNames)
     if vizFound:
         # delete any existing list of vizInterface spacecraft data
         viz.scData.clear()
         scCounter = 0
+        if checkThruster:
+            viz.settings.defaultThrusterColor = vizSupport.toRGBA255("yellow")
         for item in scNames:
             # create a chief spacecraft info container
             scData = vizInterface.VizSpacecraftData()
@@ -428,7 +431,7 @@ if __name__ == "__main__":
          False,     # showplots
          -1,        # convertPosUnits
          0,        # attType (-1 -> default, 0 -> MRP, 1 -> quaternions, 2 -> 3-2-1 Euler Angles)
-         False,      # checkThruster
-         True,      # checkRW
+         True,      # checkThruster
+         False,      # checkRW
          True       # verbose
        )

@@ -8,8 +8,8 @@ Version |release|
 -----------------
 - On Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
   Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
-- In Xcode < 11.6, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.
-  The code compiles, but auto-completion etc. doesn't work in that module.  This seems to work now with Xcode 11.6
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found.
+  The code compiles, but auto-completion etc. doesn't work in that module.
 
 Version 1.8.2
 -------------
