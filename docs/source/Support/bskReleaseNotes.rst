@@ -20,6 +20,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.3
+-------------
 - Removed old ``CMakeLists.txt`` files that are no longer needed
 - Improved the build process for Linux such that ``vizInterface`` and ``opNav`` related modules are available
   again in Basilisk python scripts.  Thus Linux users can use 1.8.x onwards and still use these enhanced features.
@@ -57,8 +61,8 @@ Version 1.8.1
 - updated the installer script to automatically set the ``conan`` repo information.  This removes one more step
   from the installation process.
 
-Version 1.8.0
--------------
+**Version 1.8.0**
+
 - updated :ref:`imu_sensor` to initialize all class variables in the constructor
 - fixed a data frame issue in :ref:`groundLocation`
 - first iteration of the CMake refactor completed. The refactor updates the project CMakeList to
