@@ -2,5 +2,5 @@
 ``numpy``
 ``matplotlib``
 ``pytest``
-``conan<1.25.0``
 ``Pillow``
+``conan>=1.24.0``

@@ -59,7 +59,7 @@ Dependencies
 
 #. Install Conan using pip, an example is below::
 
-       $ pip3 install --user conan==1.24.1
+       $ pip3 install --user conan
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 

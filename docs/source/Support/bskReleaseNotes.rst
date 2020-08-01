@@ -20,7 +20,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- mention in the platfor specific setup notes to install ``conan==1.24.1`` from the beginning
+- update the macOS dependency to use either ``conan~=1.24`` or ``conan>=1.28``.  The later resolves the linking issues
+  that ``conan`` had on macOS.  Other platforms can use ``conan>=1.24.0``.
 
 
 Version 1.8.3

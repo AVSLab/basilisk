@@ -94,6 +94,8 @@ class BasiliskConan(ConanFile):
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
+        if platform.system() == "Darwin":
+            pkgList.append('conan!=1.25.*, !=1.26.*, !=1.27.*')
 
         checkStr = "Required"
         if self.options.allOptPkg:
