@@ -248,9 +248,9 @@ def run(show_plots):
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
     fig=plt.figure(1)
-    plt.plot(tvec,storageLevel[:,1]/(8E3),label='Data Unit Total Storage Level (KB)')
-    plt.plot(tvec,storedData[:,1]/(8E3),label='Instrument 1 Partition Level (KB)')
-    plt.plot(tvec,storedData[:,2]/(8E3),label='Instrument 2 Partition Level (KB)')
+    plt.plot(tvec, storageLevel[:, 1]/(8E3), label='Data Unit Total Storage Level (KB)')
+    plt.plot(tvec, storedData[:, 1]/(8E3), label='Instrument 1 Partition Level (KB)')
+    plt.plot(tvec, storedData[:, 2]/(8E3), label='Instrument 2 Partition Level (KB)')
     plt.xlabel('Time (Hr)')
     plt.ylabel('Data Stored (KB)')
     plt.grid(True)
@@ -267,8 +267,8 @@ def run(show_plots):
 
     fig = plt.figure()
     plt.polar(pass_az[0,:], 90.-np.degrees(pass_el[0,:]))
-    ax.set_yticks(range(0, 90, 10))  # Define the yticks
-    ax.set_yticklabels(map(str, range(90, 0, -10)))
+    # ax.set_yticks(range(0, 90, 10))  # Define the yticks
+    # ax.set_yticklabels(map(str, range(90, 0, -10)))
     plt.title('Ground Pass Azimuth and Declination')
     figureList['scenarioGroundPassPolar'] = fig
 
