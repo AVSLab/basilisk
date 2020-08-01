@@ -20,7 +20,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- mention in the platfor specific setup notes to install ``conan==1.24.1`` from the beginning
+
 
 Version 1.8.3
 -------------

@@ -105,7 +105,7 @@ Installing required python support packages
 -  Basilisk uses conan for package managing. In order to do so, users
    must install conan::
 
-       $ pip3 install --user conan
+       $ pip3 install --user conan==1.24.1
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 
