@@ -103,6 +103,7 @@ When all the prerequisite installations are complete, the project can be built a
 
    This creates the Visual Studio 16 2019 IDE project in ``dist3``.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.
+   Next open the VS project and build the project.
    For other configure and build options, including running ``cmake`` directly, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
