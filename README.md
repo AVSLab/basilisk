@@ -40,7 +40,7 @@ To run the default scenario 1 of scenarioBasicOrbit, in the directory of the cop
 
 Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
 
-<!--Any new BSK module development should not occur within the BSK folder as this will be updated rapidly.  Rather, new FSW algorithm or simulation coce modules should be created in a custom folder outside of the BSK directory.  A sample folder is provided named `BasiliskCustom` wich contains sample FSW and Simulation modules.-->
+<!--Any new BSK module development should not occur within the BSK folder as this will be updated rapidly.  Rather, new FSW algorithm or simulation code modules should be created in a custom folder outside of the BSK directory.  A sample folder is provided named `BasiliskCustom` which contains sample FSW and Simulation modules.-->
 
 We are working on the ability to develop custom BSK modules outside of the Basilisk folder.  This will enable developers to safely write their own BSK modules and still be able to do a drop in replacement of future BSK releases.
 

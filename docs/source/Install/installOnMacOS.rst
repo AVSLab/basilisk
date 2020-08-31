@@ -145,21 +145,21 @@ When all the prerequisite installations are complete, the project can be built a
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
    folder.
 
-  .. Note:: If you wish to use the another version of python 3 configure the Python paths in :ref:`customPython`
+   .. Note:: If you wish to use the another version of python 3 configure the Python paths in :ref:`customPython`
 
-  .. Warning:: If you get an error message in `cmake` saying it can’t find the compiler tools, open a Terminal window and type::
+   .. Warning:: If you get an error message in `cmake` saying it can’t find the compiler tools, open a Terminal window and type::
 
         $ xcode-select -p
 
-    This should return::
+      This should return::
 
         /Applications/Xcode.app/Contents/Developer
 
-    If instead you get a different director such as ``/Library/Developer/CommandLineTools``, then correct this compiler directory path using::
+      If instead you get a different director such as ``/Library/Developer/CommandLineTools``, then correct this compiler directory path using::
 
         sudo xcode-select --reset
 
-    Now clear the Cmake cache and try running the configure and build process again.
+      Now clear the Cmake cache and try running the configure and build process again.
 
 
 #. Open the Xcode project  file  inside ``dist3``.  This is ``basilisk.xcodeproj`` on macOS.
