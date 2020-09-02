@@ -44,7 +44,8 @@ tracking errors, the RW motor torque components, as well as the RW wheel speeds.
 
 The simulation setups the spacecraft with 3 RW devices similar to :ref:`scenarioAttitudeFeedbackRW`.  One difference
 is that here :ref:`hillPoint` is used to align the spacecraft with the Hill frame.  The two debris objects are
-in a lead-follower configuration with the servicer and are 20m and 40m ahead respectively.
+in a 2:1 centered ellipse and a lead-follower configuration with the servicer respectively.  The servicer camera
+has a camera instrument attached that is pointing in the 3rd body axis direction.
 
 This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
 that it can be viewed in the Vizard visualization.  Two methods of setting up the :ref:`vizInterface` module are shown.
@@ -193,7 +194,7 @@ def run(show_plots, useMsgNameDefaults):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(40.)
 
     #
     #  create the simulation process
@@ -457,8 +458,8 @@ def run(show_plots, useMsgNameDefaults):
     oe.e = 0.0
     oe.i = 33.3 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
-    oe.omega = 347.8 * macros.D2R
-    oe.f = 85.3 * macros.D2R
+    oe.omega = 90.0 * macros.D2R
+    oe.f = 0.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
@@ -467,7 +468,7 @@ def run(show_plots, useMsgNameDefaults):
 
     # setup 1st debris object states
     oe2 = copy.deepcopy(oe)
-    oe2.f += 20./oe2.a
+    oe2.e += 0.000001
     r2N, v2N = orbitalMotion.elem2rv(mu, oe2)
     scObject2.hub.r_CN_NInit = r2N  # m   - r_CN_N
     scObject2.hub.v_CN_NInit = v2N  # m/s - v_CN_N
@@ -486,10 +487,16 @@ def run(show_plots, useMsgNameDefaults):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                              numRW=[numRW, numRW2, 0],
-                                              # saveFile=fileName,
-                                              scName=[scObject.ModelTag, scObject2.ModelTag, scObject3.ModelTag])
+    if vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
+                                                  numRW=[numRW, numRW2, 0],
+                                                  saveFile=fileName,
+                                                  scName=[scObject.ModelTag, scObject2.ModelTag, scObject3.ModelTag])
+        vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
+                                         cameraID=1, fieldOfView=40 * macros.D2R,
+                                         resolution=[1024, 1024], renderRate=0.,
+                                         cameraPos_B=[0., 0., 2.0], sigma_CB=[0., 0., 0.]
+                                         )
 
     # here the message are manually being set.  This allows for more customization
     if vizFound and not useMsgNameDefaults:
