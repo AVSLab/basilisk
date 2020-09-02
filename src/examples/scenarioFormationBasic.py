@@ -193,7 +193,7 @@ def run(show_plots, useMsgNameDefaults):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(40.)
 
     #
     #  create the simulation process
@@ -457,8 +457,8 @@ def run(show_plots, useMsgNameDefaults):
     oe.e = 0.0
     oe.i = 33.3 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
-    oe.omega = 347.8 * macros.D2R
-    oe.f = 85.3 * macros.D2R
+    oe.omega = 90.0 * macros.D2R
+    oe.f = 0.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
@@ -467,7 +467,7 @@ def run(show_plots, useMsgNameDefaults):
 
     # setup 1st debris object states
     oe2 = copy.deepcopy(oe)
-    oe2.f += 20./oe2.a
+    oe2.e += 0.000001
     r2N, v2N = orbitalMotion.elem2rv(mu, oe2)
     scObject2.hub.r_CN_NInit = r2N  # m   - r_CN_N
     scObject2.hub.v_CN_NInit = v2N  # m/s - v_CN_N
