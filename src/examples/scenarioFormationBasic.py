@@ -486,10 +486,16 @@ def run(show_plots, useMsgNameDefaults):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                              numRW=[numRW, numRW2, 0],
-                                              # saveFile=fileName,
-                                              scName=[scObject.ModelTag, scObject2.ModelTag, scObject3.ModelTag])
+    if vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
+                                                  numRW=[numRW, numRW2, 0],
+                                                  saveFile=fileName,
+                                                  scName=[scObject.ModelTag, scObject2.ModelTag, scObject3.ModelTag])
+        vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
+                                         cameraID=1, fieldOfView=40 * macros.D2R,
+                                         resolution=[1024, 1024], renderRate=0.,
+                                         cameraPos_B=[0., 0., 2.0], sigma_CB=[0., 0., 0.]
+                                         )
 
     # here the message are manually being set.  This allows for more customization
     if vizFound and not useMsgNameDefaults:
