@@ -490,7 +490,7 @@ def run(show_plots, useMsgNameDefaults):
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
                                                   numRW=[numRW, numRW2, 0],
-                                                  saveFile=fileName,
+                                                  # saveFile=fileName,
                                                   scName=[scObject.ModelTag, scObject2.ModelTag, scObject3.ModelTag])
         vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
