@@ -44,7 +44,8 @@ tracking errors, the RW motor torque components, as well as the RW wheel speeds.
 
 The simulation setups the spacecraft with 3 RW devices similar to :ref:`scenarioAttitudeFeedbackRW`.  One difference
 is that here :ref:`hillPoint` is used to align the spacecraft with the Hill frame.  The two debris objects are
-in a lead-follower configuration with the servicer and are 20m and 40m ahead respectively.
+in a 2:1 centered ellipse and a lead-follower configuration with the servicer respectively.  The servicer camera
+has a camera instrument attached that is pointing in the 3rd body axis direction.
 
 This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
 that it can be viewed in the Vizard visualization.  Two methods of setting up the :ref:`vizInterface` module are shown.
