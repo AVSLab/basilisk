@@ -11,6 +11,9 @@ except:
 
 
 def add_logger_pub(name, transport_type, port=""):
+    """
+    method add a logger functionality
+    """
     logger = logging.getLogger(name)
     protocol = None
     try:

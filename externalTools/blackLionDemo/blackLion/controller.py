@@ -34,6 +34,9 @@ path = os.path.dirname(os.path.abspath(__file__))
 
 
 class CentralDataExchangeObject(object):
+    """
+    Central data exchange object class
+    """
     def __init__(self):
         self.msg_subscribers = set()
         self.msg_publishers = set()

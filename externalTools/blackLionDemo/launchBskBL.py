@@ -23,6 +23,9 @@ class BSK_Bootstrapper(Bootstrapper):
 
 
 def launch_bsk_sims(boot_strap, local_path):
+    """
+    Launch the Basilisk simulation
+    """
     #boot_strap.add_local_node(node_name="bsk_dyn_node", file_name="dynNode.py", path=local_path + "/bskNode/")
     boot_strap.add_local_node(node_name="bsk_fsw_node", file_name="fsWNode.py", path=local_path + "/bskNode/")
     boot_strap.add_local_node(node_name="py_listener", file_name="listener.py", path=local_path + "/listenerNode/")

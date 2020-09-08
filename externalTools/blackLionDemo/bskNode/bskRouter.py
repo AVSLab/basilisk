@@ -13,6 +13,7 @@ from blackLion import constants
 
 # ----------------------------- High-level classes ----------------------------- #
 class TargetProcess_class():
+    """Target Process"""
     def __init__(self, timeStep, procName):
         self.targetTimeStep = timeStep
         self.targetProcName = procName
@@ -45,6 +46,9 @@ class DataExchangeObject(object):
 
 
 class PyRouter(simulationArchTypes.PythonModelClass):
+    """
+    test
+    """
     def __init__(self, modelName, modelActive=True, modelPriority=-1):
         super(PyRouter, self).__init__(modelName, modelActive, modelPriority)
         self.localSubscriptions = {}  # dict[msg name] = msg ID of messages to receive
