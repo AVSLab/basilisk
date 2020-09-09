@@ -525,8 +525,10 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, position_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, fieldofview_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, normalvector_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, currentmsmt_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, maxmsmt_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, cssgroupid_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StarTracker, _internal_metadata_),
@@ -644,6 +646,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, orbitlinesegments_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, relativeorbitrange_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showhillframe_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showvelocityframe_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, relativeorbitframe_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -664,15 +668,15 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 41, -1, sizeof(::vizProtobufferMessage::VizMessage_ReactionWheel)},
   { 52, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
   { 63, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
-  { 72, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
-  { 82, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
-  { 95, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
-  { 103, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
-  { 117, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
-  { 129, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 141, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
-  { 154, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 188, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 74, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
+  { 84, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
+  { 97, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
+  { 105, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
+  { 119, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
+  { 131, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
+  { 143, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 156, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 192, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -717,7 +721,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\377\033\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\335\034\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -750,66 +754,69 @@ void AddDescriptorsImpl() {
       "\200\001\n\010Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thrust"
       "Vector\030\004 \003(\001\022\025\n\rcurrentThrust\030\005 \001(\001\022\021\n\tm"
       "axThrust\030\006 \001(\001\022\023\n\013thrusterTag\030\010 \001(\t\022\r\n\005c"
-      "olor\030\t \003(\005\032b\n\017CoarseSunSensor\022\020\n\010positio"
-      "n\030\002 \003(\001\022\024\n\014normalVector\030\004 \003(\001\022\023\n\013current"
-      "Msmt\030\005 \001(\001\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarT"
-      "racker\022\020\n\010position\030\002 \003(\001\022\020\n\010rotation\030\004 \003"
-      "(\001\022\031\n\021fieldOfViewHeight\030\005 \001(\001\022\030\n\020fieldOf"
-      "ViewWidth\030\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 "
-      "\001(\005\032\253\001\n\014CameraConfig\022\020\n\010cameraID\030\001 \001(\003\022\022"
-      "\n\nparentName\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022"
-      "\022\n\nresolution\030\004 \003(\003\022\023\n\013cameraPos_B\030\007 \003(\001"
-      "\022\023\n\013cameraDir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001("
-      "\004\022\016\n\006skybox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBo"
-      "dyName\030\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tline"
-      "Color\030\003 \003(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepI"
-      "n\030\001 \001(\010\022\020\n\010position\030\002 \003(\001\022\024\n\014normalVecto"
-      "r\030\003 \003(\001\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeH"
-      "eight\030\005 \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoB"
-      "odyName\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\005\022\020\n\010cone"
-      "Name\030\t \001(\t\032\245\001\n\026StandardCameraSettings\022\026\n"
-      "\016spacecraftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023"
-      "\n\013fieldOfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022"
-      "\017\n\007setView\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001"
-      "\022\020\n\010position\030\t \003(\001\032\270\001\n\020ActuatorSettings\022"
-      "\026\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrusterP"
-      "anel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013v"
-      "iewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022\032\n\022s"
-      "howThrusterLabels\030\006 \001(\005\022\024\n\014showRWLabels\030"
-      "\007 \001(\005\032\256\001\n\013CustomModel\022\021\n\tmodelPath\030\001 \001(\t"
-      "\022\031\n\021simBodiesToModify\030\002 \003(\t\022\016\n\006offset\030\003 "
-      "\003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021"
-      "customTexturePath\030\006 \001(\t\022\025\n\rnormalMapPath"
-      "\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\222\010\n\rVizSettingsPb"
-      "\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022"
-      "\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 "
-      "\001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProtobuffer"
-      "Message.VizMessage.PointLine\022G\n\016keepOutI"
-      "nCones\030\006 \003(\0132/.vizProtobufferMessage.Viz"
-      "Message.KeepOutInCone\022X\n\026standardCameraS"
-      "ettings\030\007 \003(\01328.vizProtobufferMessage.Vi"
-      "zMessage.StandardCameraSettings\022L\n\020actua"
-      "torSettings\030\n \003(\01322.vizProtobufferMessag"
-      "e.VizMessage.ActuatorSettings\022\016\n\006skybox\030"
-      "\013 \001(\t\022C\n\014customModels\030\014 \003(\0132-.vizProtobu"
-      "fferMessage.VizMessage.CustomModel\022\036\n\026vi"
-      "ewCameraBoresightHUD\030\r \001(\005\022\031\n\021viewCamera"
-      "ConeHUD\030\016 \001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027s"
-      "howCelestialBodyLabels\030\020 \001(\005\022\034\n\024showSpac"
-      "ecraftLabels\030\021 \001(\005\022\030\n\020showCameraLabels\030\022"
-      " \001(\005\022\026\n\016customGUIScale\030\023 \001(\001\022\037\n\027defaultS"
-      "pacecraftSprite\030\024 \001(\t\022\037\n\027showSpacecraftA"
-      "sSprites\030\025 \001(\005\022$\n\034showCelestialBodiesAsS"
-      "prites\030\026 \001(\005\022\025\n\rshow24hrClock\030\027 \001(\005\022\033\n\023s"
-      "howDataRateDisplay\030\030 \001(\005\022\033\n\023keyboardAngu"
-      "larRate\030\031 \001(\001\022\030\n\020keyboardZoomRate\030\032 \001(\001\022"
-      "\034\n\024defaultThrusterColor\030\033 \003(\005\022&\n\036default"
-      "ThrusterPlumeLifeScalar\030\034 \001(\001\022\031\n\021orbitLi"
-      "neSegments\030\035 \001(\005\022\032\n\022relativeOrbitRange\030\036"
-      " \001(\005\022\025\n\rshowHillFrame\030\037 \001(\005b\006proto3"
+      "olor\030\t \003(\005\032\210\001\n\017CoarseSunSensor\022\020\n\010positi"
+      "on\030\002 \003(\001\022\023\n\013fieldOfView\030\003 \001(\001\022\024\n\014normalV"
+      "ector\030\004 \003(\001\022\023\n\013currentMsmt\030\005 \001(\001\022\017\n\007maxM"
+      "smt\030\006 \001(\001\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarTr"
+      "acker\022\020\n\010position\030\002 \003(\001\022\020\n\010rotation\030\004 \003("
+      "\001\022\031\n\021fieldOfViewHeight\030\005 \001(\001\022\030\n\020fieldOfV"
+      "iewWidth\030\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 \001"
+      "(\005\032\253\001\n\014CameraConfig\022\020\n\010cameraID\030\001 \001(\003\022\022\n"
+      "\nparentName\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022\022"
+      "\n\nresolution\030\004 \003(\003\022\023\n\013cameraPos_B\030\007 \003(\001\022"
+      "\023\n\013cameraDir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004"
+      "\022\016\n\006skybox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBod"
+      "yName\030\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tlineC"
+      "olor\030\003 \003(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepIn"
+      "\030\001 \001(\010\022\020\n\010position\030\002 \003(\001\022\024\n\014normalVector"
+      "\030\003 \003(\001\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHe"
+      "ight\030\005 \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBo"
+      "dyName\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\005\022\020\n\010coneN"
+      "ame\030\t \001(\t\032\245\001\n\026StandardCameraSettings\022\026\n\016"
+      "spacecraftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023\n"
+      "\013fieldOfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017"
+      "\n\007setView\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\022"
+      "\020\n\010position\030\t \003(\001\032\270\001\n\020ActuatorSettings\022\026"
+      "\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrusterPa"
+      "nel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013vi"
+      "ewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022\032\n\022sh"
+      "owThrusterLabels\030\006 \001(\005\022\024\n\014showRWLabels\030\007"
+      " \001(\005\032\256\001\n\013CustomModel\022\021\n\tmodelPath\030\001 \001(\t\022"
+      "\031\n\021simBodiesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003"
+      "(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021c"
+      "ustomTexturePath\030\006 \001(\t\022\025\n\rnormalMapPath\030"
+      "\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\311\010\n\rVizSettingsPb\022"
+      "\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026"
+      "\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001"
+      "(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProtobufferM"
+      "essage.VizMessage.PointLine\022G\n\016keepOutIn"
+      "Cones\030\006 \003(\0132/.vizProtobufferMessage.VizM"
+      "essage.KeepOutInCone\022X\n\026standardCameraSe"
+      "ttings\030\007 \003(\01328.vizProtobufferMessage.Viz"
+      "Message.StandardCameraSettings\022L\n\020actuat"
+      "orSettings\030\n \003(\01322.vizProtobufferMessage"
+      ".VizMessage.ActuatorSettings\022\016\n\006skybox\030\013"
+      " \001(\t\022C\n\014customModels\030\014 \003(\0132-.vizProtobuf"
+      "ferMessage.VizMessage.CustomModel\022\036\n\026vie"
+      "wCameraBoresightHUD\030\r \001(\005\022\031\n\021viewCameraC"
+      "oneHUD\030\016 \001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027sh"
+      "owCelestialBodyLabels\030\020 \001(\005\022\034\n\024showSpace"
+      "craftLabels\030\021 \001(\005\022\030\n\020showCameraLabels\030\022 "
+      "\001(\005\022\026\n\016customGUIScale\030\023 \001(\001\022\037\n\027defaultSp"
+      "acecraftSprite\030\024 \001(\t\022\037\n\027showSpacecraftAs"
+      "Sprites\030\025 \001(\005\022$\n\034showCelestialBodiesAsSp"
+      "rites\030\026 \001(\005\022\025\n\rshow24hrClock\030\027 \001(\005\022\033\n\023sh"
+      "owDataRateDisplay\030\030 \001(\005\022\033\n\023keyboardAngul"
+      "arRate\030\031 \001(\001\022\030\n\020keyboardZoomRate\030\032 \001(\001\022\034"
+      "\n\024defaultThrusterColor\030\033 \003(\005\022&\n\036defaultT"
+      "hrusterPlumeLifeScalar\030\034 \001(\001\022\031\n\021orbitLin"
+      "eSegments\030\035 \001(\005\022\032\n\022relativeOrbitRange\030\036 "
+      "\001(\005\022\025\n\rshowHillFrame\030\037 \001(\005\022\031\n\021showVeloci"
+      "tyFrame\030  \001(\005\022\032\n\022relativeOrbitFrame\030! \001("
+      "\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3635);
+      descriptor, 3729);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -3631,8 +3638,10 @@ void VizMessage_CoarseSunSensor::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage_CoarseSunSensor::kPositionFieldNumber;
+const int VizMessage_CoarseSunSensor::kFieldOfViewFieldNumber;
 const int VizMessage_CoarseSunSensor::kNormalVectorFieldNumber;
 const int VizMessage_CoarseSunSensor::kCurrentMsmtFieldNumber;
+const int VizMessage_CoarseSunSensor::kMaxMsmtFieldNumber;
 const int VizMessage_CoarseSunSensor::kCSSGroupIDFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -3651,16 +3660,16 @@ VizMessage_CoarseSunSensor::VizMessage_CoarseSunSensor(const VizMessage_CoarseSu
       normalvector_(from.normalvector_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&currentmsmt_, &from.currentmsmt_,
+  ::memcpy(&fieldofview_, &from.fieldofview_,
     static_cast<size_t>(reinterpret_cast<char*>(&cssgroupid_) -
-    reinterpret_cast<char*>(&currentmsmt_)) + sizeof(cssgroupid_));
+    reinterpret_cast<char*>(&fieldofview_)) + sizeof(cssgroupid_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CoarseSunSensor)
 }
 
 void VizMessage_CoarseSunSensor::SharedCtor() {
-  ::memset(&currentmsmt_, 0, static_cast<size_t>(
+  ::memset(&fieldofview_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&cssgroupid_) -
-      reinterpret_cast<char*>(&currentmsmt_)) + sizeof(cssgroupid_));
+      reinterpret_cast<char*>(&fieldofview_)) + sizeof(cssgroupid_));
   _cached_size_ = 0;
 }
 
@@ -3703,9 +3712,9 @@ void VizMessage_CoarseSunSensor::Clear() {
 
   position_.Clear();
   normalvector_.Clear();
-  ::memset(&currentmsmt_, 0, static_cast<size_t>(
+  ::memset(&fieldofview_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&cssgroupid_) -
-      reinterpret_cast<char*>(&currentmsmt_)) + sizeof(cssgroupid_));
+      reinterpret_cast<char*>(&fieldofview_)) + sizeof(cssgroupid_));
   _internal_metadata_.Clear();
 }
 
@@ -3732,6 +3741,20 @@ bool VizMessage_CoarseSunSensor::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
                  1, 18u, input, this->mutable_position())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double fieldOfView = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &fieldofview_)));
         } else {
           goto handle_unusual;
         }
@@ -3765,6 +3788,20 @@ bool VizMessage_CoarseSunSensor::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
                  input, &currentmsmt_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double maxMsmt = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(49u /* 49 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &maxmsmt_)));
         } else {
           goto handle_unusual;
         }
@@ -3820,6 +3857,11 @@ void VizMessage_CoarseSunSensor::SerializeWithCachedSizes(
       this->position().data(), this->position_size(), output);
   }
 
+  // double fieldOfView = 3;
+  if (this->fieldofview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->fieldofview(), output);
+  }
+
   // repeated double normalVector = 4;
   if (this->normalvector_size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteTag(4, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
@@ -3832,6 +3874,11 @@ void VizMessage_CoarseSunSensor::SerializeWithCachedSizes(
   // double currentMsmt = 5;
   if (this->currentmsmt() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->currentmsmt(), output);
+  }
+
+  // double maxMsmt = 6;
+  if (this->maxmsmt() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->maxmsmt(), output);
   }
 
   // int32 CSSGroupID = 7;
@@ -3866,6 +3913,11 @@ void VizMessage_CoarseSunSensor::SerializeWithCachedSizes(
       WriteDoubleNoTagToArray(this->position_, target);
   }
 
+  // double fieldOfView = 3;
+  if (this->fieldofview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->fieldofview(), target);
+  }
+
   // repeated double normalVector = 4;
   if (this->normalvector_size() > 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
@@ -3882,6 +3934,11 @@ void VizMessage_CoarseSunSensor::SerializeWithCachedSizes(
   // double currentMsmt = 5;
   if (this->currentmsmt() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->currentmsmt(), target);
+  }
+
+  // double maxMsmt = 6;
+  if (this->maxmsmt() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->maxmsmt(), target);
   }
 
   // int32 CSSGroupID = 7;
@@ -3938,8 +3995,18 @@ size_t VizMessage_CoarseSunSensor::ByteSizeLong() const {
     total_size += data_size;
   }
 
+  // double fieldOfView = 3;
+  if (this->fieldofview() != 0) {
+    total_size += 1 + 8;
+  }
+
   // double currentMsmt = 5;
   if (this->currentmsmt() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double maxMsmt = 6;
+  if (this->maxmsmt() != 0) {
     total_size += 1 + 8;
   }
 
@@ -3981,8 +4048,14 @@ void VizMessage_CoarseSunSensor::MergeFrom(const VizMessage_CoarseSunSensor& fro
 
   position_.MergeFrom(from.position_);
   normalvector_.MergeFrom(from.normalvector_);
+  if (from.fieldofview() != 0) {
+    set_fieldofview(from.fieldofview());
+  }
   if (from.currentmsmt() != 0) {
     set_currentmsmt(from.currentmsmt());
+  }
+  if (from.maxmsmt() != 0) {
+    set_maxmsmt(from.maxmsmt());
   }
   if (from.cssgroupid() != 0) {
     set_cssgroupid(from.cssgroupid());
@@ -4015,7 +4088,9 @@ void VizMessage_CoarseSunSensor::InternalSwap(VizMessage_CoarseSunSensor* other)
   using std::swap;
   position_.InternalSwap(&other->position_);
   normalvector_.InternalSwap(&other->normalvector_);
+  swap(fieldofview_, other->fieldofview_);
   swap(currentmsmt_, other->currentmsmt_);
+  swap(maxmsmt_, other->maxmsmt_);
   swap(cssgroupid_, other->cssgroupid_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
@@ -7837,6 +7912,8 @@ const int VizMessage_VizSettingsPb::kDefaultThrusterPlumeLifeScalarFieldNumber;
 const int VizMessage_VizSettingsPb::kOrbitLineSegmentsFieldNumber;
 const int VizMessage_VizSettingsPb::kRelativeOrbitRangeFieldNumber;
 const int VizMessage_VizSettingsPb::kShowHillFrameFieldNumber;
+const int VizMessage_VizSettingsPb::kShowVelocityFrameFieldNumber;
+const int VizMessage_VizSettingsPb::kRelativeOrbitFrameFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
@@ -7867,8 +7944,8 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
     defaultspacecraftsprite_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.defaultspacecraftsprite_);
   }
   ::memcpy(&ambient_, &from.ambient_,
-    static_cast<size_t>(reinterpret_cast<char*>(&showhillframe_) -
-    reinterpret_cast<char*>(&ambient_)) + sizeof(showhillframe_));
+    static_cast<size_t>(reinterpret_cast<char*>(&relativeorbitframe_) -
+    reinterpret_cast<char*>(&ambient_)) + sizeof(relativeorbitframe_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
 }
 
@@ -7876,8 +7953,8 @@ void VizMessage_VizSettingsPb::SharedCtor() {
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&showhillframe_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(showhillframe_));
+      reinterpret_cast<char*>(&relativeorbitframe_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(relativeorbitframe_));
   _cached_size_ = 0;
 }
 
@@ -7929,8 +8006,8 @@ void VizMessage_VizSettingsPb::Clear() {
   skybox_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&showhillframe_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(showhillframe_));
+      reinterpret_cast<char*>(&relativeorbitframe_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(relativeorbitframe_));
   _internal_metadata_.Clear();
 }
 
@@ -8344,6 +8421,34 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
+      // int32 showVelocityFrame = 32;
+      case 32: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(0u /* 256 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &showvelocityframe_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 relativeOrbitFrame = 33;
+      case 33: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 264 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &relativeorbitframe_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -8541,6 +8646,16 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(31, this->showhillframe(), output);
   }
 
+  // int32 showVelocityFrame = 32;
+  if (this->showvelocityframe() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(32, this->showvelocityframe(), output);
+  }
+
+  // int32 relativeOrbitFrame = 33;
+  if (this->relativeorbitframe() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(33, this->relativeorbitframe(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -8733,6 +8848,16 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
   // int32 showHillFrame = 31;
   if (this->showhillframe() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(31, this->showhillframe(), target);
+  }
+
+  // int32 showVelocityFrame = 32;
+  if (this->showvelocityframe() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(32, this->showvelocityframe(), target);
+  }
+
+  // int32 relativeOrbitFrame = 33;
+  if (this->relativeorbitframe() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(33, this->relativeorbitframe(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -8974,6 +9099,20 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
         this->showhillframe());
   }
 
+  // int32 showVelocityFrame = 32;
+  if (this->showvelocityframe() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->showvelocityframe());
+  }
+
+  // int32 relativeOrbitFrame = 33;
+  if (this->relativeorbitframe() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->relativeorbitframe());
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -9080,6 +9219,12 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   if (from.showhillframe() != 0) {
     set_showhillframe(from.showhillframe());
   }
+  if (from.showvelocityframe() != 0) {
+    set_showvelocityframe(from.showvelocityframe());
+  }
+  if (from.relativeorbitframe() != 0) {
+    set_relativeorbitframe(from.relativeorbitframe());
+  }
 }
 
 void VizMessage_VizSettingsPb::CopyFrom(const ::google::protobuf::Message& from) {
@@ -9135,6 +9280,8 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   swap(defaultthrusterplumelifescalar_, other->defaultthrusterplumelifescalar_);
   swap(relativeorbitrange_, other->relativeorbitrange_);
   swap(showhillframe_, other->showhillframe_);
+  swap(showvelocityframe_, other->showvelocityframe_);
+  swap(relativeorbitframe_, other->relativeorbitframe_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

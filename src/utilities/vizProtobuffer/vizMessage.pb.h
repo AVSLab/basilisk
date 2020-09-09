@@ -1169,11 +1169,23 @@ class VizMessage_CoarseSunSensor : public ::google::protobuf::Message /* @@proto
   ::google::protobuf::RepeatedField< double >*
       mutable_normalvector();
 
+  // double fieldOfView = 3;
+  void clear_fieldofview();
+  static const int kFieldOfViewFieldNumber = 3;
+  double fieldofview() const;
+  void set_fieldofview(double value);
+
   // double currentMsmt = 5;
   void clear_currentmsmt();
   static const int kCurrentMsmtFieldNumber = 5;
   double currentmsmt() const;
   void set_currentmsmt(double value);
+
+  // double maxMsmt = 6;
+  void clear_maxmsmt();
+  static const int kMaxMsmtFieldNumber = 6;
+  double maxmsmt() const;
+  void set_maxmsmt(double value);
 
   // int32 CSSGroupID = 7;
   void clear_cssgroupid();
@@ -1189,7 +1201,9 @@ class VizMessage_CoarseSunSensor : public ::google::protobuf::Message /* @@proto
   mutable int _position_cached_byte_size_;
   ::google::protobuf::RepeatedField< double > normalvector_;
   mutable int _normalvector_cached_byte_size_;
+  double fieldofview_;
   double currentmsmt_;
+  double maxmsmt_;
   ::google::protobuf::int32 cssgroupid_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
@@ -2696,6 +2710,18 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showhillframe() const;
   void set_showhillframe(::google::protobuf::int32 value);
 
+  // int32 showVelocityFrame = 32;
+  void clear_showvelocityframe();
+  static const int kShowVelocityFrameFieldNumber = 32;
+  ::google::protobuf::int32 showvelocityframe() const;
+  void set_showvelocityframe(::google::protobuf::int32 value);
+
+  // int32 relativeOrbitFrame = 33;
+  void clear_relativeorbitframe();
+  static const int kRelativeOrbitFrameFieldNumber = 33;
+  ::google::protobuf::int32 relativeorbitframe() const;
+  void set_relativeorbitframe(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
 
@@ -2730,6 +2756,8 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   double defaultthrusterplumelifescalar_;
   ::google::protobuf::int32 relativeorbitrange_;
   ::google::protobuf::int32 showhillframe_;
+  ::google::protobuf::int32 showvelocityframe_;
+  ::google::protobuf::int32 relativeorbitframe_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -3834,6 +3862,20 @@ VizMessage_CoarseSunSensor::mutable_position() {
   return &position_;
 }
 
+// double fieldOfView = 3;
+inline void VizMessage_CoarseSunSensor::clear_fieldofview() {
+  fieldofview_ = 0;
+}
+inline double VizMessage_CoarseSunSensor::fieldofview() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CoarseSunSensor.fieldOfView)
+  return fieldofview_;
+}
+inline void VizMessage_CoarseSunSensor::set_fieldofview(double value) {
+  
+  fieldofview_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CoarseSunSensor.fieldOfView)
+}
+
 // repeated double normalVector = 4;
 inline int VizMessage_CoarseSunSensor::normalvector_size() const {
   return normalvector_.size();
@@ -3876,6 +3918,20 @@ inline void VizMessage_CoarseSunSensor::set_currentmsmt(double value) {
   
   currentmsmt_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CoarseSunSensor.currentMsmt)
+}
+
+// double maxMsmt = 6;
+inline void VizMessage_CoarseSunSensor::clear_maxmsmt() {
+  maxmsmt_ = 0;
+}
+inline double VizMessage_CoarseSunSensor::maxmsmt() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CoarseSunSensor.maxMsmt)
+  return maxmsmt_;
+}
+inline void VizMessage_CoarseSunSensor::set_maxmsmt(double value) {
+  
+  maxmsmt_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CoarseSunSensor.maxMsmt)
 }
 
 // int32 CSSGroupID = 7;
@@ -5946,6 +6002,34 @@ inline void VizMessage_VizSettingsPb::set_showhillframe(::google::protobuf::int3
   
   showhillframe_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showHillFrame)
+}
+
+// int32 showVelocityFrame = 32;
+inline void VizMessage_VizSettingsPb::clear_showvelocityframe() {
+  showvelocityframe_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showvelocityframe() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showVelocityFrame)
+  return showvelocityframe_;
+}
+inline void VizMessage_VizSettingsPb::set_showvelocityframe(::google::protobuf::int32 value) {
+  
+  showvelocityframe_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showVelocityFrame)
+}
+
+// int32 relativeOrbitFrame = 33;
+inline void VizMessage_VizSettingsPb::clear_relativeorbitframe() {
+  relativeorbitframe_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::relativeorbitframe() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitFrame)
+  return relativeorbitframe_;
+}
+inline void VizMessage_VizSettingsPb::set_relativeorbitframe(::google::protobuf::int32 value) {
+  
+  relativeorbitframe_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitFrame)
 }
 
 // -------------------------------------------------------------------
