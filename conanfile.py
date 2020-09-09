@@ -229,23 +229,24 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # set the build destination folder
-    buildFolderName = 'dist3'
-    buildFolderName += '/conan'
+    buildFolderName = 'dist3/conan'
 
     # run conan install
-    conanCmdString = 'conan install . --build=missing'
-    conanCmdString += ' -s build_type=' + str(args.buildType)
-    conanCmdString += ' -if ' + buildFolderName
+    conanCmdString = list()
+    conanCmdString.append('conan install . --build=missing')
+    conanCmdString.append(' -s build_type=' + str(args.buildType))
+    conanCmdString.append(' -if ' + buildFolderName)
     if args.generator:
-        conanCmdString += ' -o generator="' + str(args.generator) + '"'
+        conanCmdString.append(' -o generator="' + str(args.generator) + '"')
     for opt, value in bskModuleOptionsBool.items():
-        conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
+        conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsString.items():
         if str(vars(args)[opt]):
-            conanCmdString += ' -o ' + opt + '=' + str(vars(args)[opt])
+            conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsFlag.items():
         if vars(args)[opt]:
-            conanCmdString += ' -o ' + opt + '=True'
+            conanCmdString.append(' -o ' + opt + '=True')
+    conanCmdString = ''.join(conanCmdString)
     print(statusColor + "Running this conan command:" + endColor)
     print(conanCmdString)
     os.system(conanCmdString)
