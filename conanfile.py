@@ -185,6 +185,10 @@ class BasiliskConan(ConanFile):
             self.generator = str(self.options.generator)
         print("cmake generator set to: " + statusColor + str(self.generator) + endColor)
 
+    def imports(self):
+        if self.settings.os == "Windows":
+            self.keep_imports = True
+            self.copy("*.dll", "../Basilisk", "bin")
 
     def build(self):
         root = os.path.abspath(os.path.curdir)
