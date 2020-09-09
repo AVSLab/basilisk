@@ -163,7 +163,7 @@ typedef struct {
     int defaultThrusterColor[4] = {-1};            //!< Default thruster plume color RGBA values
     double  defaultThrusterPlumeLifeScalar = 1.0; //!< Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
     int orbitLineSegments = 0; //!< Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4
-    int relativeOrbitRange = 0; //!< [deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to zero
+    int relativeOrbitRange = 0; //!< [deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 1
     int showHillFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 

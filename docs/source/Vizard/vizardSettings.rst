@@ -129,7 +129,7 @@ default setting for that behavior.
     * - ``relativeOrbitRange``
       - int
       - +/- angular range in degrees of the osculating trajectory to show.  Value of 0 (protobuffer default) to use
-        viz default or any value greater than or equal to zero
+        viz default or any value greater than or equal to 1
     * - ``showHillFrame``
       - int
       - flag to show the Hill frame of the spacecraft camera target. Value of 0 (protobuffer default)
