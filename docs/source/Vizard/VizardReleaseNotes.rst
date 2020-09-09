@@ -13,8 +13,18 @@ Release Notes
     - dynamic texture rendering
     - articulating CAD models
     - fuel tank visualization
-    - add support for visualizing relative orbit trajectories
-    - micro-thruster visualization support
+    - trajectory history visualization
+
+
+**Version 1.5.0**
+
+- Added the ability to visualize the osculating relative trajectory with respect to a target spacecraft.
+  This works for circular, elliptical and hyperbolic trajectories!
+- Added scripting options to support the relative trajectory settings
+- Make the instrument camera show other spacecraft within the field of view
+- Enhanced the look of the default bskSat CAD model
+
+
 
 **Version 1.4.1**
 
