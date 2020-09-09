@@ -574,6 +574,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         } 
 
         vizSettings->set_defaultthrusterplumelifescalar(this->settings.defaultThrusterPlumeLifeScalar);
+        vizSettings->set_orbitlinesegments(this->settings.orbitLineSegments);
+        vizSettings->set_relativeorbitrange(this->settings.relativeOrbitRange);
+        vizSettings->set_showhillframe(this->settings.showHillFrame);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {

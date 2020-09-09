@@ -2672,11 +2672,29 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showdataratedisplay() const;
   void set_showdataratedisplay(::google::protobuf::int32 value);
 
+  // int32 orbitLineSegments = 29;
+  void clear_orbitlinesegments();
+  static const int kOrbitLineSegmentsFieldNumber = 29;
+  ::google::protobuf::int32 orbitlinesegments() const;
+  void set_orbitlinesegments(::google::protobuf::int32 value);
+
   // double defaultThrusterPlumeLifeScalar = 28;
   void clear_defaultthrusterplumelifescalar();
   static const int kDefaultThrusterPlumeLifeScalarFieldNumber = 28;
   double defaultthrusterplumelifescalar() const;
   void set_defaultthrusterplumelifescalar(double value);
+
+  // int32 relativeOrbitRange = 30;
+  void clear_relativeorbitrange();
+  static const int kRelativeOrbitRangeFieldNumber = 30;
+  ::google::protobuf::int32 relativeorbitrange() const;
+  void set_relativeorbitrange(::google::protobuf::int32 value);
+
+  // int32 showHillFrame = 31;
+  void clear_showhillframe();
+  static const int kShowHillFrameFieldNumber = 31;
+  ::google::protobuf::int32 showhillframe() const;
+  void set_showhillframe(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
@@ -2708,7 +2726,10 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   double keyboardangularrate_;
   double keyboardzoomrate_;
   ::google::protobuf::int32 showdataratedisplay_;
+  ::google::protobuf::int32 orbitlinesegments_;
   double defaultthrusterplumelifescalar_;
+  ::google::protobuf::int32 relativeorbitrange_;
+  ::google::protobuf::int32 showhillframe_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -5883,6 +5904,48 @@ inline void VizMessage_VizSettingsPb::set_defaultthrusterplumelifescalar(double 
   
   defaultthrusterplumelifescalar_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.defaultThrusterPlumeLifeScalar)
+}
+
+// int32 orbitLineSegments = 29;
+inline void VizMessage_VizSettingsPb::clear_orbitlinesegments() {
+  orbitlinesegments_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::orbitlinesegments() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.orbitLineSegments)
+  return orbitlinesegments_;
+}
+inline void VizMessage_VizSettingsPb::set_orbitlinesegments(::google::protobuf::int32 value) {
+  
+  orbitlinesegments_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.orbitLineSegments)
+}
+
+// int32 relativeOrbitRange = 30;
+inline void VizMessage_VizSettingsPb::clear_relativeorbitrange() {
+  relativeorbitrange_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::relativeorbitrange() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitRange)
+  return relativeorbitrange_;
+}
+inline void VizMessage_VizSettingsPb::set_relativeorbitrange(::google::protobuf::int32 value) {
+  
+  relativeorbitrange_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitRange)
+}
+
+// int32 showHillFrame = 31;
+inline void VizMessage_VizSettingsPb::clear_showhillframe() {
+  showhillframe_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::showhillframe() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.showHillFrame)
+  return showhillframe_;
+}
+inline void VizMessage_VizSettingsPb::set_showhillframe(::google::protobuf::int32 value) {
+  
+  showhillframe_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.showHillFrame)
 }
 
 // -------------------------------------------------------------------

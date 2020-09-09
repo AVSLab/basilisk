@@ -122,6 +122,18 @@ default setting for that behavior.
       - double
       - Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all thruster plumes,
         >1 will increase lengths of all thruster plumes
+    * - ``orbitLineSegments``
+      - int
+      - Number of line segments to use when drawing an osculating trajectory. Value of 0 (protobuffer default)
+        to use viz default or any value greater than or equal to 4
+    * - ``relativeOrbitRange``
+      - int
+      - +/- angular range in degrees of the osculating trajectory to show.  Value of 0 (protobuffer default) to use
+        viz default or any value greater than or equal to zero
+    * - ``showHillFrame``
+      - int
+      - flag to show the Hill frame of the spacecraft camera target. Value of 0 (protobuffer default)
+        to use viz default, -1 for false, 1 for true
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

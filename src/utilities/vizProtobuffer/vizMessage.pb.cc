@@ -641,6 +641,9 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, keyboardzoomrate_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, defaultthrustercolor_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, defaultthrusterplumelifescalar_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, orbitlinesegments_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, relativeorbitrange_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, showhillframe_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -669,7 +672,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 129, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
   { 141, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
   { 154, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 185, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 188, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -714,7 +717,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\261\033\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\377\033\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -777,7 +780,7 @@ void AddDescriptorsImpl() {
       "\022\031\n\021simBodiesToModify\030\002 \003(\t\022\016\n\006offset\030\003 "
       "\003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021"
       "customTexturePath\030\006 \001(\t\022\025\n\rnormalMapPath"
-      "\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\304\007\n\rVizSettingsPb"
+      "\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\222\010\n\rVizSettingsPb"
       "\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022"
       "\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 "
       "\001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProtobuffer"
@@ -801,10 +804,12 @@ void AddDescriptorsImpl() {
       "howDataRateDisplay\030\030 \001(\005\022\033\n\023keyboardAngu"
       "larRate\030\031 \001(\001\022\030\n\020keyboardZoomRate\030\032 \001(\001\022"
       "\034\n\024defaultThrusterColor\030\033 \003(\005\022&\n\036default"
-      "ThrusterPlumeLifeScalar\030\034 \001(\001b\006proto3"
+      "ThrusterPlumeLifeScalar\030\034 \001(\001\022\031\n\021orbitLi"
+      "neSegments\030\035 \001(\005\022\032\n\022relativeOrbitRange\030\036"
+      " \001(\005\022\025\n\rshowHillFrame\030\037 \001(\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3557);
+      descriptor, 3635);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -7829,6 +7834,9 @@ const int VizMessage_VizSettingsPb::kKeyboardAngularRateFieldNumber;
 const int VizMessage_VizSettingsPb::kKeyboardZoomRateFieldNumber;
 const int VizMessage_VizSettingsPb::kDefaultThrusterColorFieldNumber;
 const int VizMessage_VizSettingsPb::kDefaultThrusterPlumeLifeScalarFieldNumber;
+const int VizMessage_VizSettingsPb::kOrbitLineSegmentsFieldNumber;
+const int VizMessage_VizSettingsPb::kRelativeOrbitRangeFieldNumber;
+const int VizMessage_VizSettingsPb::kShowHillFrameFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
@@ -7859,8 +7867,8 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
     defaultspacecraftsprite_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.defaultspacecraftsprite_);
   }
   ::memcpy(&ambient_, &from.ambient_,
-    static_cast<size_t>(reinterpret_cast<char*>(&defaultthrusterplumelifescalar_) -
-    reinterpret_cast<char*>(&ambient_)) + sizeof(defaultthrusterplumelifescalar_));
+    static_cast<size_t>(reinterpret_cast<char*>(&showhillframe_) -
+    reinterpret_cast<char*>(&ambient_)) + sizeof(showhillframe_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
 }
 
@@ -7868,8 +7876,8 @@ void VizMessage_VizSettingsPb::SharedCtor() {
   skybox_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&defaultthrusterplumelifescalar_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(defaultthrusterplumelifescalar_));
+      reinterpret_cast<char*>(&showhillframe_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(showhillframe_));
   _cached_size_ = 0;
 }
 
@@ -7921,8 +7929,8 @@ void VizMessage_VizSettingsPb::Clear() {
   skybox_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   defaultspacecraftsprite_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ambient_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&defaultthrusterplumelifescalar_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(defaultthrusterplumelifescalar_));
+      reinterpret_cast<char*>(&showhillframe_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(showhillframe_));
   _internal_metadata_.Clear();
 }
 
@@ -8294,6 +8302,48 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
+      // int32 orbitLineSegments = 29;
+      case 29: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(232u /* 232 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &orbitlinesegments_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 relativeOrbitRange = 30;
+      case 30: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(240u /* 240 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &relativeorbitrange_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 showHillFrame = 31;
+      case 31: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(248u /* 248 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &showhillframe_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -8476,6 +8526,21 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(28, this->defaultthrusterplumelifescalar(), output);
   }
 
+  // int32 orbitLineSegments = 29;
+  if (this->orbitlinesegments() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(29, this->orbitlinesegments(), output);
+  }
+
+  // int32 relativeOrbitRange = 30;
+  if (this->relativeorbitrange() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(30, this->relativeorbitrange(), output);
+  }
+
+  // int32 showHillFrame = 31;
+  if (this->showhillframe() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(31, this->showhillframe(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -8653,6 +8718,21 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
   // double defaultThrusterPlumeLifeScalar = 28;
   if (this->defaultthrusterplumelifescalar() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(28, this->defaultthrusterplumelifescalar(), target);
+  }
+
+  // int32 orbitLineSegments = 29;
+  if (this->orbitlinesegments() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(29, this->orbitlinesegments(), target);
+  }
+
+  // int32 relativeOrbitRange = 30;
+  if (this->relativeorbitrange() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(30, this->relativeorbitrange(), target);
+  }
+
+  // int32 showHillFrame = 31;
+  if (this->showhillframe() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(31, this->showhillframe(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -8868,9 +8948,30 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
         this->showdataratedisplay());
   }
 
+  // int32 orbitLineSegments = 29;
+  if (this->orbitlinesegments() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->orbitlinesegments());
+  }
+
   // double defaultThrusterPlumeLifeScalar = 28;
   if (this->defaultthrusterplumelifescalar() != 0) {
     total_size += 2 + 8;
+  }
+
+  // int32 relativeOrbitRange = 30;
+  if (this->relativeorbitrange() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->relativeorbitrange());
+  }
+
+  // int32 showHillFrame = 31;
+  if (this->showhillframe() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->showhillframe());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -8967,8 +9068,17 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   if (from.showdataratedisplay() != 0) {
     set_showdataratedisplay(from.showdataratedisplay());
   }
+  if (from.orbitlinesegments() != 0) {
+    set_orbitlinesegments(from.orbitlinesegments());
+  }
   if (from.defaultthrusterplumelifescalar() != 0) {
     set_defaultthrusterplumelifescalar(from.defaultthrusterplumelifescalar());
+  }
+  if (from.relativeorbitrange() != 0) {
+    set_relativeorbitrange(from.relativeorbitrange());
+  }
+  if (from.showhillframe() != 0) {
+    set_showhillframe(from.showhillframe());
   }
 }
 
@@ -9021,7 +9131,10 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   swap(keyboardangularrate_, other->keyboardangularrate_);
   swap(keyboardzoomrate_, other->keyboardzoomrate_);
   swap(showdataratedisplay_, other->showdataratedisplay_);
+  swap(orbitlinesegments_, other->orbitlinesegments_);
   swap(defaultthrusterplumelifescalar_, other->defaultthrusterplumelifescalar_);
+  swap(relativeorbitrange_, other->relativeorbitrange_);
+  swap(showhillframe_, other->showhillframe_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

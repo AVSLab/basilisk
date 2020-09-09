@@ -22,6 +22,10 @@ Version |release|
 -----------------
 - update the macOS dependency to use either ``conan~=1.24`` or ``conan>=1.28``.  The later resolves the linking issues
   that ``conan`` had on macOS.  Other platforms can use ``conan>=1.24.0``.
+- updated ``vizInterface` to support the latest features of Vizard 1.5, including the ability to show
+  relative trajectories
+- updated :ref:`scenarioFormationBasic` example script to show more general orbits and the use
+  of the scientific camera sensor scripting
 
 
 Version 1.8.3
