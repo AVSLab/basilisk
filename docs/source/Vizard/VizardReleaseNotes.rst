@@ -23,6 +23,7 @@ Release Notes
 - Added scripting options to support the relative trajectory settings
 - Make the instrument camera show other spacecraft within the field of view
 - Enhanced the look of the default bskSat CAD model
+- Added Hill Frame Coordinate Axes display that can be toggled on under the View Menu or through scripting
 
 
 
