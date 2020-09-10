@@ -20,6 +20,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.4
+-------------
 - update the macOS dependency to use either ``conan~=1.24`` or ``conan>=1.28``.  The later resolves the linking issues
   that ``conan`` had on macOS.  Other platforms can use ``conan>=1.24.0``.
 - updated ``vizInterface`` to support the latest features of Vizard 1.5, including the ability to show
@@ -56,8 +60,8 @@ Version 1.8.2
 - Added :ref:`scenario_CNNAttOD` to illustrate the use of the CNN-based image processing
 - Added support for Vizard v1.4.0 scripting
 
-Version 1.8.1
--------------
+**Version 1.8.1**
+
 - Added a new folder ``externalTools/fswAuto`` that contains :ref:`Folder_externalTools` to migrate BSK simulations and modules to C-code
 - Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
   also if multiple celestial bodies are setup.

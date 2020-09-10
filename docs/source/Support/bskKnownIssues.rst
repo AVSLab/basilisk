@@ -10,6 +10,12 @@ Version |release|
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found.
   The code compiles, but auto-completion etc. doesn't work in that module.
 
+Version 1.8.4
+-------------
+- On Windows the ``opNav`` related modules are not building correctly.
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
 Version 1.8.3
 -------------
 - On Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
@@ -36,8 +42,8 @@ Version 1.8.1
 - On Linux and Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
   Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
 
-Version 1.8.0
--------------
+**Version 1.8.0**
+
 - The new conan based built system might need the conan cache folder ``.conan`` to be deleted and reset.  This is
   typically in the user's home folder.  After this you need to re-run the conan setup commands::
 
