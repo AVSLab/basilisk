@@ -2,23 +2,23 @@
 
 ### Basilisk ###
 
-* [Summary of Basilisk](@ref cover)
-* [Versions](http://hanspeterschaub.info/bskHtml/Documentation/Support/User/bskReleaseNotes.html)
+* [Summary of Basilisk](http://hanspeterschaub.info/basilisk/index.html)
+* [Versions](http://hanspeterschaub.info/basilisk/Support/bskReleaseNotes.html)
 
 ### How do I get set up? ###
 The following links contain installation instructions for the supported platforms:
 
-- [Setup a macOS Development Environment](http://hanspeterschaub.info/bskHtml/Install/installOnMacOS.html)
+- [Setup a macOS Development Environment](http://hanspeterschaub.info/basilisk/Install/installOnMacOS.html)
 
-- [Setup a Linux Development Environment](http://hanspeterschaub.info/bskHtml/Install/installOnLinux.html)
+- [Setup a Linux Development Environment](http://hanspeterschaub.info/basilisk/Install/installOnLinux.html)
 
-- [Setup a Windows Development Environment](http://hanspeterschaub.info/bskHtml/Install/installOnWindows.html)
+- [Setup a Windows Development Environment](http://hanspeterschaub.info/basilisk/Install/installOnWindows.html)
 
 
 
 ### Basilisk Development guidelines ###
 
-* [Coding Guidelines](@ref codingGuidelines)
+* [Coding Guidelines](http://hanspeterschaub.info/basilisk/Support/Coder/CodingGuidlines.html)
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 
@@ -44,7 +44,7 @@ Now, when you want to use a tutorial, navigate inside that folder, and edit and 
 
 We are working on the ability to develop custom BSK modules outside of the Basilisk folder.  This will enable developers to safely write their own BSK modules and still be able to do a drop in replacement of future BSK releases.
 
-To use the standalone 3D Visualization, download the [Vizard](https://hanspeterschaub.info/bskMain.html).  This is in development, but does provide a 3D view of many of the simulation states.  
+To use the standalone 3D Visualization, download the [Vizard](http://hanspeterschaub.info/basilisk/Vizard/Vizard.html).  This is in development, but does provide a 3D view of many of the simulation states.  
 
 
 ### Who do I talk to? ###
