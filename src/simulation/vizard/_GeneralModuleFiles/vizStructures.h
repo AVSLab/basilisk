@@ -135,7 +135,7 @@ typedef struct {
     double      ambient = -1.0;                     /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
                                                              A value of -1 means it is not set. */
     int32_t     orbitLinesOn = 0;                  //!< toogle for showing orbit lines with values -1 (off), 0 (default), 1 (on)
-    int32_t     spacecraftCSon = 0;                //!< toogle for showing spacecraft CS with values -1 (off), 0 (default), 1 (on)
+    int32_t     spacecraftCSon = 0;                //!< toogle for showing spacecrsaft CS with values -1 (off), 0 (default), 1 (on)
     int32_t     planetCSon = 0;                    //!< toogle for showing planet CS with values -1 (off), 0 (default), 1 (on)
     std::vector<PointLine> pointLineList;           //!< vector of powerLine structures
     std::vector<KeepOutInCone> coneList;            //!< vector of keep in/out cones
@@ -165,6 +165,8 @@ typedef struct {
     int orbitLineSegments = 0; //!< Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4
     int relativeOrbitRange = 0; //!< [deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 1
     int showHillFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showVelocityFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int relativeOrbitFrame = 0; //!< Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
 }VizSettings;
 
 

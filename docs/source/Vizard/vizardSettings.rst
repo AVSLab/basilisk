@@ -132,8 +132,16 @@ default setting for that behavior.
         viz default or any value greater than or equal to 1
     * - ``showHillFrame``
       - int
-      - flag to show the Hill frame of the spacecraft camera target. Value of 0 (protobuffer default)
+      - flag to show the orbit Hill frame of the spacecraft camera target. Value of 0 (protobuffer default)
         to use viz default, -1 for false, 1 for true
+    * - ``showVelocityFrame``
+      - int
+      - flag to show the orbit velocity frame of the spacecraft camera target. Value of 0 (protobuffer default)
+        to use viz default, -1 for false, 1 for true
+    * - ``relativeOrbitFrame``
+      - int
+      - flag to set with respect to which frame the relative orbit trajectory is drawn.
+        Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
