@@ -72,7 +72,7 @@ public:
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
-    double              B2P321Angles[3];        //!< [-] 321 Euler anhles for body to platform
+    double              B2P321Angles[3];        //!< [-] 321 Euler angles for body to platform
     Eigen::Matrix3d     dcm_PB;           //!< [-] DCM from platform frame P to body frame B
     Eigen::Vector3d     nHat_B;              //!< [-] css unit direction vector in body frame components
     Eigen::Vector3d     sHat_B;              //!< [-] unit vector to sun in B
