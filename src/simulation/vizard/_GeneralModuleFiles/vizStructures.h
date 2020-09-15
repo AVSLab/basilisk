@@ -165,6 +165,8 @@ typedef struct {
     int orbitLineSegments = 0; //!< Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4
     int relativeOrbitRange = 0; //!< [deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 1
     int showHillFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showVelocityFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int relativeOrbitFrame = 0; //!< Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
 }VizSettings;
 
 

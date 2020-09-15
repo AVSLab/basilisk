@@ -16,6 +16,16 @@ Release Notes
     - trajectory history visualization
 
 
+**Version 1.5.1**
+
+- spacecraft relative orbit lines can now be calculated using the chief spacecraft’s velocity frame instead
+  of the Hill frame.
+- added Setting panel toggle and vizMessage setting field to allow user selection of relative orbit frame
+- added velocity frame coordinate system that can be toggled on under the View menu and a vizMessage setting field
+  to show the axes
+- the settings fields on the Standard Camera panels can now be hidden by the user so that only the camera
+  image portion of the panel remains visible
+
 **Version 1.5.0**
 
 - Added the ability to visualize the osculating relative trajectory with respect to a target spacecraft.

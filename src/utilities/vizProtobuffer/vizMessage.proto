@@ -68,8 +68,10 @@ message VizMessage{
 
     message CoarseSunSensor{
         repeated double position = 2;
+        double fieldOfView = 3; //[deg] Field of View edge-to-edge
         repeated double normalVector = 4;
         double currentMsmt = 5;
+        double maxMsmt = 6;
         int32 CSSGroupID = 7;
     }
   
@@ -177,8 +179,10 @@ message VizMessage{
         repeated int32 defaultThrusterColor = 27; //Send desired RGBA as values between 0 and 255
         double defaultThrusterPlumeLifeScalar = 28; // Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
         int32 orbitLineSegments = 29; //Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4
-        int32 relativeOrbitRange = 30; //[deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to zero
+        int32 relativeOrbitRange = 30; //[deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 1
         int32 showHillFrame = 31; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showVelocityFrame = 32; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
 
     }
 

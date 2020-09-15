@@ -24,7 +24,7 @@ About Vizard
 
     **License:** Freeware
 
-    **Status:** Version 1.5.0 (Released September 8, 2020)
+    **Status:** Version 1.5.1 (Released September 15, 2020)
 
 The Vizard Unity-based Basilisk
 visualization is able to display in a three-dimensional view the

@@ -242,7 +242,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # In both CSS simulation scenarios (A) and (B) the CSS modules must
-    # first be individuall created and configured.
+    # first be individually created and configured.
     # In this simulation each case uses two CSS sensors.  The minimum
     # variables that must be set for each CSS includes
     CSS1 = coarse_sun_sensor.CoarseSunSensor()

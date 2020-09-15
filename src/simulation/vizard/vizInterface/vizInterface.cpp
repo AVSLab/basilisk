@@ -577,6 +577,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_orbitlinesegments(this->settings.orbitLineSegments);
         vizSettings->set_relativeorbitrange(this->settings.relativeOrbitRange);
         vizSettings->set_showhillframe(this->settings.showHillFrame);
+        vizSettings->set_showvelocityframe(this->settings.showVelocityFrame);
+        vizSettings->set_relativeorbitframe(this->settings.relativeOrbitFrame);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
