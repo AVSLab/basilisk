@@ -150,12 +150,15 @@ void CoarseSunSensor::SelfInit()
         CreateNewMessage(this->cssDataOutMsgName, sizeof(CSSRawDataSimMsg),
                          this->outputBufferCount, "CSSRawDataSimMsg", this->moduleID);
     }
-    // make CSS log message if output name is specified
-    if (this->cssConfigLogMsgName != "") {
-        this->cssConfigLogMsgId = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->cssConfigLogMsgName, sizeof(CSSConfigLogSimMsg),
-                         this->outputBufferCount, "CSSConfigLogSimMsg", this->moduleID);
+    // make automated CSS log message name if output name is not specified
+    if (this->cssConfigLogMsgName == "") {
+        this->cssConfigLogMsgName = this->ModelTag + "_config_log";
     }
+    this->cssConfigLogMsgId = SystemMessaging::GetInstance()->
+    CreateNewMessage(this->cssConfigLogMsgName, sizeof(CSSConfigLogSimMsg),
+                     this->outputBufferCount, "CSSConfigLogSimMsg", this->moduleID);
+
+    return;
 }
 
 /*! This method simply calls the LinkMessages method to ensure that input messages 
