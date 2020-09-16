@@ -189,7 +189,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        useCSSConstellation (bool): Flag indicating if the CSS cluster/confiugration class should be used.
+        useCSSConstellation (bool): Flag indicating if the CSS cluster/configuration class should be used.
         usePlatform (bool): Flag specifying if the CSS platform orientation should be set.
         useEclipse (bool): Flag indicating if the eclipse input message is used.
         useKelly (bool): Flag specifying if the Kelly corruption factor is used.
