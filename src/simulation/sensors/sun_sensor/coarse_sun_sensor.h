@@ -24,6 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/cssConfigLogSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 #include "simMessages/albedoSimMsg.h"
@@ -64,20 +65,21 @@ public:
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
     
 public:
-    std::string sunInMsgName;                    //!< [-] Message name for sun data
-    std::string stateInMsgName;                  //!< [-] Message name for spacecraft state */
-    std::string cssDataOutMsgName;                  //!< [-] Message name for CSS output data */
+    std::string sunInMsgName;                   //!< [-] Message name for sun data
+    std::string stateInMsgName;                 //!< [-] Message name for spacecraft state */
+    std::string cssDataOutMsgName;              //!< [-] Message name for CSS output data */
+    std::string cssConfigLogMsgName="";         //!< [-] Message name for CSS configuration log data */
     std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message */
-    std::string albedoInMsgName;            //!< [-] Message name for albedo message */
+    std::string albedoInMsgName;                //!< [-] Message name for albedo message */
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
     double              B2P321Angles[3];        //!< [-] 321 Euler angles for body to platform
-    Eigen::Matrix3d     dcm_PB;           //!< [-] DCM from platform frame P to body frame B
-    Eigen::Vector3d     nHat_B;              //!< [-] css unit direction vector in body frame components
-    Eigen::Vector3d     sHat_B;              //!< [-] unit vector to sun in B
+    Eigen::Matrix3d     dcm_PB;                 //!< [-] DCM from platform frame P to body frame B
+    Eigen::Vector3d     nHat_B;                 //!< [-] css unit direction vector in body frame components
+    Eigen::Vector3d     sHat_B;                 //!< [-] unit vector to sun in B
     double              directValue;            //!< [-] direct solar irradiance measurement
-    double              albedoValue = -1.0;            //!< [-] albedo irradiance measurement
+    double              albedoValue = -1.0;     //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
     double              sensedValue;            //!< [-] total measurement including perturbations
     double              trueValue;              //!< [-] total measurement without perturbations
@@ -92,20 +94,21 @@ public:
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
     double              walkBounds;             //!< [-] Gauss Markov walk bounds
     double              kPower;                 //!< [-] Power factor for kelly curve
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                        //!< -- BSK Logging
 
 private:
     int64_t sunInMsgID;                         //!< [-] Connect to input time message
     int64_t stateInMsgID;                       //!< [-] Connect to input time message
-    int64_t cssDataOutMsgID;                       //!< [-] Connect to output CSS data
+    int64_t cssDataOutMsgID=-1;                 //!< [-] Connect to output CSS data
+    int64_t cssConfigLogMsgId=-1;               //!< [-] ID for the CSS configuration log sim message ID
     int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
-    int64_t albedoInMsgId;                     //!< [-] Connect to input albedo message
-    SpicePlanetStateSimMsg sunData;            //!< [-] Unused for now, but including it for future
-    SCPlusStatesSimMsg stateCurrent;           //!< [-] Current SSBI-relative state
+    int64_t albedoInMsgId;                      //!< [-] Connect to input albedo message
+    SpicePlanetStateSimMsg sunData;             //!< [-] Unused for now, but including it for future
+    SCPlusStatesSimMsg stateCurrent;            //!< [-] Current SSBI-relative state
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
-    GaussMarkov noiseModel;                    //! [-] Gauss Markov noise generation model
-    Saturate saturateUtility;                  //! [-] Saturation utility
+    GaussMarkov noiseModel;                     //! [-] Gauss Markov noise generation model
+    Saturate saturateUtility;                   //! [-] Saturation utility
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
@@ -119,7 +122,7 @@ class CSSConstellation: public SysModel {
     void CrossInit();                           //!< @brief [-] Method for initializing cross dependencies
     void SelfInit();                            //!< @brief [-] Method for initializing own messages
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation
-    void appendCSS(CoarseSunSensor newSensor); //!< @brief [-] Method for adding sensor to list
+    void appendCSS(CoarseSunSensor newSensor);  //!< @brief [-] Method for adding sensor to list
     
  public:
     uint64_t outputBufferCount;                  //!< [-] Number of messages archived in output data

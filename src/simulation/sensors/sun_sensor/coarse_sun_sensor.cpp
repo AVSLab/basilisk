@@ -150,6 +150,12 @@ void CoarseSunSensor::SelfInit()
         CreateNewMessage(this->cssDataOutMsgName, sizeof(CSSRawDataSimMsg),
                          this->outputBufferCount, "CSSRawDataSimMsg", this->moduleID);
     }
+    // make CSS log message if output name is specified
+    if (this->cssConfigLogMsgName != "") {
+        this->cssConfigLogMsgId = SystemMessaging::GetInstance()->
+        CreateNewMessage(this->cssConfigLogMsgName, sizeof(CSSConfigLogSimMsg),
+                         this->outputBufferCount, "CSSConfigLogSimMsg", this->moduleID);
+    }
 }
 
 /*! This method simply calls the LinkMessages method to ensure that input messages 
@@ -330,6 +336,16 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
         sizeof(CSSRawDataSimMsg),
         reinterpret_cast<uint8_t*> (&localMessage),
         this->moduleID);
+
+    // create CSS configuration log message
+    if (this->cssConfigLogMsgId >= 0) {
+        CSSConfigLogSimMsg configMsg;
+        configMsg.fov = this->fov;
+        configMsg.signal = this->sensedValue;
+        configMsg.maxSignal = this->maxOutput;
+        eigenVector3d2CArray(this->r_B, configMsg.r_B);
+        eigenVector3d2CArray(this->nHat_B, configMsg.nHat_B);
+    }
 }
 
 /*! This method is called at a specified rate by the architecture.  It makes the 
