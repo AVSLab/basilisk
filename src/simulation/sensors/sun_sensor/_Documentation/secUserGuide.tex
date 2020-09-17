@@ -39,6 +39,7 @@ $$
 	{\tt fov}
 $$
 This angle is the angle from the bore-sight axis to the edge of the field of view, and is expressed in terms of radians.  
+It defaults to a value of 60 degrees.
 
 
 
@@ -50,6 +51,8 @@ $$
 	{\tt scaleFactor}
 $$
 is the scale factor $\alpha$ which scales the output to the desired range of values, as well as the desired units.  For example, if the maximum sun signal ($\hat{\bm n}$ points directly at sun) should yield 1 mA, then the scale factor is set to this value.    
+
+If not set by the user, this parameter has a default value of 1.0.
 
 
 
@@ -92,6 +95,13 @@ The first message is used to know the sun heading vector, while the second messa
 
 The last message is optional.  If the {\tt EclipseSimMsg} is connected, then the solar eclipse information is taking into account.  The eclipse info provides 0 if the spacecraft is fully in a planet's shadow, 1 if in free space fully exposed to the, and a value between (0,1) if in the penumbra region.  The cosine sensor value $\hat\gamma$ is scaled by this eclipse value.  If the message is not connected, then this value default to 1, thus simulating a spacecraft that is fully exposed to the sun.  
 
+
+\subsection{Auxiliary Parameters}
+The following module variables can be set, but they are not currently used by the CSS module itself.  These are used however in the Vizard visualization.  
+\begin{itemize}
+	\item {\tt r\_B} -- position vector of the sensor relative to the body frame $\cal B$.  If not set, this defaults to a zero vector.
+	\item {\tt CSSGroupID} -- positive integer ID number if the CSS unit belongs to a group of CSS units.  If not set, this defaults to group 0.
+\end{itemize}
 
 
 \subsection{Setting Up CSS Modules}
