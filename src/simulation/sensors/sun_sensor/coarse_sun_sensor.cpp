@@ -346,8 +346,16 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
         configMsg.fov = this->fov;
         configMsg.signal = this->sensedValue;
         configMsg.maxSignal = this->maxOutput;
+        if (this->CSSGroupID >=0) {
+            configMsg.CSSGroupID = this->CSSGroupID;
+        }
         eigenVector3d2CArray(this->r_B, configMsg.r_B);
         eigenVector3d2CArray(this->nHat_B, configMsg.nHat_B);
+
+        SystemMessaging::GetInstance()->WriteMessage(this->cssConfigLogMsgId, Clock,
+            sizeof(CSSConfigLogSimMsg),
+            reinterpret_cast<uint8_t*> (&configMsg),
+            this->moduleID);
     }
 }
 

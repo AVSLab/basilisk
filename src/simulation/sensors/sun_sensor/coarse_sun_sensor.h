@@ -94,6 +94,7 @@ public:
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
     double              walkBounds;             //!< [-] Gauss Markov walk bounds
     double              kPower;                 //!< [-] Power factor for kelly curve
+    int                 CSSGroupID=-1;          //!< [-] (optional) CSS group id identifier, -1 means it is not set and default is used
     BSKLogger bskLogger;                        //!< -- BSK Logging
 
 private:

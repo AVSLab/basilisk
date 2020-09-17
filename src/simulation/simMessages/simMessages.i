@@ -23,6 +23,7 @@
 #include "albedoSimMsg.h"
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
+#include "cssConfigLogSimMsg.h"
 #include "eclipseSimMsg.h"
 #include "magneticFieldSimMsg.h"
 #include "spicePlanetStateSimMsg.h"
