@@ -86,7 +86,8 @@ def run(show_plots, accuracy):
     CSS2.ModelTag = "CSS2"
     CSS2.r_B = [1., 2., 3.]
     CSS2.fov = 70. * macros.D2R
-    CSS2.maxOutput = 10.
+    CSS2.minOutput = 1.0
+    CSS2.maxOutput = 20.
     CSS2.cssDataOutMsgName = "CSS2_output"
     CSS2.sunInMsgName = "sun_message"
     CSS2.cssConfigLogMsgName = "CSS2_custom"
@@ -126,12 +127,14 @@ def run(show_plots, accuracy):
     dataCSS1fov = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".fov", list(range(1)))
     dataCSS1signal = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".signal", list(range(1)))
     dataCSS1maxSignal = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".maxSignal", list(range(1)))
+    dataCSS1minSignal = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".minSignal", list(range(1)))
     dataCSS1CSSGroupID = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".CSSGroupID", list(range(1)))
 
     dataCSS2pos = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".r_B", list(range(3)))
     dataCSS2nHat = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".nHat_B", list(range(3)))
     dataCSS2fov = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".fov", list(range(1)))
     dataCSS2signal = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".signal", list(range(1)))
+    dataCSS2minSignal = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".minSignal", list(range(1)))
     dataCSS2maxSignal = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".maxSignal", list(range(1)))
     dataCSS2CSSGroupID = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".CSSGroupID", list(range(1)))
 
@@ -147,6 +150,9 @@ def run(show_plots, accuracy):
                                                                testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS1.maxOutput], dataCSS1signal,
                                                                      accuracy, "CSS1 maxSignal",
+                                                                     testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray([0.0], dataCSS1minSignal,
+                                                                     accuracy, "CSS1 minSignal",
                                                                      testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS1.maxOutput], dataCSS1maxSignal,
                                                                      accuracy, "CSS1 maxSignal",
@@ -165,11 +171,14 @@ def run(show_plots, accuracy):
     testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS2.fov], dataCSS2fov,
                                                                      accuracy, "CSS2 fov",
                                                                      testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray([0.0], dataCSS2signal,
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS2.minOutput], dataCSS2signal,
                                                                      accuracy, "CSS2 signal",
                                                                      testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS2.maxOutput], dataCSS2maxSignal,
                                                                      accuracy, "CSS2 maxSignal",
+                                                                     testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS2.minOutput], dataCSS2minSignal,
+                                                                     accuracy, "CSS2 minSignal",
                                                                      testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS2.CSSGroupID], dataCSS2CSSGroupID,
                                                                      accuracy, "CSS2 CSSGroupID",

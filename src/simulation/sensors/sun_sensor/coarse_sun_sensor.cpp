@@ -345,6 +345,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
         CSSConfigLogSimMsg configMsg;
         configMsg.fov = this->fov;
         configMsg.signal = this->sensedValue;
+        configMsg.minSignal = this->minOutput;
         configMsg.maxSignal = this->maxOutput;
         if (this->CSSGroupID >=0) {
             configMsg.CSSGroupID = this->CSSGroupID;

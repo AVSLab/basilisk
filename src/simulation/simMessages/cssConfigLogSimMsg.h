@@ -30,7 +30,8 @@ typedef struct {
     double nHat_B[3];       //!< [] sensor unit direction vector in the spacecraft, "B", body frame
     double fov;             //!< [rad] field of view (boresight to edge)
     double signal;          //!< [] current sensor signal
-    double maxSignal = -1.0;//!< [] maximum sensor signal
+    double maxSignal;       //!< [] maximum sensor signal, -1 means this value is not set
+    double minSignal;       //!< [] maximum sensor signal, -1 means this value is not set
     int    CSSGroupID = 0;  //!< [] Group ID if the CSS is part of a cluster
 }CSSConfigLogSimMsg;
 

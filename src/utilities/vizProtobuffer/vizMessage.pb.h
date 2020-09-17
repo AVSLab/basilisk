@@ -1187,6 +1187,12 @@ class VizMessage_CoarseSunSensor : public ::google::protobuf::Message /* @@proto
   double maxmsmt() const;
   void set_maxmsmt(double value);
 
+  // double minMsmt = 8;
+  void clear_minmsmt();
+  static const int kMinMsmtFieldNumber = 8;
+  double minmsmt() const;
+  void set_minmsmt(double value);
+
   // int32 CSSGroupID = 7;
   void clear_cssgroupid();
   static const int kCSSGroupIDFieldNumber = 7;
@@ -1204,6 +1210,7 @@ class VizMessage_CoarseSunSensor : public ::google::protobuf::Message /* @@proto
   double fieldofview_;
   double currentmsmt_;
   double maxmsmt_;
+  double minmsmt_;
   ::google::protobuf::int32 cssgroupid_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
@@ -3946,6 +3953,20 @@ inline void VizMessage_CoarseSunSensor::set_cssgroupid(::google::protobuf::int32
   
   cssgroupid_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CoarseSunSensor.CSSGroupID)
+}
+
+// double minMsmt = 8;
+inline void VizMessage_CoarseSunSensor::clear_minmsmt() {
+  minmsmt_ = 0;
+}
+inline double VizMessage_CoarseSunSensor::minmsmt() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CoarseSunSensor.minMsmt)
+  return minmsmt_;
+}
+inline void VizMessage_CoarseSunSensor::set_minmsmt(double value) {
+  
+  minmsmt_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CoarseSunSensor.minMsmt)
 }
 
 // -------------------------------------------------------------------

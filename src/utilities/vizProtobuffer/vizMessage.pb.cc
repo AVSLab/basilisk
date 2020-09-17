@@ -530,6 +530,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, currentmsmt_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, maxmsmt_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, cssgroupid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CoarseSunSensor, minmsmt_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_StarTracker, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -668,15 +669,15 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 41, -1, sizeof(::vizProtobufferMessage::VizMessage_ReactionWheel)},
   { 52, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
   { 63, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
-  { 74, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
-  { 84, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
-  { 97, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
-  { 105, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
-  { 119, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
-  { 131, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
-  { 143, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
-  { 156, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 192, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 75, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
+  { 85, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
+  { 98, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
+  { 106, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
+  { 120, -1, sizeof(::vizProtobufferMessage::VizMessage_StandardCameraSettings)},
+  { 132, -1, sizeof(::vizProtobufferMessage::VizMessage_ActuatorSettings)},
+  { 144, -1, sizeof(::vizProtobufferMessage::VizMessage_CustomModel)},
+  { 157, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 193, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -721,7 +722,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\335\034\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\356\034\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -754,69 +755,69 @@ void AddDescriptorsImpl() {
       "\200\001\n\010Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thrust"
       "Vector\030\004 \003(\001\022\025\n\rcurrentThrust\030\005 \001(\001\022\021\n\tm"
       "axThrust\030\006 \001(\001\022\023\n\013thrusterTag\030\010 \001(\t\022\r\n\005c"
-      "olor\030\t \003(\005\032\210\001\n\017CoarseSunSensor\022\020\n\010positi"
+      "olor\030\t \003(\005\032\231\001\n\017CoarseSunSensor\022\020\n\010positi"
       "on\030\002 \003(\001\022\023\n\013fieldOfView\030\003 \001(\001\022\024\n\014normalV"
       "ector\030\004 \003(\001\022\023\n\013currentMsmt\030\005 \001(\001\022\017\n\007maxM"
-      "smt\030\006 \001(\001\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n\013StarTr"
-      "acker\022\020\n\010position\030\002 \003(\001\022\020\n\010rotation\030\004 \003("
-      "\001\022\031\n\021fieldOfViewHeight\030\005 \001(\001\022\030\n\020fieldOfV"
-      "iewWidth\030\006 \001(\001\022\032\n\022starTrackerGroupID\030\007 \001"
-      "(\005\032\253\001\n\014CameraConfig\022\020\n\010cameraID\030\001 \001(\003\022\022\n"
-      "\nparentName\030\002 \001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022\022"
-      "\n\nresolution\030\004 \003(\003\022\023\n\013cameraPos_B\030\007 \003(\001\022"
-      "\023\n\013cameraDir_B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004"
-      "\022\016\n\006skybox\030\n \001(\t\032H\n\tPointLine\022\024\n\014fromBod"
-      "yName\030\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\tlineC"
-      "olor\030\003 \003(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isKeepIn"
-      "\030\001 \001(\010\022\020\n\010position\030\002 \003(\001\022\024\n\014normalVector"
-      "\030\003 \003(\001\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nconeHe"
-      "ight\030\005 \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n\ntoBo"
-      "dyName\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\005\022\020\n\010coneN"
-      "ame\030\t \001(\t\032\245\001\n\026StandardCameraSettings\022\026\n\016"
-      "spacecraftName\030\001 \001(\t\022\017\n\007setMode\030\003 \001(\005\022\023\n"
-      "\013fieldOfView\030\005 \001(\001\022\022\n\nbodyTarget\030\006 \001(\t\022\017"
-      "\n\007setView\030\007 \001(\005\022\026\n\016pointingVector\030\010 \003(\001\022"
-      "\020\n\010position\030\t \003(\001\032\270\001\n\020ActuatorSettings\022\026"
-      "\n\016spacecraftName\030\001 \001(\t\022\031\n\021viewThrusterPa"
-      "nel\030\002 \001(\005\022\027\n\017viewThrusterHUD\030\003 \001(\005\022\023\n\013vi"
-      "ewRWPanel\030\004 \001(\005\022\021\n\tviewRWHUD\030\005 \001(\005\022\032\n\022sh"
-      "owThrusterLabels\030\006 \001(\005\022\024\n\014showRWLabels\030\007"
-      " \001(\005\032\256\001\n\013CustomModel\022\021\n\tmodelPath\030\001 \001(\t\022"
-      "\031\n\021simBodiesToModify\030\002 \003(\t\022\016\n\006offset\030\003 \003"
-      "(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n\005scale\030\005 \003(\001\022\031\n\021c"
-      "ustomTexturePath\030\006 \001(\t\022\025\n\rnormalMapPath\030"
-      "\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\311\010\n\rVizSettingsPb\022"
-      "\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn\030\002 \001(\005\022\026"
-      "\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanetCSon\030\004 \001"
-      "(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProtobufferM"
-      "essage.VizMessage.PointLine\022G\n\016keepOutIn"
-      "Cones\030\006 \003(\0132/.vizProtobufferMessage.VizM"
-      "essage.KeepOutInCone\022X\n\026standardCameraSe"
-      "ttings\030\007 \003(\01328.vizProtobufferMessage.Viz"
-      "Message.StandardCameraSettings\022L\n\020actuat"
-      "orSettings\030\n \003(\01322.vizProtobufferMessage"
-      ".VizMessage.ActuatorSettings\022\016\n\006skybox\030\013"
-      " \001(\t\022C\n\014customModels\030\014 \003(\0132-.vizProtobuf"
-      "ferMessage.VizMessage.CustomModel\022\036\n\026vie"
-      "wCameraBoresightHUD\030\r \001(\005\022\031\n\021viewCameraC"
-      "oneHUD\030\016 \001(\005\022\024\n\014showCSLabels\030\017 \001(\005\022\037\n\027sh"
-      "owCelestialBodyLabels\030\020 \001(\005\022\034\n\024showSpace"
-      "craftLabels\030\021 \001(\005\022\030\n\020showCameraLabels\030\022 "
-      "\001(\005\022\026\n\016customGUIScale\030\023 \001(\001\022\037\n\027defaultSp"
-      "acecraftSprite\030\024 \001(\t\022\037\n\027showSpacecraftAs"
-      "Sprites\030\025 \001(\005\022$\n\034showCelestialBodiesAsSp"
-      "rites\030\026 \001(\005\022\025\n\rshow24hrClock\030\027 \001(\005\022\033\n\023sh"
-      "owDataRateDisplay\030\030 \001(\005\022\033\n\023keyboardAngul"
-      "arRate\030\031 \001(\001\022\030\n\020keyboardZoomRate\030\032 \001(\001\022\034"
-      "\n\024defaultThrusterColor\030\033 \003(\005\022&\n\036defaultT"
-      "hrusterPlumeLifeScalar\030\034 \001(\001\022\031\n\021orbitLin"
-      "eSegments\030\035 \001(\005\022\032\n\022relativeOrbitRange\030\036 "
-      "\001(\005\022\025\n\rshowHillFrame\030\037 \001(\005\022\031\n\021showVeloci"
-      "tyFrame\030  \001(\005\022\032\n\022relativeOrbitFrame\030! \001("
-      "\005b\006proto3"
+      "smt\030\006 \001(\001\022\022\n\nCSSGroupID\030\007 \001(\005\022\017\n\007minMsmt"
+      "\030\010 \001(\001\032\202\001\n\013StarTracker\022\020\n\010position\030\002 \003(\001"
+      "\022\020\n\010rotation\030\004 \003(\001\022\031\n\021fieldOfViewHeight\030"
+      "\005 \001(\001\022\030\n\020fieldOfViewWidth\030\006 \001(\001\022\032\n\022starT"
+      "rackerGroupID\030\007 \001(\005\032\253\001\n\014CameraConfig\022\020\n\010"
+      "cameraID\030\001 \001(\003\022\022\n\nparentName\030\002 \001(\t\022\023\n\013fi"
+      "eldOfView\030\003 \001(\001\022\022\n\nresolution\030\004 \003(\003\022\023\n\013c"
+      "ameraPos_B\030\007 \003(\001\022\023\n\013cameraDir_B\030\010 \003(\001\022\022\n"
+      "\nrenderRate\030\t \001(\004\022\016\n\006skybox\030\n \001(\t\032H\n\tPoi"
+      "ntLine\022\024\n\014fromBodyName\030\001 \001(\t\022\022\n\ntoBodyNa"
+      "me\030\002 \001(\t\022\021\n\tlineColor\030\003 \003(\005\032\304\001\n\rKeepOutI"
+      "nCone\022\020\n\010isKeepIn\030\001 \001(\010\022\020\n\010position\030\002 \003("
+      "\001\022\024\n\014normalVector\030\003 \003(\001\022\026\n\016incidenceAngl"
+      "e\030\004 \001(\001\022\022\n\nconeHeight\030\005 \001(\001\022\024\n\014fromBodyN"
+      "ame\030\006 \001(\t\022\022\n\ntoBodyName\030\007 \001(\t\022\021\n\tconeCol"
+      "or\030\010 \003(\005\022\020\n\010coneName\030\t \001(\t\032\245\001\n\026StandardC"
+      "ameraSettings\022\026\n\016spacecraftName\030\001 \001(\t\022\017\n"
+      "\007setMode\030\003 \001(\005\022\023\n\013fieldOfView\030\005 \001(\001\022\022\n\nb"
+      "odyTarget\030\006 \001(\t\022\017\n\007setView\030\007 \001(\005\022\026\n\016poin"
+      "tingVector\030\010 \003(\001\022\020\n\010position\030\t \003(\001\032\270\001\n\020A"
+      "ctuatorSettings\022\026\n\016spacecraftName\030\001 \001(\t\022"
+      "\031\n\021viewThrusterPanel\030\002 \001(\005\022\027\n\017viewThrust"
+      "erHUD\030\003 \001(\005\022\023\n\013viewRWPanel\030\004 \001(\005\022\021\n\tview"
+      "RWHUD\030\005 \001(\005\022\032\n\022showThrusterLabels\030\006 \001(\005\022"
+      "\024\n\014showRWLabels\030\007 \001(\005\032\256\001\n\013CustomModel\022\021\n"
+      "\tmodelPath\030\001 \001(\t\022\031\n\021simBodiesToModify\030\002 "
+      "\003(\t\022\016\n\006offset\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\r\n"
+      "\005scale\030\005 \003(\001\022\031\n\021customTexturePath\030\006 \001(\t\022"
+      "\025\n\rnormalMapPath\030\007 \001(\t\022\016\n\006shader\030\010 \001(\005\032\311"
+      "\010\n\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orb"
+      "itLinesOn\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022"
+      "\022\n\nplanetCSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132"
+      "+.vizProtobufferMessage.VizMessage.Point"
+      "Line\022G\n\016keepOutInCones\030\006 \003(\0132/.vizProtob"
+      "ufferMessage.VizMessage.KeepOutInCone\022X\n"
+      "\026standardCameraSettings\030\007 \003(\01328.vizProto"
+      "bufferMessage.VizMessage.StandardCameraS"
+      "ettings\022L\n\020actuatorSettings\030\n \003(\01322.vizP"
+      "rotobufferMessage.VizMessage.ActuatorSet"
+      "tings\022\016\n\006skybox\030\013 \001(\t\022C\n\014customModels\030\014 "
+      "\003(\0132-.vizProtobufferMessage.VizMessage.C"
+      "ustomModel\022\036\n\026viewCameraBoresightHUD\030\r \001"
+      "(\005\022\031\n\021viewCameraConeHUD\030\016 \001(\005\022\024\n\014showCSL"
+      "abels\030\017 \001(\005\022\037\n\027showCelestialBodyLabels\030\020"
+      " \001(\005\022\034\n\024showSpacecraftLabels\030\021 \001(\005\022\030\n\020sh"
+      "owCameraLabels\030\022 \001(\005\022\026\n\016customGUIScale\030\023"
+      " \001(\001\022\037\n\027defaultSpacecraftSprite\030\024 \001(\t\022\037\n"
+      "\027showSpacecraftAsSprites\030\025 \001(\005\022$\n\034showCe"
+      "lestialBodiesAsSprites\030\026 \001(\005\022\025\n\rshow24hr"
+      "Clock\030\027 \001(\005\022\033\n\023showDataRateDisplay\030\030 \001(\005"
+      "\022\033\n\023keyboardAngularRate\030\031 \001(\001\022\030\n\020keyboar"
+      "dZoomRate\030\032 \001(\001\022\034\n\024defaultThrusterColor\030"
+      "\033 \003(\005\022&\n\036defaultThrusterPlumeLifeScalar\030"
+      "\034 \001(\001\022\031\n\021orbitLineSegments\030\035 \001(\005\022\032\n\022rela"
+      "tiveOrbitRange\030\036 \001(\005\022\025\n\rshowHillFrame\030\037 "
+      "\001(\005\022\031\n\021showVelocityFrame\030  \001(\005\022\032\n\022relati"
+      "veOrbitFrame\030! \001(\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 3729);
+      descriptor, 3746);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -3643,6 +3644,7 @@ const int VizMessage_CoarseSunSensor::kNormalVectorFieldNumber;
 const int VizMessage_CoarseSunSensor::kCurrentMsmtFieldNumber;
 const int VizMessage_CoarseSunSensor::kMaxMsmtFieldNumber;
 const int VizMessage_CoarseSunSensor::kCSSGroupIDFieldNumber;
+const int VizMessage_CoarseSunSensor::kMinMsmtFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_CoarseSunSensor::VizMessage_CoarseSunSensor()
@@ -3822,6 +3824,20 @@ bool VizMessage_CoarseSunSensor::MergePartialFromCodedStream(
         break;
       }
 
+      // double minMsmt = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(65u /* 65 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &minmsmt_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -3886,6 +3902,11 @@ void VizMessage_CoarseSunSensor::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->cssgroupid(), output);
   }
 
+  // double minMsmt = 8;
+  if (this->minmsmt() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->minmsmt(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -3944,6 +3965,11 @@ void VizMessage_CoarseSunSensor::SerializeWithCachedSizes(
   // int32 CSSGroupID = 7;
   if (this->cssgroupid() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->cssgroupid(), target);
+  }
+
+  // double minMsmt = 8;
+  if (this->minmsmt() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->minmsmt(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -4010,6 +4036,11 @@ size_t VizMessage_CoarseSunSensor::ByteSizeLong() const {
     total_size += 1 + 8;
   }
 
+  // double minMsmt = 8;
+  if (this->minmsmt() != 0) {
+    total_size += 1 + 8;
+  }
+
   // int32 CSSGroupID = 7;
   if (this->cssgroupid() != 0) {
     total_size += 1 +
@@ -4057,6 +4088,9 @@ void VizMessage_CoarseSunSensor::MergeFrom(const VizMessage_CoarseSunSensor& fro
   if (from.maxmsmt() != 0) {
     set_maxmsmt(from.maxmsmt());
   }
+  if (from.minmsmt() != 0) {
+    set_minmsmt(from.minmsmt());
+  }
   if (from.cssgroupid() != 0) {
     set_cssgroupid(from.cssgroupid());
   }
@@ -4091,6 +4125,7 @@ void VizMessage_CoarseSunSensor::InternalSwap(VizMessage_CoarseSunSensor* other)
   swap(fieldofview_, other->fieldofview_);
   swap(currentmsmt_, other->currentmsmt_);
   swap(maxmsmt_, other->maxmsmt_);
+  swap(minmsmt_, other->minmsmt_);
   swap(cssgroupid_, other->cssgroupid_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);

@@ -73,6 +73,7 @@ message VizMessage{
         double currentMsmt = 5;
         double maxMsmt = 6;
         int32 CSSGroupID = 7;
+        double minMsmt = 8;
     }
   
     message StarTracker{
