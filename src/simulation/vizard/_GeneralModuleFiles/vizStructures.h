@@ -13,7 +13,7 @@
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
+#include "simMessages/cssConfigLogSimMsg.h"
 
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */
@@ -98,32 +98,30 @@ typedef struct {
  */
 typedef struct {
     std::string spacecraftName = "bsk-Sat";                     //!< [-] Name of the spacecraft.
-    std::string cssDataInMsgName = "css_sensors_data";          //!< [-] (Optional) Name of the incoming css data message
-    std::string cssConfInMsgName = "css_config_data";           //!< [-] (Optional) Name of the incoming css constellation data message
     std::string scPlusInMsgName = "inertial_state_output";      //!< [-] Name of the incoming SCPlus data message
     std::vector <std::string> rwInMsgName;                      /*!< [-] Vector of names of the incoming RW state messages.  If this is not
                                                                         set directly, then it is auto-generated using the spacecraft name
                                                                         as the prefix. This is required if ``numRW`` is greater than 0.
                                                                  */
+    std::vector <std::string> cssInMsgNames;                    /*!< [-] Vector of CSS config log message names */
     std::vector <ThrClusterMap> thrMsgData;                     /*!< [-] (Optional) Name of the incoming thruster data.  This is
                                                                          required if ``numThr`` is greater than 0. */
     std::string starTrackerInMsgName = "star_tracker_state";    //!< [-] (Optional) Name of the incoming Star Tracker data
     int numRW = 0;                                              //!< [-] (Optional) Number of RW
     int numThr = 0;                                             //!< [-] (Optional) Number of Thrusters
 
+    int numCSS = 0;                                             //!< [-] (Private) Number of CCS sensors
     std::vector<MsgCurrStatus> rwInMsgID;                       //!< [-] (Private) ID of the incoming rw data
     std::vector<MsgCurrStatus> thrMsgID;                        //!< [-] (Private) ID of the incoming thruster data
     std::vector<ThrClusterMap> thrInfo;                         //!< [-] (Private) thruster tagging info
     MsgCurrStatus starTrackerInMsgID;                           //!< [-] (Private) ID of the incoming Star Tracker data
     MsgCurrStatus scPlusInMsgID;                                //!< [-] (Private) ID of the incoming SCPlus data
-    MsgCurrStatus cssDataInMsgId;                               //!< [-] (Private) ID of the incoming css data
-    MsgCurrStatus cssConfInMsgId;                               //!< [-] (Private) ID of the incoming css constellation data
+    std::vector<MsgCurrStatus> cssConfLogInMsgId;               //!< [-] (Private) ID of the incoming array of css configuration log
     std::vector <RWConfigLogSimMsg> rwInMessage;                //!< [-] (Private) RW message data
+    std::vector <CSSConfigLogSimMsg> cssInMessage;              //!< [-] (Private) CSS message data
     STSensorIntMsg STMessage;                                   //!< [-] (Private) ST message data
     std::vector <THROutputSimMsg> thrOutputMessage;             //!< [-] (Private) Thr message data
     SCPlusStatesSimMsg scPlusMessage;                           //!< [-] (Private) s/c plus message data
-//    CSSArraySensorIntMsg cssDataMessage;                      //!< [-] (Private) CSS message data
-    CSSConfigFswMsg cssConfigMessage;                           //!< [-] (Private) CSS config message data
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 

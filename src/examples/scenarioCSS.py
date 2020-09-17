@@ -170,6 +170,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import coarse_sun_sensor
 from Basilisk.utilities import orbitalMotion as om
+from Basilisk.utilities import vizSupport
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
@@ -233,7 +234,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #
     # set initial spacecraft states
     #
-    scObject.hub.r_CN_NInit = [[-om.AU*1000.0], [0.0], [0.0]]              # m   - r_CN_N
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]              # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
@@ -250,6 +251,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     CSS1.fov = 80.*macros.D2R
     CSS1.scaleFactor = 2.0
     CSS1.cssDataOutMsgName = "CSS1_output"
+    CSS1.cssConfigLogMsgName = "CSS1_config_log"
     CSS1.sunInMsgName = "sun_message"
     if useKelly:
         CSS1.kellyFactor = 0.2
@@ -266,6 +268,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     CSS2 = coarse_sun_sensor.CoarseSunSensor(CSS1)      # make copy of first CSS unit
     CSS2.ModelTag = "CSS2_sensor"
     CSS2.cssDataOutMsgName = "CSS2_output"
+    CSS2.cssConfigLogMsgName = "CSS2_config_log"
     if usePlatform:
         CSS2.theta = 180.*macros.D2R
         CSS2.setUnitDirectionVectorWithPerturbation(0., 0.)
@@ -305,7 +308,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     # create simulation messages
     #
     sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
-    sunPositionMsg.PositionVector = [0.0, 0.0, 0.0]
+    sunPositionMsg.PositionVector = [0.0, om.AU*1000.0, 0.0]
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
                                CSS1.sunInMsgName,
@@ -318,6 +321,14 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
                                    simProcessName,
                                    CSS1.sunEclipseInMsgName,
                                    eclipseMsg)
+
+    # optional saving off of Vizard compatible file
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+                                              # saveFile=__file__,
+                                              # liveStream=True,
+                                              cssNames=[CSS1.cssConfigLogMsgName, CSS2.cssConfigLogMsgName]
+                                              )
+
     #
     #   initialize Simulation
     #

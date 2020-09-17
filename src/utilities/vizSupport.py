@@ -689,6 +689,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         Default value is zero RWs for each spacecraft.
     thrDevices:
         list of thruster devices states for the first spacecraft
+    cssNames:
+        list of CSS configuration log message names lists
     opNavMode: bool
         flag if opNaveMode should be used
     liveStream: bool
@@ -711,7 +713,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName'],
+        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName', 'cssNames'],
         kwargs)
 
     # setup the Vizard interface module
@@ -757,6 +759,30 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     else:
         numRWList = [0] * len(scNames)
 
+    # set CSS information
+    cssNameList = []
+    if 'cssNames' in kwargs:
+        cssNameList = kwargs['cssNames']
+        if isinstance(cssNameList, list):
+            if isinstance(cssNameList[0], list):
+                if len(scNames) != len(cssNameList):
+                    print('ERROR: cssName and scName list lengths must be the same length')
+                    exit(1)
+                for scCSSList in cssNameList:
+                    for item in scCSSList:
+                        if not isinstance(item, basestring):
+                            print('ERROR: cssNames list must contain strings of config log message names')
+                            exit(1)
+            else:
+                for item in cssNameList:
+                    if not isinstance(item, basestring):
+                        print('ERROR: cssNames list must contain strings of config log message names')
+                        exit(1)
+                cssNameList = [cssNameList]
+        else:
+            print('ERROR: cssNames must be a list of CSS config log message names')
+            exit(1)
+
     # set thruster device info
     if 'thrDevices' in kwargs:
         thrDevices = kwargs['thrDevices']
@@ -777,6 +803,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     for name in scNames:
         scData.spacecraftName = name
         scData.numRW = numRWList[i]
+        if len(cssNameList) > 0:
+            scData.cssInMsgNames = vizInterface.StringVector(cssNameList[i])
         if i != 0:
             scData.scPlusInMsgName = scPlusInMsgName + str(i+1)
         vizMessenger.scData.push_back(scData)

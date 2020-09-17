@@ -441,6 +441,8 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         it->applySensorErrors();
         it->scaleSensorValues();
         it->applySaturation();
+        it->writeOutputMessages(CurrentSimNanos);
+
         this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
