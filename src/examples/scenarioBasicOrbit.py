@@ -353,7 +353,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # To enable this, uncomment this line:
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-                                              saveFile=__file__,
+                                              # saveFile=__file__,
                                               # liveStream=True,
                                               gravBodies=gravFactory
                                               )
