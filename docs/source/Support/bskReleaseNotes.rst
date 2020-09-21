@@ -20,7 +20,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Updated conan to 1.29.2 to address issues building with opNav and support xcode 12
+- Disable freetype for windows because of opencv build issues.
 
 Version 1.8.4
 -------------
