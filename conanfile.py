@@ -94,8 +94,6 @@ class BasiliskConan(ConanFile):
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
-        if platform.system() == "Darwin":
-            pkgList.append('conan!=1.25.*, !=1.26.*, !=1.27.*')
 
         checkStr = "Required"
         if self.options.allOptPkg:
@@ -170,6 +168,11 @@ class BasiliskConan(ConanFile):
         # Install additional opencv methods
         if self.options.opNav:
             self.options['opencv'].contrib = True
+            # Raise an issue to conan-center to fix this bug. Using workaround to disable freetype for windows
+            # Issue link: https://github.com/conan-community/community/issues/341
+            #TODO Remove this once they fix this issue.
+            if self.settings.os == "Windows":
+                self.options['opencv'].freetype = False
 
         if self.options.generator == "":
             # Select default generator supplied to cmake based on os
