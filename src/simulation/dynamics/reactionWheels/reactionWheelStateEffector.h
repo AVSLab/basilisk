@@ -32,7 +32,7 @@
 #include "../../simMessages/rwCmdSimMsg.h"
 #include "../../simMessages/rwConfigSimMsg.h"
 #include "../../simMessages/rwConfigLogSimMsg.h"
-#include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+#include "../../simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/bskLogging.h"
 
@@ -81,7 +81,7 @@ private:
 	std::vector<int64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
 	int64_t CmdsInMsgID;                                        //!< -- Message ID for incoming data
 	int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
-	RWArrayTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings
+	ArrayMotorTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
 
 	StateData *hubSigma;                                        //!< class variable

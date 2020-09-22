@@ -175,7 +175,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = simFswInterfaceMessages.RWArrayTorqueIntMsg()
+    cmdArray = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
     if testCase == 'BOE' or testCase == 'FrictionSpinDown':

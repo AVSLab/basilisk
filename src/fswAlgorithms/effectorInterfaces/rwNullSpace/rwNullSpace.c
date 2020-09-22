@@ -26,7 +26,7 @@
 
 /*!
  \verbatim embed:rst
-    This method creates the module output message of type :ref:`RWArrayTorqueIntMsg`.
+    This method creates the module output message of type :ref:`ArrayMotorTorqueIntMsg`.
  \endverbatim
  @return void
  @param configData The configuration data associated with RW null space model
@@ -36,8 +36,8 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
     /* Create output message for module */
     configData->outputMsgID = CreateNewMessage(
-        configData->outputControlName, sizeof(RWArrayTorqueIntMsg),
-        "RWArrayTorqueIntMsg", moduleID);
+        configData->outputControlName, sizeof(ArrayMotorTorqueIntMsg),
+        "ArrayMotorTorqueIntMsg", moduleID);
 	
 }
 
@@ -51,7 +51,7 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
     configData->inputRWCmdsID = subscribeToMessage(configData->inputRWCommands,
-        sizeof(RWArrayTorqueIntMsg), moduleID);
+        sizeof(ArrayMotorTorqueIntMsg), moduleID);
 	configData->inputSpeedsID = subscribeToMessage(configData->inputRWSpeeds,
 		sizeof(RWSpeedIntMsg), moduleID);
     configData->inputRWConfID = subscribeToMessage(configData->inputRWConfigData,
@@ -122,21 +122,21 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    RWArrayTorqueIntMsg cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
+    ArrayMotorTorqueIntMsg cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
 	RWSpeedIntMsg rwSpeeds;                 /* [r/s] array of RW speeds */
-	RWArrayTorqueIntMsg finalControl;       /* [Nm]  array of final RW motor torques containing both
+	ArrayMotorTorqueIntMsg finalControl;       /* [Nm]  array of final RW motor torques containing both
                                                        the control and null motion torques */
 	double dVector[MAX_EFF_CNT];            /* [Nm]  null motion wheel speed control array */
     
     /*! - zero all message containers prior to evaluation */
-    memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));
-    memset(&cntrRequest, 0x0, sizeof(RWArrayTorqueIntMsg));
+    memset(&finalControl, 0x0, sizeof(ArrayMotorTorqueIntMsg));
+    memset(&cntrRequest, 0x0, sizeof(ArrayMotorTorqueIntMsg));
     memset(&rwSpeeds, 0x0, sizeof(RWSpeedIntMsg));
 
 
     /*! - Read the input RW commands to get the raw RW requests*/
     ReadMessage(configData->inputRWCmdsID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWArrayTorqueIntMsg), (void*) &(cntrRequest), moduleID);
+                sizeof(ArrayMotorTorqueIntMsg), (void*) &(cntrRequest), moduleID);
     /*! - Read the RW speeds*/
 	ReadMessage(configData->inputSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
 		sizeof(RWSpeedIntMsg), (void*)&(rwSpeeds), moduleID);
@@ -152,7 +152,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 		cntrRequest.motorTorque, finalControl.motorTorque);
 
     /*! - write the final RW torque solution to the output message */
-	WriteMessage(configData->outputMsgID, callTime, sizeof(RWArrayTorqueIntMsg),
+	WriteMessage(configData->outputMsgID, callTime, sizeof(ArrayMotorTorqueIntMsg),
 		&finalControl, moduleID);
 
     return;

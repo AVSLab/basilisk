@@ -35,8 +35,8 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
 {
     /*! - Create commanded control torque output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(RWArrayTorqueIntMsg),
-                                               "RWArrayTorqueIntMsg",
+                                               sizeof(ArrayMotorTorqueIntMsg),
+                                               "ArrayMotorTorqueIntMsg",
                                                moduleID);
 }
 
@@ -119,7 +119,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     uint32_t sizeOfMsgWritten;
     RWAvailabilityFswMsg wheelsAvailability;    /* Msg containing RW availability */
     CmdTorqueBodyIntMsg LrInputMsg;             /* Msg containing Lr control torque */
-    RWArrayTorqueIntMsg rwMotorTorques;         /* Msg struct to store the output message */
+    ArrayMotorTorqueIntMsg rwMotorTorques;         /* Msg struct to store the output message */
     int i,j,k;
     double Lr_B[3];                             /* [Nm]    commanded ADCS control torque in body frame*/
     double Lr_C[3];                             /* [Nm]    commanded ADCS control torque projected onto control axes */
@@ -212,9 +212,9 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     }
     
     /* store the output message */
-    memset(&(rwMotorTorques), 0x0, sizeof(RWArrayTorqueIntMsg));
+    memset(&(rwMotorTorques), 0x0, sizeof(ArrayMotorTorqueIntMsg));
     vCopy(us, configData->rwConfigParams.numRW, rwMotorTorques.motorTorque);
-    WriteMessage(configData->outputMsgID, callTime, sizeof(RWArrayTorqueIntMsg),
+    WriteMessage(configData->outputMsgID, callTime, sizeof(ArrayMotorTorqueIntMsg),
                  (void*) &(rwMotorTorques), moduleID);
     
     return;

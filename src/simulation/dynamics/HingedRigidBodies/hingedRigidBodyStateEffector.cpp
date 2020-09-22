@@ -19,7 +19,7 @@
 
 #include "hingedRigidBodyStateEffector.h"
 #include "utilities/avsEigenSupport.h"
-#include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+#include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
 
@@ -78,7 +78,7 @@ void HingedRigidBodyStateEffector::CrossInit()
     /* check if the optional motor torque input message name has been set */
     if (this->motorTorqueInMsgName.length() > 0) {
         this->motorTorqueInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->motorTorqueInMsgName,
-                                                                                     sizeof(RWArrayTorqueIntMsg),
+                                                                                     sizeof(ArrayMotorTorqueIntMsg),
                                                                                      moduleID);
     }
 
@@ -307,10 +307,10 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     //! - Zero the command buffer and read the incoming command array
     if (this->motorTorqueInMsgId >= 0) {
         SingleMessageHeader LocalHeader;
-        RWArrayTorqueIntMsg IncomingCmdBuffer;
-        memset(&IncomingCmdBuffer, 0x0, sizeof(RWArrayTorqueIntMsg));
+        ArrayMotorTorqueIntMsg IncomingCmdBuffer;
+        memset(&IncomingCmdBuffer, 0x0, sizeof(ArrayMotorTorqueIntMsg));
         SystemMessaging::GetInstance()->ReadMessage(this->motorTorqueInMsgId, &LocalHeader,
-                                                    sizeof(RWArrayTorqueIntMsg),
+                                                    sizeof(ArrayMotorTorqueIntMsg),
                                                     reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
         this->u = IncomingCmdBuffer.motorTorque[0];
     }

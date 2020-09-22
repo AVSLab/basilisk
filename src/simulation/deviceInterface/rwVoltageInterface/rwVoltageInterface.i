@@ -31,7 +31,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "sys_model.h"
 %include "rwVoltageInterface.h"
 %include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
-%include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 %include "simFswInterfaceMessages/macroDefinitions.h"
 
 GEN_SIZEOF(RWArrayVoltageIntMsg);

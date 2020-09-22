@@ -1202,7 +1202,7 @@ def test_hingedRigidBodyMotorTorque(show_plots):
 
     # set a fixed motor torque message
     unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"
-    motorMsg = simFswInterfaceMessages.RWArrayTorqueIntMsg()
+    motorMsg = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
     motorMsg.motorTorque = [2.0]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,

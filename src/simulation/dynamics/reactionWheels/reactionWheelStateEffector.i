@@ -40,7 +40,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "simMessages/rwConfigSimMsg.h"
 %include "simMessages/rwConfigLogSimMsg.h"
 %include "simFswInterfaceMessages/macroDefinitions.h"
-%include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"
@@ -50,7 +50,7 @@ namespace std {
     %template(RWConfigVector) vector<RWConfigSimMsg>;
 	%template(RWCmdVector) vector<RWCmdSimMsg>;
 }
-GEN_SIZEOF(RWArrayTorqueIntMsg);
+GEN_SIZEOF(ArrayMotorTorqueIntMsg);
 GEN_SIZEOF(RWConfigLogSimMsg);
 %pythoncode %{
 import sys
