@@ -20,6 +20,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.5
+-------------
 - Provide support of Vizard 1.5.1 scripting
 - Updated conan to 1.29.2 to address issues building with opNav and support xcode 12
 - Disable freetype for windows because of opencv build issues.
@@ -47,8 +51,8 @@ Version 1.8.3
   thruster pluming length can be now be custo scaled as well.
 - Added a video gallery page to the Vizard documentation section
 
-Version 1.8.2
--------------
+**Version 1.8.2**
+
 - Updated :ref:`dataFileToViz` to include the ability to read thruster force values.  The spacecraft can have
   multiple thruster sets, and this works for multiple spacecraft as well.  See :ref:`test_dataFileToViz` for an
   example on how to set this up.

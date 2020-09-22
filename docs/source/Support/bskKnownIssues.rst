@@ -6,13 +6,16 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.4
+-------------
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
 - With Xcode 12, you cannot build basilisk with opNav enabled because there is an issue with zlib conan recipe.
 
 Version 1.8.4
 -------------
-
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found.
   The code compiles, but auto-completion etc. doesn't work in that module.
 
@@ -30,8 +33,8 @@ Version 1.8.2
 - In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.  The code compiles,
   but auto-completion etc. doesn't work in that module.
 
-Version 1.8.1
--------------
+**Version 1.8.1**
+
 - When deleting ``.conan`` and doing a build with ``opNav`` set to true, the required dependencies can't be found
   on the repo on the first install run.  Running it again makes it work.  This is fixed in the next release to run
   properly on the first try.
