@@ -434,11 +434,11 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
         std::vector<AllowAccessData>::iterator it;
         it = this->messageStorage->pubData.begin();
         it += MessageID;
-        if(it->accessList.find(moduleID) != it->accessList.end())
+        if((it->accessList.find(moduleID) != it->accessList.end()) || (moduleID == -2))
         {
             MsgHdr->previousPublisher = moduleID;
         }
-        else if (moduleID != -2)
+        else
         {
             BSK_PRINT(MSG_ERROR, "Received a write request from module %" PRId64 "that doesn't publish for %s . You get nothing.",
                             moduleID, this->FindMessageName(MessageID).c_str());
