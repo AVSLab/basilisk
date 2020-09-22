@@ -37,6 +37,7 @@ public:
     double c;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
     double thetaInit;                //!< [rad] Initial hinged rigid body angle
     double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
+    double u;                        //!< [N-m] optional motor torque
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
     Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
@@ -45,6 +46,7 @@ public:
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
     std::string HingedRigidBodyOutMsgName; //!< -- state output message name
+    std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
     HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
@@ -73,6 +75,7 @@ private:
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
+    int64_t motorTorqueInMsgId;      //!< -- motor torque message ID
 
 public:
     HingedRigidBodyStateEffector();  //!< -- Contructor

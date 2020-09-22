@@ -19,6 +19,7 @@
 
 #include "hingedRigidBodyStateEffector.h"
 #include "utilities/avsEigenSupport.h"
+#include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
 
@@ -37,6 +38,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->d = 1.0;
     this->k = 1.0;
     this->c = 0.0;
+    this->u = 0.0;
     this->thetaInit = 0.00;
     this->thetaDotInit = 0.0;
     this->IPntS_S.Identity();
@@ -45,6 +47,8 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
     this->HingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
+    this->motorTorqueInMsgName = "";
+    this->motorTorqueInMsgId = -1;
     
     return;
 }
@@ -71,7 +75,13 @@ void HingedRigidBodyStateEffector::SelfInit()
  @return void*/
 void HingedRigidBodyStateEffector::CrossInit()
 {
-//HRB does not CrossInit() anything.
+    /* check if the optional motor torque input message name has been set */
+    if (this->motorTorqueInMsgName.length() > 0) {
+        this->motorTorqueInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->motorTorqueInMsgName,
+                                                                                     sizeof(RWArrayTorqueIntMsg),
+                                                                                     moduleID);
+    }
+
     return;
 }
 
@@ -85,10 +95,10 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     std::vector<int64_t>::iterator it;
 
-    HRBoutputStates.theta = this->theta;
-    HRBoutputStates.thetaDot = this->thetaDot;
+    this->HRBoutputStates.theta = this->theta;
+    this->HRBoutputStates.thetaDot = this->thetaDot;
         messageSys->WriteMessage(this->HingedRigidBodyOutMsgId, CurrentClock,
-                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&HRBoutputStates),
+                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&this->HRBoutputStates),
                                  this->moduleID);
 }
 
@@ -211,7 +221,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     // - Define cTheta
     Eigen::Vector3d gravityTorquePntH_P;
     gravityTorquePntH_P = -this->d*this->sHat1_P.cross(this->mass*g_P);
-    this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->k*this->theta - this->c*this->thetaDot
+    this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(this->u -this->k*this->theta - this->c*this->thetaDot
                     + this->sHat2_P.dot(gravityTorquePntH_P) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
                      + this->mass*this->d*this->d)*this->omega_PN_S(2)*this->omega_PN_S(0) - this->mass*this->d*
                               this->sHat3_P.transpose()*this->omegaTildeLoc_PN_P*this->omegaTildeLoc_PN_P*this->r_HP_P);
@@ -294,6 +304,17 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
  */
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    //! - Zero the command buffer and read the incoming command array
+    if (this->motorTorqueInMsgId >= 0) {
+        SingleMessageHeader LocalHeader;
+        RWArrayTorqueIntMsg IncomingCmdBuffer;
+        memset(&IncomingCmdBuffer, 0x0, sizeof(RWArrayTorqueIntMsg));
+        SystemMessaging::GetInstance()->ReadMessage(this->motorTorqueInMsgId, &LocalHeader,
+                                                    sizeof(RWArrayTorqueIntMsg),
+                                                    reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
+        this->u = IncomingCmdBuffer.motorTorque[0];
+    }
+
     this->writeOutputStateMessages(CurrentSimNanos);
     
     return;
