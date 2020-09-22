@@ -4,7 +4,7 @@
 
 The hinged rigid body class is an instantiation of the state effector abstract class. The state effector abstract class is a base class for modules that have dynamic states or degrees of freedom with respect to the rigid body hub. Examples of these would be reaction wheels, variable speed control moment gyroscopes, fuel slosh particles, etc. Since the state effectors are attached to the hub, the state effectors are directly affecting the hub as well as the hub is back affecting the state effectors.
 
-Specifically, a hinged rigid body state effector is a rigid body that has a diagonal inertia with respect to its $\mathcal{S}_i$ frame as seen in Figure~\ref{fig:FlexFigure}. It is attached to the hub through a hinge with a linear torsional spring and linear damping term. The dynamics of this multi-body problem have been derived and can be seen in Reference~\cite{Allard2016rz}. The derivation is general for $N$ number of panels attached to the hub but does not allow for multiple interconnected panels. 
+Specifically, a hinged rigid body state effector is a rigid body that has a diagonal inertia with respect to its $\mathcal{S}_i$ frame as seen in Figure~\ref{fig:FlexFigure}. It is attached to the hub through a hinge with a linear torsional spring and linear damping term.  An optional motor torque command can be used to actuate the panel.  The dynamics of this multi-body problem have been derived and can be seen in Reference~\citenum{Allard2016rz}. The derivation is general for $N$ number of panels attached to the hub but does not allow for multiple interconnected panels. 
 
 \begin{figure}[htbp]
 	\centerline{
@@ -33,10 +33,11 @@ m_{\text{sc}} \ddot{\bm r}_{B/N}-m_{\text{sc}} [\tilde{\bm{c}}]\dot{\bm\omega}_{
 \begin{multline}
 m_{\text{sp}_i} d_i \hat{\bm s}_{i,3}^{T} \ddot{\bm r}_{B/N}+ \biggl[\left(I_{s_{i,2}} + m_{\text{sp}_i}d_i^{2}\right) \hat{\bm s}_{i,2}^{T}-m_{\text{sp}_i} d_i \hat{\bm s}_{i,3}^{T} [\tilde{\bm r}_{H_i/B}]\biggr] \dot{\bm\omega}_{\cal B/N} \\
 + \left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right) \ddot \theta_i 
-= - k_i \theta_i - c_i \dot\theta_i + \hat{\bm s}_{i,2}^T \bm \tau_{\text{ext},H_i} + \left( I_{s_{i,3}} - I_{s_{i,1}} + m_{\text{sp}_i}d_i^{2}\right) \omega_{s_{i,3}} \omega_{s_{i,1}}\\
+= u_i - k_i \theta_i - c_i \dot\theta_i + \hat{\bm s}_{i,2}^T \bm \tau_{\text{ext},H_i} + \left( I_{s_{i,3}} - I_{s_{i,1}} + m_{\text{sp}_i}d_i^{2}\right) \omega_{s_{i,3}} \omega_{s_{i,1}}\\
 - m_{\text{sp}_i} d_i \hat{\bm s}_{i,3}^{T} [\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}] \bm r_{H_i/B} 
 \label{eq:solar_panel_final3}
 \end{multline}
+where $u_i$ is the optional motor torque.
 
 \subsection{Back Substitution Method}
 
@@ -70,15 +71,15 @@ With the following definitions:
 	\bm b_{\theta_i} &= -\frac{1}{\left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right)} \bigg[\left(I_{s_{i,2}} + m_{\text{sp}_i}d_i^{2}\right) \hat{\bm s}_{i,2}+m_{\text{sp}_i} d_i [\tilde{\bm r}_{H_i/B}] \hat{\bm s}_{i,3}\bigg]
 	\\
 	\begin{split}
-	c_{\theta_i} &= \frac{1}{\left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right)} \Big(- k_i \theta_i - c_i \dot\theta_i + \hat{\bm s}_{i,2} \cdot \bm \tau_{\text{ext},H_i} + \left( I_{s_{i,3}} - I_{s_{i,1}} + m_{\text{sp}_i}d_i^{2}\right) \omega_{s_{i,3}} \omega_{s_{i,1}} \\
+	c_{\theta_i} &= \frac{1}{\left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right)} \Big(u_i - k_i \theta_i - c_i \dot\theta_i + \hat{\bm s}_{i,2} \cdot \bm \tau_{\text{ext},H_i} + \left( I_{s_{i,3}} - I_{s_{i,1}} + m_{\text{sp}_i}d_i^{2}\right) \omega_{s_{i,3}} \omega_{s_{i,1}} \\
 	&- m_{\text{sp}_i} d_i \hat{\bm s}_{i,3}^{T} [\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}] \bm r_{H_i/B}\Big)
 	\label{eq:solar_panel_final6}
 	\end{split}
 	\end{align}
 \end{subequations}
+In Eq.~\eqref{eq:solar_panel_final6} the variable $u_i$ is the motor torque acting on the $i^{\text{th}}$ panel.
 
-The equations can now be organized into the following matrix respresentation:
-
+The equations can now be organized into the following matrix representation:
 \begin{equation}
 \begin{bmatrix}
 [A] & [B]\\
