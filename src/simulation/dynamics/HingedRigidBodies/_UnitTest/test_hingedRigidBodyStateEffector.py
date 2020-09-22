@@ -97,7 +97,6 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
     unitTestSim.panel1.ModelTag = "Panel1"
 
     # Define Variables for panel 2
@@ -112,7 +111,6 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
     unitTestSim.panel2.ModelTag = "Panel2"
 
     # Add panels to spaceCraft
@@ -1180,7 +1178,7 @@ def test_hingedRigidBodyMotorTorque(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -1191,7 +1189,7 @@ def test_hingedRigidBodyMotorTorque(show_plots):
     unitTestSim.panel1.mass = 100.0
     unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 100.0
+    unitTestSim.panel1.k = 0.0
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -1199,11 +1197,13 @@ def test_hingedRigidBodyMotorTorque(show_plots):
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 0 * numpy.pi / 180.0
     unitTestSim.panel1.thetaDotInit = 0.0
+    unitTestSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
+    unitTestSim.panel1.ModelTag = "panel1"
 
     # set a fixed motor torque message
     unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"
     motorMsg = simFswInterfaceMessages.RWArrayTorqueIntMsg()
-    motorMsg.motorTorque = [20.0]
+    motorMsg.motorTorque = [2.0]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                unitTestSim.panel1.motorTorqueInMsgName,
@@ -1213,14 +1213,16 @@ def test_hingedRigidBodyMotorTorque(show_plots):
     unitTestSim.panel2.mass = 100.0
     unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 100.0
+    unitTestSim.panel2.k = 0.0
     unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
-    unitTestSim.panel2.thetaInit = 0.0
+    unitTestSim.panel2.thetaInit = 0.0 * macros.D2R
     unitTestSim.panel2.thetaDotInit = 0.0
+    unitTestSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
+    unitTestSim.panel2.ModelTag = "panel2"
 
     # Add panels to spaceCraft
     scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
@@ -1256,20 +1258,19 @@ def test_hingedRigidBodyMotorTorque(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_BN_N', list(range(3)))
+    rOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_CN_N', list(range(3)))
     vOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.v_CN_N', list(range(3)))
     sigma_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.sigma_BN', list(range(3)))
     theta1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.HingedRigidBodyOutMsgName+'.theta')
     theta2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.HingedRigidBodyOutMsgName+'.theta')
-    print(theta1)
 
     rotAngMom_N = unitTestSim.GetLogVariableData(
         scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
 
     # Get the last sigma and position
-    dataPos = [rOut_BN_N[-1]]
+    dataPos = [rOut_CN_N[-1]]
 
-    truePos = [[-0.15832794740648992, 1.122481716747217, -0.37975995949382907]]
+    truePos = [[0., 0., 0.]]
 
     initialRotAngMom_N = [[rotAngMom_N[0, 1], rotAngMom_N[0, 2], rotAngMom_N[0, 3]]]
 
@@ -1305,7 +1306,7 @@ def test_hingedRigidBodyMotorTorque(show_plots):
              label=r'$\sigma_{3}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
-    plt.ylabel('MRP B/N')
+    plt.ylabel('MRP $\sigma_{B/N}$')
 
     plt.figure()
     plt.clf()
@@ -1326,19 +1327,19 @@ def test_hingedRigidBodyMotorTorque(show_plots):
     accuracy = 1e-10
     for i in range(0, len(truePos)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataPos[i], truePos[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataPos[i], truePos[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
 
     for i in range(0, len(initialRotAngMom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
                 "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
 
     if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body integrated test")
+        print("PASSED: " + " Hinged Rigid Body integrated test with motor torques")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
