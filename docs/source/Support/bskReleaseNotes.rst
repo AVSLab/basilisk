@@ -20,11 +20,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
-
-Version 1.8.6
------------------
-- Fixed an issue where the WriteMessageData method in SimModel failed to write to certain messages
+- Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
 
 Version 1.8.5
 -------------
