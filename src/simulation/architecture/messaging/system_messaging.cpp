@@ -434,7 +434,7 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
         std::vector<AllowAccessData>::iterator it;
         it = this->messageStorage->pubData.begin();
         it += MessageID;
-        if(it->accessList.find(moduleID) != it->accessList.end())
+        if((it->accessList.find(moduleID) != it->accessList.end()) || (moduleID == -2))
         {
             MsgHdr->previousPublisher = moduleID;
         }
