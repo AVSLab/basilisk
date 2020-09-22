@@ -294,6 +294,8 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
  */
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    this->writeOutputStateMessages(CurrentSimNanos);
+    
     return;
 }
 
