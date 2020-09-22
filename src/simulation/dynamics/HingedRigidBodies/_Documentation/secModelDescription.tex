@@ -15,7 +15,7 @@ Specifically, a hinged rigid body state effector is a rigid body that has a diag
 
 \subsection{Equations of Motion}
 
-The following equations of motion (EOMs) are pulled from Reference~\cite{Allard2016rz} for convenience. Equation~\eqref{eq:Rbddot3} is the spacecraft translational EOM, Equation~\eqref{eq:Final6} is the spacecraft rotational EOM, and Equation~\eqref{eq:solar_panel_final3} is the hinged rigid body rotational EOM. These are the coupled nonlinear EOMs that need to be integrated in the simulation. 
+The following equations of motion (EOMs) are pulled from Reference~\citenum{Allard2016rz} for convenience. Equation~\eqref{eq:Rbddot3} is the spacecraft translational EOM, Equation~\eqref{eq:Final6} is the spacecraft rotational EOM, and Equation~\eqref{eq:solar_panel_final3} is the hinged rigid body rotational EOM. These are the coupled nonlinear EOMs that need to be integrated in the simulation. 
 
 \begin{multline}
 m_{\text{sc}} \ddot{\bm r}_{B/N}-m_{\text{sc}} [\tilde{\bm{c}}]\dot{\bm\omega}_{\cal B/N}+\sum_{i}^{N}m_{\text{sp}_i} d_i  \bm{\hat{s}}_{i,3}\ddot{\theta}_i = \bm F_{\textnormal{ext}} - 2 m_{\text{sc}} [\tilde{\bm\omega}_{\cal B/N}]\bm{c}'\\
