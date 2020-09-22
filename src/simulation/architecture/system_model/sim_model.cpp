@@ -325,7 +325,7 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
     }
     SystemMessaging::GetInstance()->selectMessageBuffer(MessageID.processBuffer);
     SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, ClockTime,
-                                                 MessageSize, reinterpret_cast<uint8_t*> (MessageData));
+                                                 MessageSize, reinterpret_cast<uint8_t*> (MessageData), -2);
 }
 /*! This method functions as a pass-through to the message logging structure
  when adding messages to log.  The main point is to serve as an API at the

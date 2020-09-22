@@ -438,7 +438,7 @@ bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
         {
             MsgHdr->previousPublisher = moduleID;
         }
-        else
+        else if (moduleID != -2)
         {
             BSK_PRINT(MSG_ERROR, "Received a write request from module %" PRId64 "that doesn't publish for %s . You get nothing.",
                             moduleID, this->FindMessageName(MessageID).c_str());
