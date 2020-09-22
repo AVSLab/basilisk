@@ -99,11 +99,14 @@ int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
     return(localMsgID);
 }
 
-/*! This method find the message name associated with a given ID.
- @return Returns a pointer to the message name we find
- @param MessageID MEssage ID that we want to find the message name for
- */
-const char * FindMessageName(int64_t MessageID)
-{
-    return(SystemMessaging::GetInstance()->FindMessageName(MessageID).c_str());
-}
+
+// this method is commented out for now as it is not used and doesn't appear to work
+//
+///*! This method find the message name associated with a given ID.
+// @return Returns a pointer to the message name we find
+// @param MessageID MEssage ID that we want to find the message name for
+// */
+//const char * FindMessageName(int64_t MessageID)
+//{
+//    return(SystemMessaging::GetInstance()->FindMessageName(MessageID).c_str());
+//}
