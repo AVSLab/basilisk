@@ -170,7 +170,7 @@ Related Publications
 - M. Cols Margenet, P. Kenneally and  H. Schaub,  "`Software Simulator for Heterogeneous Spacecraft and Mission Components <https://hanspeterschaub.info/Papers/ColsMargenet2018.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
 - P. Kenneally and  H. Schaub,  "`Fast Spacecraft Solar Radiation Pressure Modeling By Ray-Tracing On Graphic Processing Unit <https://hanspeterschaub.info/Papers/Kenneally2018a.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
 - C. Allard and  H. Schaub,  "`Stability Analysis of Spacecraft with Flexible Solar Arrays Using Classical Techniques <https://hanspeterschaub.info/Papers/Allard2018b.pdf>`_," AAS Guidance and Control Conference, Breckenridge, CO, February  2--7, 2018.
-- P. Kenneally,  H. Schaub and S. Piggott,  "`Basilisk: A Flexible, Scalable and Modular Astrodynamics Simulation Framework <https://hanspeterschaub.info/Papers/Kenneally2018c.pdf>`_," 7th International Conference on Astrodynamics Tools and Techniques (ICATT), DLR Oberpfaffenhofen, Germany, November 6--9, 2018.
+- P. Kenneally,  H. Schaub and S. Piggott,  "`Basilisk: A Flexible, Scalable and Modular Astrodynamics Simulation Framework <https://hanspeterschaub.info/PapersPrivate/Kenneally2020a.pdf>`_," AIAA Journal of Aerospace Information Systems, Vol. 17, No. 9, Sept. 2020, pp. 4060--507.
 
 
 
