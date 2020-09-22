@@ -22,6 +22,10 @@ Version |release|
 -----------------
 - text here
 
+Version 1.8.6
+-----------------
+- Fixed an issue where the WriteMessageData method in SimModel failed to write to certain messages
+
 Version 1.8.5
 -------------
 - Provide support of Vizard 1.5.1 scripting
