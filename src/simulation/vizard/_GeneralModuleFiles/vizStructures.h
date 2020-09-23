@@ -81,6 +81,16 @@ typedef struct {
     int showRWLabels=0;            //!< [bool] should the reaction wheel labels be shown, -1 (off), 0 (default), 1 (on)
 }ActuatorGuiSettings;
 
+/*! Vizard User Interface structure specify what instrument visualizations to show
+ */
+typedef struct {
+    std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
+                                         If not provided then the ``viz.spacecraftName`` is used. */
+    int viewCSSPanel=0;             //!< [bool] should CSS panel illustration be shown, -1 (off), 0 (default), 1 (on)
+    int viewCSSHUD=0;               //!< [bool] should CSS panel Heads-Up-Display be shown, -1 (off), 0 (default), 1 (on)
+    int showCSSLabels=0;            //!< [bool] should CSS panel labels be shown, -1 (off), 0 (default), 1 (on)
+}InstrumentGuiSettings;
+
 /*! Structure defining a custom CAD model to load to represent a simulation object.
 */
 typedef struct {
@@ -140,6 +150,7 @@ typedef struct {
     std::vector<StdCameraSettings> stdCameraList;   //!< vector of spacecraft cameras
     std::vector<CustomModel> customModelList;       //!< vector of custom object models
     std::vector<ActuatorGuiSettings> actuatorGuiSettingsList; //!< msg containing the flags on displaying the actuator GUI elements
+    std::vector<InstrumentGuiSettings> instrumentGuiSettingsList; //!< msg containing the flags on displaying instruments
     std::string skyBox = "";         /*!< string containing the star field options, an empty string'' provides default NASA SVS Starmap,
                                      ``ESO`` use ESO Milky Way skybox, ``black`` provides a black background,
                                      or provide a filepath to custom background */

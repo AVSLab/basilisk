@@ -356,6 +356,77 @@ def setActuatorGuiSetting(viz, **kwargs):
     viz.settings.actuatorGuiSettingsList = vizInterface.ActuatorGuiSettingsConfig(actuatorGuiSettingList)
     return
 
+instrumentGuiSettingList = []
+def setInstrumentGuiSetting(viz, **kwargs):
+    """
+    This method sets the instrument GUI properties for a particular spacecraft.  If no ``spacecraftName`` is
+    provided, then the name of the first spacecraft in the simulation is assumed.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    spacecraftName: str
+        The name of the spacecraft for which the actuator GUI options are set.
+        Default: If not provided, then the name of the first spacecraft in the simulation is used.
+    viewCSSPanel: bool
+        flag if the GUI panel should be shown illustrating the CSS states
+        Default: if not provided, then the Vizard default settings are used
+    viewCSSHUD: bool
+        flag if the HUD visualization of the CSS states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    showCSSLabels: bool
+        flag if the CSS labels should be shown
+        Default: if not provided, then the Vizard default settings are used
+
+    """
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+
+    global firstSpacecraftName
+    vizElement = vizInterface.InstrumentGuiSettings()
+
+    unitTestSupport.checkMethodKeyword(
+        ['spacecraftName', 'viewCSSPanel', 'viewCSSHUD', 'showCSSLabels'],
+        kwargs)
+
+    if 'spacecraftName' in kwargs:
+        scName = kwargs['spacecraftName']
+        if not isinstance(scName, basestring):
+            print('ERROR: spacecraftName must be a string')
+            exit(1)
+        vizElement.spacecraftName = scName
+    else:
+        vizElement.spacecraftName = firstSpacecraftName
+
+    if 'viewCSSPanel' in kwargs:
+        setting = kwargs['viewCSSPanel']
+        if not isinstance(setting, bool):
+            print('ERROR: viewCSSPanel must be True or False')
+            exit(1)
+        vizElement.viewCSSPanel = setting
+
+    if 'viewCSSHUD' in kwargs:
+        setting = kwargs['viewCSSHUD']
+        if not isinstance(setting, bool):
+            print('ERROR: viewCSSHUD must be True or False')
+            exit(1)
+        vizElement.viewCSSHUD = setting
+
+    if 'showCSSLabels' in kwargs:
+        setting = kwargs['showCSSLabels']
+        if not isinstance(setting, bool):
+            print('ERROR: showCSSLabels must be an integer value')
+            exit(1)
+        vizElement.showCSSLabels = setting
+
+    instrumentGuiSettingList.append(vizElement)
+    del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list
+    viz.settings.instrumentGuiSettingsList = vizInterface.InstrumentGuiSettingsConfig(instrumentGuiSettingList)
+    return
 
 coneInOutList = []
 def createConeInOut(viz, **kwargs):

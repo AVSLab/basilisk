@@ -138,6 +138,13 @@ message VizMessage{
         int32 showRWLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
+    message InstrumentSettings{
+        string spacecraftName = 1; //Which spacecraft's instruments to set
+        int32 viewCSSPanel = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCSSHUD = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCSSLabels = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    }
+    
     message CustomModel{
         string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
         repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" in the first string to apply custom model to all spacecraft in simulation
@@ -160,6 +167,7 @@ message VizMessage{
         repeated StandardCameraSettings standardCameraSettings = 7;
 //        CameraTwoSettings cameraTwo = 8;
 //        PlanetCameraSettings planetCamera = 9;
+        repeated InstrumentSettings instrumentSettings = 9;
         repeated ActuatorSettings actuatorSettings = 10;
         string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
         repeated CustomModel customModels = 12;
@@ -184,7 +192,6 @@ message VizMessage{
         int32 showHillFrame = 31; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showVelocityFrame = 32; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
-
     }
 
     TimeStamp currentTime = 1;
