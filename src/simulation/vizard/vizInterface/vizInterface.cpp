@@ -587,6 +587,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             al->set_showrwlabels(this->settings.actuatorGuiSettingsList[idx].showRWLabels);
         }
 
+        // define instrument GUI settings
+        for (size_t idx = 0; idx < this->settings.instrumentGuiSettingsList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::InstrumentSettings* il = vizSettings->add_instrumentsettings();
+            il->set_spacecraftname(this->settings.instrumentGuiSettingsList[idx].spacecraftName);
+            il->set_viewcsspanel(this->settings.instrumentGuiSettingsList[idx].viewCSSPanel);
+            il->set_viewcsshud(this->settings.instrumentGuiSettingsList[idx].viewCSSHUD);
+            il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
+        }
+
+
         // define scene object custom object shapes
         for (size_t idx = 0; idx < this->settings.customModelList.size(); idx++) {
             vizProtobufferMessage::VizMessage::CustomModel* cm = vizSettings->add_custommodels();
