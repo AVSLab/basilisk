@@ -21,6 +21,8 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
+- Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
+  on macOS with Xcode 12 installed
 
 Version 1.8.5
 -------------
