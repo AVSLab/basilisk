@@ -175,7 +175,7 @@ def test_SCConnected(show_plots):
     # Attach spacecraft3 to spacecraft2
     scSystem.attachSpacecraftToPrimary(sc3, dock1SC3.portName, dock2SC2.portName)
 
-    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
@@ -192,9 +192,9 @@ def test_SCConnected(show_plots):
     rotAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
 
-    r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_BN_N',
+    r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.r_BN_N',
                                                   list(range(3)))
-    sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.sigma_BN',
+    sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.sigma_BN',
                                                   list(range(3)))
 
     truePos = [
@@ -504,13 +504,13 @@ def test_SCConnectedAndUnconnected(show_plots):
     scSystem.addSpacecraftUndocked(sc5)
 
 
-    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft4_inertial_state_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft5_inertial_state_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft4inertial_state_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft5inertial_state_output", testProcessRate)
 
-    unitTestSim.TotalSim.logThisMessage("spacecraft_energy_momentum_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft4_energy_momentum_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft5_energy_momentum_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraftenergy_momentum_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft4energy_momentum_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft5energy_momentum_output", testProcessRate)
 
     unitTestSim.InitializeSimulation()
 
@@ -518,46 +518,46 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_BN_N',
+    r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.r_BN_N',
                                                   list(range(3)))
-    sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.sigma_BN',
-                                                  list(range(3)))
-
-    r_BN_NOutput1 = unitTestSim.pullMessageLogData("spacecraft4_inertial_state_output" + '.r_BN_N',
-                                                  list(range(3)))
-    sigma_BNOutput1 = unitTestSim.pullMessageLogData("spacecraft4_inertial_state_output" + '.sigma_BN',
+    sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.sigma_BN',
                                                   list(range(3)))
 
-    r_BN_NOutput2 = unitTestSim.pullMessageLogData("spacecraft5_inertial_state_output" + '.r_BN_N',
+    r_BN_NOutput1 = unitTestSim.pullMessageLogData("spacecraft4inertial_state_output" + '.r_BN_N',
                                                   list(range(3)))
-    sigma_BNOutput2 = unitTestSim.pullMessageLogData("spacecraft5_inertial_state_output" + '.sigma_BN',
-                                                  list(range(3)))
-
-    rotEnergy = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftRotEnergy',
-                                                  list(range(1)))
-    orbEnergy = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  list(range(1)))
-    rotAngMom_N = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
-                                                  list(range(3)))
-    orbAngMom_N = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
+    sigma_BNOutput1 = unitTestSim.pullMessageLogData("spacecraft4inertial_state_output" + '.sigma_BN',
                                                   list(range(3)))
 
-    rotEnergy1 = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftRotEnergy',
-                                                  list(range(1)))
-    orbEnergy1 = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  list(range(1)))
-    rotAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
+    r_BN_NOutput2 = unitTestSim.pullMessageLogData("spacecraft5inertial_state_output" + '.r_BN_N',
                                                   list(range(3)))
-    orbAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
+    sigma_BNOutput2 = unitTestSim.pullMessageLogData("spacecraft5inertial_state_output" + '.sigma_BN',
                                                   list(range(3)))
 
-    rotEnergy2 = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftRotEnergy',
+    rotEnergy = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftRotEnergy',
                                                   list(range(1)))
-    orbEnergy2 = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftOrbEnergy',
+    orbEnergy = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftOrbEnergy',
                                                   list(range(1)))
-    rotAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
+    rotAngMom_N = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftRotAngMomPntC_N',
                                                   list(range(3)))
-    orbAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
+    orbAngMom_N = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
+                                                  list(range(3)))
+
+    rotEnergy1 = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftRotEnergy',
+                                                  list(range(1)))
+    orbEnergy1 = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftOrbEnergy',
+                                                  list(range(1)))
+    rotAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
+                                                  list(range(3)))
+    orbAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
+                                                  list(range(3)))
+
+    rotEnergy2 = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftRotEnergy',
+                                                  list(range(1)))
+    orbEnergy2 = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftOrbEnergy',
+                                                  list(range(1)))
+    rotAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
+                                                  list(range(3)))
+    orbAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
                                                   list(range(3)))
 
     truePos = [
