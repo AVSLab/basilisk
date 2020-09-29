@@ -76,6 +76,14 @@ private:
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
     int64_t motorTorqueInMsgId;      //!< -- motor torque message ID
+    Eigen::Vector3d r_SN_N;          //!< [m] position vector of hinge CM S relative to inertial frame
+    Eigen::Vector3d v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame
+    Eigen::Vector3d sigma_SN;        //!< -- MRP attitude of panel frame S relative to inertial frame
+    Eigen::Vector3d omega_SN_S;      //!< [rad/s] inertial panel frame angular velocity vector
+    StateData *sigma_BN;             //!< Hub/Inertial attitude represented by MRP
+    StateData *omega_BN_B;           //!< Hub/Inertial angular velocity vector in B frame components
+    StateData *r_BN_N;               //!< Hub/Inertial position vector in inertial frame components
+    StateData *v_BN_N;               //!< Hub/Inertial velocity vector in inertial frame components
 
 public:
     HingedRigidBodyStateEffector();  //!< -- Contructor
@@ -92,6 +100,9 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to HRBs
     void prependSpacecraftNameToStates(); //!< class method
+
+private:
+    void computePanelInertialStates();
 };
 
 

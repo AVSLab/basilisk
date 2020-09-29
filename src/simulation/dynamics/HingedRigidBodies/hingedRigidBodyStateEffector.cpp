@@ -21,6 +21,7 @@
 #include "utilities/avsEigenSupport.h"
 #include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 #include "architecture/messaging/system_messaging.h"
+#include "../../utilities/rigidBodyKinematics.h"
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
@@ -119,6 +120,11 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     this->c_B = statesIn.getPropertyReference(tmpMsgName);
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
     this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
+
+    this->sigma_BN = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
+    this->omega_BN_B = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
+    this->r_BN_N = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubPosition");
+    this->v_BN_N = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
 
     return;
 }
@@ -360,6 +366,45 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime, Eigen
                                  *omegaLocalTilde_PN_P*(this->IPntS_S(1,1)*this->sHat2_P + this->mass*this->d
                                  *rTilde_SC_B*this->sHat3_P) + this->mass*this->d*this->thetaDot*this->thetaDot
                                  *rTilde_SC_B*this->sHat1_P);
+
+    return;
+}
+
+/*! This method computes the panel states relative to the inertial frame
+ @return void
+ */
+void HingedRigidBodyStateEffector::computePanelInertialStates()
+{
+    // inertial attitude
+    Eigen::MRPd sigmaBN;
+    sigmaBN = (Eigen::Vector3d)this->sigma_BN->getState();
+    Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
+
+    Eigen::Matrix3d dcm_SN;
+    dcm_SN = this->dcm_SP*dcm_NP.transpose();
+    double dcm_SNArray[9];
+    double sigma_SNArray[3];
+    eigenMatrix3d2CArray(dcm_SN, dcm_SNArray);
+    C2MRP(RECAST3X3 dcm_SNArray, sigma_SNArray);
+    this->sigma_SN = cArray2EigenVector3d(sigma_SNArray);
+
+    // inertial angular velocity
+    Eigen::Vector3d omega_BN_B;
+    omega_BN_B = (Eigen::Vector3d)this->omega_BN_B->getState();
+    this->omega_SN_S = this->dcm_SP * ( omega_BN_B + this->thetaDot*this->sHat2_P);
+
+    // inertial position vector
+    this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)this->r_BN_N->getState();
+
+    // inertial velocity vector
+    this->v_SN_N = (Eigen::Vector3d)this->v_BN_N->getState()
+                  + this->d * thetaDot * this->sHat3_P - this->d * (omega_BN_B.cross(this->sHat1_P))
+                  + omega_BN_B.cross(this->r_HP_P);
+
+    std::cout << "sigmaSN\n" << this->sigma_SN << std::endl;
+    std::cout << "omega_SN_S\n" << this->omega_SN_S << std::endl;
+    std::cout << "r_SN_N\n" << this->r_SN_N << std::endl;
+    std::cout << "v_SN_N\n" << this->v_SN_N << std::endl;
 
     return;
 }
