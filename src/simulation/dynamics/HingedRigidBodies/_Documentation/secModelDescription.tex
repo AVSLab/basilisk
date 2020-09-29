@@ -118,3 +118,19 @@ The final equation that is needed is:
 \end{equation}
 
 
+
+\subsection{Panel State Configuration Log Message Information}
+The panel provides an output message {\tt hingedRigidBodyConfigLogOutMsgName} of type {\tt SCPlusStatesSimMsg}.  This message contains the panel frame $S_i$ position and attitude states.  As this is a regular spacecraft state message, this output message can be piped to other modules such as the coarse sun sensor or solar panel power module spacecraft state input message.  This allows the CSS or solar power evaluation to be performed relative to the time-varying panel configuration.
+
+The configuration log records the following 4 message variables: {\tt r\_BN\_N}, {\tt r\_BN\_N}, {\tt sigma\_BN} and {\tt omega\_BN\_B}.  These states are evaluated using:
+\begin{align}
+	\bm r_{S_i/N} &= \bm r_{S_i/B} + \bm r_{B/N}
+	\\
+	\bm v_{S_i/N} &= \dot{\bm r}_{B/N} + d_i \dot\theta_i \hat{\bm s}_{i,3} - d_i \bm\omega_{B/N}\times \hat{\bm s}_{i,1} + \bm\omega_{B/N} \times \bm r_{H_i/B}
+	\\
+	\bm\sigma_{S_i/N} &=  \bm\sigma_{S_i/B} \otimes\bm\sigma_{B/N}
+	\\
+	\bm\omega_{S_i/N} &= \bm\omega_{B/N} + \dot\theta_i \hat{\bm s}_{i,2}
+\end{align}
+
+When storing these log state the message body frame is the hinge frame $S_i$.

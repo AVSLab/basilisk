@@ -3,15 +3,22 @@
 This section is to outline the steps needed to setup a Hinged Rigid Body State Effector in python using Basilisk.
 
 \begin{enumerate}
-	\item Import the hingedRigidBodyStateEffector class: \newline \textit{import hingedRigidBodyStateEffector}
-	\item Create an instantiation of a Hinged Rigid body: \newline \textit{panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()}
+	\item Import the hingedRigidBodyStateEffector class: \newline \texttt{import hingedRigidBodyStateEffector}
+	\item Create an instantiation of a Hinged Rigid body: \newline \texttt{panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()}
 	\item Define all physical parameters for a Hinged Rigid Body. For example: \newline
-	\textit{IPntS\_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]}
+	\texttt{IPntS\_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]}\\
 	Do this for all of the parameters for a Hinged Rigid Body seen in the Hinged Rigid Body 1 Parameters Table.
 	\item Define the initial conditions of the states:\newline
-	\textit{panel1.thetaInit = 5*numpy.pi/180.0 \quad panel1.thetaDotInit = 0.0}
+	\texttt{panel1.thetaInit = 5*numpy.pi/180.0 \quad panel1.thetaDotInit = 0.0}
 	\item Define a unique name for each state:\newline
-	\textit{panel1.nameOfThetaState = "hingedRigidBodyTheta1" \quad panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"}
+	\texttt{panel1.nameOfThetaState = "hingedRigidBodyTheta1" \quad panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"}
+	
+	\item Define an optional motor torque input message: \\
+	\texttt{unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"}
+	
+	\item If multiple panels are used, update the default config log state message to be unique:
+	\texttt{unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName = "panel1Log"}
+	
 	\item Finally, add the panel to your spacecraftPlus:\newline
-	\textit{scObject.addStateEffector(unitTestSim.panel1)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object. 
+	\texttt{scObject.addStateEffector(unitTestSim.panel1)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object. 
 \end{enumerate}
