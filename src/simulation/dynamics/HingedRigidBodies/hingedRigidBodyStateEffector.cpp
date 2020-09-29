@@ -47,7 +47,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->dcm_HB.Identity();
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
-    this->HingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
+    this->hingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
     this->motorTorqueInMsgName = "";
     this->motorTorqueInMsgId = -1;
     
@@ -66,7 +66,7 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 void HingedRigidBodyStateEffector::SelfInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    this->HingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->HingedRigidBodyOutMsgName,
+    this->hingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyOutMsgName,
                                              sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
 
     return;
@@ -98,7 +98,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
     this->HRBoutputStates.theta = this->theta;
     this->HRBoutputStates.thetaDot = this->thetaDot;
-        messageSys->WriteMessage(this->HingedRigidBodyOutMsgId, CurrentClock,
+        messageSys->WriteMessage(this->hingedRigidBodyOutMsgId, CurrentClock,
                              sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&this->HRBoutputStates),
                                  this->moduleID);
 }

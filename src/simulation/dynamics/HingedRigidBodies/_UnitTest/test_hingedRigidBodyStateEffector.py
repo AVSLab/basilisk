@@ -1213,7 +1213,7 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 0 * numpy.pi / 180.0
     unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
+    unitTestSim.panel1.hingedRigidBodyOutMsgName = "panel1Msg"
     unitTestSim.panel1.ModelTag = "panel1"
 
     # set a fixed motor torque message
@@ -1237,7 +1237,7 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0 * macros.D2R
     unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
+    unitTestSim.panel2.hingedRigidBodyOutMsgName = "panel2Msg"
     unitTestSim.panel2.ModelTag = "panel2"
 
     # Add panels to spaceCraft
@@ -1268,8 +1268,8 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     if not useScPlus:
         scStateLogName = scObject.primaryCentralSpacecraft.spacecraftName + scStateLogName
     unitTestSim.TotalSim.logThisMessage(scStateLogName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.HingedRigidBodyOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.HingedRigidBodyOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyOutMsgName, testProcessRate)
 
     unitTestSim.InitializeSimulation()
 
@@ -1287,8 +1287,8 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     rOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.r_CN_N', list(range(3)))
     vOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.v_CN_N', list(range(3)))
     sigma_BN = unitTestSim.pullMessageLogData(scStateLogName + '.sigma_BN', list(range(3)))
-    theta1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.HingedRigidBodyOutMsgName+'.theta')
-    theta2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.HingedRigidBodyOutMsgName+'.theta')
+    theta1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyOutMsgName+'.theta')
+    theta2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyOutMsgName+'.theta')
 
     rotAngMom_N = unitTestSim.GetLogVariableData(
         variableLogTag + ".totRotAngMomPntC_N")

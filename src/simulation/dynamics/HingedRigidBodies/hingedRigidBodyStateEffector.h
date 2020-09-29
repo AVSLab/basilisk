@@ -45,7 +45,7 @@ public:
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
-    std::string HingedRigidBodyOutMsgName; //!< -- state output message name
+    std::string hingedRigidBodyOutMsgName; //!< -- state output message name
     std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
     HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
     BSKLogger bskLogger;                      //!< -- BSK Logging
@@ -74,7 +74,7 @@ private:
     Eigen::Matrix3d omegaTildeLoc_PN_P; //!< -- tilde matrix of omegaBN
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
-    int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
+    int64_t hingedRigidBodyOutMsgId; //!< -- state output message ID
     int64_t motorTorqueInMsgId;      //!< -- motor torque message ID
     Eigen::Vector3d r_SN_N;          //!< [m] position vector of hinge CM S relative to inertial frame
     Eigen::Vector3d v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame

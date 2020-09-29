@@ -229,7 +229,7 @@ def run(show_plots):
     scSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     scSim.panel1.thetaInit = 5 * np.pi / 180.0
     scSim.panel1.thetaDotInit = 0.0
-    scSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
+    scSim.panel1.hingedRigidBodyOutMsgName = "panel1Msg"
 
     # Define Variables for panel 2
     scSim.panel2.mass = 100.0
@@ -243,7 +243,7 @@ def run(show_plots):
     scSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     scSim.panel2.thetaInit = 5 * np.pi / 180.0
     scSim.panel2.thetaDotInit = 0.0
-    scSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
+    scSim.panel2.hingedRigidBodyOutMsgName = "panel2Msg"
 
     # Add panels to spaceCraft
     scObject.addStateEffector(scSim.panel1)  # in order to affect dynamics
@@ -296,8 +296,8 @@ def run(show_plots):
     numDataPoints = 100
     samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(scSim.panel1.hingedRigidBodyOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(scSim.panel2.hingedRigidBodyOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
@@ -333,8 +333,8 @@ def run(show_plots):
     # Hinged Rigid Body module is also set up with a message for "thetaDot" which
     # can be retrieved by replacing ".theta"
     # with ".thetaDot".
-    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName + '.theta', list(range(1)))
-    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName + '.theta', list(range(1)))
+    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.hingedRigidBodyOutMsgName + '.theta', list(range(1)))
+    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.hingedRigidBodyOutMsgName + '.theta', list(range(1)))
     np.set_printoptions(precision=16)
 
     #
