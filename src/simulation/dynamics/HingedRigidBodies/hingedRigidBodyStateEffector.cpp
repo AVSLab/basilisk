@@ -20,8 +20,10 @@
 #include "hingedRigidBodyStateEffector.h"
 #include "utilities/avsEigenSupport.h"
 #include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 #include "architecture/messaging/system_messaging.h"
 #include "../../utilities/rigidBodyKinematics.h"
+#include "../../utilities/avsEigenSupport.h"
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
@@ -48,6 +50,8 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
     this->hingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
+    this->hingedRigidBodyConfigLogOutMsgName = "hingedRigidBodyConfigLog";
+    this->hingedRigidBodyConfigLogOutMsgId = -1;
     this->motorTorqueInMsgName = "";
     this->motorTorqueInMsgId = -1;
     
@@ -68,6 +72,10 @@ void HingedRigidBodyStateEffector::SelfInit()
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     this->hingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyOutMsgName,
                                              sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
+
+    this->hingedRigidBodyConfigLogOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyConfigLogOutMsgName,
+                                             sizeof(SCPlusStatesSimMsg), 2, "SCPlusStatesSimMsg", this->moduleID);
+
 
     return;
 }
@@ -98,9 +106,22 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
     this->HRBoutputStates.theta = this->theta;
     this->HRBoutputStates.thetaDot = this->thetaDot;
-        messageSys->WriteMessage(this->hingedRigidBodyOutMsgId, CurrentClock,
-                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&this->HRBoutputStates),
-                                 this->moduleID);
+    messageSys->WriteMessage(this->hingedRigidBodyOutMsgId, CurrentClock,
+                         sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&this->HRBoutputStates),
+                             this->moduleID);
+
+    // write out the panel state config log message
+    SCPlusStatesSimMsg configLogMsg;
+    memset(&configLogMsg, 0x0, sizeof(SCPlusStatesSimMsg));
+    // Note, logging the hinge frame S is the body frame B of that object
+    eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
+    eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
+    eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
+    eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+    messageSys->WriteMessage(this->hingedRigidBodyConfigLogOutMsgId, CurrentClock,
+                         sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&configLogMsg),
+                             this->moduleID);
+
 }
 
 void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
@@ -321,6 +342,9 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->u = IncomingCmdBuffer.motorTorque[0];
     }
 
+    /* compute panel inertial states */
+    this->computePanelInertialStates();
+
     this->writeOutputStateMessages(CurrentSimNanos);
     
     return;
@@ -400,11 +424,6 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
     this->v_SN_N = (Eigen::Vector3d)this->v_BN_N->getState()
                   + this->d * thetaDot * this->sHat3_P - this->d * (omega_BN_B.cross(this->sHat1_P))
                   + omega_BN_B.cross(this->r_HP_P);
-
-    std::cout << "sigmaSN\n" << this->sigma_SN << std::endl;
-    std::cout << "omega_SN_S\n" << this->omega_SN_S << std::endl;
-    std::cout << "r_SN_N\n" << this->r_SN_N << std::endl;
-    std::cout << "v_SN_N\n" << this->v_SN_N << std::endl;
 
     return;
 }

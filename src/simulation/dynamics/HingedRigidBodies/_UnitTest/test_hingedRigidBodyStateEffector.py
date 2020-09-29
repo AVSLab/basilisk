@@ -1215,6 +1215,7 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.thetaDotInit = 0.0
     unitTestSim.panel1.hingedRigidBodyOutMsgName = "panel1Msg"
     unitTestSim.panel1.ModelTag = "panel1"
+    unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName = "panel1Log"
 
     # set a fixed motor torque message
     unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"
@@ -1239,6 +1240,7 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.thetaDotInit = 0.0
     unitTestSim.panel2.hingedRigidBodyOutMsgName = "panel2Msg"
     unitTestSim.panel2.ModelTag = "panel2"
+    unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName = "panel2Log"
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
@@ -1270,6 +1272,8 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.TotalSim.logThisMessage(scStateLogName, testProcessRate)
     unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyOutMsgName, testProcessRate)
     unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
 
     unitTestSim.InitializeSimulation()
 
@@ -1289,6 +1293,15 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     sigma_BN = unitTestSim.pullMessageLogData(scStateLogName + '.sigma_BN', list(range(3)))
     theta1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyOutMsgName+'.theta')
     theta2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyOutMsgName+'.theta')
+
+    rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
+    vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
+    sB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
+    oB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
+    rB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
+    vB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
+    sB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
+    oB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
 
     rotAngMom_N = unitTestSim.GetLogVariableData(
         variableLogTag + ".totRotAngMomPntC_N")
@@ -1363,6 +1376,33 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
             testFailCount += 1
             testMessages.append(
                 "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
+
+    # check config log messages
+    if not unitTestSupport.isArrayEqual(rB1N, [2.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test")
+    if not unitTestSupport.isArrayEqual(vB1N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test")
+    if not unitTestSupport.isArrayEqual(sB1N, [0.0, 0, 1.0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test")
+    if not unitTestSupport.isArrayEqual(oB1N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test")
+    if not unitTestSupport.isArrayEqual(rB2N, [-2.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test")
+    if not unitTestSupport.isArrayEqual(vB2N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test")
+    if not unitTestSupport.isArrayEqual(sB2N, [0.0, 0, 0.0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test")
+    if not unitTestSupport.isArrayEqual(oB2N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
+
 
     if testFailCount == 0:
         print("PASSED: " + " Hinged Rigid Body integrated test with motor torques")
@@ -1820,4 +1860,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyMotorTorque(True, False)
+    test_hingedRigidBodyMotorTorque(True, True)

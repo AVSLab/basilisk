@@ -47,6 +47,7 @@ public:
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
     std::string hingedRigidBodyOutMsgName; //!< -- state output message name
     std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
+    std::string hingedRigidBodyConfigLogOutMsgName; //!< panel state config log message name
     HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
@@ -76,6 +77,7 @@ private:
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     int64_t hingedRigidBodyOutMsgId; //!< -- state output message ID
     int64_t motorTorqueInMsgId;      //!< -- motor torque message ID
+    int64_t hingedRigidBodyConfigLogOutMsgId; //!< -- panel state config log msg ID
     Eigen::Vector3d r_SN_N;          //!< [m] position vector of hinge CM S relative to inertial frame
     Eigen::Vector3d v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN;        //!< -- MRP attitude of panel frame S relative to inertial frame
