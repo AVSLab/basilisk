@@ -31,7 +31,7 @@
 #include "limbOpNavMsg.h"
 #include "navAttIntMsg.h"
 #include "navTransIntMsg.h"
-#include "rwArrayTorqueIntMsg.h"
+#include "arrayMotorTorqueIntMsg.h"
 #include "rwArrayVoltageIntMsg.h"
 #include "rwSpeedIntMsg.h"
 #include "stSensorIntMsg.h"
@@ -74,8 +74,8 @@ GEN_SIZEOF(LimbOpNavMsg)
 GEN_SIZEOF(NavAttIntMsg)
 %include "navTransIntMsg.h"
 GEN_SIZEOF(NavTransIntMsg)
-%include "rwArrayTorqueIntMsg.h"
-GEN_SIZEOF(RWArrayTorqueIntMsg)
+%include "arrayMotorTorqueIntMsg.h"
+GEN_SIZEOF(ArrayMotorTorqueIntMsg)
 %include "rwArrayVoltageIntMsg.h"
 GEN_SIZEOF(RWArrayVoltageIntMsg)
 %include "rwSpeedIntMsg.h"

@@ -104,7 +104,7 @@ def rwNullSpaceTestFunction(numWheels):
     # Set the array of the reaction wheels in RWConstellationFswMsg to the list created above
     inputRWConstellationMsg.reactionWheels = rwConfigElementList
 
-    inputRWCmdMsg = simFswInterfaceMessages.RWArrayTorqueIntMsg()
+    inputRWCmdMsg = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
     usControl = [0.1, 0.2, 0.15] # [Nm] RW motor torque array
     if numWheels == 4:
         usControl.append(-0.2) # [Nm]

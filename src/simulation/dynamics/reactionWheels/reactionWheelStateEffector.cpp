@@ -395,7 +395,7 @@ void ReactionWheelStateEffector::CrossInit()
         this->CmdsInMsgID = -1;
     } else {
         this->CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputCmds,
-                                                                         sizeof(RWArrayTorqueIntMsg),
+                                                                         sizeof(ArrayMotorTorqueIntMsg),
                                                                          moduleID);
     }
 
@@ -498,9 +498,9 @@ void ReactionWheelStateEffector::ReadInputs()
 
 	//! - Zero the command buffer and read the incoming command array
 	SingleMessageHeader LocalHeader;
-	memset(IncomingCmdBuffer.motorTorque, 0x0, sizeof(RWArrayTorqueIntMsg));
+	memset(IncomingCmdBuffer.motorTorque, 0x0, sizeof(ArrayMotorTorqueIntMsg));
 	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-												sizeof(RWArrayTorqueIntMsg),
+												sizeof(ArrayMotorTorqueIntMsg),
 												reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
 
 	//! - Check if message has already been read, if stale return

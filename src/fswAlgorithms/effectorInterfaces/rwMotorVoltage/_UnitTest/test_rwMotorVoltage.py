@@ -132,7 +132,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     numRW = fswSetupRW.getNumOfDevices()
 
     # Create RW motor torque input message
-    usMessageData = rwMotorVoltage.RWArrayTorqueIntMsg()
+    usMessageData = rwMotorVoltage.ArrayMotorTorqueIntMsg()
     if useLargeVoltage:
         usMessageData.motorTorque = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
     else:

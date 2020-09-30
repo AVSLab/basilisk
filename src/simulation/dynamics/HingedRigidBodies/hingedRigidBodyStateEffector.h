@@ -32,7 +32,7 @@
 class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     double mass;                     //!< [kg] mass of hinged rigid body
-    double d;                        //!< [m] distance from hinge point to hinged rigid body center of mass
+    double d;                        //!< [m] distance from hinge point H to hinged rigid body center of mass S
     double k;                        //!< [N-m/rad] torsional spring constant of hinge
     double c;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
     double thetaInit;                //!< [rad] Initial hinged rigid body angle
@@ -44,7 +44,9 @@ public:
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
-    std::string HingedRigidBodyOutMsgName; //!< -- state output message name
+    std::string hingedRigidBodyOutMsgName; //!< -- state output message name
+    std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
+    std::string hingedRigidBodyConfigLogOutMsgName; //!< panel state config log message name
     HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
@@ -52,6 +54,7 @@ private:
     double theta;                    //!< [rad] hinged rigid body angle
     double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
     double cTheta;                  //!< -- term needed for back substitution
+    double u;                        //!< [N-m] optional motor torque
     Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HP;          //!< -- DCM from body frame to hinge frame
     Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
@@ -72,7 +75,17 @@ private:
     Eigen::Matrix3d omegaTildeLoc_PN_P; //!< -- tilde matrix of omegaBN
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
-    int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
+    int64_t hingedRigidBodyOutMsgId; //!< -- state output message ID
+    int64_t motorTorqueInMsgId;      //!< -- motor torque message ID
+    int64_t hingedRigidBodyConfigLogOutMsgId; //!< -- panel state config log msg ID
+    Eigen::Vector3d r_SN_N;          //!< [m] position vector of hinge CM S relative to inertial frame
+    Eigen::Vector3d v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame
+    Eigen::Vector3d sigma_SN;        //!< -- MRP attitude of panel frame S relative to inertial frame
+    Eigen::Vector3d omega_SN_S;      //!< [rad/s] inertial panel frame angular velocity vector
+    StateData *sigma_BN;             //!< Hub/Inertial attitude represented by MRP
+    StateData *omega_BN_B;           //!< Hub/Inertial angular velocity vector in B frame components
+    StateData *r_BN_N;               //!< Hub/Inertial position vector in inertial frame components
+    StateData *v_BN_N;               //!< Hub/Inertial velocity vector in inertial frame components
 
 public:
     HingedRigidBodyStateEffector();  //!< -- Contructor
@@ -89,6 +102,9 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to HRBs
     void prependSpacecraftNameToStates(); //!< class method
+
+private:
+    void computePanelInertialStates();
 };
 
 

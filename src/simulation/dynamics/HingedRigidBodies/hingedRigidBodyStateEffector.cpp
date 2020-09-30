@@ -19,7 +19,11 @@
 
 #include "hingedRigidBodyStateEffector.h"
 #include "utilities/avsEigenSupport.h"
+#include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 #include "architecture/messaging/system_messaging.h"
+#include "../../utilities/rigidBodyKinematics.h"
+#include "../../utilities/avsEigenSupport.h"
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
@@ -37,6 +41,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->d = 1.0;
     this->k = 1.0;
     this->c = 0.0;
+    this->u = 0.0;
     this->thetaInit = 0.00;
     this->thetaDotInit = 0.0;
     this->IPntS_S.Identity();
@@ -44,7 +49,11 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->dcm_HB.Identity();
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
-    this->HingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
+    this->hingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
+    this->hingedRigidBodyConfigLogOutMsgName = "hingedRigidBodyConfigLog";
+    this->hingedRigidBodyConfigLogOutMsgId = -1;
+    this->motorTorqueInMsgName = "";
+    this->motorTorqueInMsgId = -1;
     
     return;
 }
@@ -61,8 +70,12 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 void HingedRigidBodyStateEffector::SelfInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    this->HingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->HingedRigidBodyOutMsgName,
+    this->hingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyOutMsgName,
                                              sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
+
+    this->hingedRigidBodyConfigLogOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyConfigLogOutMsgName,
+                                             sizeof(SCPlusStatesSimMsg), 2, "SCPlusStatesSimMsg", this->moduleID);
+
 
     return;
 }
@@ -71,7 +84,13 @@ void HingedRigidBodyStateEffector::SelfInit()
  @return void*/
 void HingedRigidBodyStateEffector::CrossInit()
 {
-//HRB does not CrossInit() anything.
+    /* check if the optional motor torque input message name has been set */
+    if (this->motorTorqueInMsgName.length() > 0) {
+        this->motorTorqueInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->motorTorqueInMsgName,
+                                                                                     sizeof(ArrayMotorTorqueIntMsg),
+                                                                                     moduleID);
+    }
+
     return;
 }
 
@@ -85,11 +104,24 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     std::vector<int64_t>::iterator it;
 
-    HRBoutputStates.theta = this->theta;
-    HRBoutputStates.thetaDot = this->thetaDot;
-        messageSys->WriteMessage(this->HingedRigidBodyOutMsgId, CurrentClock,
-                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&HRBoutputStates),
-                                 this->moduleID);
+    this->HRBoutputStates.theta = this->theta;
+    this->HRBoutputStates.thetaDot = this->thetaDot;
+    messageSys->WriteMessage(this->hingedRigidBodyOutMsgId, CurrentClock,
+                         sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&this->HRBoutputStates),
+                             this->moduleID);
+
+    // write out the panel state config log message
+    SCPlusStatesSimMsg configLogMsg;
+    memset(&configLogMsg, 0x0, sizeof(SCPlusStatesSimMsg));
+    // Note, logging the hinge frame S is the body frame B of that object
+    eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
+    eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
+    eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
+    eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+    messageSys->WriteMessage(this->hingedRigidBodyConfigLogOutMsgId, CurrentClock,
+                         sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&configLogMsg),
+                             this->moduleID);
+
 }
 
 void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
@@ -109,6 +141,11 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     this->c_B = statesIn.getPropertyReference(tmpMsgName);
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
     this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
+
+    this->sigma_BN = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
+    this->omega_BN_B = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
+    this->r_BN_N = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubPosition");
+    this->v_BN_N = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
 
     return;
 }
@@ -211,7 +248,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     // - Define cTheta
     Eigen::Vector3d gravityTorquePntH_P;
     gravityTorquePntH_P = -this->d*this->sHat1_P.cross(this->mass*g_P);
-    this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->k*this->theta - this->c*this->thetaDot
+    this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(this->u -this->k*this->theta - this->c*this->thetaDot
                     + this->sHat2_P.dot(gravityTorquePntH_P) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
                      + this->mass*this->d*this->d)*this->omega_PN_S(2)*this->omega_PN_S(0) - this->mass*this->d*
                               this->sHat3_P.transpose()*this->omegaTildeLoc_PN_P*this->omegaTildeLoc_PN_P*this->r_HP_P);
@@ -294,6 +331,22 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
  */
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    //! - Zero the command buffer and read the incoming command array
+    if (this->motorTorqueInMsgId >= 0) {
+        SingleMessageHeader LocalHeader;
+        ArrayMotorTorqueIntMsg IncomingCmdBuffer;
+        memset(&IncomingCmdBuffer, 0x0, sizeof(ArrayMotorTorqueIntMsg));
+        SystemMessaging::GetInstance()->ReadMessage(this->motorTorqueInMsgId, &LocalHeader,
+                                                    sizeof(ArrayMotorTorqueIntMsg),
+                                                    reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
+        this->u = IncomingCmdBuffer.motorTorque[0];
+    }
+
+    /* compute panel inertial states */
+    this->computePanelInertialStates();
+
+    this->writeOutputStateMessages(CurrentSimNanos);
+    
     return;
 }
 
@@ -337,6 +390,40 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime, Eigen
                                  *omegaLocalTilde_PN_P*(this->IPntS_S(1,1)*this->sHat2_P + this->mass*this->d
                                  *rTilde_SC_B*this->sHat3_P) + this->mass*this->d*this->thetaDot*this->thetaDot
                                  *rTilde_SC_B*this->sHat1_P);
+
+    return;
+}
+
+/*! This method computes the panel states relative to the inertial frame
+ @return void
+ */
+void HingedRigidBodyStateEffector::computePanelInertialStates()
+{
+    // inertial attitude
+    Eigen::MRPd sigmaBN;
+    sigmaBN = (Eigen::Vector3d)this->sigma_BN->getState();
+    Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
+
+    Eigen::Matrix3d dcm_SN;
+    dcm_SN = this->dcm_SP*dcm_NP.transpose();
+    double dcm_SNArray[9];
+    double sigma_SNArray[3];
+    eigenMatrix3d2CArray(dcm_SN, dcm_SNArray);
+    C2MRP(RECAST3X3 dcm_SNArray, sigma_SNArray);
+    this->sigma_SN = cArray2EigenVector3d(sigma_SNArray);
+
+    // inertial angular velocity
+    Eigen::Vector3d omega_BN_B;
+    omega_BN_B = (Eigen::Vector3d)this->omega_BN_B->getState();
+    this->omega_SN_S = this->dcm_SP * ( omega_BN_B + this->thetaDot*this->sHat2_P);
+
+    // inertial position vector
+    this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)this->r_BN_N->getState();
+
+    // inertial velocity vector
+    this->v_SN_N = (Eigen::Vector3d)this->v_BN_N->getState()
+                  + this->d * thetaDot * this->sHat3_P - this->d * (omega_BN_B.cross(this->sHat1_P))
+                  + omega_BN_B.cross(this->r_HP_P);
 
     return;
 }

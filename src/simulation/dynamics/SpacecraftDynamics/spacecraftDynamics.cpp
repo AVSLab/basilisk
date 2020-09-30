@@ -75,9 +75,9 @@ void Spacecraft::addDockingPort(DockingData *newDockingPort)
 
 void Spacecraft::SelfInitSC(int64_t moduleID)
 {
-    this->scStateOutMsgName = this->spacecraftName + "_" + this->scStateOutMsgName;
-    this->scMassStateOutMsgName = this->spacecraftName + "_" + this->scMassStateOutMsgName;
-    this->scEnergyMomentumOutMsgName = this->spacecraftName + "_" + this->scEnergyMomentumOutMsgName;
+    this->scStateOutMsgName = this->spacecraftName + this->scStateOutMsgName;
+    this->scMassStateOutMsgName = this->spacecraftName + this->scMassStateOutMsgName;
+    this->scEnergyMomentumOutMsgName = this->spacecraftName + this->scEnergyMomentumOutMsgName;
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
                                                                                                       sizeof(SCStatesSimMsg),
                                                                                                       this->numOutMsgBuffers,

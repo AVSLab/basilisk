@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+#include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 #include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simulation/utilities/bskLogging.h"

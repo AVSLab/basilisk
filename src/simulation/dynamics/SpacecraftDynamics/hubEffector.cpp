@@ -64,10 +64,10 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
 
 void HubEffector::prependSpacecraftNameToStates()
 {
-    this->nameOfHubPosition = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubPosition;
-    this->nameOfHubVelocity = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubVelocity;
-    this->nameOfHubSigma = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubSigma;
-    this->nameOfHubOmega = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubOmega;
+    this->nameOfHubPosition = this->nameOfSpacecraftAttachedTo + this->nameOfHubPosition;
+    this->nameOfHubVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubVelocity;
+    this->nameOfHubSigma = this->nameOfSpacecraftAttachedTo + this->nameOfHubSigma;
+    this->nameOfHubOmega = this->nameOfSpacecraftAttachedTo + this->nameOfHubOmega;
 
     return;
 }
