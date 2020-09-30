@@ -244,7 +244,7 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
                      label=r'$\sigma_' + str(idx) + '$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [min]')
-        plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.ylabel(r'MRP Attitude $\sigma_{B/N}$')
 
         plt.figure(2)
         for idx in range(1, 4):
