@@ -32,12 +32,11 @@
 class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     double mass;                     //!< [kg] mass of hinged rigid body
-    double d;                        //!< [m] distance from hinge point to hinged rigid body center of mass
+    double d;                        //!< [m] distance from hinge point H to hinged rigid body center of mass S
     double k;                        //!< [N-m/rad] torsional spring constant of hinge
     double c;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
     double thetaInit;                //!< [rad] Initial hinged rigid body angle
     double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
-    double u;                        //!< [N-m] optional motor torque
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
     Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
@@ -55,6 +54,7 @@ private:
     double theta;                    //!< [rad] hinged rigid body angle
     double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
     double cTheta;                  //!< -- term needed for back substitution
+    double u;                        //!< [N-m] optional motor torque
     Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HP;          //!< -- DCM from body frame to hinge frame
     Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
