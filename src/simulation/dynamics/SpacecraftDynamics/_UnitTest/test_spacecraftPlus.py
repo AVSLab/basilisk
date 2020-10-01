@@ -33,6 +33,10 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.simulation import GravityGradientEffector
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -894,5 +898,98 @@ def test_SCPointBVsPointC(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+@pytest.mark.parametrize("accuracy", [1e-3])
+def test_scAttRef(show_plots, accuracy):
+    """Module Unit Test"""
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    # add Earth
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+    # add gravity gradient effector
+    ggEff = GravityGradientEffector.GravityGradientEffector()
+    ggEff.ModelTag = scObject.ModelTag
+    ggEff.addPlanetName(earth.bodyInMsgName)
+    scObject.addDynamicEffector(ggEff)
+    unitTestSim.AddModelToTask(unitTaskName, ggEff)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    scObject.hub.r_CN_NInit = [[7000000.0],	[0.0],	[0.0]]
+    scObject.hub.v_CN_NInit = [[7000.0],	[0.0],	[0.0]]
+    scObject.hub.sigma_BNInit = [[0.5], [0.4], [0.3]]
+    scObject.hub.sigma_BNInit = [[0.], [0.], [1.0]]
+    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+    scObject.attRefInMsgName = "attRefMsg"
+
+    # write attitude reference message
+    attRef = fswMessages.AttRefFswMsg()
+    attRef.sigma_RN = [0.0, 0.0, 1.0]
+    attRef.omega_RN_N = [1.0, 2.0, 3.0]
+    attRef.omega_RN_N = [0.0001, 0.0002, 0.0003]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               scObject.attRefInMsgName,
+                               attRef)
+
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 0.2
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    omegaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.omega_BN_B',
+                                                  list(range(3)))
+    sigmaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
+                                                  list(range(3)))
+
+    trueSigma = [attRef.sigma_RN]*3
+    trueOmega = [[-0.0001, -0.0002, 0.0003]]*3
+
+    testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, sigmaOut,
+                                                               accuracy, "sigma_BN",
+                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(trueOmega, omegaOut,
+                                                               accuracy, "omega_BN_B",
+                                                               testFailCount, testMessages)
+
+    if testFailCount == 0:
+        print("PASSED: scPlus setting attRefInMsg")
+    else:
+        print("FAILED: scPlus setting attRefInMsg")
+
+    return [testFailCount, ''.join(testMessages)]
+
 if __name__ == "__main__":
-    test_SCPointBVsPointC(True)
+    test_scAttRef(True, 1e-3)
