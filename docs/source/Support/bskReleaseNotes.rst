@@ -29,6 +29,9 @@ Version |release|
     - write the panel angle and angle rate output message
     - write the panel inertial and position states as an output message
     - updated document to make use of RST format and specify module input and output messages
+- updated ``avsEigenSupport.h`` to add new methods ``eigenMRPd2Vector3d()`` and ``eigenC2MRP()``
+- updated :ref:`spacecraftPlus` to allow the attitude motion to be prescribed through
+  an optional input message of type :ref:`attRefFswMsg`.
 
 
 
