@@ -9,6 +9,7 @@ This module is intended to be used as a model to represent a spacecraft that can
 	\item Calls all of the \textit{computeDerivatives} methods for the hub and all of the state effectors which is essentially doing $\dot{\bm X} = \bm f(\bm X, t)$
 	\item Integrates the states forward one time step using the selected integrator
 	\item Calculates the total energy and momentum of the spacecraft by adding up contributions from the hub and the state effectors
+	\item Be able to have the attitude states and rates be prescribed through an optional input message
 \end{itemize}
 
 \section{Model Assumptions and Limitations}
