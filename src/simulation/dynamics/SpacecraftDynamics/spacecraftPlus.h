@@ -44,6 +44,7 @@ public:
     std::string sysTimePropertyName;     //!< -- Name of the system time property
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
+    std::string attRefInMsgName;         //!< -- (optional) reference attitude input message name
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
@@ -102,6 +103,10 @@ private:
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
+    int64_t attRefInMsgId;                      //!< -- Message ID for the optional incoming attitude reference message
+
+private:
+    void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude
 };
 
 

@@ -23,6 +23,8 @@
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
 #include <iostream>
+#include "fswMessages/attRefFswMsg.h"
+
 
 /*! This is the constructor, setting variables to default values */
 SpacecraftPlus::SpacecraftPlus()
@@ -31,12 +33,14 @@ SpacecraftPlus::SpacecraftPlus()
     this->sysTimePropertyName = "systemTime";
     this->scStateOutMsgName = "inertial_state_output";
     this->scMassStateOutMsgName = "mass_state_output";
+    this->attRefInMsgName = "";
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
     this->timePrevious = 0.0;
     this->simTimePrevious = 0;
     this->scStateOutMsgId = -1;
+    this->attRefInMsgId = -1;
     this->numOutMsgBuffers = 2;
     this->dvAccum_B.setZero();
     this->dvAccum_BN_B.setZero();
@@ -75,6 +79,13 @@ void SpacecraftPlus::SelfInit()
 /*! This method is used to cross link the messages and to initialize the dynamics */
 void SpacecraftPlus::CrossInit()
 {
+    /* check if the optional attitude reference message name has been set */
+    if (this->attRefInMsgName.length() > 0) {
+        this->attRefInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->attRefInMsgName,
+                                                                                     sizeof(AttRefFswMsg),
+                                                                                     moduleID);
+    }
+
     // - Call gravity field cross initialization
     this->gravField.CrossInit();
     // - Call method for initializing the dynamics of spacecraftPlus
@@ -134,6 +145,30 @@ void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
     return;
 }
 
+/*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the hub*/
+void SpacecraftPlus::readAttRefMsg()
+{
+    if (this->attRefInMsgId >= 0) {
+        Eigen::MRPd sigma_BN;
+        Eigen::Vector3d omega_BN_B;
+        SingleMessageHeader LocalHeader;
+        AttRefFswMsg attRefMsg;
+        memset(&attRefMsg, 0x0, sizeof(AttRefFswMsg));
+        SystemMessaging::GetInstance()->ReadMessage(this->attRefInMsgId, &LocalHeader,
+                                                    sizeof(AttRefFswMsg),
+                                                    reinterpret_cast<uint8_t*> (&attRefMsg), moduleID);
+        sigma_BN = cArray2EigenVector3d(attRefMsg.sigma_RN);
+        Eigen::Vector3d omega_BN_N = cArray2EigenVector3d(attRefMsg.omega_RN_N);
+        Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
+        omega_BN_B = dcm_BN * omega_BN_N;
+
+        this->hubSigma->setState(eigenMRPd2Vector3d(sigma_BN));
+        this->hubOmega_BN_B->setState(omega_BN_B);
+    }
+
+    return;
+}
+
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
 void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -145,6 +180,10 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 
     // - Integrate the state forward in time
     this->integrateState(newTime);
+
+    // If set, read in and prescribe attitude reference motion
+    readAttRefMsg();
+
     Eigen::Vector3d rLocal_BN_N = this->hubR_N->getState();
     Eigen::Vector3d vLocal_BN_N = this->hubV_N->getState();
     this->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
@@ -254,6 +293,9 @@ void SpacecraftPlus::initializeDynamics()
     {
         (*dynIt)->linkInStates(this->dynManager);
     }
+
+    // If set, read in and prescribe attitude reference motion as initial states
+    readAttRefMsg();
 
     // - Call equations of motion at time zero
     this->equationsOfMotion(0.0);
