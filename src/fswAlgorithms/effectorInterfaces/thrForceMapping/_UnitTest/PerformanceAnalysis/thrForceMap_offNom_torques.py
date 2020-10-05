@@ -77,6 +77,7 @@ def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetri
 
 
 def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):
+    """thruster force test file"""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
