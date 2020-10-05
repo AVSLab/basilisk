@@ -41,6 +41,5 @@ typedef struct {
     double outputVector[3];     //!< [units] sample output vector
 }FswModuleTemplateFswMsg;
 
-/*! @} */
 
 #endif

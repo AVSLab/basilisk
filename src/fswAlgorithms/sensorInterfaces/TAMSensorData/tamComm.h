@@ -51,6 +51,5 @@ extern "C" {
 }
 #endif
 
-/*! @} */
 
 #endif
