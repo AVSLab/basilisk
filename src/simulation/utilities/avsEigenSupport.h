@@ -21,6 +21,7 @@
 #ifndef _AVSEIGENSUPPORT_
 #define _AVSEIGENSUPPORT_
 #include <Eigen/Dense>
+#include "avsEigenMRP.h"
 
 
 //!@brief General conversion between any Eigen matrix and output array
@@ -43,6 +44,11 @@ Eigen::Matrix3d eigenM2(double angle);
 Eigen::Matrix3d eigenM3(double angle);
 //!@brief returns the tilde matrix representation of a vector (equivalent to a vector cross product)
 Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec);
+//!@brief converts MRPd to an Vector3d variable
+Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
+//!@brief maps the DCM to MRPs using Eigen variables
+Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
+
 //!@brief solves for the zero of the provided function
 double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime);
 

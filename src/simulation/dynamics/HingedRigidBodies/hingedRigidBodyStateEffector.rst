@@ -31,7 +31,7 @@ provides information on what this message is used for.
       - (Optional) Input message of the hinge motor torque value
     * - hingedRigidBodyOutMsgName
       - :ref:`HingedRigidBodySimMsg`
-      - Output message containting the panel hinge state angle and angle rate
+      - Output message containing the panel hinge state angle and angle rate
     * - hingedRigidBodyConfigLogOutMsgName
       - :ref:`SCPlusStatesSimMsg`
       - Output message containing the panel inertial position and attitude states

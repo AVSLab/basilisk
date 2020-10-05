@@ -19,7 +19,9 @@
 
 #include <iostream>
 #include <math.h>
-#include <Eigen/Dense>
+#include "avsEigenSupport.h"
+#include "rigidBodyKinematics.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*
 
@@ -187,6 +189,41 @@ Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec)
 
     return mOut;
 }
+
+
+/*! This function converts the Eigen DCM to an Eigen MRPd
+ @return Eigen::MRPd
+ @param dcm_Eigen The input DCM
+ */
+Eigen::MRPd eigenC2MRP(Eigen::Matrix3d dcm_Eigen)
+{
+    Eigen::MRPd sigma_Eigen;  // output Eigen MRP
+    double dcm_Array[9];      // C array DCM
+    double sigma_Array[3];    // C array MRP
+
+    eigenMatrix3d2CArray(dcm_Eigen, dcm_Array);
+    C2MRP(RECAST3X3 dcm_Array, sigma_Array);
+    sigma_Eigen = cArray2EigenVector3d(sigma_Array);
+
+    return sigma_Eigen;
+}
+
+
+/*! This function converts the Eigen MRPd to Vector3d
+ @return Eigen::Vector3d
+ @param mrp The input Vector3d variable
+ */
+Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd mrp)
+{
+    Eigen::Vector3d vec3d;
+
+    vec3d[0] = mrp.x();
+    vec3d[1] = mrp.y();
+    vec3d[2] = mrp.z();
+
+    return vec3d;
+}
+
 
 
 /*! This function solves for the zero of the passed function using the Newton Raphson Method

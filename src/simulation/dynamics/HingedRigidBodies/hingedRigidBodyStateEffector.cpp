@@ -24,6 +24,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "../../utilities/rigidBodyKinematics.h"
 #include "../../utilities/avsEigenSupport.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
@@ -403,14 +404,10 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
     Eigen::MRPd sigmaBN;
     sigmaBN = (Eigen::Vector3d)this->sigma_BN->getState();
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
-
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();
-    double dcm_SNArray[9];
-    double sigma_SNArray[3];
-    eigenMatrix3d2CArray(dcm_SN, dcm_SNArray);
-    C2MRP(RECAST3X3 dcm_SNArray, sigma_SNArray);
-    this->sigma_SN = cArray2EigenVector3d(sigma_SNArray);
+    this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+
 
     // inertial angular velocity
     Eigen::Vector3d omega_BN_B;
