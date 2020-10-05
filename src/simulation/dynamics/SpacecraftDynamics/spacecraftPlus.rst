@@ -80,6 +80,34 @@ This section is to outline the steps needed to setup a SpacecraftPlus module in 
 
         scObject.attRefInMsgName = "attRefMsg"
 
+.. list-table:: Spacecraft Parameters Table
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Variable Name
+      - Variable Type
+      - Description
+    * - r_CN_NInit
+      - double[3]
+      - Inertial position of S/C
+    * - v_CN_NInit
+      - double[3]
+      - Inertial velocity of S/C
+    * - sigma_BNInit
+      - double[3]
+      - Initial attitude of B frame represented as an MRP
+    * - omega_BN_BInit
+      - double[3]
+      - Initial angular velocity of B frame expressed in B frame
+    * - mHub
+      - double[1]
+      - Hub mass
+    * - IHubPntBc_B
+      - double[3][3]
+      - Inertia in B frame
+    * - r_BcB_B
+      - double[3]
+      - Center of mass location in B frame
 
 
 
