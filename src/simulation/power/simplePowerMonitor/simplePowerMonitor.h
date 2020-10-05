@@ -37,6 +37,5 @@ private:
 
 };
 
-/*! @} */
 
 #endif //BASILISK_SIMPLEPOWERMONITOR_H

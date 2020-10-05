@@ -82,6 +82,5 @@ private:
     Eigen::Vector3d r_North_N; //!<[-] Inertial 3rd axis, defined internally as "North".
 };
 
-/*! @} */
 
 #endif /* GroundLocation */

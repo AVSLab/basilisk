@@ -37,6 +37,4 @@ typedef struct {
     char skyBox[MAX_STRING_LENGTH]; //!< string containing the star field preference
 }CameraConfigMsg;
 
-/*! @} */
-
 #endif

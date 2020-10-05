@@ -30,6 +30,5 @@ typedef struct {
     double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
 }RWArrayVoltageIntMsg;
 
-/*! @} */
 
 #endif

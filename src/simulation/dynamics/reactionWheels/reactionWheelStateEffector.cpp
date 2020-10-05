@@ -519,12 +519,12 @@ void ReactionWheelStateEffector::ReadInputs()
 
 }
 
-///*! This method is used to read the new commands vector and set the RW
-// firings appropriately.  It assumes that the ReadInputs method has already been
-// run successfully.
-// @return void
-// @param CurrentTime The current simulation time converted to a double
-// */
+/*! This method is used to read the new commands vector and set the RW
+ firings appropriately.  It assumes that the ReadInputs method has already been
+ run successfully.
+ @return void
+ @param CurrentTime The current simulation time converted to a double
+ */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
 	std::vector<RWCmdSimMsg>::iterator CmdIt;

@@ -17,7 +17,9 @@
 
  */
 
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 
 #ifndef FUEL_TANK_H
 #define FUEL_TANK_H

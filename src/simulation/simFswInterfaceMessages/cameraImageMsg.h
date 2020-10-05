@@ -36,6 +36,5 @@ typedef struct {
     int8_t imageType;         //!< -- Number of channels in each pixel, RGB = 3, RGBA = 4
 }CameraImageMsg;
 
-/*! @} */
 
 #endif
