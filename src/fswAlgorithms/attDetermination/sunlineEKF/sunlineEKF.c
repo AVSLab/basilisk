@@ -363,7 +363,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *configData, double updateTime)
     sunlineCKFUpdate(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
     }
     else{
-//    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
+    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
     sunlineEKFUpdate(configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->state, configData->x, configData->covar);
     }
     

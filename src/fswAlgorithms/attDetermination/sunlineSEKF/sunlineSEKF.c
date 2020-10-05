@@ -369,7 +369,7 @@ void sunlineMeasUpdate(sunlineSEKFConfig *configData, double updateTime)
     sunlineCKFUpdate(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
     }
     else{
-//    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
+    /* - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
     sunlineSEKFUpdate(configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->state, configData->x, configData->covar);
     }
 }
@@ -631,7 +631,12 @@ void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
     return;
 }
 
-
+/*! @brief compute the DCM
+ @param sunheading array of sun heading measurement states
+ @param bVec    array of bVec values
+ @param dcm DCM pointer to be returned
+ @return void
+ */
 void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm){
     double s1_B[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];

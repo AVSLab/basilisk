@@ -283,11 +283,15 @@ void sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev
     return;
 }
 
-/*! This method propagates a sunline state vector forward in time.  Note
- that the calling parameter is updated in place to save on data copies.
- This also updates the STM using the dynamics matrix.
-	@return void
 
+/*! @brief This method propagates a sunline state vector forward in time.  Note that the calling parameter is updated in place to save on data copies. This also updates the STM using the dynamics matrix.
+	@return void
+    @param dynMat dynamic matrix
+    @param dt time step
+    @param omega angular velocity
+    @param stateInOut pointer to a state array
+    @param prevstates pointer to previous states
+    @param stateTransition pointer to state transition matrix
  */
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double dt, double omega[SKF_N_STATES_HALF], double *stateInOut, double *prevstates, double *stateTransition)
 {
@@ -366,7 +370,7 @@ void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime)
     sunlineCKFUpdateOkeefe(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
     }
     else{
-//    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
+    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
     okeefeEKFUpdate(configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->state, configData->x, configData->covar);
     }
 }
