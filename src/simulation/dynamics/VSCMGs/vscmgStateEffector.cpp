@@ -681,12 +681,12 @@ void VSCMGStateEffector::ReadInputs()
 
 }
 
-///*! This method is used to read the new commands vector and set the VSCMG
-// torque commands appropriately.  It assumes that the ReadInputs method has
-// already been run successfully.
-// @return void
-// @param CurrentTime The current simulation time converted to a double
-// */
+/*! This method is used to read the new commands vector and set the VSCMG
+ torque commands appropriately.  It assumes that the ReadInputs method has
+ already been run successfully.
+ @return void
+ @param CurrentTime The current simulation time converted to a double
+ */
 void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 {
 	std::vector<VSCMGCmdSimMsg>::iterator CmdIt;
@@ -699,8 +699,8 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	// loop through commands
 	for(CmdIt=NewVSCMGCmds.begin(); CmdIt!=NewVSCMGCmds.end(); CmdIt++)
 	{
-		//! wheel torque saturation
-		//! set u_s_max to less than zero to disable saturation
+		// wheel torque saturation
+		// set u_s_max to less than zero to disable saturation
 		if (this->VSCMGData[it].u_s_max > 0.0) {
 			if(CmdIt->u_s_cmd > this->VSCMGData[it].u_s_max) {
 				CmdIt->u_s_cmd = this->VSCMGData[it].u_s_max;
