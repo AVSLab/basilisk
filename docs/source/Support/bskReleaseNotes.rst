@@ -32,6 +32,7 @@ Version |release|
 - updated ``avsEigenSupport.h`` to add new methods ``eigenMRPd2Vector3d()`` and ``eigenC2MRP()``
 - updated :ref:`spacecraftPlus` to allow the attitude motion to be prescribed through
   an optional input message of type :ref:`attRefFswMsg`.
+- fixed sign issue in :ref:`simpleSolarPanel`
 
 
 

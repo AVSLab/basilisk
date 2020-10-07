@@ -54,7 +54,6 @@ public:
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
-    Eigen::Vector3d sHat_B;                     //!< [-] Sun direction unit vector relative to the spacecraft body frame.
     double projectedArea;                        //!< [m^2] Area of the panel projected along the sun vector.
     double sunDistanceFactor;                   //!< [-] Scale factor on the base solar power computed using the true s/c-sun distance.
     int64_t sunInMsgID;                         //!< [-] Connect to input time message
