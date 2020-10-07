@@ -32,29 +32,44 @@ The script is found in the folder ``src/examples`` and executed by using::
 
     python3 scenarioRotatingPanel.py
 
+The spacecraft body frame :math:`B` is at rest and rotated such that :math:`\hat{\bf b}_3` is pointing at the sun.
+The panel is oriented relative to B such that the panel normal axis :math:`\hat{\bf n}` is along :math:`\hat{\bf b}_3`
+if the panel angle :math:`\theta` is zero.
 
+.. image:: /_images/static/test_scenario_RotatingPanelFig1.svg
+   :align: center
 
-Making a Copy of the Example Basilisk Scenario Script
------------------------------------------------------
+The hinge frame origin :math:`H` and solar panel frame origin :math:`S` are set to be the.  The panel then
+is set to rotate at a positive rate about the :math:`\hat{\bf h}_2` axis.  Thus, the solar panel should provide electrical
+power at the beginning of the simulation, but power should vanish when the panel rotates beyond 90 degrees, etc.
 
+The coarse sun sensor of CSS devices are added to this solar panel as well.  The script connects the panel inertial
+state message to each CSS module create such that their sensor signals vary with the panel orientation.  Each
+CSS unit has a boresight to edge field of view of 45 degrees, and the maximum signal output is set to 1.  The CSS
+boresight orientation unit 1 is set to :math:`{}^{\cal S}[1,0,0]` in solar panel frame components.
+The second CSS units is pointing along :math:`{}^{\cal S}[0,0,1]`.
 
 
 Illustration of Simulation Results
 ----------------------------------
 
-The following images illustrate the expected simulation run returns for a range of script configurations.
+The script will generate 3 plots.  The first plot show the spacecraft orientation which is holding steady
+pointing :math:`\hat{\bf b}_3` into the sun heading.
 
-::
-
-    show_plots = True, orbitCase='LEO', useSphericalHarmonics=False, planetCase='Earth'
-
-This scenario places the spacecraft about the Earth in a LEO orbit and without considering gravitational
-spherical harmonics.
-
-.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg
+.. image:: /_images/Scenarios/scenarioRotatingPanel1.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
+The second plot compares the solar panel rotation angle :math:`\theta` relative to the generated solar power.
+The regions where we expect to see electrical power being generated are shaded in yellow.
+
+.. image:: /_images/Scenarios/scenarioRotatingPanel2panel1theta.svg
+   :align: center
+
+The final plot compares the solar panel angle with respect to the two CSS signals.  The angular regions where we expect
+the CSS units to get a signal are shaded with a color that matches the CSS data plot.  Again good agreement is
+found with the predicted times when the rotating panel will yield CSS signals and when not.
+
+.. image:: /_images/Scenarios/scenarioRotatingPanel3.svg
    :align: center
 
 """
@@ -298,8 +313,8 @@ def plotOrbits(dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log):
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
     ax1.plot(timeData, panel1thetaLog[:, 1]*macros.R2D % 360, '--', color='royalblue')
-    ax1.fill_between(timeData, 0, 90, facecolor='lemonchiffon')
-    ax1.fill_between(timeData, 270, 360, facecolor='lemonchiffon')
+    ax1.fill_between(timeData, 0, 90, facecolor='gold')
+    ax1.fill_between(timeData, 270, 360, facecolor='gold')
     ax1.set_yticks([0, 90, 180, 270, 360])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel Angle [deg]', color='royalblue')
