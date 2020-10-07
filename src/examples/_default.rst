@@ -74,16 +74,6 @@ Attitude Steering Control
 
    MRP Steering Law <scenarioAttitudeSteering>
 
-Complex Spacecraft Dynamics Simulations
----------------------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   Fuel Slosh <scenarioFuelSlosh>
-   Flexible (Hinged) Panels <scenarioHingedRigidBody>
-
-
 Planetary Environments
 ----------------------
 
@@ -161,6 +151,15 @@ Data Sub-System
 
   Basic Data Generation and Transmission  <scenarioDataDemo>
 
+Complex Spacecraft Dynamics Simulations
+---------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   Fuel Slosh <scenarioFuelSlosh>
+   Flexible (Hinged) Panels <scenarioHingedRigidBody>
+   Sensors Attached to a Rotating Panel <scenarioRotatingPanel>
 
 
 bskSim()-Based Simulation
