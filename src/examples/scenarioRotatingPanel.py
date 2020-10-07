@@ -25,7 +25,7 @@ This scenario demonstrates how to set up a spacecraft spacecraft with rotating p
 attached onto this panel such that it's bore-sight axis rotates with the panel.  Further, the panel state
 message is connected to :ref:`simpleSolarPanel`.
 
-.. image:: /_images/static/test_scenarioBasicOrbit.svg
+.. image:: /_images/static/test_scenario_RotatingPanel.svg
    :align: center
 
 The script is found in the folder ``src/examples`` and executed by using::
