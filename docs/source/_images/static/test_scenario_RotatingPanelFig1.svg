@@ -18,7 +18,7 @@
         <path d="M 5 0 L -3 -3 L 0 0 L 0 0 L -3 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
-    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker_3" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -3 7 6" markerWidth="7" markerHeight="6" color="#fbf800">
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker_3" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -3 7 6" markerWidth="7" markerHeight="6" color="#c1be00">
       <g>
         <path d="M -2.3333333 0 L 1.4 1.4 L 0 0 L 0 0 L 1.4 -1.4 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
       </g>
@@ -74,7 +74,7 @@
       </font-face-src>
     </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.17.5\n2020-10-07 21:05:33 +0000</metadata>
+  <metadata> Produced by OmniGraffle 7.17.5\n2020-10-07 21:41:45 +0000</metadata>
   <g id="Canvas_1" fill-opacity="1" stroke-dasharray="none" fill="none" stroke-opacity="1" stroke="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -96,7 +96,7 @@
         <line x1="546" y1="329.5" x2="640.2677" y2="266.34065" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
       </g>
       <g id="Line_8">
-        <line x1="339.8948" y1="300.13793" x2="204" y2="281" marker-start="url(#SharpArrow_Marker_3)" stroke="#fbf800" stroke-linecap="round" stroke-linejoin="miter" stroke-width="3"/>
+        <line x1="339.8948" y1="300.13793" x2="204" y2="281" marker-start="url(#SharpArrow_Marker_3)" stroke="#c1be00" stroke-linecap="round" stroke-linejoin="miter" stroke-width="3"/>
       </g>
       <g id="Group_13">
         <g id="Graphic_10">

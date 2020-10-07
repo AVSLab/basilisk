@@ -121,7 +121,7 @@ body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
 		
 	img[src$="svg"] {
 		background-color: white;
-		filter: invert(100%) hue-rotate(180deg);
+		filter: invert(100%) hue-rotate(180deg) saturate(200%);;
 	}
 	
 	img[src$="jpg"], img[src$="png"] {
