@@ -205,7 +205,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(120.)
+    simulationTime = macros.sec2nano(300.)
 
     #
     #  create the simulation process
@@ -255,6 +255,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     CSS1.cssDataOutMsgName = "CSS1_output"
     CSS1.cssConfigLogMsgName = "CSS1_config_log"
     CSS1.sunInMsgName = "sun_message"
+    CSS1.r_B = [2.00131, 2.36638, 1.]
     if useKelly:
         CSS1.kellyFactor = 0.2
     if useEclipse:
@@ -272,12 +273,12 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     CSS2.cssDataOutMsgName = "CSS2_output"
     CSS2.cssConfigLogMsgName = "CSS2_config_log"
     CSS2.CSSGroupID = 0
-    CSS2.r_B = [0.0, -2.0, 0.0]
+    CSS2.r_B = [-3.05, 0.55, 1.0]
     if usePlatform:
-        CSS2.theta = 180.*macros.D2R
+        CSS2.theta = 0.*macros.D2R
         CSS2.setUnitDirectionVectorWithPerturbation(0., 0.)
     else:
-        CSS2.nHat_B = np.array([0.0, -1.0, 0.0])
+        CSS2.nHat_B = np.array([0.0, 1.0, 0.0])
 
     CSS3 = coarse_sun_sensor.CoarseSunSensor(CSS1)  # make copy of first CSS unit
     CSS3.ModelTag = "CSS3_sensor"
@@ -285,12 +286,12 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     CSS3.cssConfigLogMsgName = "CSS3_config_log"
     CSS3.CSSGroupID = 1
     CSS3.fov = 45.0*macros.D2R
-    CSS3.r_B = [0.0, -2.0, 0.0]
+    CSS3.r_B = [-3.05, 0.55, 1.0]
     if usePlatform:
-        CSS3.phi = 90. * macros.D2R
+        CSS3.theta = 90. * macros.D2R
         CSS3.setUnitDirectionVectorWithPerturbation(0., 0.)
     else:
-        CSS3.nHat_B = np.array([1.0, 0.0, 0.0])
+        CSS3.nHat_B = np.array([-1.0, 0.0, 0.0])
 
     if useCSSConstellation:
         # If instead of individual CSS a cluster of CSS units is to be evaluated as one,
