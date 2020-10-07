@@ -103,7 +103,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     sunMessage.PositionVector = [0, 0, 0]
 
     scMessage = simMessages.SCPlusStatesSimMsg()
-    scMessage.r_BN_N = [orbitDistance, 0, 0]
+    scMessage.r_BN_N = [-orbitDistance, 0, 0]
     scMessage.sigma_BN = scAttitude
 
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, "EclipseMsg", eclipseMessage)
@@ -112,7 +112,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     #   Module set-up
     panel = simpleSolarPanel.SimpleSolarPanel()
-    panel.setPanelParameters(np.array([1,0,0]),1.0, 1.0)
+    panel.setPanelParameters(np.array([1, 0, 0]), 1.0, 1.0)
     panel.stateInMsgName = "scMsg"
     panel.sunEclipseInMsgName = "EclipseMsg"
     panel.sunInMsgName = "SunMsg"
@@ -128,13 +128,12 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     
     unitTestSim.ExecuteSimulation()
 
-
     powerData = unitTestSim.pullMessageLogData("panelMsg.netPower")
 
     tol=1e-7
 
-    if not unitTestSupport.isDoubleEqual(powerData[1,:], referencePower*referenceMultiplier, tol):
-        testFailCount+=1
+    if not unitTestSupport.isDoubleEqual(powerData[1, :], referencePower*referenceMultiplier, tol):
+        testFailCount += 1
         testMessages.append('Error: simpleSolarPanel did not compute power correctly.')
     
     return [testFailCount, ''.join(testMessages)]
@@ -143,5 +142,5 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 if __name__ == "__main__":
     print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 1, rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0]))))
     print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 1, [0,0,0]))
-    print(test_simpleSolarPanel(False, 1.52*1000.*astroFunctions.AU, 1, [0,0,0]))
+    print(test_simpleSolarPanel(False, 1.52*1000.*astroFunctions.AU, 1, [0, 0, 0]))
     print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 0, [0,0,0]))
