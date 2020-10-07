@@ -141,8 +141,9 @@ message VizMessage{
     message InstrumentSettings{
         string spacecraftName = 1; //Which spacecraft's instruments to set
         int32 viewCSSPanel = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewCSSHUD = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCSSCoverage = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showCSSLabels = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCSSBoresight = 5;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     message CustomModel{

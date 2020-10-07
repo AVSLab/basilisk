@@ -2308,11 +2308,11 @@ class VizMessage_InstrumentSettings : public ::google::protobuf::Message /* @@pr
   ::google::protobuf::int32 viewcsspanel() const;
   void set_viewcsspanel(::google::protobuf::int32 value);
 
-  // int32 viewCSSHUD = 3;
-  void clear_viewcsshud();
-  static const int kViewCSSHUDFieldNumber = 3;
-  ::google::protobuf::int32 viewcsshud() const;
-  void set_viewcsshud(::google::protobuf::int32 value);
+  // int32 viewCSSCoverage = 3;
+  void clear_viewcsscoverage();
+  static const int kViewCSSCoverageFieldNumber = 3;
+  ::google::protobuf::int32 viewcsscoverage() const;
+  void set_viewcsscoverage(::google::protobuf::int32 value);
 
   // int32 showCSSLabels = 4;
   void clear_showcsslabels();
@@ -2320,14 +2320,21 @@ class VizMessage_InstrumentSettings : public ::google::protobuf::Message /* @@pr
   ::google::protobuf::int32 showcsslabels() const;
   void set_showcsslabels(::google::protobuf::int32 value);
 
+  // int32 viewCSSBoresight = 5;
+  void clear_viewcssboresight();
+  static const int kViewCSSBoresightFieldNumber = 5;
+  ::google::protobuf::int32 viewcssboresight() const;
+  void set_viewcssboresight(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.InstrumentSettings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
   ::google::protobuf::int32 viewcsspanel_;
-  ::google::protobuf::int32 viewcsshud_;
+  ::google::protobuf::int32 viewcsscoverage_;
   ::google::protobuf::int32 showcsslabels_;
+  ::google::protobuf::int32 viewcssboresight_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_InstrumentSettingsImpl();
@@ -5324,18 +5331,18 @@ inline void VizMessage_InstrumentSettings::set_viewcsspanel(::google::protobuf::
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.InstrumentSettings.viewCSSPanel)
 }
 
-// int32 viewCSSHUD = 3;
-inline void VizMessage_InstrumentSettings::clear_viewcsshud() {
-  viewcsshud_ = 0;
+// int32 viewCSSCoverage = 3;
+inline void VizMessage_InstrumentSettings::clear_viewcsscoverage() {
+  viewcsscoverage_ = 0;
 }
-inline ::google::protobuf::int32 VizMessage_InstrumentSettings::viewcsshud() const {
-  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.InstrumentSettings.viewCSSHUD)
-  return viewcsshud_;
+inline ::google::protobuf::int32 VizMessage_InstrumentSettings::viewcsscoverage() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.InstrumentSettings.viewCSSCoverage)
+  return viewcsscoverage_;
 }
-inline void VizMessage_InstrumentSettings::set_viewcsshud(::google::protobuf::int32 value) {
+inline void VizMessage_InstrumentSettings::set_viewcsscoverage(::google::protobuf::int32 value) {
   
-  viewcsshud_ = value;
-  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.InstrumentSettings.viewCSSHUD)
+  viewcsscoverage_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.InstrumentSettings.viewCSSCoverage)
 }
 
 // int32 showCSSLabels = 4;
@@ -5350,6 +5357,20 @@ inline void VizMessage_InstrumentSettings::set_showcsslabels(::google::protobuf:
   
   showcsslabels_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.InstrumentSettings.showCSSLabels)
+}
+
+// int32 viewCSSBoresight = 5;
+inline void VizMessage_InstrumentSettings::clear_viewcssboresight() {
+  viewcssboresight_ = 0;
+}
+inline ::google::protobuf::int32 VizMessage_InstrumentSettings::viewcssboresight() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.InstrumentSettings.viewCSSBoresight)
+  return viewcssboresight_;
+}
+inline void VizMessage_InstrumentSettings::set_viewcssboresight(::google::protobuf::int32 value) {
+  
+  viewcssboresight_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.InstrumentSettings.viewCSSBoresight)
 }
 
 // -------------------------------------------------------------------

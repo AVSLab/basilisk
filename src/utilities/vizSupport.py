@@ -374,8 +374,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
     viewCSSPanel: bool
         flag if the GUI panel should be shown illustrating the CSS states
         Default: if not provided, then the Vizard default settings are used
-    viewCSSHUD: bool
-        flag if the HUD visualization of the CSS states should be shown
+    viewCSSCoverage: bool
+        flag if the HUD spherical coverage of the CSS states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    viewCSSBoresight: bool
+        flag if the HUD boresight axes of the CSS states should be shown
         Default: if not provided, then the Vizard default settings are used
     showCSSLabels: bool
         flag if the CSS labels should be shown
@@ -390,7 +393,7 @@ def setInstrumentGuiSetting(viz, **kwargs):
     vizElement = vizInterface.InstrumentGuiSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'viewCSSPanel', 'viewCSSHUD', 'showCSSLabels'],
+        ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -409,12 +412,19 @@ def setInstrumentGuiSetting(viz, **kwargs):
             exit(1)
         vizElement.viewCSSPanel = setting
 
-    if 'viewCSSHUD' in kwargs:
-        setting = kwargs['viewCSSHUD']
+    if 'viewCSSCoverage' in kwargs:
+        setting = kwargs['viewCSSCoverage']
         if not isinstance(setting, bool):
-            print('ERROR: viewCSSHUD must be True or False')
+            print('ERROR: viewCSSCoverage must be True or False')
             exit(1)
-        vizElement.viewCSSHUD = setting
+        vizElement.viewCSSCoverage = setting
+
+    if 'viewCSSBoresight' in kwargs:
+        setting = kwargs['viewCSSBoresight']
+        if not isinstance(setting, bool):
+            print('ERROR: viewCSSBoresight must be True or False')
+            exit(1)
+        vizElement.viewCSSBoresight = setting
 
     if 'showCSSLabels' in kwargs:
         setting = kwargs['showCSSLabels']

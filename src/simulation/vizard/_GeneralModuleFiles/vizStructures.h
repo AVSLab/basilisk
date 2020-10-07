@@ -87,7 +87,8 @@ typedef struct {
     std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
                                          If not provided then the ``viz.spacecraftName`` is used. */
     int viewCSSPanel=0;             //!< [bool] should CSS panel illustration be shown, -1 (off), 0 (default), 1 (on)
-    int viewCSSHUD=0;               //!< [bool] should CSS panel Heads-Up-Display be shown, -1 (off), 0 (default), 1 (on)
+    int viewCSSBoresight=0;         //!< [bool] should CSS boresight axes be shown, -1 (off), 0 (default), 1 (on)
+    int viewCSSCoverage=0;          //!< [bool] should CSS coverage spheres be shown, -1 (off), 0 (default), 1 (on)
     int showCSSLabels=0;            //!< [bool] should CSS panel labels be shown, -1 (off), 0 (default), 1 (on)
 }InstrumentGuiSettings;
 

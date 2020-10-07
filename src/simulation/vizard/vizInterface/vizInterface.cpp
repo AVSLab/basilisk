@@ -592,7 +592,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             vizProtobufferMessage::VizMessage::InstrumentSettings* il = vizSettings->add_instrumentsettings();
             il->set_spacecraftname(this->settings.instrumentGuiSettingsList[idx].spacecraftName);
             il->set_viewcsspanel(this->settings.instrumentGuiSettingsList[idx].viewCSSPanel);
-            il->set_viewcsshud(this->settings.instrumentGuiSettingsList[idx].viewCSSHUD);
+            il->set_viewcsscoverage(this->settings.instrumentGuiSettingsList[idx].viewCSSCoverage);
+            il->set_viewcssboresight(this->settings.instrumentGuiSettingsList[idx].viewCSSBoresight);
             il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
         }
 

@@ -197,7 +197,7 @@ Setting Instrument GUI Options
 To specify the instrument GUI settings use the ``setInstrumentGuiSetting``
 helper method in Python. An example is::
 
-   vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSHUD=True)
+   vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True)
 
 The following table includes the keyword options for this method.
 
@@ -213,10 +213,14 @@ The following table includes the keyword options for this method.
       - Boolean
       - No
       - Show the CSS panel
-    * - ``viewCSSHUD``
+    * - ``viewCSSCoverage``
       - Boolean
       - No
-      - Show the CSS sensor normal axis
+      - Show the CSS coverage spheres
+    * - ``viewCSSBoresight``
+      - Boolean
+      - No
+      - Show the CSS boresight axes
     * - ``showCSSLabels``
       - Boolean
       - No
