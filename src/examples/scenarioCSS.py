@@ -344,11 +344,14 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
 
     # optional saving off of Vizard compatible file
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-                                              saveFile=__file__,
+                                              # saveFile=__file__,
                                               # liveStream=True,
-                                              cssNames=[CSS1.cssConfigLogMsgName, CSS2.cssConfigLogMsgName, CSS3.cssConfigLogMsgName]
+                                              cssNames=[CSS1.cssConfigLogMsgName, CSS2.cssConfigLogMsgName,
+                                                        CSS3.cssConfigLogMsgName]
                                               )
-    vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True, viewCSSBoresight=True, showCSSLabels=True)
+    vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True,
+                                       viewCSSBoresight=True, showCSSLabels=True)
+
     #
     #   initialize Simulation
     #
