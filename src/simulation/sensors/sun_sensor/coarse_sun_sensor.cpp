@@ -150,6 +150,15 @@ void CoarseSunSensor::SelfInit()
         CreateNewMessage(this->cssDataOutMsgName, sizeof(CSSRawDataSimMsg),
                          this->outputBufferCount, "CSSRawDataSimMsg", this->moduleID);
     }
+    // make automated CSS log message name if output name is not specified
+    if (this->cssConfigLogMsgName == "") {
+        this->cssConfigLogMsgName = this->ModelTag + "_config_log";
+    }
+    this->cssConfigLogMsgId = SystemMessaging::GetInstance()->
+    CreateNewMessage(this->cssConfigLogMsgName, sizeof(CSSConfigLogSimMsg),
+                     this->outputBufferCount, "CSSConfigLogSimMsg", this->moduleID);
+
+    return;
 }
 
 /*! This method simply calls the LinkMessages method to ensure that input messages 
@@ -330,6 +339,25 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
         sizeof(CSSRawDataSimMsg),
         reinterpret_cast<uint8_t*> (&localMessage),
         this->moduleID);
+
+    // create CSS configuration log message
+    if (this->cssConfigLogMsgId >= 0) {
+        CSSConfigLogSimMsg configMsg;
+        configMsg.fov = this->fov;
+        configMsg.signal = this->sensedValue;
+        configMsg.minSignal = this->minOutput;
+        configMsg.maxSignal = this->maxOutput;
+        if (this->CSSGroupID >=0) {
+            configMsg.CSSGroupID = this->CSSGroupID;
+        }
+        eigenVector3d2CArray(this->r_B, configMsg.r_B);
+        eigenVector3d2CArray(this->nHat_B, configMsg.nHat_B);
+
+        SystemMessaging::GetInstance()->WriteMessage(this->cssConfigLogMsgId, Clock,
+            sizeof(CSSConfigLogSimMsg),
+            reinterpret_cast<uint8_t*> (&configMsg),
+            this->moduleID);
+    }
 }
 
 /*! This method is called at a specified rate by the architecture.  It makes the 
@@ -413,6 +441,8 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         it->applySensorErrors();
         it->scaleSensorValues();
         it->applySaturation();
+        it->writeOutputMessages(CurrentSimNanos);
+
         this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,

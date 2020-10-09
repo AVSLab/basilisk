@@ -37,6 +37,7 @@ namespace std {
     %template(PointLineConfig) vector<PointLine>;
     %template(CustomModelConfig) vector<CustomModel>;
     %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
+    %template(InstrumentGuiSettingsConfig) vector<InstrumentGuiSettings>;
     %template(KeepOutInConeConfig) vector<KeepOutInCone>;
     %template(StdCameraConfig) vector<StdCameraSettings>;
     %template(VizSCVector) vector<VizSpacecraftData>;

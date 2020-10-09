@@ -1,7 +1,5 @@
 % !TEX root = ./Basilisk-CoarseSunSensor-20170803.tex
 
-\section{Model Description}
-
 \begin{figure}[htb]
 	\centerline{
 		\includegraphics[]{Figures/moduleDiagram}
@@ -9,6 +7,10 @@
 	\caption{Illustration of the CoarseSunSensor() module I/O}
 	\label{fig:moduleDiagram}
 \end{figure}
+
+
+\section{Model Description}
+
 \subsection{Overview}
 This document describes how Coarse Sun Sensor (CSS) devices are modeled in the Basilisk software.  Each CSS is modeled through a nominal cosine response relative to the sunlight incidence angle and proportional to light intensity.  It is possible to add individual CSS sensors to the BSK evaluation stack.  However, it is typically simpler to use the {\tt CSSConstellation()} class to store a list of CSS units which are updated as a group, along with a unique CSS array output message.
 
@@ -16,7 +18,11 @@ This document describes how Coarse Sun Sensor (CSS) devices are modeled in the B
 \subsubsection{I/O Messages}
 First, let us discuss the input and output messages of the individual CSS sensor module.  The two required input messages are of the type {\tt SpicePlanetStateSimMsg} and {\tt SCPlusStatesSimMsg}.  The first message is used to determine the sun's location relative to the inertial frame $\leftexp{N}{\bm r}_{\sun/\mathcal{N}}$.  The second message is used to read in the spacecraft inertial position vector relative to the same inertial frame $\leftexp{N}{\bm r}_{\cal B/N}$.  Finally, the last message is optional.  If it is connected, it provides the sun shadow parameter indicating if the spacecraft is in a planet's shadow.  
 
-The output message of an individual CSS unit creates a message containing the simulated CSS sensor.
+One output message of an individual CSS unit creates a message containing the simulated CSS sensor.  The second output message is of type {\tt CSSConfigLogSimMsg} that logs the CSS configuration states.  The output message name {\tt cssConfigLogMsgName} will default to
+\begin{verbatim}
+	this->ModelTag + "_config_log"
+\end{verbatim}
+unless the user specifies a custom name.
 
 
 \subsubsection{CSS Signal Simulation}

@@ -37,6 +37,7 @@ namespace std {
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/cssRawDataSimMsg.h"
+%include "../../simMessages/cssConfigLogSimMsg.h"
 %include "../../simMessages/albedoSimMsg.h"
 %include "../../simMessages/eclipseSimMsg.h"
 %include "../../simFswInterfaceMessages/cssArraySensorIntMsg.h"
@@ -44,6 +45,7 @@ GEN_SIZEOF(CSSRawDataSimMsg);
 GEN_SIZEOF(AlbedoSimMsg);
 GEN_SIZEOF(EclipseSimMsg);
 GEN_SIZEOF(CSSArraySensorIntMsg);
+GEN_SIZEOF(CSSConfigLogSimMsg);
 GEN_SIZEOF(SpicePlanetStateSimMsg);
 GEN_SIZEOF(SCPlusStatesSimMsg);
 

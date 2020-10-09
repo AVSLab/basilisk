@@ -356,6 +356,87 @@ def setActuatorGuiSetting(viz, **kwargs):
     viz.settings.actuatorGuiSettingsList = vizInterface.ActuatorGuiSettingsConfig(actuatorGuiSettingList)
     return
 
+instrumentGuiSettingList = []
+def setInstrumentGuiSetting(viz, **kwargs):
+    """
+    This method sets the instrument GUI properties for a particular spacecraft.  If no ``spacecraftName`` is
+    provided, then the name of the first spacecraft in the simulation is assumed.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    spacecraftName: str
+        The name of the spacecraft for which the actuator GUI options are set.
+        Default: If not provided, then the name of the first spacecraft in the simulation is used.
+    viewCSSPanel: bool
+        flag if the GUI panel should be shown illustrating the CSS states
+        Default: if not provided, then the Vizard default settings are used
+    viewCSSCoverage: bool
+        flag if the HUD spherical coverage of the CSS states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    viewCSSBoresight: bool
+        flag if the HUD boresight axes of the CSS states should be shown
+        Default: if not provided, then the Vizard default settings are used
+    showCSSLabels: bool
+        flag if the CSS labels should be shown
+        Default: if not provided, then the Vizard default settings are used
+
+    """
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+
+    global firstSpacecraftName
+    vizElement = vizInterface.InstrumentGuiSettings()
+
+    unitTestSupport.checkMethodKeyword(
+        ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels'],
+        kwargs)
+
+    if 'spacecraftName' in kwargs:
+        scName = kwargs['spacecraftName']
+        if not isinstance(scName, basestring):
+            print('ERROR: spacecraftName must be a string')
+            exit(1)
+        vizElement.spacecraftName = scName
+    else:
+        vizElement.spacecraftName = firstSpacecraftName
+
+    if 'viewCSSPanel' in kwargs:
+        setting = kwargs['viewCSSPanel']
+        if not isinstance(setting, bool):
+            print('ERROR: viewCSSPanel must be True or False')
+            exit(1)
+        vizElement.viewCSSPanel = setting
+
+    if 'viewCSSCoverage' in kwargs:
+        setting = kwargs['viewCSSCoverage']
+        if not isinstance(setting, bool):
+            print('ERROR: viewCSSCoverage must be True or False')
+            exit(1)
+        vizElement.viewCSSCoverage = setting
+
+    if 'viewCSSBoresight' in kwargs:
+        setting = kwargs['viewCSSBoresight']
+        if not isinstance(setting, bool):
+            print('ERROR: viewCSSBoresight must be True or False')
+            exit(1)
+        vizElement.viewCSSBoresight = setting
+
+    if 'showCSSLabels' in kwargs:
+        setting = kwargs['showCSSLabels']
+        if not isinstance(setting, bool):
+            print('ERROR: showCSSLabels must be an integer value')
+            exit(1)
+        vizElement.showCSSLabels = setting
+
+    instrumentGuiSettingList.append(vizElement)
+    del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list
+    viz.settings.instrumentGuiSettingsList = vizInterface.InstrumentGuiSettingsConfig(instrumentGuiSettingList)
+    return
 
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
@@ -689,6 +770,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         Default value is zero RWs for each spacecraft.
     thrDevices:
         list of thruster devices states for the first spacecraft
+    cssNames:
+        list of CSS configuration log message names lists
     opNavMode: bool
         flag if opNaveMode should be used
     liveStream: bool
@@ -711,7 +794,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName'],
+        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName', 'cssNames'],
         kwargs)
 
     # setup the Vizard interface module
@@ -757,6 +840,30 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     else:
         numRWList = [0] * len(scNames)
 
+    # set CSS information
+    cssNameList = []
+    if 'cssNames' in kwargs:
+        cssNameList = kwargs['cssNames']
+        if isinstance(cssNameList, list):
+            if isinstance(cssNameList[0], list):
+                if len(scNames) != len(cssNameList):
+                    print('ERROR: cssName and scName list lengths must be the same length')
+                    exit(1)
+                for scCSSList in cssNameList:
+                    for item in scCSSList:
+                        if not isinstance(item, basestring):
+                            print('ERROR: cssNames list must contain strings of config log message names')
+                            exit(1)
+            else:
+                for item in cssNameList:
+                    if not isinstance(item, basestring):
+                        print('ERROR: cssNames list must contain strings of config log message names')
+                        exit(1)
+                cssNameList = [cssNameList]
+        else:
+            print('ERROR: cssNames must be a list of CSS config log message names')
+            exit(1)
+
     # set thruster device info
     if 'thrDevices' in kwargs:
         thrDevices = kwargs['thrDevices']
@@ -777,6 +884,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     for name in scNames:
         scData.spacecraftName = name
         scData.numRW = numRWList[i]
+        if len(cssNameList) > 0:
+            scData.cssInMsgNames = vizInterface.StringVector(cssNameList[i])
         if i != 0:
             scData.scPlusInMsgName = scPlusInMsgName + str(i+1)
         vizMessenger.scData.push_back(scData)

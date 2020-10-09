@@ -153,9 +153,6 @@ helper method in Python. An example is::
 
 The following table includes the keyword options for this method.
 
-
-    viz.settings.variableName = value
-
 .. list-table:: GUI Parameter Options
     :widths: 10 10 20 100
     :header-rows: 1
@@ -188,6 +185,46 @@ The following table includes the keyword options for this method.
       - Boolean
       - No
       - Show the reaction wheel labels
+    * - ``spacecraftName``
+      - string
+      - No, sc name default
+      - Specify which spacecraft should show actuator information. If not provided then
+        the ``viz.spacecraftName`` is used.
+
+Setting Instrument GUI Options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To specify the instrument GUI settings use the ``setInstrumentGuiSetting``
+helper method in Python. An example is::
+
+   vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True)
+
+The following table includes the keyword options for this method.
+
+.. list-table:: GUI Parameter Options
+    :widths: 10 10 20 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Required
+      - Description
+    * - ``viewCSSPanel``
+      - Boolean
+      - No
+      - Show the CSS panel
+    * - ``viewCSSCoverage``
+      - Boolean
+      - No
+      - Show the CSS coverage spheres
+    * - ``viewCSSBoresight``
+      - Boolean
+      - No
+      - Show the CSS boresight axes
+    * - ``showCSSLabels``
+      - Boolean
+      - No
+      - Show the CSS labels
     * - ``spacecraftName``
       - string
       - No, sc name default

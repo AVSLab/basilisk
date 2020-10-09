@@ -108,25 +108,26 @@ void VizInterface::CrossInit()
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
         /* Define CSS data input messages */
-        msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->cssDataInMsgName);
-        if (msgInfo.itemFound) {
-            scIt->cssDataInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->cssDataInMsgName,
-                                                                                      sizeof(CSSArraySensorIntMsg), moduleID);
-            scIt->cssDataInMsgId.dataFresh = false;
-            scIt->cssDataInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        } else {
-            scIt->cssDataInMsgId.msgID = -1;
-        }
+        {
+            MsgCurrStatus cssStatus;
+            cssStatus.dataFresh = false;
+            cssStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
 
-        /* Define CSS configuration input messages */
-        msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->cssConfInMsgName);
-        if (msgInfo.itemFound) {
-            scIt->cssConfInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->cssConfInMsgName,
-                                                                                            sizeof(CSSConfigFswMsg), moduleID);
-            scIt->cssConfInMsgId.dataFresh = false;
-            scIt->cssConfInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        } else {
-            scIt->cssConfInMsgId.msgID = -1;
+            scIt->numCSS = (int) scIt->cssInMsgNames.size();
+            if (scIt->numCSS > 0) {
+                for (size_t idx = 0; idx < (size_t) scIt->numCSS; idx++)
+                {
+                    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->cssInMsgNames[idx]);
+                    if (msgInfo.itemFound) {
+                        cssStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->cssInMsgNames[idx],sizeof(CSSConfigLogSimMsg), moduleID);
+                    } else {
+                        cssStatus.msgID = -1;
+                        bskLogger.bskLog(BSK_WARNING, "vizInterface: CSS(%zu) msg %s requested but not found.", idx, scIt->cssInMsgNames[idx].c_str());
+                    }
+                    scIt->cssConfLogInMsgId.push_back(cssStatus);
+                }
+                scIt->cssInMessage.resize(scIt->cssConfLogInMsgId.size());
+            }
         }
 
         /* Define SCPlus input message */
@@ -323,7 +324,7 @@ void VizInterface::ReadBSKMessages()
         }
         }
 
-         /* Read incoming Thruster constellation msg */
+        /* Read incoming Thruster constellation msg */
         {
         for (size_t idx=0;idx< (size_t) scIt->numThr; idx++){
             if (scIt->thrMsgID[idx].msgID != -1){
@@ -339,30 +340,24 @@ void VizInterface::ReadBSKMessages()
         }
         }
 
-        /*! Read CSS data msg */
-        if (scIt->cssDataInMsgId.msgID != -1){
-            CSSArraySensorIntMsg localCSSDataArray;
-            SingleMessageHeader localCSSDataHeader;
-            SystemMessaging::GetInstance()->ReadMessage(scIt->cssDataInMsgId.msgID, &localCSSDataHeader, sizeof(CSSArraySensorIntMsg), reinterpret_cast<uint8_t*>(&localCSSDataArray));
-            if(localCSSDataHeader.WriteSize > 0 && localCSSDataHeader.WriteClockNanos != scIt->cssDataInMsgId.lastTimeTag){
-                scIt->cssDataInMsgId.lastTimeTag = localCSSDataHeader.WriteClockNanos;
-                scIt->cssDataInMsgId.dataFresh = true;
+        /* Read CSS constellation log msg */
+        {
+        for (size_t idx=0;idx< (size_t) scIt->numCSS; idx++) {
+            if (scIt->cssConfLogInMsgId[idx].msgID != -1){
+                CSSConfigLogSimMsg localCSSMsg;
+                SingleMessageHeader localCSSHeader;
+                SystemMessaging::GetInstance()->ReadMessage(scIt->cssConfLogInMsgId[idx].msgID, &localCSSHeader, sizeof(CSSConfigLogSimMsg), reinterpret_cast<uint8_t*>(&localCSSMsg));
+                if(localCSSHeader.WriteSize > 0 && localCSSHeader.WriteClockNanos != scIt->cssConfLogInMsgId[idx].lastTimeTag){
+                    scIt->cssConfLogInMsgId[idx].lastTimeTag = localCSSHeader.WriteClockNanos;
+                    scIt->cssConfLogInMsgId[idx].dataFresh = true;
+                    scIt->cssInMessage[idx] = localCSSMsg;
+                }
             }
         }
-
-        /*! Read incoming CSS config msg */
-        if (scIt->cssConfInMsgId.msgID != -1){
-            CSSConfigFswMsg localCSSConfigArray;
-            SingleMessageHeader localCSSConfigHeader;
-            SystemMessaging::GetInstance()->ReadMessage(scIt->cssConfInMsgId.msgID, &localCSSConfigHeader, sizeof(CSSConfigFswMsg), reinterpret_cast<uint8_t*>(&localCSSConfigArray));
-            if(localCSSConfigHeader.WriteSize > 0 && localCSSConfigHeader.WriteClockNanos != scIt->cssConfInMsgId.lastTimeTag){
-                scIt->cssConfInMsgId.lastTimeTag = localCSSConfigHeader.WriteClockNanos;
-                scIt->cssConfInMsgId.dataFresh = true;
-            }
-            scIt->cssConfigMessage = localCSSConfigArray;
         }
 
-        /*! Read incoming ST constellation msg */
+
+        /* Read incoming ST constellation msg */
         if (scIt->starTrackerInMsgID.msgID != -1){
             STSensorIntMsg localSTArray;
             SingleMessageHeader localSTHeader;
@@ -373,7 +368,7 @@ void VizInterface::ReadBSKMessages()
             }
             scIt->STMessage = localSTArray;
         }
-    }
+    } /* end of scIt loop */
 
     /*! Read incoming camera config msg */
     if (this->cameraConfMsgId.msgID != -1){
@@ -592,6 +587,17 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             al->set_showrwlabels(this->settings.actuatorGuiSettingsList[idx].showRWLabels);
         }
 
+        // define instrument GUI settings
+        for (size_t idx = 0; idx < this->settings.instrumentGuiSettingsList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::InstrumentSettings* il = vizSettings->add_instrumentsettings();
+            il->set_spacecraftname(this->settings.instrumentGuiSettingsList[idx].spacecraftName);
+            il->set_viewcsspanel(this->settings.instrumentGuiSettingsList[idx].viewCSSPanel);
+            il->set_viewcsscoverage(this->settings.instrumentGuiSettingsList[idx].viewCSSCoverage);
+            il->set_viewcssboresight(this->settings.instrumentGuiSettingsList[idx].viewCSSBoresight);
+            il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
+        }
+
+
         // define scene object custom object shapes
         for (size_t idx = 0; idx < this->settings.customModelList.size(); idx++) {
             vizProtobufferMessage::VizMessage::CustomModel* cm = vizSettings->add_custommodels();
@@ -715,17 +721,23 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
 
             // Write CSS output msg
-            //if (cssConfInMsgId != -1 and cssConfInMsgId != -1){
-            //for (int i=0; i< this->cssConfigMessage.nCSS; i++){
-            //    vizProtobufferMessage::VizMessage::CoarseSunSensor* css = scp->add_css();
-            //    for (int j=0; j<3; j++){
-            //        css->add_normalvector(this->cssConfigMessage.cssVals[i].nHat_B[j]);
-            //        css->add_position(0);
-            //    }
-            //    css->set_currentmsmt(this->cssDataMessage.CosValue[i]);
-            //    css->set_cssgroupid(i);
-            //    }
-            //}
+            for (size_t idx =0; idx < (size_t) scIt->numCSS; idx++)
+            {
+                if (scIt->cssConfLogInMsgId[idx].msgID != -1 && scIt->cssConfLogInMsgId[idx].dataFresh){
+                    vizProtobufferMessage::VizMessage::CoarseSunSensor* css = scp->add_css();
+                    for (int j=0; j<3; j++){
+                        css->add_normalvector(scIt->cssInMessage[idx].nHat_B[j]);
+                        css->add_position(scIt->cssInMessage[idx].r_B[j]);
+                    }
+                    css->set_currentmsmt(scIt->cssInMessage[idx].signal);
+                    css->set_maxmsmt(scIt->cssInMessage[idx].maxSignal);
+                    css->set_minmsmt(scIt->cssInMessage[idx].minSignal);
+                    css->set_cssgroupid(scIt->cssInMessage[idx].CSSGroupID);
+                    css->set_fieldofview(scIt->cssInMessage[idx].fov*2*R2D);  /* must be edge to edge fov in degrees */
+
+                    //cssConfLogInMsgId[idx].dataFresh = false;
+                }
+            }
 
 
             // Write ST output msg

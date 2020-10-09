@@ -33,6 +33,7 @@ Version |release|
 - updated :ref:`spacecraftPlus` to allow the attitude motion to be prescribed through
   an optional input message of type :ref:`attRefFswMsg`.
 - fixed sign issue in :ref:`simpleSolarPanel`
+- support Vizard 1.6.0 scripting  
 
 
 
