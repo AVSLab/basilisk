@@ -30,12 +30,13 @@ from Basilisk.simulation import avsLibrarySelfCheck
 from Basilisk.utilities import unitTestSupport
 
 
-@pytest.mark.parametrize("testName"
-    , ["testRigidBodyKinematics"
-    , "testOrbitalElements"
-    , "testOrbitalAnomalies"
-    , "testLinearAlgebra"
-    , "testEnvironment"])
+@pytest.mark.parametrize("testName",
+                         ["testRigidBodyKinematics"
+                          , "testOrbitalElements"
+                          , "testOrbitalAnomalies"
+                          , "testLinearAlgebra"
+                          , "testOrbitalHill"
+                          , "testEnvironment"])
 # provide a unique test method name, starting with test_
 def test_unitDynamicsModes(testName):
     """AVS Library Self Check"""
@@ -63,6 +64,11 @@ def unitAVSLibrarySelfCheck(testName):
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Orbital Elements Library Failed Self Test.\n")
+    if testName == "testOrbitalHill":
+        errorCount = avsLibrarySelfCheck.testOrbitalHill(1e-4)
+        if errorCount:
+            testFailCount += errorCount
+            testMessages.append("ERROR: Orbital Hill Library Failed Self Test.\n")
     if testName == "testLinearAlgebra":
         errorCount = avsLibrarySelfCheck.testLinearAlgebra(1e-10)
         if errorCount:
@@ -109,5 +115,5 @@ def unitAVSLibrarySelfCheck(testName):
 #
 if __name__ == "__main__":
     unitAVSLibrarySelfCheck(
-        "testOrbitalElements"
+        "testOrbitalHill"
     )

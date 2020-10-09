@@ -93,6 +93,10 @@ extern "C" {
     void    clMeanOscMap(double req, double J2, classicElements *elements, classicElements *elements_p, double sgn);
     void    clElem2eqElem(classicElements *elements_cl, equinoctialElements *elements_eq);
 
+    void    hillFrame(double *rc_N, double *vc_N, double HN[3][3]);
+    void    hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, double *rd_N, double *vd_N);
+    void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H);
+
     double  atmosphericDensity(double alt);
     double  debyeLength(double alt);
     void    atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec);
