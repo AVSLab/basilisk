@@ -1131,3 +1131,58 @@ def clElem2eqElem(elements_cl, elements_eq):
     elements_eq.l  = elements_cl.Omega + elements_cl.omega + M
     elements_eq.L  = elements_cl.Omega + elements_cl.omega + elements_cl.f
     return
+
+
+def hillFrame(rc_N, vc_N):
+    """
+    Compute the Hill frame DCM HN
+    :param rc_N: inertial position vector
+    :param vc_N: inertial velocity vector
+    :return: HN: DCM that maps from the inertial frame N to the Hill (i.e. orbit) frame H
+    """
+    ir = rc_N/la.norm(rc_N)
+    h = np.cross(rc_N, vc_N)
+    ih = h / la.norm(h)
+    itheta = np.cross(ih, ir)
+
+    return np.array([ir, itheta, ih])
+
+
+def rv2hill(rc_N, vc_N, rd_N, vd_N):
+    """
+    Express the deputy position and velocity vector as chief by the chief Hill frame.
+
+    :param rc_N: chief inertial position vector
+    :param vc_N: chief inertial velocity vector
+    :param rd_N: chief deputy position vector
+    :param vd_N: chief deputy velocity vector
+    :return: rho_H, rhoPrime_H: Hill frame relative position and velocity vectors
+    """
+
+    HN = hillFrame(rc_N, vc_N)
+    fDot = la.norm(np.cross(rc_N, vc_N))/(la.norm(rc_N)**2)
+    omega_HN_H = np.array([0, 0, fDot])
+    rho_H = np.matmul(HN, rd_N - rc_N)
+    rhoPrime_H = np.matmul(HN, vd_N - vc_N) - np.cross(omega_HN_H, rho_H)
+    return rho_H, rhoPrime_H
+
+
+def hill2rv(rc_N, vc_N, rho_H, rhoPrime_H):
+    """
+    Map the deputy position and velocity vector relative to the chief Hill frame to inertial frame.
+
+    :param rc_N: chief inertial position vector
+    :param vc_N: chief inertial velocity vector
+    :param rho_H: deputy Hill relative position vector
+    :param rhoPrime_H: deputy Hill relative velocity vector
+    :return:  rd_N, vd_N: Deputy inertial position and velocity vectors
+    """
+
+    NH = hillFrame(rc_N, vc_N).transpose()
+    fDot = la.norm(np.cross(rc_N, vc_N)) / (la.norm(rc_N) ** 2)
+    omega_HN_H = np.array([0, 0, fDot])
+    rd_N = rc_N + np.matmul(NH, rho_H)
+    vd_N = vc_N + np.matmul(NH, rhoPrime_H + np.cross(omega_HN_H, rho_H))
+    return rd_N, vd_N
+
+
