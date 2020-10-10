@@ -20,6 +20,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.5
+-------------
 - Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
 - Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
   on macOS with Xcode 12 installed
@@ -54,8 +58,8 @@ Version 1.8.4
 - On Windows the new build system now builds :ref:`vizInterface`
 
 
-Version 1.8.3
--------------
+**Version 1.8.3**
+
 - Removed old ``CMakeLists.txt`` files that are no longer needed
 - Improved the build process for Linux such that ``vizInterface`` and ``opNav`` related modules are available
   again in Basilisk python scripts.  Thus Linux users can use 1.8.x onwards and still use these enhanced features.
