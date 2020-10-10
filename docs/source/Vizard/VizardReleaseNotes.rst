@@ -8,12 +8,24 @@ Release Notes
 .. sidebar:: In Progress Features
 
     - Adding star tracker configuration visualization
-    - Adding coarse sun sensor configuration visualization
     - general GUI enhancements
     - dynamic texture rendering
     - articulating CAD models
     - fuel tank visualization
     - trajectory history visualization
+    - illustrate the acutal orbit trajectory rather than the osculating trajectory
+    - show the battery and power state
+    - show the hard drive state
+    - Add the rate gyro visualization
+
+**Version 1.6.0**
+
+- Heads Up Displays of Coarse Sun Sensor coverage and boresight vectors
+- Panel Display of Coarse Sun Sensors measurements
+- updates to the vizMessage.proto to support Coarse Sun Sensors messages and settings
+- Standard Camera Panel settings fields can now be hidden by clicking a button on the panel providing a more compact view
+- changed the Unity player setting for the resolution quality panel to “Hidden By Default” to hopefully prevent it from popping up on every Windows app launch
+- inertial origin coordinate frame that is visible when only spacecraft messages are present (no celestial body messages) can now be hidden by toggling off the All Planet/Moon CS under the View menu
 
 
 **Version 1.5.1**
