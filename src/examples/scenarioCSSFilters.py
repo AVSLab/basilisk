@@ -479,8 +479,11 @@ def run(saveFigures, show_plots, FilterType, simTime):
         [-0.70710678118654746, 0, -0.70710678118654757],
         [-0.70710678118654746, -0.70710678118654757, 0.0]
     ]
+    counter = 0
     for CSSHat in CSSOrientationList:
         newCSS = coarse_sun_sensor.CoarseSunSensor()
+        newCSS.ModelTag = "CSS" + str(counter)
+        counter += 1
         newCSS.minOutput = 0.
         newCSS.senNoiseStd = 0.017
         newCSS.nHat_B = CSSHat

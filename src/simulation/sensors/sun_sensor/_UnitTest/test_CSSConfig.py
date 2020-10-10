@@ -81,6 +81,7 @@ def run(show_plots, accuracy):
     CSS1.sunInMsgName = "sun_message"
     # CSS1.cssConfigLogMsgName is not set to check default behavior
     CSS1.nHat_B = [1.0, 0.0, 0.0]
+    CSS1.cssConfigLogMsgName = "CSS1_config_log"
 
     CSS2 = coarse_sun_sensor.CoarseSunSensor()
     CSS2.ModelTag = "CSS2"
@@ -97,7 +98,7 @@ def run(show_plots, accuracy):
     scSim.AddModelToTask(simTaskName, CSS1)
     scSim.AddModelToTask(simTaskName, CSS2)
 
-    scSim.TotalSim.logThisMessage(CSS1.ModelTag + "_config_log", simulationTimeStep)
+    scSim.TotalSim.logThisMessage(CSS1.cssConfigLogMsgName, simulationTimeStep)
     scSim.TotalSim.logThisMessage(CSS2.cssConfigLogMsgName, simulationTimeStep)
 
 

@@ -150,13 +150,11 @@ void CoarseSunSensor::SelfInit()
         CreateNewMessage(this->cssDataOutMsgName, sizeof(CSSRawDataSimMsg),
                          this->outputBufferCount, "CSSRawDataSimMsg", this->moduleID);
     }
-    // make automated CSS log message name if output name is not specified
-    if (this->cssConfigLogMsgName == "") {
-        this->cssConfigLogMsgName = this->ModelTag + "_config_log";
+    if (this->cssConfigLogMsgName != "") {
+        this->cssConfigLogMsgId = SystemMessaging::GetInstance()->
+        CreateNewMessage(this->cssConfigLogMsgName, sizeof(CSSConfigLogSimMsg),
+                         this->outputBufferCount, "CSSConfigLogSimMsg", this->moduleID);
     }
-    this->cssConfigLogMsgId = SystemMessaging::GetInstance()->
-    CreateNewMessage(this->cssConfigLogMsgName, sizeof(CSSConfigLogSimMsg),
-                     this->outputBufferCount, "CSSConfigLogSimMsg", this->moduleID);
 
     return;
 }
@@ -329,20 +327,23 @@ void CoarseSunSensor::applySaturation()
  @param Clock The current simulation time*/
 void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
-    CSSRawDataSimMsg localMessage;
-    //! - Zero the output message
-    memset(&localMessage, 0x0, sizeof(CSSRawDataSimMsg));
-    //! - Set the outgoing data to the scaled computation
-    localMessage.OutputData = this->sensedValue;
-    //! - Write the outgoing message to the architecture
-    SystemMessaging::GetInstance()->WriteMessage(this->cssDataOutMsgID, Clock,
-        sizeof(CSSRawDataSimMsg),
-        reinterpret_cast<uint8_t*> (&localMessage),
-        this->moduleID);
+    if (this->cssDataOutMsgID >= 0) {
+        CSSRawDataSimMsg localMessage;
+        //! - Zero the output message
+        memset(&localMessage, 0x0, sizeof(CSSRawDataSimMsg));
+        //! - Set the outgoing data to the scaled computation
+        localMessage.OutputData = this->sensedValue;
+        //! - Write the outgoing message to the architecture
+        SystemMessaging::GetInstance()->WriteMessage(this->cssDataOutMsgID, Clock,
+            sizeof(CSSRawDataSimMsg),
+            reinterpret_cast<uint8_t*> (&localMessage),
+            this->moduleID);
+    }
 
     // create CSS configuration log message
     if (this->cssConfigLogMsgId >= 0) {
         CSSConfigLogSimMsg configMsg;
+        memset(&configMsg, 0x0, sizeof(CSSConfigLogSimMsg));
         configMsg.fov = this->fov;
         configMsg.signal = this->sensedValue;
         configMsg.minSignal = this->minOutput;
