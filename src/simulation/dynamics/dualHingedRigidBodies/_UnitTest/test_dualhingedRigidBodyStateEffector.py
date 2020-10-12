@@ -310,7 +310,6 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.mass2 = 50.0
     unitTestSim.panel1.IPntS2_S2 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel1.d2 = 0.75
-    unitTestSim.panel1.l33 = 1.5
     unitTestSim.panel1.k2 = 100.0
     unitTestSim.panel1.c2 = 0.0
     unitTestSim.panel1.nameOfTheta2State = "dualHingedRigidBody1Theta2"
@@ -352,6 +351,8 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.theta1DotInit = 0.0
     unitTestSim.panel2.theta2Init = 0.0
     unitTestSim.panel2.theta2DotInit = 0.0
+    unitTestSim.panel2.hingedRigidBody1OutMsgName = "panel1_states"
+    unitTestSim.panel2.hingedRigidBody2OutMsgName = "panel2_states"
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
@@ -381,8 +382,10 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     if not useScPlus:
         scStateLogName = scObject.primaryCentralSpacecraft.spacecraftName + scStateLogName
     unitTestSim.TotalSim.logThisMessage(scStateLogName, testProcessRate)
-    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyOutMsgName, testProcessRate)
-    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates1", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates2", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBody1OutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBody2OutMsgName, testProcessRate)
     # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
     # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
 
@@ -402,8 +405,10 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     rOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.r_CN_N', list(range(3)))
     vOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.v_CN_N', list(range(3)))
     sigma_BN = unitTestSim.pullMessageLogData(scStateLogName + '.sigma_BN', list(range(3)))
-    # theta1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyOutMsgName+'.theta')
-    # theta2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyOutMsgName+'.theta')
+    thetaP1A1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates1.theta')
+    thetaP1A2 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates2.theta')
+    thetaP2A1 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBody1OutMsgName+'.theta')
+    thetaP2A2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBody1OutMsgName+'.theta')
 
     # rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
     # vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
@@ -458,17 +463,23 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     plt.xlabel('time (s)')
     plt.ylabel(r'MRP $\sigma_{B/N}$')
 
-    # plt.figure()
-    # plt.clf()
-    # plt.plot(theta1[:, 0] * macros.NANO2SEC, theta1[:, 1]*macros.R2D,
-    #          color=unitTestSupport.getLineColor(1, 3),
-    #          label=r'$\theta_{1}$')
-    # plt.plot(theta2[:, 0] * macros.NANO2SEC, theta2[:, 1]*macros.R2D,
-    #          color=unitTestSupport.getLineColor(2, 3),
-    #          label=r'$\theta_{2}$')
-    # plt.legend(loc='lower right')
-    # plt.xlabel('time (s)')
-    # plt.ylabel('Hinge Angles [deg]')
+    plt.figure()
+    plt.clf()
+    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP1A1[:, 1]*macros.R2D,
+             color=unitTestSupport.getLineColor(1, 4),
+             label=r'Panel 1 $\theta_{1}$')
+    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP1A2[:, 1]*macros.R2D,
+             color=unitTestSupport.getLineColor(2, 4),
+             label=r'Panel 1 $\theta_{2}$')
+    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP2A1[:, 1] * macros.R2D,
+             color=unitTestSupport.getLineColor(3, 4),
+             label=r'Panel 2 $\theta_{1}$')
+    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP2A2[:, 1] * macros.R2D,
+             color=unitTestSupport.getLineColor(4, 4),
+             label=r'Panel 2 $\theta_{2}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('time (s)')
+    plt.ylabel('Hinge Angles [deg]')
 
     if show_plots:
         plt.show()

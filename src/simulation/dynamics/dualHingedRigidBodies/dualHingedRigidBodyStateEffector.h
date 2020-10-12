@@ -28,6 +28,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "utilities/bskLogging.h"
+#include "simMessages/hingedRigidBodySimMsg.h"
 
 
 
@@ -47,6 +48,7 @@ public:
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
+    void writeOutputStateMessages(uint64_t CurrentClock);
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body
@@ -74,6 +76,8 @@ public:
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     BSKLogger bskLogger;                      //!< -- BSK Logging
     std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
+    std::string hingedRigidBody1OutMsgName; //!< -- state output message name of panel 1
+    std::string hingedRigidBody2OutMsgName; //!< -- state output message name of panel 1
 
 private:
     double u1;                      //!< [N-m] motor torques on panel 1
@@ -117,7 +121,9 @@ private:
     StateData *theta1DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
-    int64_t motorTorqueInMsgId;      //!< -- motor torque message ID
+    int64_t motorTorqueInMsgId;       //!< -- motor torque message ID
+    int64_t hingedRigidBody1OutMsgId; //!< -- state output message ID of panel 1
+    int64_t hingedRigidBody2OutMsgId; //!< -- state output message ID of panel 2
 
 };
 

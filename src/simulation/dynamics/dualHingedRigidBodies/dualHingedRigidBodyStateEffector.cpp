@@ -77,8 +77,21 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
  @return void*/
 void DualHingedRigidBodyStateEffector::SelfInit()
 {
-//    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-//
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+
+    if (this->hingedRigidBody1OutMsgName.length() == 0) {
+    this->hingedRigidBody1OutMsgName = this->ModelTag + "_OutputStates1";
+    }
+    if (this->hingedRigidBody2OutMsgName.length() == 0) {
+        this->hingedRigidBody2OutMsgName = this->ModelTag + "_OutputStates2";
+    }
+
+
+    this->hingedRigidBody1OutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBody1OutMsgName,
+                                             sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
+    this->hingedRigidBody2OutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBody2OutMsgName,
+                                             sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
+
 //    this->hingedRigidBodyConfigLogOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyConfigLogOutMsgName,
 //                                             sizeof(SCPlusStatesSimMsg), 2, "SCPlusStatesSimMsg", this->moduleID);
 
@@ -337,6 +350,48 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
     rotEnergyContr = rotEnergyContrS1 + rotEnergyContrS2;
     
     return;
+}
+
+/*! This method takes the computed theta states and outputs them to the m
+ messaging system.
+ @return void
+ @param CurrentClock The current simulation time (used for time stamping)
+ */
+void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
+{
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+    std::vector<int64_t>::iterator it;
+
+    HingedRigidBodySimMsg panelOutputStates;  //!< instance of messaging system message struct
+    // panel 1 states
+    memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
+    panelOutputStates.theta = this->theta1;
+    panelOutputStates.thetaDot = this->theta1Dot;
+    messageSys->WriteMessage(this->hingedRigidBody1OutMsgId, CurrentClock,
+                         sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
+                             this->moduleID);
+
+    // panel 2 states
+    memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
+    panelOutputStates.theta = this->theta2;
+    panelOutputStates.thetaDot = this->theta2Dot;
+    messageSys->WriteMessage(this->hingedRigidBody2OutMsgId, CurrentClock,
+                         sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
+                             this->moduleID);
+
+
+//    // write out the panel state config log message
+//    SCPlusStatesSimMsg configLogMsg;
+//    memset(&configLogMsg, 0x0, sizeof(SCPlusStatesSimMsg));
+//    // Note, logging the hinge frame S is the body frame B of that object
+//    eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
+//    eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
+//    eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
+//    eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+//    messageSys->WriteMessage(this->hingedRigidBodyConfigLogOutMsgId, CurrentClock,
+//                         sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&configLogMsg),
+//                             this->moduleID);
+
 }
 
 /*! This method is used so that the simulation will ask DHRB to update messages.
