@@ -32,10 +32,12 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
+from Basilisk.simulation import spacecraftDynamics
+from Basilisk.simulation import simFswInterfaceMessages
 
 @pytest.mark.parametrize("useFlag, testCase", [
-    (False,'NoGravity'),
-    (False,'Gravity')
+    (False, 'NoGravity'),
+    (False, 'Gravity')
 ])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -169,35 +171,35 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     initialOrbAngMom_N = [
-                [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
+                [orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                [orbAngMom_N[-1, 0], orbAngMom_N[-1, 1], orbAngMom_N[-1, 2], orbAngMom_N[-1, 3]]
                  ]
 
     initialRotAngMom_N = [
-                [rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]
+                [rotAngMom_N[0, 1], rotAngMom_N[0, 2], rotAngMom_N[0, 3]]
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                [rotAngMom_N[-1, 0], rotAngMom_N[-1, 1], rotAngMom_N[-1, 2], rotAngMom_N[-1, 3]]
                  ]
 
     initialOrbEnergy = [
-                [orbEnergy[0,1]]
+                [orbEnergy[0, 1]]
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                [orbEnergy[-1, 0], orbEnergy[-1, 1]]
                  ]
 
     initialRotEnergy = [
-                [rotEnergy[int(len(rotEnergy)/2)+1,1]]
+                [rotEnergy[int(len(rotEnergy)/2)+1, 1]]
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                [rotEnergy[-1, 0], rotEnergy[-1, 1]]
                  ]
 
     plt.close('all')
@@ -260,5 +262,271 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+
+@pytest.mark.parametrize("useScPlus", [True, False])
+def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    if useScPlus:
+        scObject = spacecraftPlus.SpacecraftPlus()
+        scObject.ModelTag = "spacecraftBody"
+    else:
+        scObject = spacecraftDynamics.SpacecraftDynamics()
+        scObject.ModelTag = "spacecraftBody"
+        scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    unitTestSim.panel1 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    unitTestSim.panel2 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+
+    # Define Variable for panel 1
+    unitTestSim.panel1.ModelTag = "panel1"
+    unitTestSim.panel1.mass1 = 50.0
+    unitTestSim.panel1.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
+    unitTestSim.panel1.d1 = 0.75
+    unitTestSim.panel1.l1 = 1.5
+    unitTestSim.panel1.k1 = 0.0
+    unitTestSim.panel1.c1 = 0.0
+    unitTestSim.panel1.rH1B_B = [[0.5], [0.0], [1.0]]
+    unitTestSim.panel1.dcmH1B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.nameOfTheta1State = "dualHingedRigidBody1Theta1"
+    unitTestSim.panel1.nameOfTheta1DotState = "dualHingedRigidBody1ThetaDot1"
+    unitTestSim.panel1.mass2 = 50.0
+    unitTestSim.panel1.IPntS2_S2 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
+    unitTestSim.panel1.d2 = 0.75
+    unitTestSim.panel1.l33 = 1.5
+    unitTestSim.panel1.k2 = 100.0
+    unitTestSim.panel1.c2 = 0.0
+    unitTestSim.panel1.nameOfTheta2State = "dualHingedRigidBody1Theta2"
+    unitTestSim.panel1.nameOfTheta2DotState = "dualHingedRigidBody1ThetaDot2"
+    unitTestSim.panel1.theta1Init = 5*numpy.pi/180.0
+    unitTestSim.panel1.theta1DotInit = 0.0
+    unitTestSim.panel1.theta2Init = 0.0
+    unitTestSim.panel1.theta2DotInit = 0.0
+    unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"
+
+    # set a fixed motor torque message
+    motorMsg = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
+    motorMsg.motorTorque = [2.0, 4.0]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               unitTestSim.panel1.motorTorqueInMsgName,
+                               motorMsg)
+
+    # Define Variables for panel 2
+    unitTestSim.panel2.ModelTag = "panel2"
+    unitTestSim.panel2.mass1 = 50.0
+    unitTestSim.panel2.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
+    unitTestSim.panel2.d1 = 0.75
+    unitTestSim.panel2.l1 = 1.5
+    unitTestSim.panel2.k1 = 0.0
+    unitTestSim.panel2.c1 = 0.0
+    unitTestSim.panel2.rH1B_B = [[-0.5], [0.0], [1.0]]
+    unitTestSim.panel2.dcmH1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel2.nameOfTheta1State = "dualHingedRigidBody2Theta1"
+    unitTestSim.panel2.nameOfTheta1DotState = "dualHingedRigidBody2ThetaDot1"
+    unitTestSim.panel2.mass2 = 50.0
+    unitTestSim.panel2.IPntS2_S2 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
+    unitTestSim.panel2.d2 = 0.75
+    unitTestSim.panel2.k2 = 0.0
+    unitTestSim.panel2.c2 = 0.0
+    unitTestSim.panel2.nameOfTheta2State = "dualHingedRigidBody2Theta2"
+    unitTestSim.panel2.nameOfTheta2DotState = "dualHingedRigidBody2ThetaDot2"
+    unitTestSim.panel2.theta1Init = 5 * numpy.pi / 180.0
+    unitTestSim.panel2.theta1DotInit = 0.0
+    unitTestSim.panel2.theta2Init = 0.0
+    unitTestSim.panel2.theta2DotInit = 0.0
+
+    # Add panels to spaceCraft
+    scObjectPrimary = scObject
+    if not useScPlus:
+        scObjectPrimary = scObject.primaryCentralSpacecraft
+
+    scObjectPrimary.addStateEffector(unitTestSim.panel1)
+    scObjectPrimary.addStateEffector(unitTestSim.panel2)
+
+    # Define mass properties of the rigid part of the spacecraft
+    scObjectPrimary.hub.mHub = 750.0
+    scObjectPrimary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObjectPrimary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    # Set the initial values for the states
+    scObjectPrimary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObjectPrimary.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObjectPrimary.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObjectPrimary.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+
+    scStateLogName = "inertial_state_output"
+    if not useScPlus:
+        scStateLogName = scObject.primaryCentralSpacecraft.spacecraftName + scStateLogName
+    unitTestSim.TotalSim.logThisMessage(scStateLogName, testProcessRate)
+    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyOutMsgName, testProcessRate)
+    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyOutMsgName, testProcessRate)
+    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
+    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
+
+    unitTestSim.InitializeSimulation()
+
+    variableLogTag = scObject.ModelTag
+    if not useScPlus:
+        variableLogTag += ".primaryCentralSpacecraft"
+
+    unitTestSim.AddVariableForLogging(variableLogTag + ".totRotAngMomPntC_N",
+                                      testProcessRate, 0, 2, 'double')
+
+    stopTime = 10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    rOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.r_CN_N', list(range(3)))
+    vOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.v_CN_N', list(range(3)))
+    sigma_BN = unitTestSim.pullMessageLogData(scStateLogName + '.sigma_BN', list(range(3)))
+    # theta1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyOutMsgName+'.theta')
+    # theta2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyOutMsgName+'.theta')
+
+    # rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
+    # vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
+    # sB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
+    # oB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
+    # rB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
+    # vB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
+    # sB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
+    # oB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
+
+    rotAngMom_N = unitTestSim.GetLogVariableData(
+        variableLogTag + ".totRotAngMomPntC_N")
+
+    # Get the last sigma and position
+    dataPos = [rOut_CN_N[-1]]
+
+    truePos = [[0., 0., 0.]]
+
+    initialRotAngMom_N = [[rotAngMom_N[0, 1], rotAngMom_N[0, 2], rotAngMom_N[0, 3]]]
+
+    finalRotAngMom = [rotAngMom_N[-1]]
+
+    plt.close("all")
+
+    plt.figure()
+    plt.clf()
+    plt.plot(rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]) ,
+             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]) ,
+             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) )
+    plt.xlabel('time (s)')
+    plt.ylabel('Ang. Momentum Difference')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(vOut_CN_N[:, 0] * 1e-9, vOut_CN_N[:, 1], vOut_CN_N[:, 0] * 1e-9, vOut_CN_N[:, 2], vOut_CN_N[:, 0] * 1e-9,
+             vOut_CN_N[:, 3])
+    plt.xlabel('time (s)')
+    plt.ylabel('m/s')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 1],
+             color=unitTestSupport.getLineColor(1, 3),
+             label=r'$\sigma_{1}$')
+    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 2],
+             color=unitTestSupport.getLineColor(2, 3),
+             label=r'$\sigma_{2}$')
+    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 3],
+             color=unitTestSupport.getLineColor(3, 3),
+             label=r'$\sigma_{3}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('time (s)')
+    plt.ylabel(r'MRP $\sigma_{B/N}$')
+
+    # plt.figure()
+    # plt.clf()
+    # plt.plot(theta1[:, 0] * macros.NANO2SEC, theta1[:, 1]*macros.R2D,
+    #          color=unitTestSupport.getLineColor(1, 3),
+    #          label=r'$\theta_{1}$')
+    # plt.plot(theta2[:, 0] * macros.NANO2SEC, theta2[:, 1]*macros.R2D,
+    #          color=unitTestSupport.getLineColor(2, 3),
+    #          label=r'$\theta_{2}$')
+    # plt.legend(loc='lower right')
+    # plt.xlabel('time (s)')
+    # plt.ylabel('Hinge Angles [deg]')
+
+    if show_plots:
+        plt.show()
+    plt.close("all")
+
+    accuracy = 1e-10
+    for i in range(0, len(truePos)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(dataPos[i], truePos[i], 3, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
+
+    for i in range(0, len(initialRotAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
+            testFailCount += 1
+            testMessages.append(
+                "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
+
+    # check config log messages
+    # if not unitTestSupport.isArrayEqual(rB1N, [2.0, 0, 0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test")
+    # if not unitTestSupport.isArrayEqual(vB1N, [0.0, 0, 0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test")
+    # if not unitTestSupport.isArrayEqual(sB1N, [0.0, 0, 1.0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test")
+    # if not unitTestSupport.isArrayEqual(oB1N, [0.0, 0, 0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test")
+    # if not unitTestSupport.isArrayEqual(rB2N, [-2.0, 0, 0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test")
+    # if not unitTestSupport.isArrayEqual(vB2N, [0.0, 0, 0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test")
+    # if not unitTestSupport.isArrayEqual(sB2N, [0.0, 0, 0.0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test")
+    # if not unitTestSupport.isArrayEqual(oB2N, [0.0, 0, 0], 3, accuracy):
+    #     testFailCount += 1
+    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
+
+
+    if testFailCount == 0:
+        print("PASSED: " + " Hinged Rigid Body integrated test with motor torques")
+
+    assert testFailCount < 1, testMessages
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+
+
+
 if __name__ == "__main__":
-    dualHingedRigidBodyTest(True,False,'Gravity')
+    # dualHingedRigidBodyTest(True, False, 'Gravity')
+    test_dualHingedRigidBodyMotorTorque(True,   # show plots
+                                        True)   # use scPlus

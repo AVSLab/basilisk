@@ -19,6 +19,8 @@
 
 
 #include "dualHingedRigidBodyStateEffector.h"
+#include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+#include "architecture/messaging/system_messaging.h"
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
 {
@@ -37,10 +39,13 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->d1 = 1.0;
     this->k1 = 1.0;
     this->c1 = 0.0;
+    this->l1 = 0.0;
+    this->u1 = 0.0;
     this->mass2 = 0.0;
     this->d2 = 1.0;
     this->k2 = 1.0;
     this->c2 = 0.0;
+    this->u2 = 0.0;
     this->theta1Init = 0.0;
     this->theta1DotInit = 0.0;
     this->theta2Init = 0.0;
@@ -55,12 +60,43 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->nameOfTheta2State = "hingedRigidBodyTheta2";
     this->nameOfTheta2DotState = "hingedRigidBodyTheta2Dot";
 
+    this->motorTorqueInMsgName = "";
+    this->motorTorqueInMsgId = -1;
+
     return;
 }
 
 
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 {
+    return;
+}
+
+/*! This method initializes the object. It creates the module's output
+ messages.
+ @return void*/
+void DualHingedRigidBodyStateEffector::SelfInit()
+{
+//    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+//
+//    this->hingedRigidBodyConfigLogOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyConfigLogOutMsgName,
+//                                             sizeof(SCPlusStatesSimMsg), 2, "SCPlusStatesSimMsg", this->moduleID);
+
+
+    return;
+}
+
+/*! This method subscribes to messages the HRB needs.
+ @return void*/
+void DualHingedRigidBodyStateEffector::CrossInit()
+{
+    /* check if the optional motor torque input message name has been set */
+    if (this->motorTorqueInMsgName.length() > 0) {
+        this->motorTorqueInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->motorTorqueInMsgName,
+                                                                                     sizeof(ArrayMotorTorqueIntMsg),
+                                                                                     moduleID);
+    }
+
     return;
 }
 
@@ -199,12 +235,13 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     this->matrixGDHRB.row(0) = -(this->IPntS1_S1(1,1)*this->sHat12_B.transpose() - this->mass1*this->d1*this->sHat13_B.transpose()*this->rTildeS1B_B - this->mass2*this->l1*this->sHat13_B.transpose()*this->rTildeS2B_B);
     this->matrixGDHRB.row(1) = -(this->IPntS2_S2(1,1)*this->sHat22_B.transpose() - this->mass2*this->d2*this->sHat23_B.transpose()*this->rTildeS2B_B);
 
-    this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omegaBN_S1(2)*this->omegaBN_S1(0) - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_B.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_B.dot(gravForcePan2)
+    this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omegaBN_S1(2)*this->omegaBN_S1(0)
+                            + this->u1 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_B.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_B.dot(gravForcePan2)
                             - this->mass1*this->d1*this->sHat13_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS1B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS1B_B)
                             - this->mass2*this->l1*this->sHat13_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_B); //still missing torque and force terms - SJKC
 
     this->vectorVDHRB(1) =  -(this->IPntS2_S2(0,0) - this->IPntS2_S2(2,2))*this->omegaBN_S2(2)*this->omegaBN_S2(0)
-                            - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_B.dot(gravTorquePan2PntH2) - this->mass2*this->d2*this->sHat23_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B); // still missing torque term. - SJKC
+                            + this->u2 - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_B.dot(gravTorquePan2PntH2) - this->mass2*this->d2*this->sHat23_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B); // still missing torque term. - SJKC
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
@@ -299,5 +336,31 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
                         + 0.5*this->k2*this->theta2*this->theta2;
     rotEnergyContr = rotEnergyContrS1 + rotEnergyContrS2;
     
+    return;
+}
+
+/*! This method is used so that the simulation will ask DHRB to update messages.
+ @return void
+ @param CurrentSimNanos The current simulation time in nanoseconds
+ */
+void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+{
+    //! - Zero the command buffer and read the incoming command array
+    if (this->motorTorqueInMsgId >= 0) {
+        SingleMessageHeader LocalHeader;
+        ArrayMotorTorqueIntMsg IncomingCmdBuffer;
+        memset(&IncomingCmdBuffer, 0x0, sizeof(ArrayMotorTorqueIntMsg));
+        SystemMessaging::GetInstance()->ReadMessage(this->motorTorqueInMsgId, &LocalHeader,
+                                                    sizeof(ArrayMotorTorqueIntMsg),
+                                                    reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
+        this->u1 = IncomingCmdBuffer.motorTorque[0];
+        this->u2 = IncomingCmdBuffer.motorTorque[1];
+    }
+
+    /* compute panel inertial states */
+//    this->computePanelInertialStates();
+
+    this->writeOutputStateMessages(CurrentSimNanos);
+
     return;
 }

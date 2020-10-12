@@ -44,13 +44,16 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void SelfInit();
+    void CrossInit();
+    void UpdateState(uint64_t CurrentSimNanos);
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body
     double mass2;                     //!< [kg] mass of 2nd hinged rigid body
-    double d1;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double d2;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double l1;                        //!< [m] distance from hinge point to hinged rigid body center of mass
+    double d1;                        //!< [m] distance from hinge point H1 to hinged rigid body center of mass S1
+    double d2;                        //!< [m] distance from hinge point H2 to hinged rigid body center of mass S2
+    double l1;                        //!< [m] distance from hinge point H1 to hinged point H2
     double k1;                        //!< [N-m/rad] torsional spring constant of hinge
     double k2;                        //!< [N-m/rad] torsional spring constant of hinge
     double c1;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
@@ -70,8 +73,11 @@ public:
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
 
 private:
+    double u1;                      //!< [N-m] motor torques on panel 1
+    double u2;                      //!< [N-m] motor torques on panel 2
     Eigen::Matrix3d rTildeH1B_B;      //!< [-] Tilde matrix of rHB_B
     Eigen::Matrix3d dcmS1B;           //!< [-] DCM from body to S1 frame
     Eigen::Matrix3d dcmS2B;           //!< [-] DCM from body to S2 frame
@@ -111,6 +117,7 @@ private:
     StateData *theta1DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
+    int64_t motorTorqueInMsgId;      //!< -- motor torque message ID
 
 };
 
