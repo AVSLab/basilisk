@@ -88,7 +88,6 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     unitTestSim.panel1.mass2 = 50.0
     unitTestSim.panel1.IPntS2_S2 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel1.d2 = 0.75
-    unitTestSim.panel1.l2 = 1.5
     unitTestSim.panel1.k2 = 100.0
     unitTestSim.panel1.c2 = 0.0
     unitTestSim.panel1.nameOfTheta2State = "dualHingedRigidBody1Theta2"
@@ -112,7 +111,6 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     unitTestSim.panel2.mass2 = 50.0
     unitTestSim.panel2.IPntS2_S2 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel2.d2 = 0.75
-    unitTestSim.panel2.l2 = 1.5
     unitTestSim.panel2.k2 = 100.0
     unitTestSim.panel2.c2 = 0.0
     unitTestSim.panel2.nameOfTheta2State = "dualHingedRigidBody2Theta2"

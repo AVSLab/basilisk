@@ -51,7 +51,6 @@ public:
     double d1;                        //!< [m] distance from hinge point to hinged rigid body center of mass
     double d2;                        //!< [m] distance from hinge point to hinged rigid body center of mass
     double l1;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double l2;                        //!< [m] distance from hinge point to hinged rigid body center of mass
     double k1;                        //!< [N-m/rad] torsional spring constant of hinge
     double k2;                        //!< [N-m/rad] torsional spring constant of hinge
     double c1;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
