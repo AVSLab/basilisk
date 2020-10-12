@@ -20,7 +20,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hil()``
 
 Version 1.8.5
 -------------

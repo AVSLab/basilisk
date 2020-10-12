@@ -26,6 +26,121 @@
 #include "linearAlgebra.h"
 #include "astroConstants.h"
 #include "utilities/bsk_Print.h"
+#include "rigidBodyKinematics.h"
+
+
+/*
+ * Function hillFrame
+ * Purpose: maps inertial position and velocity vectors in the Hill frame DCM HN
+ * Inputs:
+ *   rc_N: inertial position vector
+ *   vc_N: inertial velocity vector
+ * Outputs:
+ *   HN: Hill frame DCM relative to inertial frame
+ */
+void hillFrame(double *rc_N, double *vc_N, double HN[3][3])
+{
+    double ir_N[3];         /* orbit radial unit direction vector */
+    double itheta_N[3];     /* along-track unit direction vector */
+    double ih_N[3];         /* orbit plane normal unit direction vector */
+    double hVec_N[3];       /* orbit angular momentum vector */
+
+    v3Normalize(rc_N, ir_N);
+    v3Cross(rc_N, vc_N, hVec_N);
+    v3Normalize(hVec_N, ih_N);
+    v3Cross(ih_N, ir_N, itheta_N);
+    v3Copy(ir_N, HN[0]);
+    v3Copy(itheta_N, HN[1]);
+    v3Copy(ih_N, HN[2]);
+
+    return;
+}
+
+/*
+ * Function hill2rv
+ * Purpose: maps Hill frame deputy states to inertial inertial position and velocity vectors
+ * Inputs:
+ *   rc_N: chief inertial position vector
+ *   vc_N: chief inertial velocity vector
+ *   rho_H: deputy Hill position vector
+ *   rhoPrime_H: deputy Hill velocity vector
+ * Outputs:
+ *   rd_N: deputy inertial position vector
+ *   vd_N: deputy inertial velocity vector
+ */
+void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, double *rd_N, double *vd_N)
+{
+    double HN[3][3];        /* DCM of Hill frame relative to inertial */
+    double NH[3][3];        /* DCM of inertial frame relative to Hill */
+    double hVec_N[3];       /* orbit angular momentum vector */
+    double rc;              /* chief orbit radius */
+    double fDot;            /* chief true anomaly rate */
+    double omega_HN_H[3];   /* Hill frame angular velocity */
+    double rho_N[3];        /* deputy relative to chief vector in N frame components */
+
+    hillFrame(rc_N, vc_N, HN);
+    m33Transpose(HN, NH);
+    v3Cross(rc_N, vc_N, hVec_N);
+    rc = v3Norm(rc_N);
+    fDot = v3Norm(hVec_N)/rc/rc;
+    v3Set(0, 0, fDot, omega_HN_H);
+
+    /* compute inertial deputy position */
+    m33MultV3(NH, rho_H, rho_N);
+    v3Add(rc_N, rho_N, rd_N);
+
+    /* compute inertial deputy velocity */
+    v3Cross(omega_HN_H, rho_H, vd_N);
+    v3Add(vd_N, rhoPrime_H, vd_N);
+    m33MultV3(NH, vd_N, vd_N);
+    v3Add(vd_N, vc_N, vd_N);
+
+    return;
+}
+
+
+/*
+ * Function rv2hill
+ * Purpose: maps inertial frame deputy states to Hill inertial position and velocity vectors
+ * Inputs:
+ *   rc_N: chief inertial position vector
+ *   vc_N: chief inertial velocity vector
+ *   rd_N: deputy inertial position vector
+ *   vd_N: deputy inertial velocity vector
+ * Outputs:
+ *   rho_H: deputy Hill position vector
+ *   rhoPrime_H: deputy Hill velocity vector
+ */
+void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H)
+{
+    double HN[3][3];        /* DCM of Hill frame relative to inertial */
+    double hVec_N[3];       /* orbit angular momentum vector */
+    double rc;              /* chief orbit radius */
+    double fDot;            /* chief true anomaly rate */
+    double omega_HN_H[3];   /* Hill frame angular velocity */
+    double rho_N[3];        /* deputy relative to chief vector in N frame components */
+    double rhoDot_N[3];     /* inertial derivative of deputy/chief vector */
+    double rhoDot_H[3];     /* inertial derivative of deputy/chief vector */
+
+    hillFrame(rc_N, vc_N, HN);
+    v3Cross(rc_N, vc_N, hVec_N);
+    rc = v3Norm(rc_N);
+    fDot = v3Norm(hVec_N)/rc/rc;
+    v3Set(0, 0, fDot, omega_HN_H);
+
+    /* compute Hill frame position */
+    v3Subtract(rd_N, rc_N, rho_N);
+    m33MultV3(HN, rho_N, rho_H);
+
+    /* compute Hill frame velocity */
+    v3Subtract(vd_N, vc_N, rhoDot_N);
+    m33MultV3(HN, rhoDot_N, rhoDot_H);
+    v3Cross(omega_HN_H, rho_H, rhoPrime_H);
+    v3Subtract(rhoDot_H, rhoPrime_H, rhoPrime_H);
+    
+    return;
+}
+
 
 /*
  * Function: E2f

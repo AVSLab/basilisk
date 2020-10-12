@@ -1583,6 +1583,73 @@ int testOrbitalAnomalies(double accuracy)
     return errorCount;
 }
 
+int testOrbitalHill(double accuracy)
+{
+    int errorCount = 0;
+
+    double rc_N[3];
+    double vc_N[3];
+    double rd_N[3];
+    double vd_N[3];
+    double rho_H[3];
+    double rhoPrime_H[3];
+    double HN[3][3];
+    double trueVector[3];
+
+    printf("--testOrbitalHill, accuracy = %g\n", accuracy);
+
+    /* test hillFrame()*/
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    hillFrame(rc_N, vc_N, HN);
+    double HNtrue[3][3];
+    m33Set(0.0506938, 0.931702, 0.35967, -0.93404, -0.0832604,
+           0.347329, 0.353553, -0.353553, 0.866025, HNtrue);
+    for (int i = 0; i<3; i++) {
+        if(!v3IsEqualRel(HN[i], HNtrue[i], accuracy)) {
+            printf("orbitalMotion:hillFrame failed case %d\n", i);
+            errorCount++;
+        }
+    }
+
+    /* test hill2rv() */
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    v3Set(-0.286371, 0.012113, 0.875157, rho_H);
+    v3Set(0.000689358, 0.000620362, 0.000927434, rhoPrime_H);
+    hill2rv(rc_N, vc_N, rho_H, rhoPrime_H, rd_N, vd_N);
+    v3Set(353.6672082996106, 6494.264242564805, 2507.898786238764, trueVector);
+    if(!v3IsEqualRel(rd_N, trueVector, accuracy)) {
+        printf("orbitalMotion:hill2rv failed case rd_N\n");
+        errorCount++;
+    }
+    v3Set(-7.073766857682589, -0.5663665778237081, 2.65770594819381, trueVector);
+    if(!v3IsEqualRel(vd_N, trueVector, accuracy)) {
+        printf("orbitalMotion:hill2rv failed case vd_N\n");
+        errorCount++;
+    }
+
+    /* test rv2hill() */
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    v3Set(353.6672082996106, 6494.264242564805, 2507.898786238764, rd_N);
+    v3Set(-7.073766857682589, -0.5663665778237081, 2.65770594819381, vd_N);
+    rv2hill(rc_N, vc_N, rd_N, vd_N, rho_H, rhoPrime_H);
+    v3Set(-0.286371, 0.012113, 0.875157, trueVector);
+    if(!v3IsEqualRel(rho_H, trueVector, accuracy)) {
+        printf("orbitalMotion:rv2hill failed case rho_H\n");
+        errorCount++;
+    }
+    v3Set(0.000689358, 0.000620362, 0.000927434, trueVector);
+    if(!v3IsEqualRel(rhoPrime_H, trueVector, accuracy)) {
+        printf("orbitalMotion:rv2hill failed case rhoPrime_H\n");
+        errorCount++;
+    }
+
+
+    return errorCount;
+}
+
 int testOrbitalElements(double accuracy)
 {
     int errorCount = 0;
@@ -1904,8 +1971,8 @@ int testOrbitalElements(double accuracy)
     elements.omega = 113.0 * D2R;
     elements.f     = 123.0 * D2R;
     elem2rv(MU_EARTH, &elements, r, v);
-    v3PrintScreen("r", r);
-    v3PrintScreen("v", v);
+//    v3PrintScreen("r", r);
+//    v3PrintScreen("v", v);
     v3Set(-1687.13290757899,    -7307.77548588926, 0, r2);
     v3Set(-7.10333318346184,     1.63993368302803, 0, v3_2);
     if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
