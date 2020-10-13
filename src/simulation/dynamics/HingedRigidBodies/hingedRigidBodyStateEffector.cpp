@@ -51,6 +51,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
     this->hingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
+    this->hingedRigidBodyConfigLogOutMsgId = -1;
     this->hingedRigidBodyConfigLogOutMsgName = "hingedRigidBodyConfigLog";
     this->hingedRigidBodyConfigLogOutMsgId = -1;
     this->motorTorqueInMsgName = "";
@@ -103,25 +104,28 @@ void HingedRigidBodyStateEffector::CrossInit()
 void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    std::vector<int64_t>::iterator it;
 
-    this->HRBoutputStates.theta = this->theta;
-    this->HRBoutputStates.thetaDot = this->thetaDot;
-    messageSys->WriteMessage(this->hingedRigidBodyOutMsgId, CurrentClock,
-                         sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&this->HRBoutputStates),
-                             this->moduleID);
+    if (this->hingedRigidBodyOutMsgId >= 0) {
+        this->HRBoutputStates.theta = this->theta;
+        this->HRBoutputStates.thetaDot = this->thetaDot;
+        messageSys->WriteMessage(this->hingedRigidBodyOutMsgId, CurrentClock,
+                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&this->HRBoutputStates),
+                                 this->moduleID);
+    }
 
     // write out the panel state config log message
-    SCPlusStatesSimMsg configLogMsg;
-    memset(&configLogMsg, 0x0, sizeof(SCPlusStatesSimMsg));
-    // Note, logging the hinge frame S is the body frame B of that object
-    eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
-    eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
-    eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
-    eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
-    messageSys->WriteMessage(this->hingedRigidBodyConfigLogOutMsgId, CurrentClock,
-                         sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&configLogMsg),
-                             this->moduleID);
+    if (this->hingedRigidBodyConfigLogOutMsgId >= 0) {
+        SCPlusStatesSimMsg configLogMsg;
+        memset(&configLogMsg, 0x0, sizeof(SCPlusStatesSimMsg));
+        // Note, logging the hinge frame S is the body frame B of that object
+        eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
+        eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
+        eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
+        eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+        messageSys->WriteMessage(this->hingedRigidBodyConfigLogOutMsgId, CurrentClock,
+                             sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&configLogMsg),
+                                 this->moduleID);
+    }
 
 }
 
