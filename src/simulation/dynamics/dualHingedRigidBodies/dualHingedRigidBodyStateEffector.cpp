@@ -63,6 +63,7 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->motorTorqueInMsgName = "";
     this->motorTorqueInMsgId = -1;
 
+    this->dualHingedRigidBodyOutMsgName = "";
     return;
 }
 
@@ -79,12 +80,12 @@ void DualHingedRigidBodyStateEffector::SelfInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
 
-    if (this->hingedRigidBodyOutMsgName.length() == 0) {
-    this->hingedRigidBodyOutMsgName = this->ModelTag;
+    /* create panel angular state output messages */
+    if (this->dualHingedRigidBodyOutMsgName.length() == 0) {
+    this->dualHingedRigidBodyOutMsgName = this->ModelTag;
     }
-
     for (int i=0; i<2;i++) {
-    this->hingedRigidBodyOutMsgId[i] =  messageSys->CreateNewMessage(this->hingedRigidBodyOutMsgName + "_OutputStates" + std::to_string(i),
+    this->dualHingedRigidBodyOutMsgId[i] =  messageSys->CreateNewMessage(this->dualHingedRigidBodyOutMsgName + "_OutputStates" + std::to_string(i),
                                              sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
     }
 
@@ -363,7 +364,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
     panelOutputStates.theta = this->theta1;
     panelOutputStates.thetaDot = this->theta1Dot;
-    messageSys->WriteMessage(this->hingedRigidBodyOutMsgId[0], CurrentClock,
+    messageSys->WriteMessage(this->dualHingedRigidBodyOutMsgId[0], CurrentClock,
                          sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
                              this->moduleID);
 
@@ -371,7 +372,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
     panelOutputStates.theta = this->theta2;
     panelOutputStates.thetaDot = this->theta2Dot;
-    messageSys->WriteMessage(this->hingedRigidBodyOutMsgId[1], CurrentClock,
+    messageSys->WriteMessage(this->dualHingedRigidBodyOutMsgId[1], CurrentClock,
                          sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
                              this->moduleID);
 
