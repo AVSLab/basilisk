@@ -45,12 +45,12 @@ from Basilisk.simulation import simFswInterfaceMessages
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_dualHingedRigidBody(show_plots,useFlag,testCase):
+def test_dualHingedRigidBody(show_plots, useFlag, testCase):
     """Module Unit Test"""
-    [testResults, testMessage] = dualHingedRigidBodyTest(show_plots,useFlag,testCase)
+    [testResults, testMessage] = dualHingedRigidBodyTest(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
 
-def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
+def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -77,14 +77,15 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     unitTestSim.panel2 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
+    unitTestSim.panel2.ModelTag = "panel1"
     unitTestSim.panel1.mass1 = 50.0
     unitTestSim.panel1.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel1.d1 = 0.75
     unitTestSim.panel1.l1 = 1.5
     unitTestSim.panel1.k1 = 100.0
     unitTestSim.panel1.c1 = 0.0
-    unitTestSim.panel1.rH1B_B = [[0.5], [0.0], [1.0]]
-    unitTestSim.panel1.dcmH1B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.r_H1B_B = [[0.5], [0.0], [1.0]]
+    unitTestSim.panel1.dcm_H1B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel1.nameOfTheta1State = "dualHingedRigidBody1Theta1"
     unitTestSim.panel1.nameOfTheta1DotState = "dualHingedRigidBody1ThetaDot1"
     unitTestSim.panel1.mass2 = 50.0
@@ -100,14 +101,15 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     unitTestSim.panel1.theta2DotInit = 0.0
 
     # Define Variables for panel 2
+    unitTestSim.panel2.ModelTag = "panel2"
     unitTestSim.panel2.mass1 = 50.0
     unitTestSim.panel2.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel2.d1 = 0.75
     unitTestSim.panel2.l1 = 1.5
     unitTestSim.panel2.k1 = 100.0
     unitTestSim.panel2.c1 = 0.0
-    unitTestSim.panel2.rH1B_B = [[-0.5], [0.0], [1.0]]
-    unitTestSim.panel2.dcmH1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel2.r_H1B_B = [[-0.5], [0.0], [1.0]]
+    unitTestSim.panel2.dcm_H1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel2.nameOfTheta1State = "dualHingedRigidBody2Theta1"
     unitTestSim.panel2.nameOfTheta1DotState = "dualHingedRigidBody2ThetaDot1"
     unitTestSim.panel2.mass2 = 50.0
@@ -263,7 +265,7 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 
-@pytest.mark.parametrize("useScPlus", [True, False])
+@pytest.mark.parametrize("useScPlus", [True])
 def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -303,8 +305,8 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.l1 = 1.5
     unitTestSim.panel1.k1 = 0.0
     unitTestSim.panel1.c1 = 0.0
-    unitTestSim.panel1.rH1B_B = [[0.5], [0.0], [1.0]]
-    unitTestSim.panel1.dcmH1B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.r_H1B_B = [[0.5], [0.0], [1.0]]
+    unitTestSim.panel1.dcm_H1B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel1.nameOfTheta1State = "dualHingedRigidBody1Theta1"
     unitTestSim.panel1.nameOfTheta1DotState = "dualHingedRigidBody1ThetaDot1"
     unitTestSim.panel1.mass2 = 50.0
@@ -314,7 +316,7 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.c2 = 0.0
     unitTestSim.panel1.nameOfTheta2State = "dualHingedRigidBody1Theta2"
     unitTestSim.panel1.nameOfTheta2DotState = "dualHingedRigidBody1ThetaDot2"
-    unitTestSim.panel1.theta1Init = 5*numpy.pi/180.0
+    unitTestSim.panel1.theta1Init = 0*numpy.pi/180.0
     unitTestSim.panel1.theta1DotInit = 0.0
     unitTestSim.panel1.theta2Init = 0.0
     unitTestSim.panel1.theta2DotInit = 0.0
@@ -336,8 +338,8 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.l1 = 1.5
     unitTestSim.panel2.k1 = 0.0
     unitTestSim.panel2.c1 = 0.0
-    unitTestSim.panel2.rH1B_B = [[-0.5], [0.0], [1.0]]
-    unitTestSim.panel2.dcmH1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel2.r_H1B_B = [[-0.5], [0.0], [1.0]]
+    unitTestSim.panel2.dcm_H1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel2.nameOfTheta1State = "dualHingedRigidBody2Theta1"
     unitTestSim.panel2.nameOfTheta1DotState = "dualHingedRigidBody2ThetaDot1"
     unitTestSim.panel2.mass2 = 50.0
@@ -347,11 +349,12 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.c2 = 0.0
     unitTestSim.panel2.nameOfTheta2State = "dualHingedRigidBody2Theta2"
     unitTestSim.panel2.nameOfTheta2DotState = "dualHingedRigidBody2ThetaDot2"
-    unitTestSim.panel2.theta1Init = 5 * numpy.pi / 180.0
+    unitTestSim.panel2.theta1Init = 0 * numpy.pi / 180.0
     unitTestSim.panel2.theta1DotInit = 0.0
     unitTestSim.panel2.theta2Init = 0.0
     unitTestSim.panel2.theta2DotInit = 0.0
     unitTestSim.panel2.dualHingedRigidBodyOutMsgName = "panelTwo"
+    unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName = "panelTwo"
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
@@ -385,8 +388,10 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates1", testProcessRate)
     unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.dualHingedRigidBodyOutMsgName + "_OutputStates0", testProcessRate)
     unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.dualHingedRigidBodyOutMsgName + "_OutputStates1", testProcessRate)
-    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
-    # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag
+                                        + "_InertialStates0", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
+                                        + "_InertialStates1", testProcessRate)
 
     unitTestSim.InitializeSimulation()
 
@@ -411,14 +416,22 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     thetaP2A2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyOutMsgName
                                                + '_OutputStates1.theta')
 
-    # rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
-    # vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
-    # sB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
-    # oB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
-    # rB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
-    # vB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
-    # sB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
-    # oB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
+    rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag
+                                          + '_InertialStates0.r_BN_N', list(range(3)))[0]
+    vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag
+                                          + '_InertialStates0.v_BN_N', list(range(3)))[0]
+    sB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag
+                                          + '_InertialStates0.sigma_BN', list(range(3)))[0]
+    oB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag +
+                                          '_InertialStates0.omega_BN_B', list(range(3)))[0]
+    rB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
+                                          + '_InertialStates1.r_BN_N', list(range(3)))[0]
+    vB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
+                                          + '_InertialStates1.v_BN_N', list(range(3)))[0]
+    sB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
+                                          + '_InertialStates1.sigma_BN', list(range(3)))[0]
+    oB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
+                                          + '_InertialStates1.omega_BN_B', list(range(3)))[0]
 
     rotAngMom_N = unitTestSim.GetLogVariableData(
         variableLogTag + ".totRotAngMomPntC_N")
@@ -501,34 +514,34 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
                 "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
 
     # check config log messages
-    # if not unitTestSupport.isArrayEqual(rB1N, [2.0, 0, 0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test")
-    # if not unitTestSupport.isArrayEqual(vB1N, [0.0, 0, 0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test")
-    # if not unitTestSupport.isArrayEqual(sB1N, [0.0, 0, 1.0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test")
-    # if not unitTestSupport.isArrayEqual(oB1N, [0.0, 0, 0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test")
-    # if not unitTestSupport.isArrayEqual(rB2N, [-2.0, 0, 0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test")
-    # if not unitTestSupport.isArrayEqual(vB2N, [0.0, 0, 0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test")
-    # if not unitTestSupport.isArrayEqual(sB2N, [0.0, 0, 0.0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test")
-    # if not unitTestSupport.isArrayEqual(oB2N, [0.0, 0, 0], 3, accuracy):
-    #     testFailCount += 1
-    #     testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
+    if not unitTestSupport.isArrayEqual(rB1N, [1.25, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 r_S1N_N config log test")
+    if not unitTestSupport.isArrayEqual(vB1N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 v_S1N_N config log test")
+    if not unitTestSupport.isArrayEqual(sB1N, [0.0, 0, 1.0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 sigma_S1N config log test")
+    if not unitTestSupport.isArrayEqual(oB1N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 omega_S1N_B config log test")
+    if not unitTestSupport.isArrayEqual(rB2N, [-2.75, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 r_S2N_N config log test")
+    if not unitTestSupport.isArrayEqual(vB2N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 v_S2N_N config log test")
+    if not unitTestSupport.isArrayEqual(sB2N, [0.0, 0, 0.0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 sigma_S2N config log test")
+    if not unitTestSupport.isArrayEqual(oB2N, [0.0, 0, 0], 3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 omega_S2N_B config log test")
 
 
     if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body integrated test with motor torques")
+        print("PASSED: " + " Dual Hinged Rigid Body integrated test with motor torques")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
