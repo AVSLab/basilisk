@@ -76,8 +76,7 @@ public:
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     BSKLogger bskLogger;                      //!< -- BSK Logging
     std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
-    std::string hingedRigidBody1OutMsgName; //!< -- state output message name of panel 1
-    std::string hingedRigidBody2OutMsgName; //!< -- state output message name of panel 1
+    std::string hingedRigidBodyOutMsgName; //!< -- state output message base name for all panels
 
 private:
     double u1;                      //!< [N-m] motor torques on panel 1
@@ -122,8 +121,7 @@ private:
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     int64_t motorTorqueInMsgId;       //!< -- motor torque message ID
-    int64_t hingedRigidBody1OutMsgId; //!< -- state output message ID of panel 1
-    int64_t hingedRigidBody2OutMsgId; //!< -- state output message ID of panel 2
+    int64_t hingedRigidBodyOutMsgId[2];  //!< -- state output message ID of all panels
 
 };
 

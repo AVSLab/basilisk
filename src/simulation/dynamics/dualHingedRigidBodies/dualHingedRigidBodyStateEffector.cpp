@@ -79,18 +79,14 @@ void DualHingedRigidBodyStateEffector::SelfInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
 
-    if (this->hingedRigidBody1OutMsgName.length() == 0) {
-    this->hingedRigidBody1OutMsgName = this->ModelTag + "_OutputStates1";
-    }
-    if (this->hingedRigidBody2OutMsgName.length() == 0) {
-        this->hingedRigidBody2OutMsgName = this->ModelTag + "_OutputStates2";
+    if (this->hingedRigidBodyOutMsgName.length() == 0) {
+    this->hingedRigidBodyOutMsgName = this->ModelTag;
     }
 
-
-    this->hingedRigidBody1OutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBody1OutMsgName,
+    for (int i=0; i<2;i++) {
+    this->hingedRigidBodyOutMsgId[i] =  messageSys->CreateNewMessage(this->hingedRigidBodyOutMsgName + "_OutputStates" + std::to_string(i),
                                              sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
-    this->hingedRigidBody2OutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBody2OutMsgName,
-                                             sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
+    }
 
 //    this->hingedRigidBodyConfigLogOutMsgId =  messageSys->CreateNewMessage(this->hingedRigidBodyConfigLogOutMsgName,
 //                                             sizeof(SCPlusStatesSimMsg), 2, "SCPlusStatesSimMsg", this->moduleID);
@@ -367,7 +363,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
     panelOutputStates.theta = this->theta1;
     panelOutputStates.thetaDot = this->theta1Dot;
-    messageSys->WriteMessage(this->hingedRigidBody1OutMsgId, CurrentClock,
+    messageSys->WriteMessage(this->hingedRigidBodyOutMsgId[0], CurrentClock,
                          sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
                              this->moduleID);
 
@@ -375,7 +371,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
     panelOutputStates.theta = this->theta2;
     panelOutputStates.thetaDot = this->theta2Dot;
-    messageSys->WriteMessage(this->hingedRigidBody2OutMsgId, CurrentClock,
+    messageSys->WriteMessage(this->hingedRigidBodyOutMsgId[1], CurrentClock,
                          sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
                              this->moduleID);
 

@@ -351,8 +351,7 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.theta1DotInit = 0.0
     unitTestSim.panel2.theta2Init = 0.0
     unitTestSim.panel2.theta2DotInit = 0.0
-    unitTestSim.panel2.hingedRigidBody1OutMsgName = "panel1_states"
-    unitTestSim.panel2.hingedRigidBody2OutMsgName = "panel2_states"
+    unitTestSim.panel2.hingedRigidBodyOutMsgName = "panelTwo"
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
@@ -382,10 +381,10 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     if not useScPlus:
         scStateLogName = scObject.primaryCentralSpacecraft.spacecraftName + scStateLogName
     unitTestSim.TotalSim.logThisMessage(scStateLogName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates0", testProcessRate)
     unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates1", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates2", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBody1OutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBody2OutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyOutMsgName + "_OutputStates0", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyOutMsgName + "_OutputStates1", testProcessRate)
     # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
     # unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
 
@@ -405,10 +404,10 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     rOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.r_CN_N', list(range(3)))
     vOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.v_CN_N', list(range(3)))
     sigma_BN = unitTestSim.pullMessageLogData(scStateLogName + '.sigma_BN', list(range(3)))
-    thetaP1A1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates1.theta')
-    thetaP1A2 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates2.theta')
-    thetaP2A1 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBody1OutMsgName+'.theta')
-    thetaP2A2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBody1OutMsgName+'.theta')
+    thetaP1A1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates0.theta')
+    thetaP1A2 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates1.theta')
+    thetaP2A1 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyOutMsgName+'_OutputStates0.theta')
+    thetaP2A2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyOutMsgName+'_OutputStates1.theta')
 
     # rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
     # vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
