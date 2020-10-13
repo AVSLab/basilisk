@@ -67,7 +67,7 @@ public:
     Eigen::Matrix3d IPntS1_S1;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Matrix3d IPntS2_S2;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d rH1B_B;           //!< [m] vector pointing from body frame origin to Hinge location
-    Eigen::Matrix3d dcmH1B;           //!< [-] DCM from body frame to hinge frame
+    Eigen::Matrix3d dcm_H1B;          //!< [-] DCM from body frame to hinge frame
     double thetaH2S1;                 //!< [-] theta offset of H2 frame with respect to S1 frame
     std::string nameOfTheta1State;    //!< [-] Identifier for the theta state data container
     std::string nameOfTheta1DotState; //!< [-] Identifier for the thetaDot state data container
@@ -82,8 +82,8 @@ private:
     double u1;                      //!< [N-m] motor torques on panel 1
     double u2;                      //!< [N-m] motor torques on panel 2
     Eigen::Matrix3d rTildeH1B_B;      //!< [-] Tilde matrix of rHB_B
-    Eigen::Matrix3d dcmS1B;           //!< [-] DCM from body to S1 frame
-    Eigen::Matrix3d dcmS2B;           //!< [-] DCM from body to S2 frame
+    Eigen::Matrix3d dcm_S1B;          //!< [-] DCM from body to S1 frame
+    Eigen::Matrix3d dcm_S2B;          //!< [-] DCM from body to S2 frame
     Eigen::Vector3d omegaBN_S1;       //!< [rad/s] omega_BN in S frame components
     Eigen::Vector3d omegaBN_S2;       //!< [rad/s] omega_BN in S frame components
     Eigen::Vector3d sHat11_B;         //!< [-] unit direction vector for the first axis of the S frame

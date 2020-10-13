@@ -53,7 +53,7 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->IPntS1_S1.setIdentity();
     this->IPntS2_S2.setIdentity();
     this->rH1B_B.setZero();
-    this->dcmH1B.setIdentity();
+    this->dcm_H1B.setIdentity();
     this->thetaH2S1 = 0.0;
     this->nameOfTheta1State = "hingedRigidBodyTheta1";
     this->nameOfTheta1DotState = "hingedRigidBodyTheta1Dot";
@@ -160,20 +160,20 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     // - Next find the sHat unit vectors
     Eigen::Matrix3d dcmS1H1;
     dcmS1H1 = eigenM2(this->theta1);
-    this->dcmS1B = dcmS1H1*this->dcmH1B;
+    this->dcm_S1B = dcmS1H1*this->dcm_H1B;
     Eigen::Matrix3d dcmH2S1;
     dcmH2S1 = eigenM2(this->thetaH2S1);
     Eigen::Matrix3d dcmH2B;
-    dcmH2B = dcmH2S1*this->dcmS1B;
+    dcmH2B = dcmH2S1*this->dcm_S1B;
     Eigen::Matrix3d dcmS2H2;
     dcmS2H2 = eigenM2(this->theta2);
-    this->dcmS2B = dcmS2H2 * dcmH2B;
-    this->sHat11_B = this->dcmS1B.row(0);
-    this->sHat12_B = this->dcmS1B.row(1);
-    this->sHat13_B = this->dcmS1B.row(2);
-    this->sHat21_B = this->dcmS2B.row(0);
-    this->sHat22_B = this->dcmS2B.row(1);
-    this->sHat23_B = this->dcmS2B.row(2);
+    this->dcm_S2B = dcmS2H2 * dcmH2B;
+    this->sHat11_B = this->dcm_S1B.row(0);
+    this->sHat12_B = this->dcm_S1B.row(1);
+    this->sHat13_B = this->dcm_S1B.row(2);
+    this->sHat21_B = this->dcm_S2B.row(0);
+    this->sHat22_B = this->dcm_S2B.row(1);
+    this->sHat23_B = this->dcm_S2B.row(2);
     this->rS1B_B = this->rH1B_B - this->d1*this->sHat11_B;
     this->rS2B_B = this->rH1B_B - this->l1*this->sHat11_B - this->d2*this->sHat21_B;
     this->effProps.rEff_CB_B = 1.0/this->effProps.mEff*(this->mass1*this->rS1B_B + this->mass2*this->rS2B_B);
@@ -182,7 +182,7 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     // - Define rTildeSB_B
     this->rTildeS1B_B = eigenTilde(this->rS1B_B);
     this->rTildeS2B_B = eigenTilde(this->rS2B_B);
-    this->effProps.IEffPntB_B = this->dcmS1B.transpose()*this->IPntS1_S1*this->dcmS1B + this->mass1*this->rTildeS1B_B*this->rTildeS1B_B.transpose() + this->dcmS2B.transpose()*this->IPntS2_S2*this->dcmS2B + this->mass2*this->rTildeS2B_B*this->rTildeS2B_B.transpose();
+    this->effProps.IEffPntB_B = this->dcm_S1B.transpose()*this->IPntS1_S1*this->dcm_S1B + this->mass1*this->rTildeS1B_B*this->rTildeS1B_B.transpose() + this->dcm_S2B.transpose()*this->IPntS2_S2*this->dcm_S2B + this->mass2*this->rTildeS2B_B*this->rTildeS2B_B.transpose();
 
     // First, find the rPrimeSB_B
     this->rPrimeS1B_B = this->d1*this->theta1Dot*this->sHat13_B;
@@ -328,8 +328,8 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
     omega_S2B_B = (this->theta1Dot + this->theta2Dot)*this->sHat22_B;
     omega_S1N_B = omega_S1B_B + omegaLocal_BN_B;
     omega_S2N_B = omega_S2B_B + omegaLocal_BN_B;
-    IPntS1_B = this->dcmS1B.transpose()*this->IPntS1_S1*this->dcmS1B;
-    IPntS2_B = this->dcmS2B.transpose()*this->IPntS2_S2*this->dcmS2B;
+    IPntS1_B = this->dcm_S1B.transpose()*this->IPntS1_S1*this->dcm_S1B;
+    IPntS2_B = this->dcm_S2B.transpose()*this->IPntS2_S2*this->dcm_S2B;
     rDot_S1B_B = this->rPrimeS1B_B + omegaLocal_BN_B.cross(this->rS1B_B);
     rDot_S2B_B = this->rPrimeS2B_B + omegaLocal_BN_B.cross(this->rS2B_B);
     rotAngMomPntCContr_B = IPntS1_B*omega_S1N_B + this->mass1*this->rS1B_B.cross(rDot_S1B_B)
