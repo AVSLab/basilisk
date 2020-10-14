@@ -134,15 +134,26 @@ void DualHingedRigidBodyStateEffector::CrossInit()
     return;
 }
 
+void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
+{
+    this->nameOfTheta1State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1State;
+    this->nameOfTheta1DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1DotState;
+    this->nameOfTheta2State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2State;
+    this->nameOfTheta2DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2DotState;
+
+    return;
+}
+
+
 void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
 
-    this->sigma_BNState = statesIn.getStateObject("hubSigma");
-    this->omega_BN_BState = statesIn.getStateObject("hubOmega");
-    this->r_BN_NState = statesIn.getStateObject("hubPosition");
-    this->v_BN_NState = statesIn.getStateObject("hubVelocity");
+    this->sigma_BNState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
+    this->omega_BN_BState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
+    this->r_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubPosition");
+    this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
 
     return;
 }
@@ -421,6 +432,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
         }
     }
 }
+
 
 /*! This method is used so that the simulation will ask DHRB to update messages.
  @return void

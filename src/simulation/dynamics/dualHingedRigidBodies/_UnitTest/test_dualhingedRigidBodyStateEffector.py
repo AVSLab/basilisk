@@ -265,7 +265,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     return [testFailCount, ''.join(testMessages)]
 
 
-@pytest.mark.parametrize("useScPlus", [True])
+@pytest.mark.parametrize("useScPlus", [True, False])
 def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the

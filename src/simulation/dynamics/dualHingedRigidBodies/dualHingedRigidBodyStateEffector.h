@@ -52,6 +52,7 @@ public:
 
 private:
     void computePanelInertialStates();
+    void prependSpacecraftNameToStates(); //!< class method
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body

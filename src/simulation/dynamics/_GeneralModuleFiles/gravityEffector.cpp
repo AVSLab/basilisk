@@ -448,9 +448,9 @@ void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 
 void GravityEffector::prependSpacecraftNameToStates()
 {
-    this->inertialPositionPropName = this->nameOfSpacecraftAttachedTo + "_" + this->inertialPositionPropName;
-    this->inertialVelocityPropName = this->nameOfSpacecraftAttachedTo + "_" +this->inertialVelocityPropName;
-    this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + "_" + this->vehicleGravityPropName;
+    this->inertialPositionPropName = this->nameOfSpacecraftAttachedTo + this->inertialPositionPropName;
+    this->inertialVelocityPropName = this->nameOfSpacecraftAttachedTo + this->inertialVelocityPropName;
+    this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + this->vehicleGravityPropName;
 
     return;
 }
