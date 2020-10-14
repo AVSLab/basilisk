@@ -16,29 +16,29 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module fswModuleTemplate
+%module hillStateConveter
 %{
    #include "hillStateConverter.h"
 
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_fswModuleTemplate(void*, uint64_t, uint64_t);
-%ignore Update_fswModuleTemplate;
-%constant void SelfInit_fswModuleTemplate(void*, uint64_t);
-%ignore SelfInit_fswModuleTemplate;
-%constant void CrossInit_fswModuleTemplate(void*, uint64_t);
-%ignore CrossInit_fswModuleTemplate;
-%constant void Reset_fswModuleTemplate(void*, uint64_t, uint64_t);
-%ignore Reset_fswModuleTemplate;
-GEN_SIZEOF(fswModuleTemplateConfig);
+%constant void Update_hillStateConverter(void*, uint64_t, uint64_t);
+%ignore Update_hillStateConverter;
+%constant void SelfInit_hillStateConveter(void*, uint64_t);
+%ignore SelfInit_hillStateConveter;
+%constant void CrossInit_hillStateConveter(void*, uint64_t);
+%ignore CrossInit_hillStateConveter;
+%constant void Reset_hillStateConveter(void*, uint64_t, uint64_t);
+%ignore Reset_hillStateConveter;
+GEN_SIZEOF(hillStateConveterConfig);
 %include "hillStateConverter.h"
 
 // sample Module support file to be included in this sub-module
 %include "../../fswMessages/hillRelStateFswMsg.h"
-GEN_SIZEOF(FswModuleTemplateFswMsg);
+GEN_SIZEOF(HillRelStateFswMsg);
 %include "../../../simulation/simFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(FswModuleTemplateFswMsg);
+GEN_SIZEOF(NavTransIntMsg);
 
 %pythoncode %{
 import sys
