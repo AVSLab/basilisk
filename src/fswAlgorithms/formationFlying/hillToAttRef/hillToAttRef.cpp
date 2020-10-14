@@ -22,7 +22,9 @@
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 HillToAttRef::HillToAttRef()
 {
-    this->
+    this->hillStateInMsgName="";
+    this->attStateInMsgName="";
+    this->attRefOutMsgName="";
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -43,7 +45,9 @@ void HillToAttRef::SelfInit()
 void HillToAttRef::CrossInit()
 {
     /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
+    this->hillStateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->hillStateInMsgName,sizeof(HillRelStateFswMsg), moduleID);
+    /*! - Get the image data message ID*/
+    this->attStateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->hillStateInMsgName,sizeof(HillRelStateFswMsg), moduleID);
 }
 
 /*! This is the destructor */
@@ -68,15 +72,28 @@ void HillToAttRef::Reset(uint64_t CurrentSimNanos)
  */
 void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
 {
+    SingleMessageHeader localHeader;
     //  Read in the relative state and chief attitude messages
-
+    SystemMessaging::GetInstance()->ReadMessage(this->hillStateInMsgId, &localHeader,
+                                                sizeof(HillRelStateFswMsg),
+                                                reinterpret_cast<uint8_t*>(&this->hillStateInMsg),
+                                                this->moduleID);
+    SystemMessaging::GetInstance()->ReadMessage(this->attStateInMsgId, &localHeader,
+                                                sizeof(NavAttIntMsg),
+                                                reinterpret_cast<uint8_t*>(&this->attStateInMsg),
+                                                this->moduleID);
 
     //  Apply the gain matrix to get a relative attitude
 
+
+
+
     //  Combine the relative attitude with the chief inertial attitude to get the reference attitude
 
+
+
     //  Write the reference message
-    SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+    SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId, CurrentSimNanos, sizeof(AttRefFswMsg), reinterpret_cast<uint8_t *>(&this->attRefOutMsg), this->moduleID);
 
     return;
 }

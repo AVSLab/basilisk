@@ -27,8 +27,9 @@
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/bskLogging.h"
-#include "../fswMessages/hillRelStateFswMsg.h"
-#include "../simFswInterfaceMessages/navAttIntMsg.h"
+#include "fswMessages/hillRelStateFswMsg.h"
+#include "fswMessages/attRefFswMsg.h"
+#include "../simulation/simFswInterfaceMessages/navAttIntMsg.h"
 
 
 /*! @brief visual planet tracking with Hough circles */
@@ -45,7 +46,7 @@ public:
 public:
     std::string hillStateInMsgName;                //!< Message name for the hill-frame relative position message.
     std::string attStateInMsgName;                //!< Message name for the target spacecraft's attitude nav message.
-    std::string attRefOutFswMsgName;  //!< Attitude reference message generated after the control law is applied.
+    std::string attRefOutMsgName;  //!< Attitude reference message generated after the control law is applied.
     Eigen::MatrixXd gainMatrix; //!< Arbitrary dimensioned gain matrix
     BSKLogger bskLogger;                //!< -- BSK Logging
 

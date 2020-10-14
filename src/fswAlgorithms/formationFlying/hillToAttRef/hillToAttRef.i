@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module houghCircles
+%module hillToAttRef
 %{
    #include "hillToAttRef.h"
 
@@ -29,16 +29,19 @@ from Basilisk.simulation.swig_common_model import *
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.h"
-%include "houghCircles.h"
-%include "../../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "../../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+%include "hillToAttRef.h"
+%include "../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
+%include "../../fswMessages/hillRelStateFswMsg.h"
+%include "../../fswMessages/attRefFswMsg.h"
 %include "swig_conly_data.i"
 
-GEN_SIZEOF(CirclesOpNavMsg)
-GEN_SIZEOF(CameraImageMsg)
+GEN_SIZEOF(NavAttIntMsg)
+GEN_SIZEOF(HillRelStateFswMsg)
+ GEN_SIZEOF(AttRefFswMsg)
 
 
-%pythoncode %{
+
+ %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
