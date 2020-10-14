@@ -29,6 +29,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.h"
+%include "std_vector.i"
 %include "hillToAttRef.h"
 %include "../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/hillRelStateFswMsg.h"
@@ -37,9 +38,11 @@ from Basilisk.simulation.swig_common_model import *
 
 GEN_SIZEOF(NavAttIntMsg)
 GEN_SIZEOF(HillRelStateFswMsg)
- GEN_SIZEOF(AttRefFswMsg)
+GEN_SIZEOF(AttRefFswMsg)
 
-
+namespace std {
+         %template(GainMatrixVectorD) vector<double *>;
+}
 
  %pythoncode %{
 import sys
