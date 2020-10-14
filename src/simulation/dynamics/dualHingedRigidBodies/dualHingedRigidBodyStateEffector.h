@@ -84,31 +84,33 @@ public:
     std::string dualHingedRigidBodyConfigLogOutMsgName; //!< panel state config log message base name for all panels
 
 private:
+    Eigen::Vector3d r_H1P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a single spacecraft body is modeled than P is the same as B
+    Eigen::Matrix3d dcm_H1P;          //!< -- DCM from primary body frame to hinge 1 frame
     double u1;                        //!< [N-m] motor torques on panel 1
     double u2;                        //!< [N-m] motor torques on panel 2
     Eigen::Matrix3d rTildeH1B_B;      //!< [-] Tilde matrix of rHB_B
-    Eigen::Matrix3d dcm_S1B;          //!< [-] DCM from body to S1 frame
-    Eigen::Matrix3d dcm_S2B;          //!< [-] DCM from body to S2 frame
-    Eigen::Vector3d omega_BN_S1;      //!< [rad/s] omega_BN in S1 frame components
-    Eigen::Vector3d omega_BN_S2;      //!< [rad/s] omega_BN in S2 frame components
-    Eigen::Vector3d sHat11_B;         //!< [-] unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat12_B;         //!< [-] unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat13_B;         //!< [-] unit direction vector for the third axis of the S frame
-    Eigen::Vector3d sHat21_B;         //!< [-] unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat22_B;         //!< [-] unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat23_B;         //!< [-] unit direction vector for the third axis of the S frame
-    Eigen::Vector3d r_S1B_B;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in B frame comp
-    Eigen::Vector3d r_S2B_B;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in B frame comp
-    Eigen::Matrix3d rTildeS1B_B;      //!< [-] Tilde matrix of rSB_B
-    Eigen::Matrix3d rTildeS2B_B;      //!< [-] Tilde matrix of rSB_B
-    Eigen::Vector3d rPrimeS1B_B;      //!< [m/s] Body time derivative of rSB_B
-    Eigen::Vector3d rPrimeS2B_B;      //!< [m/s] Body time derivative of rSB_B
-    Eigen::Matrix3d rPrimeTildeS1B_B; //!< [-] Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d rPrimeTildeS2B_B; //!< [-] Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d IS1PrimePntS1_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Matrix3d IS2PrimePntS2_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Vector3d omega_BNLoc_B;    //!< [rad/s] local copy of omegaBN
-    Eigen::Matrix3d omegaTildeBNLoc_B;//!< [-] tilde matrix of omegaBN
+    Eigen::Matrix3d dcm_S1P;          //!< [-] DCM from primary body to S1 frame
+    Eigen::Matrix3d dcm_S2P;          //!< [-] DCM from primary body to S2 frame
+    Eigen::Vector3d omega_PN_S1;      //!< [rad/s] omega_PN in S1 frame components
+    Eigen::Vector3d omega_PN_S2;      //!< [rad/s] omega_PN in S2 frame components
+    Eigen::Vector3d sHat11_P;         //!< [-] unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat12_P;         //!< [-] unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat13_P;         //!< [-] unit direction vector for the third axis of the S frame
+    Eigen::Vector3d sHat21_P;         //!< [-] unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat22_P;         //!< [-] unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat23_P;         //!< [-] unit direction vector for the third axis of the S frame
+    Eigen::Vector3d r_S1P_P;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in P frame comp
+    Eigen::Vector3d r_S2P_P;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in P frame comp
+    Eigen::Matrix3d rTildeS1P_P;      //!< [-] Tilde matrix of rSP_P
+    Eigen::Matrix3d rTildeS2P_P;      //!< [-] Tilde matrix of rSP_P
+    Eigen::Vector3d rPrimeS1P_P;      //!< [m/s] Body time derivative of rSP_P
+    Eigen::Vector3d rPrimeS2P_P;      //!< [m/s] Body time derivative of rSBP_P
+    Eigen::Matrix3d rPrimeTildeS1P_P; //!< [-] Tilde matrix of rPrime_SP_P
+    Eigen::Matrix3d rPrimeTildeS2P_P; //!< [-] Tilde matrix of rPrime_SP_P
+    Eigen::Matrix3d IS1PrimePntS1_P;  //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
+    Eigen::Matrix3d IS2PrimePntS2_P;  //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
+    Eigen::Vector3d omega_PNLoc_P;    //!< [rad/s] local copy of omegaPN
+    Eigen::Matrix3d omegaTildePNLoc_P;//!< [-] tilde matrix of omegaPN
     double theta1;                    //!< [rad] hinged rigid body angle
     double theta1Dot;                 //!< [rad/s] hinged rigid body angle rate
     double theta2;                    //!< [rad] hinged rigid body angle
