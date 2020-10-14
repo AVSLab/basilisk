@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="678.5058 351.5458 661.4942 216.0449" width="661.4942" height="216.0449">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-3 -3 7 6" markerWidth="7" markerHeight="6" color="black">
+      <g>
+        <path d="M 3 0 L -1.8 -1.8 L 0 0 L 0 0 L -1.8 1.8 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Courier" font-size="12" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Courier"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica" font-size="12" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Helvetica"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.17.5\n2020-10-13 22:40:30 +0000</metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" fill="none" stroke="none">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_20">
+        <path d="M 875 355.5 L 1071.2413 355.5 C 1074.0027 355.5 1076.2413 357.73858 1076.2413 360.5 L 1076.2413 562.0907 C 1076.2413 564.85215 1074.0027 567.0907 1071.2413 567.0907 L 875 567.0907 C 872.2386 567.0907 870 564.85215 870 562.0907 L 870 360.5 C 870 357.73858 872.2386 355.5 875 355.5 Z" fill="#ffc0ff"/>
+        <path d="M 875 355.5 L 1071.2413 355.5 C 1074.0027 355.5 1076.2413 357.73858 1076.2413 360.5 L 1076.2413 562.0907 C 1076.2413 564.85215 1074.0027 567.0907 1071.2413 567.0907 L 875 567.0907 C 872.2386 567.0907 870 564.85215 870 562.0907 L 870 360.5 C 870 357.73858 872.2386 355.5 875 355.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(875 454.12736)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="3.878636" y="11">DualHingedRigidBodyStateEffector</tspan>
+        </text>
+      </g>
+      <g id="Line_19">
+        <line x1="727.614" y1="382.50556" x2="860.7" y2="382.50556" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Group_29">
+        <g id="Graphic_21">
+          <text transform="translate(1088.0922 382.55067)" fill="black">
+            <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">HingedRigidBodySimMsg</tspan>
+          </text>
+        </g>
+        <g id="Line_18">
+          <line x1="1076.8063" y1="381.04824" x2="1209.8923" y2="381.04824" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_17">
+          <text transform="translate(1088.0922 351.5458)" fill="black">
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">dualHingedRigidBodyOutMsgName </tspan>
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="25">+ “_OutputStates0”</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_16">
+        <text transform="translate(683.5058 382.0074)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="12.332947" y="11">ArrayMotorTorqueIntMsg</tspan>
+        </text>
+      </g>
+      <g id="Graphic_15">
+        <text transform="translate(697.0175 367.5033)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="25.19435" y="11">motorTorqueInMsgName</tspan>
+        </text>
+      </g>
+      <g id="Group_30">
+        <g id="Graphic_14">
+          <text transform="translate(1088.0922 494.3244)" fill="black">
+            <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCPlusStatesSimMsg</tspan>
+          </text>
+        </g>
+        <g id="Line_13">
+          <line x1="1076.8063" y1="492.822" x2="1209.8923" y2="492.822" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_12">
+          <text transform="translate(1081.8063 461.31756)" fill="black">
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">dualHingedRigidBodyConfigLogOutMsgName</tspan>
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="25">+ “_InertialStates0”</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Line_23">
+        <line x1="1076.8063" y1="432.9341" x2="1209.8923" y2="432.9341" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Group_28">
+        <g id="Graphic_24">
+          <text transform="translate(1088.0922 434.8117)" fill="black">
+            <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">HingedRigidBodySimMsg</tspan>
+          </text>
+        </g>
+        <g id="Graphic_22">
+          <text transform="translate(1088.0922 403.80687)" fill="black">
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">dualHingedRigidBodyOutMsgName </tspan>
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="25">+ “_OutputStates1”</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Group_31">
+        <g id="Graphic_27">
+          <text transform="translate(1088.0922 548.58744)" fill="black">
+            <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCPlusStatesSimMsg</tspan>
+          </text>
+        </g>
+        <g id="Line_26">
+          <line x1="1076.8063" y1="547.085" x2="1209.8923" y2="547.085" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_25">
+          <text transform="translate(1081.8063 515.5806)" fill="black">
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">dualHingedRigidBodyConfigLogOutMsgName</tspan>
+            <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="25">+ “_InertialStates1”</tspan>
+          </text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

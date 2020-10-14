@@ -12,7 +12,7 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_MRP_PD:
+.. _ModuleIO_hingedRigidBodyStateEffector:
 .. figure:: /../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Images/moduleHRBStateEffector.svg
     :align: center
 
@@ -64,7 +64,7 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 
 #. Import the hingedRigidBodyStateEffector class::
 
-    import hingedRigidBodyStateEffector
+    from Basilisk.simulation import hingedRigidBodyStateEffector
 
 #. Create an instantiation of a Hinged Rigid body::
 
@@ -88,17 +88,26 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 
 #. Define an optional motor torque input message::
 
-    unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"
+    panel1.motorTorqueInMsgName = "motorTorque"
+
+#. The angular states of the panel are created using an output message with the name
+   ``hingedRigidBodyOutMsgName``.  The default value of this string is ``hingedRigidBody_OutputStates``::
+
+    panel1.hingedRigidBodyOutMsgName = "panel1Angles"
 
 #. If multiple panels are used, update the default config log state message to be unique::
 
-    unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName = "panel1Log"
+    panel1.hingedRigidBodyConfigLogOutMsgName = "panel1Log"
 
-#. Finally, add the panel to your spacecraftPlus::
+#. Add the panel to your spacecraftPlus::
 
-    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(panel1)
 
-See :ref:`spacecraftPlus` documentation on how to set up a spacecraftPlus object.
+   See :ref:`spacecraftPlus` documentation on how to set up a spacecraftPlus object.
+
+#. Add the module to the task list::
+
+    unitTestSim.AddModelToTask(unitTaskName, panel1)
 
 
 
