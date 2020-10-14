@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module hillStateConveter
+%module hillStateConverter
 %{
    #include "hillStateConverter.h"
 
@@ -25,13 +25,13 @@
 %include "swig_conly_data.i"
 %constant void Update_hillStateConverter(void*, uint64_t, uint64_t);
 %ignore Update_hillStateConverter;
-%constant void SelfInit_hillStateConveter(void*, uint64_t);
-%ignore SelfInit_hillStateConveter;
-%constant void CrossInit_hillStateConveter(void*, uint64_t);
-%ignore CrossInit_hillStateConveter;
-%constant void Reset_hillStateConveter(void*, uint64_t, uint64_t);
-%ignore Reset_hillStateConveter;
-GEN_SIZEOF(hillStateConveterConfig);
+%constant void SelfInit_hillStateConverter(void*, uint64_t);
+%ignore SelfInit_hillStateConverter;
+%constant void CrossInit_hillStateConverter(void*, uint64_t);
+%ignore CrossInit_hillStateConverter;
+%constant void Reset_hillStateConverter(void*, uint64_t, uint64_t);
+%ignore Reset_hillStateConverter;
+GEN_SIZEOF(hillStateConverterConfig);
 %include "hillStateConverter.h"
 
 // sample Module support file to be included in this sub-module

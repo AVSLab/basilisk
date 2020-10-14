@@ -57,7 +57,7 @@ extern "C" {
     void SelfInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID);
     void CrossInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID);
     void Update_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_hillStateConverter(hillStateConveterConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

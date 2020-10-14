@@ -38,13 +38,13 @@
  \verbatim embed:rst
     This method initializes the configData for this module.
     It checks to ensure that the inputs are sane and then creates the
-    output message of type :ref:`FswModuleTemplateFswMsg`.
+    output message of type :ref:`hillStateConverterFswMsg`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
+void SelfInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID)
 {
     
     /*! - Create output message for module */
@@ -59,13 +59,13 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
     This method performs the second stage of initialization for this module.
     It's primary function is to link the input messages that were created elsewhere.
     Nothing else should be happening in this function.  The subscribed message is
-    of type :ref:`FswModuleTemplateFswMsg`.
+    of type :ref:`hillStateConverterFswMsg`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
+void CrossInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID)
 {
     /*! - Get the ID of the subscribed input message */
     configData->chiefStateInMsgID = subscribeToMessage(configData->chiefStateInMsgName,
@@ -85,7 +85,7 @@ void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mo
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
 }
 
@@ -95,7 +95,7 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void Update_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
@@ -107,10 +107,12 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
                 sizeof(NavTransIntMsg), (void*) &(configData->depStateInMsg), moduleID);
 
     /*! - Add the module specific code */
-    rv2hill(*(chiefStateInMsg.r_CN_N), *(chiefStateInMsg.v_CN_N), *(depStateInMsg.r_CN_N),  *(depStateInMsg.v_CN_N), *(configData->hillStateOutMsg.r_DC_H), *(configData->hillStateOutMsg.v_DC_H))
+    rv2hill(configData->chiefStateInMsg.r_BN_N, configData->chiefStateInMsg.v_BN_N,
+            configData->depStateInMsg.r_BN_N,  configData->depStateInMsg.v_BN_N,
+            configData->hillStateOutMsg.r_DC_H, configData->hillStateOutMsg.v_DC_H);
 
     /*! - write the module output message */
-    WriteMessage(configData->hillStateOutMsgID, callTime, sizeof(HillStateFswMsg),
+    WriteMessage(configData->hillStateOutMsgID, callTime, sizeof(HillRelStateFswMsg),
                  (void*) &(configData->hillStateOutMsg), moduleID);
 
     return;
