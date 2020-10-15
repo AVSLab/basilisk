@@ -63,6 +63,10 @@ body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
 	max-width: 500px;
 }
 
+code, .rst-content tt, .rst-content code {
+	color: #E74C3C;
+}
+
 @media (prefers-color-scheme: dark) {
 	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
 		background-color: black;
