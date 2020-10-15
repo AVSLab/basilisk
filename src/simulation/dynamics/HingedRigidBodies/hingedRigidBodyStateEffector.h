@@ -55,8 +55,8 @@ private:
     double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
     double cTheta;                  //!< -- term needed for back substitution
     double u;                        //!< [N-m] optional motor torque
-    Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from body frame origin to Hinge location
-    Eigen::Matrix3d dcm_HP;          //!< -- DCM from body frame to hinge frame
+    Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from primary body frame P origin to Hinge location.  If a single spacecraft body is modeled than P is the same as B
+    Eigen::Matrix3d dcm_HP;          //!< -- DCM from primary body frame to hinge frame
     Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
     Eigen::Matrix3d rTilde_HP_P;     //!< -- Tilde matrix of rHB_B

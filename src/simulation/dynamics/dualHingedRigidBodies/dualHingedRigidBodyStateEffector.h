@@ -28,6 +28,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "utilities/bskLogging.h"
+#include "simMessages/hingedRigidBodySimMsg.h"
 
 
 
@@ -44,14 +45,21 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void SelfInit();
+    void CrossInit();
+    void UpdateState(uint64_t CurrentSimNanos);
+    void writeOutputStateMessages(uint64_t CurrentClock);
+
+private:
+    void computePanelInertialStates();
+    void prependSpacecraftNameToStates(); //!< class method
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body
     double mass2;                     //!< [kg] mass of 2nd hinged rigid body
-    double d1;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double d2;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double l1;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double l2;                        //!< [m] distance from hinge point to hinged rigid body center of mass
+    double d1;                        //!< [m] distance from hinge point H1 to hinged rigid body center of mass S1
+    double d2;                        //!< [m] distance from hinge point H2 to hinged rigid body center of mass S2
+    double l1;                        //!< [m] distance from hinge point H1 to hinged point H2
     double k1;                        //!< [N-m/rad] torsional spring constant of hinge
     double k2;                        //!< [N-m/rad] torsional spring constant of hinge
     double c1;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
@@ -62,8 +70,8 @@ public:
     double theta2DotInit;             //!< [rad/s] Initial hinged rigid body angle rate for second panel
     Eigen::Matrix3d IPntS1_S1;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Matrix3d IPntS2_S2;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
-    Eigen::Vector3d rH1B_B;           //!< [m] vector pointing from body frame origin to Hinge location
-    Eigen::Matrix3d dcmH1B;           //!< [-] DCM from body frame to hinge frame
+    Eigen::Vector3d r_H1B_B;          //!< [m] vector pointing from body frame origin to Hinge location
+    Eigen::Matrix3d dcm_H1B;          //!< [-] DCM from body frame to hinge frame
     double thetaH2S1;                 //!< [-] theta offset of H2 frame with respect to S1 frame
     std::string nameOfTheta1State;    //!< [-] Identifier for the theta state data container
     std::string nameOfTheta1DotState; //!< [-] Identifier for the thetaDot state data container
@@ -71,31 +79,38 @@ public:
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
+    std::string dualHingedRigidBodyOutMsgName; //!< -- state output message base name for all panels
+    std::string dualHingedRigidBodyConfigLogOutMsgName; //!< panel state config log message base name for all panels
 
 private:
+    Eigen::Vector3d r_H1P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a single spacecraft body is modeled than P is the same as B
+    Eigen::Matrix3d dcm_H1P;          //!< -- DCM from primary body frame to hinge 1 frame
+    double u1;                        //!< [N-m] motor torques on panel 1
+    double u2;                        //!< [N-m] motor torques on panel 2
     Eigen::Matrix3d rTildeH1B_B;      //!< [-] Tilde matrix of rHB_B
-    Eigen::Matrix3d dcmS1B;           //!< [-] DCM from body to S1 frame
-    Eigen::Matrix3d dcmS2B;           //!< [-] DCM from body to S2 frame
-    Eigen::Vector3d omegaBN_S1;       //!< [rad/s] omega_BN in S frame components
-    Eigen::Vector3d omegaBN_S2;       //!< [rad/s] omega_BN in S frame components
-    Eigen::Vector3d sHat11_B;         //!< [-] unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat12_B;         //!< [-] unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat13_B;         //!< [-] unit direction vector for the third axis of the S frame
-    Eigen::Vector3d sHat21_B;         //!< [-] unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat22_B;         //!< [-] unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat23_B;         //!< [-] unit direction vector for the third axis of the S frame
-    Eigen::Vector3d rS1B_B;           //!< [-] Vector pointing from body origin to CoM of hinged rigid body in B frame comp
-    Eigen::Vector3d rS2B_B;           //!< [-] Vector pointing from body origin to CoM of hinged rigid body in B frame comp
-    Eigen::Matrix3d rTildeS1B_B;      //!< [-] Tilde matrix of rSB_B
-    Eigen::Matrix3d rTildeS2B_B;      //!< [-] Tilde matrix of rSB_B
-    Eigen::Vector3d rPrimeS1B_B;      //!< [m/s] Body time derivative of rSB_B
-    Eigen::Vector3d rPrimeS2B_B;      //!< [m/s] Body time derivative of rSB_B
-    Eigen::Matrix3d rPrimeTildeS1B_B; //!< [-] Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d rPrimeTildeS2B_B; //!< [-] Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d IS1PrimePntS1_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Matrix3d IS2PrimePntS2_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Vector3d omegaBNLoc_B;     //!< [rad/s] local copy of omegaBN
-    Eigen::Matrix3d omegaTildeBNLoc_B;//!< [-] tilde matrix of omegaBN
+    Eigen::Matrix3d dcm_S1P;          //!< [-] DCM from primary body to S1 frame
+    Eigen::Matrix3d dcm_S2P;          //!< [-] DCM from primary body to S2 frame
+    Eigen::Vector3d omega_PN_S1;      //!< [rad/s] omega_PN in S1 frame components
+    Eigen::Vector3d omega_PN_S2;      //!< [rad/s] omega_PN in S2 frame components
+    Eigen::Vector3d sHat11_P;         //!< [-] unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat12_P;         //!< [-] unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat13_P;         //!< [-] unit direction vector for the third axis of the S frame
+    Eigen::Vector3d sHat21_P;         //!< [-] unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat22_P;         //!< [-] unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat23_P;         //!< [-] unit direction vector for the third axis of the S frame
+    Eigen::Vector3d r_S1P_P;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in P frame comp
+    Eigen::Vector3d r_S2P_P;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in P frame comp
+    Eigen::Matrix3d rTildeS1P_P;      //!< [-] Tilde matrix of rSP_P
+    Eigen::Matrix3d rTildeS2P_P;      //!< [-] Tilde matrix of rSP_P
+    Eigen::Vector3d rPrimeS1P_P;      //!< [m/s] Body time derivative of rSP_P
+    Eigen::Vector3d rPrimeS2P_P;      //!< [m/s] Body time derivative of rSBP_P
+    Eigen::Matrix3d rPrimeTildeS1P_P; //!< [-] Tilde matrix of rPrime_SP_P
+    Eigen::Matrix3d rPrimeTildeS2P_P; //!< [-] Tilde matrix of rPrime_SP_P
+    Eigen::Matrix3d IS1PrimePntS1_P;  //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
+    Eigen::Matrix3d IS2PrimePntS2_P;  //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
+    Eigen::Vector3d omega_PNLoc_P;    //!< [rad/s] local copy of omegaPN
+    Eigen::Matrix3d omegaTildePNLoc_P;//!< [-] tilde matrix of omegaPN
     double theta1;                    //!< [rad] hinged rigid body angle
     double theta1Dot;                 //!< [rad/s] hinged rigid body angle rate
     double theta2;                    //!< [rad] hinged rigid body angle
@@ -105,14 +120,21 @@ private:
     Eigen::MatrixXd matrixFDHRB;
     Eigen::MatrixXd matrixGDHRB;
     Eigen::Vector2d vectorVDHRB;
-    StateData *hubSigma;              //!< [-] state manager access to the hubs MRP state
-    StateData *hubOmega;              //!< [-] state manager access to the hubs omegaBN_B state
-    StateData *hubVelocity;           //!< [-] state manager access to the hubs rDotBN_N state
     StateData *theta1State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta1DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
-
+    int64_t motorTorqueInMsgId;       //!< -- motor torque message ID
+    int64_t dualHingedRigidBodyOutMsgId[2];  //!< -- state output message ID of all panels
+    int64_t dualHingedRigidBodyConfigLogOutMsgId[2]; //!< -- panel state config log msg ID of all panels
+    Eigen::Vector3d r_SN_N[2];        //!< [m] position vector of hinge CM S relative to inertial frame
+    Eigen::Vector3d v_SN_N[2];        //!< [m/s] inertial velocity vector of S relative to inertial frame
+    Eigen::Vector3d sigma_SN[2];      //!< -- MRP attitude of panel frame S relative to inertial frame
+    Eigen::Vector3d omega_SN_S[2];    //!< [rad/s] inertial panel frame angular velocity vector
+    StateData *sigma_BNState;         //!< Hub/Inertial attitude represented by MRP
+    StateData *omega_BN_BState;       //!< Hub/Inertial angular velocity vector in B frame components
+    StateData *r_BN_NState;           //!< Hub/Inertial position vector in inertial frame components
+    StateData *v_BN_NState;           //!< Hub/Inertial velocity vector in inertial frame components
 };
 
 

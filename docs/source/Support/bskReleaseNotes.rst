@@ -21,8 +21,9 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hil()``
+- Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support :ref:`spacecraftDynamics`.
 
-Version 1.8.5
+Version 1.8.6
 -------------
 - Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
 - Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
@@ -3273,81 +3274,20 @@ the star tracker is not available.
 
 **Version 0.1.1**
 
+- On Linux, simplified the processing running BSK modules that require
+  boost. This makes the Viz related communication modules working again.
+- Added boost libs built on Ubuntu against gcc 5.4.0 20160609.
+- Added RPATH settings to allow for build directory to be placed outside
+  source directory
+- Major addition with new depleatable mass dynamic modeling, including
+  some fuel tank dynamic models.
+- minor fix for Monte Carlo dispersions
 
-.. raw:: html
-
-   <ul>
-
-.. raw:: html
-
-   <li>
-
-On Linux, simplified the processing running BSK modules that require
-boost. This makes the Viz related communication modules working again.
-
-.. raw:: html
-
-   </li>
-
-.. raw:: html
-
-   <ul>
-
-.. raw:: html
-
-   <li>
-
-Added boost libs built on Ubunutu against gcc 5.4.0 20160609.
-
-.. raw:: html
-
-   </li>
-
-.. raw:: html
-
-   <li>
-
-Added RPATH settings to allow for build directory to be placed outside
-source directory
-
-.. raw:: html
-
-   </li>
-
-.. raw:: html
-
-   </ul>
-
-.. raw:: html
-
-   <li>
-
-Major addition with new depleatable mass dynamic modeling, including
-some fuel tank dynamic models.
-
-.. raw:: html
-
-   </li>
-
-.. raw:: html
-
-   <li>
-
-minor fix for Monte Carlo dispersions
-
-.. raw:: html
-
-   </li>
-
-.. raw:: html
-
-   </ul>
 
 **Version 0.1.0**
 
 
-Simulation modules include:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Simulation modules include:**
 
 .. raw:: html
 
@@ -3360,9 +3300,9 @@ Simulation modules include:
     Flexible integration structure with fixed time step RK1, RK2 and RK4
     included</li>
 
-    <li>Rigid spacecraft simulated through <code>spacecratPlus()</code> module.  The spacecraft object makes it simple to add external disturbances through <code>dynEffectors</code> and state depended actuation through <code>stateEffectors</code>.
+    <li>Rigid spacecraft simulated through <code>spacecraftPlus()</code> module.  The spacecraft object makes it simple to add external disturbances through <code>dynEffectors</code> and state depended actuation through <code>stateEffectors</code>.
       <ul>
-          <li>Dynamics Effectors (acuation methods which do not have their own states to integrate)</li>
+          <li>Dynamics Effectors (actuation methods which do not have their own states to integrate)</li>
               <ul>
                   <li>External force or torque module</li>
                   <li>Solar radiation pressure module</li>
@@ -3387,8 +3327,8 @@ Simulation modules include:
 
    </ul>
 
-The AVS Lab Flight Algorithm folder contains:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**The AVS Lab Flight Algorithm folder contains:**
+
 - FSW template module
 - CSS based sun heading estimation module
 - UKF filter to determine inertial attitude
