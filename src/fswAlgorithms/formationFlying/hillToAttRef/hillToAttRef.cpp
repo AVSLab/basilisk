@@ -36,7 +36,7 @@ void HillToAttRef::SelfInit()
 {
     /*! - Create output message for module */
     this->attRefOutMsgId= SystemMessaging::GetInstance()->CreateNewMessage(this->attRefOutMsgName,sizeof(AttRefFswMsg),2,"AttRefFswMsg",this->moduleID);
-    this->matrixIndex = this->gainMatrix.begin();
+    this->matrixIndex = this->gainMatrixVec.begin();
 
 }
 
@@ -66,7 +66,7 @@ HillToAttRef::~HillToAttRef()
  */
 void HillToAttRef::Reset(uint64_t CurrentSimNanos)
 {
-    this->matrixIndex = this->gainMatrix.begin(); //    Start back at the initial gain matrix
+    this->matrixIndex = this->gainMatrixVec.begin(); //    Start back at the initial gain matrix
     return;
 }
 
@@ -91,14 +91,25 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
 
     double relativeAtt[3];
     double hillState[6];
+    double gainMat[6][6];
 
     for(int ind=0; ind<3; ind++){
         hillState[ind] = this->hillStateInMsg.r_DC_H[ind];
         hillState[ind+3] = this->hillStateInMsg.v_DC_H[ind];
     }
     auto currentMat = *(this->matrixIndex);
+    std::vector<std::vector<double>>::const_iterator row;
+    std::vector<double>::const_iterator col;
 
-    mMultV(currentMat, 6, 6,
+    int row_ind = 0;
+    int col_ind = 0;
+    for(row = currentMat.begin(); row != currentMat.end(); ++row, ++row_ind){
+        for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
+            gainMat[row_ind][col_ind] = *col;
+            }
+    }
+
+    mMultV(gainMat, 6, 6,
                    hillState,
                    relativeAtt);
 
@@ -110,6 +121,8 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
     }
     //  Write the reference message
     SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId, CurrentSimNanos, sizeof(AttRefFswMsg), reinterpret_cast<uint8_t *>(&this->attRefOutMsg), this->moduleID);
+
+    ++this->matrixIndex;
 
     return;
 }

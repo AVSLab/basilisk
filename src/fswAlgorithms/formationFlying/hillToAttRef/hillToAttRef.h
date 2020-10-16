@@ -47,13 +47,13 @@ public:
     std::string hillStateInMsgName;                //!< Message name for the hill-frame relative position message.
     std::string attStateInMsgName;                //!< Message name for the target spacecraft's attitude nav message.
     std::string attRefOutMsgName;  //!< Attitude reference message generated after the control law is applied.
-    std::vector<double[6][6]> gainMatrix; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double[6][6]
+    std::vector<std::vector<std::vector<double>>> gainMatrixVec; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
     BSKLogger bskLogger;                //!< -- BSK Logging
 
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
 
-    std::vector<double[6][6]>::iterator matrixIndex;
+    std::vector<std::vector<std::vector<double>>>::iterator matrixIndex;
 
     int32_t hillStateInMsgId;        //!< ID for the outgoing message
     int32_t attStateInMsgId;

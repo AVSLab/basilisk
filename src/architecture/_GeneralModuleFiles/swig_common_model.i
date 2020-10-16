@@ -35,7 +35,8 @@ namespace std {
    %template(StringSet) set<string>;
    %template(intSet) set<unsigned long>;
    %template(ConstCharVector) vector<const char*>;
-   %template(MultiArray) vector < vector <double>>;
+   %template(MultiArray) vector < vector <double> >;
+   %template(MultiArray3d) vector < vector < vector <double> > >;
 }
 
 %include "swig_eigen.i"
