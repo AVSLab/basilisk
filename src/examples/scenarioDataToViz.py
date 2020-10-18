@@ -107,9 +107,10 @@ def run(show_plots, attType):
         exit()
     file1 = open(dataFileName, 'r')
     Lines = file1.readlines()
-    t0 = float(Lines[1].split(",")[0])
-    t1 = float(Lines[2].split(",")[0])
-    tN = float(Lines[-1].split(",")[0])
+    delimiter = ","
+    t0 = float(Lines[1].split(delimiter)[0])
+    t1 = float(Lines[2].split(delimiter)[0])
+    tN = float(Lines[-1].split(delimiter)[0])
     timeStepSeconds = t1 - t0
     simulationTimeSeconds = tN - t0
 
@@ -140,7 +141,7 @@ def run(show_plots, attType):
 
     scNames = ["servicer", "target"]
     dataModule.scStateOutMsgNames = dataFileToViz.StringVector(scNames)
-    dataModule.delimiter = ","
+    dataModule.delimiter = delimiter
     scSim.AddModelToTask(simTaskName, dataModule)
 
     # setup Earth Gravity Body
