@@ -19,7 +19,6 @@
 #include "hillToAttRef.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
-#include <iostream>
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 HillToAttRef::HillToAttRef()
 {
@@ -48,11 +47,9 @@ void HillToAttRef::SelfInit()
 void HillToAttRef::CrossInit()
 {
     /*! - Get the image data message ID*/
-    std::cout<<"Hill msg name:"<<this->hillStateInMsgName<<std::endl;
     this->hillStateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->hillStateInMsgName,sizeof(HillRelStateFswMsg), moduleID);
 
     /*! - Get the image data message ID*/
-    std::cout<<"att state msg name:"<<this->attStateInMsgName<<std::endl;
     this->attStateInMsgId  = SystemMessaging::GetInstance()->subscribeToMessage(this->attStateInMsgName,sizeof(NavAttIntMsg), moduleID);
 }
 
@@ -98,12 +95,10 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
     double gainMat[6][6];
     std::vector<std::vector<double>> currentMat;
 
-    std::cout<<"Copying data into hillState"<<std::endl;
     for(int ind=0; ind<3; ind++){
         hillState[ind] = this->hillStateInMsg.r_DC_H[ind];
         hillState[ind+3] = this->hillStateInMsg.v_DC_H[ind];
     }
-    std::cout<<"Creating currentMat, pointers, whatever"<<std::endl;
 
     if(this->matrixIndex >= this->gainMatrixVecLen){
         this->matrixIndex = this->gainMatrixVecLen-1;   //  Hold at the last value if we've overrun the vector
@@ -112,7 +107,6 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
     std::vector<std::vector<double>>::const_iterator row;
     std::vector<double>::const_iterator col;
 
-    std::cout<<"Copying data into gainMat"<<std::endl;
     int row_ind = 0;
     int col_ind = 0;
     for(row = currentMat.begin(); row != currentMat.end(); ++row, ++row_ind){
