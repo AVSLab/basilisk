@@ -48,16 +48,16 @@ typedef struct {
     NavTransIntMsg depStateInMsg;
 
     BSKLogger *bskLogger;                           //!< BSK Logging
-}hillStateConverterConfig;
+}HillStateConverterConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    void SelfInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID);
-    void CrossInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID);
-    void Update_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID);
+    void CrossInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID);
+    void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

@@ -44,7 +44,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID)
+void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID)
 {
     
     /*! - Create output message for module */
@@ -65,7 +65,7 @@ void SelfInit_hillStateConverter(hillStateConverterConfig *configData, int64_t m
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_hillStateConverter(hillStateConverterConfig *configData, int64_t moduleID)
+void CrossInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID)
 {
     /*! - Get the ID of the subscribed input message */
     configData->chiefStateInMsgID = subscribeToMessage(configData->chiefStateInMsgName,
@@ -85,7 +85,7 @@ void CrossInit_hillStateConverter(hillStateConverterConfig *configData, int64_t 
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
 }
 
@@ -95,7 +95,7 @@ void Reset_hillStateConverter(hillStateConverterConfig *configData, uint64_t cal
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_hillStateConverter(hillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
+void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;

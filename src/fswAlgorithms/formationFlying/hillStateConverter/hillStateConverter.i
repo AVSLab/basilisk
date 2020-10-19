@@ -31,7 +31,7 @@
 %ignore CrossInit_hillStateConverter;
 %constant void Reset_hillStateConverter(void*, uint64_t, uint64_t);
 %ignore Reset_hillStateConverter;
-GEN_SIZEOF(hillStateConverterConfig);
+GEN_SIZEOF(HillStateConverterConfig);
 %include "hillStateConverter.h"
 
 // sample Module support file to be included in this sub-module
