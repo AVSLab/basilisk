@@ -103,6 +103,8 @@ def setup_spacecraft_plant(rN, vN, modelName,):
          0., 9., 0.,
          0., 0., 8.]
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.r_CN_NInit = rN
+    scObject.hub.v_CN_NInit = vN
 
     scNav = simple_nav.SimpleNav()
     scNav.inputStateName = scObject.scStateOutMsgName
@@ -113,7 +115,6 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     dragCoeff = 1.0
     normalVector = [0,0.707,0.707]
     panelLocation = [0,0,0]
-
     dragEffector = facetDragDynamicEffector.FacetDragDynamicEffector()
     dragEffector.addFacet(dragArea, dragCoeff, normalVector, panelLocation)
     scObject.addDynamicEffector(dragEffector)
@@ -136,9 +137,9 @@ def run(show_plots, altOffset, trueAnomOffset):
     dynTaskName = "dynTask"
     fswTaskName = "dynTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(15.0) #   Timestep to evaluate dynamics at
-    dynTimeStep = macros.sec2nano(15.0) #   Timestep to evaluate dynamics at
+    dynTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
+    simProcess.addTask(scSim.CreateNewTask(fswTaskName, dynTimeStep))
 
     ##  Configure environmental parameters
     #   Gravity; includes 2-body plus J2.
@@ -187,11 +188,11 @@ def run(show_plots, altOffset, trueAnomOffset):
     #   Add all dynamics stuff to dynamics task
     scSim.AddModelToTask(dynTaskName, chiefSc)
     scSim.AddModelToTask(dynTaskName, depSc)
+    scSim.AddModelToTask(dynTaskName, atmosphere)
     scSim.AddModelToTask(dynTaskName, chiefDrag)
     scSim.AddModelToTask(dynTaskName, depDrag)
     scSim.AddModelToTask(dynTaskName, chiefNav)
     scSim.AddModelToTask(dynTaskName, depNav)
-#    scSim.AddModelToTask(dynTaskName, gravFactory.spiceObject)
 
     ##  FSW setup
     #   Chief S/C
@@ -215,32 +216,33 @@ def run(show_plots, altOffset, trueAnomOffset):
     # hillToAtt guidance law
     depAttRef = hillToAttRef.HillToAttRef()
     depAttRef.ModelTag = 'dep_att_ref'
-    depAttRef.hillStateInMsg = hillStateNavData.hillStateOutMsgName
-    depAttRef.attStateInMsg = chiefNav.outputAttName
+    depAttRef.hillStateInMsgName = hillStateNavData.hillStateOutMsgName
+    depAttRef.attStateInMsgName = chiefNav.outputAttName
     depAttRef.attRefOutMsgName = 'dep_att_ref'
-    depAttRef.gainMatrixVec = [[ [0.00000000e+00],  [0.00000000e+00], [0.00000000e+00], [0.00000000e+00], [0.00000000e+00], [0.00000000e+00]],
-                               [ [0.00000000e+00],  [0.00000000e+00], [0.00000000e+00], [0.00000000e+00], [0.00000000e+00], [0.00000000e+00]],
-                               [ [1.28982586e-02], [-9.99999987e-05], [0.00000000e+00], [1.90838094e-01], [5.58803922e+00], [0.00000000e+00]]]
+    depAttRef.gainMatrixVec = hillToAttRef.MultiArray3d(np.array([[[ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00,  0.00000000e+00],
+                               [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00, 0.00000000e+00],
+                               [ 1.28982586e-02, -9.99999987e-05,  0.00000000e+00,  1.90838094e-01,   5.58803922e+00,  0.00000000e+00]]]))
     depSc.attRefInMsgName = depAttRef.attRefOutMsgName
 
     scSim.AddModelToTask(fswTaskName, chiefAttRefWrap, chiefAttRefData)
     scSim.AddModelToTask(fswTaskName, hillStateNavWrap, hillStateNavData)
-    scSim.AddModelToTask(fswTaskName, depAttRefWrap, defAttRefData)
+    scSim.AddModelToTask(fswTaskName, depAttRef)
 
     # ----- log ----- #
-    orbit_period = 2*np.pi/np.sqrt(mu/oe.a**3)
-    simulationTime = orbit_period*20
+    orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
+    simulationTime = 20*orbit_period
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
     samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scObject2.scStateOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(chiefSc.scStateOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(depSc.scStateOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(hillStateNavData.hillStateOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, dynProcessName, gravBodies=gravFactory,
-                                              # saveFile=fileName,
-                                              scName=[scObject.ModelTag, scObject2.ModelTag])
+    # viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
+    #                                           # saveFile=fileName,
+    #                                           scName=[chiefSc.ModelTag, depSc.ModelTag])
 
     # ----- execute sim ----- #
     scSim.InitializeSimulationAndDiscover()
@@ -248,10 +250,14 @@ def run(show_plots, altOffset, trueAnomOffset):
     scSim.ExecuteSimulation()
 
     # ----- pull ----- #
-    pos = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    pos2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    pos = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    vel = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    chiefAtt = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
+    pos2 = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    vel2 = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    depAtt = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
+    hillPos = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.r_DC_H', list(range(3)))
+    hillVel = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.v_DC_H', list(range(3)))
     timeData = pos[:, 0]*macros.NANO2SEC/orbit_period
 
     # ----- plot ----- #
@@ -292,7 +298,7 @@ def run(show_plots, altOffset, trueAnomOffset):
     plt.xlabel("time [orbit]")
     plt.ylabel("mean orbital element difference")
     figureList = {}
-    pltName = fileName + "1" + str(int(useClassicElem))
+    pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
     # equinoctial oe (figure2)
     plt.figure(2)
@@ -330,8 +336,24 @@ def run(show_plots, altOffset, trueAnomOffset):
     plt.legend()
     plt.xlabel("time [orbit]")
     plt.ylabel("mean orbital element difference")
-    pltName = fileName + "2" + str(int(useClassicElem))
+    pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
+
+    plt.figure()
+    plt.plot(timeData, chiefAtt,label='Chief $\sigma_{BN}$')
+    plt.plot(timeData, depAtt, label='Deputy $\sigma_{BN}$')
+    plt.grid()
+    plt.legend()
+    plt.ylim([-1,1])
+    plt.xlabel('Time')
+    plt.ylabel('MRP Value')
+
+    plt.figure()
+    plt.plot(hillPos[:,1],hillPos[:,2])
+    plt.grid()
+    plt.legend()
+    plt.xlabel('Hill X (m)')
+    plt.ylabel('Hill Y (m)')
 
     if(show_plots):
         plt.show()
@@ -343,6 +365,6 @@ def run(show_plots, altOffset, trueAnomOffset):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        10.0e3, #   altitude offset
-        0.01 #  True anomaly offset
+        10.0, #   altitude offset (m)
+        0.0001 #  True anomaly offset (deg)
     )
