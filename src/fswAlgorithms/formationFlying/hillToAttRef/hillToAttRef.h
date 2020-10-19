@@ -53,8 +53,8 @@ public:
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
 
-    std::vector<std::vector<std::vector<double>>>::iterator matrixIndex;
-
+    uint64_t matrixIndex;
+    uint64_t gainMatrixVecLen;
     int32_t hillStateInMsgId;        //!< ID for the outgoing message
     int32_t attStateInMsgId;
     int32_t attRefOutMsgId;                //!< ID for the outgoing message
