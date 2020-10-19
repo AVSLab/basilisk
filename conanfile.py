@@ -93,6 +93,16 @@ class BasiliskConan(ConanFile):
         print("conan: " + failColor + "Error configuring conan repo information." + endColor)
     print("\n")
 
+    # auto-generate C message definition files
+    print(statusColor + "Auto-generating message definitions..." + endColor)
+    bskPath = os.getcwd()
+    os.chdir(os.path.join(bskPath, "src/simulation/architecture/messaging/"))
+    cmdString = list()
+    cmdString.append("python3")
+    cmdString.append("GenCMessages.py")
+    subprocess.check_call(cmdString)
+    os.chdir(bskPath)
+
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
         required = reqFile.read().replace("`", "").split('\n')

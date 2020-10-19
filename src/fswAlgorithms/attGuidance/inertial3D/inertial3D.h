@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include "fswMessages/attRefFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
-#include <../../../simulation/architecture/messaging/c_messages/AttRefFswMsg_C.h>
+#include <architecture/messaging/cMessages/AttRefFswMsg_C.h>
 
 
 

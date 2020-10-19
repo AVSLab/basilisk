@@ -34,6 +34,7 @@ src/utilities/vizProtobuffer/vizMessage.pb.cc
 src/utilities/vizProtobuffer/vizMessage.pb.h
 externalTools/fswAuto/autosetter/sets/*
 externalTools/fswAuto/autowrapper/wraps/*
+src/simulation/architecture/messaging/cMessages/*
 **/outputFiles/*
 
 *.fdb_latexmk
