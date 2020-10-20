@@ -76,6 +76,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 
@@ -97,7 +98,7 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     scObject.ModelTag = modelName
     scObject.scStateOutMsgName = modelName+'_inertial_states'
     scObject.scMassStateOutMsgName = modelName+'_mass_states'
-    scObject.hub.mHub = 12.0
+    scObject.hub.mHub = 3.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     I = [10., 0., 0.,
          0., 9., 0.,
@@ -111,9 +112,9 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     scNav.outputTransName = modelName + '_trans_nav_state'
     scNav.outputAttName = modelName + '_att_nav_state'
 
-    dragArea = 1.0
+    dragArea = 2.0
     dragCoeff = 1.0
-    normalVector = [0,0.707,0.707]
+    normalVector = rbk.euler3(np.radians(45.)).dot(np.array([0,1,0]))
     panelLocation = [0,0,0]
     dragEffector = facetDragDynamicEffector.FacetDragDynamicEffector()
     dragEffector.addFacet(dragArea, dragCoeff, normalVector, panelLocation)
@@ -167,9 +168,13 @@ def run(show_plots, altOffset, trueAnomOffset):
     chief_oe.f = 180.*macros.D2R
     chief_rN, chief_vN = orbitalMotion.elem2rv(mu, chief_oe)
 
-    dep_oe = copy.deepcopy(chief_oe)
-    dep_oe.a += altOffset
-    dep_oe.f += trueAnomOffset
+    dep_oe = orbitalMotion.ClassicElements()
+    dep_oe.a = orbitalMotion.REQ_EARTH * 1e3 + 230e3 + (altOffset)  # meters
+    dep_oe.e = 0.
+    dep_oe.i = 60.
+    dep_oe.Omega = 00.0 * macros.D2R
+    dep_oe.omega = 0.0 * macros.D2R
+    dep_oe.f = (180. + trueAnomOffset) * macros.D2R
     dep_rN, dep_vN = orbitalMotion.elem2rv(mu, dep_oe)
 
     #   Initialize s/c dynamics, drag, navigation solutions
@@ -230,7 +235,7 @@ def run(show_plots, altOffset, trueAnomOffset):
 
     # ----- log ----- #
     orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
-    simulationTime = 20*orbit_period
+    simulationTime = 30*orbit_period
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
     samplingTime = simulationTime // (numDataPoints - 1)
@@ -340,8 +345,8 @@ def run(show_plots, altOffset, trueAnomOffset):
     figureList[pltName] = plt.figure(2)
 
     plt.figure()
-    plt.plot(timeData, chiefAtt,label='Chief $\sigma_{BN}$')
-    plt.plot(timeData, depAtt, label='Deputy $\sigma_{BN}$')
+    plt.plot(timeData, chiefAtt[:,1:4],label='Chief $\sigma_{BN}$')
+    plt.plot(timeData, depAtt[:,1:4], label='Deputy $\sigma_{BN}$')
     plt.grid()
     plt.legend()
     plt.ylim([-1,1])
@@ -366,5 +371,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         10.0, #   altitude offset (m)
-        0.0001 #  True anomaly offset (deg)
+        0.001 #  True anomaly offset (deg)
     )
