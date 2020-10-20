@@ -19,12 +19,18 @@
 #include "hillToAttRef.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
+#include <iostream>
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 HillToAttRef::HillToAttRef()
 {
     this->hillStateInMsgName="";
     this->attStateInMsgName="";
     this->attRefOutMsgName="";
+    for(int ind=0; ind<3; ++ind){
+        this->attRefOutMsg.sigma_RN[ind] =0;
+        this->attRefOutMsg.omega_RN_N[ind] = 0;
+        this->attRefOutMsg.domega_RN_N[ind] = 0;
+    }
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -92,7 +98,7 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
 
     double relativeAtt[3];
     double hillState[6];
-    double gainMat[6][6];
+    double gainMat[3][6];
     std::vector<std::vector<double>> currentMat;
 
     for(int ind=0; ind<3; ind++){
@@ -103,6 +109,7 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
     if(this->matrixIndex >= this->gainMatrixVecLen){
         this->matrixIndex = this->gainMatrixVecLen-1;   //  Hold at the last value if we've overrun the vector
     }
+
     currentMat = this->gainMatrixVec[this->matrixIndex];
     std::vector<std::vector<double>>::const_iterator row;
     std::vector<double>::const_iterator col;
@@ -110,26 +117,28 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
     int row_ind = 0;
     int col_ind = 0;
     for(row = currentMat.begin(); row != currentMat.end(); ++row, ++row_ind){
+        col_ind = 0;
         for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
             gainMat[row_ind][col_ind] = *col;
             }
     }
 
-    mMultV(gainMat, 6, 6,
+    mMultV(gainMat, 3, 6,
                    hillState,
                    relativeAtt);
-
     //  Combine the relative attitude with the chief inertial attitude to get the reference attitude
     addMRP(this->attStateInMsg.sigma_BN, relativeAtt, this->attRefOutMsg.sigma_RN);
-    for(int ind=0; ind<3; ind++){
+    for(int ind=0; ind<3; ++ind){
         this->attRefOutMsg.omega_RN_N[ind] = 0;
         this->attRefOutMsg.domega_RN_N[ind] = 0;
     }
+
     //  Write the reference message
-    SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId, CurrentSimNanos, sizeof(AttRefFswMsg), reinterpret_cast<uint8_t *>(&this->attRefOutMsg), this->moduleID);
+    SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId,
+                                                 CurrentSimNanos, sizeof(AttRefFswMsg),
+                                                 reinterpret_cast<uint8_t*>(&this->attRefOutMsg),
+                                                 this->moduleID);
 
-    ++this->matrixIndex;
-
-    return;
+    this->matrixIndex += 1;
 }
 
