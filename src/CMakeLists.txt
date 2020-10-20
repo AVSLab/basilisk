@@ -145,6 +145,7 @@ function(generate_package_libraries INIT_DIRECTORY)
         # Link all necessary libraries
         target_link_libraries(${LIB_NAME} SimUtilities)
         target_link_libraries(${LIB_NAME} SimMessaging)
+        target_link_libraries(${LIB_NAME} cMessages)
         target_link_libraries(${LIB_NAME} AlgorithmMessaging)
         target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
         target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
@@ -484,6 +485,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory("simulation/utilities")
 add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("simulation/architecture/messaging")
+add_subdirectory("simulation/architecture/cMessages")
 add_subdirectory("fswAlgorithms/messaging")
 
 
@@ -492,7 +494,7 @@ add_subdirectory("fswAlgorithms/messaging")
 # TODO: I'd like for all generated libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions --.dylib, .lib, .a, etc -- which gets messy in CMake).
 generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
 
-set(ARCHITECTURE_LIBS simulationLib SimUtilities SimMessaging)
+set(ARCHITECTURE_LIBS simulationLib SimUtilities SimMessaging cMessages)
 
 ##############
 # SIMULATION #

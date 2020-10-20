@@ -17,8 +17,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #define SWIGPYTHON_BUILTIN
 
-%include "swig_common_model.i"
-
+%pythoncode %{
+    from Basilisk.simulation.swig_common_model import *
+%}
+%include "swig_conly_data.i"
+%include "std_vector.i"
 %module message
 %pythoncode %{
     import numpy as np
@@ -113,8 +116,8 @@ INSTANTIATE_TEMPLATES(CmdForceInertialIntMsg, cmdForceInertialIntMsg, simFswInte
 INSTANTIATE_TEMPLATES(EphemerisIntMsg, ephemerisIntMsg, simFswInterfaceMessages)
 
 //fsw messages
-INSTANTIATE_TEMPLATES(AttRefFswMsg, attRefFswMsg, ../fswAlgorithms/fswMessages)
-INSTANTIATE_TEMPLATES(AttGuidFswMsg, attGuidFswMsg, ../fswAlgorithms/fswMessages)
-INSTANTIATE_TEMPLATES(VehicleConfigFswMsg, vehicleConfigFswMsg, ../fswAlgorithms/fswMessages)
+INSTANTIATE_TEMPLATES(AttRefFswMsg, attRefFswMsg, fswAlgorithms/fswMessages)
+INSTANTIATE_TEMPLATES(AttGuidFswMsg, attGuidFswMsg, fswAlgorithms/fswMessages)
+INSTANTIATE_TEMPLATES(VehicleConfigFswMsg, vehicleConfigFswMsg, fswAlgorithms/fswMessages)
 
 %include "message.h"

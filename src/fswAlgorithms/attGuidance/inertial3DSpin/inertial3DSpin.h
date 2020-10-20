@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
-#include <architecture/messaging/cMessages/AttRefFswMsg_C.h>
+#include <architecture/cMessages/AttRefFswMsg_C.h>
 
 /*!@brief module configuration structure definition.
  */

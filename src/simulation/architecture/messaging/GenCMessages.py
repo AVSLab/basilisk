@@ -10,7 +10,7 @@ message_template = license
 header_template = license
 swig_template = license
 
-destination_dir = './cMessages/'
+destination_dir = '../cMessages/'
 if not os.path.exists(os.path.dirname(destination_dir)):
     try:
         os.makedirs(os.path.dirname(destination_dir))
@@ -18,16 +18,21 @@ if not os.path.exists(os.path.dirname(destination_dir)):
         if exc.errno != errno.EEXIST:
             raise
 
-with open(destination_dir + 'cMessages.i', 'w') as w:
+with open(destination_dir + 'cMessagesPy.i', 'w') as w:
     w.write(swig_template)
-swig_template = open(destination_dir + 'cMessages.i', 'a')
+swig_template = open(destination_dir + 'cMessagesPy.i', 'a')
+
+with open('./cMessageTemplate/CMakeLists_template', 'r') as r:
+    cmakeText = r.read()
+with open(destination_dir + 'CMakeLists.txt', 'w') as w:
+    w.write(cmakeText)
 
 with open('cMessageTemplate/README_template', 'r') as r:
     README = r.read()
 message_template += README
 header_template += README
 swig_template.write(README)
-swig_template.write("%module cMessages\n")
+swig_template.write("%module cMessagesPy\n")
 
 with open('./cMessageTemplate/message_template', 'r') as f:
     message_template += f.read()
@@ -45,7 +50,7 @@ def to_message(struct_data):
     if struct_data:
         struct_data = struct_data.replace(' ', '').split(',')
         struct_name = struct_data[0]
-        source_dir = "../../../" + struct_data[2] + '/'
+        source_dir = struct_data[2] + '/'
         source_header_file = source_dir + struct_data[1] + '.h'
         definitions = message_template.format(type=struct_name)
         header = header_template.format(type=struct_name, structHeader=source_header_file)
