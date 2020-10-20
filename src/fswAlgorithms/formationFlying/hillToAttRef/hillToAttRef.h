@@ -49,6 +49,8 @@ public:
     std::string attRefOutMsgName;  //!< Attitude reference message generated after the control law is applied.
     std::vector<std::vector<std::vector<double>>> gainMatrixVec; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
     BSKLogger bskLogger;                //!< -- BSK Logging
+    double relMRPMax; //!< Optional maximum bound on MRP element magnitudes
+    double relMRPMin; //!< Optional minimum bound on MRP element magnitudes
 
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers

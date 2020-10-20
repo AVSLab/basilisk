@@ -31,6 +31,8 @@ HillToAttRef::HillToAttRef()
         this->attRefOutMsg.omega_RN_N[ind] = 0;
         this->attRefOutMsg.domega_RN_N[ind] = 0;
     }
+    this->relMRPMax = 2;
+    this->relMRPMin = -2;
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -126,6 +128,12 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
     mMultV(gainMat, 3, 6,
                    hillState,
                    relativeAtt);
+
+    for(int ind=0; ind<3; ++ind){
+        relativeAtt[ind] = std::max(relativeAtt[ind], this->relMRPMin);
+        relativeAtt[ind] = std::min(relativeAtt[ind], this->relMRPMax);
+    }
+
     //  Combine the relative attitude with the chief inertial attitude to get the reference attitude
     addMRP(this->attStateInMsg.sigma_BN, relativeAtt, this->attRefOutMsg.sigma_RN);
     for(int ind=0; ind<3; ++ind){

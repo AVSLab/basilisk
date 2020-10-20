@@ -138,7 +138,7 @@ def run(show_plots, altOffset, trueAnomOffset):
     dynTaskName = "dynTask"
     fswTaskName = "dynTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
+    dynTimeStep = macros.sec2nano(5.0) #   Timestep to evaluate dynamics at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
     simProcess.addTask(scSim.CreateNewTask(fswTaskName, dynTimeStep))
 
@@ -147,7 +147,7 @@ def run(show_plots, altOffset, trueAnomOffset):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['earth'])
     gravBodies['earth'].isCentralBody = True
-    gravBodies['earth'].useSphericalHarmParams = True
+    gravBodies['earth'].useSphericalHarmParams = False
     simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
 
     #   Density
@@ -227,7 +227,11 @@ def run(show_plots, altOffset, trueAnomOffset):
     depAttRef.gainMatrixVec = hillToAttRef.MultiArray3d(np.array([[[ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00,  0.00000000e+00],
                                [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00, 0.00000000e+00],
                                [ 1.28982586e-02, -9.99999987e-05,  0.00000000e+00,  1.90838094e-01,   5.58803922e+00,  0.00000000e+00]]]))
+    depAttRef.relMRPMin = -0.2
+    depAttRef.relMRPMax = 0.5
+
     depSc.attRefInMsgName = depAttRef.attRefOutMsgName
+
 
     scSim.AddModelToTask(fswTaskName, chiefAttRefWrap, chiefAttRefData)
     scSim.AddModelToTask(fswTaskName, hillStateNavWrap, hillStateNavData)
@@ -260,7 +264,7 @@ def run(show_plots, altOffset, trueAnomOffset):
     chiefAtt = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
     pos2 = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.r_BN_N', list(range(3)))
     vel2 = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    depAtt = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
+    depAtt = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
     hillPos = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.r_DC_H', list(range(3)))
     hillVel = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.v_DC_H', list(range(3)))
     timeData = pos[:, 0]*macros.NANO2SEC/orbit_period
@@ -346,7 +350,7 @@ def run(show_plots, altOffset, trueAnomOffset):
 
     plt.figure()
     plt.plot(timeData, chiefAtt[:,1:4],label='Chief $\sigma_{BN}$')
-    plt.plot(timeData, depAtt[:,1:4], label='Deputy $\sigma_{BN}$')
+    plt.plot(timeData, depAtt[:,1:4],label='Deputy $\sigma_{BN}$')
     plt.grid()
     plt.legend()
     plt.ylim([-1,1])
@@ -371,5 +375,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         10.0, #   altitude offset (m)
-        0.001 #  True anomaly offset (deg)
+        0.01 #  True anomaly offset (deg)
     )
