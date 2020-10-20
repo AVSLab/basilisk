@@ -64,7 +64,6 @@ class BasiliskConan(ConanFile):
     generator = None
 
     # make sure conan is configured to use the libstdc++11 by default
-    print(statusColor + "Checking conan configuration:" + endColor)
     if platform.system() != "Darwin":
         try:
             subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=DEVNULL)
@@ -75,7 +74,7 @@ class BasiliskConan(ConanFile):
             try:
                 subprocess.check_output(["conan", "profile", "update",
                                          "settings.compiler.libcxx=libstdc++11", "default"])
-                print("Configuring: " + statusColor + "use libstdc++11 by default" + endColor)
+                print("\nConfiguring: " + statusColor + "use libstdc++11 by default" + endColor)
 
             except:
                 pass
@@ -91,10 +90,10 @@ class BasiliskConan(ConanFile):
                 subprocess.check_call(cmdString)
     except:
         print("conan: " + failColor + "Error configuring conan repo information." + endColor)
-    print("\n")
+    print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     # auto-generate C message definition files
-    print(statusColor + "Auto-generating message definitions..." + endColor)
+    print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
     bskPath = os.getcwd()
     os.chdir(os.path.join(bskPath, "src/simulation/architecture/messaging/"))
     cmdString = list()
@@ -102,6 +101,7 @@ class BasiliskConan(ConanFile):
     cmdString.append("GenCMessages.py")
     subprocess.check_call(cmdString)
     os.chdir(bskPath)
+    print("Done")
 
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
