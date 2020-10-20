@@ -485,7 +485,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory("simulation/utilities")
 add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("simulation/architecture/messaging")
-add_subdirectory("simulation/architecture/cMessages")
+add_subdirectory("simulation/architecture/messaging/cMessages")
 add_subdirectory("fswAlgorithms/messaging")
 
 

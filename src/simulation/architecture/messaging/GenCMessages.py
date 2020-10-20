@@ -10,7 +10,7 @@ message_template = license
 header_template = license
 swig_template = license
 
-destination_dir = '../cMessages/'
+destination_dir = './cMessages/'
 if not os.path.exists(os.path.dirname(destination_dir)):
     try:
         os.makedirs(os.path.dirname(destination_dir))
@@ -22,25 +22,25 @@ with open(destination_dir + 'cMessagesPy.i', 'w') as w:
     w.write(swig_template)
 swig_template = open(destination_dir + 'cMessagesPy.i', 'a')
 
-with open('./cMessageTemplate/CMakeLists_template', 'r') as r:
+with open('./cMessagesTemplate/CMakeLists_template', 'r') as r:
     cmakeText = r.read()
 with open(destination_dir + 'CMakeLists.txt', 'w') as w:
     w.write(cmakeText)
 
-with open('cMessageTemplate/README_template', 'r') as r:
+with open('cMessagesTemplate/README_template', 'r') as r:
     README = r.read()
 message_template += README
 header_template += README
 swig_template.write(README)
 swig_template.write("%module cMessagesPy\n")
 
-with open('./cMessageTemplate/message_template', 'r') as f:
+with open('./cMessagesTemplate/message_template', 'r') as f:
     message_template += f.read()
 
-with open('./cMessageTemplate/header_template', 'r') as f:
+with open('./cMessagesTemplate/header_template', 'r') as f:
     header_template += f.read()
 
-with open('./cMessageTemplate/swig_template', 'r') as f:
+with open('./cMessagesTemplate/swig_template', 'r') as f:
     swig_template_block = f.read()
 
 with open('./message.i', 'r') as fb:
