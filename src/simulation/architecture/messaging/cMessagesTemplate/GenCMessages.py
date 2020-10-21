@@ -3,7 +3,7 @@ import parse
 import os,errno
 import shutil
 
-with open("../../../../LICENSE", 'r') as f:
+with open("../../../../../LICENSE", 'r') as f:
     license = "/*"
     license += f.read()
     license += "*/\n\n"
@@ -12,7 +12,7 @@ header_template = license
 swig_template = license
 
 # clear out an old folder and create a fresh folder of wrapped C message interfaces
-destination_dir = './cMessages/'
+destination_dir = '../cMessages/'
 if os.path.exists(destination_dir):
     shutil.rmtree(destination_dir, ignore_errors=True)
 try:
@@ -25,28 +25,28 @@ with open(destination_dir + 'cMessagesPy.i', 'w') as w:
     w.write(swig_template)
 swig_template = open(destination_dir + 'cMessagesPy.i', 'a')
 
-with open('./cMessagesTemplate/CMakeLists_template', 'r') as r:
+with open('./CMakeLists_template', 'r') as r:
     cmakeText = r.read()
 with open(destination_dir + 'CMakeLists.txt', 'w') as w:
     w.write(cmakeText)
 
-with open('cMessagesTemplate/README_template', 'r') as r:
+with open('./README_template', 'r') as r:
     README = r.read()
 message_template += README
 header_template += README
 swig_template.write(README)
 swig_template.write("%module cMessagesPy\n")
 
-with open('./cMessagesTemplate/message_template', 'r') as f:
+with open('./message_template', 'r') as f:
     message_template += f.read()
 
-with open('./cMessagesTemplate/header_template', 'r') as f:
+with open('./header_template', 'r') as f:
     header_template += f.read()
 
-with open('./cMessagesTemplate/swig_template', 'r') as f:
+with open('./swig_template', 'r') as f:
     swig_template_block = f.read()
 
-with open('./message.i', 'r') as fb:
+with open('../message.i', 'r') as fb:
     lines = fb.readlines()
 
 def to_message(struct_data):
