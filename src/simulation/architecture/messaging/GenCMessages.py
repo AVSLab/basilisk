@@ -1,6 +1,7 @@
 # Generate C code messages that are compatible with cpp functor based system
 import parse
 import os,errno
+import shutil
 
 with open("../../../../LICENSE", 'r') as f:
     license = "/*"
@@ -10,13 +11,15 @@ message_template = license
 header_template = license
 swig_template = license
 
+# clear out an old folder and create a fresh folder of wrapped C message interfaces
 destination_dir = './cMessages/'
-if not os.path.exists(os.path.dirname(destination_dir)):
-    try:
-        os.makedirs(os.path.dirname(destination_dir))
-    except OSError as exc:  # Guard against race condition
-        if exc.errno != errno.EEXIST:
-            raise
+if os.path.exists(destination_dir):
+    shutil.rmtree(destination_dir, ignore_errors=True)
+try:
+    os.makedirs(os.path.dirname(destination_dir))
+except OSError as exc:  # Guard against race condition
+    if exc.errno != errno.EEXIST:
+        raise
 
 with open(destination_dir + 'cMessagesPy.i', 'w') as w:
     w.write(swig_template)
