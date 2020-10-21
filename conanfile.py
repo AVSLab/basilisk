@@ -97,7 +97,10 @@ class BasiliskConan(ConanFile):
     bskPath = os.getcwd()
     os.chdir(os.path.join(bskPath, "src/simulation/architecture/messaging/"))
     cmdString = list()
-    cmdString.append("python3")
+    if platform.system() == "Windows":
+        cmdString.append("py")
+    else:
+        cmdString.append("python3")
     cmdString.append("GenCMessages.py")
     subprocess.check_call(cmdString)
     os.chdir(bskPath)
@@ -151,7 +154,7 @@ class BasiliskConan(ConanFile):
         # check the version of Python
         print("\nChecking Python version:")
         if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
-            print(warningColor + "Python 3.7 should be used with Basilisk." + endColor)
+            print(warningColor + "Python 3.7 or newer should be used with Basilisk." + endColor)
             print("You are using Python {}.{}.{}".format(sys.version_info.major,
                                                          sys.version_info.minor,sys.version_info.micro))
         else:
