@@ -21,9 +21,9 @@
 #define _ATT_TRACKING_ERROR_
 
 #include "messaging/static_messaging.h"
-#include "architecture/messaging/cMessages/AttGuidFswMsg_C.h"
-#include "architecture/messaging/cMessages/NavAttIntMsg_C.h"
-#include "architecture/messaging/cMessages/AttRefFswMsg_C.h"
+#include "architecture/messaging2/cMessages/AttGuidFswMsg_C.h"
+#include "architecture/messaging2/cMessages/NavAttIntMsg_C.h"
+#include "architecture/messaging2/cMessages/AttRefFswMsg_C.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/attGuidFswMsg.h"

@@ -1,4 +1,4 @@
-/* All of the files in this folder (architecture/messaging/cMessages) are autocoded by the script architecture/messaging/GenCMessages.py.
+/* All of the files in this folder (architecture/messaging2/cMessages) are autocoded by the script architecture/messaging2/cMessagesTemplare/GenCMessages.py.
 The script checks for the line "INSTANTIATE_TEMPLATES" in the file architecture/messaging/message.i. This
 ensures that if a c++ message is instantiated that we also have a C equivalent of that message.
 

@@ -28,9 +28,9 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
-#include "architecture/messaging/cMessages/VehicleConfigFswMsg_C.h"
-#include "architecture/messaging/cMessages/AttGuidFswMsg_C.h"
-#include "architecture/messaging/cMessages/CmdTorqueBodyIntMsg_C.h"
+#include "architecture/messaging2/cMessages/VehicleConfigFswMsg_C.h"
+#include "architecture/messaging2/cMessages/AttGuidFswMsg_C.h"
+#include "architecture/messaging2/cMessages/CmdTorqueBodyIntMsg_C.h"
 #include <stdint.h>
 
 

@@ -1,5 +1,5 @@
 #include "{type}_C.h"
-#include "simulation/architecture/messaging/message.h"
+#include "simulation/architecture/messaging2/message.h"
 
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
     subscriber->payloadPointer = &(source->payload);

@@ -485,7 +485,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory("simulation/utilities")
 add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("simulation/architecture/messaging")
-add_subdirectory("simulation/architecture/messaging/cMessages")
+add_subdirectory("simulation/architecture/messaging2/cMessages")
 add_subdirectory("fswAlgorithms/messaging")
 
 
@@ -516,6 +516,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sim_synch" SIM_SYNCH_TARGET
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilities" UTILITIES_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilitiesSelfCheck" UTILITIES_SELF_CHECK_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/architecture/message2" MESSAGE2_TARGETS)
 
 
 
@@ -532,6 +533,7 @@ generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulat
 generate_package_targets("${UTILITIES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${UTILITIES_SELF_CHECK_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${MESSAGE2_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 
 

@@ -20,7 +20,7 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
-#include "../../architecture/messaging/message.h"
+#include "../../architecture/messaging2/message.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../../simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
