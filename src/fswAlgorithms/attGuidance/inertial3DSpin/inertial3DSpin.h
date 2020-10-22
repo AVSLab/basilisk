@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
-#include <architecture/messaging2/cMessages/AttRefFswMsg_C.h>
+#include <architecture/messaging2/cMessages/AttRefMsg_C.h>
 
 /*!@brief module configuration structure definition.
  */
@@ -33,9 +33,9 @@ typedef struct {
     double omega_spin[3];                            /*!< angular velocity spin vector */
     uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
     /* declare module IO interfaces */
-    AttRefFswMsg_C attRefOutMsg;                     //!< reference attitude output message
-    AttRefFswMsg_C attRefInMsg;                      //!< reference atttiude input message 
-    AttRefFswMsg attRefOutBuffer;                    //!< [-] structure for the output data
+    AttRefMsg_C attRefOutMsg;                     //!< reference attitude output message
+    AttRefMsg_C attRefInMsg;                      //!< reference atttiude input message
+    AttRefMsg attRefOutBuffer;                    //!< [-] structure for the output data
     BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DSpinConfig;
 

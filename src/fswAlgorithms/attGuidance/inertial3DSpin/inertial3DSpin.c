@@ -50,7 +50,7 @@
 void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    AttRefFswMsg_C_claim(&configData->attRefOutMsg, &configData->attRefOutMsg);
+    AttRefMsg_C_claim(&configData->attRefOutMsg, &configData->attRefOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -87,9 +87,9 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, i
 void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
-    AttRefFswMsg attRefInMsgBuffer;
-    memset(&attRefInMsgBuffer, 0x0, sizeof(AttRefFswMsg));
-    attRefInMsgBuffer = AttRefFswMsg_C_read(&configData->attRefInMsg);
+    AttRefMsg attRefInMsgBuffer;
+    memset(&attRefInMsgBuffer, 0x0, sizeof(AttRefMsg));
+    attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
     
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
@@ -109,7 +109,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
                                     dt);
     printf("HPS_C: 5\n");
     /*! - Write output message */
-    AttRefFswMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg);
+    AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg);
     printf("HPS_C: 6\n");
     /*! Update prior time to current for next evaluation */
     configData->priorTime = callTime;
@@ -146,7 +146,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
     v3Add(configData->sigma_RN, v3Temp, configData->sigma_RN);
     MRPswitch(configData->sigma_RN, 1.0, configData->sigma_RN);
     
-    /*! Copy output in AttRefFswMsg struct */
+    /*! Copy output in AttRefMsg struct */
     v3Copy(configData->sigma_RN, configData->attRefOutBuffer.sigma_RN);
     v3Copy(omega_RN_N, configData->attRefOutBuffer.omega_RN_N);
     v3Copy(domega_RN_N, configData->attRefOutBuffer.domega_RN_N);

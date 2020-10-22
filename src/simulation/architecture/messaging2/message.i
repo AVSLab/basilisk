@@ -37,7 +37,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "message.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
-%define INSTANTIATE_TEMPLATES(messageType,message_file, directory)
+%define INSTANTIATE_TEMPLATES(messageType, message_file, directory)
 %{
 #include "../../directory/message_file.h"
 %}
@@ -116,7 +116,7 @@ INSTANTIATE_TEMPLATES(CmdForceInertialIntMsg, cmdForceInertialIntMsg, simFswInte
 INSTANTIATE_TEMPLATES(EphemerisIntMsg, ephemerisIntMsg, simFswInterfaceMessages)
 
 //fsw messages
-INSTANTIATE_TEMPLATES(AttRefFswMsg, attRefFswMsg, fswAlgorithms/fswMessages)
+INSTANTIATE_TEMPLATES(AttRefMsg, AttRefMsg, architecture/messaging2/messageDefinitions)
 INSTANTIATE_TEMPLATES(AttGuidFswMsg, attGuidFswMsg, fswAlgorithms/fswMessages)
 INSTANTIATE_TEMPLATES(VehicleConfigFswMsg, vehicleConfigFswMsg, fswAlgorithms/fswMessages)
 

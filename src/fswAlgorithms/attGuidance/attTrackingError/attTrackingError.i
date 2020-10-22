@@ -31,16 +31,16 @@
 %constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
 %ignore Reset_attTrackingError;
 struct AttGuidFswMsg_C;
-struct AttRefFswMsg_C;
+struct AttRefMsg_C;
 struct NavAttIntMsg_C;
 %include "attTrackingError.h"
 %include "../../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
+%include "architecture/messaging2/messageDefinitions/AttRefMsg.h"
 GEN_SIZEOF(NavAttIntMsg);
 GEN_SIZEOF(attTrackingErrorConfig);
 GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(AttRefFswMsg);
+GEN_SIZEOF(AttRefMsg);
 
 
 %pythoncode %{

@@ -37,7 +37,7 @@
 
 /*!
  \verbatim embed:rst
-    This method creates the module output message of type :ref:`AttRefFswMsg`.
+    This method creates the module output message of type :ref:`AttRefMsg`.
  \endverbatim
  @return void
  @param configData The configuration data associated with RW null space model
@@ -46,7 +46,7 @@
 void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    AttRefFswMsg_C_claim(&configData->attRefOutMsg, &configData->attRefOutMsg);
+    AttRefMsg_C_claim(&configData->attRefOutMsg, &configData->attRefOutMsg);
 }
 
 /*! This method performs the second stage of initialization
@@ -80,13 +80,13 @@ void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t m
  */
 void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    AttRefFswMsg attRefOut;         /* output message structure */
+    AttRefMsg attRefOut;         /* output message structure */
 
     /*! - Compute and store output message */
     computeInertialPointingReference(configData, &attRefOut);
 
     /*! - Write output message */
-    AttRefFswMsg_C_write(&attRefOut, &configData->attRefOutMsg);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg);
 
     return;
 }
@@ -100,7 +100,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t 
  @param configData The configuration data associated with the null space control
  @param attRefOut Output message 
  */
-void computeInertialPointingReference(inertial3DConfig *configData, AttRefFswMsg *attRefOut)
+void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsg *attRefOut)
 {
     v3Copy(configData->sigma_R0N, attRefOut->sigma_RN);
     v3SetZero(attRefOut->omega_RN_N);

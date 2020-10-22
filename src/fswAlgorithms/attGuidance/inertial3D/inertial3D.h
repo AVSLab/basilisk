@@ -21,9 +21,8 @@
 #define _INERTIAL3D_
 
 #include <stdint.h>
-#include "fswMessages/attRefFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
-#include <architecture/messaging2/cMessages/AttRefFswMsg_C.h>
+#include <architecture/messaging2/cMessages/AttRefMsg_C.h>
 
 
 
@@ -32,7 +31,7 @@
  */
 typedef struct {
     double sigma_R0N[3];                            //!<  MRP from inertial frame N to corrected reference frame R
-    AttRefFswMsg_C attRefOutMsg;                    //!< reference attitude output message
+    AttRefMsg_C attRefOutMsg;                    //!< reference attitude output message
     BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DConfig;
 
@@ -45,7 +44,7 @@ extern "C" {
     void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    void computeInertialPointingReference(inertial3DConfig *configData, AttRefFswMsg *attRefOut);
+    void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsg *attRefOut);
 
 #ifdef __cplusplus
 }

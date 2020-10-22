@@ -16,27 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module inertial3DSpin
-%{
-   #include "inertial3DSpin.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_inertial3DSpin(void*, uint64_t, uint64_t);
-%ignore Update_inertial3DSpin;
-%constant void SelfInit_inertial3DSpin(void*, uint64_t);
-%ignore SelfInit_inertial3DSpin;
-%constant void CrossInit_inertial3DSpin(void*, uint64_t);
-%ignore CrossInit_inertial3DSpin;
-%constant void Reset_inertial3DSpin(void*, uint64_t, uint64_t);
-%ignore Reset_inertial3DSpin;
-GEN_SIZEOF(inertial3DSpinConfig);
-GEN_SIZEOF(AttRefMsg);
-%include "inertial3DSpin.h"
+#ifndef ATT_REF_MESSAGE_H
+#define ATT_REF_MESSAGE_H
 
-// sample Module supportfile to be included in this sub-module
-%include "architecture/messaging2/messageDefinitions/AttRefMsg.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+
+/*! @brief Structure used to define the output definition for attitude reference generation */
+typedef struct {
+    double sigma_RN[3];         //!<        MRP Reference attitude of R relative to N
+    double omega_RN_N[3];       //!< [r/s]  Reference frame rate vector of the of R relative to N in N frame components
+    double domega_RN_N[3];      //!< [r/s2] Reference frame inertial acceleration of  R relative to N in N frame components
+}AttRefMsg;
+
+
+#endif
