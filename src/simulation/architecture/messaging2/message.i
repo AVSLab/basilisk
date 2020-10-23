@@ -117,7 +117,7 @@ INSTANTIATE_TEMPLATES(EphemerisIntMsg, ephemerisIntMsg, simFswInterfaceMessages)
 
 //fsw messages
 INSTANTIATE_TEMPLATES(AttRefMsg, AttRefMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(AttGuidFswMsg, attGuidFswMsg, fswAlgorithms/fswMessages)
-INSTANTIATE_TEMPLATES(VehicleConfigFswMsg, vehicleConfigFswMsg, fswAlgorithms/fswMessages)
+INSTANTIATE_TEMPLATES(AttGuidMsg, AttGuidMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(VehicleConfigMsg, VehicleConfigMsg, architecture/messaging2/messageDefinitions)
 
 %include "message.h"

@@ -17,17 +17,18 @@
 
  */
 
-#ifndef ATT_REF_MESSAGE2_H
-#define ATT_REF_MESSAGE2_H
+#ifndef ATT_GUID_MESSAGE2_H
+#define ATT_GUID_MESSAGE2_H
 
 
 
-/*! @brief Structure used to define the output definition for attitude reference generation */
+/*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
-    double sigma_RN[3];         //!<        MRP Reference attitude of R relative to N
-    double omega_RN_N[3];       //!< [r/s]  Reference frame rate vector of the of R relative to N in N frame components
-    double domega_RN_N[3];      //!< [r/s2] Reference frame inertial acceleration of  R relative to N in N frame components
-}AttRefMsg;
+    double sigma_BR[3];         //!<        Current attitude error estimate (MRPs) of B relative to R*/
+    double omega_BR_B[3];       //!< [r/s]  Current body error estimate of B relateive to R in B frame compoonents */
+    double omega_RN_B[3];       //!< [r/s]  Reference frame rate vector of the of R relative to N in B frame components */
+    double domega_RN_B[3];      //!< [r/s2] Reference frame inertial body acceleration of R relative to N in B frame components */
+}AttGuidMsg;
 
 
 #endif

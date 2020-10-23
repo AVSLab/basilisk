@@ -46,8 +46,8 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 
 /*! @brief This method performs the second stage of initialization for this module.
  Its primary function is to link the input messages that were created elsewhere.  The required
- input messages are the attitude tracking error message of type ``AttGuidFswMsg``
- and the vehicle configuration message of type ``VehicleConfigFswMsg``.
+ input messages are the attitude tracking error message of type ``AttGuidMsg``
+ and the vehicle configuration message of type ``VehicleConfigMsg``.
  Optional messages are the RW configuration message of type ``RWArrayConfigFswMsg``,
  the RW speed message of type `RWSpeedIntMsg`
  and the RW availability message of type :`RWAvailabilityFswMsg`.
@@ -93,9 +93,9 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
     int i;
 
     /*! - zero and read in vehicle configuration message */
-    VehicleConfigFswMsg sc;
-    memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
-    sc = VehicleConfigFswMsg_C_read(&configData->vehConfigInMsg);
+    VehicleConfigMsg sc;
+    memset(&sc, 0x0, sizeof(VehicleConfigMsg));
+    sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
     /*! - copy over spacecraft inertia tensor */
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
@@ -130,7 +130,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
 void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    AttGuidFswMsg      guidCmd;            /* attitude tracking error message */
+    AttGuidMsg      guidCmd;            /* attitude tracking error message */
     RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */
     RWAvailabilityFswMsg wheelsAvailability; /* Reaction wheel availability message */
     CmdTorqueBodyIntMsg controlOut;        /* output message */
@@ -160,8 +160,8 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
 
     /*! - Read the attitude tracking error message */
-    memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
-    guidCmd = AttGuidFswMsg_C_read(&configData->guidInMsg);
+    memset(&guidCmd, 0x0, sizeof(AttGuidMsg));
+    guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);
 
     /*! - read in optional RW speed and availability message */
     if(configData->rwConfigParams.numRW > 0) {

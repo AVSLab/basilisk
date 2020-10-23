@@ -17,17 +17,16 @@
 
  */
 
-#ifndef ATT_REF_MESSAGE2_H
-#define ATT_REF_MESSAGE2_H
+#ifndef VEHICLE_CONFIG_MESSAGE2_H
+#define VEHICLE_CONFIG_MESSAGE2_H
 
 
-
-/*! @brief Structure used to define the output definition for attitude reference generation */
+/*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
-    double sigma_RN[3];         //!<        MRP Reference attitude of R relative to N
-    double omega_RN_N[3];       //!< [r/s]  Reference frame rate vector of the of R relative to N in N frame components
-    double domega_RN_N[3];      //!< [r/s2] Reference frame inertial acceleration of  R relative to N in N frame components
-}AttRefMsg;
+    double ISCPntB_B[9];          //!< [kg m^2] Spacecraft Inertia 
+    double CoM_B[3];              //!< [m] Center of mass of spacecraft in body
+    uint32_t CurrentADCSState;    //!< [-] Current ADCS state for subsystem
+}VehicleConfigMsg;
 
 
 #endif

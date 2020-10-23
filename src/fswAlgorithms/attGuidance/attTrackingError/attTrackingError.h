@@ -21,12 +21,11 @@
 #define _ATT_TRACKING_ERROR_
 
 #include "messaging/static_messaging.h"
-#include "architecture/messaging2/cMessages/AttGuidFswMsg_C.h"
+#include "architecture/messaging2/cMessages/AttGuidMsg_C.h"
 #include "architecture/messaging2/cMessages/NavAttIntMsg_C.h"
 #include "architecture/messaging2/cMessages/AttRefMsg_C.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "fswMessages/attGuidFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
 
 
@@ -36,7 +35,7 @@
 typedef struct {
     /* declare module private variables */
     double sigma_R0R[3];                        //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
-    AttGuidFswMsg_C attGuidOutMsg;              //!< output msg of attitude guidance
+    AttGuidMsg_C attGuidOutMsg;              //!< output msg of attitude guidance
     NavAttIntMsg_C attNavInMsg;                 //!< input msg measured attitude
     AttRefMsg_C attRefInMsg;                 //!< input msg of reference attitude
     BSKLogger *bskLogger;                       //!< BSK Logging
@@ -50,7 +49,7 @@ extern "C" {
     void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID);
     void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID);
-    void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefMsg ref, AttGuidFswMsg *attGuidOut);
+    void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefMsg ref, AttGuidMsg *attGuidOut);
 
 #ifdef __cplusplus
 }

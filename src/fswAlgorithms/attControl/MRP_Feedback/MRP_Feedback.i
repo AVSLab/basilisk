@@ -33,16 +33,16 @@
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(MRP_FeedbackConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
+GEN_SIZEOF(AttGuidMsg);
+GEN_SIZEOF(VehicleConfigMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
 struct CmdTorqueBodyIntMsg_C;
-struct AttGuidFswMsg_C;
-struct VehicleConfigFswMsg_C;
+struct AttGuidMsg_C;
+struct VehicleConfigMsg_C;
 %include "MRP_Feedback.h"
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
+%include "architecture/messaging2/messageDefinitions/AttGuidMsg.h"
+%include "architecture/messaging2/messageDefinitions/VehicleConfigMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"

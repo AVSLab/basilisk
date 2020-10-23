@@ -21,15 +21,13 @@
 #define _MRP_FEEDBACK_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
-#include "architecture/messaging2/cMessages/VehicleConfigFswMsg_C.h"
-#include "architecture/messaging2/cMessages/AttGuidFswMsg_C.h"
+#include "architecture/messaging2/cMessages/VehicleConfigMsg_C.h"
+#include "architecture/messaging2/cMessages/AttGuidMsg_C.h"
 #include "architecture/messaging2/cMessages/CmdTorqueBodyIntMsg_C.h"
 #include <stdint.h>
 
@@ -59,8 +57,8 @@ typedef struct {
     int32_t rwSpeedsInMsgId;                            //!< [-] ID for the reaction wheel speeds message
 
     CmdTorqueBodyIntMsg_C cmdTorqueOutMsg;
-    AttGuidFswMsg_C guidInMsg;
-    VehicleConfigFswMsg_C vehConfigInMsg;
+    AttGuidMsg_C guidInMsg;
+    VehicleConfigMsg_C vehConfigInMsg;
 
     BSKLogger *bskLogger;                               //!< BSK Logging
 }MRP_FeedbackConfig;

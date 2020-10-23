@@ -34,7 +34,7 @@
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
     /*! Create output message for module */
-    AttGuidFswMsg_C_claim(&configData->attGuidOutMsg, &configData->attGuidOutMsg);
+    AttGuidMsg_C_claim(&configData->attGuidOutMsg, &configData->attGuidOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -69,19 +69,19 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
 {
     AttRefMsg ref;                      /* reference guidance message */
     NavAttIntMsg nav;                      /* navigation message */
-    AttGuidFswMsg attGuidOut;              /* Guidance message */
+    AttGuidMsg attGuidOut;              /* Guidance message */
 
     /*! - Read the input messages */
     memset(&ref, 0x0, sizeof(AttRefMsg));
     memset(&nav, 0x0, sizeof(NavAttIntMsg));
-    memset(&attGuidOut, 0x0, sizeof(AttGuidFswMsg));
+    memset(&attGuidOut, 0x0, sizeof(AttGuidMsg));
 
     ref = AttRefMsg_C_read(&configData->attRefInMsg);
     nav = NavAttIntMsg_C_read(&configData->attNavInMsg);
 
     computeAttitudeError(configData->sigma_R0R, nav, ref, &attGuidOut);
 
-    AttGuidFswMsg_C_write(&attGuidOut, &configData->attGuidOutMsg);
+    AttGuidMsg_C_write(&attGuidOut, &configData->attGuidOutMsg);
 
     return;
 }
@@ -93,7 +93,7 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
  @param ref The reference attitude
  @param attGuidOut Output attitude guidance message
  */
-void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefMsg ref, AttGuidFswMsg *attGuidOut){
+void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefMsg ref, AttGuidMsg *attGuidOut){
     double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
     double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
     double      dcm_BN[3][3];               /* DCM from inertial to body frame */
