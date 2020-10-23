@@ -175,6 +175,33 @@ Variables holding data from a read message are to be composed in the following m
 -  ``Buffer``: explicitly identifies the variable as having a data
    buffer functionality.
 
+.. _bsk2MessageDefinition:
+
+Message Definitions
+~~~~~~~~~~~~~~~~~~~
+The C based messages are stored in ``src/architecture/messaging2/messageDefinition`` as a ``*.h`` file.
+The file name uses Upper Camel Case and should be idential to the message name within the file.
+The last three letters should be ``Msg``.
+For example, a particular spacecraft sensor message could be named ``SpecialSensorMsg.h``.  The contents
+could be
+
+.. code:: cpp
+
+    #ifndef SPECIAL_SENSOR_MESSAGE2_H
+    #define SPECIAL_SENSOR_MESSAGE2_H
+
+    /*! @brief Describe the purpose of the message */
+    typedef struct {
+        double sensorOutput_B[3];   //!<        sensor vector in B frame components */
+        double sensorSignal;        //!<        raw sensor signal
+        int status;                 //!<        sensor status flag
+    }SpecialSensorMsg;
+
+    #endif
+
+When running the Basilisk setup command ``python3 conanfile.py`` the related message interface files
+are then automatially created and included in the project.
+
 C/C++ Exceptions
 ----------------
 

@@ -14,6 +14,7 @@ The following support files help with writing Basilisk modules.
    Coder/addSphinxDoc
    Coder/bskModuleCheckoutList
    Coder/UnderstandingBasilisk
+   Coder/migratingBskModuleToBsk2
    Coder/MigratingToPython3
 
 

@@ -12,9 +12,9 @@ The following support documents are for the Basilisk user who is seeking general
    User/FAQ
    User/FAQmacOS
    User/FAQwindows
-   User/migratingToBsk2
    User/createHtmlDocumentation
    User/usingLivePlotting
+   User/migratingToBsk2
 
 
 

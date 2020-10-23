@@ -6,7 +6,7 @@ Migrating Basilisk Scripts from Version 1.X to 2.X
 
 Motivation
 ----------
-This document discusses what user-facing changes occured with the new messaging system in Basilisk version 2.0
+This document discusses what user-facing changes occurred with the new messaging system in Basilisk version 2.0
 and higher.  The string messaging system is replaced with a smarter message object system that
 
 - prevents the user from connecting to the wrong message type in the C/C++ code
@@ -18,9 +18,10 @@ The overall goal is to create a new implementation is that is easier to use and 
 to execute.
 
 However, nothing is for free.  Making these changes was not possible without breaking existing code.  This migration
-help page outlines all the user-facing changes that have occured.  This facilities the process of upgrading legacy
+help page outlines all the user-facing changes that have occurred.  This facilities the process of upgrading legacy
 Basilisk python scripts to function with the new message system, etc.
 
+For changes related to updating Basilisk C and C++ module code, see :ref:`migratingBskModuleToBsk2`.
 
 Message Names
 -------------
