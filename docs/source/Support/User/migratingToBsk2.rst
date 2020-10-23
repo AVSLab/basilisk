@@ -32,10 +32,28 @@ while before we had ``stateOutMsgName`` and ``stateOutMsgId`` variables, now a s
 
 Logged Data
 -----------
-The logging of messages is much simplified.  There are a few changes to note in the format of the logged data.  In
-Basilisk v2.0 and higher the time information is no longer pre-pended in a first column, but rather provided as a
+The logging of messages is much simplified.  There are a few changes to note in the format of the logged data.
+
+Here is some sample code.  The only line required to log the state output message use::
+
+    attErrorLog = attErrorConfig.attGuidOutMsg.log()
+
+This creates an object that can be added to a task list through::
+
+    scSim.AddModelToTask(logTaskName, attErrorLog)
+
+The update rate of ``logTaskName`` controls the frequency at which this message is logged.
+
+That is it.  The data is now logged into ``attErrorLog`` automatically during the simulation run.
+In the new messaging system  the time information is no longer pre-pended in a first column, but rather provided as a
 separate array accessed through ``.times()``.  This means logging `N` time steps of a 3D vector no longer no longer
 yields a `Nx4` array, but rather a `Nx3` array.  Some plotting or value checking logic might have to be updated.
+For example, to plot using the log data use::
+
+    for idx in range(3):
+        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx])
+
+
 
 Module and Message Naming Changes
 ---------------------------------

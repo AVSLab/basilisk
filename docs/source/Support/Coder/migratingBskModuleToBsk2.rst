@@ -236,6 +236,7 @@ Updating a C++ Module
 
 #. Updating the ``module.i`` file:
 
+    - In the ``GEN_SIZEOF()`` commands, update the message from ``ModuleFswMsg`` to ``ModuleMsg``
     - Update the message definition include statement from
 
       .. code:: cpp
