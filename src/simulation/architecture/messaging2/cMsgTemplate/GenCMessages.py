@@ -10,6 +10,7 @@ with open("../../../../../LICENSE", 'r') as f:
 message_template = license
 header_template = license
 swig_template = license
+message_i_template = license
 
 # clear out an old folder and create a fresh folder of wrapped C message interfaces
 destination_dir = '../cMsgCInterface/'
@@ -21,29 +22,44 @@ except OSError as exc:  # Guard against race condition
     if exc.errno != errno.EEXIST:
         raise
 
+# create swig file for C-msg C interface methods
 with open(destination_dir + 'cMsgCInterfacePy.i', 'w') as w:
     w.write(swig_template)
 swig_template = open(destination_dir + 'cMsgCInterfacePy.i', 'a')
 
-with open('./CMakeLists_template', 'r') as r:
+# create the cmake file for the auto-generated C-msg interface files
+with open('./CMakeLists_template.txt', 'r') as r:
     cmakeText = r.read()
 with open(destination_dir + 'CMakeLists.txt', 'w') as w:
     w.write(cmakeText)
 
-with open('./README_template', 'r') as r:
+# append all C msg definitions to the message.i file
+with open('./message_i_template.txt', 'r') as r:
+    messageContent = r.read()
+    message_i_template += messageContent
+with open(destination_dir + '../message.i', 'w') as w:
+    w.write(message_i_template)
+for file in os.listdir("../cMsgDefinition"):
+    if file.endswith(".h"):
+        message_i_template += "\nINSTANTIATE_TEMPLATES(" + os.path.splitext(file)[0] + ")"
+message_i_template += '\n\n%include "message.h"\n'
+with open(destination_dir + '../message.i', 'w') as w:
+    w.write(message_i_template)
+
+with open('./README_template.txt', 'r') as r:
     README = r.read()
 message_template += README
 header_template += README
 swig_template.write(README)
 swig_template.write("%module cMsgCInterfacePy\n")
 
-with open('./message_template', 'r') as f:
+with open('./message_template.txt', 'r') as f:
     message_template += f.read()
 
-with open('./header_template', 'r') as f:
+with open('./header_template.txt', 'r') as f:
     header_template += f.read()
 
-with open('./swig_template', 'r') as f:
+with open('./swig_template.txt', 'r') as f:
     swig_template_block = f.read()
 
 with open('../message.i', 'r') as fb:
