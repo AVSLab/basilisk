@@ -16,27 +16,14 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module simpleNav
-%{
-   #include "simpleNav.h"
-%}
 
-%pythoncode %{
-from Basilisk.simulation.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+#ifndef _CMD_FORCE_INERTIAL_MESSAGE2_
+#define _CMD_FORCE_INERTIAL_MESSAGE2_
 
-%include "sys_model.h"
-%include "simpleNav.h"
-%include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavTransMsg.h"
-GEN_SIZEOF(SCPlusStatesMsg);
-GEN_SIZEOF(NavAttMsg);
-GEN_SIZEOF(NavTransMsg);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief Message used to define the vehicle control force vector in Inertial frame components*/
+typedef struct {
+    double forceRequestInertial[3];     //!< [N] control force request 
+}CmdForceInertialMsg;
+
+
+#endif

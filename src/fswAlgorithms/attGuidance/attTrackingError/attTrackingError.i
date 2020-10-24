@@ -34,10 +34,10 @@ struct AttGuidMsg_C;
 struct AttRefMsg_C;
 struct NavAttIntMsg_C;
 %include "attTrackingError.h"
-%include "../../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
+%include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
 %include "architecture/messaging2/messageDefinitions/attGuidMsg.h"
 %include "architecture/messaging2/messageDefinitions/AttRefMsg.h"
-GEN_SIZEOF(NavAttIntMsg);
+GEN_SIZEOF(NavAttMsg);
 GEN_SIZEOF(attTrackingErrorConfig);
 GEN_SIZEOF(AttGuidMsg);
 GEN_SIZEOF(AttRefMsg);

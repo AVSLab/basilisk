@@ -28,7 +28,7 @@
 #include "simulation/utilities/bskLogging.h"
 #include "architecture/messaging2/cMessages/VehicleConfigMsg_C.h"
 #include "architecture/messaging2/cMessages/AttGuidMsg_C.h"
-#include "architecture/messaging2/cMessages/CmdTorqueBodyIntMsg_C.h"
+#include "architecture/messaging2/cMessages/CmdTorqueBodyMsg_C.h"
 #include <stdint.h>
 
 
@@ -56,7 +56,7 @@ typedef struct {
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];        //!< [-] The name for the reaction wheel speeds message
     int32_t rwSpeedsInMsgId;                            //!< [-] ID for the reaction wheel speeds message
 
-    CmdTorqueBodyIntMsg_C cmdTorqueOutMsg;
+    CmdTorqueBodyMsg_C cmdTorqueOutMsg;
     AttGuidMsg_C guidInMsg;
     VehicleConfigMsg_C vehConfigInMsg;
 

@@ -31,15 +31,12 @@ SpacecraftPlus::SpacecraftPlus()
 {
     // - Set default names
     this->sysTimePropertyName = "systemTime";
-    this->scStateOutMsgName = "inertial_state_output";
-    this->scMassStateOutMsgName = "mass_state_output";
     this->attRefInMsgName = "";
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
     this->timePrevious = 0.0;
     this->simTimePrevious = 0;
-    this->scStateOutMsgId = -1;
     this->attRefInMsgId = -1;
     this->numOutMsgBuffers = 2;
     this->dvAccum_B.setZero();
@@ -107,7 +104,7 @@ void SpacecraftPlus::addDynamicEffector(DynamicEffector *newDynamicEffector)
 void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
 {
     // - Populate state output message
-    SCPlusStatesSimMsg stateOut;
+    SCPlusStatesMsg stateOut;
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
@@ -127,7 +124,7 @@ void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
     this->writeScStateOutMsg(stateOut);
 
     // - Populate mass state output message
-    SCPlusMassPropsSimMsg massStateOut;
+    SCPlusMassPropsMsg massStateOut;
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);

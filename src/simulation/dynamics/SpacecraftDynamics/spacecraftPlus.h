@@ -29,8 +29,8 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/scPlusMassPropsSimMsg.h"
+#include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
+#include "architecture/messaging2/messageDefinitions/SCPlusMassPropsMsg.h"
 #include "hubEffector.h"
 #include "utilities/bskLogging.h"
 
@@ -42,8 +42,6 @@ public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< -- Name of the system time property
-    std::string scStateOutMsgName;       //!< -- Name of the state output message
-    std::string scMassStateOutMsgName;   //!< -- Name of the state output message
     std::string attRefInMsgName;         //!< -- (optional) reference attitude input message name
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
@@ -76,8 +74,8 @@ public:
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    SimMessage<SCPlusStatesSimMsg> scStateOutMsg;
-    SimMessage<SCPlusMassPropsSimMsg> scMassOutMsg;
+    SimMessage<SCPlusStatesMsg> scStateOutMsg;
+    SimMessage<SCPlusMassPropsMsg> scMassOutMsg;
 
 public:
     SpacecraftPlus();                    //!< -- Constructor
@@ -103,14 +101,12 @@ private:
     StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-    int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
-    int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
     int64_t attRefInMsgId;                      //!< -- Message ID for the optional incoming attitude reference message
 
 private:
     void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude
-    WriteFunctor<SCPlusStatesSimMsg> writeScStateOutMsg;
-    WriteFunctor<SCPlusMassPropsSimMsg> writeScMassOutMsg;
+    WriteFunctor<SCPlusStatesMsg> writeScStateOutMsg;
+    WriteFunctor<SCPlusMassPropsMsg> writeScMassOutMsg;
 };
 
 

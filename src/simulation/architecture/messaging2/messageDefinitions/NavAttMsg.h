@@ -16,27 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module simpleNav
-%{
-   #include "simpleNav.h"
-%}
 
-%pythoncode %{
-from Basilisk.simulation.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+#ifndef NAV_ATT_MESSAGE2_H
+#define NAV_ATT_MESSAGE2_H
 
-%include "sys_model.h"
-%include "simpleNav.h"
-%include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavTransMsg.h"
-GEN_SIZEOF(SCPlusStatesMsg);
-GEN_SIZEOF(NavAttMsg);
-GEN_SIZEOF(NavTransMsg);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief Structure used to define the output definition for attitude guidance*/
+typedef struct {
+    double timeTag;          //!< [s]   Current vehicle time-tag associated with measurements*/
+    double sigma_BN[3];      //!<       Current spacecraft attitude (MRPs) of body relative to inertial */
+    double omega_BN_B[3];    //!< [r/s] Current spacecraft angular velocity vector of body frame B relative to inertial frame N, in B frame components
+    double vehSunPntBdy[3];  //!<       Current sun pointing vector in body frame
+}NavAttMsg;
+
+
+#endif

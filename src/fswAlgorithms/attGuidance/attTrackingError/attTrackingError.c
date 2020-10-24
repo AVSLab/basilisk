@@ -68,16 +68,16 @@ void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTim
 void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     AttRefMsg ref;                      /* reference guidance message */
-    NavAttIntMsg nav;                      /* navigation message */
+    NavAttMsg nav;                      /* navigation message */
     AttGuidMsg attGuidOut;              /* Guidance message */
 
     /*! - Read the input messages */
     memset(&ref, 0x0, sizeof(AttRefMsg));
-    memset(&nav, 0x0, sizeof(NavAttIntMsg));
+    memset(&nav, 0x0, sizeof(NavAttMsg));
     memset(&attGuidOut, 0x0, sizeof(AttGuidMsg));
 
     ref = AttRefMsg_C_read(&configData->attRefInMsg);
-    nav = NavAttIntMsg_C_read(&configData->attNavInMsg);
+    nav = NavAttMsg_C_read(&configData->attNavInMsg);
 
     computeAttitudeError(configData->sigma_R0R, nav, ref, &attGuidOut);
 
@@ -93,7 +93,7 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
  @param ref The reference attitude
  @param attGuidOut Output attitude guidance message
  */
-void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefMsg ref, AttGuidMsg *attGuidOut){
+void computeAttitudeError(double sigma_R0R[3], NavAttMsg nav, AttRefMsg ref, AttGuidMsg *attGuidOut){
     double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
     double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
     double      dcm_BN[3][3];               /* DCM from inertial to body frame */

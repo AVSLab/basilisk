@@ -20,12 +20,12 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
-#include "../../architecture/messaging2/message.h"
+#include "architecture/messaging2/message.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../../simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "../../simFswInterfaceMessages/cmdForceBodyIntMsg.h"
-#include "../../simFswInterfaceMessages/cmdForceInertialIntMsg.h"
+#include "architecture/messaging2/messageDefinitions/CmdTorqueBodyMsg.h"
+#include "architecture/messaging2/messageDefinitions/CmdForceBodyMsg.h"
+#include "architecture/messaging2/messageDefinitions/CmdForceInertialMsg.h"
 #include "utilities/bskLogging.h"
 
 
@@ -45,9 +45,9 @@ public:
     void computeForceTorque(double integTime);
 
 private:
-    CmdTorqueBodyIntMsg incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
-    CmdForceInertialIntMsg incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
-    CmdForceBodyIntMsg incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
+    CmdTorqueBodyMsg incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
+    CmdForceInertialMsg incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
+    CmdForceBodyMsg incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
 
 
 public:
@@ -56,9 +56,9 @@ public:
     Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    ReadFunctor<CmdTorqueBodyIntMsg> cmdTorqueInMsg;
-    ReadFunctor<CmdForceBodyIntMsg> cmdForceBodyInMsg;
-    ReadFunctor<CmdForceInertialIntMsg>cmdForceInertialInMsg;
+    ReadFunctor<CmdTorqueBodyMsg> cmdTorqueInMsg;
+    ReadFunctor<CmdForceBodyMsg> cmdForceBodyInMsg;
+    ReadFunctor<CmdForceInertialMsg>cmdForceInertialInMsg;
 
 };
 

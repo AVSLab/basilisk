@@ -32,7 +32,7 @@
 #include <string.h>
 #include <math.h>
 
-/*! @brief This method sets up the module output message of type `CmdTorqueBodyIntMsg`
+/*! @brief This method sets up the module output message of type `CmdTorqueBodyMsg`
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
@@ -40,7 +40,7 @@
 void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    CmdTorqueBodyIntMsg_C_claim(&configData->cmdTorqueOutMsg, &configData->cmdTorqueOutMsg);
+    CmdTorqueBodyMsg_C_claim(&configData->cmdTorqueOutMsg, &configData->cmdTorqueOutMsg);
 
 }
 
@@ -133,7 +133,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     AttGuidMsg      guidCmd;            /* attitude tracking error message */
     RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */
     RWAvailabilityFswMsg wheelsAvailability; /* Reaction wheel availability message */
-    CmdTorqueBodyIntMsg controlOut;        /* output message */
+    CmdTorqueBodyMsg controlOut;        /* output message */
 
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
@@ -157,7 +157,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     double              *wheelGs;           /* Reaction wheel spin axis pointer */
 
     /*! - zero the output message */
-    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
+    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyMsg));
 
     /*! - Read the attitude tracking error message */
     memset(&guidCmd, 0x0, sizeof(AttGuidMsg));
@@ -238,7 +238,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    CmdTorqueBodyIntMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg);
+    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg);
 
     return;
 }

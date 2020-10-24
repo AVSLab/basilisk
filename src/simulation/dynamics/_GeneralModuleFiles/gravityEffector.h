@@ -26,7 +26,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <vector>
 #include <Eigen/Dense>
-#include "simMessages/spicePlanetStateSimMsg.h"
+#include "architecture/messaging2/messageDefinitions/SpicePlanetStateMsg.h"
 #include "utilities/bskLogging.h"
 #include "architecture/messaging2/message.h"
 
@@ -82,7 +82,7 @@ public:
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
     void registerProperties(DynParamManager& statesIn);  //!< class method
-    ReadFunctor<SpicePlanetStateSimMsg> readInputMsg;
+    ReadFunctor<SpicePlanetStateMsg> readInputMsg;
 
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
@@ -93,7 +93,7 @@ public:
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
-    SpicePlanetStateSimMsg localPlanet;//!< [-]   Class storage of ephemeris info from scheduled portion
+    SpicePlanetStateMsg localPlanet;//!< [-]   Class storage of ephemeris info from scheduled portion
     SingleMessageHeader localHeader;//!< [-]      Header information for ephemeris storage
     std::string bodyInMsgName;      //!<          Gravitational body name
     std::string outputMsgName;      //!<          Ephemeris information relative to display frame
@@ -131,7 +131,7 @@ public:
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData); //!< class method
     void writeOutputMessages(uint64_t currentSimNanos); //!< class method
-    WriteFunctor<SpicePlanetStateSimMsg> writeCentralBodyOutMsg;
+    WriteFunctor<SpicePlanetStateMsg> writeCentralBodyOutMsg;
 
 public:
     std::string vehicleGravityPropName;            //!< [-] Name of the vehicle mass state
@@ -142,7 +142,7 @@ public:
     std::string inertialVelocityPropName;           //!< [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //!< [-] Name of the s/c this gravity model is attached to
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    SimMessage<SpicePlanetStateSimMsg> centralBodyOutMsg;
+    SimMessage<SpicePlanetStateMsg> centralBodyOutMsg;
 
 private:
     Eigen::MatrixXd *gravProperty;                  //!< [-] g_N property for output

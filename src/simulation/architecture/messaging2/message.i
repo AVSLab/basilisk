@@ -100,20 +100,16 @@ typedef struct messageType;
 %enddef
 
 //sim messages
-INSTANTIATE_TEMPLATES(SpicePlanetStateSimMsg, spicePlanetStateSimMsg, simMessages)
-INSTANTIATE_TEMPLATES(EclipseSimMsg, eclipseSimMsg, simMessages)
-INSTANTIATE_TEMPLATES(SCPlusStatesSimMsg, scPlusStatesSimMsg, simMessages)
-INSTANTIATE_TEMPLATES(SCPlusMassPropsSimMsg, scPlusMassPropsSimMsg, simMessages)
-INSTANTIATE_TEMPLATES(EpochSimMsg, epochSimMsg, simMessages)
-INSTANTIATE_TEMPLATES(SpiceTimeSimMsg, spiceTimeSimMsg, simMessages)
+INSTANTIATE_TEMPLATES(SpicePlanetStateMsg, SpicePlanetStateMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(SCPlusStatesMsg, SCPlusStatesMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(SCPlusMassPropsMsg, SCPlusMassPropsMsg, architecture/messaging2/messageDefinitions)
 
 //fsw interface messages
-INSTANTIATE_TEMPLATES(NavAttIntMsg, navAttIntMsg, simFswInterfaceMessages)
-INSTANTIATE_TEMPLATES(NavTransIntMsg, navTransIntMsg, simFswInterfaceMessages)
-INSTANTIATE_TEMPLATES(CmdTorqueBodyIntMsg, cmdTorqueBodyIntMsg, simFswInterfaceMessages)
-INSTANTIATE_TEMPLATES(CmdForceBodyIntMsg, cmdForceBodyIntMsg, simFswInterfaceMessages)
-INSTANTIATE_TEMPLATES(CmdForceInertialIntMsg, cmdForceInertialIntMsg, simFswInterfaceMessages)
-INSTANTIATE_TEMPLATES(EphemerisIntMsg, ephemerisIntMsg, simFswInterfaceMessages)
+INSTANTIATE_TEMPLATES(NavAttMsg, NavAttMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(NavTransMsg, NavTransMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(CmdTorqueBodyMsg, CmdTorqueBodyMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(CmdForceBodyMsg, CmdForceBodyMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(CmdForceInertialMsg, CmdForceInertialMsg, architecture/messaging2/messageDefinitions)
 
 //fsw messages
 INSTANTIATE_TEMPLATES(AttRefMsg, AttRefMsg, architecture/messaging2/messageDefinitions)

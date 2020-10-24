@@ -16,27 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module simpleNav
-%{
-   #include "simpleNav.h"
-%}
 
-%pythoncode %{
-from Basilisk.simulation.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+#ifndef NAV_TRANS_MESSAGE2_H
+#define NAV_TRANS_MESSAGE2_H
 
-%include "sys_model.h"
-%include "simpleNav.h"
-%include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavTransMsg.h"
-GEN_SIZEOF(SCPlusStatesMsg);
-GEN_SIZEOF(NavAttMsg);
-GEN_SIZEOF(NavTransMsg);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+/*! @brief Structure used to define the output definition for translatoin guidance*/
+typedef struct {
+    double timeTag;          //!< [s]   Current vehicle time-tag associated with measurements*/
+    double r_BN_N[3];        //!< [m]   Current inertial spacecraft position vector in inertial frame N components
+    double v_BN_N[3];        //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
+    double vehAccumDV[3];    //!< [m/s] Total accumulated delta-velocity for s/c
+}NavTransMsg;
+
+
+#endif

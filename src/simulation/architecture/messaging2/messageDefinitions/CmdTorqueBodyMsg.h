@@ -16,27 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module simpleNav
-%{
-   #include "simpleNav.h"
-%}
 
-%pythoncode %{
-from Basilisk.simulation.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+#ifndef _CMD_TORQUE_BODY_MESSAGE2_
+#define _CMD_TORQUE_BODY_MESSAGE2_
 
-%include "sys_model.h"
-%include "simpleNav.h"
-%include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavTransMsg.h"
-GEN_SIZEOF(SCPlusStatesMsg);
-GEN_SIZEOF(NavAttMsg);
-GEN_SIZEOF(NavTransMsg);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+/*! @brief Message used to define the vehicle control torque vector in Body frame components*/
+typedef struct {
+    double torqueRequestBody[3];     //!< [Nm] Control torque requested
+}CmdTorqueBodyMsg;
+
+
+#endif

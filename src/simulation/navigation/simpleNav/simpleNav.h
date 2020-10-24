@@ -23,13 +23,13 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
+#include "architecture/messaging2/messageDefinitions/SpicePlanetStateMsg.h"
+#include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
+#include "architecture/messaging2/messageDefinitions/NavTransMsg.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
-#include "../../architecture/messaging2/message.h"
+#include "architecture/messaging2/message.h"
 
 /*! @brief simple navigation module class */
 class SimpleNav: public SysModel {
@@ -51,24 +51,24 @@ public:
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
-    SimMessage<NavAttIntMsg> attOutMsg;
-    SimMessage<NavTransIntMsg> transOutMsg;
+    SimMessage<NavAttMsg> attOutMsg;
+    SimMessage<NavTransMsg> transOutMsg;
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
-    NavAttIntMsg trueAttState;        //!< -- attitude nav state without errors
-    NavAttIntMsg estAttState;         //!< -- attitude nav state including errors
-    NavTransIntMsg trueTransState;    //!< -- translation nav state without errors
-    NavTransIntMsg estTransState;     //!< -- translation nav state including errors
-    SCPlusStatesSimMsg inertialState; //!< -- input inertial state from Star Tracker
-    SpicePlanetStateSimMsg sunState;  //!< -- input Sun state
+    NavAttMsg trueAttState;        //!< -- attitude nav state without errors
+    NavAttMsg estAttState;         //!< -- attitude nav state including errors
+    NavTransMsg trueTransState;    //!< -- translation nav state without errors
+    NavTransMsg estTransState;     //!< -- translation nav state including errors
+    SCPlusStatesMsg inertialState; //!< -- input inertial state from Star Tracker
+    SpicePlanetStateMsg sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-    ReadFunctor<SCPlusStatesSimMsg> scStateInMsg;
-    ReadFunctor<SpicePlanetStateSimMsg> sunStateInMsg;
+    ReadFunctor<SCPlusStatesMsg> scStateInMsg;
+    ReadFunctor<SpicePlanetStateMsg> sunStateInMsg;
 
 private:
-    WriteFunctor<NavAttIntMsg>  writeAttOutMsg;
-    WriteFunctor<NavTransIntMsg> writeTransOutMsg;
+    WriteFunctor<NavAttMsg>  writeAttOutMsg;
+    WriteFunctor<NavTransMsg> writeTransOutMsg;
 
 private:
     Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state

@@ -16,27 +16,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module simpleNav
-%{
-   #include "simpleNav.h"
-%}
 
-%pythoncode %{
-from Basilisk.simulation.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+#ifndef SC_PLUS_MASS_PROPS_MESSAGE2_H
+#define SC_PLUS_MASS_PROPS_MESSAGE2_H
 
-%include "sys_model.h"
-%include "simpleNav.h"
-%include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
-%include "architecture/messaging2/messageDefinitions/NavTransMsg.h"
-GEN_SIZEOF(SCPlusStatesMsg);
-GEN_SIZEOF(NavAttMsg);
-GEN_SIZEOF(NavTransMsg);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+
+/*! @brief This structure is used in the messaging system to communicate what the mass
+ properties of the vehicle are currently.*/
+typedef struct {
+    double massSC;                   //!< kg   Current spacecraft mass
+    double c_B[3];                   //!< m    Center of mass of spacecraft with respect to point B
+    double ISC_PntB_B[3][3];         //!< kgm2 Inertia tensor of spacecraft (relative to body)
+}SCPlusMassPropsMsg;
+
+
+#endif
