@@ -43,7 +43,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         #include "architecture/messaging2/cMessages/ModuleMsg_C.h"
+         #include "architecture/messaging2/cMsgCInterface/ModuleMsg_C.h"
 
       This import provides access to the message object as well as the C message structure definition.
 
@@ -128,7 +128,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         %include "architecture/messaging2/messageDefinitions/ModuleMsg.h"
+         %include "architecture/messaging2/cMsgDefinition/ModuleMsg.h"
 
 
 Updating a C++ Module
@@ -140,7 +140,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "architecture/messaging2/messageDefinitions/OutputMsg.h"
+         #include "architecture/messaging2/cMsgDefinition/OutputMsg.h"
 
     - Add the include statement for the new message system using:
 
@@ -253,5 +253,5 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         %include "architecture/messaging2/messageDefinitions/OutputSimMsg.h"
+         %include "architecture/messaging2/cMsgDefinition/OutputSimMsg.h"
 

@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import inertial3DSpin                   # import the module that is to be tested
 from Basilisk.utilities import macros as mc
 from Basilisk.simulation import message
-from Basilisk.simulation.cMessages import AttRefFswMsg_C
+from Basilisk.simulation.cMsgCInterfacePy import AttRefFswMsg_C
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

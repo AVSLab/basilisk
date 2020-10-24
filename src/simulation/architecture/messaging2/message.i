@@ -100,20 +100,20 @@ typedef struct messageType;
 %enddef
 
 //sim messages
-INSTANTIATE_TEMPLATES(SpicePlanetStateMsg, SpicePlanetStateMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(SCPlusStatesMsg, SCPlusStatesMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(SCPlusMassPropsMsg, SCPlusMassPropsMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(SpicePlanetStateMsg, SpicePlanetStateMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(SCPlusStatesMsg, SCPlusStatesMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(SCPlusMassPropsMsg, SCPlusMassPropsMsg, architecture/messaging2/cMsgDefinition)
 
 //fsw interface messages
-INSTANTIATE_TEMPLATES(NavAttMsg, NavAttMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(NavTransMsg, NavTransMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(CmdTorqueBodyMsg, CmdTorqueBodyMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(CmdForceBodyMsg, CmdForceBodyMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(CmdForceInertialMsg, CmdForceInertialMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(NavAttMsg, NavAttMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(NavTransMsg, NavTransMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(CmdTorqueBodyMsg, CmdTorqueBodyMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(CmdForceBodyMsg, CmdForceBodyMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(CmdForceInertialMsg, CmdForceInertialMsg, architecture/messaging2/cMsgDefinition)
 
 //fsw messages
-INSTANTIATE_TEMPLATES(AttRefMsg, AttRefMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(AttGuidMsg, AttGuidMsg, architecture/messaging2/messageDefinitions)
-INSTANTIATE_TEMPLATES(VehicleConfigMsg, VehicleConfigMsg, architecture/messaging2/messageDefinitions)
+INSTANTIATE_TEMPLATES(AttRefMsg, AttRefMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(AttGuidMsg, AttGuidMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(VehicleConfigMsg, VehicleConfigMsg, architecture/messaging2/cMsgDefinition)
 
 %include "message.h"

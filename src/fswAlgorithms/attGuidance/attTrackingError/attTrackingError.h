@@ -21,9 +21,9 @@
 #define _ATT_TRACKING_ERROR_
 
 #include "messaging/static_messaging.h"
-#include "architecture/messaging2/cMessages/AttGuidMsg_C.h"
-#include "architecture/messaging2/cMessages/NavAttMsg_C.h"
-#include "architecture/messaging2/cMessages/AttRefMsg_C.h"
+#include "architecture/messaging2/cMsgCInterface/AttGuidMsg_C.h"
+#include "architecture/messaging2/cMsgCInterface/NavAttMsg_C.h"
+#include "architecture/messaging2/cMsgCInterface/AttRefMsg_C.h"
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
 

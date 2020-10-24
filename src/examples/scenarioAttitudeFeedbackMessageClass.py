@@ -40,7 +40,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.simulation.cMessages import VehicleConfigFswMsg_C
+from Basilisk.simulation.cMsgCInterfacePy import VehicleConfigFswMsg_C
 
 # I absolutely do not understand at the moment but we have to import vizSupport for new messages to work...
 from Basilisk.utilities import vizSupport

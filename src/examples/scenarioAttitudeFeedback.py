@@ -163,7 +163,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.simulation.cMessagesPy import VehicleConfigFswMsg_C
+from Basilisk.simulation.cMsgCInterfacePy import VehicleConfigFswMsg_C
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport

@@ -29,8 +29,8 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-#include "architecture/messaging2/messageDefinitions/SCPlusMassPropsMsg.h"
+#include "architecture/messaging2/cMsgDefinition/SCPlusStatesMsg.h"
+#include "architecture/messaging2/cMsgDefinition/SCPlusMassPropsMsg.h"
 #include "hubEffector.h"
 #include "utilities/bskLogging.h"
 

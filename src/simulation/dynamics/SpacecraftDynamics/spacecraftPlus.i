@@ -43,8 +43,8 @@ namespace std {
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "../_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftPlus.h"
-%include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-%include "architecture/messaging2/messageDefinitions/SCPlusMassPropsMsg.h"
+%include "architecture/messaging2/cMsgDefinition/SCPlusStatesMsg.h"
+%include "architecture/messaging2/cMsgDefinition/SCPlusMassPropsMsg.h"
 %include "hubEffector.h"
 GEN_SIZEOF(SCPlusStatesMsg)
 GEN_SIZEOF(SCPlusMassPropsMsg)

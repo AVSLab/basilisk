@@ -23,10 +23,10 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "architecture/messaging2/messageDefinitions/SCPlusStatesMsg.h"
-#include "architecture/messaging2/messageDefinitions/SpicePlanetStateMsg.h"
-#include "architecture/messaging2/messageDefinitions/NavAttMsg.h"
-#include "architecture/messaging2/messageDefinitions/NavTransMsg.h"
+#include "architecture/messaging2/cMsgDefinition/SCPlusStatesMsg.h"
+#include "architecture/messaging2/cMsgDefinition/SpicePlanetStateMsg.h"
+#include "architecture/messaging2/cMsgDefinition/NavAttMsg.h"
+#include "architecture/messaging2/cMsgDefinition/NavTransMsg.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include "architecture/messaging2/message.h"

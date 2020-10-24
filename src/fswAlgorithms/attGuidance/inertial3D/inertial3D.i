@@ -34,7 +34,7 @@ GEN_SIZEOF(inertial3DConfig);
 GEN_SIZEOF(AttRefMsg);
 struct AttRefMsg_C;
 %include "inertial3D.h"
-%include "architecture/messaging2/messageDefinitions/AttReFMsg.h"
+%include "architecture/messaging2/cMsgDefinition/AttReFMsg.h"
 
 
 %pythoncode %{
