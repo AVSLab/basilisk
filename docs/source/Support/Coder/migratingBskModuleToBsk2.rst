@@ -142,6 +142,12 @@ Updating a C++ Module
 
          #include "architecture/messaging2/messageDefinitions/OutputMsg.h"
 
+    - Add the include statement for the new message system using:
+
+      .. code:: cpp
+
+         #include "architecture/messaging2/message.h"
+
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated
       ``int_32t`` message ID variable ``moduleOutMsgId`` with the public variable:
