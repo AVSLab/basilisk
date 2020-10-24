@@ -243,6 +243,7 @@ class fileCrawler():
                     "cmake" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
                     "outputFiles" in dirs_in_dir[i] or \
+                    "cMsgTemplate" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
@@ -377,6 +378,8 @@ class fileCrawler():
                 if "fswMessages" in src_path \
                         or "simFswInterfaceMessages" in src_path \
                         or "simMessages" in src_path\
+                        or "cMsgDefinition" in src_path\
+                        or "cMsgCInterface" in src_path\
                         or "utilities" in src_path:
                     lines += c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
                 else:
