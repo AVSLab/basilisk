@@ -53,8 +53,7 @@ def to_message(struct_data):
     if struct_data:
         struct_data = struct_data.replace(' ', '').split(',')
         struct_name = struct_data[0]
-        source_dir = struct_data[2] + '/'
-        source_header_file = source_dir + struct_data[1] + '.h'
+        source_header_file = 'architecture/messaging2/cMsgDefinition/' + struct_name + '.h'
         definitions = message_template.format(type=struct_name)
         header = header_template.format(type=struct_name, structHeader=source_header_file)
         swig_template.write(swig_template_block.format(type=struct_name))

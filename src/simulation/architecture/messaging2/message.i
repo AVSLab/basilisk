@@ -37,11 +37,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "message.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
-%define INSTANTIATE_TEMPLATES(messageType, message_file, directory)
+%define INSTANTIATE_TEMPLATES(messageType)
 %{
-#include "../../directory/message_file.h"
+#include "architecture/messaging2/cMsgDefinition/messageType.h"
 %}
-%include "../../directory/message_file.h"
+%include "architecture/messaging2/cMsgDefinition/messageType.h"
 
 %template(messageType ## Reader) ReadFunctor<messageType>;
 %extend ReadFunctor<messageType> {
@@ -100,20 +100,20 @@ typedef struct messageType;
 %enddef
 
 //sim messages
-INSTANTIATE_TEMPLATES(SpicePlanetStateMsg, SpicePlanetStateMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(SCPlusStatesMsg, SCPlusStatesMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(SCPlusMassPropsMsg, SCPlusMassPropsMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(SpicePlanetStateMsg)
+INSTANTIATE_TEMPLATES(SCPlusStatesMsg)
+INSTANTIATE_TEMPLATES(SCPlusMassPropsMsg)
 
 //fsw interface messages
-INSTANTIATE_TEMPLATES(NavAttMsg, NavAttMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(NavTransMsg, NavTransMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(CmdTorqueBodyMsg, CmdTorqueBodyMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(CmdForceBodyMsg, CmdForceBodyMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(CmdForceInertialMsg, CmdForceInertialMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(NavAttMsg)
+INSTANTIATE_TEMPLATES(NavTransMsg)
+INSTANTIATE_TEMPLATES(CmdTorqueBodyMsg)
+INSTANTIATE_TEMPLATES(CmdForceBodyMsg)
+INSTANTIATE_TEMPLATES(CmdForceInertialMsg)
 
 //fsw messages
-INSTANTIATE_TEMPLATES(AttRefMsg, AttRefMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(AttGuidMsg, AttGuidMsg, architecture/messaging2/cMsgDefinition)
-INSTANTIATE_TEMPLATES(VehicleConfigMsg, VehicleConfigMsg, architecture/messaging2/cMsgDefinition)
+INSTANTIATE_TEMPLATES(AttRefMsg)
+INSTANTIATE_TEMPLATES(AttGuidMsg)
+INSTANTIATE_TEMPLATES(VehicleConfigMsg)
 
 %include "message.h"
