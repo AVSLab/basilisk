@@ -53,7 +53,7 @@ default setting for that behavior.
       - Type
       - Description
     * - ``ambient``
-      - [0,8]
+      - [0,1]
       - float value to specify the ambient Vizard lighting.
     * - ``orbitLinesOn``
       - (-1,1)
@@ -142,6 +142,15 @@ default setting for that behavior.
       - int
       - flag to set with respect to which frame the relative orbit trajectory is drawn.
         Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
+    * - ``relativeOrbitFrame``
+      - string
+      - If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that
+        spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera
+        target spacecraft as the chief.
+    * - ``spacecraftShadowBrightness``
+      - double
+      - Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value
+        to use viz default
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

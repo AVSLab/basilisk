@@ -2744,6 +2744,20 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_defaultspacecraftsprite();
   void set_allocated_defaultspacecraftsprite(::std::string* defaultspacecraftsprite);
 
+  // string relativeOrbitChief = 34;
+  void clear_relativeorbitchief();
+  static const int kRelativeOrbitChiefFieldNumber = 34;
+  const ::std::string& relativeorbitchief() const;
+  void set_relativeorbitchief(const ::std::string& value);
+  #if LANG_CXX11
+  void set_relativeorbitchief(::std::string&& value);
+  #endif
+  void set_relativeorbitchief(const char* value);
+  void set_relativeorbitchief(const char* value, size_t size);
+  ::std::string* mutable_relativeorbitchief();
+  ::std::string* release_relativeorbitchief();
+  void set_allocated_relativeorbitchief(::std::string* relativeorbitchief);
+
   // double ambient = 1;
   void clear_ambient();
   static const int kAmbientFieldNumber = 1;
@@ -2882,6 +2896,12 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 relativeorbitframe() const;
   void set_relativeorbitframe(::google::protobuf::int32 value);
 
+  // double spacecraftShadowBrightness = 35;
+  void clear_spacecraftshadowbrightness();
+  static const int kSpacecraftShadowBrightnessFieldNumber = 35;
+  double spacecraftshadowbrightness() const;
+  void set_spacecraftshadowbrightness(double value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
 
@@ -2896,6 +2916,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   mutable int _defaultthrustercolor_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr skybox_;
   ::google::protobuf::internal::ArenaStringPtr defaultspacecraftsprite_;
+  ::google::protobuf::internal::ArenaStringPtr relativeorbitchief_;
   double ambient_;
   ::google::protobuf::int32 orbitlineson_;
   ::google::protobuf::int32 spacecraftcson_;
@@ -2919,6 +2940,7 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int32 showhillframe_;
   ::google::protobuf::int32 showvelocityframe_;
   ::google::protobuf::int32 relativeorbitframe_;
+  double spacecraftshadowbrightness_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -6349,6 +6371,73 @@ inline void VizMessage_VizSettingsPb::set_relativeorbitframe(::google::protobuf:
   
   relativeorbitframe_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitFrame)
+}
+
+// string relativeOrbitChief = 34;
+inline void VizMessage_VizSettingsPb::clear_relativeorbitchief() {
+  relativeorbitchief_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& VizMessage_VizSettingsPb::relativeorbitchief() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+  return relativeorbitchief_.GetNoArena();
+}
+inline void VizMessage_VizSettingsPb::set_relativeorbitchief(const ::std::string& value) {
+  
+  relativeorbitchief_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+}
+#if LANG_CXX11
+inline void VizMessage_VizSettingsPb::set_relativeorbitchief(::std::string&& value) {
+  
+  relativeorbitchief_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+}
+#endif
+inline void VizMessage_VizSettingsPb::set_relativeorbitchief(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  relativeorbitchief_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+}
+inline void VizMessage_VizSettingsPb::set_relativeorbitchief(const char* value, size_t size) {
+  
+  relativeorbitchief_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+}
+inline ::std::string* VizMessage_VizSettingsPb::mutable_relativeorbitchief() {
+  
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+  return relativeorbitchief_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* VizMessage_VizSettingsPb::release_relativeorbitchief() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+  
+  return relativeorbitchief_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void VizMessage_VizSettingsPb::set_allocated_relativeorbitchief(::std::string* relativeorbitchief) {
+  if (relativeorbitchief != NULL) {
+    
+  } else {
+    
+  }
+  relativeorbitchief_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), relativeorbitchief);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.relativeOrbitChief)
+}
+
+// double spacecraftShadowBrightness = 35;
+inline void VizMessage_VizSettingsPb::clear_spacecraftshadowbrightness() {
+  spacecraftshadowbrightness_ = 0;
+}
+inline double VizMessage_VizSettingsPb::spacecraftshadowbrightness() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.spacecraftShadowBrightness)
+  return spacecraftshadowbrightness_;
+}
+inline void VizMessage_VizSettingsPb::set_spacecraftshadowbrightness(double value) {
+  
+  spacecraftshadowbrightness_ = value;
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.spacecraftShadowBrightness)
 }
 
 // -------------------------------------------------------------------
