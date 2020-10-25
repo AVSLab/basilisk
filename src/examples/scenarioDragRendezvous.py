@@ -80,7 +80,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 
-from Basilisk.simulation import spacecraftPlus, facetDragDynamicEffector, simple_nav, exponentialAtmosphere
+from Basilisk.simulation import spacecraftPlus, facetDragDynamicEffector, simple_nav, exponentialAtmosphere, vizInterface
 from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -232,7 +232,6 @@ def run(show_plots, altOffset, trueAnomOffset):
 
     depSc.attRefInMsgName = depAttRef.attRefOutMsgName
 
-
     scSim.AddModelToTask(fswTaskName, chiefAttRefWrap, chiefAttRefData)
     scSim.AddModelToTask(fswTaskName, hillStateNavWrap, hillStateNavData)
     scSim.AddModelToTask(fswTaskName, depAttRef)
@@ -249,9 +248,27 @@ def run(show_plots, altOffset, trueAnomOffset):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    # viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
-    #                                           # saveFile=fileName,
-    #                                           scName=[chiefSc.ModelTag, depSc.ModelTag])
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
+                                              saveFile=fileName,
+                                              scName=[chiefSc.ModelTag, depSc.ModelTag])
+    # delete any existing list of vizInterface spacecraft data
+    viz.scData.clear()
+
+    # create a chief spacecraft info container
+    scData = vizInterface.VizSpacecraftData()
+    scData.spacecraftName = chiefSc.ModelTag
+    scData.numRW = 0
+    scData.scPlusInMsgName = chiefSc.scStateOutMsgName
+    # the following command is required as we are deviating from the default naming of using the Model.Tag
+    viz.scData.push_back(scData)
+
+    # create a chief spacecraft info container
+    scData = vizInterface.VizSpacecraftData()
+    scData.spacecraftName = depSc.ModelTag
+    scData.numRW = 0
+    scData.scPlusInMsgName = depSc.scStateOutMsgName
+    # the following command is required as we are deviating from the default naming of using the Model.Tag
+    viz.scData.push_back(scData)
 
     # ----- execute sim ----- #
     scSim.InitializeSimulationAndDiscover()
