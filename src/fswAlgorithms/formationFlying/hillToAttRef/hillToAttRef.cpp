@@ -79,12 +79,7 @@ void HillToAttRef::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
- @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
- */
-void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
-{
+void HillToAttRef::ReadMessages(uint64_t CurrentSimNanos){
     SingleMessageHeader localHeader;
     //  Read in the relative state and chief attitude messages
     SystemMessaging::GetInstance()->ReadMessage(this->hillStateInMsgId, &localHeader,
@@ -95,40 +90,19 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
                                                 sizeof(NavAttIntMsg),
                                                 reinterpret_cast<uint8_t*>(&this->attStateInMsg),
                                                 this->moduleID);
+}
 
-    //  Apply the gain matrix to get a relative attitude
+void HillToAttRef::WriteMessages(uint64_t CurrentSimNanos){
+    //  Write the reference message
+    SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId,
+                                                 CurrentSimNanos, sizeof(AttRefFswMsg),
+                                                 reinterpret_cast<uint8_t *>(&this->attRefOutMsg),
+                                                 this->moduleID);
+}
 
-    double relativeAtt[3];
-    double hillState[6];
-    double gainMat[3][6];
-    std::vector<std::vector<double>> currentMat;
+void HillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
 
-    for(int ind=0; ind<3; ind++){
-        hillState[ind] = this->hillStateInMsg.r_DC_H[ind];
-        hillState[ind+3] = this->hillStateInMsg.v_DC_H[ind];
-    }
-
-    if(this->matrixIndex >= this->gainMatrixVecLen){
-        this->matrixIndex = this->gainMatrixVecLen-1;   //  Hold at the last value if we've overrun the vector
-    }
-
-    currentMat = this->gainMatrixVec[this->matrixIndex];
-    std::vector<std::vector<double>>::const_iterator row;
-    std::vector<double>::const_iterator col;
-
-    int row_ind = 0;
-    int col_ind = 0;
-    for(row = currentMat.begin(); row != currentMat.end(); ++row, ++row_ind){
-        col_ind = 0;
-        for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
-            gainMat[row_ind][col_ind] = *col;
-            }
-    }
-
-    mMultV(gainMat, 3, 6,
-                   hillState,
-                   relativeAtt);
-
+    //  Check to see if the relative attitude components exceed specified bounds (by default these are non-physical and should never be reached)
     for(int ind=0; ind<3; ++ind){
         relativeAtt[ind] = std::max(relativeAtt[ind], this->relMRPMin);
         relativeAtt[ind] = std::min(relativeAtt[ind], this->relMRPMax);
@@ -141,11 +115,53 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos)
         this->attRefOutMsg.domega_RN_N[ind] = 0;
     }
 
-    //  Write the reference message
-    SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId,
-                                                 CurrentSimNanos, sizeof(AttRefFswMsg),
-                                                 reinterpret_cast<uint8_t*>(&this->attRefOutMsg),
-                                                 this->moduleID);
+}
+
+/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
+ @return void
+ @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ */
+void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
+
+    this->ReadMessages(CurrentSimNanos);
+
+    double relativeAtt[3];
+    double hillState[6];
+    double gainMat[3][6];
+    std::vector<std::vector<double>> currentMat;
+
+    //  Create a state vector based on the current Hill positions
+    for(int ind=0; ind<3; ind++){
+        hillState[ind] = this->hillStateInMsg.r_DC_H[ind];
+        hillState[ind+3] = this->hillStateInMsg.v_DC_H[ind];
+    }
+
+    // Check overrun condition; if user supplied insufficient gain matrices, fix at last supplied matrix.
+    if(this->matrixIndex >= this->gainMatrixVecLen){
+        this->matrixIndex = this->gainMatrixVecLen-1;   //  Hold at the last value if we've overrun the vector
+    }
+
+    //  Get the current matrix (assume 1 per update) and convert it to a standard C matrix
+    currentMat = this->gainMatrixVec[this->matrixIndex];
+    std::vector<std::vector<double>>::const_iterator row;
+    std::vector<double>::const_iterator col;
+
+    int row_ind = 0;
+    int col_ind = 0;
+    for(row = currentMat.begin(); row != currentMat.end(); ++row, ++row_ind){
+        col_ind = 0;
+        for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
+            gainMat[row_ind][col_ind] = *col;
+            }
+    }
+    //  Apply the gainMat to the relative state to produce a chief-relative attitude
+    mMultV(gainMat, 3, 6,
+                   hillState,
+                   relativeAtt);
+
+    //  Convert that to an inertial attitude and write the attRef msg
+    this->RelativeToInertialMRP(relativeAtt);
+    this->WriteMessages(CurrentSimNanos);
 
     this->matrixIndex += 1;
 }

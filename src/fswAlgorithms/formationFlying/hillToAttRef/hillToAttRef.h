@@ -37,11 +37,15 @@ class HillToAttRef: public SysModel {
 public:
     HillToAttRef();
     ~HillToAttRef();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
+
+    void WriteMessages(uint64_t CurrentSimNanos);
+    void ReadMessages(uint64_t CurrentSimNanos);
+    void RelativeToInertialMRP(double relativeAtt[3]);
     
 public:
     std::string hillStateInMsgName;                //!< Message name for the hill-frame relative position message.
