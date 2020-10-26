@@ -37,7 +37,7 @@ namespace std {
 %include "sys_model.h"
 %include "../../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/hillRelStateFswMsg.h"
-%include "hillToAttRef.h"
+%include "linSensitivityProp.h"
 GEN_SIZEOF(NavAttIntMsg);
 GEN_SIZEOF(HillRelStateFswMsg);
 

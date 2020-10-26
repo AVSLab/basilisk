@@ -59,13 +59,12 @@ public:
 
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-
-    int32_t depAttInMsgName;        //!< ID for the outgoing message
-    int32_t chiefAttInMsgName;        //!< ID for the outgoing message
+    uint64_t previousTime;
+    int32_t depAttInMsgId;        //!< ID for the outgoing message
+    int32_t chiefAttInMsgId;        //!< ID for the outgoing message
     int32_t hillStateInMsgId;
     int32_t sensOutMsgId;                //!< ID for the outgoing message
-
-    Eigen::Vector6d sensitivityState;
+    Eigen::VectorXd sensitivityState;
     HillRelStateFswMsg hillStateInMsg;
     NavAttIntMsg depAttInMsg;
     NavAttIntMsg chiefAttInMsg;

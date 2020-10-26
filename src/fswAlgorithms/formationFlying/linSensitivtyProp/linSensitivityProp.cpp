@@ -20,17 +20,19 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
 #include <iostream>
+#include "utilities/avsEigenSupport.h"
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 LinSensProp::LinSensProp()
 {
     this->hillStateInMsgName="";
-    this->depAttNavMsgName="";
-    this->chiefAttNavMsgName="";
+    this->depAttInMsgName="";
+    this->chiefAttInMsgName="";
     this->sensOutMsgName="";
+    this->previousTime = 0.0;
 
     for(int ind=0; ind<3; ++ind){
-        this->sensOutMsg.r_DC_H =0;
-        this->sensOutMsg.v_DC_H = 0;
+        this->sensOutMsg.r_DC_H[ind] =0.0;
+        this->sensOutMsg.v_DC_H[ind] = 0.0;
     }
 }
 
@@ -41,7 +43,7 @@ LinSensProp::LinSensProp()
 void LinSensProp::SelfInit()
 {
     /*! - Create output message for module */
-    this->sensOutMsgId= SystemMessaging::GetInstance()->CreateNewMessage(this->sensOutMsgName,sizeof(HillStateFswMsg),2,"HillStateFswMsg",this->moduleID);
+    this->sensOutMsgId= SystemMessaging::GetInstance()->CreateNewMessage(this->sensOutMsgName,sizeof(HillRelStateFswMsg),2,"HillRelStateFswMsg",this->moduleID);
 }
 
 
@@ -72,8 +74,8 @@ void LinSensProp::Reset(uint64_t CurrentSimNanos)
 {
     //  Set the sensitivities back to zero:
     for(int ind=0; ind<3; ++ind){
-        this->sensOutMsg.r_DC_H =0;
-        this->sensOutMsg.v_DC_H = 0;
+        this->sensOutMsg.r_DC_H[ind] = 0.0;
+        this->sensOutMsg.v_DC_H[ind] =  0.0;
     }
 }
 
@@ -97,7 +99,7 @@ void LinSensProp::ReadMessages(uint64_t CurrentSimNanos){
 void LinSensProp::WriteMessages(uint64_t CurrentSimNanos){
     //  Write the reference message
     SystemMessaging::GetInstance()->WriteMessage(this->sensOutMsgId,
-                                                 CurrentSimNanos, sizeof(HillStateFswMsg),
+                                                 CurrentSimNanos, sizeof(HillRelStateFswMsg),
                                                  reinterpret_cast<uint8_t *>(&this->sensOutMsg),
                                                  this->moduleID);
 }
@@ -111,34 +113,33 @@ void LinSensProp::WriteMessages(uint64_t CurrentSimNanos){
 void LinSensProp::UpdateState(uint64_t CurrentSimNanos) {
 
     this->ReadMessages(CurrentSimNanos);
-
+    auto dt = double(CurrentSimNanos- this->previousTime)*1E9;
     //  Set up relative att, hill inputs and compute them from messages
     double relativeAtt[3];
 
-    Eigen::Vector6d hillState;
+    Eigen::VectorXd hillState;
     //  Create a state vector based on the current Hill positions
     for(int ind=0; ind<3; ind++){
         hillState[ind] = this->hillStateInMsg.r_DC_H[ind];
         hillState[ind+3] = this->hillStateInMsg.v_DC_H[ind];
     }
-    subMRP(this-depAttInMsg.sigma_BN, this->chiefStateInMsg.sigma_BN, relativeAtt);
-    Eigen::Vector3d relativeAttVec = Eigen::Vector3d cArray2EigenVector3d(relativeAtt);
+    subMRP(this->depAttInMsg.sigma_BN, this->chiefAttInMsg.sigma_BN, relativeAtt);
+    Eigen::Vector3d relativeAttVec = cArray2EigenVector3d(relativeAtt);
 
     // Compute the new sensitivity with an euler step
-    auto sens_dot = this->A * sensitivityState + this->C * hillState + this->D * this->relativeAttVec;
+    auto sens_dot = this->A * sensitivityState + this->C * hillState + this->D * relativeAttVec;
 
     this->sensitivityState = this->sensitivityState + sens_dot * dt;
 
     //  Create a state vector based on the current Hill positions
     for(int ind=0; ind<3; ind++){
-        this->sensOutMsg.r_DC_H[ind] = this->sensitivityState[ind]
+        this->sensOutMsg.r_DC_H[ind] = this->sensitivityState[ind];
         this->sensOutMsg.r_DC_H[ind+3] = this->sensitivityState[ind];
     }
 
     //  Convert that to an inertial attitude and write the attRef msg
 
     this->WriteMessages(CurrentSimNanos);
-
-    this->matrixIndex += 1;
+    this->previousTime = CurrentSimNanos;
 }
 
