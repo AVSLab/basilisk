@@ -36,26 +36,37 @@ private:
     messageType* payloadPointer;
     bool initialized;
 public:
+    //! method description
     ReadFunctor() : initialized(false) {};
+    //! method description
     ReadFunctor(messageType* payloadPointer) : payloadPointer(payloadPointer), initialized(true){};
+    //! method description
     const messageType& operator()(){return *this->payloadPointer;};
+    //! method description
     bool linked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
+    //! method description
     void subscribeToC(void* source){
         this->payloadPointer = (messageType*) source;
         this->initialized = true;} // this method works by knowing that the first member of a C message is the payload.
+    //! method description
     void subscribeTo(SimMessage<messageType> source){
         *this = source.addSubscriber();
     }
+    //! Log method description
     Log<messageType> log(){return Log<messageType>(this);}
 };
 
+/*! Write Functor */
 template<typename messageType>
 class WriteFunctor{
 private:
     messageType* payloadPointer;
 public:
+    //! method description
     WriteFunctor(){};
+    //! method description
     WriteFunctor(messageType* payloadPointer) : payloadPointer(payloadPointer){};
+    //! method description
     void operator()(messageType payload){
         *this->payloadPointer = payload;
         return;
@@ -75,6 +86,7 @@ private:
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload);
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload);
 public:
+    //! method description
     ReadFunctor<messageType> addSubscriber();  //! -- request read rights. returns ref to this->read
     WriteFunctor<messageType> addAuthor();  //! -- request write rights.
     messageType* subscribeRaw();  //! for plain ole c modules
@@ -101,33 +113,44 @@ template<typename messageType>
 class Log : public SysModel{
 public:
     Log(){};
+    //! -- Use this to log cpp messages
     Log(SimMessage<messageType>* message){
         this->readMessage = message->addSubscriber();
-    }  //!< -- Use this to log cpp messages
+    }
+    //! -- Use this to log C messages
     Log(void* message){
         this->readMessage = ReadFunctor<messageType>((messageType*) message);
-    } //!< -- Use this to log C messages
+    }
+    //! -- Use this to keep track of what someone is reading
     Log(ReadFunctor<messageType>* messageReader){
         this->readMessage = *messageReader;
-    }  //!< -- Use this to keep track of what someone is reading
+    }
     ~Log(){};
+
+    //! -- self initialization
     void SelfInit(){};
+    //! -- cross initialization
     void CrossInit(){};
+    //! Method description
     void IntegratedInit(){};
+    //! -- Read and record the message at the owning task's rate
     void UpdateState(uint64_t CurrentSimNanos){
         this->logTimes.push_back(CurrentSimNanos);
         this->log.push_back(this->readMessage());
-    };  //!< -- Read and record the message at the owning task's rate
+    };
+    //! Reset method
     void Reset(uint64_t CurrentSimNanos){this->log.clear(); this->logTimes.clear();};  //!< -- Can only reset to 0 for now
+    //! time method
     std::vector<uint64_t>& times(){return this->logTimes;}
+    //! record method
     std::vector<messageType>& record(){return this->log;};
 
 private:
-    std::vector<messageType> log;
-    std::vector<uint64_t> logTimes;
+    std::vector<messageType> log;           //!< vector of log messages
+    std::vector<uint64_t> logTimes;         //!< vector of log times
 
 private:
-    ReadFunctor<messageType> readMessage;
+    ReadFunctor<messageType> readMessage;   //!< method description
 };
 
 #endif

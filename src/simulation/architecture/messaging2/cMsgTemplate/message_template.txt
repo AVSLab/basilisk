@@ -1,23 +1,28 @@
 #include "{type}_C.h"
 #include "simulation/architecture/messaging2/message.h"
 
+//! C interface to subscribe to a message
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
     subscriber->payloadPointer = &(source->payload);
 }};
 
+//! C interface to claim authorship to a message
 void {type}_C_claim({type}_C *coowner, {type}_C *data) {{
     coowner->payloadPointer = &data->payload;
 }};
 
+//! C interface to write to a message
 void {type}_C_write({type} *data, {type}_C *destination) {{
     *destination->payloadPointer = *data;
     return;
 }};
 
+//! C interface to read to a message
 {type} {type}_C_read({type}_C *source) {{
     return *source->payloadPointer;
 }};
 
+//! method description
 void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
     SimMessage<{type}>* source_t = (SimMessage<{type}>*) source;
     subscriber->payloadPointer = source_t->subscribeRaw();

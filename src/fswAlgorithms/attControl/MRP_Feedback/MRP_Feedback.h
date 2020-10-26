@@ -56,9 +56,9 @@ typedef struct {
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];        //!< [-] The name for the reaction wheel speeds message
     int32_t rwSpeedsInMsgId;                            //!< [-] ID for the reaction wheel speeds message
 
-    CmdTorqueBodyMsg_C cmdTorqueOutMsg;
-    AttGuidMsg_C guidInMsg;
-    VehicleConfigMsg_C vehConfigInMsg;
+    CmdTorqueBodyMsg_C cmdTorqueOutMsg;                 //!< output message
+    AttGuidMsg_C guidInMsg;                             //!< input message
+    VehicleConfigMsg_C vehConfigInMsg;                  //!< input message
 
     BSKLogger *bskLogger;                               //!< BSK Logging
 }MRP_FeedbackConfig;

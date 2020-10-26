@@ -56,9 +56,9 @@ public:
     Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    ReadFunctor<CmdTorqueBodyMsg> cmdTorqueInMsg;
-    ReadFunctor<CmdForceBodyMsg> cmdForceBodyInMsg;
-    ReadFunctor<CmdForceInertialMsg>cmdForceInertialInMsg;
+    ReadFunctor<CmdTorqueBodyMsg> cmdTorqueInMsg;           //!< input msg
+    ReadFunctor<CmdForceBodyMsg> cmdForceBodyInMsg;         //!< input msg
+    ReadFunctor<CmdForceInertialMsg>cmdForceInertialInMsg;  //!< input msg
 
 };
 

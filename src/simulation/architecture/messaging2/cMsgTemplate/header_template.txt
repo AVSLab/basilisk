@@ -4,9 +4,10 @@
 #include <stdint.h>
 #include "{structHeader}"
 
+//! structure definition
 typedef struct {{
-    {type} payload;
-    {type} *payloadPointer;
+    {type} payload;		//!< message copy
+    {type} *payloadPointer;	//!< pointer to message
 }} {type}_C;
 
 #ifdef __cplusplus

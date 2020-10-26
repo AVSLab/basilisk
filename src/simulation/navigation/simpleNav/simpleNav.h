@@ -51,8 +51,8 @@ public:
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
-    SimMessage<NavAttMsg> attOutMsg;
-    SimMessage<NavTransMsg> transOutMsg;
+    SimMessage<NavAttMsg> attOutMsg;        //!< output msg
+    SimMessage<NavTransMsg> transOutMsg;    //!< output msg
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
     NavAttMsg trueAttState;        //!< -- attitude nav state without errors
@@ -63,12 +63,12 @@ public:
     SpicePlanetStateMsg sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-    ReadFunctor<SCPlusStatesMsg> scStateInMsg;
-    ReadFunctor<SpicePlanetStateMsg> sunStateInMsg;
+    ReadFunctor<SCPlusStatesMsg> scStateInMsg;      //!< read functor
+    ReadFunctor<SpicePlanetStateMsg> sunStateInMsg; //!< read functor
 
 private:
-    WriteFunctor<NavAttMsg>  writeAttOutMsg;
-    WriteFunctor<NavTransMsg> writeTransOutMsg;
+    WriteFunctor<NavAttMsg>  writeAttOutMsg;        //!< write msg
+    WriteFunctor<NavTransMsg> writeTransOutMsg;     //!< write msg
 
 private:
     Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state

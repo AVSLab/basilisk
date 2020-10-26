@@ -82,7 +82,7 @@ public:
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
     void registerProperties(DynParamManager& statesIn);  //!< class method
-    ReadFunctor<SpicePlanetStateMsg> readInputMsg;
+    ReadFunctor<SpicePlanetStateMsg> readInputMsg;       //!< read functor
 
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
@@ -142,7 +142,7 @@ public:
     std::string inertialVelocityPropName;           //!< [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //!< [-] Name of the s/c this gravity model is attached to
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    SimMessage<SpicePlanetStateMsg> centralBodyOutMsg;
+    SimMessage<SpicePlanetStateMsg> centralBodyOutMsg;  //!< output message
 
 private:
     Eigen::MatrixXd *gravProperty;                  //!< [-] g_N property for output
