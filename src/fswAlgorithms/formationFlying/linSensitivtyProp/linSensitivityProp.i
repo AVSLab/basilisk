@@ -29,7 +29,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "stdint.i"
 %include "std_string.i"
 %include "std_vector.i"
-
+%include "swig_eigen.i"
 namespace std {
 
 };
@@ -41,7 +41,7 @@ namespace std {
 GEN_SIZEOF(NavAttIntMsg);
 GEN_SIZEOF(HillRelStateFswMsg);
 
-%pythoncode %{
+ %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}

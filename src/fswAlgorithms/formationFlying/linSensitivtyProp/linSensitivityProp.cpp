@@ -34,6 +34,7 @@ LinSensProp::LinSensProp()
         this->sensOutMsg.r_DC_H[ind] =0.0;
         this->sensOutMsg.v_DC_H[ind] = 0.0;
     }
+    this->sensitivityState.resize(6,1);
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -113,11 +114,11 @@ void LinSensProp::WriteMessages(uint64_t CurrentSimNanos){
 void LinSensProp::UpdateState(uint64_t CurrentSimNanos) {
 
     this->ReadMessages(CurrentSimNanos);
-    auto dt = double(CurrentSimNanos- this->previousTime)*1E9;
+    auto dt = double(CurrentSimNanos- this->previousTime)*1E-9;
     //  Set up relative att, hill inputs and compute them from messages
     double relativeAtt[3];
 
-    Eigen::VectorXd hillState;
+    Eigen::VectorXd hillState(6);
     //  Create a state vector based on the current Hill positions
     for(int ind=0; ind<3; ind++){
         hillState[ind] = this->hillStateInMsg.r_DC_H[ind];
@@ -128,13 +129,11 @@ void LinSensProp::UpdateState(uint64_t CurrentSimNanos) {
 
     // Compute the new sensitivity with an euler step
     auto sens_dot = this->A * sensitivityState + this->C * hillState + this->D * relativeAttVec;
-
     this->sensitivityState = this->sensitivityState + sens_dot * dt;
-
     //  Create a state vector based on the current Hill positions
     for(int ind=0; ind<3; ind++){
         this->sensOutMsg.r_DC_H[ind] = this->sensitivityState[ind];
-        this->sensOutMsg.r_DC_H[ind+3] = this->sensitivityState[ind];
+        this->sensOutMsg.v_DC_H[ind] = this->sensitivityState[ind+3];
     }
 
     //  Convert that to an inertial attitude and write the attRef msg
