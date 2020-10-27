@@ -81,7 +81,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 
 from Basilisk.simulation import spacecraftPlus, facetDragDynamicEffector, simple_nav, exponentialAtmosphere, vizInterface
-from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint
+from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint, linSensitivityProp
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -138,7 +138,7 @@ def run(show_plots, altOffset, trueAnomOffset):
     dynTaskName = "dynTask"
     fswTaskName = "dynTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(5.0) #   Timestep to evaluate dynamics at
+    dynTimeStep = macros.sec2nano(1.0) #   Timestep to evaluate dynamics at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
     simProcess.addTask(scSim.CreateNewTask(fswTaskName, dynTimeStep))
 
@@ -218,6 +218,32 @@ def run(show_plots, altOffset, trueAnomOffset):
     hillStateNavData.depStateInMsgName = depNav.outputTransName
     hillStateNavData.hillStateOutMsgName = 'dep_hill_nav'
 
+    # linear sensitivity propagator
+    sensProp = linSensitivityProp.LinSensProp()
+    sensProp.depAttInMsgName = depNav.outputAttName
+    sensProp.chiefAttInMsgName = chiefNav.outputAttName
+    sensProp.hillStateInMsgName = 'dep_hill_nav'
+    sensProp.sensOutMsgName = 'dep_sens_nav'
+    sensProp.C = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675151888e-10,0.000000000000000000e+00,0.000000000000000000e+00],
+    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-1.435758240535030378e-09,0.000000000000000000e+00],
+    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]]
+    sensProp.D = hillToAttRef.MultiArray([[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,2.229340680802995532e-05],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]
+                            ])
+    sensProp.A = hillToAttRef.MultiArray([[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                            [4.134628279603025589e-06,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675993545e-10,2.347943292785702706e-03,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-2.347943292785702706e-03,-1.435758240535198709e-09,0.000000000000000000e+00],
+                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]
+                            ])
     # hillToAtt guidance law
     depAttRef = hillToAttRef.HillToAttRef()
     depAttRef.ModelTag = 'dep_att_ref'
@@ -235,6 +261,7 @@ def run(show_plots, altOffset, trueAnomOffset):
     scSim.AddModelToTask(fswTaskName, chiefAttRefWrap, chiefAttRefData)
     scSim.AddModelToTask(fswTaskName, hillStateNavWrap, hillStateNavData)
     scSim.AddModelToTask(fswTaskName, depAttRef)
+    scSim.AddModelToTask(fswTaskName, sensProp)
 
     # ----- log ----- #
     orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
@@ -245,30 +272,31 @@ def run(show_plots, altOffset, trueAnomOffset):
     scSim.TotalSim.logThisMessage(chiefSc.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(depSc.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(hillStateNavData.hillStateOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(sensProp.sensOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
-                                              scName=[chiefSc.ModelTag, depSc.ModelTag])
-    # delete any existing list of vizInterface spacecraft data
-    viz.scData.clear()
-
-    # create a chief spacecraft info container
-    scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = chiefSc.ModelTag
-    scData.numRW = 0
-    scData.scPlusInMsgName = chiefSc.scStateOutMsgName
-    # the following command is required as we are deviating from the default naming of using the Model.Tag
-    viz.scData.push_back(scData)
-
-    # create a chief spacecraft info container
-    scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = depSc.ModelTag
-    scData.numRW = 0
-    scData.scPlusInMsgName = depSc.scStateOutMsgName
-    # the following command is required as we are deviating from the default naming of using the Model.Tag
-    viz.scData.push_back(scData)
+    # viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
+    #                                           saveFile=fileName,
+    #                                           scName=[chiefSc.ModelTag, depSc.ModelTag])
+    # # delete any existing list of vizInterface spacecraft data
+    # viz.scData.clear()
+    #
+    # # create a chief spacecraft info container
+    # scData = vizInterface.VizSpacecraftData()
+    # scData.spacecraftName = chiefSc.ModelTag
+    # scData.numRW = 0
+    # scData.scPlusInMsgName = chiefSc.scStateOutMsgName
+    # # the following command is required as we are deviating from the default naming of using the Model.Tag
+    # viz.scData.push_back(scData)
+    #
+    # # create a chief spacecraft info container
+    # scData = vizInterface.VizSpacecraftData()
+    # scData.spacecraftName = depSc.ModelTag
+    # scData.numRW = 0
+    # scData.scPlusInMsgName = depSc.scStateOutMsgName
+    # # the following command is required as we are deviating from the default naming of using the Model.Tag
+    # viz.scData.push_back(scData)
 
     # ----- execute sim ----- #
     scSim.InitializeSimulationAndDiscover()
@@ -284,6 +312,8 @@ def run(show_plots, altOffset, trueAnomOffset):
     depAtt = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
     hillPos = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.r_DC_H', list(range(3)))
     hillVel = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.v_DC_H', list(range(3)))
+    hillPosSens = scSim.pullMessageLogData(sensProp.sensOutMsgName + '.r_DC_H', list(range(3)))
+    hillVelSens = scSim.pullMessageLogData(sensProp.sensOutMsgName + '.v_DC_H', list(range(3)))
     timeData = pos[:, 0]*macros.NANO2SEC/orbit_period
 
     # ----- plot ----- #
@@ -380,6 +410,20 @@ def run(show_plots, altOffset, trueAnomOffset):
     plt.legend()
     plt.xlabel('Hill X (m)')
     plt.ylabel('Hill Y (m)')
+
+    plt.figure()
+    plt.plot(timeData, hillPosSens[:,1:3],label='Position Sensitivities')
+    plt.grid()
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Sensitivity value')
+
+    plt.figure()
+    plt.plot(timeData, hillVelSens[:,1:3], label='Velocity Sensitivities')
+    plt.grid()
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Sensitivity value')
 
     if(show_plots):
         plt.show()
