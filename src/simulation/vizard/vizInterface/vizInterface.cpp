@@ -18,7 +18,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdio>
-#include <architecture/messaging/system_messaging.h>
+#include "architecture/messaging/system_messaging.h"
 
 #include "vizInterface.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
