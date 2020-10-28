@@ -1,11 +1,11 @@
 #define SWIGPYTHON_BUILTIN
 
+%module message
 %pythoncode %{
     from Basilisk.simulation.swig_common_model import *
 %}
 %include "swig_conly_data.i"
 %include "std_vector.i"
-%module message
 %pythoncode %{
     import numpy as np
 %};
@@ -30,7 +30,7 @@
 %extend ReadFunctor<messageType> {
         %pythoncode %{
             def subscribeTo(self, source):
-                from Basilisk.simulation.c_messages import messageType ## _C
+                from Basilisk.simulation.cMsgCInterfacePy import messageType ## _C
                 if type(source) == messageType ## Class:
                     self.__subscribe_to(source)
                 elif type(source) == messageType ## _C:

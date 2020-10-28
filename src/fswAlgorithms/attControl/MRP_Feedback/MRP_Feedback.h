@@ -23,7 +23,6 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
 #include "architecture/messaging2/cMsgCInterface/VehicleConfigMsg_C.h"

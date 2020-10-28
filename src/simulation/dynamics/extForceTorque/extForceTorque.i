@@ -38,6 +38,9 @@ from Basilisk.simulation.swig_common_model import *
 GEN_SIZEOF(CmdTorqueBodyMsg);
 GEN_SIZEOF(CmdForceBodyMsg);
 GEN_SIZEOF(CmdForceInertialMsg);
+struct CmdTorqueBodyMsg_C;
+struct CmdForceBodyMsg_C;
+struct CmdForceInertialMsg_C;
 
 
 %pythoncode %{

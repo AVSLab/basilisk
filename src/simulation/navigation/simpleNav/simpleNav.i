@@ -36,6 +36,10 @@ from Basilisk.simulation.swig_common_model import *
 GEN_SIZEOF(SCPlusStatesMsg);
 GEN_SIZEOF(NavAttMsg);
 GEN_SIZEOF(NavTransMsg);
+struct SCPlusStatesMsg_C;
+struct NavAttMsg_C;
+struct NavTransMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

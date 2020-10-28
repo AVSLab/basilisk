@@ -37,7 +37,7 @@ GEN_SIZEOF(AttGuidMsg);
 GEN_SIZEOF(VehicleConfigMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
-struct CmdTorqueBodyIntMsg_C;
+struct CmdTorqueBodyMsg_C;
 struct AttGuidMsg_C;
 struct VehicleConfigMsg_C;
 %include "MRP_Feedback.h"
@@ -45,11 +45,11 @@ struct VehicleConfigMsg_C;
 %include "architecture/messaging2/cMsgDefinition/VehicleConfigMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+%include "architecture/messaging2/cMsgDefinition/CmdTorqueBodyMsg.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+GEN_SIZEOF(CmdTorqueBodyMsg);
 
 %pythoncode %{
 import sys

@@ -32,7 +32,7 @@
 %ignore Reset_attTrackingError;
 struct AttGuidMsg_C;
 struct AttRefMsg_C;
-struct NavAttIntMsg_C;
+struct NavAttMsg_C;
 %include "attTrackingError.h"
 %include "architecture/messaging2/cMsgDefinition/NavAttMsg.h"
 %include "architecture/messaging2/cMsgDefinition/attGuidMsg.h"

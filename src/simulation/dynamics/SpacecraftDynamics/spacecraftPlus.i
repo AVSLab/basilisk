@@ -48,6 +48,8 @@ namespace std {
 %include "hubEffector.h"
 GEN_SIZEOF(SCPlusStatesMsg)
 GEN_SIZEOF(SCPlusMassPropsMsg)
+struct SCPlusStatesMsg_C;
+struct SCPlusMassPropsMsg_C;
 
 %pythoncode %{
 import sys
