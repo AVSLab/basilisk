@@ -18,7 +18,7 @@
  */
 %module dsenHillToAttRef
 %{
-   #include "dsenHillToAttRef.h"
+   #include "desenHillToAttRef.h"
 
  %}
 

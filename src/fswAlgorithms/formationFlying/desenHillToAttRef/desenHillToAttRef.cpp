@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* modify the path to reflect the new module names */
-#include "dsenHillToAttRef.h"
+#include "desenHillToAttRef.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
 #include <iostream>
@@ -44,7 +44,29 @@ void DsenHillToAttRef::SelfInit()
     /*! - Create output message for module */
     this->attRefOutMsgId= SystemMessaging::GetInstance()->CreateNewMessage(this->attRefOutMsgName,sizeof(AttRefFswMsg),2,"AttRefFswMsg",this->moduleID);
     this->matrixIndex = 0;
-    this->gainMatrixVecLen = this->gainMatrixVec.size();
+    this->gainMatrixVecLen = this->stateGainVec.size();
+
+    std::vector<std::vector<double>>::const_iterator row;
+    std::vector<double>::const_iterator col;
+
+    //  Copy B, R_inv into C arrays
+    int row_ind = 0;
+    int col_ind = 0;
+    for(row = this->Rinv.begin(); row != this->Rinv.end(); ++row, ++row_ind){
+        col_ind = 0;
+        for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
+            this->Rinv_arr[row_ind][col_ind] = *col;
+        }
+    }
+
+    row_ind = 0;
+    col_ind = 0;
+    for(row = this->B.begin(); row != this->B.end(); ++row, ++row_ind){
+        col_ind = 0;
+        for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
+            this->B_arr[row_ind][col_ind] = *col;
+        }
+    }
 }
 
 
@@ -76,7 +98,7 @@ DsenHillToAttRef::~DsenHillToAttRef()
 void DsenHillToAttRef::Reset(uint64_t CurrentSimNanos)
 {
     this->matrixIndex = 0;//    Start back at the initial gain matrix
-    this->gainMatrixVecLen = this->gainMatrixVec.size(); // Update this in case gainMatrixVec changed size
+    this->gainMatrixVecLen = this->stateGainVec.size(); // Update this in case gainMatrixVec changed size
     return;
 }
 
@@ -133,13 +155,14 @@ void DsenHillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
     double relativeAtt[3];
     double stateContrib[6];
     double sensContrib[6];
-    double btContrib[3]
+    double btContrib[3];
 
     double hillState[6];
     double sensState[6];
-    double gainMat[6][6];
-    double gainMat[6][6];
-    std::vector<std::vector<double>> currentMat;
+    double stateGainMat[6][6];
+    double sensGainMat[6][6];
+    std::vector<std::vector<double>> currentStateMat;
+    std::vector<std::vector<double>> currentSensMat;
 
     //  Create a state vector based on the current Hill positions
     for(int ind=0; ind<3; ind++){
@@ -186,10 +209,12 @@ void DsenHillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
            sensState,
            sensContrib);
     mAdd(stateContrib, 6, 1, sensContrib, btContrib);
-    mtMultV(this->B, 6, 3,
+    mtMultV(this->B_arr, 6, 3,
             btContrib,
             btContrib);
-    mMultV(this->R_inv, 3,3, -btContrib, relativeAtt);
+    mMultV(this->Rinv_arr, 3,3, btContrib, relativeAtt);
+
+    vScale(-1.0, relativeAtt, 3, relativeAtt);
     //  Convert that to an inertial attitude and write the attRef msg
     this->RelativeToInertialMRP(relativeAtt);
     this->WriteMessages(CurrentSimNanos);

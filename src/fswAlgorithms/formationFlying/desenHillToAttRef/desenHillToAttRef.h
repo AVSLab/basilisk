@@ -54,14 +54,17 @@ public:
     std::string attRefOutMsgName;  //!< Attitude reference message generated after the control law is applied.
     std::vector<std::vector<std::vector<double>>> stateGainVec; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
     std::vector<std::vector<std::vector<double>>> sensGainVec;
-    Eigen::MatrixXd Rinv;   //  Inverse matrix of the control weight
-    Eigen::MatrixXd B_Transpose; // Transpose of the control effect matrix
+    std::vector<std::vector<double>> Rinv;   //  Inverse matrix of the control weight
+    std::vector<std::vector<double>> B; // Control Effects matrix
     BSKLogger bskLogger;                //!< -- BSK Logging
     double relMRPMax; //!< Optional maximum bound on MRP element magnitudes
     double relMRPMin; //!< Optional minimum bound on MRP element magnitudes
 
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
+
+    double B_arr[6][3];
+    double Rinv_arr[3][3];
 
     uint64_t matrixIndex;
     uint64_t gainMatrixVecLen;
