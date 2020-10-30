@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module dsenHillToAttRef
+%module desenHillToAttRef
 %{
    #include "desenHillToAttRef.h"
 
@@ -38,7 +38,7 @@ namespace std {
 %include "../../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/hillRelStateFswMsg.h"
 %include "../../fswMessages/attRefFswMsg.h"
-%include "dsenHillToAttRef.h"
+%include "desenHillToAttRef.h"
 GEN_SIZEOF(AttRefFswMsg);
 GEN_SIZEOF(NavAttIntMsg);
 GEN_SIZEOF(HillRelStateFswMsg);

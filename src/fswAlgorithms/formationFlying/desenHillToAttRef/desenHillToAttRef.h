@@ -33,10 +33,10 @@
 
 
 /*! @brief visual planet tracking with Hough circles */
-class DsenHillToAttRef: public SysModel {
+class DesenHillToAttRef: public SysModel {
 public:
-    DsenHillToAttRef();
-    ~DsenHillToAttRef();
+    DesenHillToAttRef();
+    ~DesenHillToAttRef();
 
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();

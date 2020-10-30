@@ -21,7 +21,7 @@
 #include "utilities/rigidBodyKinematics.h"
 #include <iostream>
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
-DsenHillToAttRef::DsenHillToAttRef()
+DesenHillToAttRef::DesenHillToAttRef()
 {
     this->hillStateInMsgName="";
     this->attStateInMsgName="";
@@ -39,7 +39,7 @@ DsenHillToAttRef::DsenHillToAttRef()
  It's primary function is to create messages that will be written to.
  @return void
  */
-void DsenHillToAttRef::SelfInit()
+void DesenHillToAttRef::SelfInit()
 {
     /*! - Create output message for module */
     this->attRefOutMsgId= SystemMessaging::GetInstance()->CreateNewMessage(this->attRefOutMsgName,sizeof(AttRefFswMsg),2,"AttRefFswMsg",this->moduleID);
@@ -74,7 +74,7 @@ void DsenHillToAttRef::SelfInit()
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  */
-void DsenHillToAttRef::CrossInit()
+void DesenHillToAttRef::CrossInit()
 {
     /*! - Get the image data message ID*/
     this->hillStateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->hillStateInMsgName,sizeof(HillRelStateFswMsg), moduleID);
@@ -85,7 +85,7 @@ void DsenHillToAttRef::CrossInit()
 }
 
 /*! This is the destructor */
-DsenHillToAttRef::~DsenHillToAttRef()
+DesenHillToAttRef::~DesenHillToAttRef()
 {
     return;
 }
@@ -95,14 +95,14 @@ DsenHillToAttRef::~DsenHillToAttRef()
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void DsenHillToAttRef::Reset(uint64_t CurrentSimNanos)
+void DesenHillToAttRef::Reset(uint64_t CurrentSimNanos)
 {
     this->matrixIndex = 0;//    Start back at the initial gain matrix
     this->gainMatrixVecLen = this->stateGainVec.size(); // Update this in case gainMatrixVec changed size
     return;
 }
 
-void DsenHillToAttRef::ReadMessages(uint64_t CurrentSimNanos){
+void DesenHillToAttRef::ReadMessages(uint64_t CurrentSimNanos){
     SingleMessageHeader localHeader;
     //  Read in the relative state and chief attitude messages
     SystemMessaging::GetInstance()->ReadMessage(this->hillStateInMsgId, &localHeader,
@@ -119,7 +119,7 @@ void DsenHillToAttRef::ReadMessages(uint64_t CurrentSimNanos){
                                                 this->moduleID);
 }
 
-void DsenHillToAttRef::WriteMessages(uint64_t CurrentSimNanos){
+void DesenHillToAttRef::WriteMessages(uint64_t CurrentSimNanos){
     //  Write the reference message
     SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId,
                                                  CurrentSimNanos, sizeof(AttRefFswMsg),
@@ -127,7 +127,7 @@ void DsenHillToAttRef::WriteMessages(uint64_t CurrentSimNanos){
                                                  this->moduleID);
 }
 
-void DsenHillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
+void DesenHillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
 
     //  Check to see if the relative attitude components exceed specified bounds (by default these are non-physical and should never be reached)
     for(int ind=0; ind<3; ++ind){
@@ -148,17 +148,17 @@ void DsenHillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void DsenHillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
+void DesenHillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
 
     this->ReadMessages(CurrentSimNanos);
 
-    double relativeAtt[3];
-    double stateContrib[6];
-    double sensContrib[6];
-    double btContrib[3];
+    double relativeAtt[3] = {0,0,0};
+    double stateContrib[6] = {0,0,0,0,0,0};
+    double sensContrib[6]= {0,0,0,0,0,0};
+    double btContrib[3]= {0.0,0.0,0.0};
 
-    double hillState[6];
-    double sensState[6];
+    double hillState[6] ={0,0,0,0,0,0};;
+    double sensState[6]= {0,0,0,0,0,0};;
     double stateGainMat[6][6];
     double sensGainMat[6][6];
     std::vector<std::vector<double>> currentStateMat;
@@ -186,10 +186,12 @@ void DsenHillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
     //  Copy the gain matrix elements into C arrays
     int row_ind = 0;
     int col_ind = 0;
+
+    //  Print out the dimensions of currentmats
     for(row = currentStateMat.begin(); row != currentStateMat.end(); ++row, ++row_ind){
         col_ind = 0;
         for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
-            stateGainMat[row_ind][col_ind] = *col;
+            stateGainMat[row_ind][col_ind] = *col; //   WIP - this line segfaults? Might be fucking up python initialization.
             }
     }
     row_ind = 0;
@@ -202,6 +204,7 @@ void DsenHillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
     }
 
     //  Apply the gainMat to the relative state to produce a chief-relative attitude
+    //  Implement u = -Rinv * B_t * (state_gain*state_err + sens_gain*sens_err) 
     mMultV(stateGainMat, 6, 6,
             hillState,
             stateContrib);
