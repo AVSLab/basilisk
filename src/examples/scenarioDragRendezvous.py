@@ -81,10 +81,37 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 
 from Basilisk.simulation import spacecraftPlus, facetDragDynamicEffector, simple_nav, exponentialAtmosphere, vizInterface
-from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint, linSensitivityProp
+from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint, linSensitivityProp, desenHillToAttRef
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
+#   Declare some linearized drag HCW dynamics
+drag_state_dynamics = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [4.134628279603025589e-06,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675993545e-10,2.347943292785702706e-03,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-2.347943292785702706e-03,-1.435758240535198709e-09,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]]
+drag_ctrl_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,2.229340680802995532e-05],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]
+                     ]
+drag_sens_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675151888e-10,0.000000000000000000e+00,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-1.435758240535030378e-09,0.000000000000000000e+00],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]]
+drag_R_inv = [[-1e-8,0,0],
+              [0,-1e-8,0],
+              [0,0,-1e-8]]
+
+gain_set = np.load('./data/ddsen_gain.npz')['gain']
+gain_set = np.transpose(gain_set, (2,0,1))
 
 def setup_spacecraft_plant(rN, vN, modelName,):
     """
@@ -123,7 +150,7 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     return scObject, dragEffector, scNav
 
 
-def run(show_plots, altOffset, trueAnomOffset):
+def run(show_plots, altOffset, trueAnomOffset, ctrlType='lqr'):
     """
     At the end of the python script you can specify the following example parameters.
 
@@ -138,7 +165,7 @@ def run(show_plots, altOffset, trueAnomOffset):
     dynTaskName = "dynTask"
     fswTaskName = "dynTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(1.0) #   Timestep to evaluate dynamics at
+    dynTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
     simProcess.addTask(scSim.CreateNewTask(fswTaskName, dynTimeStep))
 
@@ -224,45 +251,42 @@ def run(show_plots, altOffset, trueAnomOffset):
     sensProp.chiefAttInMsgName = chiefNav.outputAttName
     sensProp.hillStateInMsgName = 'dep_hill_nav'
     sensProp.sensOutMsgName = 'dep_sens_nav'
-    sensProp.C = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675151888e-10,0.000000000000000000e+00,0.000000000000000000e+00],
-    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-1.435758240535030378e-09,0.000000000000000000e+00],
-    [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]]
-    sensProp.D = hillToAttRef.MultiArray([[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,2.229340680802995532e-05],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]
-                            ])
-    sensProp.A = hillToAttRef.MultiArray([[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                            [4.134628279603025589e-06,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675993545e-10,2.347943292785702706e-03,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-2.347943292785702706e-03,-1.435758240535198709e-09,0.000000000000000000e+00],
-                            [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]
-                            ])
-    # hillToAtt guidance law
-    depAttRef = hillToAttRef.HillToAttRef()
-    depAttRef.ModelTag = 'dep_att_ref'
+    sensProp.C = hillToAttRef.MultiArray(drag_sens_effects)
+    sensProp.D = hillToAttRef.MultiArray(drag_ctrl_effects)
+    sensProp.A = hillToAttRef.MultiArray(drag_state_dynamics)
+
+    #   Configure module-specific control parameters
+    if ctrlType == 'desen':
+        #   desensitized relative attitude control w/ dynamic gain
+        depAttRef = desenHillToAttRef.DesenHillToAttRef()
+        depAttRef.ModelTag = 'dep_att_ref'
+        depAttRef.sensInMsgName = sensProp.sensOutMsgName
+        depAttRef.B = hillToAttRef.MultiArray(drag_ctrl_effects)
+        depAttRef.Rinv = hillToAttRef.MultiArray(drag_R_inv)
+        depAttRef.stateGainVec = hillToAttRef.MultiArray3d(gain_set[:,0:6,0:6])
+        depAttRef.sensGainVec = hillToAttRef.MultiArray3d(gain_set[:,0:6,6:])
+
+    else:
+        # hillToAtt guidance law w/ static gain
+        depAttRef = hillToAttRef.HillToAttRef()
+        depAttRef.ModelTag = 'dep_att_ref'
+        depAttRef.gainMatrixVec = hillToAttRef.MultiArray3d(np.array([[[ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00,  0.00000000e+00],
+                                                                       [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00, 0.00000000e+00],
+                                                                       [ 1.28982586e-02, -9.99999987e-05,  0.00000000e+00,  1.90838094e-01,   5.58803922e+00,  0.00000000e+00]]]))
+
+    #   Configure parameters common to relative attitude guidance modules
     depAttRef.hillStateInMsgName = hillStateNavData.hillStateOutMsgName
     depAttRef.attStateInMsgName = chiefNav.outputAttName
     depAttRef.attRefOutMsgName = 'dep_att_ref'
-    depAttRef.gainMatrixVec = hillToAttRef.MultiArray3d(np.array([[[ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00,  0.00000000e+00],
-                               [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,   0.00000000e+00, 0.00000000e+00],
-                               [ 1.28982586e-02, -9.99999987e-05,  0.00000000e+00,  1.90838094e-01,   5.58803922e+00,  0.00000000e+00]]]))
     depAttRef.relMRPMin = -0.2
     depAttRef.relMRPMax = 0.5
-
+    #   Set the deputy spacecraft to directly follow the attRefMessage
     depSc.attRefInMsgName = depAttRef.attRefOutMsgName
 
     scSim.AddModelToTask(fswTaskName, chiefAttRefWrap, chiefAttRefData)
     scSim.AddModelToTask(fswTaskName, hillStateNavWrap, hillStateNavData)
-    scSim.AddModelToTask(fswTaskName, depAttRef)
     scSim.AddModelToTask(fswTaskName, sensProp)
-
+    scSim.AddModelToTask(fswTaskName, depAttRef)
     # ----- log ----- #
     orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
     simulationTime = 30*orbit_period
@@ -276,27 +300,27 @@ def run(show_plots, altOffset, trueAnomOffset):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    # viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
-    #                                           saveFile=fileName,
-    #                                           scName=[chiefSc.ModelTag, depSc.ModelTag])
-    # # delete any existing list of vizInterface spacecraft data
-    # viz.scData.clear()
-    #
-    # # create a chief spacecraft info container
-    # scData = vizInterface.VizSpacecraftData()
-    # scData.spacecraftName = chiefSc.ModelTag
-    # scData.numRW = 0
-    # scData.scPlusInMsgName = chiefSc.scStateOutMsgName
-    # # the following command is required as we are deviating from the default naming of using the Model.Tag
-    # viz.scData.push_back(scData)
-    #
-    # # create a chief spacecraft info container
-    # scData = vizInterface.VizSpacecraftData()
-    # scData.spacecraftName = depSc.ModelTag
-    # scData.numRW = 0
-    # scData.scPlusInMsgName = depSc.scStateOutMsgName
-    # # the following command is required as we are deviating from the default naming of using the Model.Tag
-    # viz.scData.push_back(scData)
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
+                                              saveFile=fileName,
+                                              scName=[chiefSc.ModelTag, depSc.ModelTag])
+    # delete any existing list of vizInterface spacecraft data
+    viz.scData.clear()
+
+    # create a chief spacecraft info container
+    scData = vizInterface.VizSpacecraftData()
+    scData.spacecraftName = chiefSc.ModelTag
+    scData.numRW = 0
+    scData.scPlusInMsgName = chiefSc.scStateOutMsgName
+    # the following command is required as we are deviating from the default naming of using the Model.Tag
+    viz.scData.push_back(scData)
+
+    # create a chief spacecraft info container
+    scData = vizInterface.VizSpacecraftData()
+    scData.spacecraftName = depSc.ModelTag
+    scData.numRW = 0
+    scData.scPlusInMsgName = depSc.scStateOutMsgName
+    # the following command is required as we are deviating from the default naming of using the Model.Tag
+    viz.scData.push_back(scData)
 
     # ----- execute sim ----- #
     scSim.InitializeSimulationAndDiscover()
@@ -436,5 +460,6 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         10.0, #   altitude offset (m)
-        0.01 #  True anomaly offset (deg)
+        0.01, #  True anomaly offset (deg)
+        ctrlType='desen'
     )
