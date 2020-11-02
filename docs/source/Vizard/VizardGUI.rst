@@ -145,6 +145,12 @@ This panel provides access to some system defaults:
 - keyboard controlled camera angular rate
 - keyboard controlled camera zoom rate
 
+Save Messages To File
+^^^^^^^^^^^^^^^^^^^^^
+Allows all the protobuffer message, or a sub-set, to be saved off to a file.  This document is located
+inside a sub-folder ``VizardData`` inside the user's home directory.
+
+
 ``View`` Menu Item
 ------------------
 The ``View`` menu tab contains a range of Vizard options. A range of coordinate frames can be toggled on or off.

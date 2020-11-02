@@ -18,6 +18,14 @@ Release Notes
     - show the hard drive state
     - Add the rate gyro visualization
 
+**Version 1.6.1**
+
+- organized the Settings panel into tabs to improve usability and future expansion
+- user can choose the chief spacecraft for the relative orbits to be other than the current main camera target under the View menu. This setting can also be scripted as a vizMessage setting
+- spacecraft shadows can be brightened using a setting in the General tab of the Settings panel. This setting can also be scripted as a vizMessage setting.
+- added the ability to save off all or a portion of the messages in the current run to a new file. This new function is available as “Save Messages to File” under the File menu. This feature works in both file playback mode and live-streaming mode. The data is safed into a sub-folder ``VizardData`` in the user's home directory.
+
+
 **Version 1.6.0**
 
 - Heads Up Displays of Coarse Sun Sensor coverage and boresight vectors
