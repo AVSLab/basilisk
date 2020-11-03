@@ -197,7 +197,7 @@ class BasiliskConan(ConanFile):
         if self.options.vizInterface:
             # build the protobuffer support files
             bskPath = os.getcwd()
-            os.chdir(os.path.join(bskPath, "src/utilities/vizProtobuffer/"))
+            os.chdir(os.path.join(bskPath, 'src', 'utilities', 'vizProtobuffer'))
             print(statusColor + "Building protobuffer interface files..." + endColor)
             cmdString = ["protoc", "--cpp_out=./", "vizMessage.proto"]
             subprocess.check_call(cmdString)
