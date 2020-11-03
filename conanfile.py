@@ -150,8 +150,8 @@ class BasiliskConan(ConanFile):
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18@bincrafters/stable")
             self.requires.add("protobuf/3.5.2@bincrafters/stable")
-            self.requires.add("cppzmq/4.3.0@bincrafters/stable")            
-
+            self.requires.add("cppzmq/4.3.0@bincrafters/stable")
+            self.requires.add("protoc_installer/3.5.2@bincrafters/stable")
 
     def configure(self):
         if self.options.clean:
@@ -194,6 +194,15 @@ class BasiliskConan(ConanFile):
             self.copy("*.dll", "../Basilisk", "bin")
 
     def build(self):
+        if self.options.vizInterface:
+            # build the protobuffer support files
+            bskPath = os.getcwd()
+            os.chdir(os.path.join(bskPath, 'src', 'utilities', 'vizProtobuffer'))
+            print(statusColor + "Building protobuffer interface files..." + endColor)
+            cmdString = ["protoc", "--cpp_out=./", "vizMessage.proto"]
+            subprocess.check_call(cmdString)
+            os.chdir(bskPath)
+
         root = os.path.abspath(os.path.curdir)
 
         self.source_folder = os.path.join(root, "src")
