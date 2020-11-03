@@ -150,8 +150,8 @@ class BasiliskConan(ConanFile):
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18@bincrafters/stable")
             self.requires.add("protobuf/3.5.2@bincrafters/stable")
-            self.requires.add("cppzmq/4.3.0@bincrafters/stable")            
-
+            self.requires.add("cppzmq/4.3.0@bincrafters/stable")
+            self.requires.add("protoc_installer/3.5.2@bincrafters/stable")
 
     def configure(self):
         if self.options.clean:
