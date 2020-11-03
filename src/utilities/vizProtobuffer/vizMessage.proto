@@ -2,6 +2,9 @@
  * Basilisk Sim to an external visualization application.
  * To generate the asscociate files for C++, run from a terminal window
  * protoc --cpp_out=./ vizMessage.proto
+ *
+ * If you get an error about not finding protoc, then you need to install the protobuffer compiler first.
+ * see http://google.github.io/proto-lens/installing-protoc.html
  */
 
 syntax = "proto3";
