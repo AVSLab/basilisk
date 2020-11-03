@@ -2,6 +2,9 @@
  * Basilisk Sim to an external visualization application.
  * To generate the asscociate files for C++, run from a terminal window
  * protoc --cpp_out=./ vizMessage.proto
+ *
+ * If you get an error about not finding protoc, then you need to install the protobuffer compiler first.
+ * see http://google.github.io/proto-lens/installing-protoc.html
  */
 
 syntax = "proto3";
@@ -159,7 +162,7 @@ message VizMessage{
 
 
     message VizSettingsPb{
-        double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 8
+        double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 1
         int32 orbitLinesOn = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 spacecraftCSon = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 planetCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -193,6 +196,8 @@ message VizMessage{
         int32 showHillFrame = 31; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showVelocityFrame = 32; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
+        string relativeOrbitChief = 34; // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
+        double spacecraftShadowBrightness = 35; // Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
     }
 
     TimeStamp currentTime = 1;

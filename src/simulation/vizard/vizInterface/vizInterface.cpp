@@ -574,7 +574,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showhillframe(this->settings.showHillFrame);
         vizSettings->set_showvelocityframe(this->settings.showVelocityFrame);
         vizSettings->set_relativeorbitframe(this->settings.relativeOrbitFrame);
-
+        vizSettings->set_relativeorbitchief(this->settings.relativeOrbitChief);
+        vizSettings->set_spacecraftshadowbrightness(this->settings.spacecraftShadowBrightness);
+        
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();

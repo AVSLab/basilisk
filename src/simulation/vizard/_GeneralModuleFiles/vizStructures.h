@@ -177,6 +177,8 @@ typedef struct {
     int showHillFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showVelocityFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int relativeOrbitFrame = 0; //!< Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
+    std::string relativeOrbitChief = "";            //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
+    double spacecraftShadowBrightness = -1.0;       //!< Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
 }VizSettings;
 
 
