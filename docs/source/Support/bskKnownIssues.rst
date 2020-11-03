@@ -6,7 +6,13 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- text here
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
+Version 1.8.7
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
 
 Version 1.8.6
 -------------
@@ -23,8 +29,8 @@ Version 1.8.4
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found.
   The code compiles, but auto-completion etc. doesn't work in that module.
 
-Version 1.8.3
--------------
+**Version 1.8.3**
+
 - On Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
   Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found.

@@ -20,6 +20,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.7
+-------------
 - Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hil()``
 - Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support :ref:`spacecraftDynamics`.
 - Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
@@ -49,8 +53,8 @@ Version 1.8.5
 - Updated conan to 1.29.2 to address issues building with opNav and support xcode 12
 - Disable freetype for windows because of opencv build issues.
 
-Version 1.8.4
--------------
+**Version 1.8.4**
+
 - update the macOS dependency to use either ``conan~=1.24`` or ``conan>=1.28``.  The later resolves the linking issues
   that ``conan`` had on macOS.  Other platforms can use ``conan>=1.24.0``.
 - updated ``vizInterface`` to support the latest features of Vizard 1.5, including the ability to show
