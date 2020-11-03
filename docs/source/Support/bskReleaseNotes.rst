@@ -20,7 +20,9 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- The protobuffer interface files are now automatically created from
+  ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
+  ``protoc`` command each time the protobuffer message definitions changed.
 
 Version 1.8.7
 -------------
