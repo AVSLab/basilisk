@@ -67,6 +67,7 @@ This resulting feedback control error is shown below.
 
 import os
 import copy
+import time
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -150,7 +151,7 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     return scObject, dragEffector, scNav
 
 
-def drag_simulator(altOffset, trueAnomOffset, ctrlType='lqr'):
+def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', makeViz=False):
     """
     Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
     both static gain and desensitized time-varying gain options and the option to use simulated attitude control or
@@ -160,6 +161,10 @@ def drag_simulator(altOffset, trueAnomOffset, ctrlType='lqr'):
         altOffset - double - deputy altitude offset from the chief ('x' hill direction), meters
         trueAnomOffset - double - deputy true anomaly difference from the chief ('y' direction), degrees
     """
+
+    startTime = time.time()
+    print(f"Starting process execution for altOffset = {altOffset}, trueAnomOffset={trueAnomOffset}, densMultiplier={densMultiplier} with {ctrlType} controls...")
+
     scSim = SimulationBaseClass.SimBaseClass()
 
     #   Configure simulation container and timestep
@@ -185,7 +190,7 @@ def drag_simulator(altOffset, trueAnomOffset, ctrlType='lqr'):
     atmosphere.ModelTag = 'exponential'
     atmosphere.planetRadius = orbitalMotion.REQ_EARTH*1e3   #   m
     atmosphere.scaleHeight = 8e3    # m
-    atmosphere.baseDensity = 1.020 #    kg/m^3
+    atmosphere.baseDensity = 1.020 * densMultiplier #    kg/m^3
 
     ##   Set up chief, deputy orbits:
     mu = gravFactory.gravBodies['earth'].mu
@@ -303,33 +308,41 @@ def drag_simulator(altOffset, trueAnomOffset, ctrlType='lqr'):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
-                                              saveFile=fileName,
-                                              scName=[chiefSc.ModelTag, depSc.ModelTag])
-    # delete any existing list of vizInterface spacecraft data
-    viz.scData.clear()
+    if makeViz:
+        viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, simProcessName, gravBodies=gravFactory,
+                                                  saveFile=fileName,
+                                                  scName=[chiefSc.ModelTag, depSc.ModelTag])
+        # delete any existing list of vizInterface spacecraft data
+        viz.scData.clear()
 
-    # create a chief spacecraft info container
-    scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = chiefSc.ModelTag
-    scData.numRW = 0
-    scData.scPlusInMsgName = chiefSc.scStateOutMsgName
-    # the following command is required as we are deviating from the default naming of using the Model.Tag
-    viz.scData.push_back(scData)
+        # create a chief spacecraft info container
+        scData = vizInterface.VizSpacecraftData()
+        scData.spacecraftName = chiefSc.ModelTag
+        scData.numRW = 0
+        scData.scPlusInMsgName = chiefSc.scStateOutMsgName
+        # the following command is required as we are deviating from the default naming of using the Model.Tag
+        viz.scData.push_back(scData)
 
-    # create a chief spacecraft info container
-    scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = depSc.ModelTag
-    scData.numRW = 0
-    scData.scPlusInMsgName = depSc.scStateOutMsgName
-    # the following command is required as we are deviating from the default naming of using the Model.Tag
-    viz.scData.push_back(scData)
+        # create a chief spacecraft info container
+        scData = vizInterface.VizSpacecraftData()
+        scData.spacecraftName = depSc.ModelTag
+        scData.numRW = 0
+        scData.scPlusInMsgName = depSc.scStateOutMsgName
+        # the following command is required as we are deviating from the default naming of using the Model.Tag
+        viz.scData.push_back(scData)
 
     # ----- execute sim ----- #
     scSim.InitializeSimulationAndDiscover()
     scSim.ConfigureStopTime(simulationTime)
+    setupTimeStamp = time.time()
+    setupTime = setupTimeStamp-startTime
+    print(f"Sim setup complete in {setupTime} seconds, executing...")
+
     scSim.ExecuteSimulation()
 
+    execTimeStamp = time.time()
+    execTime = execTimeStamp - setupTimeStamp
+    print(f"Sim complete in {execTime} seconds, pulling data...")
     # ----- pull ----- #
     varNames = [chiefSc.scStateOutMsgName + '.r_BN_N', chiefSc.scStateOutMsgName + '.v_BN_N', chiefSc.scStateOutMsgName+'.sigma_BN',
                 depSc.scStateOutMsgName + '.r_BN_N', depSc.scStateOutMsgName + '.v_BN_N',depSc.scStateOutMsgName+'.sigma_BN',
@@ -342,13 +355,15 @@ def drag_simulator(altOffset, trueAnomOffset, ctrlType='lqr'):
     results_dict['dynTimeData'] = results_dict[chiefSc.scStateOutMsgName+'.r_BN_N'][:, 0]*macros.NANO2SEC/orbit_period
     results_dict['fswTimeData'] = results_dict[sensProp.sensOutMsgName+'.r_DC_H'][:, 0]*macros.NANO2SEC/orbit_period
     results_dict['mu'] = mu
-
+    pullTimeStamp = time.time()
+    pullTime = pullTimeStamp - execTimeStamp
+    overallTime = pullTimeStamp - startTime
+    print(f"Data pulled in {pullTime} seconds. Overall time: {overallTime} seconds.")
     return results_dict
 
 
-def run(show_plots, altOffset, trueAnomOffset,ctrlType='lqr'):
-    #timeData, fswTimeData, pos, vel, chiefAtt, pos2, vel2, depAtt, hillPos, hillVel, hillPosSens, hillVelSens, numDataPoints, mu, ctrlType):
-    results = drag_simulator(altOffset, trueAnomOffset, ctrlType=ctrlType)
+def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr'):
+    results = drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, makeViz=True,)
 
     timeData = results['dynTimeData']
     fswTimeData = results['fswTimeData']
@@ -484,5 +499,6 @@ if __name__ == "__main__":
         True,  # show_plots
         10.0, #   altitude offset (m)
         0.04, #  True anomaly offset (deg)
+        1, #    Density multiplier (nondimensional)
         ctrlType='desen'
     )
