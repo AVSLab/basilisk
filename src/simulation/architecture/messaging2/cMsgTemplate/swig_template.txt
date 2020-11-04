@@ -2,6 +2,7 @@
 #include "{type}_C.h"
 %}}
 %include "{type}_C.h"
+typedef struct {type};
 %extend {type}_C {{
     %pythoncode %{{
 

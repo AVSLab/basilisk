@@ -1,4 +1,7 @@
 #define SWIGPYTHON_BUILTIN
+#ifdef __linux__
+   #define SWIGWORDSIZE64
+#endif
 
 %module message
 %pythoncode %{
@@ -6,6 +9,7 @@
 %}
 %include "swig_conly_data.i"
 %include "std_vector.i"
+%include "std_string.i"
 %pythoncode %{
     import numpy as np
 %};
@@ -20,6 +24,8 @@
 %include "message.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
+%rename(__time_vector) times;  // It's not really useful to give the user back a time vector
+%rename(__record_vector) record;
 %define INSTANTIATE_TEMPLATES(messageType)
 %{
 #include "architecture/messaging2/cMsgDefinition/messageType.h"
@@ -45,8 +51,6 @@
 %template(messageType ## Class) SimMessage<messageType>;
 
 %template(messageType ## Logger) Log<messageType>;
-%rename(__time_vector) times;  // It's not really useful to give the user back a time vector
-%rename(__record_vector) record;
 %extend Log<messageType> {
     %pythoncode %{
         def times(self):
