@@ -28,13 +28,13 @@ with open(destination_dir + 'cMsgCInterfacePy.i', 'w') as w:
 swig_template = open(destination_dir + 'cMsgCInterfacePy.i', 'a')
 
 # create the cmake file for the auto-generated C-msg interface files
-with open('./CMakeLists_template.txt', 'r') as r:
+with open('./CMakeLists.in', 'r') as r:
     cmakeText = r.read()
 with open(destination_dir + 'CMakeLists.txt', 'w') as w:
     w.write(cmakeText)
 
 # append all C msg definitions to the message.i file
-with open('./message_i_template.txt', 'r') as r:
+with open('./message.i.in', 'r') as r:
     messageContent = r.read()
     message_i_template += messageContent
 with open(destination_dir + '../message.i', 'w') as w:
@@ -46,20 +46,20 @@ message_i_template += '\n\n%include "message.h"\n'
 with open(destination_dir + '../message.i', 'w') as w:
     w.write(message_i_template)
 
-with open('./README_template.txt', 'r') as r:
+with open('./README.in', 'r') as r:
     README = r.read()
 message_template += README
 header_template += README
 swig_template.write(README)
 swig_template.write("%module cMsgCInterfacePy\n")
 
-with open('./message_template.txt', 'r') as f:
+with open('./message.in', 'r') as f:
     message_template += f.read()
 
-with open('./header_template.txt', 'r') as f:
+with open('./header.in', 'r') as f:
     header_template += f.read()
 
-with open('./swig_template.txt', 'r') as f:
+with open('./swig.in', 'r') as f:
     swig_template_block = f.read()
 
 with open('../message.i', 'r') as fb:
