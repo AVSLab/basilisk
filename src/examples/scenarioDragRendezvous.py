@@ -70,7 +70,7 @@ import copy
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import pandas as pd
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import simIncludeGravBody
@@ -150,24 +150,27 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     return scObject, dragEffector, scNav
 
 
-def run(show_plots, altOffset, trueAnomOffset, ctrlType='lqr'):
+def drag_simulator(altOffset, trueAnomOffset, ctrlType='lqr'):
     """
-    At the end of the python script you can specify the following example parameters.
+    Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
+    both static gain and desensitized time-varying gain options and the option to use simulated attitude control or
+    direct reference inputs.
 
     Args:
-        show_plots (bool): Determines if the script should display plots
-        useClassicElem (bool): Determines if classic orbital element is used
+        altOffset - double - deputy altitude offset from the chief ('x' hill direction), meters
+        trueAnomOffset - double - deputy true anomaly difference from the chief ('y' direction), degrees
     """
     scSim = SimulationBaseClass.SimBaseClass()
 
     #   Configure simulation container and timestep
     simProcessName = "simProcess"
     dynTaskName = "dynTask"
-    fswTaskName = "dynTask"
+    fswTaskName = "fswTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
+    dynTimeStep = macros.sec2nano(1.0) #   Timestep to evaluate dynamics at
+    fswTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
-    simProcess.addTask(scSim.CreateNewTask(fswTaskName, dynTimeStep))
+    simProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     ##  Configure environmental parameters
     #   Gravity; includes 2-body plus J2.
@@ -328,18 +331,41 @@ def run(show_plots, altOffset, trueAnomOffset, ctrlType='lqr'):
     scSim.ExecuteSimulation()
 
     # ----- pull ----- #
-    pos = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    chiefAtt = scSim.pullMessageLogData(chiefSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
-    pos2 = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel2 = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    depAtt = scSim.pullMessageLogData(depSc.scStateOutMsgName + '.sigma_BN', list(range(3)))
-    hillPos = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.r_DC_H', list(range(3)))
-    hillVel = scSim.pullMessageLogData(hillStateNavData.hillStateOutMsgName + '.v_DC_H', list(range(3)))
-    hillPosSens = scSim.pullMessageLogData(sensProp.sensOutMsgName + '.r_DC_H', list(range(3)))
-    hillVelSens = scSim.pullMessageLogData(sensProp.sensOutMsgName + '.v_DC_H', list(range(3)))
-    timeData = pos[:, 0]*macros.NANO2SEC/orbit_period
+    varNames = [chiefSc.scStateOutMsgName + '.r_BN_N', chiefSc.scStateOutMsgName + '.v_BN_N', chiefSc.scStateOutMsgName+'.sigma_BN',
+                depSc.scStateOutMsgName + '.r_BN_N', depSc.scStateOutMsgName + '.v_BN_N',depSc.scStateOutMsgName+'.sigma_BN',
+                hillStateNavData.hillStateOutMsgName+'.r_DC_H',hillStateNavData.hillStateOutMsgName+'.v_DC_H',
+                sensProp.sensOutMsgName+'.r_DC_H', sensProp.sensOutMsgName+'.v_DC_H',
+                ]
+    varSizes = [list(range(3))]*len(varNames)
+    types = ['double'] * len(varNames)
+    results_dict = scSim.pullMultiMessageLogData(varNames, varSizes, types) #   use pullMultiMessages for O(n) pull scaling
+    results_dict['dynTimeData'] = results_dict[chiefSc.scStateOutMsgName+'.r_BN_N'][:, 0]*macros.NANO2SEC/orbit_period
+    results_dict['fswTimeData'] = results_dict[sensProp.sensOutMsgName+'.r_DC_H'][:, 0]*macros.NANO2SEC/orbit_period
+    results_dict['mu'] = mu
 
+    return results_dict
+
+
+def run(show_plots, altOffset, trueAnomOffset,ctrlType='lqr'):
+    #timeData, fswTimeData, pos, vel, chiefAtt, pos2, vel2, depAtt, hillPos, hillVel, hillPosSens, hillVelSens, numDataPoints, mu, ctrlType):
+    results = drag_simulator(altOffset, trueAnomOffset, ctrlType=ctrlType)
+
+    timeData = results['dynTimeData']
+    fswTimeData = results['fswTimeData']
+    pos = results['wiggum_inertial_states.r_BN_N']
+    vel = results['wiggum_inertial_states.v_BN_N']
+    chiefAtt = results['wiggum_inertial_states.sigma_BN']
+    pos2 = results['lou_inertial_states.r_BN_N']
+    vel2= results['lou_inertial_states.v_BN_N']
+    depAtt = results['lou_inertial_states.sigma_BN']
+    hillPos = results['dep_hill_nav.r_DC_H']
+    hillVel = results['dep_hill_nav.v_DC_H']
+    hillPosSens = results['dep_sens_nav.r_DC_H']
+    hillVelSens = results['dep_sens_nav.v_DC_H']
+    numDataPoints = len(timeData)
+    mu = results['mu']
+
+    #swTimeData, pos, vel, chiefAtt, pos2, vel2, depAtt, hillPos, hillVel, hillPosSens, hillVelSens, numDataPoints, mu,
     # ----- plot ----- #
     # classical oe (figure1)
     plt.figure(1)
@@ -436,14 +462,14 @@ def run(show_plots, altOffset, trueAnomOffset, ctrlType='lqr'):
     plt.ylabel('Hill Y (m)')
 
     plt.figure()
-    plt.plot(timeData, hillPosSens[:,1:3],label='Position Sensitivities')
+    plt.plot(fswTimeData, hillPosSens[:,1:3],label='Position Sensitivities')
     plt.grid()
     plt.legend()
     plt.xlabel('Time')
     plt.ylabel('Sensitivity value')
 
     plt.figure()
-    plt.plot(timeData, hillVelSens[:,1:3], label='Velocity Sensitivities')
+    plt.plot(fswTimeData, hillVelSens[:,1:3], label='Velocity Sensitivities')
     plt.grid()
     plt.legend()
     plt.xlabel('Time')
@@ -453,13 +479,10 @@ def run(show_plots, altOffset, trueAnomOffset, ctrlType='lqr'):
         plt.show()
     plt.close("all")
 
-    return pos, vel, pos2, vel2, numDataPoints, figureList
-
-
 if __name__ == "__main__":
     run(
         True,  # show_plots
         10.0, #   altitude offset (m)
-        0.01, #  True anomaly offset (deg)
+        0.04, #  True anomaly offset (deg)
         ctrlType='desen'
     )
