@@ -953,7 +953,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         if (gravBodies):
             for key in gravBodies:
                 msgName = key + '_planet_data'
-                if (not scSim.TotalSim.IsMsgCreated(msgName)):
+                if (not scSim.TotalSim.IsMsgCreated(msgName)) and len(gravFactory.spicePlanetNames) == 0:
                     ephemData = spice_interface.SpicePlanetStateSimMsg()
                     ephemData.J2000Current = 0.0
                     ephemData.PositionVector = [0.0, 0.0, 0.0]
