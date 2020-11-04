@@ -339,7 +339,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName
+                                        , gravBodies=gravFactory
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation
