@@ -62,6 +62,7 @@ public:
 public:
     std::vector<VizSpacecraftData> scData;      //!< [-] vector of spacecraft data containers
     std::vector <std::string> spiceInMsgName;   //!< [-] Name of the incoming Spice data
+    std::vector<GroundLocationPbMsg> groundLocations;//!< [] vector of ground locations
     std::string opnavImageOutMsgName;           //!< The name of the Image output message
     int opNavMode;                              /*!< [int] Set non-zero positive value  if Unity/Viz couple in direct
                                                  communication. (1 - regular opNav, 2 - performance opNav) */

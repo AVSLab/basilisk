@@ -35,6 +35,7 @@ from Basilisk.simulation.swig_common_model import *
 namespace std {
     %template(VizThrConfig) vector<ThrClusterMap>;
     %template(PointLineConfig) vector<PointLine>;
+    %template(GroundLocationConfig) vector<GroundLocationPbMsg>;
     %template(CustomModelConfig) vector<CustomModel>;
     %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
     %template(InstrumentGuiSettingsConfig) vector<InstrumentGuiSettings>;

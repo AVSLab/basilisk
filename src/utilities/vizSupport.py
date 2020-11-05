@@ -99,6 +99,104 @@ def setSprite(shape, **kwargs):
 
     return answer
 
+groundLocationList = []
+def addGroundLocation(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+
+    vizElement = vizInterface.GroundLocationPbMsg()
+
+    unitTestSupport.checkMethodKeyword(
+        ['name', 'parentBodyName', 'r_GP_P', 'gHat_P', 'fieldOfView', 'color', 'sprite'],
+        kwargs)
+
+    if 'name' in kwargs:
+        name = kwargs['name']
+        if not isinstance(name, basestring):
+            print('ERROR: name must be a string')
+            exit(1)
+        vizElement.name = name
+    else:
+        print("ERROR: name argument must be provided to addGroundLocation")
+        exit(0)
+
+    if 'parentBodyName' in kwargs:
+        parentBodyName = kwargs['parentBodyName']
+        if not isinstance(parentBodyName, basestring):
+            print('ERROR: parentBodyName must be a string')
+            exit(1)
+        vizElement.parentBodyName = parentBodyName
+    else:
+        print("ERROR: parentBodyName argument must be provided to addGroundLocation")
+        exit(1)
+
+    if 'r_GP_P' in kwargs:
+        r_GP_P = kwargs['r_GP_P']
+        if not isinstance(r_GP_P, list):
+            print('ERROR: r_GP_P must be a list of floats')
+            print(r_GP_P)
+            exit(1)
+        if len(r_GP_P) != 3:
+            print('ERROR: r_GP_P must be list of three floats')
+            exit(1)
+        try:
+            # check if vector is a list
+            vizElement.r_GP_P = r_GP_P
+        except:
+            try:
+                # convert Eigen array to list
+                vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
+            except:
+                pass
+    else:
+        print("ERROR: r_GP_P argument must be provided to addGroundLocation")
+        exit(0)
+
+    if 'gHat_P' in kwargs:
+        gHat_P = kwargs['gHat_P']
+        if not isinstance(gHat_P, list):
+            print('ERROR: gHat_P must be a list of three floats')
+            exit(1)
+        if len(gHat_P) != 3:
+            print('ERROR: gHat_P must be list of three floats')
+            exit(1)
+        vizElement.gHat_P = gHat_P
+    else:
+        vizElement.gHat_P = r_GP_P / np.linalg.norm(r_GP_P)
+
+    if 'fieldOfView' in kwargs:
+        fieldOfView = kwargs['fieldOfView']
+        if not isinstance(fieldOfView, float):
+            print('ERROR: fieldOfView must be a float value in radians')
+            exit(1)
+        if fieldOfView > np.pi or fieldOfView < 0.0:
+            print('ERROR: fieldOfView must be a value between 0 and Pi')
+            exit(1)
+        vizElement.fieldOfView = fieldOfView
+
+    if 'color' in kwargs:
+        color = kwargs['color']
+        vizElement.color = toRGBA255(color)
+
+    if 'sprite' in kwargs:
+        spriteName = kwargs['sprite']
+        if not isinstance(spriteName, basestring):
+            print('ERROR: spriteName must be a string')
+            exit(1)
+
+        shapeList = ["CIRCLE", "SQUARE", "TRIANGLE", "STAR"]
+        if (spriteName not in shapeList):
+            print("The sprite argument was provided this unknown sprite shape primitive: " + shape)
+            exit(1)
+        vizElement.sprite = spriteName
+
+    groundLocationList.append(vizElement)
+    del viz.groundLocations[:]  # clear settings list to replace it with updated list
+    viz.groundLocations = vizInterface.GroundLocationConfig(groundLocationList)
+
+    return
+
 pointLineList = []
 def createPointLine(viz, **kwargs):
     if not vizFound:

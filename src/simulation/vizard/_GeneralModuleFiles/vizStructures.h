@@ -105,6 +105,18 @@ typedef struct {
     int shader=-1;                          //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
 }CustomModel;
 
+/*! Structure defining ground location information
+ */
+typedef struct {
+    std::string name;                   //!< ground location text label
+    std::string parentBodyName;         //!< name of the parent planet body P on which the ground location G is positioned
+    double r_GP_P[3];                   //!< [m] Position of location G relative to planet frame P
+    double gHat_P[3];                   //!< ground location Normal relative to parent body frame.
+    double fieldOfView = -1;            //!< [rad] Edge-to-Edge, -1 -> use default, values between 0.0001deg and 179.9999deg valid
+    int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default
+    std::string sprite = "";            //!< Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE", default is "CIRCLE"
+}GroundLocationPbMsg;
+
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
 typedef struct {
