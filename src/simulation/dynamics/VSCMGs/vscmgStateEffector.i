@@ -39,7 +39,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "simMessages/vscmgConfigSimMsg.h"
 %include "simFswInterfaceMessages/vscmgSpeedIntMsg.h"
 %include "simFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
-%include "simFswInterfaceMessages/macroDefinitions.h"
+%include "utilities/macroDefinitions.h"
 
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"

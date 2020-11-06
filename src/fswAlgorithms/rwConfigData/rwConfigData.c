@@ -24,7 +24,7 @@
 /* modify the path to reflect the new module names */
 #include "rwConfigData/rwConfigData.h"
 #include "simulation/utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "rwConfigData.h"
 #include <string.h>
 

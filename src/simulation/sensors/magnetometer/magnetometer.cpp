@@ -27,7 +27,7 @@
 #include <cstring>
 #include <algorithm>
 #include "utilities/avsEigenSupport.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 
 /*! This is the constructor, setting variables to default values. */

@@ -31,7 +31,7 @@
 #include "simMessages/vscmgCmdSimMsg.h"
 #include "simMessages/vscmgConfigSimMsg.h"
 #include "simFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "utilities/bskLogging.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"

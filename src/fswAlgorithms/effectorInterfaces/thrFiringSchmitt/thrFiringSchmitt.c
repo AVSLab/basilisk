@@ -23,7 +23,7 @@
 
 #include "effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
 #include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include <stdio.h>
 #include <string.h>
 

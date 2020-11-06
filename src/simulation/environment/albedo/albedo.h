@@ -41,7 +41,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/albedoSimMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 /*!< albedo instrument configuration class */
 typedef class Config {

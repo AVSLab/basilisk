@@ -24,7 +24,7 @@
 #include "attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "simulation/utilities/astroConstants.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"

@@ -23,7 +23,7 @@
 #include "transDetermination/ephemNavConverter/ephemNavConverter.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 
 /*! This method creates the output navigation message (translation only) for

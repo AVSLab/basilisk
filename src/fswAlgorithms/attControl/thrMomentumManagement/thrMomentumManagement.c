@@ -23,7 +23,7 @@
 
 #include "attControl/thrMomentumManagement/thrMomentumManagement.h"
 #include "attControl/MRP_Steering/MRP_Steering.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include <string.h>
 

@@ -25,7 +25,7 @@
 #include "attControl/MRP_Feedback/MRP_Feedback.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "simulation/utilities/astroConstants.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 

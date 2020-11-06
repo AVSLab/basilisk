@@ -97,3 +97,13 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+---------------------------+-----------------------------------+
 
 
+Miscellaneous Changes
+---------------------
+If from Python you access ``#define`` values of ``macroDefinitions.h``, such as::
+
+    simFswInterfaceMessages.MAX_EFF_CNT
+    fswMessages.MAX_EFF_CNT
+
+then you can now access these definitions using  ``message.i`` using::
+
+    message.MAX_EFF_CNT

@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
 

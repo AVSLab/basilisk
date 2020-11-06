@@ -21,7 +21,7 @@
  */
 
 #include "effectorInterfaces/thrForceMapping/thrForceMapping.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 #include "simulation/utilities/linearAlgebra.h"

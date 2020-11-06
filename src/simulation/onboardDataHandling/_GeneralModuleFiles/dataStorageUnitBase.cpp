@@ -19,7 +19,7 @@
 
 #include "architecture/messaging/system_messaging.h"
 #include "dataStorageUnitBase.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void

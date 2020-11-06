@@ -20,7 +20,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
 #include "utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "powerStorageBase.h"
 
 

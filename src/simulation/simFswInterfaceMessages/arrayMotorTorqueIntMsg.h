@@ -21,7 +21,7 @@
 #define ARRAY_MOTOR_TORQUE_H
 
 
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 
 

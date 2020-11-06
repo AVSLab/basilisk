@@ -22,7 +22,7 @@
 
 
 #include "onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 /*! @brief simple storage unit class */
 class SimpleStorageUnit: public DataStorageUnitBase {

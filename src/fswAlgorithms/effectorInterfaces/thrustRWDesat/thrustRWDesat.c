@@ -21,7 +21,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 

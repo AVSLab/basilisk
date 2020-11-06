@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cstring>
 #include <thread>
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 /*! This is the constructor for the clock synch model.  It sets default variable
     values and initializes the various parts of the model */

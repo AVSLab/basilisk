@@ -25,7 +25,7 @@
 #include "fswUtilities/fswDefinitions.h"
 #include "fswMessages/thrArrayConfigFswMsg.h"
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "simulation/utilities/bskLogging.h"
 

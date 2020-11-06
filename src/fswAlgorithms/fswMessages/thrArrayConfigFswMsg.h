@@ -20,7 +20,7 @@
 #ifndef THR_ARRAY_MESSAGE_H
 #define THR_ARRAY_MESSAGE_H
 
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "thrConfigFswMsg.h"
 
 

@@ -37,7 +37,7 @@
 #include "stSensorIntMsg.h"
 #include "tamSensorIntMsg.h"
 #include "thrArrayOnTimeCmdIntMsg.h"
-#include "macroDefinitions.h"
+#include "../utilities/macroDefinitions.h"
 #include "deviceStatusIntMsg.h"
 #include "powerNodeStatusIntMsg.h"
 %}
@@ -89,7 +89,7 @@ GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
 %include "deviceStatusIntMsg.h"
 GEN_SIZEOF(DeviceStatusIntMsg)
 
-%include "macroDefinitions.h"
+%include "../utilities/macroDefinitions.h"
 
 #ifndef CSHARP_ROX
 %pythoncode %{

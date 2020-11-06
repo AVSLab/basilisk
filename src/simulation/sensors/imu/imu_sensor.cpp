@@ -27,7 +27,7 @@
 #include "utilities/gauss_markov.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include <inttypes.h>
 
 

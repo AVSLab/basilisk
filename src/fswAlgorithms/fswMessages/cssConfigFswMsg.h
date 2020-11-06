@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "cssUnitConfigFswMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 
 

@@ -20,7 +20,7 @@
 #include "attDetermination/sunlineSEKF/sunlineSEKF.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>
 #include <math.h>

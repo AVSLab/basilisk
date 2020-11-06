@@ -19,7 +19,7 @@
 
 
 #include "gravityEffector.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/linearAlgebra.h"
 #include <iostream>

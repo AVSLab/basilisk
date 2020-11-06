@@ -23,7 +23,7 @@
 
 #include "attControl/MRP_PD/MRP_PD.h"
 #include "simulation/utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include <string.h>
 
 /*! This method initializes the configData for this module.

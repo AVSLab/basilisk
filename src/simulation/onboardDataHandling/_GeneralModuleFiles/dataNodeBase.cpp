@@ -18,7 +18,7 @@
  */
 
 #include "architecture/messaging/system_messaging.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "dataNodeBase.h"
 #include "string.h"
 

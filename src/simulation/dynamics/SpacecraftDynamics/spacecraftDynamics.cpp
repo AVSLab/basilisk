@@ -18,7 +18,7 @@
  */
 
 #include "spacecraftDynamics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"

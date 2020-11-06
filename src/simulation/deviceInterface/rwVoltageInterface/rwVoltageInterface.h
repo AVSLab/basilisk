@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../../simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "../../simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
-#include "../../simFswInterfaceMessages/macroDefinitions.h"
+#include "../../utilities/macroDefinitions.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 

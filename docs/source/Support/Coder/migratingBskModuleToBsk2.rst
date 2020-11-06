@@ -34,6 +34,18 @@ This facilitates the migration to 2.0 as it requires some commands to be changed
 none of the code logic should have to change.  As before, the message interfaces vary between
 C and C++ modules.
 
+Moved Support Files
+^^^^^^^^^^^^^^^^^^^
+If your module uses::
+
+    #include "simulation/simFswInterfaceMessages/macroDefinitions.h"
+
+this file has now moved to::
+
+    #include "simulation/utilities/macroDefinitions.h"
+
+
+
 Updating a C Module
 ^^^^^^^^^^^^^^^^^^^
 

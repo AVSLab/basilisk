@@ -21,7 +21,7 @@
 #include <math.h>
 #include "avsEigenSupport.h"
 #include "rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 /*
 

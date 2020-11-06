@@ -21,7 +21,7 @@
 #include "attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 /*! This method initializes the configData for the nominal delta-V maneuver guidance.
  It checks to ensure that the inputs are sane and then creates the

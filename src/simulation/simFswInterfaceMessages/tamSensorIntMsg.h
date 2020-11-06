@@ -20,8 +20,6 @@
 #ifndef _TAM_SENSOR_MESSAGE_H
 #define _TAM_SENSOR_MESSAGE_H
 
-//#include "macroDefinitions.h"
-
 
 //! @brief Simulated TAM Sensor output message definition.
 typedef struct {

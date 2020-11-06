@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "fswMessages/opNavFswMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"

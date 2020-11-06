@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 
 /*! @brief Array with availability of RW */

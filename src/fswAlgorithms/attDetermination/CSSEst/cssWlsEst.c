@@ -19,7 +19,7 @@
 
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "simulation/utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 

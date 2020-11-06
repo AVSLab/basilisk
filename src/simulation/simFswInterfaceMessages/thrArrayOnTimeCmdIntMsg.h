@@ -20,7 +20,7 @@
 #ifndef THR_CMD_MESSAGE_H
 #define THR_CMD_MESSAGE_H
 
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 
 /*! @brief Structure used to define the output definition for vehicle effectors*/

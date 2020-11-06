@@ -24,7 +24,7 @@
 
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"

@@ -12,7 +12,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 
 SimpleSolarPanel::SimpleSolarPanel(){

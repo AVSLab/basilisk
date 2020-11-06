@@ -19,7 +19,7 @@
 #include <string.h>
 #include "attGuidance/attTrackingError/attTrackingError.h"
 #include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 

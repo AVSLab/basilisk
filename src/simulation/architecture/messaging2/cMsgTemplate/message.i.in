@@ -10,6 +10,7 @@
 %include "swig_conly_data.i"
 %include "std_vector.i"
 %include "std_string.i"
+%include "../../utilities/macroDefinitions.h"
 %pythoncode %{
     import numpy as np
 %};

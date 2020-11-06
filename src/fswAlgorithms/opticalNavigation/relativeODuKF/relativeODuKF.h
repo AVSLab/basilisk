@@ -24,7 +24,7 @@
 
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "fswMessages/opNavFswMsg.h"
 #include "fswMessages/opNavFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"

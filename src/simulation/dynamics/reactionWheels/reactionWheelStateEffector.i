@@ -39,7 +39,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "simMessages/rwCmdSimMsg.h"
 %include "simMessages/rwConfigSimMsg.h"
 %include "simMessages/rwConfigLogSimMsg.h"
-%include "simFswInterfaceMessages/macroDefinitions.h"
+%include "utilities/macroDefinitions.h"
 %include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 
 //%include "spacecraftPlus.h"

@@ -21,7 +21,7 @@
 #include <sstream>
 #include "architecture/messaging/system_messaging.h"
 #include <string.h>
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/avsEigenSupport.h"

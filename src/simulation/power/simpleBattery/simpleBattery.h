@@ -23,7 +23,7 @@
 
 #include "power/_GeneralModuleFiles/powerStorageBase.h"
 #include "../../simMessages/powerStorageStatusSimMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "utilities/bskLogging.h"
 
 

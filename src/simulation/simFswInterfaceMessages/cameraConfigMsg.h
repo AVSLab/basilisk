@@ -23,7 +23,7 @@
 #define MAX_STRING_LENGTH 256
 /*! @brief Structure used to define the camera parameters*/
 
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 
 typedef struct {
     int64_t cameraID;          //!< [-]   ID of the camera that took the snapshot*/

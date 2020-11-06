@@ -20,7 +20,7 @@
 #ifndef _THRUST_GROUP_DATA_
 #define _THRUST_GROUP_DATA_
 
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 

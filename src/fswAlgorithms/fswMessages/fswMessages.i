@@ -60,7 +60,7 @@ STRUCTASLIST(CSSUnitConfigFswMsg)
 STRUCTASLIST(AccPktDataFswMsg)
 STRUCTASLIST(RWConfigElementFswMsg)
 
-%include "../simFswInterfaceMessages/macroDefinitions.h"
+%include "../utilities/macroDefinitions.h"
 %include "../fswMessages/AccDataFswMsg.h"
 GEN_SIZEOF(AccDataFswMsg)
 %include "../fswMessages/AccPktDataFswMsg.h"

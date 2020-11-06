@@ -19,7 +19,7 @@
 
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "simulation/utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include <string.h>
 
 /*! This method initializes the configData for theIMU sensor interface.

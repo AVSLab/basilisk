@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/macroDefinitions.h"
 #include "simulation/utilities/astroConstants.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/orbitalMotion.h"
