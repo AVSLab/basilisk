@@ -6,7 +6,7 @@
 
 //! structure definition
 typedef struct {{
-    {type} payload;		//!< message copy
+    {type} payload;		//!< message copy, zero'd on construction
     {type} *payloadPointer;	//!< pointer to message
 }} {type}_C;
 

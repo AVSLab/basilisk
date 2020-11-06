@@ -15,8 +15,8 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
         OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef MESSAGING2_H
+#define MESSAGING2_H
 #include <memory>
 #include "../../_GeneralModuleFiles/sys_model.h"
 #include <vector>
@@ -82,7 +82,7 @@ class Log;
 template<typename messageType>
 class SimMessage{
 private:
-    messageType payload;  //! -- struct defining message payload
+    messageType payload = {};  //! -- struct defining message payload, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload);
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload);
 public:
