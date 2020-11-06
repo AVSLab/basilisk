@@ -60,16 +60,16 @@ typedef struct {
     VehicleConfigMsg_C vehConfigInMsg;                  //!< input message
 
     BSKLogger *bskLogger;                               //!< BSK Logging
-}MRP_FeedbackConfig;
+}mrpFeedbackConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID);
-    void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID);
-    void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID);
+    void CrossInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID);
+    void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
 
 
 #ifdef __cplusplus

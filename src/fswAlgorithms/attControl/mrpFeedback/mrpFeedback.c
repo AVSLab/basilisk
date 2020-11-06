@@ -22,7 +22,7 @@
 
  */
 
-#include "attControl/MRP_Feedback/MRP_Feedback.h"
+#include "attControl/mrpFeedback/mrpFeedback.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"
@@ -37,7 +37,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
 */
-void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
+void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     CmdTorqueBodyMsg_C_claim(&configData->cmdTorqueOutMsg, &configData->cmdTorqueOutMsg);
@@ -55,7 +55,7 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
+void CrossInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Get the control data message ID*/
     configData->rwParamsInMsgId = -1;
@@ -85,7 +85,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with the MRP steering control
  @param moduleID The module identifier
 */
-void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
     uint64_t timeOfMsgWritten;
@@ -127,7 +127,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, int64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
+void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
     AttGuidMsg      guidCmd;            /* attitude tracking error message */

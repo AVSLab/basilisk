@@ -16,23 +16,23 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module MRP_Feedback
+%module mrpFeedback
 %{
-   #include "MRP_Feedback.h"
+   #include "mrpFeedback.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_MRP_Feedback(void*, uint64_t, uint64_t);
-%ignore Update_MRP_Feedback;
-%constant void SelfInit_MRP_Feedback(void*, uint64_t);
-%ignore SelfInit_MRP_Feedback;
-%constant void CrossInit_MRP_Feedback(void*, uint64_t);
-%ignore CrossInit_MRP_Feedback;
-%constant void Reset_MRP_Feedback(void*, uint64_t, uint64_t);
-%ignore Reset_MRP_Feedback;
+%constant void Update_mrpFeedback(void*, uint64_t, uint64_t);
+%ignore Update_mrpFeedback;
+%constant void SelfInit_mrpFeedback(void*, uint64_t);
+%ignore SelfInit_mrpFeedback;
+%constant void CrossInit_mrpFeedback(void*, uint64_t);
+%ignore CrossInit_mrpFeedback;
+%constant void Reset_mrpFeedback(void*, uint64_t, uint64_t);
+%ignore Reset_mrpFeedback;
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(RWAvailabilityFswMsg);
-GEN_SIZEOF(MRP_FeedbackConfig);
+GEN_SIZEOF(mrpFeedbackConfig);
 GEN_SIZEOF(AttGuidMsg);
 GEN_SIZEOF(VehicleConfigMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
@@ -40,7 +40,7 @@ GEN_SIZEOF(RWSpeedIntMsg);
 struct CmdTorqueBodyMsg_C;
 struct AttGuidMsg_C;
 struct VehicleConfigMsg_C;
-%include "MRP_Feedback.h"
+%include "mrpFeedback.h"
 %include "cMsgDefinition/AttGuidMsg.h"
 %include "cMsgDefinition/VehicleConfigMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"

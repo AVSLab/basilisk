@@ -11,11 +11,11 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_MRP_Feedback:
-.. figure:: /../../src/fswAlgorithms/attControl/MRP_Feedback/_Documentation/Images/moduleIOMrpFeedback.svg
+.. _ModuleIO_mrpFeedback:
+.. figure:: /../../src/fswAlgorithms/attControl/mrpFeedback/_Documentation/Images/moduleIOMrpFeedback.svg
     :align: center
 
-    Figure 1: ``MRP_Feedback()`` Module I/O Illustration
+    Figure 1: ``mrpFeedback()`` Module I/O Illustration
 
 .. table:: Module I/O Messages
     :widths: 25 25 100
@@ -23,9 +23,11 @@ provides information on what this message is used for.
     +-----------------------+-----------------------------------+---------------------------------------------------+
     | Msg Variable Name     | Msg Type                          | Description                                       |
     +=======================+===================================+===================================================+
-    | inputGuidName         | :ref:`AttGuidFswMsg`              | The name of the attitude guidance input message   |
+    | cmdTorqueOutMsg       | :ref:`CmdTorqueBodyMsg`           | Control torque output message                     |
     +-----------------------+-----------------------------------+---------------------------------------------------+
-    | vehConfigInMsgName    | :ref:`VehicleConfigFswMsg`        | Name of the vehicle configuration input message   |
+    | guidInMsg             | :ref:`AttGuidMsg`                 | The name of the attitude guidance input message   |
+    +-----------------------+-----------------------------------+---------------------------------------------------+
+    | vehConfigInMsg        | :ref:`VehicleConfigMsg`           | Name of the vehicle configuration input message   |
     +-----------------------+-----------------------------------+---------------------------------------------------+
     | rwParamsInMsgName     | :ref:`RWArrayConfigFswMsg`        | (Optional) The name of the RW array configuration |
     |                       |                                   | input message                                     |
@@ -42,7 +44,7 @@ Detailed Module Description
 ---------------------------
 General Function
 ^^^^^^^^^^^^^^^^
-The ``MRP_Feedback`` module creates the MRP attitude feedback control torque :math:`{\bf L}_{r}` developed in chapter 8 of `Analytical Mechanics of Space Systems <http://doi.org/10.2514/4.105210>`__.  The input and output messages are illustrated in :ref:`ModuleIO_MRP_Feedback`.  The output message is a body-frame control torque vector.  The required attitude guidance message contains both attitude tracking error states as well as reference frame states.  This message is read in with every update cycle. The vehicle configuration message is only read in on reset and contains the spacecraft inertia tensor about the vehicle's center of mass location.
+The ``mrpFeedback`` module creates the MRP attitude feedback control torque :math:`{\bf L}_{r}` developed in chapter 8 of `Analytical Mechanics of Space Systems <http://doi.org/10.2514/4.105210>`__.  The input and output messages are illustrated in :ref:`ModuleIO_mrpFeedback`.  The output message is a body-frame control torque vector.  The required attitude guidance message contains both attitude tracking error states as well as reference frame states.  This message is read in with every update cycle. The vehicle configuration message is only read in on reset and contains the spacecraft inertia tensor about the vehicle's center of mass location.
 
 The MRP feedback control can compensate for Reaction Wheel (RW) gyroscopic effects as well.  This is an optional input message where the RW configuration array message contains the RW spin axis :math:`\hat{\bf g}_{s,i}` information and the RW polar inertia about the spin axis :math:`I_{W_{s,i}}`.  This is only read in on reset.  The RW speed message contains the RW speed :math:`\Omega_{i}` and is read in every time step.  The optional RW availability message can be used to include or not include RWs in the MRP feedback.  This allows the module to selectively turn off some RWs.  The default is that all RWs are operational and are included.
 
