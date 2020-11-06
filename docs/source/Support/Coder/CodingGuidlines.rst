@@ -179,8 +179,8 @@ Variables holding data from a read message are to be composed in the following m
 
 Message Definitions
 ~~~~~~~~~~~~~~~~~~~
-The C based messages are stored in ``src/architecture/messaging2/messageDefinition`` as a ``*.h`` file.
-The file name uses Upper Camel Case and should be idential to the message name within the file.
+The C based messages are stored in ``src/cMsgDefinition`` as a ``*.h`` file.
+The file name uses Upper Camel Case and should be identical to the message name within the file.
 The last three letters should be ``Msg``.
 For example, a particular spacecraft sensor message could be named ``SpecialSensorMsg.h``.  The contents
 could be
