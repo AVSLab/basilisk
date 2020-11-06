@@ -33,6 +33,7 @@
 #include "cMsgDefinition/SCPlusMassPropsMsg.h"
 #include "hubEffector.h"
 #include "utilities/bskLogging.h"
+#include "architecture/messaging2/messaging2.h"
 
 
 

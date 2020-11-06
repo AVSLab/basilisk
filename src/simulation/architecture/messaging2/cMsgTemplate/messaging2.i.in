@@ -3,7 +3,7 @@
    #define SWIGWORDSIZE64
 #endif
 
-%module message
+%module messaging2
 %pythoncode %{
     from Basilisk.simulation.swig_common_model import *
 %}
@@ -16,13 +16,13 @@
 %};
 %{
 #include "../../_GeneralModuleFiles/sys_model.h"
-#include "message.h"
+#include "messaging2.h"
 #include <vector>
 %}
 %template(TimeVector) std::vector<uint64_t>;
 %include "std_vector.i"
 %include "../../_GeneralModuleFiles/sys_model.h"
-%include "message.h"
+%include "messaging2.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
 %rename(__time_vector) times;  // It's not really useful to give the user back a time vector

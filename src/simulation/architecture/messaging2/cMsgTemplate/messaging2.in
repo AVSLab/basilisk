@@ -1,5 +1,5 @@
 #include "{type}_C.h"
-#include "simulation/architecture/messaging2/message.h"
+#include "simulation/architecture/messaging2/messaging2.h"
 
 //! C interface to subscribe to a message
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{

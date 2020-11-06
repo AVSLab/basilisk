@@ -158,7 +158,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "architecture/messaging2/message.h"
+         #include "architecture/messaging2/messaging2.h"
 
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated

@@ -29,7 +29,7 @@
 #include "cMsgDefinition/NavTransMsg.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
-#include "architecture/messaging2/message.h"
+#include "architecture/messaging2/messaging2.h"
 
 /*! @brief simple navigation module class */
 class SimpleNav: public SysModel {

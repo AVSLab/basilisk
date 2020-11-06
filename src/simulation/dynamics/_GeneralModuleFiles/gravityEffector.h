@@ -28,7 +28,7 @@
 #include <Eigen/Dense>
 #include "../cMsgDefinition/SpicePlanetStateMsg.h"
 #include "utilities/bskLogging.h"
-#include "architecture/messaging2/message.h"
+#include "architecture/messaging2/messaging2.h"
 
 /*! @brief spherical harmonics class */
 class SphericalHarmonics
