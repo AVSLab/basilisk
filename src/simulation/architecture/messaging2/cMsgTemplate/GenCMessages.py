@@ -39,7 +39,7 @@ with open('./message.i.in', 'r') as r:
     message_i_template += messageContent
 with open(destination_dir + '../message.i', 'w') as w:
     w.write(message_i_template)
-for file in os.listdir("../cMsgDefinition"):
+for file in os.listdir("../../../../cMsgDefinition"):
     if file.endswith(".h"):
         message_i_template += "\nINSTANTIATE_TEMPLATES(" + os.path.splitext(file)[0] + ")"
 message_i_template += '\n\n%include "message.h"\n'
@@ -69,7 +69,7 @@ def to_message(struct_data):
     if struct_data:
         struct_data = struct_data.replace(' ', '').split(',')
         struct_name = struct_data[0]
-        source_header_file = 'architecture/messaging2/cMsgDefinition/' + struct_name + '.h'
+        source_header_file = 'cMsgDefinition/' + struct_name + '.h'
         definitions = message_template.format(type=struct_name)
         header = header_template.format(type=struct_name, structHeader=source_header_file)
         swig_template.write(swig_template_block.format(type=struct_name))

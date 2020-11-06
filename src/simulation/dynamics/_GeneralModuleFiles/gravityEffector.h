@@ -26,7 +26,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <vector>
 #include <Eigen/Dense>
-#include "architecture/messaging2/cMsgDefinition/SpicePlanetStateMsg.h"
+#include "../cMsgDefinition/SpicePlanetStateMsg.h"
 #include "utilities/bskLogging.h"
 #include "architecture/messaging2/message.h"
 

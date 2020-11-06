@@ -23,9 +23,9 @@
 #include "architecture/messaging2/message.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "architecture/messaging2/cMsgDefinition/CmdTorqueBodyMsg.h"
-#include "architecture/messaging2/cMsgDefinition/CmdForceBodyMsg.h"
-#include "architecture/messaging2/cMsgDefinition/CmdForceInertialMsg.h"
+#include "cMsgDefinition/CmdTorqueBodyMsg.h"
+#include "cMsgDefinition/CmdForceBodyMsg.h"
+#include "cMsgDefinition/CmdForceInertialMsg.h"
 #include "utilities/bskLogging.h"
 
 

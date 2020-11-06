@@ -34,9 +34,9 @@ struct AttGuidMsg_C;
 struct AttRefMsg_C;
 struct NavAttMsg_C;
 %include "attTrackingError.h"
-%include "architecture/messaging2/cMsgDefinition/NavAttMsg.h"
-%include "architecture/messaging2/cMsgDefinition/AttGuidMsg.h"
-%include "architecture/messaging2/cMsgDefinition/AttRefMsg.h"
+%include "cMsgDefinition/NavAttMsg.h"
+%include "cMsgDefinition/AttGuidMsg.h"
+%include "cMsgDefinition/AttRefMsg.h"
 GEN_SIZEOF(NavAttMsg);
 GEN_SIZEOF(attTrackingErrorConfig);
 GEN_SIZEOF(AttGuidMsg);

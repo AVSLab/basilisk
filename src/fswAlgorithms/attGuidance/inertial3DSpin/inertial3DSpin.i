@@ -35,7 +35,7 @@ GEN_SIZEOF(AttRefMsg);
 %include "inertial3DSpin.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "architecture/messaging2/cMsgDefinition/AttRefMsg.h"
+%include "cMsgDefinition/AttRefMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

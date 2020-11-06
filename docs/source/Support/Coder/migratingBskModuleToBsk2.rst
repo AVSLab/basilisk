@@ -128,7 +128,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         %include "architecture/messaging2/cMsgDefinition/ModuleMsg.h"
+         %include "cMsgDefinition/ModuleMsg.h"
 
 
 Updating a C++ Module
@@ -140,7 +140,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "architecture/messaging2/cMsgDefinition/OutputMsg.h"
+         #include "cMsgDefinition/OutputMsg.h"
 
     - Add the include statement for the new message system using:
 
@@ -253,5 +253,5 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         %include "architecture/messaging2/cMsgDefinition/OutputSimMsg.h"
+         %include "cMsgDefinition/OutputMsg.h"
 
