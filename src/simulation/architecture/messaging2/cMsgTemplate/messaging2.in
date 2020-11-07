@@ -4,22 +4,42 @@
 //! C interface to subscribe to a message
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
     subscriber->payloadPointer = &(source->payload);
+    subscriber->headerPointer = &(source->header);
+    subscriber->header.isLinked = 1;
 }};
 
 //! C interface to claim authorship to a message
 void {type}_C_claim({type}_C *coowner, {type}_C *data) {{
     coowner->payloadPointer = &data->payload;
+    coowner->headerPointer = &data->header;
 }};
 
 //! C interface to write to a message
-void {type}_C_write({type} *data, {type}_C *destination) {{
+void {type}_C_write({type} *data, {type}_C *destination, uint64_t callTime) {{
     *destination->payloadPointer = *data;
+    destination->headerPointer->isWritten = 1;
+    destination->headerPointer->timeWritten = callTime;
     return;
 }};
 
 //! C interface to read to a message
 {type} {type}_C_read({type}_C *source) {{
     return *source->payloadPointer;
+}};
+
+//! C interface to to see if this message container has been subscribed to
+int {type}_C_isLinked({type}_C *data) {{
+    return data->header.isLinked;
+}};
+
+//! C interface to to see if this message container ever been written to
+int {type}_C_isWritten({type}_C *data) {{
+    return data->headerPointer->isWritten;
+}};
+
+//! C interface to to see if this message container ever been written to
+uint64_t {type}_C_timeWritten({type}_C *data) {{
+    return data->headerPointer->timeWritten;
 }};
 
 //! method description

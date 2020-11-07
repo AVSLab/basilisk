@@ -81,7 +81,7 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
 
     computeAttitudeError(configData->sigma_R0R, nav, ref, &attGuidOut);
 
-    AttGuidMsg_C_write(&attGuidOut, &configData->attGuidOutMsg);
+    AttGuidMsg_C_write(&attGuidOut, &configData->attGuidOutMsg, callTime);
 
     return;
 }

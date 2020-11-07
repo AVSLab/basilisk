@@ -3,11 +3,14 @@
 
 #include <stdint.h>
 #include "{structHeader}"
+#include "architecture/messaging2/msg2Header.h"
 
 //! structure definition
 typedef struct {{
-    {type} payload;		//!< message copy, zero'd on construction
-    {type} *payloadPointer;	//!< pointer to message
+    {type} payload;		        //!< message copy, zero'd on construction
+    {type} *payloadPointer;	    //!< pointer to message
+    Msg2Header header;              //!< message header, zero'd on construction
+    Msg2Header *headerPointer;      //!< pointer to message header
 }} {type}_C;
 
 #ifdef __cplusplus
@@ -20,7 +23,13 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source);
 
 void {type}_C_claim({type}_C *coowner, {type}_C *data);
 
-void {type}_C_write({type} *data, {type}_C *destination);
+int {type}_C_isLinked({type}_C *data);
+
+int {type}_C_isWritten({type}_C *data);
+
+uint64_t {type}_C_timeWritten({type}_C *data);
+
+void {type}_C_write({type} *data, {type}_C *destination, uint64_t callTime);
 
 {type} {type}_C_read({type}_C *source);
 

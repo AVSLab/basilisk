@@ -109,7 +109,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
                                     dt);
     printf("HPS_C: 5\n");
     /*! - Write output message */
-    AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg);
+    AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg, callTime);
     printf("HPS_C: 6\n");
     /*! Update prior time to current for next evaluation */
     configData->priorTime = callTime;

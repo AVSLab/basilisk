@@ -238,7 +238,7 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
 
     /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg);
+    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, callTime);
 
     return;
 }
