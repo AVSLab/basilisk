@@ -1,7 +1,4 @@
 #define SWIGPYTHON_BUILTIN
-#ifdef __linux__
-   #define SWIGWORDSIZE64
-#endif
 
 %module messaging2
 %pythoncode %{

@@ -2,6 +2,7 @@
 import parse
 import os,errno
 import shutil
+from sys import platform
 
 with open("../../../../../LICENSE", 'r') as f:
     license = "/*"
@@ -35,7 +36,11 @@ with open(destination_dir + 'CMakeLists.txt', 'w') as w:
 
 # append all C msg definitions to the messaging2.i file
 with open('./messaging2.i.in', 'r') as r:
-    messageContent = r.read()
+    if platform == "linux" or platform == "linux2":
+        messageContent = "#define SWIGWORDSIZE64\n"
+    else: 
+        messageContent = ""
+    messageContent += r.read()
     messaging2_i_template += messageContent
 with open(destination_dir + '../messaging2.i', 'w') as w:
     w.write(messaging2_i_template)
