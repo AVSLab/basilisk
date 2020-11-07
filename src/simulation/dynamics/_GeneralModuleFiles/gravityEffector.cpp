@@ -368,7 +368,7 @@ double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
  */
 void GravBodyData::loadEphemeris(int64_t moduleID)
 {
-    if(this->readInputMsg.linked()){
+    if(this->readInputMsg.isLinked()){
         this->localPlanet = this->readInputMsg();
     }
     return;

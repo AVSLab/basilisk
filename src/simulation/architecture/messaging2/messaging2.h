@@ -20,6 +20,8 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <memory>
 #include "../../_GeneralModuleFiles/sys_model.h"
 #include <vector>
+#include "architecture/messaging2/msg2Header.h"
+#include "utilities/bskLogging.h"
 
 
 /*! forward-declare sim message for use by read functor */
@@ -33,25 +35,65 @@ class Log;
 template<typename messageType>
 class ReadFunctor{
 private:
-    messageType* payloadPointer;
-    bool initialized;
+    messageType* payloadPointer;    //! -- pointer to the incoming msg data
+    Msg2Header *headerPointer;      //! -- pointer to the incoming msg header
+    bool initialized;               //! -- flag indicating if the input message is connect to another message
+
 public:
-    //! method description
+    BSKLogger bskLogger;                          //!< -- BSK Logging
+
+    //! constructor
     ReadFunctor() : initialized(false) {};
-    //! method description
+
+    //! constructor
     ReadFunctor(messageType* payloadPointer) : payloadPointer(payloadPointer), initialized(true){};
-    //! method description
+
+    //! constructor
     const messageType& operator()(){return *this->payloadPointer;};
-    //! method description
-    bool linked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
-    //! method description
+
+    //! check if this msg has been connected to
+    bool isLinked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
+
+    //! check if the message has been ever written to
+    bool isWritten(){
+        if (this->initialized) {
+            return this->headerPointer->isWritten;
+        } else {
+            bskLogger.bskLog(BSK_ERROR, "You are checking if an unconnected msg is written.");
+            return false;
+        }
+    };
+
+    //! return the time at which the message was written
+    uint64_t timeWritten(){
+        if (this->initialized) {
+            return this->headerPointer->timeWritten;
+        } else {
+            bskLogger.bskLog(BSK_ERROR, "You are requesting the write time of an unconnected msg.");
+            return 0;
+        }
+    };
+
+    //! subscribe to a C message
     void subscribeToC(void* source){
+        // this method works by knowing that the first member of a C message is the payload.
         this->payloadPointer = (messageType*) source;
-        this->initialized = true;} // this method works by knowing that the first member of a C message is the payload.
-    //! method description
+
+        // advance the address to connect to C message header
+        messageType* pt = this->payloadPointer;
+        messageType** pt2 = (messageType **) (++pt);
+        this->headerPointer = (Msg2Header *) (++pt2);
+
+        // set flag that this input message is connected to another message
+        this->initialized = true;
+    };
+
+    //! Subscribe to a C++ message
     void subscribeTo(SimMessage<messageType> source){
         *this = source.addSubscriber();
-    }
+        this->initialized = true;
+    };
+
     //! Log method description
     Log<messageType> log(){return Log<messageType>(this);}
 };

@@ -160,7 +160,6 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     memset(&controlOut, 0x0, sizeof(CmdTorqueBodyMsg));
 
     /*! - Read the attitude tracking error message */
-    memset(&guidCmd, 0x0, sizeof(AttGuidMsg));
     guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);
 
     /*! - read in optional RW speed and availability message */

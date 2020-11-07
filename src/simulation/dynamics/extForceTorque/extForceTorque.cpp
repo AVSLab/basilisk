@@ -85,13 +85,13 @@ void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
  */
 void ExtForceTorque::readInputMessages()
 {
-    if(this->cmdTorqueInMsg.linked()){
+    if(this->cmdTorqueInMsg.isLinked()){
         this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg();
     }
-    if(this->cmdForceBodyInMsg.linked()){
+    if(this->cmdForceBodyInMsg.isLinked()){
         this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg();
     }
-    if(this->cmdForceInertialInMsg.linked()){
+    if(this->cmdForceInertialInMsg.isLinked()){
         this->incomingCmdForceInertialBuffer = this->cmdForceInertialInMsg();
     }
 
@@ -109,7 +109,7 @@ void ExtForceTorque::computeForceTorque(double integTime)
     /* add the cmd force in inertial frame components set via Python */
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
-    if(this->cmdForceInertialInMsg.linked()){
+    if(this->cmdForceInertialInMsg.isLinked()){
 		cmdVec = cArray2EigenVector3d(this->incomingCmdForceInertialBuffer.forceRequestInertial);
 		this->forceExternal_N += cmdVec;
     }
@@ -117,7 +117,7 @@ void ExtForceTorque::computeForceTorque(double integTime)
     /* add the cmd force in body frame components set via Python */
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
-    if(this->cmdForceBodyInMsg.linked()){
+    if(this->cmdForceBodyInMsg.isLinked()){
 		cmdVec = cArray2EigenVector3d(this->incomingCmdForceBodyBuffer.forceRequestBody);
         this->forceExternal_B +=cmdVec;
     }
@@ -125,7 +125,7 @@ void ExtForceTorque::computeForceTorque(double integTime)
     /* add the cmd torque about Point B in body frame components set via Python */
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
-    if(this->cmdTorqueInMsg.linked()){
+    if(this->cmdTorqueInMsg.isLinked()){
 		cmdVec = cArray2EigenVector3d(this->incomingCmdTorqueBuffer.torqueRequestBody);
         this->torqueExternalPntB_B += cmdVec;
     }

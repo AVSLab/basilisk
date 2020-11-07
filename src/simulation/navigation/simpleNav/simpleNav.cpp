@@ -103,11 +103,11 @@ void SimpleNav::readInputMessages()
     memset(&this->sunState, 0x0, sizeof(SpicePlanetStateMsg));
     memset(&this->inertialState, 0x0, sizeof(SCPlusStatesMsg));
 
-    if(this->scStateInMsg.linked()){
+    if(this->scStateInMsg.isLinked()){
         this->inertialState = this->scStateInMsg();
     }
 
-    if(this->sunStateInMsg.linked())
+    if(this->sunStateInMsg.isLinked())
     {
         this->sunState = this->sunStateInMsg();
     }
@@ -132,7 +132,7 @@ void SimpleNav::applyErrors()
     v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
-    if(this->sunStateInMsg.linked()){
+    if(this->sunStateInMsg.isLinked()){
         double dcm_OT[3][3];       /* dcm, body T to body O */
         MRP2C(&(this->navErrors.data()[12]), dcm_OT);
         m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
@@ -157,7 +157,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
 
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
-    if(this->sunStateInMsg.linked()){
+    if(this->sunStateInMsg.isLinked()){
         double sc2SunInrtl[3];
         double dcm_BN[3][3];        /* dcm, inertial to body */
         v3Subtract(this->sunState.PositionVector, this->inertialState.r_BN_N, sc2SunInrtl);
