@@ -59,7 +59,7 @@ public:
         if (this->initialized) {
             return this->headerPointer->isWritten;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "You are checking if an unconnected msg is written.");
+            bskLogger.bskLog(BSK_ERROR, "In C++ input msg, you are checking if an unconnected msg is written.");
             return false;
         }
     };
@@ -69,7 +69,7 @@ public:
         if (this->initialized) {
             return this->headerPointer->timeWritten;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "You are requesting the write time of an unconnected msg.");
+            bskLogger.bskLog(BSK_ERROR, "In C++ input msg, you are requesting the write time of an unconnected msg.");
             return 0;
         }
     };

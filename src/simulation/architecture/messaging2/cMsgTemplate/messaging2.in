@@ -1,5 +1,6 @@
 #include "{type}_C.h"
 #include "simulation/architecture/messaging2/messaging2.h"
+#include "utilities/bsk_Print.h"
 
 //! C interface to subscribe to a message
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
@@ -34,12 +35,20 @@ int {type}_C_isLinked({type}_C *data) {{
 
 //! C interface to to see if this message container ever been written to
 int {type}_C_isWritten({type}_C *data) {{
-    return data->headerPointer->isWritten;
+    if (data->header.isLinked) {{
+        return data->headerPointer->isWritten;
+    }}
+    BSK_PRINT(MSG_ERROR,"In C input msg, you are checking if an unconnected msg is written.");
+    return 0;
 }};
 
 //! C interface to to see if this message container ever been written to
 uint64_t {type}_C_timeWritten({type}_C *data) {{
-    return data->headerPointer->timeWritten;
+    if (data->header.isLinked) {{
+        return data->headerPointer->timeWritten;
+    }}
+    BSK_PRINT(MSG_ERROR,"In C input msg, you are requesting the write time of an unconnected msg.");
+    return 0;
 }};
 
 //! method description
