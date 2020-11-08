@@ -163,7 +163,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.simulation.cMsgCInterfacePy import VehicleConfigMsg_C
+import Basilisk.simulation.cMsgCInterfacePy as cMsgPy
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -293,7 +293,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # B origin and the center of mass (defaulted to zero).  This message is set through
     configData = messaging2.VehicleConfigMsg()
     configData.ISCPntB_B = I
-    configDataMsg = messaging2.writeCMsgCppInterface(configData)
+
+    # configDataMsg = cMsgPy.writeCMsgCInterface(configData) # make C interface to msg
+    configDataMsg = messaging2.writeCMsgCppInterface(configData) # make C++ interface to msg
 
 
     #

@@ -11,8 +11,8 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
 
 //! C interface to claim authorship to a message
 void {type}_C_claim({type}_C *coowner, {type}_C *data) {{
-    coowner->payloadPointer = &data->payload;
-    coowner->headerPointer = &data->header;
+    coowner->payloadPointer = &(data->payload);
+    coowner->headerPointer = &(data->header);
 }};
 
 //! C interface to write to a message
