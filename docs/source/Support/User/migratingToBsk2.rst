@@ -99,6 +99,35 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+---------------------------+-----------------------------------+
 
 
+Setting a Basilisk Message from Python
+--------------------------------------
+Using C++ Interface
+^^^^^^^^^^^^^^^^^^^
+Import ``messages2`` to have access to all message definitions::
+
+    from Basilisk.simulation import messaging2
+
+To create a message of type ``ParticularMsg``, first get a copy of the message structure using::
+
+    msgData = messaging2.ParticularMsg()
+
+Next, fill in ``msgData`` with the needed information.  The structure is always initialized to zero on creation.
+When done, use the following command to create the Msg object and get a copy for other modules to subscribe to.::
+
+    msg = messaging2.writeCMsgCppInterface(msgData)
+
+Using C Interface
+^^^^^^^^^^^^^^^^^
+Follow the same steps above to create and fill in the contents of ``msgData``.  To create a C interface to
+the message, import ``cMsgCInterfacePy`` using::
+
+    from Basilisk.simulation import cMsgCInterfacePy
+
+Finally, create the message and receive a copy of the message object using::
+
+    msg = cMsgCInterfacePy.writeCMsgCInterface(msgData)
+
+
 Miscellaneous Changes
 ---------------------
 If from Python you access ``#define`` values of ``macroDefinitions.h``, such as::

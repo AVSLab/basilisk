@@ -110,8 +110,13 @@ Updating a C Module
       .. code:: cpp
 
          ModuleFswMsg msgBuffer;
-         memset(&msgBuffer, 0x0, sizeof(ModuleFswMsg));
          msgBuffer = ModuleMsg_C_read(&configData->moduleInMsg);
+
+      - To check is an input message has been connected to, check the value of ``ModuleMsg_C_isLinked()``
+      - To check if a message has ever been written to, check the value of ``ModuleMsg_C_isWritten()``
+      - To get the time when a message was written, use ``ModuleMsg_C_timeWritten()``
+
+
 
     - To write to an output message, assuming ``outputMsgBuffer`` is a local variable holding
       the message content, replace
@@ -229,10 +234,14 @@ Updating a C++ Module
       .. code:: cpp
 
          InputFswMsg moduleInMsgBuffer;
-         memset(&moduleInMsgBuffer, 0x0, sizeof(InputFswMsg));
          moduleInMsgBuffer = this->moduleInMsg();
 
       Take a moment to marvel at the simplicity of this message reading!
+
+      - To check is an input message has been connected to, check the value of ``this->moduleInMsg.isLinked()``
+      - To check if a message has ever been written to, check the value of ``this->moduleInMsg.isWritten()``
+      - To get the time when a message was written, use ``this->moduleInMsg.timeWritten()``
+
 
     - To check if an input message has been connected to, check the status of
       ``this->moduleInMsg.linked()``
@@ -248,7 +257,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         this->writeModuleOutMsg(outMsgBuffer);
+         this->writeModuleOutMsg(outMsgBuffer, clockTime);
 
       Again, stop and marvel.
 
