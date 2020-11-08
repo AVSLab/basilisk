@@ -119,8 +119,8 @@ void SimpleNav::readInputMessages()
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
-  this->writeAttOutMsg(this->estAttState);
-  this->writeTransOutMsg(this->estTransState);
+  this->writeAttOutMsg(this->estAttState, Clock);
+  this->writeTransOutMsg(this->estTransState, Clock);
 }
 
 void SimpleNav::applyErrors()

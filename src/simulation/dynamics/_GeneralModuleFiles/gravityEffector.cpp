@@ -432,7 +432,7 @@ void GravityEffector::UpdateState(uint64_t currentSimNanos)
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
     if (this->centralBodyOutMsgId > 0) {
-        this->writeCentralBodyOutMsg(this->centralBody->localPlanet);
+        this->writeCentralBodyOutMsg(this->centralBody->localPlanet, currentSimNanos);
     }
     return;
 }

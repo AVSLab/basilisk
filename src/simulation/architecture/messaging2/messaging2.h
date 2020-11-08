@@ -46,7 +46,7 @@ public:
     ReadFunctor() : initialized(false) {};
 
     //! constructor
-    ReadFunctor(messageType* payloadPointer) : payloadPointer(payloadPointer), initialized(true){};
+    ReadFunctor(messageType* payloadPtr, Msg2Header *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
 
     //! constructor
     const messageType& operator()(){return *this->payloadPointer;};
@@ -103,14 +103,17 @@ template<typename messageType>
 class WriteFunctor{
 private:
     messageType* payloadPointer;
+    Msg2Header* headerPointer;
 public:
     //! method description
     WriteFunctor(){};
     //! method description
-    WriteFunctor(messageType* payloadPointer) : payloadPointer(payloadPointer){};
+    WriteFunctor(messageType* payloadPointer, Msg2Header *headerPointer) : payloadPointer(payloadPointer), headerPointer(headerPointer){};
     //! method description
-    void operator()(messageType payload){
+    void operator()(messageType payload, uint64_t callTime){
         *this->payloadPointer = payload;
+        this->headerPointer->isWritten = 1;
+        this->headerPointer->timeWritten = callTime;
         return;
     }
 };
@@ -124,9 +127,10 @@ class Log;
 template<typename messageType>
 class SimMessage{
 private:
-    messageType payload = {};  //! -- struct defining message payload, zero'd on creation
-    ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload);
-    WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload);
+    messageType payload = {};   //! struct defining message payload, zero'd on creation
+    Msg2Header header = {};     //! struct definiing the message header, zero'd on creation
+    ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);
+    WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
 public:
     //! method description
     ReadFunctor<messageType> addSubscriber();  //! -- request read rights. returns ref to this->read
@@ -161,7 +165,8 @@ public:
     }
     //! -- Use this to log C messages
     Log(void* message){
-        this->readMessage = ReadFunctor<messageType>((messageType*) message);
+        Msg2Header msgHeader;
+        this->readMessage = ReadFunctor<messageType>((messageType*) message, &msgHeader);
     }
     //! -- Use this to keep track of what someone is reading
     Log(ReadFunctor<messageType>* messageReader){
