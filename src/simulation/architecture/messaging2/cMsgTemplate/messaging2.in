@@ -54,5 +54,8 @@ uint64_t {type}_C_timeWritten({type}_C *data) {{
 //! method description
 void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
     SimMessage<{type}>* source_t = (SimMessage<{type}>*) source;
-    subscriber->payloadPointer = source_t->subscribeRaw();
+    Msg2Header *msgPtr;
+    subscriber->payloadPointer = source_t->subscribeRaw(&(msgPtr));
+    subscriber->headerPointer = msgPtr;
+    subscriber->header.isLinked = 1;
 }};

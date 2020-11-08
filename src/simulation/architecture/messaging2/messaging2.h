@@ -128,14 +128,14 @@ template<typename messageType>
 class SimMessage{
 private:
     messageType payload = {};   //! struct defining message payload, zero'd on creation
-    Msg2Header header = {};     //! struct definiing the message header, zero'd on creation
+    Msg2Header header = {};     //! struct defining the message header, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
 public:
     //! method description
     ReadFunctor<messageType> addSubscriber();  //! -- request read rights. returns ref to this->read
     WriteFunctor<messageType> addAuthor();  //! -- request write rights.
-    messageType* subscribeRaw();  //! for plain ole c modules
+    messageType* subscribeRaw(Msg2Header **msgPtr);  //! for plain ole c modules
     Log<messageType> log(){return Log<messageType>(this);}
 };
 
@@ -150,7 +150,8 @@ WriteFunctor<messageType> SimMessage<messageType>::addAuthor(){
 }
 
 template<typename messageType>
-messageType* SimMessage<messageType>::subscribeRaw(){
+messageType* SimMessage<messageType>::subscribeRaw(Msg2Header **msgPtr){
+    *msgPtr = &this->header;
     return &this->payload;
 }
 
