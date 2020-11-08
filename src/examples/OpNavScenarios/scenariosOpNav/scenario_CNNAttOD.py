@@ -286,14 +286,17 @@ def run(showPlots, simTime = None):
 
     mode = ["None", "-directComm", "-opNavMode"]
     # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
-    if platform != "darwin":
-        child = subprocess.Popen([TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
-             "tcp://localhost:5556"])
-    else:
-        child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
-                                  "tcp://localhost:5556"])
-    print("Vizard spawned with PID = " + str(child.pid))
-
+    try:
+        if platform != "darwin":
+            child = subprocess.Popen([TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
+                 "tcp://localhost:5556"])
+        else:
+            child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
+                                      "tcp://localhost:5556"])
+        print("Vizard spawned with PID = " + str(child.pid))
+    except FileNotFoundError as not_found:
+        print("Either download Vizard at this path %s or change appPath in BSK_OpNav.py file" % TheBSKSim.vizPath)
+        exit(1)
     # Configure FSW mode
     TheScenario.masterSim.modeRequest = 'prepOpNav'
     # Initialize simulation
