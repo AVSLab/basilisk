@@ -291,11 +291,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # The MRP Feedback algorithm requires the vehicle configuration structure. This defines various spacecraft
     # related states such as the inertia tensor and the position vector between the primary Body-fixed frame
     # B origin and the center of mass (defaulted to zero).  This message is set through
-    configDataMsg = messaging2.VehicleConfigMsgClass()  # a c++ message class instance with a configData payload, which is private
-    configDataWriter = configDataMsg.addAuthor()  # a WriteFunctor which is connected to the configDataMsg payload
-    configData = messaging2.VehicleConfigMsg()  # a configData message struct (payload)
-    configData.ISCPntB_B = I  # can be edited directly like any other swigged struct
-    configDataWriter(configData, 0)  # ask the WriteFunctor to overwrite configDataMsg payload with the argument provided.
+    configData = messaging2.VehicleConfigMsg()
+    configData.ISCPntB_B = I
+    configDataMsg = messaging2.writeCMsgCppInterface(configData)
+
 
     #
     # Setup data logging before the simulation is initialized

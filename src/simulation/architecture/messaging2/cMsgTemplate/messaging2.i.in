@@ -30,6 +30,39 @@
 %}
 %include "cMsgDefinition/messageType.h"
 
+%pythoncode %{
+    def writeCMsgCppInterface(payload, **kwargs):
+        """Python interface to write a C msg with a C++ interface.
+
+        Keyword arguments:
+            time - [ns] time the message was written.  Defaults to 0 if not provided.
+        """
+        # check if msg write time is specified, if not, default to 0
+        if 'time' in kwargs:
+            time = kwargs['time']
+            error = False
+            if not isinstance(time, int):
+                error = True
+            if time < 0:
+                error = True
+            if error:
+                print("writeCMsgCppInterface time argument must be a positive integer in nano-seconds.")
+                exit(1)
+        else:
+            time = 0
+
+        # find the msg structure name
+        typeString = str(type(payload))
+        msgStructName = (typeString.split('messaging2.')[1])[:-2]
+
+        # create the C++ interface to the C message structure
+        msg = eval(msgStructName + 'Class()')
+        msgWriter = msg.addAuthor()
+        msgWriter(payload, time)
+
+        return msg
+%}
+
 %template(messageType ## Reader) ReadFunctor<messageType>;
 %extend ReadFunctor<messageType> {
         %pythoncode %{
