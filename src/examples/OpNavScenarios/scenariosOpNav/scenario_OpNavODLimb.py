@@ -274,11 +274,8 @@ def run(showPlots, simTime = None):
         print("IDK how to turn this thing off")
 
     # Pull the results of the base simulation running the chosen scenario
-    if showPlots:
-        figureList = TheScenario.pull_outputs(showPlots)
-        return figureList
-    else:
-        return {}
+        # Terminating Vizard application
+        child.kill()
 
 
 if __name__ == "__main__":

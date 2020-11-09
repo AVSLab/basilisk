@@ -336,10 +336,8 @@ def run(showPlots, simTime = None):
     t2 = time.time()
     print('Finished Execution in ', t2-t1, ' seconds. Post-processing results')
 
-    try:
-        os.kill(child.pid + 1, signal.SIGKILL)
-    except:
-        print("IDK how to turn this thing off")
+    # Terminating Vizard application
+    child.kill()
 
     # Pull the results of the base simulation running the chosen scenario
     if showPlots:
