@@ -110,7 +110,7 @@ drag_sens_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000
 drag_R_inv = [[-1e-8,0,0],
               [0,-1e-8,0],
               [0,0,-1e-8]]
-
+#/home/andrew/dev/basilisk/src/examples/data/ddsen_gain.npz
 gain_set = np.load('./data/ddsen_gain.npz')['gain']
 gain_set = np.transpose(gain_set, (2,0,1))
 
@@ -498,7 +498,7 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         10.0, #   altitude offset (m)
-        0.04, #  True anomaly offset (deg)
+        0.02, #  True anomaly offset (deg)
         1, #    Density multiplier (nondimensional)
         ctrlType='desen'
     )
