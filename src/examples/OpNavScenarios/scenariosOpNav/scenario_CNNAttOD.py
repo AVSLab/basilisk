@@ -53,8 +53,8 @@ import OpNav_Plotting as BSK_plt
 # Create your own scenario child class
 class scenario_OpNav(BSKScenario):
     """Main Simulation Class"""
-    def __init__(self, masterSim):
-        super(scenario_OpNav, self).__init__(masterSim)
+    def __init__(self, masterSim, showPlots=False):
+        super(scenario_OpNav, self).__init__(masterSim, showPlots)
         self.name = 'scenario_opnav'
         self.masterSim = masterSim
         self.filterUse ="relOD" #"bias" #
@@ -275,7 +275,7 @@ def run(showPlots, simTime = None):
     TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
-    TheScenario = scenario_OpNav(TheBSKSim)
+    TheScenario = scenario_OpNav(TheBSKSim, showPlots)
     TheScenario.filterUse = "relOD"
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
@@ -284,19 +284,9 @@ def run(showPlots, simTime = None):
     # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 
+    # The following code spawns the Vizard application from python
     mode = ["None", "-directComm", "-opNavMode"]
-    # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
-    try:
-        if platform != "darwin":
-            child = subprocess.Popen([TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
-                 "tcp://localhost:5556"])
-        else:
-            child = subprocess.Popen(["open", TheBSKSim.vizPath, "--args", mode[TheBSKSim.get_DynModel().vizInterface.opNavMode],
-                                      "tcp://localhost:5556"])
-        print("Vizard spawned with PID = " + str(child.pid))
-    except FileNotFoundError as not_found:
-        print("Either download Vizard at this path %s or change appPath in BSK_OpNav.py file" % TheBSKSim.vizPath)
-        exit(1)
+    TheScenario.run_vizard(mode[TheBSKSim.get_DynModel().vizInterface.opNavMode])
     # Configure FSW mode
     TheScenario.masterSim.modeRequest = 'prepOpNav'
     # Initialize simulation
@@ -319,17 +309,8 @@ def run(showPlots, simTime = None):
     TheBSKSim.ExecuteSimulation()
     t2 = time.time()
     print('Finished Execution in ', t2-t1, ' seconds. Post-processing results')
-
-    # Terminating Vizard application
-    child.kill()
-
-    # Pull the results of the base simulation running the chosen scenario
-    if showPlots:
-        figureList = TheScenario.pull_outputs(showPlots)
-        return figureList
-    else:
-        return {}
-
+    #Terminate vizard and show plots
+    TheScenario.end_scenario()
 
 if __name__ == "__main__":
     if not BSK_OpNavFsw.centerRadiusCNNIncluded:
