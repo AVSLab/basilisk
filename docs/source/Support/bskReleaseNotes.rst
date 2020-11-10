@@ -23,6 +23,7 @@ Version |release|
 - The protobuffer interface files are now automatically created from
   ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
   ``protoc`` command each time the protobuffer message definitions changed.
+- centerRadiusCNN is now supported on all the platforms
 
 Version 1.8.7
 -------------

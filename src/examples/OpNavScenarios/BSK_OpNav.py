@@ -87,6 +87,7 @@ from Basilisk.simulation import sim_model
 
 # Get current file path
 import sys, os, inspect
+import subprocess
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -94,7 +95,7 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/modelsOpNav')
 
 # TODO : Modify the path to the viz here
-appPath = '/Applications/Vizard.app' #If on Mac
+appPath = '/Applications/vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
 # appPath = './../../Applications/Vizard.app' #If on Linux
 class BSKSim(SimulationBaseClass.SimBaseClass):
     """
@@ -147,9 +148,12 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addInterfaceRef(self.dyn2FSWInterface)
 
 class BSKScenario(object):
-    def __init__(self, masterSim):
+    def __init__(self, masterSim, showPlots):
         self.name = "scenario"
         self.masterSim = masterSim
+        self.vizard = None
+
+        self.showPlots = showPlots
 
     def configure_initial_conditions(self):
         """
@@ -168,6 +172,32 @@ class BSKScenario(object):
             Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
+    def run_vizard(self, mode):
+        try:
+            self.vizard = subprocess.Popen(
+                [self.masterSim.vizPath, "--args", mode, "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
+
+            print("Vizard spawned with PID = " + str(self.vizard.pid))
+        except FileNotFoundError:
+            print("Vizard application not found")
+            if sys.platform != "darwin":
+                print(
+                    "Either download Vizard at this path %s or change appPath in BSK_OpNav.py file" % self.masterSim.vizPath)
+            else:
+                print("1. Download  Vizard interface \n2. Move it to Applications \n"
+                      "3. Change only application name while initializing appPath variable in BSK_OpNav")
+            exit(1)
+    def end_scenario(self):
+
+        if self.vizard is None:
+            print("vizard application is not launched")
+            exit(1)
+        self.vizard.kill()
+        # Pull the results of the base simulation running the chosen scenario
+        if self.showPlots:
+            self.pull_outputs(self.showPlots)
+
+
 
 
 
