@@ -13,6 +13,8 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
 void {type}_C_addAuthor({type}_C *coowner, {type}_C *data) {{
     coowner->payloadPointer = &(data->payload);
     coowner->headerPointer = &(data->header);
+    memset(coowner->payloadPointer, 0x0, sizeof({type}));
+    memset(coowner->headerPointer, 0x0, sizeof(Msg2Header));
 }};
 
 //! C interface to write to a message
