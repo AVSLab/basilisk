@@ -46,7 +46,7 @@
 void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    AttRefMsg_C_claim(&configData->attRefOutMsg, &configData->attRefOutMsg);
+    AttRefMsg_C_addAuthor(&configData->attRefOutMsg, &configData->attRefOutMsg);
 }
 
 /*! This method performs the second stage of initialization

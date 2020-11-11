@@ -21,7 +21,7 @@ typedef struct {type};
         return {type}Logger(self)
 
     def userMessage(self, data=None):
-        {type}_C_claim(self, self)
+        {type}_C_addAuthor(self, self)
         if data:
             {type}_C_write(data, self, 0)
         return self

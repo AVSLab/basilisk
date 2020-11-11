@@ -34,7 +34,7 @@
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
     /*! Create output message for module */
-    AttGuidMsg_C_claim(&configData->attGuidOutMsg, &configData->attGuidOutMsg);
+    AttGuidMsg_C_addAuthor(&configData->attGuidOutMsg, &configData->attGuidOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.

@@ -40,7 +40,7 @@
 void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
-    CmdTorqueBodyMsg_C_claim(&configData->cmdTorqueOutMsg, &configData->cmdTorqueOutMsg);
+    CmdTorqueBodyMsg_C_addAuthor(&configData->cmdTorqueOutMsg, &configData->cmdTorqueOutMsg);
 
 }
 

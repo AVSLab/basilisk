@@ -21,7 +21,7 @@ void {type}_cpp_subscribe({type}_C *subscriber, void* source);
 
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source);
 
-void {type}_C_claim({type}_C *coowner, {type}_C *data);
+void {type}_C_addAuthor({type}_C *coowner, {type}_C *data);
 
 int {type}_C_isLinked({type}_C *data);
 

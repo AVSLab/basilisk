@@ -84,7 +84,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         ModuleMsg_C_claim(&configData->moduleOutMsg, &configData->moduleOutMsg);
+         ModuleMsg_C_addAuthor(&configData->moduleOutMsg, &configData->moduleOutMsg);
 
     - To connect to an input message, delete
 
