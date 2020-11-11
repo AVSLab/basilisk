@@ -27,6 +27,9 @@ void {type}_C_write({type} *data, {type}_C *destination, uint64_t callTime) {{
 
 //! C interface to read to a message
 {type} {type}_C_read({type}_C *source) {{
+    if (!source->header.isLinked) {{
+        BSK_PRINT(MSG_ERROR,"In C input msg, you are trying to read an un-connected message.");
+    }}
     return *source->payloadPointer;
 }};
 

@@ -49,7 +49,13 @@ public:
     ReadFunctor(messageType* payloadPtr, Msg2Header *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
 
     //! constructor
-    const messageType& operator()(){return *this->payloadPointer;};
+    const messageType& operator()(){
+        if (!this->initialized) {
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are trying to read an un-connected message.");
+        }
+        return *this->payloadPointer;
+
+    };
 
     //! check if this msg has been connected to
     bool isLinked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
@@ -59,7 +65,7 @@ public:
         if (this->initialized) {
             return this->headerPointer->isWritten;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "In C++ input msg, you are checking if an unconnected msg is written.");
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are checking if an unconnected msg is written.");
             return false;
         }
     };
@@ -69,7 +75,7 @@ public:
         if (this->initialized) {
             return this->headerPointer->timeWritten;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "In C++ input msg, you are requesting the write time of an unconnected msg.");
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting the write time of an unconnected msg.");
             return 0;
         }
     };

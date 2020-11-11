@@ -100,13 +100,9 @@ void SimpleNav::CrossInit()
  */
 void SimpleNav::readInputMessages()
 {
+    this->inertialState = this->scStateInMsg();
+
     memset(&this->sunState, 0x0, sizeof(SpicePlanetStateMsg));
-    memset(&this->inertialState, 0x0, sizeof(SCPlusStatesMsg));
-
-    if(this->scStateInMsg.isLinked()){
-        this->inertialState = this->scStateInMsg();
-    }
-
     if(this->sunStateInMsg.isLinked())
     {
         this->sunState = this->sunStateInMsg();

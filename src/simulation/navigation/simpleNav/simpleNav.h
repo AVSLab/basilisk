@@ -63,8 +63,8 @@ public:
     SpicePlanetStateMsg sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-    ReadFunctor<SCPlusStatesMsg> scStateInMsg;      //!< read functor
-    ReadFunctor<SpicePlanetStateMsg> sunStateInMsg; //!< read functor
+    ReadFunctor<SCPlusStatesMsg> scStateInMsg;      //!< read input msg
+    ReadFunctor<SpicePlanetStateMsg> sunStateInMsg; //!< read input msg
 
 private:
     WriteFunctor<NavAttMsg>  writeAttOutMsg;        //!< write msg
