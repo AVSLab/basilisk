@@ -155,7 +155,6 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import simpleNav
-from Basilisk.simulation import messaging2
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
@@ -163,7 +162,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.simulation import cMsgCInterfacePy
+from Basilisk.simulation import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport

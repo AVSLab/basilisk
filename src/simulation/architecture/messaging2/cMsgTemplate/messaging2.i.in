@@ -10,6 +10,7 @@
 %include "../../utilities/macroDefinitions.h"
 %pythoncode %{
     import numpy as np
+    from Basilisk.simulation import cMsgCInterfacePy
 %};
 %{
 #include "../../_GeneralModuleFiles/sys_model.h"
