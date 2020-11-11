@@ -27,7 +27,7 @@ typedef struct {
     double r_BN_N[3];        //!< [m]   Current inertial spacecraft position vector in inertial frame N components
     double v_BN_N[3];        //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
     double vehAccumDV[3];    //!< [m/s] Total accumulated delta-velocity for s/c
-}NavTransMsg;
+}NavTransMsgPayload;
 
 
 #endif

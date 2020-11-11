@@ -37,10 +37,10 @@ struct NavAttMsg_C;
 %include "cMsgPayloadDef/NavAttMsg.h"
 %include "cMsgPayloadDef/AttGuidMsg.h"
 %include "cMsgPayloadDef/AttRefMsg.h"
-GEN_SIZEOF(NavAttMsg);
+GEN_SIZEOF(NavAttMsgPayload);
 GEN_SIZEOF(attTrackingErrorConfig);
-GEN_SIZEOF(AttGuidMsg);
-GEN_SIZEOF(AttRefMsg);
+GEN_SIZEOF(AttGuidMsgPayload);
+GEN_SIZEOF(AttRefMsgPayload);
 
 
 %pythoncode %{

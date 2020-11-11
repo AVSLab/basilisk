@@ -33,9 +33,9 @@ from Basilisk.simulation.swig_common_model import *
 %include "cMsgPayloadDef/SCPlusStatesMsg.h"
 %include "cMsgPayloadDef/NavAttMsg.h"
 %include "cMsgPayloadDef/NavTransMsg.h"
-GEN_SIZEOF(SCPlusStatesMsg);
-GEN_SIZEOF(NavAttMsg);
-GEN_SIZEOF(NavTransMsg);
+GEN_SIZEOF(SCPlusStatesMsgPayload);
+GEN_SIZEOF(NavAttMsgPayload);
+GEN_SIZEOF(NavTransMsgPayload);
 struct SCPlusStatesMsg_C;
 struct NavAttMsg_C;
 struct NavTransMsg_C;

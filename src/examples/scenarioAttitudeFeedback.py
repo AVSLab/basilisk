@@ -290,7 +290,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # The MRP Feedback algorithm requires the vehicle configuration structure. This defines various spacecraft
     # related states such as the inertia tensor and the position vector between the primary Body-fixed frame
     # B origin and the center of mass (defaulted to zero).  This message is set through
-    configData = messaging2.VehicleConfigMsg()
+    configData = messaging2.VehicleConfigMsgPayload()
     configData.ISCPntB_B = I
     configDataMsg = messaging2.VehicleConfigMsgClass().write(configData)
 

@@ -31,10 +31,10 @@ SimpleNav::SimpleNav()
     this->crossTrans = false;
     this->crossAtt = false;
     this->prevTime = 0;
-    memset(&estAttState, 0x0, sizeof(NavAttMsg));
-    memset(&trueAttState, 0x0, sizeof(NavAttMsg));
-    memset(&estTransState, 0x0, sizeof(NavTransMsg));
-    memset(&trueTransState, 0x0, sizeof(NavTransMsg));
+    memset(&estAttState, 0x0, sizeof(NavAttMsgPayload));
+    memset(&trueAttState, 0x0, sizeof(NavAttMsgPayload));
+    memset(&estTransState, 0x0, sizeof(NavTransMsgPayload));
+    memset(&trueTransState, 0x0, sizeof(NavTransMsgPayload));
     this->PMatrix.resize(18,18);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(18);
@@ -102,7 +102,7 @@ void SimpleNav::readInputMessages()
 {
     this->inertialState = this->scStateInMsg();
 
-    memset(&this->sunState, 0x0, sizeof(SpicePlanetStateMsg));
+    memset(&this->sunState, 0x0, sizeof(SpicePlanetStateMsgPayload));
     if(this->sunStateInMsg.isLinked())
     {
         this->sunState = this->sunStateInMsg();

@@ -13,12 +13,12 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
 void {type}_C_addAuthor({type}_C *coowner, {type}_C *data) {{
     coowner->payloadPointer = &(data->payload);
     coowner->headerPointer = &(data->header);
-    memset(coowner->payloadPointer, 0x0, sizeof({type}));
+    memset(coowner->payloadPointer, 0x0, sizeof({type}Payload));
     memset(coowner->headerPointer, 0x0, sizeof(Msg2Header));
 }};
 
 //! C interface to write to a message
-void {type}_C_write({type} *data, {type}_C *destination, uint64_t callTime) {{
+void {type}_C_write({type}Payload *data, {type}_C *destination, uint64_t callTime) {{
     *destination->payloadPointer = *data;
     destination->headerPointer->isWritten = 1;
     destination->headerPointer->timeWritten = callTime;
@@ -26,7 +26,7 @@ void {type}_C_write({type} *data, {type}_C *destination, uint64_t callTime) {{
 }};
 
 //! C interface to read to a message
-{type} {type}_C_read({type}_C *source) {{
+{type}Payload {type}_C_read({type}_C *source) {{
     if (!source->header.isLinked) {{
         BSK_PRINT(MSG_ERROR,"In C input msg, you are trying to read an un-connected message.");
     }}
@@ -58,7 +58,7 @@ uint64_t {type}_C_timeWritten({type}_C *data) {{
 
 //! method description
 void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
-    SimMessage<{type}>* source_t = (SimMessage<{type}>*) source;
+    SimMessage<{type}Payload>* source_t = (SimMessage<{type}Payload>*) source;
     Msg2Header *msgPtr;
     subscriber->payloadPointer = source_t->subscribeRaw(&(msgPtr));
     subscriber->headerPointer = msgPtr;

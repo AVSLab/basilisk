@@ -93,8 +93,8 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
     int i;
 
     /*! - zero and read in vehicle configuration message */
-    VehicleConfigMsg sc;
-    memset(&sc, 0x0, sizeof(VehicleConfigMsg));
+    VehicleConfigMsgPayload sc;
+    memset(&sc, 0x0, sizeof(VehicleConfigMsgPayload));
     sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
     /*! - copy over spacecraft inertia tensor */
     for (i=0; i < 9; i++){
@@ -130,10 +130,10 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
 void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    AttGuidMsg      guidCmd;            /* attitude tracking error message */
+    AttGuidMsgPayload      guidCmd;            /* attitude tracking error message */
     RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */
     RWAvailabilityFswMsg wheelsAvailability; /* Reaction wheel availability message */
-    CmdTorqueBodyMsg controlOut;        /* output message */
+    CmdTorqueBodyMsgPayload controlOut;        /* output message */
 
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
@@ -157,7 +157,7 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     double              *wheelGs;           /* Reaction wheel spin axis pointer */
 
     /*! - zero the output message */
-    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyMsg));
+    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyMsgPayload));
 
     /*! - Read the attitude tracking error message */
     guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);

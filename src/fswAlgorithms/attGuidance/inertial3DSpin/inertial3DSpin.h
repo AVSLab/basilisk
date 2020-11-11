@@ -35,7 +35,7 @@ typedef struct {
     /* declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;                     //!< reference attitude output message
     AttRefMsg_C attRefInMsg;                      //!< reference atttiude input message
-    AttRefMsg attRefOutBuffer;                    //!< [-] structure for the output data
+    AttRefMsgPayload attRefOutBuffer;                    //!< [-] structure for the output data
     BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DSpinConfig;
 

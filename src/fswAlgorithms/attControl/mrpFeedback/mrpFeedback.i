@@ -33,8 +33,8 @@
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(mrpFeedbackConfig);
-GEN_SIZEOF(AttGuidMsg);
-GEN_SIZEOF(VehicleConfigMsg);
+GEN_SIZEOF(AttGuidMsgPayload);
+GEN_SIZEOF(VehicleConfigMsgPayload);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
 struct CmdTorqueBodyMsg_C;
@@ -49,7 +49,7 @@ struct VehicleConfigMsg_C;
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 
-GEN_SIZEOF(CmdTorqueBodyMsg);
+GEN_SIZEOF(CmdTorqueBodyMsgPayload);
 
 %pythoncode %{
 import sys

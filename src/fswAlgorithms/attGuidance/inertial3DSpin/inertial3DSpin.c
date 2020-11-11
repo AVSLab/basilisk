@@ -87,8 +87,8 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, i
 void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
-    AttRefMsg attRefInMsgBuffer;
-    memset(&attRefInMsgBuffer, 0x0, sizeof(AttRefMsg));
+    AttRefMsgPayload attRefInMsgBuffer;
+    memset(&attRefInMsgBuffer, 0x0, sizeof(AttRefMsgPayload));
     attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
     
     /*! - Get input reference and compute integration time step to use downstream */
@@ -146,7 +146,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
     v3Add(configData->sigma_RN, v3Temp, configData->sigma_RN);
     MRPswitch(configData->sigma_RN, 1.0, configData->sigma_RN);
     
-    /*! Copy output in AttRefMsg struct */
+    /*! Copy output in AttRefMsgPayload struct */
     v3Copy(configData->sigma_RN, configData->attRefOutBuffer.sigma_RN);
     v3Copy(omega_RN_N, configData->attRefOutBuffer.omega_RN_N);
     v3Copy(domega_RN_N, configData->attRefOutBuffer.domega_RN_N);

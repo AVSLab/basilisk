@@ -51,24 +51,24 @@ public:
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
-    SimMessage<NavAttMsg> attOutMsg;        //!< output msg
-    SimMessage<NavTransMsg> transOutMsg;    //!< output msg
+    SimMessage<NavAttMsgPayload> attOutMsg;        //!< output msg
+    SimMessage<NavTransMsgPayload> transOutMsg;    //!< output msg
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
-    NavAttMsg trueAttState;        //!< -- attitude nav state without errors
-    NavAttMsg estAttState;         //!< -- attitude nav state including errors
-    NavTransMsg trueTransState;    //!< -- translation nav state without errors
-    NavTransMsg estTransState;     //!< -- translation nav state including errors
-    SCPlusStatesMsg inertialState; //!< -- input inertial state from Star Tracker
-    SpicePlanetStateMsg sunState;  //!< -- input Sun state
+    NavAttMsgPayload trueAttState;        //!< -- attitude nav state without errors
+    NavAttMsgPayload estAttState;         //!< -- attitude nav state including errors
+    NavTransMsgPayload trueTransState;    //!< -- translation nav state without errors
+    NavTransMsgPayload estTransState;     //!< -- translation nav state including errors
+    SCPlusStatesMsgPayload inertialState; //!< -- input inertial state from Star Tracker
+    SpicePlanetStateMsgPayload sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-    ReadFunctor<SCPlusStatesMsg> scStateInMsg;      //!< read input msg
-    ReadFunctor<SpicePlanetStateMsg> sunStateInMsg; //!< read input msg
+    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;      //!< read input msg
+    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< read input msg
 
 private:
-    WriteFunctor<NavAttMsg>  writeAttOutMsg;        //!< write msg
-    WriteFunctor<NavTransMsg> writeTransOutMsg;     //!< write msg
+    WriteFunctor<NavAttMsgPayload>  writeAttOutMsg;        //!< write msg
+    WriteFunctor<NavTransMsgPayload> writeTransOutMsg;     //!< write msg
 
 private:
     Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state

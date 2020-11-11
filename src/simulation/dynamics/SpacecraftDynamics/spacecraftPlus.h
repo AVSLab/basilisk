@@ -75,8 +75,8 @@ public:
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    SimMessage<SCPlusStatesMsg> scStateOutMsg;      //!< output message
-    SimMessage<SCPlusMassPropsMsg> scMassOutMsg;    //!< output message
+    SimMessage<SCPlusStatesMsgPayload> scStateOutMsg;      //!< output message
+    SimMessage<SCPlusMassPropsMsgPayload> scMassOutMsg;    //!< output message
 
 public:
     SpacecraftPlus();                    //!< -- Constructor
@@ -106,8 +106,8 @@ private:
 
 private:
     void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude
-    WriteFunctor<SCPlusStatesMsg> writeScStateOutMsg;
-    WriteFunctor<SCPlusMassPropsMsg> writeScMassOutMsg;
+    WriteFunctor<SCPlusStatesMsgPayload> writeScStateOutMsg;
+    WriteFunctor<SCPlusMassPropsMsgPayload> writeScMassOutMsg;
 };
 
 

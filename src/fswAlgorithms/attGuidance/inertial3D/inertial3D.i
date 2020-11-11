@@ -31,7 +31,7 @@
 %constant void Reset_inertial3D(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3D;
 GEN_SIZEOF(inertial3DConfig);
-GEN_SIZEOF(AttRefMsg);
+GEN_SIZEOF(AttRefMsgPayload);
 struct AttRefMsg_C;
 %include "inertial3D.h"
 %include "cMsgPayloadDef/AttRefMsg.h"

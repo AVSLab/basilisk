@@ -46,8 +46,8 @@ namespace std {
 %include "cMsgPayloadDef/SCPlusStatesMsg.h"
 %include "cMsgPayloadDef/SCPlusMassPropsMsg.h"
 %include "hubEffector.h"
-GEN_SIZEOF(SCPlusStatesMsg)
-GEN_SIZEOF(SCPlusMassPropsMsg)
+GEN_SIZEOF(SCPlusStatesMsgPayload)
+GEN_SIZEOF(SCPlusMassPropsMsgPayload)
 struct SCPlusStatesMsg_C;
 struct SCPlusMassPropsMsg_C;
 

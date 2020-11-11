@@ -44,7 +44,7 @@ extern "C" {
     void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsg *attRefOut);
+    void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsgPayload *attRefOut);
 
 #ifdef __cplusplus
 }

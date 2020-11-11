@@ -32,7 +32,7 @@ typedef struct {
     double J20002Pfix_dot[3][3];    //!< (-) Derivative of the orientation matrix of planet-fixed relative to inertial
     int computeOrient;              //!< (-) Flag indicating whether the reference should be computed
     char PlanetName[MAX_BODY_NAME_LENGTH];        //!< -- Name of the planet for the state
-}SpicePlanetStateMsg;
+}SpicePlanetStateMsgPayload;
 
 
 #endif

@@ -31,8 +31,8 @@
 %}
 %include "cMsgPayloadDef/messageType.h"
 
-%template(messageType ## Reader) ReadFunctor<messageType>;
-%extend ReadFunctor<messageType> {
+%template(messageType ## Reader) ReadFunctor<messageType ## Payload>;
+%extend ReadFunctor<messageType ## Payload> {
         %pythoncode %{
             def subscribeTo(self, source):
                 from Basilisk.simulation.cMsgCInterfacePy import messageType ## _C
@@ -45,10 +45,10 @@
         %}
 };
 
-%template(messageType ## Writer) WriteFunctor<messageType>;
+%template(messageType ## Writer) WriteFunctor<messageType ## Payload>;
 
-%template(messageType ## Class) SimMessage<messageType>;
-%extend SimMessage<messageType>{
+%template(messageType ## Class) SimMessage<messageType ## Payload>;
+%extend SimMessage<messageType ## Payload>{
     %pythoncode %{
         def write(self, payload, time=0):
             """write the message payload.  The second argument is time in nanoseconds.  It is optional and defaults to 0."""
@@ -59,8 +59,8 @@
     %}
 };
 
-%template(messageType ## Logger) Log<messageType>;
-%extend Log<messageType> {
+%template(messageType ## Logger) Log<messageType ## Payload>;
+%extend Log<messageType ## Payload> {
     %pythoncode %{
         def times(self):
             return np.array(self.__time_vector())
@@ -81,8 +81,8 @@
 
 typedef struct messageType;
 
-%template(messageType ## Vector) std::vector<messageType>;
-%extend std::vector<messageType>{
+%template(messageType ## Vector) std::vector<messageType ## Payload>;
+%extend std::vector<messageType ## Payload>{
     %pythoncode %{
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.

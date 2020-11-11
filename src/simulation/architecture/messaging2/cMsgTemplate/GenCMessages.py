@@ -46,7 +46,8 @@ with open(destination_dir + '../messaging2.i', 'w') as w:
     w.write(messaging2_i_template)
 for file in os.listdir("../../../../cMsgPayloadDef"):
     if file.endswith(".h"):
-        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + os.path.splitext(file)[0] + ")"
+        msgName = os.path.splitext(file)[0]
+        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ")"
 messaging2_i_template += '\n\n%include "messaging2.h"\n'
 with open(destination_dir + '../messaging2.i', 'w') as w:
     w.write(messaging2_i_template)

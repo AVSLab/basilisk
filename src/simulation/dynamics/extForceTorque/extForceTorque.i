@@ -35,9 +35,9 @@ from Basilisk.simulation.swig_common_model import *
 %include "cMsgPayloadDef/CmdTorqueBodyMsg.h"
 %include "cMsgPayloadDef/CmdForceBodyMsg.h"
 %include "cMsgPayloadDef/CmdForceInertialMsg.h"
-GEN_SIZEOF(CmdTorqueBodyMsg);
-GEN_SIZEOF(CmdForceBodyMsg);
-GEN_SIZEOF(CmdForceInertialMsg);
+GEN_SIZEOF(CmdTorqueBodyMsgPayload);
+GEN_SIZEOF(CmdForceBodyMsgPayload);
+GEN_SIZEOF(CmdForceInertialMsgPayload);
 struct CmdTorqueBodyMsg_C;
 struct CmdForceBodyMsg_C;
 struct CmdForceInertialMsg_C;

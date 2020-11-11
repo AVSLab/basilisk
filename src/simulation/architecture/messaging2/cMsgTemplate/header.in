@@ -7,8 +7,8 @@
 
 //! structure definition
 typedef struct {{
-    {type} payload;		        //!< message copy, zero'd on construction
-    {type} *payloadPointer;	    //!< pointer to message
+    {type}Payload payload;		        //!< message copy, zero'd on construction
+    {type}Payload *payloadPointer;	    //!< pointer to message
     Msg2Header header;              //!< message header, zero'd on construction
     Msg2Header *headerPointer;      //!< pointer to message header
 }} {type}_C;
@@ -29,9 +29,9 @@ int {type}_C_isWritten({type}_C *data);
 
 uint64_t {type}_C_timeWritten({type}_C *data);
 
-void {type}_C_write({type} *data, {type}_C *destination, uint64_t callTime);
+void {type}_C_write({type}Payload *data, {type}_C *destination, uint64_t callTime);
 
-{type} {type}_C_read({type}_C *source);
+{type}Payload {type}_C_read({type}_C *source);
 
 #ifdef __cplusplus
 }}

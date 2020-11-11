@@ -80,7 +80,7 @@ void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t m
  */
 void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    AttRefMsg attRefOut;         /* output message structure */
+    AttRefMsgPayload attRefOut;         /* output message structure */
 
     /*! - Compute and store output message */
     computeInertialPointingReference(configData, &attRefOut);
@@ -100,7 +100,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t 
  @param configData The configuration data associated with the null space control
  @param attRefOut Output message 
  */
-void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsg *attRefOut)
+void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsgPayload *attRefOut)
 {
     v3Copy(configData->sigma_R0N, attRefOut->sigma_RN);
     v3SetZero(attRefOut->omega_RN_N);
