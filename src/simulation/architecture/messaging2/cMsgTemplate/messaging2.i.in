@@ -25,14 +25,14 @@
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
 %rename(__time_vector) times;  // It's not really useful to give the user back a time vector
 %rename(__record_vector) record;
-%define INSTANTIATE_TEMPLATES(messageType)
+%define INSTANTIATE_TEMPLATES(messageType, messageTypePayload)
 %{
-#include "cMsgPayloadDef/messageType.h"
+#include "cMsgPayloadDef/messageTypePayload.h"
 %}
-%include "cMsgPayloadDef/messageType.h"
+%include "cMsgPayloadDef/messageTypePayload.h"
 
-%template(messageType ## Reader) ReadFunctor<messageType ## Payload>;
-%extend ReadFunctor<messageType ## Payload> {
+%template(messageType ## Reader) ReadFunctor<messageTypePayload>;
+%extend ReadFunctor<messageTypePayload> {
         %pythoncode %{
             def subscribeTo(self, source):
                 from Basilisk.simulation.cMsgCInterfacePy import messageType ## _C
@@ -45,10 +45,10 @@
         %}
 };
 
-%template(messageType ## Writer) WriteFunctor<messageType ## Payload>;
+%template(messageType ## Writer) WriteFunctor<messageTypePayload>;
 
-%template(messageType ## Class) SimMessage<messageType ## Payload>;
-%extend SimMessage<messageType ## Payload>{
+%template(messageType ## Class) SimMessage<messageTypePayload>;
+%extend SimMessage<messageTypePayload>{
     %pythoncode %{
         def write(self, payload, time=0):
             """write the message payload.  The second argument is time in nanoseconds.  It is optional and defaults to 0."""

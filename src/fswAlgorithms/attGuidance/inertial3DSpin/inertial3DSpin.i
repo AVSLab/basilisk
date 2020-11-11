@@ -35,7 +35,7 @@ GEN_SIZEOF(AttRefMsgPayload);
 %include "inertial3DSpin.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "cMsgPayloadDef/AttRefMsg.h"
+%include "cMsgPayloadDef/AttRefMsgPayload.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

@@ -41,11 +41,11 @@ struct CmdTorqueBodyMsg_C;
 struct AttGuidMsg_C;
 struct VehicleConfigMsg_C;
 %include "mrpFeedback.h"
-%include "cMsgPayloadDef/AttGuidMsg.h"
-%include "cMsgPayloadDef/VehicleConfigMsg.h"
+%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "cMsgPayloadDef/CmdTorqueBodyMsg.h"
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 

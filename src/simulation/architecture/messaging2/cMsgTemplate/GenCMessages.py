@@ -46,8 +46,8 @@ with open(destination_dir + '../messaging2.i', 'w') as w:
     w.write(messaging2_i_template)
 for file in os.listdir("../../../../cMsgPayloadDef"):
     if file.endswith(".h"):
-        msgName = os.path.splitext(file)[0]
-        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ")"
+        msgName = (os.path.splitext(file)[0])[:-7]
+        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " + msgName + "Payload)"
 messaging2_i_template += '\n\n%include "messaging2.h"\n'
 with open(destination_dir + '../messaging2.i', 'w') as w:
     w.write(messaging2_i_template)
@@ -75,7 +75,7 @@ def to_message(struct_data):
     if struct_data:
         struct_data = struct_data.replace(' ', '').split(',')
         struct_name = struct_data[0]
-        source_header_file = 'cMsgPayloadDef/' + struct_name + '.h'
+        source_header_file = 'cMsgPayloadDef/' + struct_name + 'Payload.h'
         definitions = messaging2_template.format(type=struct_name)
         header = header_template.format(type=struct_name, structHeader=source_header_file)
         swig_template.write(swig_template_block.format(type=struct_name))
