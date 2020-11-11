@@ -294,7 +294,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     configData = messaging2.VehicleConfigMsg()
     configData.ISCPntB_B = I
 
-    # configDataMsg = cMsgCInterfacePy.writeCMsgCInterface(configData)  # make C interface to msg
     configDataMsg = messaging2.writeCMsgCppInterface(configData)  # make C++ interface to msg
 
 

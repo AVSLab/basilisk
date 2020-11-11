@@ -101,8 +101,6 @@ This list makes it simple to see what naming will need to be changed.
 
 Setting a Basilisk Message from Python
 --------------------------------------
-Using C++ Interface
-^^^^^^^^^^^^^^^^^^^
 Import ``messages2`` to have access to all message definitions::
 
     from Basilisk.simulation import messaging2
@@ -115,17 +113,6 @@ Next, fill in ``msgData`` with the needed information.  The structure is always 
 When done, use the following command to create the Msg object and get a copy for other modules to subscribe to.::
 
     msg = messaging2.writeCMsgCppInterface(msgData)
-
-Using C Interface
-^^^^^^^^^^^^^^^^^
-Follow the same steps above to create and fill in the contents of ``msgData``.  To create a C interface to
-the message, import ``cMsgCInterfacePy`` using::
-
-    from Basilisk.simulation import cMsgCInterfacePy
-
-Finally, create the message and receive a copy of the message object using::
-
-    msg = cMsgCInterfacePy.writeCMsgCInterface(msgData)
 
 
 Miscellaneous Changes
