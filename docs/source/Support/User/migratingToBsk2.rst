@@ -124,8 +124,9 @@ To create a message of type ``ParticularMsg``, first get a copy of the message s
 Next, fill in ``msgData`` with the needed information.  The structure is always initialized to zero on creation.
 When done, use the following command to create the Msg object and get a copy for other modules to subscribe to.::
 
-    msg = messaging2.writeCMsgCppInterface(msgData)
+    msg = messaging2.ParticularMsgClass().write(msgData, time)
 
+The ``time`` is the message write time in nano-seconds.  It is optional and defaults to 0.
 
 Miscellaneous Changes
 ---------------------

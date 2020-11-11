@@ -56,7 +56,7 @@ with open('./README.in', 'r') as r:
 messaging2_template += README
 header_template += README
 swig_template.write(README)
-swig_template.write("%module cMsgCInterfacePy\n")
+swig_template.write('%module cMsgCInterfacePy\n%include "swig_conly_data.i"\n')
 
 with open('./messaging2.c.in', 'r') as f:
     messaging2_template += f.read()
