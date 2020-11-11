@@ -292,7 +292,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # B origin and the center of mass (defaulted to zero).  This message is set through
     configData = messaging2.VehicleConfigMsgPayload()
     configData.ISCPntB_B = I
-    configDataMsg = messaging2.VehicleConfigMsgClass().write(configData)
+    configDataMsg = messaging2.VehicleConfigMsg().write(configData)
 
 
     #

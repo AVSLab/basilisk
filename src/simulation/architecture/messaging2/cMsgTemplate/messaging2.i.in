@@ -36,7 +36,7 @@
         %pythoncode %{
             def subscribeTo(self, source):
                 from Basilisk.simulation.cMsgCInterfacePy import messageType ## _C
-                if type(source) == messageType ## Class:
+                if type(source) == messageType:
                     self.__subscribe_to(source)
                 elif type(source) == messageType ## _C:
                     self.__subscribe_to_C(source)
@@ -47,7 +47,7 @@
 
 %template(messageType ## Writer) WriteFunctor<messageTypePayload>;
 
-%template(messageType ## Class) SimMessage<messageTypePayload>;
+%template(messageType) SimMessage<messageTypePayload>;
 %extend SimMessage<messageTypePayload>{
     %pythoncode %{
         def write(self, payload, time=0):
