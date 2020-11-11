@@ -368,8 +368,8 @@ double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
  */
 void GravBodyData::loadEphemeris(int64_t moduleID)
 {
-    if(this->readInputMsg.isLinked()){
-        this->localPlanet = this->readInputMsg();
+    if(this->planetBodyInMsg.isLinked()){
+        this->localPlanet = this->planetBodyInMsg();
     } else {
         /* use default zero planet state information, including a zero orientation */
         m33SetIdentity(this->localPlanet.J20002Pfix);
