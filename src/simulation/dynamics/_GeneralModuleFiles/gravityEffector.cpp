@@ -370,6 +370,9 @@ void GravBodyData::loadEphemeris(int64_t moduleID)
 {
     if(this->readInputMsg.isLinked()){
         this->localPlanet = this->readInputMsg();
+    } else {
+        /* use default zero planet state information, including a zero orientation */
+        m33SetIdentity(this->localPlanet.J20002Pfix);
     }
     return;
 }
