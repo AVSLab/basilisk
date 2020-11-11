@@ -34,8 +34,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import inertial3DSpin                   # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.simulation import message
-from Basilisk.simulation.cMsgCInterfacePy import AttRefFswMsg_C
+from Basilisk.simulation import messaging2
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -86,7 +85,7 @@ def subModuleTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = AttRefFswMsg_C().userMessage()  # Create a structure for the input message
+    RefStateOutData = messaging2.AttRefFswMsg()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.payload.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.0, 0.0, 0.0])

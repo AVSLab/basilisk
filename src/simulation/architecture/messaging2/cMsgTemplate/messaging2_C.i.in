@@ -20,10 +20,5 @@ typedef struct {type};
         from Basilisk.simulation.messaging2 import {type}Logger
         return {type}Logger(self)
 
-    def userMessage(self, data=None):
-        {type}_C_addAuthor(self, self)
-        if data:
-            {type}_C_write(data, self, 0)
-        return self
     %}}
 }};
