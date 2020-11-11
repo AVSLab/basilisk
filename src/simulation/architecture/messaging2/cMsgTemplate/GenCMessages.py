@@ -56,17 +56,15 @@ with open('./README.in', 'r') as r:
 messaging2_template += README
 header_template += README
 swig_template.write(README)
-with open('./swigCHeader.in', 'r') as r:
-    swigCHeader = r.read()
-swig_template.write(swigCHeader)
+swig_template.write("%module cMsgCInterfacePy\n")
 
-with open('./messaging2.in', 'r') as f:
+with open('./messaging2.c.in', 'r') as f:
     messaging2_template += f.read()
 
 with open('./header.in', 'r') as f:
     header_template += f.read()
 
-with open('./swigCMsg.in', 'r') as f:
+with open('./messaging2_C.i.in', 'r') as f:
     swig_template_block = f.read()
 
 with open('../messaging2.i', 'r') as fb:
