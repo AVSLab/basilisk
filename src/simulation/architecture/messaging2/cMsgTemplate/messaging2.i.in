@@ -27,9 +27,9 @@
 %rename(__record_vector) record;
 %define INSTANTIATE_TEMPLATES(messageType)
 %{
-#include "cMsgDefinition/messageType.h"
+#include "cMsgPayloadDef/messageType.h"
 %}
-%include "cMsgDefinition/messageType.h"
+%include "cMsgPayloadDef/messageType.h"
 
 %template(messageType ## Reader) ReadFunctor<messageType>;
 %extend ReadFunctor<messageType> {

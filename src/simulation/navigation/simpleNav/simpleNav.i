@@ -30,9 +30,9 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "sys_model.h"
 %include "simpleNav.h"
-%include "cMsgDefinition/SCPlusStatesMsg.h"
-%include "cMsgDefinition/NavAttMsg.h"
-%include "cMsgDefinition/NavTransMsg.h"
+%include "cMsgPayloadDef/SCPlusStatesMsg.h"
+%include "cMsgPayloadDef/NavAttMsg.h"
+%include "cMsgPayloadDef/NavTransMsg.h"
 GEN_SIZEOF(SCPlusStatesMsg);
 GEN_SIZEOF(NavAttMsg);
 GEN_SIZEOF(NavTransMsg);
