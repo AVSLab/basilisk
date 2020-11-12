@@ -1,7 +1,7 @@
 %{{
-#include "{type}_C.h"
+#include "../dist3/autoSource/cMsgCInterface/{type}_C.h"
 %}}
-%include "{type}_C.h"
+%include "../dist3/autoSource/cMsgCInterface/{type}_C.h"
 %include "../Msg2Header.h"
 typedef struct {type};
 %extend {type}_C {{

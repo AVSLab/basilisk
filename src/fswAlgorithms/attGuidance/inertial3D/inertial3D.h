@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
-#include "architecture/messaging2/cMsgCInterface/AttRefMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
 
 
 

@@ -10,18 +10,8 @@ with open("../../../../../LICENSE", 'r') as f:
     license += "*/\n\n"
 messaging2_template = license
 header_template = license
-swig_template = license
 
 # clear out an old folder and create a fresh folder of wrapped C message interfaces
-destination_dir = '../cMsgCInterface/'
-if os.path.exists(destination_dir):
-    shutil.rmtree(destination_dir, ignore_errors=True)
-try:
-    os.makedirs(os.path.dirname(destination_dir))
-except OSError as exc:  # Guard against race condition
-    if exc.errno != errno.EEXIST:
-        raise
-
 autoSourceDestDir = '../../../../../dist3/autoSource/'
 if os.path.exists(autoSourceDestDir):
     shutil.rmtree(autoSourceDestDir, ignore_errors=True)
@@ -31,16 +21,13 @@ except OSError as exc:  # Guard against race condition
     if exc.errno != errno.EEXIST:
         raise
 
-# create swig file for C-msg C interface methods
-with open(destination_dir + 'cMsgCInterfacePy.i', 'w') as w:
-    w.write(swig_template)
-swig_template = open(destination_dir + 'cMsgCInterfacePy.i', 'a')
+destination_dir = autoSourceDestDir + 'cMsgCInterface/'
+os.makedirs(os.path.dirname(destination_dir))
 
-# create the cmake file for the auto-generated C-msg interface files
-with open('./CMakeLists.in', 'r') as r:
-    cmakeText = r.read()
-with open(destination_dir + 'CMakeLists.txt', 'w') as w:
-    w.write(cmakeText)
+
+# create swig file for C-msg C interface methods
+swig_template = open(autoSourceDestDir + 'cMsgCInterfacePy.auto.i', 'w')
+
 
 # append all C msg definitions to the dist3/autoSource/messaging2.auto.i file that is imported into messaging2.i
 messaging2_header_i_template = ""
@@ -62,8 +49,6 @@ with open('./README.in', 'r') as r:
     README = r.read()
 messaging2_template += README
 header_template += README
-swig_template.write(README)
-swig_template.write('%module cMsgCInterfacePy\n%include "swig_conly_data.i"\n')
 
 with open('./messaging2.c.in', 'r') as f:
     messaging2_template += f.read()
@@ -97,4 +82,3 @@ def to_message(struct_data):
 template_call = 'INSTANTIATE_TEMPLATES({:dat})'
 for line in lines:
     it = parse.parse(template_call, line, dict(dat=to_message))
-
