@@ -1,5 +1,7 @@
 #define SWIGPYTHON_BUILTIN
 
+%include ../../../../dist3/autoSource/messaging2.header.auto.i
+
 %module messaging2
 %pythoncode %{
     from Basilisk.simulation.swig_common_model import *
@@ -95,4 +97,6 @@ typedef struct messageType;
 };
 %enddef
 
+%include ../../../../dist3/autoSource/messaging2.auto.i
 
+%include "messaging2.h"

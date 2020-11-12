@@ -11,7 +11,6 @@ with open("../../../../../LICENSE", 'r') as f:
 messaging2_template = license
 header_template = license
 swig_template = license
-messaging2_i_template = license
 
 # clear out an old folder and create a fresh folder of wrapped C message interfaces
 destination_dir = '../cMsgCInterface/'
@@ -19,6 +18,15 @@ if os.path.exists(destination_dir):
     shutil.rmtree(destination_dir, ignore_errors=True)
 try:
     os.makedirs(os.path.dirname(destination_dir))
+except OSError as exc:  # Guard against race condition
+    if exc.errno != errno.EEXIST:
+        raise
+
+autoSourceDestDir = '../../../../../dist3/autoSource/'
+if os.path.exists(autoSourceDestDir):
+    shutil.rmtree(autoSourceDestDir, ignore_errors=True)
+try:
+    os.makedirs(os.path.dirname(autoSourceDestDir))
 except OSError as exc:  # Guard against race condition
     if exc.errno != errno.EEXIST:
         raise
@@ -34,23 +42,21 @@ with open('./CMakeLists.in', 'r') as r:
 with open(destination_dir + 'CMakeLists.txt', 'w') as w:
     w.write(cmakeText)
 
-# append all C msg definitions to the messaging2.i file
-with open('./messaging2.i.in', 'r') as r:
-    if platform == "linux" or platform == "linux2":
-        messageContent = "#define SWIGWORDSIZE64\n"
-    else: 
-        messageContent = ""
-    messageContent += r.read()
-    messaging2_i_template += messageContent
-with open(destination_dir + '../messaging2.i', 'w') as w:
-    w.write(messaging2_i_template)
+# append all C msg definitions to the dist3/autoSource/messaging2.auto.i file that is imported into messaging2.i
+messaging2_header_i_template = ""
+if platform == "linux" or platform == "linux2":
+    messaging2_header_i_template = "#define SWIGWORDSIZE64\n"
+with open(autoSourceDestDir + 'messaging2.header.auto.i', 'w') as w:
+    w.write(messaging2_header_i_template)
+
+messaging2_i_template = ""
 for file in os.listdir("../../../../cMsgPayloadDef"):
     if file.endswith(".h"):
         msgName = (os.path.splitext(file)[0])[:-7]
         messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " + msgName + "Payload)"
-messaging2_i_template += '\n\n%include "messaging2.h"\n'
-with open(destination_dir + '../messaging2.i', 'w') as w:
+with open(autoSourceDestDir + 'messaging2.auto.i', 'w') as w:
     w.write(messaging2_i_template)
+
 
 with open('./README.in', 'r') as r:
     README = r.read()
@@ -68,7 +74,7 @@ with open('./header.in', 'r') as f:
 with open('./messaging2_C.i.in', 'r') as f:
     swig_template_block = f.read()
 
-with open('../messaging2.i', 'r') as fb:
+with open(autoSourceDestDir + 'messaging2.auto.i', 'r') as fb:
     lines = fb.readlines()
 
 def to_message(struct_data):
