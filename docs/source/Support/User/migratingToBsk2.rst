@@ -128,6 +128,15 @@ When done, use the following command to create the Msg object and get a copy for
 
 The ``time`` is the message write time in nano-seconds.  It is optional and defaults to 0.
 
+Reading a Basilisk Message from Python
+--------------------------------------
+Assume ``bskObject`` is the Basilisk module created in Python.  To read an output message ``someOutMsg``
+and print a variable ``someMsgVariable`` within this outpout message, you can use::
+
+    msgCopy = bskObject.someOutMsg.read()
+    print(msgCopy.someMsgVariable)
+
+
 Miscellaneous Changes
 ---------------------
 If from Python you access ``#define`` values of ``macroDefinitions.h``, such as::

@@ -54,10 +54,14 @@
     %pythoncode %{
         def write(self, payload, time=0):
             """write the message payload.  The second argument is time in nanoseconds.  It is optional and defaults to 0."""
-            writer = self.addAuthor()
-            writer(payload, time)
+            writeMsg = self.addAuthor()
+            writeMsg(payload, time)
             return self
 
+        def read(self):
+            """read the message payload"""
+            readMsg = self.addSubscriber()
+            return readMsg()
     %}
 };
 
