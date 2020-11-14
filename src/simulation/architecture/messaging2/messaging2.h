@@ -18,7 +18,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #ifndef MESSAGING2_H
 #define MESSAGING2_H
 #include <memory>
-#include "../../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include "architecture/messaging2/msg2Header.h"
 #include "utilities/bskLogging.h"

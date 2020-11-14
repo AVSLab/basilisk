@@ -1,6 +1,23 @@
+/*
+Copyright (c) 2020, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+*/
+
 #define SWIGPYTHON_BUILTIN
 
-%include ../../../../dist3/autoSource/messaging2.header.auto.i
+%include ../dist3/autoSource/messaging2.header.auto.i
 
 %module messaging2
 %pythoncode %{
@@ -9,19 +26,19 @@
 %include "swig_conly_data.i"
 %include "std_vector.i"
 %include "std_string.i"
-%include "../../utilities/macroDefinitions.h"
+%include "utilities/macroDefinitions.h"
 %pythoncode %{
     import numpy as np
     from Basilisk.simulation import cMsgCInterfacePy
 %};
 %{
-#include "../../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "messaging2.h"
 #include <vector>
 %}
 %template(TimeVector) std::vector<uint64_t>;
 %include "std_vector.i"
-%include "../../_GeneralModuleFiles/sys_model.h"
+%include "_GeneralModuleFiles/sys_model.h"
 %include "messaging2.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
@@ -101,6 +118,6 @@ typedef struct messageType;
 };
 %enddef
 
-%include ../../../../dist3/autoSource/messaging2.auto.i
+%include ../dist3/autoSource/messaging2.auto.i
 
 %include "messaging2.h"
