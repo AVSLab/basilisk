@@ -136,6 +136,15 @@ and print a variable ``someMsgVariable`` within this outpout message, you can us
     msgCopy = bskObject.someOutMsg.read()
     print(msgCopy.someMsgVariable)
 
+Connecting Output to Input Messages in Python
+---------------------------------------------
+You wish to connect the output message ``bskOne.someOutMsg`` to the input message `bskTwo.someInMsg``.
+This is done using::
+
+        bskTwo.someInMsg.subscribeTo(bskOne.someOutMsg)
+
+It does not matter if these message interfaces are based in C or C++. The ``subscribeTo()`` method handles this
+automatically.
 
 Miscellaneous Changes
 ---------------------

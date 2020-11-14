@@ -17,6 +17,11 @@ void {type}_C_addAuthor({type}_C *coowner, {type}_C *data) {{
     memset(coowner->headerPointer, 0x0, sizeof(Msg2Header));
 }};
 
+//! C interface to initialize the module output message
+void {type}_C_init({type}_C *owner) {{
+    {type}_C_addAuthor(owner, owner);
+}};
+
 //! C interface to write to a message
 void {type}_C_write({type}Payload *data, {type}_C *destination, uint64_t callTime) {{
     *destination->payloadPointer = *data;

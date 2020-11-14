@@ -23,6 +23,8 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source);
 
 void {type}_C_addAuthor({type}_C *coowner, {type}_C *data);
 
+void {type}_C_init({type}_C *owner);
+
 int {type}_C_isLinked({type}_C *data);
 
 int {type}_C_isWritten({type}_C *data);
