@@ -33,37 +33,8 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import fswModuleTemplate                 # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswMessages
-
-
-class DataStore:
-    """Container for developer defined variables to be used in test data post-processing and plotting.
-
-        Attributes:
-            variableState (list): an example variable to hold test result data.
-    """
-
-    def __init__(self):
-        self.variableState = None  # replace/add with appropriate variables for test result data storing
-
-    def plotData(self):
-        """
-        All test plotting to be performed here.
-        """
-        plt.figure(1) # plot a sample variable.
-        plt.plot(self.variableState[:, 0]*macros.NANO2SEC, self.variableState[:, 1], label='Sample Variable')
-        plt.legend(loc='upper left')
-        plt.xlabel('Time [s]')
-        plt.ylabel('Variable Description [unit]')
-        plt.show()
-
-
-@pytest.fixture(scope="module")
-def plotFixture(show_plots):
-    dataStore = DataStore()
-    yield dataStore
-    if show_plots:
-        dataStore.plotData()
+from Basilisk.simulation import messaging2                      # import the message definitions
+from Basilisk.utilities import vizSupport
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -71,7 +42,7 @@ def plotFixture(show_plots):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_module(plotFixture, show_plots):     # update "module" in this function name to reflect the module name
+def test_module(show_plots):     # update "module" in this function name to reflect the module name
     r"""
     **Validation Test Description**
 
@@ -101,11 +72,11 @@ def test_module(plotFixture, show_plots):     # update "module" in this function
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
-    [testResults, testMessage] = fswModuleTestFunction(plotFixture, show_plots)
+    [testResults, testMessage] = fswModuleTestFunction(show_plots)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(plotFixture, show_plots):
+def fswModuleTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -121,7 +92,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()                          # update with current values
+    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()  # update with current values
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "fswModuleTemplate"           # update python name of test module
 
@@ -129,24 +100,24 @@ def fswModuleTestFunction(plotFixture, show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.dataInMsgName = "sampleInput"          # update with current values
-    moduleConfig.dataOutMsgName = "sampleOutput"        # update with current values
     moduleConfig.dummy = 1                              # update module parameter with required values
     moduleConfig.dumVector = [1., 2., 3.]
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = fswMessages.FswModuleTemplateFswMsg()    # Create a structure for the input message
-    inputMessageData.outputVector = [1.0, -0.5, 0.7]            # Set up a list as a 3-vector
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.dataInMsgName,
-                               inputMessageData)
+    inputMessageData = messaging2.FswModuleTemplateMsgPayload()  # Create a structure for the input message
+    inputMessageData.outputVector = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
+    inputMsg = messaging2.FswModuleTemplateMsg().write(inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.dataOutMsgName, testProcessRate)
+    dataLog = moduleConfig.dataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
     variableName = "dummy"                              # name the module variable to be logged
     unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + "." + variableName, testProcessRate)
+
+    # connect the message interfaces
+    moduleConfig.dataInMsg.subscribeTo(inputMsg)
+
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -170,13 +141,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "outputVector"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
-
-    # Set the results variable(s) to the fixture data storage variables so that it is accessible for plotting
-    plotFixture.variableState = variableState
 
     # set the filtered output truth states
     trueVector = [
@@ -190,13 +155,13 @@ def fswModuleTestFunction(plotFixture, show_plots):
     # compare the module results to the truth values
     accuracy = 1e-12
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
-    for i in range(0,len(trueVector)):
+    for i in range(0, len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.outputVector[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i, 0]*macros.NANO2SEC) +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed outputVector" +
+                                " unit test at t=" +
+                                str(dataLog.times()[i]*macros.NANO2SEC) +
                                 "sec\n")
 
         # check a scalar double value
@@ -209,13 +174,35 @@ def fswModuleTestFunction(plotFixture, show_plots):
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.6))    # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
 
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag)
         print("This test uses an accuracy value of " + str(accuracy))
+    else:
+        print("FAILED " + moduleWrap.ModelTag)
+        print(testMessages)
+
+    plt.close("all")  # close all prior figures so we start with a clean slate
+    plt.figure(1)
+    plt.plot(variableState[:, 0] * macros.NANO2SEC, variableState[:, 1])
+    plt.xlabel('Time [s]')
+    plt.ylabel('Variable Description [unit]')
+    plt.suptitle('Title of Sample Plot')
+
+    plt.figure(2)
+    for idx in range(3):
+        plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.outputVector[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'$s_' + str(idx) + '$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel(r'Msg Output Vector States')
+
+    if show_plots:
+        plt.show()
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -228,6 +215,5 @@ def fswModuleTestFunction(plotFixture, show_plots):
 #
 if __name__ == "__main__":
     fswModuleTestFunction(
-               plotFixture,
                True        # show_plots
     )

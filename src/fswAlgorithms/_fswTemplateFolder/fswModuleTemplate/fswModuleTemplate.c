@@ -37,7 +37,7 @@
  \verbatim embed:rst
     This method initializes the configData for this module.
     It checks to ensure that the inputs are sane and then creates the
-    output message of type :ref:`FswModuleTemplateFswMsg`.
+    output message of type :ref:`FswModuleTemplateMsgPayload`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -45,20 +45,12 @@
  */
 void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
 {
-    
-    /*! - Create output message for module */
-    configData->dataOutMsgID = CreateNewMessage(configData->dataOutMsgName,
-                                               sizeof(FswModuleTemplateFswMsg),
-                                               "FswModuleTemplateFswMsg",          /* add the output structure name */
-                                               moduleID);
+    FswModuleTemplateMsg_C_init(&configData->dataOutMsg);
 }
 
 /*!
  \verbatim embed:rst
-    This method performs the second stage of initialization for this module.
-    It's primary function is to link the input messages that were created elsewhere.
-    Nothing else should be happening in this function.  The subscribed message is
-    of type :ref:`FswModuleTemplateFswMsg`.
+    Perform any steps required after all modules have run Self-Init.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -66,10 +58,6 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
 */
 void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
 {
-    /*! - Get the ID of the subscribed input message */
-    configData->dataInMsgID = subscribeToMessage(configData->dataInMsgName,
-                                                sizeof(FswModuleTemplateFswMsg),
-                                                moduleID);
 
 }
 
@@ -100,13 +88,13 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
 {
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-    double              Lr[3];              /* [unit] variable description */
-    FswModuleTemplateFswMsg fswModuleOut;   /* output message */
+    double              Lr[3];                      /*!< [unit] variable description */
+    FswModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
+    FswModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
 
     /*! - Read the input messages */
-    ReadMessage(configData->dataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(FswModuleTemplateFswMsg), (void*) &(configData->inputVector), moduleID);
-
+    inMsgBuffer = FswModuleTemplateMsg_C_read(&configData->dataInMsg);
+    v3Copy(inMsgBuffer.outputVector, configData->inputVector);
 
 
     /*! - Add the module specific code */
@@ -115,11 +103,10 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     Lr[0] += configData->dummy;
 
     /*! - store the output message */
-    v3Copy(Lr, fswModuleOut.outputVector);
+    v3Copy(Lr, outMsgBuffer.outputVector);
 
     /*! - write the module output message */
-    WriteMessage(configData->dataOutMsgID, callTime, sizeof(FswModuleTemplateFswMsg),
-                 (void*) &(fswModuleOut), moduleID);
+    FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, callTime);
 
     return;
 }

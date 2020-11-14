@@ -22,9 +22,8 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/fswModuleTemplateFswMsg.h"
 #include "simulation/utilities/bskLogging.h"
-
+#include "../dist3/autoSource/cMsgCInterface/FswModuleTemplateMsg_C.h"
 
 
 
@@ -35,10 +34,8 @@ typedef struct {
     double dumVector[3];                            //!< [units] sample vector variable
 
     /* declare module IO interfaces */
-    char dataOutMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
-    int32_t dataOutMsgID;                           //!< ID for the outgoing message
-    char dataInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the Input message
-    int32_t dataInMsgID;                            //!< ID for the incoming message
+    FswModuleTemplateMsg_C dataOutMsg;              //!< sample output message
+    FswModuleTemplateMsg_C dataInMsg;               //!< sample input message
 
     double  inputVector[3];                         //!< [units]  vector description
     BSKLogger *bskLogger;                           //!< BSK Logging

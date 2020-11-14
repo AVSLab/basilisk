@@ -150,6 +150,11 @@ Updating a C Module
          %include "cMsgPayloadDef/ModuleMsgPayload.h"
          struct ModuleMsg_C;
 
+#. Updating the ``module.rst`` documentation file:
+
+    - In the table of module messages, update any message variable names that were changed
+      as well as the message definition from ``SomeFswMsgPayload`` to ``SomeMsgPayload``.
+    - If applicable, update the module msg I/O illustration
 
 Updating a C++ Module
 ^^^^^^^^^^^^^^^^^^^^^
@@ -282,3 +287,10 @@ Updating a C++ Module
 
          %include "cMsgPayloadDef/OutputMsgPayload.h"
 
+#. Updating the ``module.rst`` documentation file:
+
+    - In the table of module messages, update any message variable names that were changed
+      as well as the message definition from ``SomeFswMsgPayload`` to ``SomeMsgPayload``.
+    - If applicable, update the module msg I/O illustration
+    - If there are links to message types in the source method descriptions, update these
+      to use the new message payload declaration.

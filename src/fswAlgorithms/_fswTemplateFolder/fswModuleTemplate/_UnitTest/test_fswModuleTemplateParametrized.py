@@ -46,7 +46,9 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import fswModuleTemplate                # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import messaging2                      # import the message definitions
+from Basilisk.utilities import vizSupport
+
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -142,22 +144,20 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.dataInMsgName = "sampleInput"          # update with current values
-    moduleConfig.dataOutMsgName = "sampleOutput"        # update with current values
     moduleConfig.dummy = 1                              # update module parameter with required values
     moduleConfig.dumVector = [1., 2., 3.]
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = fswMessages.FswModuleTemplateFswMsg()    # Create a structure for the input message
+    inputMessageData = messaging2.FswModuleTemplateMsgPayload() # Create a structure for the input message
     inputMessageData.outputVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.dataInMsgName,
-                               inputMessageData)
+    inputMsg = messaging2.FswModuleTemplateMsg().write(inputMessageData)
+    moduleConfig.dataInMsg.subscribeTo(inputMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.dataOutMsgName, testProcessRate)
+    dataLog = moduleConfig.dataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
     variableName = "dummy"                              # name the module variable to be logged
     unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + "." + variableName, testProcessRate)
 
@@ -181,17 +181,14 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     unitTestSim.ExecuteSimulation()
 
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "outputVector"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    # This pulls the BSK module internal varialbe log from the simulation run.
+    # Note, this should only be done for debugging as it is a slow process
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
 
     # set the filtered output truth states
-    trueVector=[];
-    if param1==1:
-        if param2==1:
+    trueVector = []
+    if param1 == 1:
+        if param2 == 1:
             trueVector = [
                        [2.0, 1.0, 0.7],
                        [3.0, 1.0, 0.7],
@@ -200,7 +197,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
                        [3.0, 1.0, 0.7]
                        ]
         else:
-            if param2==3:
+            if param2 == 3:
                 trueVector = [
                        [2.0, 3.0, 0.7],
                        [3.0, 3.0, 0.7],
@@ -209,10 +206,11 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
                        [3.0, 3.0, 0.7]
                        ]
             else:
-                testFailCount+=1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+                testFailCount += 1
+                testMessages.append("FAILED: " + moduleWrap.ModelTag
+                                    + " Module failed with unsupported input parameters")
     else:
-        if param1==2:
+        if param1 == 2:
             trueVector = [
                        [3.0, 2.0, 0.7],
                        [4.0, 2.0, 0.7],
@@ -221,21 +219,19 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
                        [4.0, 2.0, 0.7]
                        ]
         else:
-            testFailCount+=1
+            testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.outputVector,
                                                                accuracy, "Output Vector",
                                                                testFailCount, testMessages)
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(dummyTrue, variableState,
-                                                               accuracy, "dummy parameter",
-                                                               testFailCount, testMessages)
+                                                                     accuracy, "dummy parameter",
+                                                                     testFailCount, testMessages)
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
@@ -253,6 +249,16 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     plt.xlabel('Time [s]')
     plt.ylabel('Variable Description [unit]')
     plt.suptitle('Title of Sample Plot')
+
+    plt.figure(2)
+    for idx in range(3):
+        plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.outputVector[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'$s_' + str(idx) + '$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel(r'Msg Output Vector States')
+
     if show_plots:
         plt.show()
 
