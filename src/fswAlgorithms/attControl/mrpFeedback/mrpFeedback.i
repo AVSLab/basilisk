@@ -31,25 +31,20 @@
 %constant void Reset_mrpFeedback(void*, uint64_t, uint64_t);
 %ignore Reset_mrpFeedback;
 ARRAYASLIST(FSWdeviceAvailability)
-GEN_SIZEOF(RWAvailabilityFswMsg);
-GEN_SIZEOF(mrpFeedbackConfig);
-GEN_SIZEOF(AttGuidMsgPayload);
-GEN_SIZEOF(VehicleConfigMsgPayload);
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedIntMsg);
-struct CmdTorqueBodyMsg_C;
-struct AttGuidMsg_C;
-struct VehicleConfigMsg_C;
+
 %include "mrpFeedback.h"
+
 %include "cMsgPayloadDef/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
 %include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 
-GEN_SIZEOF(CmdTorqueBodyMsgPayload);
 
 %pythoncode %{
 import sys

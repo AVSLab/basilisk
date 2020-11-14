@@ -96,6 +96,12 @@ Updating a C Module
       The input messages are connected when then Basilisk simulation is scripted in python.  No
       additional code is required in your C code.
 
+    - To create a local copy of the message content (payload) itself, use
+
+      .. code:: cpp
+
+        ModuleFswMsgPayload msgBuffer;
+
     - To read in a message, replace
 
       .. code:: cpp
@@ -109,7 +115,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         ModuleFswMsg msgBuffer;
+         ModuleMsgPayload msgBuffer;
          msgBuffer = ModuleMsg_C_read(&configData->moduleInMsg);
 
       - To check is an input message has been connected to, check the value of ``ModuleMsg_C_isLinked()``
@@ -119,7 +125,7 @@ Updating a C Module
 
 
     - To write to an output message, assuming ``outputMsgBuffer`` is a local variable holding
-      the message content, replace
+      the message content (payload), replace
 
       .. code:: cpp
 
@@ -130,22 +136,19 @@ Updating a C Module
 
       .. code:: cpp
 
-         ModuleMsg_C_write(&outputMsgBuffer, &configData->moduleOutMsg);
+         ModuleMsg_C_write(&outputMsgBuffer, &configData->moduleOutMsg, callTime);
 
 #. Updating the ``module.i`` file:
 
-    - In the ``GEN_SIZEOF()`` commands, update the message from ``ModuleFswMsg`` to ``ModuleMsg``
-    - Add this structure definition
+    - In the ``GEN_SIZEOF()`` commands used to be used to get the size of a message in Python.  This is no longer
+      required with the new message system.  Thus, these ``GEN_SIZEOF()`` commands can be removed.  To create and access
+      messages from Python the ``message2`` package is now used.
+    - Update the ``#include`` statement and add the ``struct`` statement to red
 
       .. code:: cpp
 
+         %include "cMsgPayloadDef/ModuleMsgPayload.h"
          struct ModuleMsg_C;
-
-    - Update the ``#include`` statement to
-
-      .. code:: cpp
-
-         %include "cMsgDefinition/ModuleMsg.h"
 
 
 Updating a C++ Module
@@ -157,7 +160,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "cMsgDefinition/OutputMsg.h"
+         #include "cMsgPayloadDef/OutputMsgPayload.h"
 
     - Add the include statement for the new message system using:
 
@@ -263,7 +266,10 @@ Updating a C++ Module
 
 #. Updating the ``module.i`` file:
 
-    - In the ``GEN_SIZEOF()`` commands, update the message from ``ModuleFswMsg`` to ``ModuleMsg``
+    - In the ``GEN_SIZEOF()`` commands used to be used to get the size of a message in Python.  This is no longer
+      required with the new message system.  Thus, these ``GEN_SIZEOF()`` commands can be removed.  To create and access
+      messages from Python the ``message2`` package is now used.
+
     - Update the message definition include statement from
 
       .. code:: cpp
@@ -274,5 +280,5 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         %include "cMsgDefinition/OutputMsg.h"
+         %include "cMsgPayloadDef/OutputMsgPayload.h"
 

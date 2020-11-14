@@ -167,7 +167,7 @@ Variables holding data from a read message are to be composed in the following m
 
 .. code:: cpp
 
-   RWCmdStruct rwCommandInBuffer;
+   RWCmdMsgPayload rwCommandInBuffer;
 
 -  ``rwCommand``: description of the data.
 -  ``In`` (``Out``): indicates the direction of the data being written
@@ -179,10 +179,10 @@ Variables holding data from a read message are to be composed in the following m
 
 Message Definitions
 ~~~~~~~~~~~~~~~~~~~
-The C based messages are stored in ``src/cMsgDefinition`` as a ``*.h`` file.
+The C based messages are stored in ``src/cMsgPayloadDef`` as a ``*.h`` file.
 The file name uses Upper Camel Case and should be identical to the message name within the file.
-The last three letters should be ``Msg``.
-For example, a particular spacecraft sensor message could be named ``SpecialSensorMsg.h``.  The contents
+The last  letters should be ``MsgPayload``.
+For example, a particular spacecraft sensor message could be named ``SpecialSensorMsgPayload.h``.  The contents
 could be
 
 .. code:: cpp
@@ -195,7 +195,7 @@ could be
         double sensorOutput_B[3];   //!<        sensor vector in B frame components */
         double sensorSignal;        //!<        raw sensor signal
         int status;                 //!<        sensor status flag
-    }SpecialSensorMsg;
+    }SpecialSensorMsgPayload;
 
     #endif
 

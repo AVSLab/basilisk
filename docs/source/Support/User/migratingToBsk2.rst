@@ -30,30 +30,21 @@ Rather, the messages have become smart objects that can be directly connected to
 while before we had ``stateOutMsgName`` and ``stateOutMsgId`` variables, now a single msg variable named
 ``stateOutMsg`` is used.   See :ref:`codingGuidelines` for more info on message naming.
 
-Logged Data
------------
-The logging of messages is much simplified.  There are a few changes to note in the format of the logged data.
+Importing Message Definitions
+-----------------------------
+All message payload definitions are now stored contained in the ``message2`` package, providing a
+unified interface to all flight software and simulation messages.  Thus, instead of importing::
 
-Here is some sample code.  The only line required to log the state output message use::
+    from Basilisk.fswAlgorithms import fswMessages
 
-    attErrorLog = attErrorConfig.attGuidOutMsg.log()
+just import ``message2`` using::
 
-This creates an object that can be added to a task list through::
+    from Basilisk.simulation import messaging2
 
-    scSim.AddModelToTask(logTaskName, attErrorLog)
-
-The update rate of ``logTaskName`` controls the frequency at which this message is logged.
-
-That is it.  The data is now logged into ``attErrorLog`` automatically during the simulation run.
-In the new messaging system  the time information is no longer pre-pended in a first column, but rather provided as a
-separate array accessed through ``.times()``.  This means logging `N` time steps of a 3D vector no longer no longer
-yields a `Nx4` array, but rather a `Nx3` array.  Some plotting or value checking logic might have to be updated.
-For example, to plot using the log data use::
-
-    for idx in range(3):
-        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx])
-
-
+Configuring Module Input/Output Message Names
+---------------------------------------------
+The Basilisk modules no longer use message names.  Rather, the message objects now direct are connected
+to each other within Python.  Thus, the BSK module doesn't have to set message names from Python.
 
 Module and Message Naming Changes
 ---------------------------------
@@ -67,7 +58,7 @@ This list makes it simple to see what naming will need to be changed.
     :widths: 40 30 30
 
     +---------------------------+-------------------------------+-----------------------------------+
-    | Module Name               | Old Msg Name                  | New Msg Interface Name            |
+    | Module Name               | Old Msg Name                  | New Msg Interface                 |
     +===========================+===============================+===================================+
     | attTrackingError          | ``outputDataMessage``         | ``attGuidOutMsg``                 |
     +                           +-------------------------------+-----------------------------------+
@@ -145,6 +136,31 @@ This is done using::
 
 It does not matter if these message interfaces are based in C or C++. The ``subscribeTo()`` method handles this
 automatically.
+
+Logged Data
+-----------
+The logging of messages is much simplified.  There are a few changes to note in the format of the logged data.
+
+Here is some sample code.  The only line required to log the state output message use::
+
+    attErrorLog = attErrorConfig.attGuidOutMsg.log()
+
+This creates an object that can be added to a task list through::
+
+    scSim.AddModelToTask(logTaskName, attErrorLog)
+
+The update rate of ``logTaskName`` controls the frequency at which this message is logged.
+
+That is it.  The data is now logged into ``attErrorLog`` automatically during the simulation run.
+In the new messaging system  the time information is no longer pre-pended in a first column, but rather provided as a
+separate array accessed through ``.times()``.  This means logging `N` time steps of a 3D vector no longer no longer
+yields a `Nx4` array, but rather a `Nx3` array.  Some plotting or value checking logic might have to be updated.
+For example, to plot using the log data use::
+
+    for idx in range(3):
+        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx])
+
+
 
 Miscellaneous Changes
 ---------------------
