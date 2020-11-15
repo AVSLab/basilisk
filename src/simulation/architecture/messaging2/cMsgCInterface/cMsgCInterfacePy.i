@@ -20,5 +20,6 @@
 
 %module cMsgCInterfacePy
 %include "swig_conly_data.i"
+%include "std_vector.i"
 
 %include ../dist3/autoSource/cMsgCInterfacePy.auto.i
