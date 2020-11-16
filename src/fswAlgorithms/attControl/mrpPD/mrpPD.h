@@ -21,9 +21,9 @@
 #define _MRP_PD_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
@@ -40,13 +40,11 @@ typedef struct {
     double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
 
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];               //!< The name of the output message
-    int32_t controlOutMsgId;                                //!< [] ID for the outgoing body accel requests
-    char inputGuidName[MAX_STAT_MSG_LENGTH];                //!< The name of the Input message
-    int32_t guidInMsgId;                                    //!< [] ID for the incoming guidance errors
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the Input message
-    int32_t vehicleConfigDataInMsgId;                       //!< [] ID for the incoming static vehicle data
-    BSKLogger *bskLogger;                             //!< BSK Logging
+    CmdTorqueBodyMsg_C cmdTorqueOutMsg;                 //!< commanded torque output message
+    AttGuidMsg_C guidInMsg;                             //!< attitude guidance input message
+    VehicleConfigMsg_C vehConfigInMsg;                  //!< vehicle configuration input message
+
+    BSKLogger *bskLogger;                               //!< BSK Logging
 
 }MRP_PDConfig;
 

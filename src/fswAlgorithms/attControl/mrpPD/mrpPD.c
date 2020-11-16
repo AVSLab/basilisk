@@ -17,11 +17,11 @@
 
  */
 /*
-    MRP_PD Module
+    mrpPD Module
  
  */
 
-#include "attControl/MRP_PD/MRP_PD.h"
+#include "attControl/mrpPD/mrpPD.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>
@@ -35,10 +35,8 @@
 */
 void SelfInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
 {
-        /*! - Create output message for module */
-    configData->controlOutMsgId = CreateNewMessage(configData->outputDataName,
-        sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
-
+    /*! - Create output message for module */
+    CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 
 }
 
@@ -50,11 +48,6 @@ void SelfInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
 */
 void CrossInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message IDs*/
-    configData->guidInMsgId = subscribeToMessage(configData->inputGuidName,
-                                                 sizeof(AttGuidFswMsg), moduleID);
-    configData->vehicleConfigDataInMsgId = subscribeToMessage(configData->inputVehicleConfigDataName,
-                                                              sizeof(VehicleConfigFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -66,15 +59,11 @@ void CrossInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
 */
 void Reset_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-    VehicleConfigFswMsg   sc;               /* spacecraft configuration message */
+    VehicleConfigMsgPayload   sc;               /*!< spacecraft configuration message */
 
     /*! - read in spacecraft configuration message */
-    memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
-    ReadMessage(configData->vehicleConfigDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(VehicleConfigFswMsg), (void*) &sc, moduleID);
-    mCopy(sc.ISCPntB_B, 1, 9, configData->ISCPntB_B);
+    VehicleConfigMsgPayload vcInMsg = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
+    mCopy(vcInMsg.ISCPntB_B, 1, 9, configData->ISCPntB_B);
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
@@ -87,24 +76,20 @@ void Reset_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID)
 void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-    double              Lr[3];              /* required control torque vector [Nm] */
-    double              omega_BN_B[3];      /* Inertial angular body vector in body B-frame components */
-    CmdTorqueBodyIntMsg controlOutMsg;      /* Control output requests */
-    AttGuidFswMsg       guidInMsg;          /* Guidance Message */
+    double              Lr[3];                  /*!< required control torque vector [Nm] */
+    double              omega_BN_B[3];          /*!< Inertial angular body vector in body B-frame components */
+    CmdTorqueBodyMsgPayload controlOutMsg;      /*!< Control output requests */
+    AttGuidMsgPayload       guidInMsg;          /*!< Guidance Message */
     double              v3_temp1[3];
     double              v3_temp2[3];
     double              v3_temp3[3];
     double              v3_temp4[3];
 
     /*! - zero the output message copy */
-    memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
+    memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyMsgPayload));
 
     /*! - Read the guidance input message */
-    memset(&guidInMsg, 0x0, sizeof(AttGuidFswMsg));
-    ReadMessage(configData->guidInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttGuidFswMsg), (void*) &(guidInMsg), moduleID);
+    guidInMsg = AttGuidMsg_C_read(&configData->guidInMsg);
 
     /*! - Compute angular body rate */
     v3Add(guidInMsg.omega_BR_B, guidInMsg.omega_RN_B, omega_BN_B);
@@ -132,8 +117,7 @@ void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime,
 
     /*! - Store and write the output message */
     v3Copy(Lr, controlOutMsg.torqueRequestBody);
-    WriteMessage(configData->controlOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &controlOutMsg, moduleID);
+    CmdTorqueBodyMsg_C_write(&controlOutMsg, &configData->cmdTorqueOutMsg, callTime);
     
     return;
 }

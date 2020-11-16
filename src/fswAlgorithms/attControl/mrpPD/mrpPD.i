@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module MRP_PD
+%module mrpPD
 %{
-   #include "MRP_PD.h"
+   #include "mrpPD.h"
 %}
 
 %include "swig_conly_data.i"
@@ -30,15 +30,15 @@
 %ignore CrossInit_MRP_PD;
 %constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_PD;
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-GEN_SIZEOF(MRP_PDConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
 
-%include "MRP_PD.h"
+%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+
+%include "mrpPD.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

@@ -9,7 +9,7 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 .. _ModuleIO_MRP_PD:
-.. figure:: /../../src/fswAlgorithms/attControl/MRP_PD/_Documentation/Images/moduleIOMrpPd.svg
+.. figure:: /../../src/fswAlgorithms/attControl/mrpPD/_Documentation/Images/moduleIOMrpPd.svg
     :align: center
 
     Figure 1: ``MRP_PD()`` Module I/O Illustration
@@ -20,9 +20,11 @@ provides information on what this message is used for.
     +-------------------------------+-------------------------------+-----------------------------------------------+
     | Msg Variable Name             | Msg Type                      | Description                                   |
     +===============================+===============================+===============================================+
-    | outputDataName                | :ref:`CmdTorqueBodyIntMsg`    | Commanded external torque output message      |
+    | cmdTorqueOutMsg               | :ref:`CmdTorqueBodyMsgPayload`| Commanded external torque output message      |
     +-------------------------------+-------------------------------+-----------------------------------------------+
-    | inputVehicleConfigDataName    | :ref:`VehicleConfigFswMsg`    | Vehicle configuration input message           |
+    | vehConfigInMsg                | :ref:`VehicleConfigMsgPayload`| Vehicle configuration input message           |
+    +-------------------------------+-------------------------------+-----------------------------------------------+
+    | guidInMsg                     | :ref:`VehicleConfigMsgPayload`| Vehicle configuration input message           |
     +-------------------------------+-------------------------------+-----------------------------------------------+
 
 Detailed Module Description

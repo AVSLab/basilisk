@@ -86,6 +86,12 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRWSpeedsName``         | ``rwSpeedsInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | MRP_PD →                  | ``outputDataName``            | ``cmdTorqueOutMsg``               |
+    + ``mrpPD``                 +-------------------------------+-----------------------------------+
+    |                           | ``inputGuidName``             | ``guidInMsg``                     |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputVehicleConfigDataName``| ``vehConfigInMsg``                |
+    +---------------------------+-------------------------------+-----------------------------------+
     | simple_nav →              | ``outputAttMessage``          | ``attOutMsg``                     |
     + ``simpleNav``             +-------------------------------+-----------------------------------+
     |                           | ``outputTransMessage``        | ``transOutMsg``                   |

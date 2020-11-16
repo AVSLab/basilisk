@@ -31,8 +31,9 @@ path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import MRP_PD  # import the module that is to be tested
+from Basilisk.fswAlgorithms import mrpPD  # import the module that is to be tested
 from Basilisk.utilities import macros
+from Basilisk.simulation import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -85,18 +86,14 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = MRP_PD.MRP_PDConfig()
+    moduleConfig = mrpPD.MRP_PDConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "MRP_PD"
+    moduleWrap.ModelTag = "mrpPD"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputGuidName = "inputGuidName"
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-    moduleConfig.outputDataName = "outputName"
-
     moduleConfig.K = 0.15
     moduleConfig.P = 150.0
     if setExtTorque:
@@ -105,23 +102,27 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = MRP_PD.AttGuidFswMsg()  # Create a structure for the input message
+    guidCmdData = messaging2.AttGuidMsgPayload()
     guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
     guidCmdData.omega_RN_B = [-0.02, -0.01, 0.005]
     guidCmdData.domega_RN_B = [0.0002, 0.0003, 0.0001]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.inputGuidName, guidCmdData)
+    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfig FSW Message:
-    vehicleConfigOut = MRP_PD.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = [1000., 0., 0.,
+    vehicleConfigIn = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigIn.ISCPntB_B = [1000., 0., 0.,
                                   0., 800., 0.,
                                   0., 0., 800.]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
-                               moduleConfig.inputVehicleConfigDataName, vehicleConfigOut)
+    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigIn)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    dataLog = moduleConfig.cmdTorqueOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -130,20 +131,14 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(3)))
-
-    trueVector = [findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut)]*3
+    trueVector = [findTrueTorques(moduleConfig, guidCmdData, vehicleConfigIn)]*3
     # print trueVector
 
     # compare the module results to the truth values
     accuracy = 1e-12
     print("accuracy = " + str(accuracy))
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.torqueRequestBody, accuracy,
                                                                "torqueRequestBody", testFailCount, testMessages)
 
     snippentName = "passFail" + str(setExtTorque)
