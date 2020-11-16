@@ -30,7 +30,6 @@
 %ignore CrossInit_mrpFeedback;
 %constant void Reset_mrpFeedback(void*, uint64_t, uint64_t);
 %ignore Reset_mrpFeedback;
-ARRAYASLIST(FSWdeviceAvailability)
 
 %include "mrpFeedback.h"
 
@@ -38,12 +37,15 @@ ARRAYASLIST(FSWdeviceAvailability)
 struct AttGuidMsg_C;
 %include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
-%include "../../fswMessages/rwAvailabilityFswMsg.h"
-%include "../../fswUtilities/fswDefinitions.h"
+%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "cMsgPayloadDef/RWAvailabilityMsgPayload.h"
+struct RWAvailabilityMsg_C;
+
 
 
 %pythoncode %{

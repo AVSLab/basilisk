@@ -37,7 +37,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
 */
-void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
+void SelfInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
@@ -55,25 +55,11 @@ void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
+void CrossInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->rwParamsInMsgId = -1;
-    configData->rwSpeedsInMsgId = -1;
-    configData->rwAvailInMsgId = -1;
-
-    if(strlen(configData->rwParamsInMsgName) > 0) {
-        configData->rwParamsInMsgId = subscribeToMessage(configData->rwParamsInMsgName,
-                                                       sizeof(RWArrayConfigFswMsg), moduleID);
-        if (strlen(configData->inputRWSpeedsName) > 0) {
-        configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
-                                                         sizeof(RWSpeedIntMsg), moduleID);
-        } else {
-            _bskLog(configData->bskLogger, BSK_ERROR, "Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
-        }
-        if(strlen(configData->rwAvailInMsgName) > 0) {
-            configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,
-                                                             sizeof(RWAvailabilityFswMsg), moduleID);
+    if(RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
+        if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
+            _bskLog(configData->bskLogger, BSK_ERROR, "Error: the rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 }
@@ -85,7 +71,7 @@ void CrossInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with the MRP steering control
  @param moduleID The module identifier
 */
-void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpFeedback(MrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
     uint64_t timeOfMsgWritten;
@@ -105,11 +91,9 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
     configData->rwConfigParams.numRW = 0;
 
     /*! - check if RW configuration message exists */
-    if (configData->rwParamsInMsgId >= 0) {
-        /*! - Zero and Read static RW config data message and store it in module variables*/
-        memset(&(configData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
-        ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
+    if (RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
+        /*! - Read static RW config data message and store it in module variables*/
+        configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
     }
 
     /*! - Reset the integral measure of the rate tracking error */
@@ -127,12 +111,12 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
+void Update_mrpFeedback(MrpFeedbackConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
     AttGuidMsgPayload      guidCmd;            /* attitude tracking error message */
-    RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */
-    RWAvailabilityFswMsg wheelsAvailability; /* Reaction wheel availability message */
+    RWSpeedMsgPayload      wheelSpeeds;        /* Reaction wheel speed message */
+    RWAvailabilityMsgPayload wheelsAvailability; /* Reaction wheel availability message */
     CmdTorqueBodyMsgPayload controlOut;        /* output message */
 
     uint64_t            timeOfMsgWritten;
@@ -164,13 +148,10 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
 
     /*! - read in optional RW speed and availability message */
     if(configData->rwConfigParams.numRW > 0) {
-        memset(&wheelSpeeds, 0x0, sizeof(RWSpeedIntMsg));
-        ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
-        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); /* wheelAvailability set to 0 (AVAILABLE) by default */
-        if (configData->rwAvailInMsgId >= 0){
-            ReadMessage(configData->rwAvailInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                        sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
+        wheelSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
+        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityMsgPayload)); /* wheelAvailability set to 0 (AVAILABLE) by default */
+        if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg)) {
+            wheelsAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
         }
     }
 

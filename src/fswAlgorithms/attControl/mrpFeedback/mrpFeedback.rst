@@ -23,19 +23,19 @@ provides information on what this message is used for.
     +-----------------------+-----------------------------------+---------------------------------------------------+
     | Msg Variable Name     | Msg Type                          | Description                                       |
     +=======================+===================================+===================================================+
-    | cmdTorqueOutMsg       | :ref:`CmdTorqueBodyMsg`           | Control torque output message                     |
+    | cmdTorqueOutMsg       | :ref:`CmdTorqueBodyMsgPayload`    | Control torque output message                     |
     +-----------------------+-----------------------------------+---------------------------------------------------+
-    | guidInMsg             | :ref:`AttGuidMsg`                 | The name of the attitude guidance input message   |
+    | guidInMsg             | :ref:`AttGuidMsgPayload`          | The name of the attitude guidance input message   |
     +-----------------------+-----------------------------------+---------------------------------------------------+
-    | vehConfigInMsg        | :ref:`VehicleConfigMsg`           | Name of the vehicle configuration input message   |
+    | vehConfigInMsg        | :ref:`VehicleConfigMsgPayload`    | Name of the vehicle configuration input message   |
     +-----------------------+-----------------------------------+---------------------------------------------------+
-    | rwParamsInMsgName     | :ref:`RWArrayConfigFswMsg`        | (Optional) The name of the RW array configuration |
+    | rwParamsInMsg         | :ref:`RWArrayConfigMsgPayload`    | (Optional) The name of the RW array configuration |
     |                       |                                   | input message                                     |
     +-----------------------+-----------------------------------+---------------------------------------------------+
-    | inputRWSpeedsName     | :ref:`RWSpeedIntMsg`              | (Optional) The name for the reaction wheel speeds |
+    | rwSpeedsInMsg         | :ref:`RWSpeedMsgPayload`          | (Optional) The name for the reaction wheel speeds |
     |                       |                                   | message                                           |
     +-----------------------+-----------------------------------+---------------------------------------------------+
-    | rwAvailInMsgName      | :ref:`RWAvailabilityFswMsg`       | (Optional) The name of the RWs availability       |
+    | rwAvailInMsg          | :ref:`RWAvailabilityMsgPayload`   | (Optional) The name of the RWs availability       |
     |                       |                                   | message                                           |
     +-----------------------+-----------------------------------+---------------------------------------------------+
 
@@ -175,6 +175,6 @@ This module requires the following variables from the required input messages:
 
 The gains :math:`K` and :math:`P` must be set to positive values.  The integral gain :math:`K_i` is optional, it is a negative number by default. Setting this variable to a negative number disables the error integration for the controller, leaving just PD terms. The integrator is required to maintain asymptotic tracking in the presence of an external disturbing torque.  The ``integralLimit`` is a scalar value applied in an element-wise check to ensure that the value of each element of the :math:`\int_{t_{0}}^{t} \pmb\sigma \text{d}t` vector is within the desired limit. If not, the sign of that element is persevered, but the magnitude is replaced by ``integralLimit``.
 
-If the ``rwParamsInMsgName`` is specified, then the associated ``inputRWSpeedsName`` is required as well.
+If the ``rwParamsInMsg`` is specified, then the associated ``rwSpeedsInMsg`` is required as well.
 
-The ``rwAvailInMsgName`` is optional and is used to selectively include RW devices in the control solution.
+The ``rwAvailInMsg`` is optional and is used to selectively include RW devices in the control solution.

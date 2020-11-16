@@ -156,6 +156,15 @@ Updating a C Module
 
          %include "cMsgPayloadDef/ModuleMsgPayload.h"
          struct ModuleMsg_C;
+    - Any custom Swig'd interfaces to access message content, such as
+
+      .. code:: cpp
+
+         ARRAYASLIST(FSWdeviceAvailability)
+
+      should be removed the ``module.i`` file and moved to ``src/simulation/architecture/messaging2/messaging2.i``
+      file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
+      Basilisk python script.
 
 #. Updating the ``module.rst`` documentation file:
 
@@ -293,6 +302,16 @@ Updating a C++ Module
       .. code:: cpp
 
          %include "cMsgPayloadDef/OutputMsgPayload.h"
+
+    - Any custom Swig'd interfaces to access message content, such as
+
+      .. code:: cpp
+
+         %template(RWConfigVector) vector<RWConfigSimMsg>;
+
+      should be removed the ``module.i`` file and moved to ``src/simulation/architecture/messaging2/messaging2.i``
+      file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
+      Basilisk python script.
 
 #. Updating the ``module.rst`` documentation file:
 

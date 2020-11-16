@@ -85,6 +85,10 @@ This list makes it simple to see what naming will need to be changed.
     |                           | ``vehConfigInMsgName``        | ``vehConfigInMsg``                |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRWSpeedsName``         | ``rwSpeedsInMsg``                 |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``rwAvailInMsgName``          | ``rwAvailInMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``rwParamsInMsgName``         | ``rwParamsInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
     | MRP_PD →                  | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     + ``mrpPD``                 +-------------------------------+-----------------------------------+

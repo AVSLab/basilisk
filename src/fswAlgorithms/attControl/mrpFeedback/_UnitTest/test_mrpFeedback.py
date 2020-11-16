@@ -40,8 +40,8 @@ import numpy as np
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import MRP_Feedback
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms import mrpFeedback
+from Basilisk.simulation import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -112,7 +112,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = MRP_Feedback.MRP_FeedbackConfig()
+    moduleConfig = mrpFeedback.MrpFeedbackConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "MRP_Feedback"
 
@@ -120,26 +120,15 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     #   Initialize the test module configuration data
-
-    moduleConfig.inputGuidName  = "inputGuidName"
-    moduleConfig.vehConfigInMsgName  = "vehicleConfigName"
-    if rwNum > 0:
-        moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
-    moduleConfig.outputDataName = "outputName"
-
-    moduleConfig.K  =   0.15
+    moduleConfig.K = 0.15
     moduleConfig.Ki = intGain
-    moduleConfig.P  = 150.0
+    moduleConfig.P = 150.0
     moduleConfig.integralLimit = integralLimit
     moduleConfig.knownTorquePntB_B = [1., 1., 1.]
 
-
-    #   Create input message and size it because the regular creator of that message
-    #   is not part of the test.
-
+    # create input messages
     #   AttGuidFswMsg Message:
-    guidCmdData = MRP_Feedback.AttGuidFswMsg()  # Create a structure for the input message
+    guidCmdData = messaging2.AttGuidMsgPayload()
     sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = [0.010, -0.020, 0.015]
@@ -148,38 +137,27 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = [0.0002, 0.0003, 0.0001]
     guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.inputGuidName,
-                               guidCmdData)
+    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
+    vehicleConfig = messaging2.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
+    vehicleConfig.ISCPntB_B = I
+    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfig)
 
     # wheelSpeeds Message
-    rwSpeedMessage = MRP_Feedback.RWSpeedIntMsg()
-    Omega = [10.0, 25.0, 50.0, 100.0] # rad/sec
+    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
+    Omega = [10.0, 25.0, 50.0, 100.0]  # rad/sec
     rwSpeedMessage.wheelSpeeds = Omega
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.inputRWSpeedsName,
-                               rwSpeedMessage)
-
-
+    rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
     jsList = []
     GsMatrix_B = []
     def writeMsgInWheelConfiguration():
-        rwConfigParams = MRP_Feedback.RWArrayConfigFswMsg()
+        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
 
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
@@ -189,45 +167,44 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = rwNum
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   moduleConfig.rwParamsInMsgName,
-                                   rwConfigParams)
-        jsList = rwConfigParams.JsList
-        GsMatrix_B = rwConfigParams.GsMatrix_B
-        return jsList, GsMatrix_B
+        msg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+        return rwConfigParams.JsList, rwConfigParams.GsMatrix_B, msg
 
-    if len(moduleConfig.rwParamsInMsgName) > 0:
-        jsList, GsMatrix_B = writeMsgInWheelConfiguration()
+    if rwNum > 0:
+        jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
 
     # wheelAvailability message
-    rwAvailabilityMessage = fswMessages.RWAvailabilityFswMsg()
+    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
     if useRwAvailability != "NO":
-        moduleConfig.rwAvailInMsgName = "rw_availability"
         if useRwAvailability == "ON":
-            rwAvailabilityMessage.wheelAvailability  = [MRP_Feedback.AVAILABLE, MRP_Feedback.AVAILABLE,
-                                                        MRP_Feedback.AVAILABLE, MRP_Feedback.AVAILABLE]
+            rwAvailabilityMessage.wheelAvailability = [messaging2.AVAILABLE, messaging2.AVAILABLE,
+                                                       messaging2.AVAILABLE, messaging2.AVAILABLE]
         elif useRwAvailability == "OFF":
-            rwAvailabilityMessage.wheelAvailability  = [MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE,
-                                                        MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE]
+            rwAvailabilityMessage.wheelAvailability = [messaging2.UNAVAILABLE, messaging2.UNAVAILABLE,
+                                                       messaging2.UNAVAILABLE, messaging2.UNAVAILABLE]
         else:
             print("WARNING: unknown rw availability status")
-
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   moduleConfig.rwAvailInMsgName,
-                                   rwAvailabilityMessage)
+        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
     else:
         # set default availability
-        rwAvailabilityMessage.wheelAvailability = [MRP_Feedback.AVAILABLE, MRP_Feedback.AVAILABLE,
-                                                   MRP_Feedback.AVAILABLE, MRP_Feedback.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = [messaging2.AVAILABLE, messaging2.AVAILABLE,
+                                                   messaging2.AVAILABLE, messaging2.AVAILABLE]
 
-
-    LrTrue = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList,
+    LrTrue = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfig, jsList,
                              rwNum, GsMatrix_B, rwAvailabilityMessage)
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    dataLog = moduleConfig.cmdTorqueOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
+    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    if rwNum > 0:
+        moduleConfig.rwParamsInMsg.subscribeTo(rwParamInMsg)
+        moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    if useRwAvailability != "NO":
+        moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     #   Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -241,20 +218,14 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-
-    #   This pulls the actual data log from the simulation run.
-    #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                    list(range(3)))
-
     # compare the module results to the truth values
     accuracy = 1e-8
     for i in range(0, len(LrTrue)):
         # check vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], LrTrue[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed mrpFeedback unit test at t="
+                                + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -334,7 +305,7 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
 if __name__ == "__main__":
     test_MRP_Feedback(False,    # showplots
                       0.01,     # intGain
-                      4,        # rwNum
+                      0,        # rwNum
                       0.0,      # integralLimit
                       "NO"      # useRwAvailability ("NO", "ON", "OFF")
                       )

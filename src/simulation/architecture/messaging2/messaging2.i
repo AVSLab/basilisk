@@ -27,6 +27,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "std_vector.i"
 %include "std_string.i"
 %include "utilities/macroDefinitions.h"
+%include "fswUtilities/fswDefinitions.h"
+
+ARRAYASLIST(FSWdeviceAvailability)
+
 %pythoncode %{
     import numpy as np
     from Basilisk.simulation import cMsgCInterfacePy
