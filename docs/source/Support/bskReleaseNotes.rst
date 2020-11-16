@@ -24,6 +24,7 @@ Version |release|
   ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
   ``protoc`` command each time the protobuffer message definitions changed.
 - centerRadiusCNN is now supported on all the platforms
+- Support Terminal Progress bar while running simulation
 
 Version 1.8.7
 -------------

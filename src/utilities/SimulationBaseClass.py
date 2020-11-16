@@ -41,7 +41,7 @@ except NameError:
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.simulation import simMessages
 from Basilisk.simulation import bskLogging
-
+from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 import warnings
 
 
@@ -410,7 +410,8 @@ class SimBaseClass:
                     minNextTime = CurrSimTime + LogValue.Period
         return minNextTime
 
-    def ExecuteSimulation(self, showPlots=None, livePlots=None, simComm=None, plottingFunc=None, plotArgs=None):
+    def ExecuteSimulation(self, showPlots=None, livePlots=None, simComm=None, plottingFunc=None, plotArgs=None,
+                          disableProgressBar=True):
         self.initializeEventChecks()
 
         #Live Plotting Thread
@@ -425,6 +426,7 @@ class SimBaseClass:
             nextPriority = self.pyProcList[0].pyProcPriority
             pyProcPresent = True
             nextStopTime = self.pyProcList[0].nextCallTime()
+        progressBar = SimulationProgressBar(self.StopTime, disableProgressBar)
         while (self.TotalSim.NextTaskTime <= self.StopTime):
             if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
                 self.nextEventTime = self.checkEvents()
@@ -433,6 +435,7 @@ class SimBaseClass:
                 nextStopTime = self.nextEventTime
                 nextPriority = -1
             self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
+            progressBar.update(self.TotalSim.NextTaskTime)
             nextPriority = -1
             nextStopTime = self.StopTime
             nextLogTime = self.RecordLogVars()
@@ -451,6 +454,8 @@ class SimBaseClass:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+        progressBar.update(self.StopTime)
+        progressBar.close()
         if simComm is not None:
             simComm.send("TERM")
         if showPlots:
