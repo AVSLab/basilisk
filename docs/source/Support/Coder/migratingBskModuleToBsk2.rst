@@ -129,6 +129,8 @@ Updating a C Module
 
       .. code:: cpp
 
+         memset(&outputMsgBuffer, 0x0, sizeof(ModuleFswMsg));
+         outputMsgBuffer.variable = 42;     // specify output msg values
          WriteMessage(configData->moduleOutMsgId, callTime, sizeof(ModuleIntMsg),
                  (void*) &(outputMsgBuffer), moduleID);
 
@@ -136,7 +138,12 @@ Updating a C Module
 
       .. code:: cpp
 
+         memset(&outputMsgBuffer, 0x0, sizeof(ModuleMsgPayload));
+         outputMsgBuffer.variable = 42;      // specify output msg values
          ModuleMsg_C_write(&outputMsgBuffer, &configData->moduleOutMsg, callTime);
+
+      Note that you should still zero the local ``outputMsgBuffer`` structure in C Modules such that the message
+      has zero default values if some fields are note set.
 
 #. Updating the ``module.i`` file:
 

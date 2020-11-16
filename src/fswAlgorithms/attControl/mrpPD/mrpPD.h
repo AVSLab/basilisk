@@ -46,16 +46,16 @@ typedef struct {
 
     BSKLogger *bskLogger;                               //!< BSK Logging
 
-}MRP_PDConfig;
+}MrpPDConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID);
-    void CrossInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID);
-    void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID);
+    void CrossInit_mrpPD(MrpPDConfig *configData, int64_t moduleID);
+    void Update_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }

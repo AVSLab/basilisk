@@ -33,7 +33,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void SelfInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
+void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
@@ -46,7 +46,7 @@ void SelfInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
+void CrossInit_mrpPD(MrpPDConfig *configData, int64_t moduleID)
 {
 }
 
@@ -57,7 +57,7 @@ void CrossInit_MRP_PD(MRP_PDConfig *configData, int64_t moduleID)
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Reset_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     VehicleConfigMsgPayload   sc;               /*!< spacecraft configuration message */
 
@@ -73,7 +73,7 @@ void Reset_MRP_PD(MRP_PDConfig *configData, uint64_t callTime, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_MRP_PD(MRP_PDConfig *configData, uint64_t callTime,
+void Update_mrpPD(MrpPDConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
     double              Lr[3];                  /*!< required control torque vector [Nm] */

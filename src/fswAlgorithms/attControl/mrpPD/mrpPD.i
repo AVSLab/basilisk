@@ -22,14 +22,14 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Update_MRP_PD;
-%constant void SelfInit_MRP_PD(void*, uint64_t);
-%ignore SelfInit_MRP_PD;
-%constant void CrossInit_MRP_PD(void*, uint64_t);
-%ignore CrossInit_MRP_PD;
-%constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Reset_MRP_PD;
+%constant void Update_mrpPD(void*, uint64_t, uint64_t);
+%ignore Update_mrpPD;
+%constant void SelfInit_mrpPD(void*, uint64_t);
+%ignore SelfInit_mrpPD;
+%constant void CrossInit_mrpPD(void*, uint64_t);
+%ignore CrossInit_mrpPD;
+%constant void Reset_mrpPD(void*, uint64_t, uint64_t);
+%ignore Reset_mrpPD;
 
 %include "cMsgPayloadDef/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
