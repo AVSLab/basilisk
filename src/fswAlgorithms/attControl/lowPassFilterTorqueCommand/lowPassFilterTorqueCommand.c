@@ -39,11 +39,8 @@
  */
 void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(CmdTorqueBodyIntMsg),
-                                                "CmdTorqueBodyIntMsg",
-                                                moduleID);
+    /*! - Initialize output message for module */
+    CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -54,10 +51,6 @@ void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *confi
  */
 void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->inputMsgID = subscribeToMessage(configData->inputDataName,
-                                                sizeof(CmdTorqueBodyIntMsg),
-                                                moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -93,10 +86,11 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
     uint32_t    sizeOfMsgWritten;
     double      v3[3];                      /*!<      3d vector sub-result */
     int         i;
+    CmdTorqueBodyMsgPayload controlOut;             /*!< -- Control output message */
 
     /*! - Read the input messages */
-    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(configData->Lr[0]), moduleID);
+    CmdTorqueBodyMsgPayload msgBuffer = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueInMsg);
+    v3Copy(msgBuffer.torqueRequestBody, configData->Lr[0]);
 
     /*
         check if the filter states must be reset
@@ -151,10 +145,8 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
     /*
         store the output message 
      */
-    v3Copy(configData->LrF[0], configData->controlOut.torqueRequestBody);
+    v3Copy(configData->LrF[0], controlOut.torqueRequestBody);
+    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, callTime);
     
-    WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(configData->controlOut), moduleID);
-
     return;
 }

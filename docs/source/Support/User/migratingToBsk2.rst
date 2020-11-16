@@ -74,6 +74,10 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRefName``              | ``attRefInMsg``                   |
     +---------------------------+-------------------------------+-----------------------------------+
+    | lowPassFilterTorqueCommand| ``outputDataName``            | ``cmdTorqueOutMsg``               |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputDataName``             | ``cmdTorqueInMsg``                |
+    +---------------------------+-------------------------------+-----------------------------------+
     | MRP_Feedback →            | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     + ``mrpFeedback``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
@@ -108,9 +112,9 @@ Import ``messages2`` to have access to all message definitions::
 
     from Basilisk.simulation import messaging2
 
-To create a message of type ``ParticularMsg``, first get a copy of the message structure using::
+To create the message content of type ``ParticularMsgPayload``, first get a copy of the message structure using::
 
-    msgData = messaging2.ParticularMsg()
+    msgData = messaging2.ParticularMsgPayload()
 
 Next, fill in ``msgData`` with the needed information.  The structure is always initialized to zero on creation.
 When done, use the following command to create the Msg object and get a copy for other modules to subscribe to.::
@@ -169,6 +173,6 @@ If from Python you access ``#define`` values of ``macroDefinitions.h``, such as:
     simFswInterfaceMessages.MAX_EFF_CNT
     fswMessages.MAX_EFF_CNT
 
-then you can now access these definitions using  ``message.i`` using::
+then you can now access these definitions using  ``messaging2.i`` using::
 
-    message.MAX_EFF_CNT
+    messaging2.MAX_EFF_CNT

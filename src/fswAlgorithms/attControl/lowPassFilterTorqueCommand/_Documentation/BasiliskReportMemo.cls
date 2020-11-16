@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesClass{IAC}[2015/03/30 v1.0 AVS Lab Software document class]
-\typeout{TYPESETTING in AVS Lab Software  Report...}
+\ProvidesClass{BasiliskReportMemo}[2015/03/30 v1.0 AVS Lab Software document class]
+\typeout{TYPESETTING in BSK Technical  Report...}
 
 \LoadClass[titlepage,11pt]{article}
 
@@ -21,7 +21,9 @@
 \RequirePackage{lastpage}
 %\RequirePackage[original,runin]{abstract}
 \RequirePackage[total={6.5in,9in},top=1in, left=1in]{geometry}
-\RequirePackage[colorlinks=false,hyperfootnotes=false]{hyperref}
+\RequirePackage[colorlinks=true,linkcolor=MidnightBlue,
+			urlcolor=MidnightBlue,
+		        citecolor=MidnightBlue,hyperfootnotes=false]{hyperref}
 \RequirePackage{url}
 \RequirePackage{titling}
 \RequirePackage[compact]{titlesec}
@@ -31,6 +33,7 @@
 \RequirePackage[absolute]{textpos}
 
 \renewcommand*{\familydefault}{\sfdefault}
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
 
 
 %
@@ -39,11 +42,13 @@
 \RequirePackage{fancyhdr}
 \fancyhead{}
 \fancyfoot{}
-\fancyhead[L]{\footnotesize Doc. ID: AVS-Sim-\ModuleName}
+\fancyhead[L]{\footnotesize Doc. ID: Basilisk-\ModuleName}
 \fancyhead[R]{\footnotesize Page \thepage \ of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
 
 
 %
@@ -52,46 +57,23 @@
 \newcommand{\makeCover}{
 
 \begin{textblock*}{6.625in}(2.25in,0.975in)
-	\includegraphics[width=3.5in]{Figures/AVSlogo.pdf}
+	\includegraphics[width=3.5in]{Figures/Basilisk-Logo.pdf}
 \end{textblock*}
 
 
 
 \begin{textblock*}{6.5in}(1in,3.5in)
 \centering
-\LARGE\bfseries \noindent Autonomous Vehicle Simulation (AVS) Laboratory\\
+\LARGE\bfseries \noindent \submiterInstitute\\
 \vskip 0.1in
-\noindent AVS-Sim Technical Memorandum\\
-\large\noindent Document ID: AVS-SIM-\ModuleName\\
+\noindent Basilisk Technical Memorandum\\
 \vskip 0.1in
-\noindent \MakeUppercase{\subject}
+\noindent \MakeUppercase{\ModuleName}
 \end{textblock*}
 
 ~\\
 \vskip 4.25in
-{\renewcommand{\arraystretch}{2}
-\noindent
-\begin{tabular}{|p{1.6in}|p{4.7in}|}
-\hline
-~Prepared by & \preparer\\
-\hline
-\end{tabular}
-}
-\vskip 0.2in
 
-{\renewcommand{\arraystretch}{2}
-\noindent
-\begin{tabular}{|p{6.46in}|}
-\hline
-~{\bfseries Status:}~~ \status \\
-\hline
-~{\bfseries Scope/Contents} \\
-\hline
-\summary \\
-\hline
-\end{tabular}
-}
-\vskip 0.2in
 }
 
 %

@@ -175,7 +175,7 @@ Updating a C++ Module
 
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated
-      ``int_32t`` message ID variable ``moduleOutMsgId`` with the public variable:
+      ``int_32t`` message ID variable ``moduleOutMsgId`` with the ``public`` variable:
 
       .. code:: cpp
 
@@ -185,13 +185,13 @@ Updating a C++ Module
 
     - For input messages, replace the ``std::string`` message name variable
       ``moduleInMsgName`` and associated
-      ``int_32t`` message ID variable ``moduleInMsgId`` with the public functor:
+      ``int_32t`` message ID variable ``moduleInMsgId`` with the ``public`` functor:
 
       .. code:: cpp
 
          ReadFunctor<InputMsg>   moduleInMsg;     //!< sensor input message
 
-    - If the module writes to an output message, then add the write functor as a private functor:
+    - If the module writes to an output message, then add the write functor as a ``private`` functor:
 
       .. code:: cpp
 

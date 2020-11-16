@@ -37,7 +37,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import lowPassFilterTorqueCommand       # import the module that is to be tested
 from Basilisk.utilities import macros
-
+from Basilisk.simulation import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -68,19 +68,13 @@ def subModuleTestFunction(show_plots):
 
     #   Construct algorithm and associated C++ container
     moduleConfig = lowPassFilterTorqueCommand.lowPassFilterTorqueCommandConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        lowPassFilterTorqueCommand.Update_lowPassFilterTorqueCommand,
-                                        lowPassFilterTorqueCommand.SelfInit_lowPassFilterTorqueCommand,
-                                        lowPassFilterTorqueCommand.CrossInit_lowPassFilterTorqueCommand,
-                                        lowPassFilterTorqueCommand.Reset_lowPassFilterTorqueCommand)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "lowPassFilterTorqueCommand"      # python name of test module.
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     #   Initialize the test module configuration data
-    moduleConfig.inputDataName  = "controlTorqueRaw"
-    moduleConfig.outputDataName = "controlTorqueFiltered"
     moduleConfig.wc = 0.1*math.pi*2                 #   [rad/s] continous time critical filter frequency
     moduleConfig.h = 0.5                            #   [s]     filter time step
     moduleConfig.reset = 1                          #           flag to initialize module states on first run
@@ -88,22 +82,16 @@ def subModuleTestFunction(show_plots):
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
-    inputMessageData = lowPassFilterTorqueCommand.CmdTorqueBodyIntMsg()
-    inputMessageSize = inputMessageData.getStructSize()                          # 3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputDataName,
-                                          inputMessageSize,
-                                          2)        # number of buffers (leave at 2 as default, don't make zero)
-    torqueRequest = [1.0, -0.5, 0.7]                # Set up a list as a 3-vector
-    inputMessageData.torqueRequestBody = torqueRequest   # Write torque request to input message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputDataName,
-                                          inputMessageSize,
-                                          0,
-                                          inputMessageData)             # write data into the simulator
+    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()
+    inputMessageData.torqueRequestBody = [1.0, -0.5, 0.7]
+    inMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
+
+    # setup msg connection
+    moduleConfig.cmdTorqueInMsg.subscribeTo(inMsg)
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
-    #unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".reset", testProcessRate)
+    outLog = moduleConfig.cmdTorqueOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, outLog)
 
     #   Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -117,11 +105,7 @@ def subModuleTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    #   This pulls the actual data log from the simulation run.
-    #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
-    LrF = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                    list(range(3)))
+    LrF = outLog.torqueRequestBody
 
     #   set the filtered output truth states
     LrFtrue = [
@@ -134,9 +118,9 @@ def subModuleTestFunction(show_plots):
 
     #   compare the module and truth results
     for i in range(0,len(LrFtrue)):
-        if not unitTestSupport.isArrayEqual(LrF[i],LrFtrue[i],3,1e-12):
+        if not unitTestSupport.isArrayEqual(LrF[i], LrFtrue[i], 3, 1e-12):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed LrFtrue unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 
