@@ -11,10 +11,10 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 .. _ModuleIO_MRP_Steering:
-.. figure:: /../../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/Images/moduleIOMrpSteering.svg
+.. figure:: /../../src/fswAlgorithms/attControl/mrpSteering/_Documentation/Images/moduleIOMrpSteering.svg
     :align: center
 
-    Figure 1: ``MRP_Steering()`` Module I/O Illustration
+    Figure 1: ``mrpSteering()`` Module I/O Illustration
 
 
 .. table:: Module I/O Messages
@@ -23,14 +23,14 @@ provides information on what this message is used for.
     +-----------------------+-----------------------------------+---------------------------------------------------+
     | Msg Variable Name     | Msg Type                          | Description                                       |
     +=======================+===================================+===================================================+
-    | inputGuidName         | :ref:`AttGuidFswMsg`              | Attitude guidance input message.                  |
+    | guidInMsg             | :ref:`AttGuidMsgPayload`          | Attitude guidance input message.                  |
     +-----------------------+-----------------------------------+---------------------------------------------------+
-    | outputDataName        | :ref:`RateCmdFswMsg`              | Rate command output message.                      |
+    | rateCmdOutMsg         | :ref:`RateCmdMsgPayload`          | Rate command output message.                      |
     +-----------------------+-----------------------------------+---------------------------------------------------+
 
 Detailed Module Description
 ---------------------------
-The following text describes the mathematics behind the ``MRP_Steering`` module.  Further information can also be
+The following text describes the mathematics behind the ``mrpSteering`` module.  Further information can also be
 found in the journal paper `Speed-Constrained Three-Axes Attitude Control Using Kinematic Steering <http://dx.doi.org/10.1016/j.actaastro.2018.03.022>`_.
 
 Steering Law Goals
@@ -227,21 +227,21 @@ to reduce this to a bang-band rate control, then this would yield a Lyapunov opt
 minimizes :math:`\dot V` subject to the allowable rate constraint :math:`\omega_{\text{max}}`.
 
 .. _ModuleIO_MRP_Steering_fSigmaOptionsA:
-.. figure:: /../../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/Images/fSigmaOptionsA.jpg
+.. figure:: /../../src/fswAlgorithms/attControl/mrpSteering/_Documentation/Images/fSigmaOptionsA.jpg
     :scale: 50 %
     :align: center
 
     Figure 2: :math:`\omega_{\text{max}}` dependency with :math:`K_{1} = 0.1`, :math:`K_{3} = 1`
 
 .. _ModuleIO_MRP_Steering_fSigmaOptionsB:
-.. figure:: /../../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/Images/fSigmaOptionsB.jpg
+.. figure:: /../../src/fswAlgorithms/attControl/mrpSteering/_Documentation/Images/fSigmaOptionsB.jpg
     :scale: 50 %
     :align: center
 
     Figure 3: :math:`K_{1}` dependency with :math:`\omega_{\text{max}}` = 1 deg/s, :math:`K_{3} = 1`
 
 .. _ModuleIO_MRP_Steering_fSigmaOptionsC:
-.. figure:: /../../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/Images/fSigmaOptionsC.jpg
+.. figure:: /../../src/fswAlgorithms/attControl/mrpSteering/_Documentation/Images/fSigmaOptionsC.jpg
     :scale: 50 %
     :align: center
 

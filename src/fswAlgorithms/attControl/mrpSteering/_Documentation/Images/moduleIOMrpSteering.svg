@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="997 594.3263 454 60.09746" width="454" height="60.09746">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="997 594.3263 454 60.09746" width="454" height="60.09746">
   <defs>
     <font-face font-family="Courier" font-size="12" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
       <font-face-src>
@@ -23,23 +23,21 @@
       </font-face-src>
     </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.12.1 
-    <dc:date>2020-01-20 15:57:55 +0000</dc:date>
-  </metadata>
-  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill="none" stroke-dasharray="none" fill-opacity="1">
+  <metadata> Produced by OmniGraffle 7.18\n2020-11-16 22:55:43 +0000</metadata>
+  <g id="Canvas_1" fill="none" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none">
     <title>Canvas 1</title>
-    <g id="Canvas_1: Layer 1">
+    <g id="Canvas_1_Layer_1">
       <title>Layer 1</title>
       <g id="Graphic_9">
         <text transform="translate(1313.5625 622.3672)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">RateCmdFswMsg</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">RateCmdMsgPayload</tspan>
         </text>
       </g>
       <g id="Graphic_2">
         <path d="M 1159.5 594.8263 L 1297.5 594.8263 C 1300.2614 594.8263 1302.5 597.06485 1302.5 599.8263 L 1302.5 648.9237 C 1302.5 651.68515 1300.2614 653.9237 1297.5 653.9237 L 1159.5 653.9237 C 1156.7386 653.9237 1154.5 651.68515 1154.5 648.9237 L 1154.5 599.8263 C 1154.5 597.06485 1156.7386 594.8263 1159.5 594.8263 Z" fill="#ffc0ff"/>
         <path d="M 1159.5 594.8263 L 1297.5 594.8263 C 1300.2614 594.8263 1302.5 597.06485 1302.5 599.8263 L 1302.5 648.9237 C 1302.5 651.68515 1300.2614 653.9237 1297.5 653.9237 L 1159.5 653.9237 C 1156.7386 653.9237 1154.5 651.68515 1154.5 648.9237 L 1154.5 599.8263 C 1154.5 597.06485 1156.7386 594.8263 1159.5 594.8263 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(1159.5 617.207)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="30.444" y="11">MRP_Steering</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="35.994" y="11">mrpSteering</tspan>
         </text>
       </g>
       <g id="Line_4">
@@ -50,17 +48,17 @@
       </g>
       <g id="Graphic_8">
         <text transform="translate(1313.5625 605.3672)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">outputDataName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">rateCmdOutMsg</tspan>
         </text>
       </g>
       <g id="Graphic_10">
         <text transform="translate(1013.5625 619.0099)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="32.822266" y="11">AttGuidFswMsg</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="4.017578" y="11">AttGuidMsgPayload</tspan>
         </text>
       </g>
       <g id="Graphic_11">
         <text transform="translate(1002 604.5099)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="54.621094" y="11">inputGuidName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="82.63477" y="11">guidInMsg</tspan>
         </text>
       </g>
     </g>

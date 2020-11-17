@@ -21,10 +21,9 @@
  
  */
 
-#include "attControl/MRP_Steering/MRP_Steering.h"
+#include "attControl/mrpSteering/mrpSteering.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-#include "fswMessages/rateCmdFswMsg.h"
 #include "simulation/utilities/astroConstants.h"
 #include <string.h>
 #include <math.h>
@@ -38,12 +37,9 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
+void SelfInit_mrpSteering(MrpSteeringConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-        sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
-
+    RateCmdMsg_C_init(&configData->rateCmdOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -52,11 +48,8 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
+void CrossInit_mrpSteering(MrpSteeringConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID from the input guidance message */
-    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
-                                                 sizeof(AttGuidFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -66,7 +59,7 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpSteering(MrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
 }
@@ -78,29 +71,26 @@ void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, int64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime,
+void Update_mrpSteering(MrpSteeringConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    AttGuidFswMsg guidCmd;              /* Guidance Message */
-    RateCmdFswMsg outMsg;               /* copy of output message */
+    AttGuidMsgPayload guidCmd;              /* Guidance Message */
+    RateCmdMsgPayload outMsg;               /* copy of output message */
     uint64_t      timeOfMsgWritten;
     uint32_t      sizeOfMsgWritten;
     
     /*! - Zero message copies*/
-    memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
-    memset(&outMsg, 0x0, sizeof(RateCmdFswMsg));
+    memset(&outMsg, 0x0, sizeof(RateCmdMsgPayload));
 
     /*! - Read the dynamic input messages */
-    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
+    guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);
 
     /*! - evalute MRP kinematic steering law */
     MRPSteeringLaw(configData, guidCmd.sigma_BR, outMsg.omega_BastR_B, outMsg.omegap_BastR_B);
 
     /*! - Store the output message and pass it to the message bus */
-    WriteMessage(configData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
-                 (void*) &(outMsg), moduleID);
-    
+    RateCmdMsg_C_write(&outMsg, &configData->rateCmdOutMsg, callTime);
+
     return;
 }
 
@@ -113,7 +103,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime,
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates
  */
-void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
+void MRPSteeringLaw(MrpSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
 {
     double  sigma_i;        /* ith component of sigma_B/R */
     double  B[3][3];        /* B-matrix of MRP differential kinematic equations */

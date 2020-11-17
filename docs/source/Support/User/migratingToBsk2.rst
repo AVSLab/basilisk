@@ -96,6 +96,10 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputVehicleConfigDataName``| ``vehConfigInMsg``                |
     +---------------------------+-------------------------------+-----------------------------------+
+    | MRP_Steering →            | ``outputDataName``            | ``rateCmdOutMsg``                 |
+    + ``mrpSteering``           +-------------------------------+-----------------------------------+
+    |                           | ``inputGuidName``             | ``guidInMsg``                     |
+    +---------------------------+-------------------------------+-----------------------------------+
     | simple_nav →              | ``outputAttMessage``          | ``attOutMsg``                     |
     + ``simpleNav``             +-------------------------------+-----------------------------------+
     |                           | ``outputTransMessage``        | ``transOutMsg``                   |

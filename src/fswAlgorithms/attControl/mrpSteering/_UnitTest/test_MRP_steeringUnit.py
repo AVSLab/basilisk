@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
+
 import numpy as np
 import pytest
 
@@ -28,8 +28,8 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import MRP_Steering  # import the module that is to be tested
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to be tested
+from Basilisk.simulation import messaging2
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 
@@ -88,30 +88,22 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = MRP_Steering.MRP_SteeringConfig()
+    moduleConfig = mrpSteering.MrpSteeringConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "MRP_Steering"
+    moduleWrap.ModelTag = "mrpSteering"
 
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputGuidName = "inputGuidName"
-    moduleConfig.outputDataName = "rate_steering"
-
     moduleConfig.K1 = K1
     moduleConfig.K3 = K3
     moduleConfig.omega_max = omegaMax
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
-    #   attGuidOut Message:
-    guidCmdData = fswMessages.AttGuidFswMsg()  # Create a structure for the input message
-    inputMessageSize = guidCmdData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
-                                          inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
-
+    guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -120,12 +112,14 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
-                                          0, guidCmdData)
-
+    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    dataLog = moduleConfig.rateCmdOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -134,12 +128,6 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "omega_BastR_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(3)))
-
     # Compute truth states
     omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, moduleConfig)
 
@@ -147,26 +135,19 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     accuracy = 1e-12
     for i in range(0, len(omegaAstTrue)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], omegaAstTrue[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.omega_BastR_B[i], omegaAstTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
-                                " unit test at t=" + str(moduleOutput1=[i, 0] * macros.NANO2SEC) +
-                                "sec \n")
-
-    moduleOutputName = "omegap_BastR_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                   list(range(3)))
-
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BastR_B unit test at t="
+                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0, len(omegaAstPTrue)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], omegaAstPTrue[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.omegap_BastR_B[i], omegaAstPTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
-                                " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
-                                "sec \n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omegap_BastR_B unit test at t="
+                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
@@ -212,4 +193,4 @@ def findTrueValues(guidCmdData, moduleConfig):
 
 
 if __name__ == "__main__":
-    test_mrp_steering_tracking(False)
+    test_mrp_steering_tracking(False, 0.1, 1.0, 1.0)

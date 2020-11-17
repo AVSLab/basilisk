@@ -29,10 +29,9 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import MRP_Steering  # import the module that is to be tested
+from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to be tested
 from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import messaging2
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 
@@ -92,9 +91,9 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = MRP_Steering.MRP_SteeringConfig()
+    moduleConfig = mrpSteering.MrpSteeringConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "MRP_Steering"
+    moduleWrap.ModelTag = "mrpSteering"
 
     servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
     servoWrap = unitTestSim.setModelDataWrap(servoConfig)
@@ -105,8 +104,6 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     unitTestSim.AddModelToTask(unitTaskName, servoWrap, servoConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputGuidName = "inputGuidName"
-    moduleConfig.outputDataName = "rate_steering"
     servoConfig.inputGuidName = moduleConfig.inputGuidName
     servoConfig.vehConfigInMsgName = "vehicleConfigName"
     servoConfig.rwParamsInMsgName = "rwa_config_data_parsed"
@@ -126,11 +123,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = fswMessages.AttGuidFswMsg()  # Create a structure for the input message
-    inputMessageSize = guidCmdData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
-                                          inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
-
+    guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -139,44 +132,25 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
-                                          0, guidCmdData)
+    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()                           # 18 doubles + 1 32bit integer
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, servoConfig.vehConfigInMsgName,
-                                          inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    unitTestSim.TotalSim.WriteMessageData(servoConfig.vehConfigInMsgName,
-                                          inputMessageSize,
-                                          0, vehicleConfigOut)
+    vcInMsg = messaging2.VehicleConfigMsgPayload().write(vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = simFswInterfaceMessages.RWSpeedIntMsg()
-    inputMessageSize = rwSpeedMessage.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          servoConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
     Omega = [10.0, 25.0, 50.0, 100.0]
     rwSpeedMessage.wheelSpeeds = Omega
-    unitTestSim.TotalSim.WriteMessageData(servoConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          0,
-                                          rwSpeedMessage)
+    rwInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
-    jsList = []
-    GsMatrix_B = []
     def writeMsgInWheelConfiguration():
-        rwConfigParams = fswMessages.RWArrayConfigFswMsg()
-        inputMessageSize = rwConfigParams.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, servoConfig.rwParamsInMsgName,
-                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
+        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
@@ -185,37 +159,25 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = 4
-        unitTestSim.TotalSim.WriteMessageData(servoConfig.rwParamsInMsgName, inputMessageSize,
-                                              0, rwConfigParams)
+        msg = messaging2.RWAvailabilityMsg.write(rwConfigParams)
         jsList = rwConfigParams.JsList
         GsMatrix_B = rwConfigParams.GsMatrix_B
-        return jsList, GsMatrix_B
+        return jsList, GsMatrix_B, msg
 
 
-    if len(servoConfig.rwParamsInMsgName) > 0:
-        writeMsgInWheelConfiguration()
+    jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
 
     # wheelAvailability message
     rwAvailList = []
-    #rwAvailabilityMessage = fswMessages.RWAvailabilityFswMsg()
-    def writeMsgInWheelAvailability():
-        rwAvailabilityMessage = rateServoFullNonlinear.RWAvailabilityFswMsg()
-        inputMessageSize = rwAvailabilityMessage.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, servoConfig.rwAvailInMsgName,
-                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        rwAvail = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
-        rwAvailabilityMessage.wheelAvailability = rwAvail
-        unitTestSim.TotalSim.WriteMessageData(servoConfig.rwAvailInMsgName, inputMessageSize,
-                                              0, rwAvailabilityMessage)
-        rwAvailList.append(rwAvail)
-        return rwAvailList
-
-
-    if len(servoConfig.rwAvailInMsgName) > 0:
-        writeMsgInWheelAvailability()
+    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
+    rwAvail = [messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE]
+    rwAvailabilityMessage.wheelAvailability = rwAvail
+    rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+    rwAvailList.append(rwAvail)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(servoConfig.outputDataName, testProcessRate)
+    dataLog = servoConfig.cmdTorqueOutMsg
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -266,7 +228,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueValues(guidCmdData,moduleConfig):
+def findTrueValues(guidCmdData, moduleConfig):
 
     omegaMax = moduleConfig.omega_max
     sigma = np.asarray(guidCmdData.sigma_BR)

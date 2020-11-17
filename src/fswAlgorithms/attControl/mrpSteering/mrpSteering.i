@@ -16,26 +16,27 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module MRP_Steering
+%module mrpSteering
 %{
-   #include "MRP_Steering.h"
+   #include "mrpSteering.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_MRP_Steering(void*, uint64_t, uint64_t);
-%ignore Update_MRP_Steering;
-%constant void SelfInit_MRP_Steering(void*, uint64_t);
-%ignore SelfInit_MRP_Steering;
-%constant void CrossInit_MRP_Steering(void*, uint64_t);
-%ignore CrossInit_MRP_Steering;
-%constant void Reset_MRP_Steering(void*, uint64_t, uint64_t);
-%ignore Reset_MRP_Steering;
-GEN_SIZEOF(MRP_SteeringConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(RateCmdFswMsg);
-%include "MRP_Steering.h"
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/rateCmdFswMsg.h"
+%constant void Update_mrpSteering(void*, uint64_t, uint64_t);
+%ignore Update_mrpSteering;
+%constant void SelfInit_mrpSteering(void*, uint64_t);
+%ignore SelfInit_mrpSteering;
+%constant void CrossInit_mrpSteering(void*, uint64_t);
+%ignore CrossInit_mrpSteering;
+%constant void Reset_mrpSteering(void*, uint64_t, uint64_t);
+%ignore Reset_mrpSteering;
+
+%include "mrpSteering.h"
+
+%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+%include "cMsgPayloadDef/RateCmdMsgPayload.h"
+struct RateCmdMsg_C;
 
 %pythoncode %{
 import sys
