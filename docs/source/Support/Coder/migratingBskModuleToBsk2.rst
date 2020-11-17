@@ -94,6 +94,12 @@ Updating a C Module
 
          ModuleMsg_C_init(&configData->moduleOutMsg);
 
+    - To check if an output message has been linked to other input message, use
+
+      .. code:: cpp
+
+         ModuleMsg_C_isLinked(&configData->moduleOutMsg);
+
     - To connect to an input message, delete
 
       .. code:: cpp
@@ -240,6 +246,9 @@ Updating a C++ Module
                                                                              "ModuleSimMsg", this->moduleID);
 
       The new message object is automatically created through the above process in the ``module.h`` file.
+
+    - To check is an output message has been connected to, check the value of ``this->moduleOutMsg.isLinked()``
+
 
     - To subscribe to an input message, this is now accomplished in the Basilisk Python script
       where the message to module connections are setup now.  Thus, delete code such as this:

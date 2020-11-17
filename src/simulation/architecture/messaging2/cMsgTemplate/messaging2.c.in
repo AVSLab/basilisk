@@ -6,7 +6,8 @@
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
     subscriber->payloadPointer = &(source->payload);
     subscriber->headerPointer = &(source->header);
-    subscriber->header.isLinked = 1;
+    subscriber->header.isLinked = 1;            // set input message as linked
+    subscriber->headerPointer->isLinked = 1;        // set output message as linked
 }};
 
 //! C interface to claim authorship to a message
@@ -65,5 +66,6 @@ void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
     Msg2Header *msgPtr;
     subscriber->payloadPointer = source_t->subscribeRaw(&(msgPtr));
     subscriber->headerPointer = msgPtr;
-    subscriber->header.isLinked = 1;
+    subscriber->header.isLinked = 1;    // set input message as linked
+    subscriber->headerPointer->isLinked = 1;    // set output message as linked
 }};

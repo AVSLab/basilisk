@@ -91,7 +91,8 @@ public:
         this->headerPointer = (Msg2Header *) (++pt2);
 
         // set flag that this input message is connected to another message
-        this->initialized = true;
+        this->initialized = true;           // set input message as linked
+        this->headerPointer->isLinked = 1;  // set source output message as linked
     };
 
     //! Subscribe to a C++ message
@@ -143,10 +144,14 @@ public:
     WriteFunctor<messageType> addAuthor();  //! -- request write rights.
     messageType* subscribeRaw(Msg2Header **msgPtr);  //! for plain ole c modules
     Log<messageType> log(){return Log<messageType>(this);}
+
+    //! check if this msg has been connected to
+    bool isLinked(){return this->header.isLinked;};
 };
 
 template<typename messageType>
 ReadFunctor<messageType> SimMessage<messageType>::addSubscriber(){
+    this->header.isLinked = 1;
     return this->read;
 }
 
@@ -158,6 +163,7 @@ WriteFunctor<messageType> SimMessage<messageType>::addAuthor(){
 template<typename messageType>
 messageType* SimMessage<messageType>::subscribeRaw(Msg2Header **msgPtr){
     *msgPtr = &this->header;
+    this->header.isLinked = 1;
     return &this->payload;
 }
 
