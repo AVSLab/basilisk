@@ -82,13 +82,7 @@ This list makes it simple to see what naming will need to be changed.
     + ``mrpFeedback``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +                           +-------------------------------+-----------------------------------+
-    |                           | ``vehConfigInMsgName``        | ``vehConfigInMsg``                |
-    +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRWSpeedsName``         | ``rwSpeedsInMsg``                 |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``rwAvailInMsgName``          | ``rwAvailInMsg``                  |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``rwParamsInMsgName``         | ``rwParamsInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
     | MRP_PD →                  | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     + ``mrpPD``                 +-------------------------------+-----------------------------------+
@@ -106,15 +100,9 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | rateServoFullNonlinear    | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     +                           +-------------------------------+-----------------------------------+
-    |                           | ``inputGuidName``             | ``vehConfigInMsg``                |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``vehConfigInMsgName``        | ``scStateInMsg``                  |
+    |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRWSpeedsName``         | ``rwSpeedsInMsg``                 |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``rwAvailInMsgName``          | ``rwAvailInMsg``                  |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``rwParamsInMsgName``         | ``rwParamsInMsg``                 |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRateSteeringName``     | ``rateSteeringInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
@@ -126,21 +114,7 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputSunName``              | ``sunStateInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
-    | spacecraftPlus            | ``scStateOutMsgName``         | ``scStateOutMsg``                 |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``scMassStateOutMsgName``     | ``scMassOutMsg``                  |
-    +---------------------------+-------------------------------+-----------------------------------+
-    | thrMomentumManagement     | ``deltaHOutMsgName``          | ``deltaHOutMsg``                  |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``rwSpeedsInMsgName``         | ``rwSpeedsInMsgName``             |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``rwConfigDataInMsgName``     | ``rwConfigDataInMsg``             |
-    +---------------------------+-------------------------------+-----------------------------------+
-    | extForceTorque            | ``cmdTorqueInMsgName``        | ``cmdTorqueInMsg``                |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``cmdForceInertialInMsgName`` | ``cmdForceInertialInMsg``         |
-    +                           +-------------------------------+-----------------------------------+
-    |                           | ``cmdForceBodyInMsgName``     | ``cmdForceBodyInMsg``             |
+    | spacecraftPlus            | ``scMassStateOutMsgName``     | ``scMassOutMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
 
 
