@@ -6,13 +6,6 @@
 Setup On Windows
 ================
 
-.. warning::
-
-    On Windows the :ref:`vizInterface` and ``opNav`` related modules are not currently working with the
-    Basilisk 1.8.x build
-    system.  If you need this functionality, then please use Basilisk version 1.7.x for now.
-
-
 The following was developed using Windows 7 and Visual Studio Community 2017 or 2019. The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
 
 Software setup
@@ -25,6 +18,12 @@ In order to run Basilisk, the following software will be necessary:
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Visual Studios 15 or Greater
 -  `Swig <http://www.swig.org/download.html>`__ version 3 or 4
+-  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__
+   application to be able to pull and manage a copy of Basilisk
+
+The following python package dependencies are automatically checked and installed in the steps below.
+
+- .. include:: ../bskPkgRequired.txt
 
 Configuration
 -------------

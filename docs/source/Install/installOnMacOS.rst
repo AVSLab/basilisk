@@ -10,6 +10,9 @@ Setup On macOS
 These instruction outline how to install Basilisk (BSK) on a clean version of macOS.
 Basilisk requires the use of Python 3.  Don't use the Python 2 system that comes with macOS.
 
+The following python package dependencies are automatically checked and installed in the steps below.
+
+- .. include:: ../bskPkgRequired.txt
 
 Developer Software Tools
 ------------------------
@@ -25,7 +28,7 @@ In order to run Basilisk on macOS, the following software is necessary:
 
         $ xcode-select --install
 
-#. (Optional) Get the `SourceTree <http://sourcetreeapp.com>`__
+#. (Optional) Get the `SourceTree <http://sourcetreeapp.com>`__ or `GitKraken <https://www.gitkraken.com>`__
    application to be able to pull and manage a copy of Basilisk
 #. (Optional) Get the `PyCharm <https://www.jetbrains.com/pycharm/>`__
    application to be able to edit python source files

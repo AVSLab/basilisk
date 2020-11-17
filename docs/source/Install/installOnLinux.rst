@@ -20,6 +20,9 @@ In order to run Basilisk, the following software will be necessary. This documen
 
 -  `SWIG <http://www.swig.org/>`__ (version 3 or 4)
 -  `GCC <https://gcc.gnu.org/>`__
+-  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__
+   application to be able to pull and manage a copy of Basilisk
+
 
 Dependencies
 ------------
