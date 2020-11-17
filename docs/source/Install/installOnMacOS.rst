@@ -109,8 +109,6 @@ Installing required python support packages
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 
-   Note that ``conan`` version 1.25.x has issues on macOS where it doesn't properly link system frameworks.  Stick
-   with 1.24.x for now.
 
    .. warning::
 
