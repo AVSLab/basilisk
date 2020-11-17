@@ -70,7 +70,7 @@ def subModuleTestFunction(show_plots, simCase):
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "prvSteering"
 
-    servoConfig = rateServoFullNonlinear.RateServoFullNonlinearConfig()
+    servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
     servoWrap = unitTestSim.setModelDataWrap(servoConfig)
     servoWrap.ModelTag = "rate_servo"
 

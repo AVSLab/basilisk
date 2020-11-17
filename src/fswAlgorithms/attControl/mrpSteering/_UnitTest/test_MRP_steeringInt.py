@@ -95,7 +95,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "mrpSteering"
 
-    servoConfig = rateServoFullNonlinear.RateServoFullNonlinearConfig()
+    servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
     servoWrap = unitTestSim.setModelDataWrap(servoConfig)
     servoWrap.ModelTag = "rate_servo"
 

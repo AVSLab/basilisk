@@ -59,16 +59,16 @@ typedef struct {
 
     BSKLogger *bskLogger;                           //!< BSK Logging
 
-}RateServoFullNonlinearConfig;
+}rateServoFullNonlinearConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_rateServoFullNonlinear(RateServoFullNonlinearConfig *configData, int64_t moduleID);
-    void CrossInit_rateServoFullNonlinear(RateServoFullNonlinearConfig *configData, int64_t moduleID);
-    void Update_rateServoFullNonlinear(RateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_rateServoFullNonlinear(RateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID);
+    void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID);
+    void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
 
     
 #ifdef __cplusplus

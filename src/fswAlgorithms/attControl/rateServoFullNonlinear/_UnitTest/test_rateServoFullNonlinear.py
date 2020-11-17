@@ -80,7 +80,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rateServoFullNonlinear.RateServoFullNonlinearConfig()
+    moduleConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rate_servo"
 
