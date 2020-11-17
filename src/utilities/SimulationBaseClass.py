@@ -193,8 +193,11 @@ class SimBaseClass:
         self.simulationInitialized = False
         self.simulationFinished = False
         self.bskLogger = bskLogging.BSKLogger()
-
+        self.showProgressBar = False
         self.allModules = set()
+
+    def SetProgressBar(self, value):
+        self.showProgressBar = value
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
         '''
@@ -410,8 +413,7 @@ class SimBaseClass:
                     minNextTime = CurrSimTime + LogValue.Period
         return minNextTime
 
-    def ExecuteSimulation(self, showPlots=None, livePlots=None, simComm=None, plottingFunc=None, plotArgs=None,
-                          disableProgressBar=True):
+    def ExecuteSimulation(self, showPlots=None, livePlots=None, simComm=None, plottingFunc=None, plotArgs=None):
         self.initializeEventChecks()
 
         #Live Plotting Thread
@@ -426,7 +428,7 @@ class SimBaseClass:
             nextPriority = self.pyProcList[0].pyProcPriority
             pyProcPresent = True
             nextStopTime = self.pyProcList[0].nextCallTime()
-        progressBar = SimulationProgressBar(self.StopTime, disableProgressBar)
+        progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
         while (self.TotalSim.NextTaskTime <= self.StopTime):
             if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
                 self.nextEventTime = self.checkEvents()
@@ -454,7 +456,7 @@ class SimBaseClass:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
-        progressBar.update(self.StopTime)
+        progressBar.mark_complete()
         progressBar.close()
         if simComm is not None:
             simComm.send("TERM")

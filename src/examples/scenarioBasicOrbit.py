@@ -54,6 +54,21 @@ Copy the folder ``{basiliskPath}/examples`` into a new folder in a different dir
 Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the copied integrated tests.
 
 
+Enable Terminal Bar to Show Simulation Progress
+-----------------------------------------------
+
+To enable progress bar, one need to set ``showProgressBar`` data member of class SimulationBaseClass to true.
+
+.. code-block:: python
+
+     scSim = SimulationBaseClass.SimBaseClass()
+     scSim.SetProgressBar(True)
+
+Method ``SetProgressBar`` should be used to set variable ``showProgressBar`` as True with the above statement. After
+enabling the progress bar, all the simulation run by ``scSim.ExecuteSimulation()`` will show the progress bar in the
+terminal.
+
+
 Vizard Visualization Option
 ---------------------------
 
