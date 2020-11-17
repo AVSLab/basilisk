@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
+
 import numpy as np
 import pytest
 
@@ -32,8 +32,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import rateServoFullNonlinear  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -81,22 +80,14 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
+    moduleConfig = rateServoFullNonlinear.RateServoFullNonlinearConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rate_servo"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
-    # Initialize the test module configuration data
-    moduleConfig.inputGuidName = "inputGuidName"
-    moduleConfig.vehConfigInMsgName = "vehicleConfigName"
-    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    moduleConfig.rwAvailInMsgName = "rw_availability"
-    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
-    moduleConfig.inputRateSteeringName = "rate_steering"
-    moduleConfig.outputDataName = "outputName"
-
+    # configure module parameters
     moduleConfig.Ki = intGain
     moduleConfig.P = 150.0
     moduleConfig.integralLimit = integralLimit
@@ -105,11 +96,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = fswMessages.AttGuidFswMsg()  # Create a structure for the input message
-    inputMessageSize = guidCmdData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
-                                          inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
-
+    guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -118,44 +105,27 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
-                                          0, guidCmdData)
+    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()                           # 18 doubles + 1 32bit integer
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
-                                          inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehConfigInMsgName,
-                                          inputMessageSize,
-                                          0, vehicleConfigOut)
+    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = simFswInterfaceMessages.RWSpeedIntMsg()
-    inputMessageSize = rwSpeedMessage.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
     Omega = [10.0, 25.0, 50.0, 100.0]
     rwSpeedMessage.wheelSpeeds = Omega
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          0,
-                                          rwSpeedMessage)
+    rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
     jsList = []
     GsMatrix_B = []
     def writeMsgInWheelConfiguration():
-        rwConfigParams = fswMessages.RWArrayConfigFswMsg()
-        inputMessageSize = rwConfigParams.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
-                                              inputMessageSize, 2)  # number of buffers (leave at 2 as default)
+        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
@@ -164,56 +134,48 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = rwNum
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
-                                              0, rwConfigParams)
-        jsList = rwConfigParams.JsList
-        GsMatrix_B = rwConfigParams.GsMatrix_B
-        return jsList, GsMatrix_B
+        rwParamInMsg = messaging2.RWArrayConfigMsg().write((rwConfigParams))
+        return rwConfigParams.JsList, rwConfigParams.GsMatrix_B, rwParamInMsg
 
-
-    if len(moduleConfig.rwParamsInMsgName) > 0:
-        jsList, GsMatrix_B = writeMsgInWheelConfiguration()
+    jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
 
     # wheelAvailability message
-    rwAvailabilityMessage = fswMessages.RWAvailabilityFswMsg()
+    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
     if useRwAvailability != "NO":
-        moduleConfig.rwAvailInMsgName = "rw_availability"
         if useRwAvailability == "ON":
-            rwAvailabilityMessage.wheelAvailability  = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE,
-                                                        rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
+            rwAvailabilityMessage.wheelAvailability  = [messaging2.AVAILABLE, messaging2.AVAILABLE,
+                                                        messaging2.AVAILABLE, messaging2.AVAILABLE]
         elif useRwAvailability == "OFF":
-            rwAvailabilityMessage.wheelAvailability  = [rateServoFullNonlinear.UNAVAILABLE, rateServoFullNonlinear.UNAVAILABLE,
-                                                        rateServoFullNonlinear.UNAVAILABLE, rateServoFullNonlinear.UNAVAILABLE]
+            rwAvailabilityMessage.wheelAvailability  = [messaging2.UNAVAILABLE, messaging2.UNAVAILABLE,
+                                                        messaging2.UNAVAILABLE, messaging2.UNAVAILABLE]
         else:
             print("WARNING: unknown rw availability status")
-
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   moduleConfig.rwAvailInMsgName,
-                                   rwAvailabilityMessage)
+        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
     else:
         # set default availability
-        rwAvailabilityMessage.wheelAvailability = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE,
-                                                   rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = [messaging2.AVAILABLE, messaging2.AVAILABLE,
+                                                   messaging2.AVAILABLE, messaging2.AVAILABLE]
 
 
     # rateSteering message
-    rateSteeringMsg = fswMessages.RateCmdFswMsg()
-    inputMessageSize = rateSteeringMsg.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRateSteeringName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-
+    rateSteeringMsg = messaging2.RateCmdMsgPayload()
     rateSteeringMsg.omega_BastR_B = omega_BastR_B
     rateSteeringMsg.omegap_BastR_B = omegap_BastR_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRateSteeringName,
-                                          inputMessageSize,
-                                          0,
-                                          rateSteeringMsg)
+    rateCmdInMsg = messaging2.RateCmdMsg().write(rateSteeringMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    dataLog = moduleConfig.cmdTorqueOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # Initialize the test module configuration data
+    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
+    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    moduleConfig.rwParamsInMsg.subscribeTo(rwParamInMsg)
+    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    moduleConfig.rateSteeringInMsg.subscribeTo(rateCmdInMsg)
+    if useRwAvailability != "NO":
+        moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -227,12 +189,6 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(3)))
-
     # set the filtered output truth states
     LrTrue = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList,
                              rwNum, GsMatrix_B, rwAvailabilityMessage,rateSteeringMsg)
@@ -242,11 +198,10 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     accuracy = 1e-8
     for i in range(0, len(LrTrue)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], LrTrue[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
-                                " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
-                                "sec \n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed torqueRequestBody unit test at t="
+                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
@@ -333,7 +288,7 @@ if __name__ == "__main__":
     test_rate_servo_full_nonlinear(False, #show plots T/F
                                    4,           # Number of RW
                                    0.01,        # Integral Gain
-                                   (0,0,0),     # omegap_BastR_B
-                                   (0,0,0),     # omega_BastR_B
+                                   (0, 0, 0),   # omegap_BastR_B
+                                   (0, 0, 0),   # omega_BastR_B
                                    20,          # integraLimit
                                    "ON")        # useRwAvailability

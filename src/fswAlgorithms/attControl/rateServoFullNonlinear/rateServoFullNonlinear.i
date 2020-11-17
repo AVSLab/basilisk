@@ -30,24 +30,24 @@
 %ignore CrossInit_rateServoFullNonlinear;
 %constant void Reset_rateServoFullNonlinear(void*, uint64_t, uint64_t);
 %ignore Reset_rateServoFullNonlinear;
-ARRAYASLIST(FSWdeviceAvailability)
-GEN_SIZEOF(rateServoFullNonlinearConfig);
-GEN_SIZEOF(RWAvailabilityFswMsg);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedIntMsg);
-GEN_SIZEOF(RateCmdFswMsg);
+
 %include "rateServoFullNonlinear.h"
-%include "../../fswMessages/rwAvailabilityFswMsg.h"
-%include "../../fswUtilities/fswDefinitions.h"
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "../../fswMessages/rateCmdFswMsg.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+
+%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "cMsgPayloadDef/RWAvailabilityMsgPayload.h"
+struct RWAvailabilityMsg_C;
+%include "cMsgPayloadDef/RateCmdMsgPayload.h"
+struct RateCmdMsg_C;
+
 
 %pythoncode %{
 import sys

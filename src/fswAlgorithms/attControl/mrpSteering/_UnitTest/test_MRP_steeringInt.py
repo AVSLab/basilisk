@@ -95,22 +95,13 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "mrpSteering"
 
-    servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
+    servoConfig = rateServoFullNonlinear.RateServoFullNonlinearConfig()
     servoWrap = unitTestSim.setModelDataWrap(servoConfig)
     servoWrap.ModelTag = "rate_servo"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     unitTestSim.AddModelToTask(unitTaskName, servoWrap, servoConfig)
-
-    # Initialize the test module configuration data
-    servoConfig.inputGuidName = moduleConfig.inputGuidName
-    servoConfig.vehConfigInMsgName = "vehicleConfigName"
-    servoConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    servoConfig.rwAvailInMsgName = "rw_availability"
-    servoConfig.inputRWSpeedsName = "reactionwheel_speeds"
-    servoConfig.inputRateSteeringName = moduleConfig.outputDataName
-    servoConfig.outputDataName = "outputName"
 
     moduleConfig.K1 = K1
     moduleConfig.K3 = K3
@@ -124,14 +115,10 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     #   is not part of the test.
     #   attGuidOut Message:
     guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
-    sigma_BR = np.array([0.3, -0.5, 0.7])
-    guidCmdData.sigma_BR = sigma_BR
-    omega_BR_B = np.array([0.010, -0.020, 0.015])
-    guidCmdData.omega_BR_B = omega_BR_B
-    omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    guidCmdData.omega_RN_B = omega_RN_B
-    domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    guidCmdData.domega_RN_B = domega_RN_B
+    guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
+    guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
+    guidCmdData.omega_RN_B = [-0.02, -0.01, 0.005]
+    guidCmdData.domega_RN_B = [0.0002, 0.0003, 0.0001]
     guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
@@ -140,7 +127,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsgPayload().write(vehicleConfigOut)
+    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # wheelSpeeds Message
     rwSpeedMessage = messaging2.RWSpeedMsgPayload()
@@ -159,11 +146,10 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = 4
-        msg = messaging2.RWAvailabilityMsg.write(rwConfigParams)
+        msg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
         jsList = rwConfigParams.JsList
         GsMatrix_B = rwConfigParams.GsMatrix_B
         return jsList, GsMatrix_B, msg
-
 
     jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
 
@@ -176,8 +162,18 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     rwAvailList.append(rwAvail)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = servoConfig.cmdTorqueOutMsg
+    dataLog = servoConfig.cmdTorqueOutMsg.log()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
+    servoConfig.guidInMsg.subscribeTo(guidInMsg)
+    servoConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    servoConfig.rwParamsInMsg.subscribeTo(rwParamInMsg)
+    servoConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    servoConfig.rwSpeedsInMsg.subscribeTo(rwInMsg)
+    servoConfig.rateSteeringInMsg.subscribeTo(moduleConfig.rateCmdOutMsg)
+    servoConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -191,13 +187,6 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
-    moduleOutput = unitTestSim.pullMessageLogData(servoConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(3)))
-
-
     # Compute true values
     trueVals = findTrueTorques(moduleConfig, servoConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, rwAvailList)
 
@@ -206,13 +195,11 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     accuracy = 1e-12
     for i in range(0, len(trueVals)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVals[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], trueVals[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
-                                " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
-                                "sec \n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed torqueRequestBody unit test at t="
+                                + str(dataLog.times[i] * macros.NANO2SEC) + "sec \n")
 
-    print(moduleOutput)
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
@@ -320,4 +307,4 @@ def findTrueTorques(moduleConfig,servoConfig, guidCmdData,rwSpeedMessage,vehicle
     return Lr
 
 if __name__ == "__main__":
-    test_mrp_steering_tracking(False, 0.15)
+    test_mrp_steering_tracking(False, 0.15, 1.0, 0.025)

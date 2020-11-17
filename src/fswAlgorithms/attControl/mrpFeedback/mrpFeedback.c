@@ -57,11 +57,7 @@ void SelfInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
 */
 void CrossInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
 {
-    if(RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
-        if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR, "Error: the rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
-        }
-    }
+
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -74,9 +70,14 @@ void CrossInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
 void Reset_mrpFeedback(MrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     int i;
+
+    /* check that optional messages are correct connected */
+    if(RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
+        if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
+            _bskLog(configData->bskLogger, BSK_ERROR, "Error: the rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+        }
+    }
 
     /*! - zero and read in vehicle configuration message */
     VehicleConfigMsgPayload sc;

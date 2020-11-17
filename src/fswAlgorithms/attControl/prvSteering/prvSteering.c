@@ -21,7 +21,7 @@
  
  */
 
-#include "attControl/PRV_Steering/PRV_Steering.h"
+#include "attControl/prvSteering/prvSteering.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simulation/utilities/astroConstants.h"
@@ -36,12 +36,9 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
+void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-        sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
-    
+    RateCmdMsg_C_init(&configData->rateCmdOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -50,11 +47,8 @@ void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
+void CrossInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
-                                                 sizeof(AttGuidFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -64,7 +58,7 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Reset_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     return;
 }
@@ -76,23 +70,23 @@ void Reset_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, int64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime,
+void Update_prvSteering(PrvSteeringConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-        
+    AttGuidMsgPayload   guidCmd;            /*!< Guidance Message */
+    RateCmdMsgPayload   outMsgBuffer;       /*!< -- copy of output message */
+
+    /*! - Zero output message copies*/
+    memset(&outMsgBuffer, 0x0, sizeof(RateCmdMsgPayload));
+
     /*! - Read the dynamic input messages */
-    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-    
+    guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);
+
     /* evalute MRP kinematic steering law */
-    PRVSteeringLaw(configData, guidCmd.sigma_BR, configData->outMsg.omega_BastR_B, configData->outMsg.omegap_BastR_B);
+    PRVSteeringLaw(configData, guidCmd.sigma_BR, outMsgBuffer.omega_BastR_B, outMsgBuffer.omegap_BastR_B);
     
     /* Store the output message and pass it to the message bus */
-    WriteMessage(configData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
-                 (void*) &(configData->outMsg), moduleID);
+    RateCmdMsg_C_write(&outMsgBuffer, &configData->rateCmdOutMsg, callTime);
     
     return;
 }
@@ -107,7 +101,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime,
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates
  */
-void PRVSteeringLaw(PRV_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
+void PRVSteeringLaw(PrvSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
 {
     double e_hat[3];        /*!< principal rotation axis of MRP */
     double phi;             /*!< principal rotation angle of MRP */

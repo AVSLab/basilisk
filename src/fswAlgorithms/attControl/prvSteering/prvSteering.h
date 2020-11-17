@@ -21,8 +21,8 @@
 #define _PRV_STEERING_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/rateCmdFswMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/RateCmdMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
@@ -36,26 +36,22 @@ typedef struct {
     double omega_max;                   /*!< [rad/sec] Maximum rate command of steering control */
 
     /* declare module IO interfaces */    
-    char outputDataName[MAX_STAT_MSG_LENGTH];               /*!< The name of the control output message */
-    int32_t outputMsgID;                                    /*!< [-] ID for the control output message */
-    char inputGuidName[MAX_STAT_MSG_LENGTH];                /*!< The name of the input guidance message*/
-    int32_t inputGuidID;                                    /*!< [-] ID for the input guidance message*/
-
-    RateCmdFswMsg outMsg;               /*!< -- copy of output message */
+    RateCmdMsg_C rateCmdOutMsg;             //!< rate command output message
+    AttGuidMsg_C guidInMsg;                 //!< attitude guidance input message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
-}PRV_SteeringConfig;
+}PrvSteeringConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID);
-    void CrossInit_PRV_Steering(PRV_SteeringConfig *configData, int64_t moduleID);
-    void Update_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID);
+    void CrossInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID);
+    void Update_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    void PRVSteeringLaw(PRV_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+    void PRVSteeringLaw(PrvSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
     
 #ifdef __cplusplus

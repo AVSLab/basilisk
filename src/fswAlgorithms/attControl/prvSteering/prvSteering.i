@@ -16,26 +16,27 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module PRV_Steering
+%module prvSteering
 %{
-   #include "PRV_Steering.h"
+   #include "prvSteering.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_PRV_Steering(void*, uint64_t, uint64_t);
-%ignore Update_PRV_Steering;
-%constant void SelfInit_PRV_Steering(void*, uint64_t);
-%ignore SelfInit_PRV_Steering;
-%constant void CrossInit_PRV_Steering(void*, uint64_t);
-%ignore CrossInit_PRV_Steering;
-%constant void Reset_PRV_Steering(void*, uint64_t, uint64_t);
-%ignore Reset_PRV_Steering;
-%include "PRV_Steering.h"
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/rateCmdFswMsg.h"
-GEN_SIZEOF(PRV_SteeringConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(RateCmdFswMsg);
+%constant void Update_prvSteering(void*, uint64_t, uint64_t);
+%ignore Update_prvSteering;
+%constant void SelfInit_prvSteering(void*, uint64_t);
+%ignore SelfInit_prvSteering;
+%constant void CrossInit_prvSteering(void*, uint64_t);
+%ignore CrossInit_prvSteering;
+%constant void Reset_prvSteering(void*, uint64_t, uint64_t);
+%ignore Reset_prvSteering;
+
+%include "prvSteering.h"
+
+%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+%include "cMsgPayloadDef/RateCmdMsgPayload.h"
+struct RateCmdMsg_C;
 
 %pythoncode %{
 import sys
