@@ -232,7 +232,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
+    scSim.SetProgressBar(True)
 
     #  create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)

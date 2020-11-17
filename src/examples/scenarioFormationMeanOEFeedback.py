@@ -96,6 +96,7 @@ def run(show_plots, useClassicElem, numOrbits):
         useClassicElem (bool): Determines if classic orbital element is used
     """
     scSim = SimulationBaseClass.SimBaseClass()
+    scSim.SetProgressBar(True)
 
     # ----- dynamics ----- #
     dynProcessName = "dynProcess"
