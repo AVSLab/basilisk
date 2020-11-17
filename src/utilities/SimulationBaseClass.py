@@ -41,7 +41,7 @@ except NameError:
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.simulation import simMessages
 from Basilisk.simulation import bskLogging
-
+from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 import warnings
 
 
@@ -193,8 +193,11 @@ class SimBaseClass:
         self.simulationInitialized = False
         self.simulationFinished = False
         self.bskLogger = bskLogging.BSKLogger()
-
+        self.showProgressBar = False
         self.allModules = set()
+
+    def SetProgressBar(self, value):
+        self.showProgressBar = value
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
         '''
@@ -425,6 +428,7 @@ class SimBaseClass:
             nextPriority = self.pyProcList[0].pyProcPriority
             pyProcPresent = True
             nextStopTime = self.pyProcList[0].nextCallTime()
+        progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
         while (self.TotalSim.NextTaskTime <= self.StopTime):
             if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
                 self.nextEventTime = self.checkEvents()
@@ -433,6 +437,7 @@ class SimBaseClass:
                 nextStopTime = self.nextEventTime
                 nextPriority = -1
             self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
+            progressBar.update(self.TotalSim.NextTaskTime)
             nextPriority = -1
             nextStopTime = self.StopTime
             nextLogTime = self.RecordLogVars()
@@ -451,6 +456,8 @@ class SimBaseClass:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+        progressBar.mark_complete()
+        progressBar.close()
         if simComm is not None:
             simComm.send("TERM")
         if showPlots:
