@@ -112,7 +112,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = mrpFeedback.MrpFeedbackConfig()
+    moduleConfig = mrpFeedback.mrpFeedbackConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "MRP_Feedback"
 

@@ -32,12 +32,12 @@
 #include <string.h>
 #include <math.h>
 
-/*! @brief This method sets up the module output message of type `CmdTorqueBodyMsg`
+/*! @brief This method sets up the module output message of type :ref:`CmdTorqueBodyMsgPayload`
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
 */
-void SelfInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
+void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
@@ -45,17 +45,12 @@ void SelfInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
 }
 
 /*! @brief This method performs the second stage of initialization for this module.
- Its primary function is to link the input messages that were created elsewhere.  The required
- input messages are the attitude tracking error message of type ``AttGuidMsg``
- and the vehicle configuration message of type ``VehicleConfigMsg``.
- Optional messages are the RW configuration message of type ``RWArrayConfigFswMsg``,
- the RW speed message of type `RWSpeedIntMsg`
- and the RW availability message of type :`RWAvailabilityFswMsg`.
+
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void CrossInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
+void CrossInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 {
 
 }
@@ -67,7 +62,7 @@ void CrossInit_mrpFeedback(MrpFeedbackConfig *configData, int64_t moduleID)
  @param configData The configuration data associated with the MRP steering control
  @param moduleID The module identifier
 */
-void Reset_mrpFeedback(MrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
     int i;
@@ -112,7 +107,7 @@ void Reset_mrpFeedback(MrpFeedbackConfig *configData, uint64_t callTime, int64_t
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_mrpFeedback(MrpFeedbackConfig *configData, uint64_t callTime,
+void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
     AttGuidMsgPayload      guidCmd;            /* attitude tracking error message */
