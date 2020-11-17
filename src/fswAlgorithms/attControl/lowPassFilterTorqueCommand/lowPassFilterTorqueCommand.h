@@ -20,7 +20,6 @@
 #ifndef _LOW_PASS_FILTER_TORQUE_COMMAND_
 #define _LOW_PASS_FILTER_TORQUE_COMMAND_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
@@ -48,11 +47,6 @@ typedef struct {
     /* declare module IO interfaces */
     CmdTorqueBodyMsg_C cmdTorqueOutMsg;             //!< commanded torque output message
     CmdTorqueBodyMsg_C cmdTorqueInMsg;              //!< commanded torque input message
-
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t outputMsgID;                            /*!< [] ID for the outgoing filtered torque message */
-    int32_t inputMsgID;                             /*!< [] ID for the commanded torque message */
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 

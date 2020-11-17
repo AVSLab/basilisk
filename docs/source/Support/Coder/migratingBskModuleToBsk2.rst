@@ -51,6 +51,14 @@ Updating a C Module
 
 #. Updating the ``module.h`` file:
 
+    - Remove the import of the C interface to the old messaging system, delete this line
+
+      .. code:: cpp
+
+         #include "messaging/static_messaging.h"
+
+      The message wrappers being included below replace this step.
+
     - Update the ``#include`` statement to read in the message definition through
 
       .. code:: cpp

@@ -20,7 +20,6 @@
 #ifndef _RATE_SERVO_FULL_NONLINEAR_
 #define _RATE_SERVO_FULL_NONLINEAR_
 
-#include "messaging/static_messaging.h"
 
 #include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
 #include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"

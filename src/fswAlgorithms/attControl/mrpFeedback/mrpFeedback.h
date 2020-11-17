@@ -20,7 +20,6 @@
 #ifndef _MRP_FEEDBACK_CONTROL_H_
 #define _MRP_FEEDBACK_CONTROL_H_
 
-#include "messaging/static_messaging.h"
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 

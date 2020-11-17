@@ -20,7 +20,6 @@
 #ifndef _MRP_PD_CONTROL_H_
 #define _MRP_PD_CONTROL_H_
 
-#include "messaging/static_messaging.h"
 #include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
 #include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
 #include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"

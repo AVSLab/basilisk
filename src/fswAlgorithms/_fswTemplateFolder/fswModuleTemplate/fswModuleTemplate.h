@@ -20,7 +20,6 @@
 #ifndef _FSW_MODULE_TEMPLATE_FSW_MSG_H_
 #define _FSW_MODULE_TEMPLATE_FSW_MSG_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
 #include "../dist3/autoSource/cMsgCInterface/FswModuleTemplateMsg_C.h"
