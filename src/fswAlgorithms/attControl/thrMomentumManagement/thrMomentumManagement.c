@@ -30,7 +30,7 @@
 /*!
  \verbatim embed:rst
     This method initializes the configData for this module.  It creates a single output message of type
-    :ref:`CmdTorqueBodyIntMsg`.
+    :ref:`CmdTorqueBodyMsgPayload`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -38,20 +38,12 @@
 */
 void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
-    
-    /*! - Create output message for module */
-    configData->deltaHOutMsgId = CreateNewMessage(configData->deltaHOutMsgName,
-                                               sizeof(CmdTorqueBodyIntMsg),
-                                               "CmdTorqueBodyIntMsg",          /* add the output structure name */
-                                               moduleID);
-
+    CmdTorqueBodyMsg_C_init(&configData->deltaHOutMsg);
 }
 
 /*!
  \verbatim embed:rst
     This method performs the second stage of initialization for this module.
-    It links to 2 required input messages of type :ref:`RWArrayConfigFswMsg` and
-    :ref:`RWSpeedIntMsg`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -59,11 +51,6 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
  */
 void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
-    /*! - Get the input message IDs */
-    configData->rwConfInMsgId = subscribeToMessage(configData->rwConfigDataInMsgName,
-                                                  sizeof(RWArrayConfigFswMsg), moduleID);
-    configData->rwSpeedsInMsgId = subscribeToMessage(configData->rwSpeedsInMsgName,
-                                                     sizeof(RWSpeedIntMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -75,13 +62,8 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, in
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-
     /*! - read in the RW configuration message */
-    memset(&(configData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
-    ReadMessage(configData->rwConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
+    configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwConfigDataInMsg);
 
     /*! - reset the momentum dumping request flag */
     configData->initRequest = 1;
@@ -97,10 +79,8 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64
  */
 void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-    RWSpeedIntMsg       rwSpeedMsg;         /* Reaction wheel speed estimate message */
-    CmdTorqueBodyIntMsg controlOutMsg;      /* Control torque output message */
+    RWSpeedMsgPayload   rwSpeedMsg;         /* Reaction wheel speed estimate message */
+    CmdTorqueBodyMsgPayload controlOutMsg;  /* Control torque output message */
     double              hs;                 /* net RW cluster angular momentum magnitude */
     double              hs_B[3];            /* RW angular momentum */
     double              vec3[3];            /* temp vector */
@@ -111,9 +91,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint6
     if (configData->initRequest == 1) {
 
         /*! - Read the input messages */
-        memset(&rwSpeedMsg, 0x0, sizeof(RWSpeedIntMsg));
-        ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWSpeedIntMsg), (void*) &(rwSpeedMsg), moduleID);
+        rwSpeedMsg = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
 
         /*! - compute net RW momentum magnitude */
         v3SetZero(hs_B);
@@ -134,11 +112,10 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint6
 
 
         /*! - write out the output message */
-        memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
+        memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyMsgPayload));
         v3Copy(Delta_H_B, controlOutMsg.torqueRequestBody);
 
-        WriteMessage(configData->deltaHOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
-                     (void*) &controlOutMsg, moduleID);
+        CmdTorqueBodyMsg_C_write(&controlOutMsg, &configData->deltaHOutMsg, callTime);
 
     }
 

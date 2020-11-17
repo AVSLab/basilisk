@@ -60,17 +60,17 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | Module Name               | Old Msg Name                  | New Msg Interface                 |
     +===========================+===============================+===================================+
-    | attTrackingError          | ``outputDataMessage``         | ``attGuidOutMsg``                 |
+    | attTrackingError          | ``outputDataMessageName``     | ``attGuidOutMsg``                 |
     +                           +-------------------------------+-----------------------------------+
-    |                           | ``inputNavMessage``           | ``attNavInMsg``                   |
+    |                           | ``inputNavMessageName``       | ``attNavInMsg``                   |
     +                           +-------------------------------+-----------------------------------+
-    |                           | ``inputRefMessage``           | ``attRefInMsg``                   |
+    |                           | ``inputRefMessageName``       | ``attRefInMsg``                   |
     +---------------------------+-------------------------------+-----------------------------------+
     | gravityEffector           | ``bodyInMsgName``             | ``planetBodyInMsg``               |
     +---------------------------+-------------------------------+-----------------------------------+
-    | inertial3D                | ``outMsg``                    | ``attRefOutMsg``                  |
+    | inertial3D                | ``outputDataName``            | ``attRefOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
-    | inertial3DSpin            | ``outputData``                | ``attRefOutMsg``                  |
+    | inertial3DSpin            | ``outputDataName``            | ``attRefOutMsg``                  |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRefName``              | ``attRefInMsg``                   |
     +---------------------------+-------------------------------+-----------------------------------+
@@ -104,10 +104,6 @@ This list makes it simple to see what naming will need to be changed.
     + ``prvSteering``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +---------------------------+-------------------------------+-----------------------------------+
-    | simple_nav →              | ``outputAttMessage``          | ``attOutMsg``                     |
-    + ``simpleNav``             +-------------------------------+-----------------------------------+
-    |                           | ``outputTransMessage``        | ``transOutMsg``                   |
-    +---------------------------+-------------------------------+-----------------------------------+
     | rateServoFullNonlinear    | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``vehConfigInMsg``                |
@@ -122,9 +118,23 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRateSteeringName``     | ``rateSteeringInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
+    | simple_nav →              | ``outputAttMessage``          | ``attOutMsg``                     |
+    + ``simpleNav``             +-------------------------------+-----------------------------------+
+    |                           | ``outputTransMessage``        | ``transOutMsg``                   |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputStateName``            | ``scStateInMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputSunName``              | ``sunStateInMsg``                 |
+    +---------------------------+-------------------------------+-----------------------------------+
     | spacecraftPlus            | ``scStateOutMsgName``         | ``scStateOutMsg``                 |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``scMassStateOutMsgName``     | ``scMassOutMsg``                  |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | thrMomentumManagement     | ``deltaHOutMsgName``          | ``deltaHOutMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``rwSpeedsInMsgName``         | ``rwSpeedsInMsgName``             |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``rwConfigDataInMsgName``     | ``rwConfigDataInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
     | extForceTorque            | ``cmdTorqueInMsgName``        | ``cmdTorqueInMsg``                |
     +                           +-------------------------------+-----------------------------------+

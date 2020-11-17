@@ -30,14 +30,15 @@
 %ignore CrossInit_thrMomentumManagement;
 %constant void Reset_thrMomentumManagement(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumManagement;
+
 %include "thrMomentumManagement.h"
-GEN_SIZEOF(thrMomentumManagementConfig);
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
-GEN_SIZEOF(RWArrayConfigFswMsg);
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-GEN_SIZEOF(RWSpeedIntMsg);
+
+%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
 
 %pythoncode %{
 import sys
