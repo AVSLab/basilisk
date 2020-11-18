@@ -80,7 +80,7 @@ void Update_mrpSteering(MrpSteeringConfig *configData, uint64_t callTime,
     uint32_t      sizeOfMsgWritten;
     
     /*! - Zero message copies*/
-    memset(&outMsg, 0x0, sizeof(RateCmdMsgPayload));
+    outMsg = RateCmdMsg_C_zeroMsgPayload();
 
     /*! - Read the dynamic input messages */
     guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);

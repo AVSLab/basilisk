@@ -77,7 +77,7 @@ void Update_prvSteering(PrvSteeringConfig *configData, uint64_t callTime,
     RateCmdMsgPayload   outMsgBuffer;       /*!< -- copy of output message */
 
     /*! - Zero output message copies*/
-    memset(&outMsgBuffer, 0x0, sizeof(RateCmdMsgPayload));
+    outMsgBuffer = RateCmdMsg_C_zeroMsgPayload();
 
     /*! - Read the dynamic input messages */
     guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);

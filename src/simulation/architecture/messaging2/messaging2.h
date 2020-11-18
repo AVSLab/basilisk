@@ -57,6 +57,13 @@ public:
 
     };
 
+    //! return a zero'd copy of the message payload structure
+    messageType zeroMsgPayload(){
+        messageType zeroMsg;
+        memset(&zeroMsg, 0x0, sizeof(messageType));
+        return zeroMsg;
+    }
+
     //! check if this msg has been connected to
     bool isLinked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
 
@@ -144,10 +151,18 @@ public:
     WriteFunctor<messageType> addAuthor();  //! -- request write rights.
     messageType* subscribeRaw(Msg2Header **msgPtr);  //! for plain ole c modules
     Log<messageType> log(){return Log<messageType>(this);}
+    messageType zeroMsgPayload();       //! - returned a zero'd copy of the messagy payload structure
 
     //! check if this msg has been connected to
     bool isLinked(){return this->header.isLinked;};
 };
+
+template<typename messageType>
+messageType SimMessage<messageType>::zeroMsgPayload(){
+    messageType zeroMsg;
+    memset(&zeroMsg, 0x0, sizeof(messageType));
+    return zeroMsg;
+}
 
 template<typename messageType>
 ReadFunctor<messageType> SimMessage<messageType>::addSubscriber(){

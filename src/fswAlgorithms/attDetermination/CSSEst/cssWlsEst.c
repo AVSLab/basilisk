@@ -176,8 +176,8 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     NavAttMsgPayload sunlineOutBuffer;               /* Output Nav message*/
     
     /* Zero output message*/
-    memset(&sunlineOutBuffer, 0x0, sizeof(NavAttMsgPayload));
-    
+    sunlineOutBuffer = NavAttMsg_C_zeroMsgPayload();
+
     /*! Message Read and Setup*/
     /*! - Read the input parsed CSS sensor data message*/
     InputBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
@@ -213,7 +213,8 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     }
     
     /*! Estimation Steps*/
-    memset(&configData->filtStatus, 0x0, sizeof(SunlineFilterMsgPayload));
+    configData->filtStatus = SunlineFilterMsg_C_zeroMsgPayload();
+
     if(configData->numActiveCss == 0) /*! - If there is no sun, just quit*/
     {
         /*! + If no CSS got a strong enough signal.  Sun estimation is not possible.  Return the zero vector instead */

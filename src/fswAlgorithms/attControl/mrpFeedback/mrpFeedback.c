@@ -76,7 +76,6 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
 
     /*! - zero and read in vehicle configuration message */
     VehicleConfigMsgPayload sc;
-    memset(&sc, 0x0, sizeof(VehicleConfigMsgPayload));
     sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
     /*! - copy over spacecraft inertia tensor */
     for (i=0; i < 9; i++){
@@ -137,7 +136,7 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     double              *wheelGs;           /* Reaction wheel spin axis pointer */
 
     /*! - zero the output message */
-    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyMsgPayload));
+    controlOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
 
     /*! - Read the attitude tracking error message */
     guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);
@@ -145,7 +144,7 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     /*! - read in optional RW speed and availability message */
     if(configData->rwConfigParams.numRW > 0) {
         wheelSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
-        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityMsgPayload)); /* wheelAvailability set to 0 (AVAILABLE) by default */
+        wheelsAvailability = RWAvailabilityMsg_C_zeroMsgPayload(); /* wheelAvailability set to 0 (AVAILABLE) by default */
         if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg)) {
             wheelsAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
         }

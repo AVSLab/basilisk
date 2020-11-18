@@ -112,7 +112,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint6
 
 
         /*! - write out the output message */
-        memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyMsgPayload));
+        controlOutMsg = CmdTorqueBodyMsg_C_zeroMsgPayload();
         v3Copy(Delta_H_B, controlOutMsg.torqueRequestBody);
 
         CmdTorqueBodyMsg_C_write(&controlOutMsg, &configData->deltaHOutMsg, callTime);

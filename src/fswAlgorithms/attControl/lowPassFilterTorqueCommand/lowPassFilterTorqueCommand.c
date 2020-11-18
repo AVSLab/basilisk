@@ -88,7 +88,10 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
     int         i;
     CmdTorqueBodyMsgPayload controlOut;             /*!< -- Control output message */
 
-    /*! - Read the input messages */
+    /* zero the output message */
+    controlOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
+
+    /* - Read the input messages */
     CmdTorqueBodyMsgPayload msgBuffer = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueInMsg);
     v3Copy(msgBuffer.torqueRequestBody, configData->Lr[0]);
 

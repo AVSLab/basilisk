@@ -29,6 +29,13 @@ void {type}_C_write({type}Payload *data, {type}_C *destination, uint64_t callTim
     return;
 }};
 
+//! C interface to return a zero'd copy of the message payload
+{type}Payload {type}_C_zeroMsgPayload() {{
+    {type}Payload zeroMsg;
+    memset(&zeroMsg, 0x0, sizeof({type}Payload));
+    return zeroMsg;
+}};
+
 //! C interface to read to a message
 {type}Payload {type}_C_read({type}_C *source) {{
     if (!source->header.isLinked) {{

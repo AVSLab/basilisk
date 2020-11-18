@@ -136,7 +136,13 @@ Updating a C Module
       - To check if a message has ever been written to, check the value of ``ModuleMsg_C_isWritten()``
       - To get the time when a message was written, use ``ModuleMsg_C_timeWritten()``
 
+    - To zero a message payload variable ``someMsgBuffer`` of type ``SomeMsgPayload``, you can remove
+      the use of ``memset()`` and use
 
+      .. code:: cpp
+
+         SomeMsgPayload someMsgBuffer;
+         someMsgBuffer = SomeMsg_C_zeroMsgPayload();
 
     - To write to an output message, assuming ``outputMsgBuffer`` is a local variable holding
       the message content (payload), replace
@@ -152,7 +158,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         memset(&outputMsgBuffer, 0x0, sizeof(ModuleMsgPayload));
+         outputMsgBuffer = ModuleMsg_C_zeroMsgPayload();
          outputMsgBuffer.variable = 42;      // specify output msg values
          ModuleMsg_C_write(&outputMsgBuffer, &configData->moduleOutMsg, callTime);
 
@@ -286,6 +292,19 @@ Updating a C++ Module
 
     - To check if an input message has been connected to, check the status of
       ``this->moduleInMsg.linked()``
+
+    - To zero a local message structure variable ``someMsgBuffer`` of type ``SomeMsgPayload``, remove
+      the use of ``memset()`` and rather use the following.  If the msg buffer variable is for use
+      with an input message ``someInMsg``, then use
+
+      .. code:: cpp
+
+         SomeMsgPayload someMsgBuffer;
+         someMsgBuffer = this->someInMsg.zeroMsgPayload();
+
+      If the buffer is related to an output message ``someOutMsg``, the same basic syntax works.
+      Just replace ``someInMsg`` with ``someOutMsg`` above.  This ensures the correct message type is zero'd
+      and assigned to the local buffer variable.
 
     - To write to an output message, replace this old code:
 

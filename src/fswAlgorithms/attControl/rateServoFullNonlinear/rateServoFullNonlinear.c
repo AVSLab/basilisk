@@ -139,7 +139,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     double              intLimCheck;
         
     /*! - zero the output message */
-    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyMsgPayload));
+    controlOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
     
     /*! - compute control update time */
     if (configData->priorTime == 0) {
@@ -154,8 +154,8 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     rateGuid = RateCmdMsg_C_read(&configData->rateSteeringInMsg);
 
 
-    memset(wheelSpeeds.wheelSpeeds, 0x0, sizeof(RWSpeedMsgPayload));
-    memset(wheelsAvailability.wheelAvailability, 0x0, sizeof(RWAvailabilityMsgPayload)); // wheelAvailability set to 0 (AVAILABLE) by default
+    wheelSpeeds = RWSpeedMsg_C_zeroMsgPayload();
+    wheelsAvailability = RWAvailabilityMsg_C_zeroMsgPayload();  // wheelAvailability set to 0 (AVAILABLE) by default
     if(configData->rwConfigParams.numRW > 0) {
         wheelSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
         if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg)) {

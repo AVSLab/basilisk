@@ -35,6 +35,8 @@ void {type}_C_write({type}Payload *data, {type}_C *destination, uint64_t callTim
 
 {type}Payload {type}_C_read({type}_C *source);
 
+{type}Payload {type}_C_zeroMsgPayload();
+
 #ifdef __cplusplus
 }}
 #endif

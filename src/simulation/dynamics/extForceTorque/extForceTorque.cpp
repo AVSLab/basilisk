@@ -56,13 +56,22 @@ void ExtForceTorque::SelfInit()
  */
 void ExtForceTorque::CrossInit()
 {
-    /* zero the input message vectors */
-    memset(&(this->incomingCmdTorqueBuffer.torqueRequestBody), 0x0, 3*sizeof(double));
-    memset(&(this->incomingCmdForceInertialBuffer.forceRequestInertial), 0x0, 3*sizeof(double));
-    memset(&(this->incomingCmdForceBodyBuffer.forceRequestBody), 0x0, 3*sizeof(double));
+    return;
+}
+
+/*! This method is used to reset the module. C
+ @return void
+ */
+void ExtForceTorque::Reset(uint64_t CurrentSimNanos)
+{
+    /* zero the input messages */
+    this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg.zeroMsgPayload();
+    this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg.zeroMsgPayload();
+    this->incomingCmdForceInertialBuffer = this->cmdForceInertialInMsg.zeroMsgPayload();
 
     return;
 }
+
 
 void ExtForceTorque::linkInStates(DynParamManager& statesIn)
 {

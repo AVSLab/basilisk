@@ -86,12 +86,13 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
 */
 void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
     double              Lr[3];                      /*!< [unit] variable description */
     FswModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
     FswModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
 
+    // always zero the output buffer first
+    outMsgBuffer = FswModuleTemplateMsg_C_zeroMsgPayload();
+    
     /*! - Read the input messages */
     inMsgBuffer = FswModuleTemplateMsg_C_read(&configData->dataInMsg);
     v3Copy(inMsgBuffer.outputVector, configData->inputVector);

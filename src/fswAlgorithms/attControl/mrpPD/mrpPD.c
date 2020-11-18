@@ -86,7 +86,7 @@ void Update_mrpPD(MrpPDConfig *configData, uint64_t callTime,
     double              v3_temp4[3];
 
     /*! - zero the output message copy */
-    memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyMsgPayload));
+    controlOutMsg = CmdTorqueBodyMsg_C_zeroMsgPayload();
 
     /*! - Read the guidance input message */
     guidInMsg = AttGuidMsg_C_read(&configData->guidInMsg);
