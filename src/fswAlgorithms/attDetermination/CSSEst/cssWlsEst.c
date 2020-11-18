@@ -30,11 +30,9 @@
  */
 void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
-    if(strlen(configData->cssWLSFiltResOutMsgName) > 0) {
-        configData->cssWlsFiltResOutMsgId = CreateNewMessage(configData->cssWLSFiltResOutMsgName,
-                                                             sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
+    NavAttMsg_C_init(&configData->navStateOutMsg);
+    if (SunlineFilterMsg_C_isLinked(&configData->cssWLSFiltResOutMsg)) {
+        SunlineFilterMsg_C_init(&configData->cssWLSFiltResOutMsg);
     }
 }
 
@@ -47,12 +45,6 @@ void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
  */
 void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
-    /*! - Subscribe to css measurements */
-    configData->cssDataInMsgID = subscribeToMessage(configData->cssDataInMsgName,
-        sizeof(CSSArraySensorIntMsg), moduleID);
-    /*! - Subscribe to css configuration message for normals */
-    configData->cssConfigInMsgID = subscribeToMessage(configData->cssConfigInMsgName,
-                                                      sizeof(CSSConfigFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -64,13 +56,7 @@ void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
  */
 void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-
-    memset(&(configData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
-    ReadMessage(configData->cssConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CSSConfigFswMsg),
-                (void *) &(configData->cssConfigInBuffer), moduleID);
+    configData->cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
 
     configData->priorSignalAvailable = 0;
     v3SetZero(configData->dOld);
@@ -97,7 +83,7 @@ void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t module
     @param wlsEst The WLS estimate computed for the CSS measurements
     @param cssResiduals The measurement residuals output by this function
 */
-void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
+void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig,
                          double *wlsEst, double *cssResiduals)
 {
     int i;
@@ -177,10 +163,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
 void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    CSSArraySensorIntMsg InputBuffer;            /* CSS measurements */
+    CSSArraySensorMsgPayload InputBuffer;        /* CSS measurements */
     double H[MAX_NUM_CSS_SENSORS*3];             /* The predicted pointing vector for each measurement */
     double y[MAX_NUM_CSS_SENSORS];               /* Measurements */
     double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];  /* Matrix of measurement weights */
@@ -190,17 +173,14 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     double dHatNew[3];                           /* New normalized sun heading estimate */
     double dHatOld[3];                           /* Prior normalized sun heading estimate */
     double  dt;                                  /* [s] Control update period */
-    NavAttIntMsg sunlineOutBuffer;               /* Output Nav message*/
+    NavAttMsgPayload sunlineOutBuffer;               /* Output Nav message*/
     
     /* Zero output message*/
-    memset(&sunlineOutBuffer, 0x0, sizeof(NavAttIntMsg));
+    memset(&sunlineOutBuffer, 0x0, sizeof(NavAttMsgPayload));
     
     /*! Message Read and Setup*/
     /*! - Read the input parsed CSS sensor data message*/
-    memset(&InputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(configData->cssDataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CSSArraySensorIntMsg),
-                (void*) (&InputBuffer), moduleID);
+    InputBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
 
     /*! - Compute control update time */
     if (configData->priorTime == 0) {
@@ -233,7 +213,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     }
     
     /*! Estimation Steps*/
-    memset(&configData->filtStatus, 0x0, sizeof(SunlineFilterFswMsg));
+    memset(&configData->filtStatus, 0x0, sizeof(SunlineFilterMsgPayload));
     if(configData->numActiveCss == 0) /*! - If there is no sun, just quit*/
     {
         /*! + If no CSS got a strong enough signal.  Sun estimation is not possible.  Return the zero vector instead */
@@ -282,12 +262,11 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
 
     /*! Residual Computation */
     /*! - If the residual fit output message is set, then compute the residuals and stor them in the output message */
-    if(strlen(configData->cssWLSFiltResOutMsgName) > 0) {
+    if (SunlineFilterMsg_C_isLinked(&configData->cssWLSFiltResOutMsg)) {
         configData->filtStatus.numObs = (int) configData->numActiveCss;
         configData->filtStatus.timeTag = (double) (callTime*NANO2SEC);
         v3Copy(sunlineOutBuffer.vehSunPntBdy, configData->filtStatus.state);
-        WriteMessage(configData->cssWlsFiltResOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
-                     &configData->filtStatus, moduleID);
+        SunlineFilterMsg_C_write(&configData->filtStatus, &configData->cssWLSFiltResOutMsg, callTime);
 
     }
     /*! Writing Outputs */
@@ -299,8 +278,6 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
         configData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
     }
     /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
-    WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-                 &(sunlineOutBuffer), moduleID);
-    
+    NavAttMsg_C_write(&sunlineOutBuffer, &configData->navStateOutMsg, callTime);
     return;
 }

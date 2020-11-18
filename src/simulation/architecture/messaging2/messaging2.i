@@ -30,6 +30,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "fswUtilities/fswDefinitions.h"
 
 ARRAYASLIST(FSWdeviceAvailability)
+STRUCTASLIST(CSSUnitConfigMsgPayload)
 
 %pythoncode %{
     import numpy as np
