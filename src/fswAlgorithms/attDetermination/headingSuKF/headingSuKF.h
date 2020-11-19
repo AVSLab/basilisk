@@ -22,21 +22,22 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/headingFilterFswMsg.h"
-#include "fswMessages/opNavFswMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/HeadingFilterMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the SuKF heading module data */
 typedef struct {
-    char opnavOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
-    char opnavDataInMsgName[MAX_STAT_MSG_LENGTH];/*!< The name of the input opnav data message*/
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
-
+    OpNavMsg_C opnavDataOutMsg;             /*!< output message */
+    HeadingFilterMsg_C filtDataOutMsg;      /*!< output message */
+    OpNavMsg_C opnavDataInMsg;              /*!< input message */
+    CameraConfigMsg_C cameraConfigInMsg;    /*!< (optional) input message */
+    
     int putInCameraFrame;         /*!< [-] If camera message is found output the result to the camera frame as well as the body and inertial frame*/
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
@@ -79,14 +80,9 @@ typedef struct {
     
 
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
-	NavAttIntMsg outputHeading;   /*!< -- Output heading estimate data */
-    OpNavFswMsg opnavInBuffer;  /*!< -- message buffer */
+	NavAttMsgPayload outputHeading;   /*!< -- Output heading estimate data */
+    OpNavMsgPayload opnavInBuffer;  /*!< -- message buffer */
     
-    int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
-    int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-    int32_t opnavDataInMsgId;   /*!< [-] ID for the opNav data in put message */
-    int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
-
     BSKLogger *bskLogger;                             //!< BSK Logging
 
 }HeadingSuKFConfig;

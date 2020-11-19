@@ -32,52 +32,52 @@ splitPath = path.split('fswAlgorithms')
 import matplotlib.pyplot as plt
 
 
-def StateCovarPlot(x, Pflat, string, show_plots):
+def StateCovarPlot(time, x, Pflat, string, show_plots):
 
-    numStates = len(x[0,:])-1
+    numStates = len(x[0, :])
 
-    P = np.zeros([len(Pflat[:,0]),numStates,numStates])
-    t= np.zeros(len(Pflat[:,0]))
-    for i in range(len(Pflat[:,0])):
-        t[i] = x[i, 0]*1E-9
-        P[i,:,:] = Pflat[i,1:(numStates*numStates+1)].reshape([numStates,numStates])
+    P = np.zeros([len(Pflat[:, 0]), numStates, numStates])
+    t = np.zeros(len(Pflat[:, 0]))
+    for i in range(len(Pflat[:, 0])):
+        t[i] = time[i]*1E-9
+        P[i, :, :] = Pflat[i, 0:(numStates*numStates+1)].reshape([numStates, numStates])
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
-    plt.plot(t , x[:, 1], "b", label='Error Filter')
-    plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
-    plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 0, 0]), 'r--')
+    plt.plot(t , x[:, 0], "b", label='Error Filter')
+    plt.plot(t , x[:, 0]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
+    plt.plot(t , x[:, 0]-3 * np.sqrt(P[:, 0, 0]), 'r--')
     plt.legend(loc='lower right')
     plt.title('First LOS component')
     plt.grid()
 
 
     plt.subplot(323)
-    plt.plot(t , x[:, 2], "b")
-    plt.plot(t , x[:, 2]+3 * np.sqrt(P[:, 1, 1]), 'r--')
-    plt.plot(t , x[:, 2]-3 * np.sqrt(P[:, 1, 1]), 'r--')
+    plt.plot(t , x[:, 1], "b")
+    plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 1, 1]), 'r--')
+    plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 1, 1]), 'r--')
     plt.title('Second LOS component')
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(t , x[:, 4], "b")
-    plt.plot(t , x[:, 4]+3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.plot(t , x[:, 4]-3 * np.sqrt(P[:, 3, 3]), 'r--')
+    plt.plot(t , x[:, 3], "b")
+    plt.plot(t , x[:, 3]+3 * np.sqrt(P[:, 3, 3]), 'r--')
+    plt.plot(t , x[:, 3]-3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.title('Second rate component')
     plt.grid()
 
     plt.subplot(325)
-    plt.plot(t , x[:, 3], "b")
-    plt.plot(t , x[:, 3]+3 * np.sqrt(P[:, 2, 2]), 'r--')
-    plt.plot(t , x[:, 3]-3 * np.sqrt(P[:, 2, 2]), 'r--')
+    plt.plot(t , x[:, 2], "b")
+    plt.plot(t , x[:, 2]+3 * np.sqrt(P[:, 2, 2]), 'r--')
+    plt.plot(t , x[:, 2]-3 * np.sqrt(P[:, 2, 2]), 'r--')
     plt.xlabel('t(s)')
     plt.title('Third LOS component')
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(t , x[:, 5], "b")
-    plt.plot(t , x[:, 5]+3 * np.sqrt(P[:, 4, 4]), 'r--')
-    plt.plot(t , x[:, 5]-3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.plot(t , x[:, 4], "b")
+    plt.plot(t , x[:, 4]+3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.plot(t , x[:, 4]-3 * np.sqrt(P[:, 4, 4]), 'r--')
     plt.xlabel('t(s)')
     plt.title('Third rate component')
     plt.grid()
@@ -89,13 +89,13 @@ def StateCovarPlot(x, Pflat, string, show_plots):
 
 
 
-def PostFitResiduals(Res, noise, string, show_plots):
+def PostFitResiduals(time, Res, noise, string, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
     numObs = len(Res[0,:])
     for i in range(len(Res[:,0])):
-        t[i] = Res[i, 0]*1E-9
+        t[i] = time[i]*1E-9
         MeasNoise[i] = 3*noise
         # Don't plot zero values, since they mean that no measurement is taken
         for j in range(len(Res[0,:])-1):
@@ -104,7 +104,7 @@ def PostFitResiduals(Res, noise, string, show_plots):
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(311)
-    plt.plot(t , Res[:, 1], "b.", label='Residual')
+    plt.plot(t , Res[:, 0], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='lower right')
@@ -114,7 +114,7 @@ def PostFitResiduals(Res, noise, string, show_plots):
     plt.grid()
 
     plt.subplot(312)
-    plt.plot(t , Res[:, 2], "b.")
+    plt.plot(t , Res[:, 1], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     if noise >1E-5:
@@ -123,7 +123,7 @@ def PostFitResiduals(Res, noise, string, show_plots):
     plt.grid()
 
     plt.subplot(313)
-    plt.plot(t , Res[:, 3], "b.")
+    plt.plot(t , Res[:, 2], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     if noise > 1E-5:

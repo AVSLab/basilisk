@@ -31,17 +31,18 @@
 %ignore CrossInit_headingSuKF;
 %constant void Reset_headingSuKF(void*, uint64_t, uint64_t);
 %ignore Reset_headingSuKF;
-GEN_SIZEOF(HeadingFilterFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(OpNavFswMsg);
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(HeadingSuKFConfig);
+
 %include "headingSuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/headingFilterFswMsg.h"
-%include "../../fswMessages/opNavFswMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
+
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "cMsgPayloadDef/HeadingFilterMsgPayload.h"
+struct HeadingFilterMsg_C;
+%include "cMsgPayloadDef/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+%include "cMsgPayloadDef/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
 
 %pythoncode %{
 import sys

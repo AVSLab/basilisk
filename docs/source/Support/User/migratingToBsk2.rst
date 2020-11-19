@@ -68,6 +68,8 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | gravityEffector           | ``bodyInMsgName``             | ``planetBodyInMsg``               |
     +---------------------------+-------------------------------+-----------------------------------+
+    | headingSuKF               | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
     | inertial3D                | ``outputDataName``            | ``attRefOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
     | inertial3DSpin            | ``outputDataName``            | ``attRefOutMsg``                  |
