@@ -65,7 +65,7 @@ public:
     };
 
     //! copy the message payload from source to destination
-    void msgPayloadCopy(messageType *destination, messageType *source){
+    void copyMsgPayload(messageType *destination, messageType *source){
         memcpy(destination, source, sizeof(messageType));
         return;
     };
@@ -163,7 +163,7 @@ public:
     //! - returned a zero'd copy of the messagy payload structure
     messageType zeroMsgPayload();
     //! - copies the source structure to the destination structure
-    void msgPayloadCopy(messageType *destination, messageType *source);
+    void copyMsgPayload(messageType *destination, messageType *source);
 
     //! check if this msg has been connected to
     bool isLinked(){return this->header.isLinked;};
@@ -177,7 +177,7 @@ messageType SimMessage<messageType>::zeroMsgPayload(){
 }
 
 template<typename messageType>
-void SimMessage<messageType>::msgPayloadCopy(messageType *destination, messageType *source){
+void SimMessage<messageType>::copyMsgPayload(messageType *destination, messageType *source){
     memcpy(destination, source, sizeof(messageType));
     return;
 }

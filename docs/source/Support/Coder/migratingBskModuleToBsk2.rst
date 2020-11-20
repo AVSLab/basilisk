@@ -151,7 +151,7 @@ Updating a C Module
 
          SomeMsgPayload sourceMsgBuffer, destMsgBuffer;
          sourceMsgBuffer.variable = ...
-         SomeMsg_C_msgPayloadCopy(&destMsgBuffer, &sourceMsgBuffer);
+         SomeMsg_C_copyMsgPayload(&destMsgBuffer, &sourceMsgBuffer);
 
     - To write to an output message, assuming ``outputMsgBuffer`` is a local variable holding
       the message content (payload), replace
@@ -323,7 +323,7 @@ Updating a C++ Module
 
          SomeMsgPayload destMsgBuffer, sourceMsgBuffer;
          sourceMsgBuffer.variable = ...
-         this->someOutMsg.msgPayloadCopy(&destMsgBuffer, &sourceMsgBuffer);
+         this->someOutMsg.copyMsgPayload(&destMsgBuffer, &sourceMsgBuffer);
 
     - To write to an output message, replace this old code:
 
