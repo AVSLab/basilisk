@@ -62,7 +62,14 @@ public:
         messageType zeroMsg;
         memset(&zeroMsg, 0x0, sizeof(messageType));
         return zeroMsg;
-    }
+    };
+
+    //! copy the message payload from source to destination
+    void msgPayloadCopy(messageType *destination, messageType *source){
+        memcpy(destination, source, sizeof(messageType));
+        return;
+    };
+
 
     //! check if this msg has been connected to
     bool isLinked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
@@ -146,12 +153,17 @@ private:
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
 public:
-    //! method description
-    ReadFunctor<messageType> addSubscriber();  //! -- request read rights. returns ref to this->read
-    WriteFunctor<messageType> addAuthor();  //! -- request write rights.
-    messageType* subscribeRaw(Msg2Header **msgPtr);  //! for plain ole c modules
+    //! -- request read rights. returns ref to this->read
+    ReadFunctor<messageType> addSubscriber();
+    //! -- request write rights.
+    WriteFunctor<messageType> addAuthor();
+    //! for plain ole c modules
+    messageType* subscribeRaw(Msg2Header **msgPtr);
     Log<messageType> log(){return Log<messageType>(this);}
-    messageType zeroMsgPayload();       //! - returned a zero'd copy of the messagy payload structure
+    //! - returned a zero'd copy of the messagy payload structure
+    messageType zeroMsgPayload();
+    //! - copies the source structure to the destination structure
+    void msgPayloadCopy(messageType *destination, messageType *source);
 
     //! check if this msg has been connected to
     bool isLinked(){return this->header.isLinked;};
@@ -163,6 +175,13 @@ messageType SimMessage<messageType>::zeroMsgPayload(){
     memset(&zeroMsg, 0x0, sizeof(messageType));
     return zeroMsg;
 }
+
+template<typename messageType>
+void SimMessage<messageType>::msgPayloadCopy(messageType *destination, messageType *source){
+    memcpy(destination, source, sizeof(messageType));
+    return;
+}
+
 
 template<typename messageType>
 ReadFunctor<messageType> SimMessage<messageType>::addSubscriber(){

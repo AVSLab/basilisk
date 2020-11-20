@@ -36,6 +36,12 @@ void {type}_C_write({type}Payload *data, {type}_C *destination, uint64_t callTim
     return zeroMsg;
 }};
 
+//! C interface to copy one message payload structure to another
+void {type}_C_msgPayloadCopy({type}Payload *destination, {type}Payload *source) {{
+    memcpy(destination, source, sizeof({type}Payload));
+    return;
+}}
+
 //! C interface to read to a message
 {type}Payload {type}_C_read({type}_C *source) {{
     if (!source->header.isLinked) {{

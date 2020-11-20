@@ -110,7 +110,7 @@ Updating a C Module
       The input messages are connected when then Basilisk simulation is scripted in python.  No
       additional code is required in your C code.
 
-    - To create a local copy of the message content (payload) itself, use
+    - To create a local variable of the message content structure (payload) itself, use
 
       .. code:: cpp
 
@@ -132,17 +132,26 @@ Updating a C Module
          ModuleMsgPayload msgBuffer;
          msgBuffer = ModuleMsg_C_read(&configData->moduleInMsg);
 
-      - To check is an input message has been connected to, check the value of ``ModuleMsg_C_isLinked()``
+      - To check is a message has been connected to, check the value of ``ModuleMsg_C_isLinked()``
       - To check if a message has ever been written to, check the value of ``ModuleMsg_C_isWritten()``
       - To get the time when a message was written, use ``ModuleMsg_C_timeWritten()``
 
-    - To zero a message payload variable ``someMsgBuffer`` of type ``SomeMsgPayload``, you can remove
-      the use of ``memset()`` and use
+    - To zero a message payload variable ``someMsgBuffer`` of type ``SomeMsgPayload``,
+      while enjoyoing strong type checking, you can remove the use of ``memset()`` and use instead
 
       .. code:: cpp
 
          SomeMsgPayload someMsgBuffer;
          someMsgBuffer = SomeMsg_C_zeroMsgPayload();
+
+    - To copy the msg payload structure from one variable ``sourceMsgBuffer`` to another ``destMsgBuffer``,
+      you can replace the use of ``memcpy()`` with
+
+      .. code:: cpp
+
+         SomeMsgPayload sourceMsgBuffer, destMsgBuffer;
+         sourceMsgBuffer.variable = ...
+         SomeMsg_C_msgPayloadCopy(&destMsgBuffer, &sourceMsgBuffer);
 
     - To write to an output message, assuming ``outputMsgBuffer`` is a local variable holding
       the message content (payload), replace
@@ -305,6 +314,16 @@ Updating a C++ Module
       If the buffer is related to an output message ``someOutMsg``, the same basic syntax works.
       Just replace ``someInMsg`` with ``someOutMsg`` above.  This ensures the correct message type is zero'd
       and assigned to the local buffer variable.
+
+    - Assume you want to copy the message payload structure associated with an message ``someInMsg`` or ``someOutMsg``.
+      To copy the msg payload structure from one variable ``sourceMsgBuffer`` to another ``destMsgBuffer``,
+      you can replace the use of ``memcpy()``
+
+      .. code:: cpp
+
+         SomeMsgPayload destMsgBuffer, sourceMsgBuffer;
+         sourceMsgBuffer.variable = ...
+         this->someOutMsg.msgPayloadCopy(&destMsgBuffer, &sourceMsgBuffer);
 
     - To write to an output message, replace this old code:
 
