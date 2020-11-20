@@ -147,10 +147,19 @@ and print a variable ``someMsgVariable`` within this outpout message, you can us
 
 Connecting Output to Input Messages in Python
 ---------------------------------------------
-You wish to connect the output message ``bskOne.someOutMsg`` to the input message `bskTwo.someInMsg``.
-This is done using::
+Assume you have a message ``someMsg`` that you want to connect to another Basilisk module.  This message
+can be a stand-alone message in Python, or a output message within a Basilisk module.  It doesn't matter if this
+message ``someMsg`` is created in a C or C++ Basilisk module.
 
-        bskTwo.someInMsg.subscribeTo(bskOne.someOutMsg)
+If you want to connect to the input message ``someInMsg`` of a C++ Basilisk module ``moduleObject``,
+then you can use::
+
+        moduleObject.someInMsg.subscribeTo(someMsg)
+
+If you want to connect the input message ``someInMsg`` of a C wrapped Basilisk module ``moduleConfig``,
+then you can use::
+
+        moduleConfig.someInMsg.subscribeTo(someMsg)
 
 It does not matter if these message interfaces are based in C or C++. The ``subscribeTo()`` method handles this
 automatically.
