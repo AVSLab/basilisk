@@ -50,13 +50,13 @@ with open('./README.in', 'r') as r:
 messaging2_template += README
 header_template += README
 
-with open('./messaging2.c.in', 'r') as f:
+with open('./msg_C.cpp.in', 'r') as f:
     messaging2_template += f.read()
 
-with open('./header.in', 'r') as f:
+with open('./msg_C.h.in', 'r') as f:
     header_template += f.read()
 
-with open('./messaging2_C.i.in', 'r') as f:
+with open('./cMsgCInterfacePy.i.in', 'r') as f:
     swig_template_block = f.read()
 
 with open(autoSourceDestDir + 'messaging2.auto.i', 'r') as fb:
