@@ -20,14 +20,13 @@
 #ifndef _HEADING_UKF_H_
 #define _HEADING_UKF_H_
 
-#include "messaging/static_messaging.h"
-#include <stdint.h>
 #include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
 #include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
 #include "../dist3/autoSource/cMsgCInterface/HeadingFilterMsg_C.h"
 #include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
 #include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
 
+#include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
 
 
