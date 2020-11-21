@@ -32,12 +32,8 @@
  */
 void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
-		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
-    /*! - Create filter states output message which is mostly for debug*/
-    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-        sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
+    NavAttMsg_C_init(&configData->navStateOutMsg);
+    SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor
@@ -48,14 +44,7 @@ void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
  @param moduleID The module identifier
  */
 void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
-{
-    /*! - Find the message ID for the coarse sun sensor data message */
-    configData->cssDataInMsgId = subscribeToMessage(configData->cssDataInMsgName,
-        sizeof(CSSArraySensorIntMsg), moduleID);
-    /*! - Find the message ID for the coarse sun sensor configuration message */
-    configData->cssConfigInMsgId = subscribeToMessage(configData->cssConfigInMsgName,
-                                                   sizeof(CSSConfigFswMsg), moduleID);
-    
+{    
 }
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -69,20 +58,17 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
     
-    CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
+    CSSConfigMsgPayload cssConfigInBuffer;
     int32_t i, badUpdate;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     badUpdate = 0;
 
     /*! - Zero the local configuration data structures and outputs */
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
-    
+    configData->outputSunline = NavAttMsg_C_zeroMsgPayload();
+
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(configData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CSSConfigFswMsg  ), &cssConfigInBuffer, moduleID);
+    cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
@@ -149,9 +135,8 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
     
-    memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
+    configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
+
     if (badUpdate <0){
         _bskLog(configData->bskLogger, BSK_WARNING, "Reset method contained bad update");
     }
@@ -174,19 +159,19 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     double states_BN[SKF_N_STATES_SWITCH];
     uint64_t i;
     uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    SunlineFilterFswMsg sunlineDataOutBuffer;
+    int isWritten;
+    SunlineFilterMsgPayload sunlineDataOutBuffer;
     double maxSens;
     
     /*! - Read the input parsed CSS sensor data message*/
-    timeOfMsgWritten = 0;
-    sizeOfMsgWritten = 0;
-    memset(&(sunlineDataOutBuffer), 0x0, sizeof(SunlineFilterFswMsg));
-    memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    memset(&(configData->outputSunline), 0x0, sizeof(NavAttIntMsg));
-    ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-        sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
-    
+    configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
+    timeOfMsgWritten = CSSArraySensorMsg_C_timeWritten(&configData->cssDataInMsg);
+    isWritten = CSSArraySensorMsg_C_isWritten(&configData->cssDataInMsg);
+
+    /* zero the output messages */
+    configData->outputSunline = NavAttMsg_C_zeroMsgPayload();
+    sunlineDataOutBuffer = SunlineFilterMsg_C_zeroMsgPayload();
+
     /*! If the filter is not initialized manually, give it an initial guess using the CSS with the strongest signal.*/
     if(configData->filterInitialized==0)
     {
@@ -225,7 +210,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
     newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0)
+    if(newTimeTag >= configData->timeTag && isWritten)
     {
         sunlineSuKFTimeUpdate(configData, newTimeTag);
         sunlineSuKFMeasUpdate(configData, newTimeTag);
@@ -260,8 +245,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     v3Normalize(configData->outputSunline.vehSunPntBdy,
         configData->outputSunline.vehSunPntBdy);
     configData->outputSunline.timeTag = configData->timeTag;
-	WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-		&(configData->outputSunline), moduleID);
+    NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, callTime);
     
     /*! - Switch the rates back to omega_BN instead of omega_SB */
     vCopy(configData->state, SKF_N_STATES_SWITCH, states_BN);
@@ -274,8 +258,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
-                 &sunlineDataOutBuffer, moduleID);
+    SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, callTime);
     
     return;
 }
