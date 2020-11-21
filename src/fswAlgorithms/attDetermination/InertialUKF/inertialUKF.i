@@ -31,24 +31,32 @@
 %ignore CrossInit_inertialUKF;
 %constant void Reset_inertialUKF(void*, uint64_t, uint64_t);
 %ignore Reset_inertialUKF;
+
 STRUCTASLIST(LowPassFilterData)
-STRUCTASLIST(AccPktDataFswMsg)
 STRUCTASLIST(STMessage)
+
 %include "inertialUKF.h"
+
+
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/inertialFilterFswMsg.h"
-%include "../../fswMessages/stAttFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "../../fswMessages/AccDataFswMsg.h"
-%include "../../fswMessages/AccPktDataFswMsg.h"
+
+%include "cMsgPayloadDef/InertialFilterMsgPayload.h"
+struct InertialFilterMsg_C;
+%include "cMsgPayloadDef/STAttMsgPayload.h"
+struct STAttMsg_C;
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "cMsgPayloadDef/AccDataMsgPayload.h"
+struct AccDataMsg_C;
+%include "cMsgPayloadDef/AccPktDataMsgPayload.h"
+struct AccPktDataMsg_C;
+
 %include "utilities/signalCondition.h"
-GEN_SIZEOF(STAttFswMsg);
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedIntMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(AccDataFswMsg);
+struct LowPassFilterData;
 
 
 %pythoncode %{

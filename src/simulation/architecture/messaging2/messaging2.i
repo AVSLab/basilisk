@@ -31,6 +31,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ARRAYASLIST(FSWdeviceAvailability)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
+STRUCTASLIST(AccPktDataMsgPayload)
+
 
 %pythoncode %{
     import numpy as np
