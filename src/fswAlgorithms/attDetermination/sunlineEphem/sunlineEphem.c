@@ -25,7 +25,7 @@
 
 /*!
  \verbatim embed:rst
-    This method sets up the module output message of type :ref:`NavAttIntMsg`
+    This method sets up the module output message of type :ref:`NavAttMsgPayload`
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -33,20 +33,13 @@
  */
 void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
-                                                    sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
-
+    NavAttMsg_C_init(&configData->navStateOutMsg);
 }
 
 
 /*!
  \verbatim embed:rst
     This method performs the second stage of initialization for this module.
-    Its primary function is to link the input messages that were created elsewhere.  The required
-    input messages are the sun ephemeris message of type :ref:`EphemerisIntMsg`,
-    the spacecraft translational navigation message of type :ref:`NavTransIntMsg`
-    and the spacecraft attitude navigation message of type :ref:`NavAttIntMsg`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -54,17 +47,6 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  */
 void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
-    /*! - Find the message ID for the sun direction */
-    configData->sunPositionInMsgId = subscribeToMessage(configData->sunPositionInMsgName,
-                                                        sizeof(EphemerisIntMsg), moduleID);
-    
-    /*! - Find the messgae ID for the spacecraft direction */
-    configData->scPositionInMsgId = subscribeToMessage(configData->scPositionInMsgName,
-                                                       sizeof(NavTransIntMsg), moduleID);
-    
-    /*! - Find the messgae ID for the spacecraft attitude */
-    configData->scAttitudeInMsgId = subscribeToMessage(configData->scAttitudeInMsgName,
-                                                       sizeof(NavAttIntMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -87,28 +69,20 @@ void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64
  */
 void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;      /* [ns] Read time when message was written*/
-    uint32_t sizeOfMsgWritten;      /* [-] Non-zero size indicates we received ST msg*/
     double r_SB_N[3];               /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
     double r_SB_N_hat[3];           /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
     double r_SB_B_hat[3];           /* [m] difference between the sun and spacecrat in the body frame (of unit length) */
     double BN[3][3];                /* [-] direction cosine matrix used to rotate the inertial frame to body frame */
-    NavAttIntMsg outputSunline;     /* [-] Output sunline estimate data */
-    EphemerisIntMsg sunEphemBuffer; /* [-] Input sun ephemeris data */
-    NavTransIntMsg scTransBuffer;   /* [-] Input spacecraft position data */
-    NavAttIntMsg scAttBuffer;       /* [-] Input spacecraft attitude data */
+    NavAttMsgPayload outputSunline;     /* [-] Output sunline estimate data */
+    EphemerisMsgPayload sunEphemBuffer; /* [-] Input sun ephemeris data */
+    NavTransMsgPayload scTransBuffer;   /* [-] Input spacecraft position data */
+    NavAttMsgPayload scAttBuffer;       /* [-] Input spacecraft attitude data */
     
     /*! - Read the input messages */
-    memset(&outputSunline, 0x0, sizeof(NavAttIntMsg));
-    memset(&sunEphemBuffer, 0x0, sizeof(EphemerisIntMsg));
-    memset(&scTransBuffer, 0x0, sizeof(NavTransIntMsg));
-    memset(&scAttBuffer, 0x0, sizeof(NavAttIntMsg));
-    ReadMessage(configData->sunPositionInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(EphemerisIntMsg), (void*) &sunEphemBuffer, moduleID);
-    ReadMessage(configData->scPositionInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &scTransBuffer, moduleID);
-    ReadMessage(configData->scAttitudeInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), (void*) &scAttBuffer, moduleID);
+    outputSunline = NavAttMsg_C_zeroMsgPayload();
+    sunEphemBuffer = EphemerisMsg_C_read(&configData->sunPositionInMsg);
+    scTransBuffer = NavTransMsg_C_read(&configData->scPositionInMsg);
+    scAttBuffer = NavAttMsg_C_read(&configData->scAttitudeInMsg);
 
     /*! - Calculate Sunline Heading from Ephemeris Data*/
     v3Subtract(sunEphemBuffer.r_BdyZero_N, scTransBuffer.r_BN_N, r_SB_N);
@@ -119,7 +93,6 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int6
     
     /*! - store the output message*/
     v3Copy(r_SB_B_hat, outputSunline.vehSunPntBdy);
-    WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-                 &(outputSunline), moduleID);
+    NavAttMsg_C_write(&outputSunline, &configData->navStateOutMsg, callTime);
     return;
 }

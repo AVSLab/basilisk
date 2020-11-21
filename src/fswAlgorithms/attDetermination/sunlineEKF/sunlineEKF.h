@@ -20,7 +20,6 @@
 #ifndef _SUNLINE_EKF_H_
 #define _SUNLINE_EKF_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 #include <string.h>
 

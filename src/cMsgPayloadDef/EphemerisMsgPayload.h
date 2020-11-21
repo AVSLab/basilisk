@@ -16,31 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module sunlineEphem
-%{
-    #include "sunlineEphem.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_sunlineEphem(void*, uint64_t, uint64_t);
-%ignore Update_sunlineEphem;
-%constant void SelfInit_sunlineEphem(void*, uint64_t);
-%ignore SelfInit_sunlineEphem;
-%constant void CrossInit_sunlineEphem(void*, uint64_t);
-%ignore CrossInit_sunlineEphem;
-%constant void Reset_sunlineEphem(void*, uint64_t, uint64_t);
-%ignore Reset_sunlineEphem;
+#ifndef EPHEMERIS_OUTPUT_H
+#define EPHEMERIS_OUTPUT_H
 
-%include "cMsgPayloadDef/NavAttMsgPayload.h"
-struct NavAttMsg_C;
-%include "cMsgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "cMsgPayloadDef/EphemerisMsgPayload.h"
-struct EphemerisMsg_C;
 
-%include "sunlineEphem.h"
+/*! @brief Message structure used to write ephemeris states out to other modules*/
+typedef struct {
+    double r_BdyZero_N[3];          //!< [m] Position of orbital body
+    double v_BdyZero_N[3];          //!< [m/s] Velocity of orbital body
+    double timeTag;                 //!< [s] vehicle Time-tag for state
+}EphemerisMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif

@@ -20,7 +20,6 @@
 #ifndef _SUNLINE_EKF_H_
 #define _SUNLINE_EKF_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 
 #include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
