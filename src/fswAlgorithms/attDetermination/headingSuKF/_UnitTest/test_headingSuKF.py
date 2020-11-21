@@ -396,10 +396,7 @@ def StateUpdateSunLine(show_plots):
     testVector = np.array([0.9, 0.1, 0.02])
     testOmega = np.array([0.01, 0.05, 0.001])
     inputData = messaging2.OpNavMsgPayload()
-    inDataMsg = messaging2.OpNavMsg().write(inputData)
-
-    camConfigMsg = messaging2.CameraConfigMsgPayload()
-    inCamConfigMsg = messaging2.CameraConfigMsg().write(camConfigMsg)
+    opnavDataInMsg = messaging2.OpNavMsg()
 
     stateTarget = testVector.tolist()
     inputData.r_BN_B = stateTarget
@@ -407,8 +404,7 @@ def StateUpdateSunLine(show_plots):
     moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
 
     # setup message connections
-    moduleConfig.opnavDataInMsg.subscribeTo(inDataMsg)
-    moduleConfig.cameraConfigInMsg.subscribeTo(inCamConfigMsg)
+    moduleConfig.opnavDataInMsg.subscribeTo(opnavDataInMsg)
 
     unitTestSim.InitializeSimulation()
     t1 = 1000
@@ -418,7 +414,7 @@ def StateUpdateSunLine(show_plots):
             inputData.valid = 1
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
             inputData.covar_B = [0.0001**2, 0, 0, 0, 0.0001**2, 0, 0, 0, 0.0001**2]
-            inDataMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
+            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -449,7 +445,7 @@ def StateUpdateSunLine(show_plots):
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
             inputData.valid = 1
             inputData.covar_B = [0.0001**2,0,0,0,0.0001**2,0,0,0,0.0001**2]
-            inDataMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
+            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+t1 +1)*0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -510,13 +506,10 @@ def StatePropSunLine(show_plots):
     dataLog = moduleConfig.filtDataOutMsg.log()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    inCamConfigData = messaging2.CameraConfigMsgPayload()
-    inCamConfigMsg = messaging2.CameraConfigMsg().write(inCamConfigData)
     inData = messaging2.OpNavMsgPayload()
     inDataMsg = messaging2.OpNavMsg().write(inData)
 
     # setup message connections
-    moduleConfig.cameraConfigInMsg.subscribeTo(inCamConfigMsg)
     moduleConfig.opnavDataInMsg.subscribeTo(inDataMsg)
 
     unitTestSim.InitializeSimulation()

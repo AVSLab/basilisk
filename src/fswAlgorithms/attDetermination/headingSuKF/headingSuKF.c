@@ -47,12 +47,6 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
  */
 void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
-    /*! - Check input message connections */
-    if (CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)){
-        configData->putInCameraFrame = 1;
-    } else {
-        configData->putInCameraFrame = 0;
-    }
 }
 
 /*! This method resets the heading attitude filter to an initial state and
@@ -68,7 +62,14 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     
     int32_t i;
     double tempMatrix[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
-    
+
+    /*! - Check input message connections */
+    if (CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)){
+        configData->putInCameraFrame = 1;
+    } else {
+        configData->putInCameraFrame = 0;
+    }
+
     /*! - Zero the local configuration data structures and outputs */
     configData->outputHeading = NavAttMsg_C_zeroMsgPayload();
 
@@ -147,6 +148,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     double states_BN[HEAD_N_STATES_SWITCH];
     int i;
     uint64_t ClockTime;
+    int isWritten;
 
     HeadingFilterMsgPayload headingDataOutBuffer;
     OpNavMsgPayload opnavOutputBuffer;
@@ -154,7 +156,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
 
-    configData->opnavInBuffer = OpNavMsg_C_zeroMsgPayload();
+    /* zero variables */
     cameraConfig = CameraConfigMsg_C_zeroMsgPayload();
     opnavOutputBuffer = OpNavMsg_C_zeroMsgPayload();
     v3SetZero(configData->obs);
@@ -162,6 +164,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
 
     configData->opnavInBuffer = OpNavMsg_C_read(&configData->opnavDataInMsg);
     ClockTime = OpNavMsg_C_timeWritten(&configData->opnavDataInMsg);
+    isWritten = OpNavMsg_C_isWritten(&configData->opnavDataInMsg);
     if (configData->putInCameraFrame == 1){
         cameraConfig = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
     }
@@ -180,7 +183,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && configData->opnavInBuffer.valid ==1)
+    if(newTimeTag >= configData->timeTag && isWritten && configData->opnavInBuffer.valid ==1)
     {
         headingSuKFTimeUpdate(configData, newTimeTag);
         headingSuKFMeasUpdate(configData, newTimeTag);
