@@ -31,13 +31,18 @@
 %ignore CrossInit_sunlineUKF;
 %constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineUKF;
-GEN_SIZEOF(SunlineFilterFswMsg);
-GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(SunlineUKFConfig);
+
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+%include "cMsgPayloadDef/SunlineFilterMsgPayload.h"
+struct SunlineFilterMsg_C;
+%include "cMsgPayloadDef/CSSConfigMsgPayload.h"
+struct CSSConfigMsg_C;
+
 %include "sunlineUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/sunlineFilterFswMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
 
 %pythoncode %{
 import sys
