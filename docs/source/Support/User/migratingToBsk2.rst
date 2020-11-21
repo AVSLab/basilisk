@@ -137,6 +137,15 @@ When done, use the following command to create the Msg object and get a copy for
 
 The ``time`` is the message write time in nano-seconds.  It is optional and defaults to 0.
 
+If you want to just create a message from Python, but not write to it, you can use::
+
+    msg = messaging2.ParticularMsg()
+
+This will create a zero'd message payload with a header that indicates it has never been written.  To write
+to it at a later time you simply use::
+
+    msg.write(msgData, time)
+
 Reading a Basilisk Message from Python
 --------------------------------------
 Assume ``bskObject`` is the Basilisk module created in Python.  To read an output message ``someOutMsg``
