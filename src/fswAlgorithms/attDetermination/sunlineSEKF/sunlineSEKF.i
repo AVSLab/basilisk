@@ -31,15 +31,16 @@
 %ignore CrossInit_sunlineSEKF;
 %constant void Reset_sunlineSEKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineSEKF;
-STRUCTASLIST(CSSConfigFswMsg)
-GEN_SIZEOF(CSSConfigFswMsg)
-GEN_SIZEOF(SunlineFilterFswMsg);
-GEN_SIZEOF(sunlineSEKFConfig);
-GEN_SIZEOF(VehicleConfigFswMsg);
-%include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/sunlineFilterFswMsg.h"
+
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+%include "cMsgPayloadDef/SunlineFilterMsgPayload.h"
+struct SunlineFilterMsg_C;
+%include "cMsgPayloadDef/CSSConfigMsgPayload.h"
+struct CSSConfigMsg_C;
+
 %include "sunlineSEKF.h"
 
 %pythoncode %{
