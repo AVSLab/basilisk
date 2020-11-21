@@ -31,12 +31,18 @@
 %ignore CrossInit_okeefeEKF;
 %constant void Reset_okeefeEKF(void*, uint64_t, uint64_t);
 %ignore Reset_okeefeEKF;
-GEN_SIZEOF(SunlineFilterFswMsg);
-GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(okeefeEKFConfig);
+
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/sunlineFilterFswMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
+
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+%include "cMsgPayloadDef/SunlineFilterMsgPayload.h"
+struct SunlineFilterMsg_C;
+%include "cMsgPayloadDef/CSSConfigMsgPayload.h"
+struct CSSConfigMsg_C;
+
 %include "okeefeEKF.h"
 
 %pythoncode %{
