@@ -16,30 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module eulerRotation
-%{
-   #include "eulerRotation.h"
-%}
 
-%include "swig_conly_data.i"
+#ifndef ATT_STATE_MESSAGE_H
+#define ATT_STATE_MESSAGE_H
 
-%constant void Update_eulerRotation(void*, uint64_t, uint64_t);
-%ignore Update_eulerRotation;
-%constant void SelfInit_eulerRotation(void*, uint64_t);
-%ignore SelfInit_eulerRotation;
-%constant void CrossInit_eulerRotation(void*, uint64_t);
-%ignore CrossInit_eulerRotation;
-%constant void Reset_eulerRotation(void*, uint64_t, uint64_t);
-%ignore Reset_eulerRotation;
 
-%include "eulerRotation.h"
 
-%include "cMsgPayloadDef/AttRefMsgPayload.h"
-struct AttRefMsg_C;
-%include "cMsgPayloadDef/AttStateMsgPayload.h"
-struct AttStateMsg_C;
+/*! @brief Structure used to define the output euler set for attitude reference generation */
+typedef struct {
+    double state[3];          //!< []   3D attitude orientation coordinate set The units depend on the attitude coordinate chosen and can be either radians (i.e. Euler angles) or dimensionless (i.e. MRP, quaternions, etc.)
+    double rate[3];           //!< []   3D attitude rate coordinate set.  These rate coordinates can be either omega (in rad/sec) or attitude coordiante rates with appropriate units
+}AttStateMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif

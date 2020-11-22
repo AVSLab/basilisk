@@ -45,11 +45,7 @@
  */
 void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
 {
-    /* - Create output message for module */
-    configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
-                                               sizeof(AttRefFswMsg),
-                                               "AttRefFswMsg",
-                                               moduleID);
+    AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
 /*! @brief This method performs the second stage of initialization for the module
@@ -60,18 +56,6 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
  @param moduleID The ID associated with the configData
  */void CrossInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
 {
-    /* - Get the control data message ID*/
-    configData->attRefInMsgID = subscribeToMessage(configData->attRefInMsgName,
-                                                sizeof(AttRefFswMsg),
-                                                moduleID);
-    
-    configData->desiredAttInMsgID = -1;
-    if(strlen(configData->desiredAttInMsgName) > 0)
-    {
-        configData->desiredAttInMsgID = subscribeToMessage(configData->desiredAttInMsgName,
-                                                         sizeof(AttStateFswMsg),
-                                                         moduleID);
-    }
 }
 
 /*! @brief This resets the module to original states.
@@ -97,25 +81,18 @@ void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int
  */
 void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    AttRefMsgPayload inputRef;
+    AttRefMsgPayload attRefOut;
+
     /* - Read input messages */
-    AttRefFswMsg inputRef;
-    AttRefFswMsg attRefOut;
+    inputRef = AttRefMsg_C_read(&configData->attRefInMsg);
 
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-
-    memset(&inputRef, 0x0, sizeof(AttRefFswMsg));
-    ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
-
-    if (configData->desiredAttInMsgID >= 0)
+    if (AttStateMsg_C_isLinked(&configData->desiredAttInMsg))
     {
-        AttStateFswMsg attStates;
+        AttStateMsgPayload attStates;
 
         /* - Read Raster Manager messages */
-        memset(&attStates, 0x0, sizeof(AttStateFswMsg));
-        ReadMessage(configData->desiredAttInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(AttStateFswMsg), (void*) &(attStates), moduleID);
+        attStates = AttStateMsg_C_read(&configData->desiredAttInMsg);
         /* - Save commanded 321 Euler set and rates */
         v3Copy(attStates.state, configData->cmdSet);
         v3Copy(attStates.rate, configData->cmdRates);
@@ -126,7 +103,7 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, in
     /* - Compute time step to use in the integration downstream */
     computeTimeStep(configData, callTime);
     /* - Compute output reference frame */
-    memset(&attRefOut, 0x0, sizeof(AttRefFswMsg));
+    attRefOut = AttRefMsg_C_zeroMsgPayload();
     computeEulerRotationReference(configData,
                                   inputRef.sigma_RN,
                                   inputRef.omega_RN_N,
@@ -134,8 +111,7 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, in
                                   &attRefOut);
 
     /* - Write output messages */
-    WriteMessage(configData->attRefOutMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(attRefOut), moduleID);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, callTime);
 
     /* - Update last time the module was called to current call time */
     configData->priorTime = callTime;
@@ -221,7 +197,7 @@ void computeEulerRotationReference(eulerRotationConfig *configData,
                                    double sigma_R0N[3],
                                    double omega_R0N_N[3],
                                    double domega_R0N_N[3],
-                                   AttRefFswMsg *attRefOut)
+                                   AttRefMsgPayload *attRefOut)
 {
     /* Compute attitude reference*/
     double attIncrement[3];         /*!< [] increment in attitude coordinates  */
