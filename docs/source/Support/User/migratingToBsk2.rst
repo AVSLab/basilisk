@@ -66,6 +66,14 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRefMessageName``       | ``attRefInMsg``                   |
     +---------------------------+-------------------------------+-----------------------------------+
+    | celestialTwoBodyPoint     | ``outputDataName``            | ``attRefOutMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputCelMessName``          | ``celBodyInMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputSecMessName``          | ``secCelBodyInMsg``               |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
+    +---------------------------+-------------------------------+-----------------------------------+
     | gravityEffector           | ``bodyInMsgName``             | ``planetBodyInMsg``               |
     +---------------------------+-------------------------------+-----------------------------------+
     | headingSuKF               | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
@@ -116,7 +124,7 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputSunName``              | ``sunStateInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
-    | spacecraftPlus            | ``scMassStateOutMsgName``     | ``scMassOutMsg``                 |
+    | spacecraftPlus            | ``scMassStateOutMsgName``     | ``scMassOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
 
 

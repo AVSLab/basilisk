@@ -20,11 +20,12 @@
 #ifndef _CELESTIAL_BODY_POINT_H_
 #define _CELESTIAL_BODY_POINT_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "fswMessages/attRefFswMsg.h"
+
+#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
@@ -43,17 +44,15 @@ typedef struct {
     
     
     /* Declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message*/
-    char inputNavDataName[MAX_STAT_MSG_LENGTH];     //!< The name of the incoming attitude command*/
-    char inputCelMessName[MAX_STAT_MSG_LENGTH];     //!< The name of the celestial body message*/
-    char inputSecMessName[MAX_STAT_MSG_LENGTH];     //!< The name of the secondary body to constrain point*/
-    int32_t outputMsgID;                            //!< (-) ID for the outgoing body estimate message*/
-    int32_t inputNavID;                             //!< (-) ID for the incoming IMU data message*/
-    int32_t inputCelID;                             //!< (-) ID for the incoming mass properties message*/
-    int32_t inputSecID;                             //!< (-) ID for the secondary constraint message*/
-    
+    AttRefMsg_C attRefOutMsg;                       //!< The name of the output message*/
+    EphemerisMsg_C celBodyInMsg;                    //!< The name of the celestial body message*/
+    EphemerisMsg_C secCelBodyInMsg;                 //!< The name of the secondary body to constrain point*/
+    NavTransMsg_C transNavInMsg;                    //!< The name of the incoming attitude command*/
+
+    int secCelBodyIsLinked;                         //!< flag to indicate if the optional 2nd celestial body message is linked
+
     /* Output attitude reference data to send */
-    AttRefFswMsg attRefOut;                         //!< (-) copy of output reference frame message
+    AttRefMsgPayload attRefOut;                     //!< (-) copy of output reference frame message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 }celestialTwoBodyPointConfig;

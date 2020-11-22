@@ -33,11 +33,7 @@
 void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(AttRefFswMsg),
-                                               "AttRefFswMsg",
-                                               moduleID);
+    AttRefMsg_C_init(&configData->attRefOutMsg);
     return;
     
 }
@@ -52,28 +48,12 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
 void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     int64_t moduleID)
 {
-    /*! - subscribe to other message*/
-    /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
-     not exist, this subscribe function will create an empty planet message.  This behavior
-     is by design such that if a planet doesn't have a message, default (0,0,0) position
-     and velocity vectors are assumed. */
-    configData->inputCelID = subscribeToMessage(configData->inputCelMessName,
-                                                sizeof(EphemerisIntMsg), moduleID);
-    /*! - inputNavID provides the current spacecraft location and velocity */
-    configData->inputNavID = subscribeToMessage(configData->inputNavDataName,
-                                                sizeof(NavTransIntMsg), moduleID);
-    configData->inputSecID = -1;
-    if(strlen(configData->inputSecMessName) > 0)
-    {
-        /*! - inputSecID provides the 2nd plant ephemeris message */
-        configData->inputSecID = subscribeToMessage(configData->inputSecMessName,
-                                                    sizeof(EphemerisIntMsg), moduleID);
-    }
-    return;
-    
 }
+
 void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    configData->secCelBodyIsLinked = EphemerisMsg_C_isLinked(&configData->secCelBodyInMsg);
+
     return;
 }
 
@@ -94,8 +74,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     /*! - Compute the pointing requirements */
     computeCelestialTwoBodyPoint(configData, callTime);
     /*! - Write the output message */
-    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(configData->attRefOut), moduleID);
+    AttRefMsg_C_write(&configData->attRefOut, &configData->attRefOutMsg, callTime);
 }
 
 /*! This method takes the navigation translational info as well as the spice data of the
@@ -107,15 +86,9 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
  */
 void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    NavTransIntMsg navData;
-    EphemerisIntMsg primPlanet;
-    EphemerisIntMsg secPlanet;
-
-    /*! - Zero the local planet ephemeris message */
-    memset(&primPlanet, 0x0, sizeof(EphemerisIntMsg));
-    memset(&navData, 0x0, sizeof(NavTransIntMsg));
+    NavTransMsgPayload navData;
+    EphemerisMsgPayload primPlanet;
+    EphemerisMsgPayload secPlanet;
 
     double R_P1B_N_hat[3];          /* Unit vector in the direction of r_P1 */
     double R_P2B_N_hat[3];          /* Unit vector in the direction of r_P2 */
@@ -123,19 +96,20 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleI
     double platAngDiff;             /* Angle between r_P1 and r_P2 */
     double dotProduct;              /* Temporary scalar variable */
     
-    ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(NavTransIntMsg), &navData, moduleID);
-    ReadMessage(configData->inputCelID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(EphemerisIntMsg), &primPlanet, moduleID);
-    
+    navData = NavTransMsg_C_read(&configData->transNavInMsg);
+    primPlanet = EphemerisMsg_C_read(&configData->celBodyInMsg);
+
+
     v3Subtract(primPlanet.r_BdyZero_N, navData.r_BN_N, configData->R_P1B_N);
     v3Subtract(primPlanet.v_BdyZero_N, navData.v_BN_N, configData->v_P1B_N);
     
     v3SetZero(configData->a_P1B_N); /* accelerations of s/c relative to planets set to zero*/
     v3SetZero(configData->a_P2B_N);
-    
-    if(configData->inputSecID >= 0)
+
+    if(configData->secCelBodyIsLinked)
     {
-        memset(&secPlanet, 0x0, sizeof(EphemerisIntMsg));
-        ReadMessage(configData->inputSecID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(EphemerisIntMsg), &secPlanet, moduleID);
+
+        secPlanet = EphemerisMsg_C_read(&configData->secCelBodyInMsg);
         /*! - Compute R_P2 and v_P2 */
         v3Subtract(secPlanet.r_BdyZero_N, navData.r_BN_N, configData->R_P2B_N);
         v3Subtract(secPlanet.v_BdyZero_N, navData.v_BN_N, configData->v_P2B_N);
@@ -151,7 +125,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleI
     }
     
     /*! - Cross the P1 states to get R_P2, v_p2 and a_P2 */
-    if(configData->inputSecID < 0 || fabs(platAngDiff) < configData->singularityThresh)
+    if(!configData->secCelBodyIsLinked || fabs(platAngDiff) < configData->singularityThresh)
     {
         v3Cross(configData->R_P1B_N, configData->v_P1B_N, configData->R_P2B_N);
         v3Cross(configData->R_P1B_N, configData->a_P1B_N, configData->v_P2B_N);
@@ -204,8 +178,7 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     double ddr2_hat[3];     /* r2_hat second time-derivative */
     double ddr3_hat[3];     /* r3_hat second time-derivative */
     
-    
-    memset(&configData->attRefOut, 0x0, sizeof(AttRefFswMsg));
+    configData->attRefOut = AttRefMsg_C_zeroMsgPayload();
     
     /* - Initial computations: R_n, v_n, a_n */
     v3Cross(configData->R_P1B_N, configData->R_P2B_N, R_N);
