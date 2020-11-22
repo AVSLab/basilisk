@@ -24,7 +24,7 @@ class SimulationProgressBar:
             self.p.update(self.max_value - self.last_update)
             self.last_update = self.max_value
 
-    def mark_complete(self):
+    def markComplete(self):
         if self.update == self.max_value:
             return
         self.p.update(self.max_value-self.last_update)

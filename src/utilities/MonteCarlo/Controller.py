@@ -43,6 +43,8 @@ import multiprocessing as mp
 import pickle as pickle
 from Basilisk.utilities.MonteCarlo.DataWriter import DataWriter
 from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
+from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
+
 
 class Controller:
     """
@@ -71,6 +73,13 @@ class Controller:
             icfilename=""
         )
 
+    def setShowProgressBar(self, value):
+        """
+        To enable or disable progress bar to show simulation progress
+        Args:
+            value: boolean value, decide to show/hide progress bar
+        """
+        self.simParams.showProgressBar = value
 
     @staticmethod
     def load(runDirectory):
@@ -403,6 +412,7 @@ class Controller:
         # It is called within worker threads with each worker's simulation parameters
         simulationExecutor = SimulationExecutor()
         #
+        progressBar = SimulationProgressBar(len(caseList), self.simParams.showProgressBar)
         if self.numProcess == 1:  # don't make child thread
             if self.simParams.verbose:
                 print("Executing sequentially...")
@@ -415,6 +425,7 @@ class Controller:
                     except:
                         failed.append(i)
                 i += 1
+                progressBar.update(i)
         else:
             numSims = len(caseList)
             if self.numProcess > numSims:
@@ -437,6 +448,7 @@ class Controller:
                             print("Job", result[1], "failed...")
 
                         jobsFinished += 1
+                        progressBar.update(jobsFinished)
                     pool.close()
                 except KeyboardInterrupt as e:
                     print("Ctrl-C was hit, closing pool")
@@ -451,6 +463,8 @@ class Controller:
                 finally:
                     pool.join()
 
+        progressBar.markComplete()
+        progressBar.close()
         # If the data was archiving, close the queue.
         if self.archiveDir is not None and self.archiveDir != self.icDirectory:
             while not self.dataOutQueue.empty():
@@ -602,9 +616,12 @@ class Controller:
         # It is called within worker threads with each worker's simulation parameters
         simulationExecutor = SimulationExecutor()
 
+        progressBar = SimulationProgressBar(numSims, self.simParams.showProgressBar)
+
         # The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It
         # is a temporary fix to a memory leak which is assumed to be a result of the simGenerator not collecting
         # garbage properly. # TODO: Find a more permenant solution to the leak.
+
         if self.numProcess == 1:  # don't make child thread
             if self.simParams.verbose:
                 print("Executing sequentially...")
@@ -617,6 +634,7 @@ class Controller:
                     except:
                         failed.append(i)
                     i += 1
+                    progressBar.update(i)
         else:
             if self.numProcess > numSims:
                 print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
@@ -627,7 +645,7 @@ class Controller:
                     offset = numSims % self.numProcess
                 else:
                     offset = 0
-                simGenerator = self.generateSims(list(range(self.numProcess*i,self.numProcess*(i+1)+offset)))
+                simGenerator = self.generateSims(list(range(self.numProcess*i, self.numProcess*(i+1)+offset)))
                 pool = mp.Pool(self.numProcess)
                 try:
                     # yields results *as* the workers finish jobs
@@ -637,10 +655,7 @@ class Controller:
                             print("Job", result[1], "failed...")
 
                         jobsFinished += 1
-                        if self.simParams.verbose:
-                            if jobsFinished % max(1, numSims // 20) == 0:  # print percentage after every ~5%
-                                print("Finished", jobsFinished, "/", numSims, \
-                                      "\t-- {}%".format(int(100 * float(jobsFinished) / numSims)))
+                        progressBar.update(jobsFinished)
                     pool.close()
                 except KeyboardInterrupt as e:
                     print("Ctrl-C was hit, closing pool")
@@ -656,6 +671,8 @@ class Controller:
                     # Wait until all data is logged from the spawned runs before proceeding with the next set.
                     pool.join()
 
+        progressBar.markComplete()
+        progressBar.close()
         # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
         while not self.dataOutQueue.empty():
            time.sleep(1)
@@ -691,7 +708,8 @@ class SimulationParameters():
 
     def __init__(self, creationFunction, executionFunction, configureFunction,
                  retentionPolicies, dispersions, shouldDisperseSeeds,
-                 shouldArchiveParameters, filename, icfilename, index=None, verbose=False, modifications={}):
+                 shouldArchiveParameters, filename, icfilename, index=None, verbose=False, modifications={},
+                 showProgressBar=False):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
@@ -706,6 +724,7 @@ class SimulationParameters():
         self.modifications = modifications
         self.dispersionMag = {}
         self.saveDispMag = False
+        self.showProgressBar = showProgressBar
 
 
 

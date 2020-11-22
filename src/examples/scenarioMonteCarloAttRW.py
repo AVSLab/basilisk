@@ -36,6 +36,19 @@ The script is found in the folder ``src/examples`` and executed by using::
 For more information on the Attitude Feedback Simulation with RW, please see the documentation
 on the :ref:`scenarioAttitudeFeedbackRW` file.
 
+Enable Terminal Bar to Show Simulation Progress
+-----------------------------------------------
+
+To enable progress bar, one need to set ``showProgressBar`` data member of class SimulationParameters to true.
+
+.. code-block:: python
+
+     monteCarlo = Controller()
+     monteCarlo.setShowProgressBar(True)
+
+Method ``setShowProgressBar`` should be used to set variable ``showProgressBar`` as True with the above statement. After
+enabling the progress bar, all the simulation run by ``monteCarlo.ExecuteSimulation()`` and
+montoCarlo.runInitialConditions will show the progress bar in the terminal.
 
 Setup Changes for Monte-Carlo Runs
 ----------------------------------
@@ -324,6 +337,7 @@ def run(saveFigures, case, show_plots, useDatashader):
     # The simulations can have random seeds of each simulation dispersed randomly
     monteCarlo.setShouldDisperseSeeds(True)
 
+    monteCarlo.setShowProgressBar(True)
     # Optionally set the number of cores to use
     # monteCarlo.setThreadCount(PROCESSES)
 

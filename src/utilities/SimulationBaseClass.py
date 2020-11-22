@@ -456,7 +456,7 @@ class SimBaseClass:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
-        progressBar.mark_complete()
+        progressBar.markComplete()
         progressBar.close()
         if simComm is not None:
             simComm.send("TERM")
