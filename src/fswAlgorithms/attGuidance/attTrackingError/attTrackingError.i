@@ -30,18 +30,14 @@
 %ignore CrossInit_attTrackingError;
 %constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
 %ignore Reset_attTrackingError;
-struct AttGuidMsg_C;
-struct AttRefMsg_C;
-struct NavAttMsg_C;
 %include "attTrackingError.h"
-%include "cMsgPayloadDef/NavAttMsgPayload.h"
-%include "cMsgPayloadDef/AttGuidMsgPayload.h"
-%include "cMsgPayloadDef/AttRefMsgPayload.h"
-GEN_SIZEOF(NavAttMsgPayload);
-GEN_SIZEOF(attTrackingErrorConfig);
-GEN_SIZEOF(AttGuidMsgPayload);
-GEN_SIZEOF(AttRefMsgPayload);
 
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+%include "cMsgPayloadDef/AttRefMsgPayload.h"
+struct AttRefMsg_C;
 
 %pythoncode %{
     import sys

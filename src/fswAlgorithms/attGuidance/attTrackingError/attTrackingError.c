@@ -72,9 +72,7 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
     AttGuidMsgPayload attGuidOut;              /* Guidance message */
 
     /*! - Read the input messages */
-    memset(&ref, 0x0, sizeof(AttRefMsgPayload));
-    memset(&nav, 0x0, sizeof(NavAttMsgPayload));
-    memset(&attGuidOut, 0x0, sizeof(AttGuidMsgPayload));
+    attGuidOut = AttGuidMsg_C_zeroMsgPayload();
 
     ref = AttRefMsg_C_read(&configData->attRefInMsg);
     nav = NavAttMsg_C_read(&configData->attNavInMsg);

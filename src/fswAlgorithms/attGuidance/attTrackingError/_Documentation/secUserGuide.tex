@@ -15,10 +15,6 @@ The user only needs to setup the module and link the proper message names:
 \texttt{ moduleWrap.ModelTag = "attTrackingError"} 
 \item Add the module to the task: \\
  \texttt{ unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)}
-\item Link message names. For instance: \\
-  \texttt{  moduleConfig.inputNavName  = "inputNavName"} \\
-     \texttt{   moduleConfig.inputRefName  = "inputRefName"} \\
-     \texttt{   moduleConfig.outputDataName = "outputName"}
 \item  Set the R0R vector: \\
 \texttt{    moduleConfig.sigma\_R0R  = [0.01, 0.05, -0.55]}
 \end{itemize}
