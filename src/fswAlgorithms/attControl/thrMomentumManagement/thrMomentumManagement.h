@@ -41,7 +41,7 @@ typedef struct {
 
     /* declare module public variables */
     double hs_min;                                      //!< [Nms]  minimum RW cluster momentum for dumping
-    
+
     /* declare module IO interfaces */
     CmdTorqueBodyMsg_C deltaHOutMsg;                    //!< The name of the output message
     RWSpeedMsg_C rwSpeedsInMsg;                         //!< [] The name for the reaction wheel speeds message

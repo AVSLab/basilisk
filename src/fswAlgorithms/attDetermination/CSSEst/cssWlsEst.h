@@ -35,8 +35,8 @@
 /*! @brief Top level structure for the CSS weighted least squares estimator.
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
-    CSSArraySensorMsg_C cssDataInMsg;                   //!< The name of the css sensor input message
-    CSSConfigMsg_C cssConfigInMsg;                      //!< The name of the css configuration input message
+    CSSArraySensorMsg_C cssDataInMsg;                   //!< The name of the CSS sensor input message
+    CSSConfigMsg_C cssConfigInMsg;                      //!< The name of the CSS configuration input message
     NavAttMsg_C navStateOutMsg;                         //!< The name of the navigation output message containing the estimated states
     SunlineFilterMsg_C cssWLSFiltResOutMsg;             //!< The name of the CSS filter data out message
 
