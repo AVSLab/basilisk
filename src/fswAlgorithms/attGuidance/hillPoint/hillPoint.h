@@ -20,13 +20,13 @@
 #ifndef _HILL_POINT_
 #define _HILL_POINT_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 
 /* Required module input messages */
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "fswMessages/attRefFswMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
@@ -37,12 +37,12 @@
 typedef struct {
     
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       //!<        The name of the output message
-    int32_t outputMsgID;                            //!< (-)    ID for the outgoing message
-    char inputNavDataName[MAX_STAT_MSG_LENGTH];     //!<        The name of the incoming attitude command
-    int32_t inputNavID;                             //!< (-)    ID for the incoming IMU data message
-    char inputCelMessName[MAX_STAT_MSG_LENGTH];     //!<        The name of the celestial body message
-    int32_t inputCelID;                             //!< (-)    ID for the planet input message
+    AttRefMsg_C attRefOutMsg;               //!<        The name of the output message
+    NavTransMsg_C transNavInMsg;            //!<        The name of the incoming attitude command
+    EphemerisMsg_C celBodyInMsg;            //!<        The name of the celestial body message
+
+    int planetMsgIsLinked;                  //!<        flag if the planet message is linked
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 
 }hillPointConfig;
@@ -61,7 +61,7 @@ extern "C" {
                                       double v_BN_N[3],
                                       double celBdyPositonVector[3],
                                       double celBdyVelocityVector[3],
-                                      AttRefFswMsg *attRefOut);
+                                      AttRefMsgPayload *attRefOut);
 
 #ifdef __cplusplus
 }

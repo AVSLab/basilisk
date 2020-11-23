@@ -30,15 +30,15 @@
 %ignore CrossInit_hillPoint;
 %constant void Reset_hillPoint(void*, uint64_t, uint64_t);
 %ignore Reset_hillPoint;
-%include "hillPoint.h"
-%include "simFswInterfaceMessages/ephemerisIntMsg.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
-GEN_SIZEOF(EphemerisIntMsg);
-GEN_SIZEOF(hillPointConfig);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(AttRefFswMsg);
 
+%include "hillPoint.h"
+
+%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "cMsgPayloadDef/AttRefMsgPayload.h"
+struct AttRefMsg_C;
 
 %pythoncode %{
 import sys

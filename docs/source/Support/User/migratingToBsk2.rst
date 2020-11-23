@@ -78,6 +78,12 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | headingSuKF               | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
+    | hillPoint                 | ``outputDataName``            | ``attRefOutMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputCelMessName``          | ``celBodyInMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
+    +---------------------------+-------------------------------+-----------------------------------+
     | inertial3D                | ``outputDataName``            | ``attRefOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
     | inertial3DSpin            | ``outputDataName``            | ``attRefOutMsg``                  |
