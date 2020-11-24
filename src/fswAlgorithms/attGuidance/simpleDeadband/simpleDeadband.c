@@ -48,26 +48,16 @@
  */
 void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputGuidID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(AttGuidFswMsg),
-                                               "AttGuidFswMsg",
-                                               moduleID);
-    configData->wasControlOff = 1;
+    AttGuidMsg_C_init(&configData->attGuidOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
 void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
-                                                sizeof(AttGuidFswMsg),
-                                                moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -92,11 +82,8 @@ void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, i
 void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read the input message and set it as the output by default */
-    uint64_t    timeOfMsgWritten;
-    uint32_t    sizeOfMsgWritten;
-    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttGuidFswMsg), (void*) &(configData->attGuidOut), moduleID);
-    
+    configData->attGuidOut = AttGuidMsg_C_read(&configData->guidInMsg);
+
     /*! - Evaluate average simple in attitude and rates */
     configData->attError = 4.0 * atan(v3Norm(configData->attGuidOut.sigma_BR));
     configData->rateError = v3Norm(configData->attGuidOut.omega_BR_B);
@@ -105,8 +92,7 @@ void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, 
     applyDBLogic_simpleDeadband(configData);
     
     /*! - Write output guidance message and update module knowledge of control status*/
-    WriteMessage(configData->outputGuidID, callTime, sizeof(AttGuidFswMsg),
-                 (void*) &(configData->attGuidOut), moduleID);
+    AttGuidMsg_C_write(&configData->attGuidOut, &configData->attGuidOutMsg, callTime);
     return;
 }
 

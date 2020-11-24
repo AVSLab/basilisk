@@ -31,16 +31,16 @@
 %ignore CrossInit_opNavPoint;
 %constant void Reset_opNavPoint(void*, uint64_t, uint64_t);
 %ignore Reset_opNavPoint;
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/opNavFswMsg.h"
 
-GEN_SIZEOF(OpNavPointConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(OpNavFswMsg);
-GEN_SIZEOF(NavAttIntMsg);
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+%include "cMsgPayloadDef/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+
 %include "opNavPoint.h"
 
 %pythoncode %{

@@ -20,9 +20,8 @@
 #ifndef _SIMPLE_DEADBAND_
 #define _SIMPLE_DEADBAND_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/attGuidFswMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
 
 
@@ -39,12 +38,10 @@ typedef struct {
     double rateError;                   /*!< current scalar rate error */
     
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message*/
-    char inputGuidName[MAX_STAT_MSG_LENGTH];         /*!< The name of the guidance reference Input message */
-    int32_t outputGuidID;                            /*!< ID for the outgoing message */
-    int32_t inputGuidID;                             /*!< ID for the incoming guidance reference message */
+    AttGuidMsg_C attGuidOutMsg;    /*!< The name of the output message*/
+    AttGuidMsg_C guidInMsg;        /*!< The name of the guidance reference Input message */
 
-    AttGuidFswMsg attGuidOut;                       /*!< copy of the output message */
+    AttGuidMsgPayload attGuidOut;                       /*!< copy of the output message */
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 

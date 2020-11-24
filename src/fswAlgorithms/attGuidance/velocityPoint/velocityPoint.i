@@ -31,13 +31,13 @@
 %constant void Reset_velocityPoint(void*, uint64_t, uint64_t);
 %ignore Reset_velocityPoint;
 %include "velocityPoint.h"
-%include "simFswInterfaceMessages/ephemerisIntMsg.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
-GEN_SIZEOF(velocityPointConfig);
-GEN_SIZEOF(EphemerisIntMsg);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(AttRefFswMsg);
+
+%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "cMsgPayloadDef/AttRefMsgPayload.h"
+struct AttRefMsg_C;
 
 %pythoncode %{
 import sys

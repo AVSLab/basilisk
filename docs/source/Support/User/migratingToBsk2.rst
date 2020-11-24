@@ -110,9 +110,13 @@ This list makes it simple to see what naming will need to be changed.
     + ``mrpSteering``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +---------------------------+-------------------------------+-----------------------------------+
+    | opNavPoint                | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
     | PRV_Steering →            | ``outputDataName``            | ``rateCmdOutMsg``                 |
     + ``prvSteering``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | rasterManager             | ``AttStateOutMsgName``        | ``attStateOutMsg``                |
     +---------------------------+-------------------------------+-----------------------------------+
     | rateServoFullNonlinear    | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     +                           +-------------------------------+-----------------------------------+
@@ -121,6 +125,10 @@ This list makes it simple to see what naming will need to be changed.
     |                           | ``inputRWSpeedsName``         | ``rwSpeedsInMsg``                 |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRateSteeringName``     | ``rateSteeringInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | simpleDeadband            | ``outputDataName``            | ``attGuidOutMsg``                 |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +---------------------------+-------------------------------+-----------------------------------+
     | simple_nav →              | ``outputAttMessage``          | ``attOutMsg``                     |
     + ``simpleNav``             +-------------------------------+-----------------------------------+
@@ -131,6 +139,12 @@ This list makes it simple to see what naming will need to be changed.
     |                           | ``inputSunName``              | ``sunStateInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
     | spacecraftPlus            | ``scMassStateOutMsgName``     | ``scMassOutMsg``                  |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | velocityPoint             | ``outputDataName``            | ``attRefOutMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputCelMessName``          | ``celBodyInMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
 
 

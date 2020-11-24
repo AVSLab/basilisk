@@ -33,29 +33,18 @@
  */
 void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
-        sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
-    memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
-    memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
+    AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
     
 }
 
 /*! This method performs the second stage of initialization for the sun safe attitude
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
+ interface.
  @return void
  @param configData The configuration data associated with the sun safe attitude guidance
  @param moduleID The Basilisk module identifier
  */
 void CrossInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
-    /*! - Loop over the number of sensors and find IDs for each one */
-    configData->sunDirectionInMsgID = subscribeToMessage(configData->sunDirectionInMsgName,
-        sizeof(NavAttIntMsg), moduleID);
-    configData->imuInMsgID = subscribeToMessage(configData->imuInMsgName,
-        sizeof(NavAttIntMsg), moduleID);
-    
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -86,8 +75,7 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
         v3Normalize(configData->eHat180_B, configData->eHat180_B);
     }
 
-    memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
-    memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
+    configData->attGuidanceOutBuffer = AttGuidMsg_C_zeroMsgPayload();
 
     return;
 }
@@ -102,24 +90,20 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
 void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    NavAttIntMsg navMsg;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
+    NavAttMsgPayload navMsg;
     double ctSNormalized;
     double sNorm;                   /*!< --- Norm of measured direction vector */
     double e_hat[3];                /*!< --- Eigen Axis */
     double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
     double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
 
-    NavAttIntMsg localImuDataInBuffer;
-    /* zero the input message containers */
-    memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
-    memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
+    NavAttMsgPayload localImuDataInBuffer;
+    configData->attGuidanceOutBuffer = AttGuidMsg_C_zeroMsgPayload();
+
     /*! - Read the current sun body vector estimate*/
-    ReadMessage(configData->sunDirectionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
-    ReadMessage(configData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
+    navMsg = NavAttMsg_C_read(&configData->sunDirectionInMsg);
+    localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
+
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
 
     /*! - Compute the current error vector if it is valid*/
@@ -167,8 +151,7 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
     }
 
     /* write the Guidance output message */
-    WriteMessage(configData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
-                 (void*) &(configData->attGuidanceOutBuffer), moduleID);
+    AttGuidMsg_C_write(&configData->attGuidanceOutBuffer, &configData->attGuidanceOutMsg, callTime);
     
     return;
 }

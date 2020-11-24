@@ -40,19 +40,12 @@
 
 void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->AttStateOutMsgID = CreateNewMessage(configData->AttStateOutMsgName,
-                                                 sizeof(AttStateFswMsg),
-                                                 "AttStateFswMsg",
-                                                 moduleID);
-    configData->mnvrActive = 0;
-    configData->scanSelector = 0;
-    
+    AttStateMsg_C_init(&configData->attStateOutMsg);
 }
 
 void CrossInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+
 }
 
 void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID)
@@ -91,9 +84,8 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
         _bskLog(configData->bskLogger, BSK_INFORMATION, info);
     }
     
-    
-    WriteMessage(configData->AttStateOutMsgID, callTime, sizeof(AttStateFswMsg),
-                 (void*) &(configData->attOutSet), moduleID);
+    AttStateMsg_C_write(&configData->attOutSet, &configData->attStateOutMsg, callTime);
+
     return;
 }
 

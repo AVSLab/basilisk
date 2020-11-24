@@ -20,9 +20,9 @@
 #ifndef _SUN_SAFE_POINT_H_
 #define _SUN_SAFE_POINT_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/attGuidFswMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
@@ -30,9 +30,9 @@
 
 /*! @brief Top level structure for the sun-safe attitude guidance routine.*/
 typedef struct {
-    char attGuidanceOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char sunDirectionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char imuInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the incoming IMU message*/
+    AttGuidMsg_C attGuidanceOutMsg; /*!< The name of the output message*/
+    NavAttMsg_C sunDirectionInMsg; /*!< The name of the Input message*/
+    NavAttMsg_C imuInMsg;    /*!< The name of the incoming IMU message*/
     double minUnitMag;       /*!< -- The minimally acceptable norm of sun body vector*/
     double sunAngleErr;      /*!< rad The current error between cmd and obs sun angle*/
     double smallAngle;       /*!< rad An angle value that specifies what is near 0 or 180 degrees */
@@ -41,10 +41,8 @@ typedef struct {
     double sHatBdyCmd[3];    /*!< -- Desired body vector to point at the sun*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no sun direction is available */
     double sunAxisSpinRate;  /*!< r/s Desired constant spin rate about sun heading vector */
-    int32_t attGuidanceOutMsgID;/*!< -- ID for the outgoing body estimate message*/
-    int32_t sunDirectionInMsgID;/*!< -- ID for the incoming CSS sensor message*/
-    int32_t imuInMsgID;        /*!< -- ID for the incoming IMU sensor message*/
-    AttGuidFswMsg attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
+
+    AttGuidMsgPayload attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
     BSKLogger *bskLogger;                             //!< BSK Logging
 }sunSafePointConfig;
 

@@ -33,30 +33,18 @@
  */
 void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
-        sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
-    memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
-    memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
-    
+    AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the opNav attitude
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
+ interface.
  @return void
  @param configData The configuration data associated with the opNav attitude guidance
  @param moduleID The Basilisk module identifier
  */
 void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
-    /*! - Loop over the number of sensors and find IDs for each one */
-    configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
-                                                      sizeof(OpNavFswMsg), moduleID);
-    configData->imuInMsgID = subscribeToMessage(configData->imuInMsgName,
-        sizeof(NavAttIntMsg), moduleID);
-    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleID);
-    
+
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -88,8 +76,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
     }
     configData->lastTime = 0;
     v3SetZero(configData->currentHeading_N);
-    memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
-    memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
+    configData->attGuidanceOutBuffer = AttGuidMsg_C_zeroMsgPayload();
 
     return;
 }
@@ -104,9 +91,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
 void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    OpNavFswMsg opNavMsg;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
+    OpNavMsgPayload opNavMsg;
     double cthNormalized;
     double timeWithoutMeas;
     double currentHeading_C[3], alignAxis_B[3];
@@ -115,18 +100,13 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     double omega_BN_B[3];           /* r/s inertial body angular velocity vector in B frame components */
     double omega_RN_B[3];           /* r/s local copy of the desired reference frame rate */
     double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
-    NavAttIntMsg localImuDataInBuffer;
-    CameraConfigMsg cameraSpecs;
-    /* zero the input message containers */
-    memset(&(opNavMsg), 0x0, sizeof(OpNavFswMsg));
-    memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
+    NavAttMsgPayload localImuDataInBuffer;
+    CameraConfigMsgPayload cameraSpecs;
+
     /*! - Read the current target vector estimate*/
-    ReadMessage(configData->opnavDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(OpNavFswMsg), (void*) &(opNavMsg), moduleID);
-    ReadMessage(configData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
-    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CameraConfigMsg), &cameraSpecs, moduleID);
+    opNavMsg = OpNavMsg_C_read(&configData->opnavDataInMsg);
+    localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
+    cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
     
     if (configData->lastTime==0){
         configData->lastTime=callTime*1E-9;
@@ -198,8 +178,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     }
 
     /* write the Guidance output message */
-    WriteMessage(configData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
-                 (void*) &(configData->attGuidanceOutBuffer), moduleID);
+    AttGuidMsg_C_write(&configData->attGuidanceOutBuffer, &configData->attGuidanceOutMsg, callTime);
     
     return;
 }

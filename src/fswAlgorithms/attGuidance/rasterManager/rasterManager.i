@@ -31,9 +31,11 @@
 %ignore CrossInit_rasterManager;
 %constant void Reset_rasterManager(void*, uint64_t, uint64_t);
 %ignore Reset_rasterManager;
-GEN_SIZEOF(rasterManagerConfig);
+
 %include "rasterManager.h"
 
+%include "cMsgPayloadDef/AttStateMsgPayload.h"
+struct AttStateMsg_C;
 
 %pythoncode %{
 import sys
