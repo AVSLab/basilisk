@@ -31,14 +31,13 @@
 %ignore CrossInit_mrpRotation;
 %constant void Reset_mrpRotation(void*, uint64_t, uint64_t);
 %ignore Reset_mrpRotation;
-GEN_SIZEOF(mrpRotationConfig);
-GEN_SIZEOF(AttRefFswMsg);
-GEN_SIZEOF(AttStateFswMsg);
+
 %include "mrpRotation.h"
 
-// supportfile to be included in this sub-module
-%include "../../fswMessages/attRefFswMsg.h"
-%include "../../fswMessages/attStateFswMsg.h"
+%include "cMsgPayloadDef/AttRefMsgPayload.h"
+struct AttRefMsg_C;
+%include "cMsgPayloadDef/AttStateMsgPayload.h"
+struct AttStateMsg_C;
 
 %pythoncode %{
 import sys

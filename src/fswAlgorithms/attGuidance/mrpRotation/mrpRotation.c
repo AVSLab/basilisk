@@ -39,11 +39,7 @@
  */
 void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message with sigma_RN etc. for module */
-    configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
-                                                  sizeof(AttRefFswMsg),
-                                                  "AttRefFswMsg",
-                                                  moduleID);
+    AttRefMsg_C_init(&configData->attRefOutMsg);
 
     return;
 }
@@ -57,20 +53,6 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
  */
 void CrossInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->attRefInMsgID = subscribeToMessage(configData->attRefInMsgName,
-                                                   sizeof(AttRefFswMsg),
-                                                   moduleID);
-
-    /*! - Read in optional attitude scanning configuration message */
-    configData->desiredAttInMsgID = -1;
-    if(strlen(configData->desiredAttInMsgName) > 0)
-    {
-        configData->desiredAttInMsgID = subscribeToMessage(configData->desiredAttInMsgName,
-                                                           sizeof(AttStateFswMsg),
-                                                           moduleID);
-    }
-    return;
 }
 
 /*! @brief This resets the module to original states.
@@ -98,25 +80,20 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t
 void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read input messages */
-    AttRefFswMsg inputRef;                                /* [-] read in the [R_0N] input reference message */
-    AttRefFswMsg attRefOut;                               /* [-] structure for the Reference frame output data */
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
+    AttRefMsgPayload inputRef;                                /* [-] read in the [R_0N] input reference message */
+    AttRefMsgPayload attRefOut;                               /* [-] structure for the Reference frame output data */
 
     /*!- read in input reference frame message */
-    memset(&inputRef, 0x0, sizeof(AttRefFswMsg));
-    ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttRefFswMsg), (void *) &inputRef, moduleID);
+    inputRef = AttRefMsg_C_read(&configData->attRefInMsg);
 
     /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
-    if (configData->desiredAttInMsgID >= 0)
+    if (AttStateMsg_C_isLinked(&configData->desiredAttInMsg))
     {
-        AttStateFswMsg attStates;                         /* [-] initial [RR_0] attitude state message */
+        AttStateMsgPayload attStates;                         /* [-] initial [RR_0] attitude state message */
 
         /* - Read Raster Manager messages */
-        memset(&attStates, 0x0, sizeof(AttStateFswMsg));
-        ReadMessage(configData->desiredAttInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(AttStateFswMsg), (void*) &(attStates), moduleID);
+        attStates = AttStateMsg_C_read(&configData->desiredAttInMsg);
+
         /* - Save commanded MRP set and body rates */
         v3Copy(attStates.state, configData->cmdSet);
         v3Copy(attStates.rate, configData->cmdRates);
@@ -128,7 +105,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
     computeTimeStep(configData, callTime);
 
     /*! - Compute output reference frame */
-    memset(&attRefOut, 0x0, sizeof(AttRefFswMsg));
+    attRefOut = AttRefMsg_C_zeroMsgPayload();
     computeMRPRotationReference(configData,
                                 inputRef.sigma_RN,
                                 inputRef.omega_RN_N,
@@ -137,8 +114,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
 
 
     /*! - write attitude guidance reference output */
-    WriteMessage(configData->attRefOutMsgID, callTime, sizeof(AttRefFswMsg),
-                 &attRefOut, moduleID);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, callTime);
 
     /*! - Update last time the module was called to current call time */
     configData->priorTime = callTime;
@@ -197,7 +173,7 @@ void computeMRPRotationReference(mrpRotationConfig *configData,
                                  double sigma_R0N[3],
                                  double omega_R0N_N[3],
                                  double domega_R0N_N[3],
-                                 AttRefFswMsg   *attRefOut)
+                                 AttRefMsgPayload   *attRefOut)
 {
     double attIncrement[3];         /* [] increment in MRP attitude coordinates  */
     double RR0[3][3];               /* [] DCM rotating from R0 to R */
