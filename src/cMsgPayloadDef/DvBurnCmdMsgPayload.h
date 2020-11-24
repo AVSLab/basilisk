@@ -16,30 +16,20 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module dvGuidance
-%{
-   #include "dvGuidance.h"
-%}
+#include <stdint.h>
 
-%include "swig_conly_data.i"
-%constant void Update_dvGuidance(void*, uint64_t, uint64_t);
-%ignore Update_dvGuidance;
-%constant void SelfInit_dvGuidance(void*, uint64_t);
-%ignore SelfInit_dvGuidance;
-%constant void CrossInit_dvGuidance(void*, uint64_t);
-%ignore CrossInit_dvGuidance;
-%constant void Reset_dvGuidance(void*, uint64_t, uint64_t);
-%ignore Reset_dvGuidance;
+#ifndef DV_BURN_CMD_MESSAGE_H
+#define DV_BURN_CMD_MESSAGE_H
 
-%include "dvGuidance.h"
 
-%include "cMsgPayloadDef/AttRefMsgPayload.h"
-struct AttRefMsg_C;
-%include "cMsgPayloadDef/DvBurnCmdMsgPayload.h"
-struct DvBurnCmdMsg_C;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief Input burn command structure used to configure the burn*/
+typedef struct {
+    double dvInrtlCmd[3];    //!< [m/s] The commanded DV we need in inertial 
+    double dvRotVecUnit[3];  //!< [-] The commanded vector we need to rotate about
+    double dvRotVecMag;      //!< [r/s] The commanded rotation rate for the vector
+    uint64_t burnStartTime;  //!< [ns]  The commanded time to start the burn
+}DvBurnCmdMsgPayload;
 
+
+#endif

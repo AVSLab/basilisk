@@ -33,26 +33,17 @@
  */
 void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(AttRefFswMsg), "AttRefFswMsg", moduleID);
-    return;
-    
+    AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the delta-V maneuver
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
+ interface.
  @return void
  @param configData The configuration data associated with the attitude maneuver guidance
  @param moduleID The unique module identifier
  */
 void CrossInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 {
-    configData->inputBurnCmdID = subscribeToMessage(configData->inputBurnDataName,
-                                                    sizeof(DvBurnCmdFswMsg), moduleID);
-    return;
-
 }
 
 /*! @brief This resets the module.
@@ -85,18 +76,14 @@ void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
     double bu2_N[3];                 /* vector, vector which becomes the BubN DCM's second basis vector */
 	double burnTime;                 /* duration for which to thrust */
 	double rotPRV[3];                /* principle rotation vector about which to rotate during the burn */
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    DvBurnCmdFswMsg localBurnData;   /* [-] input message container */
-    AttRefFswMsg attCmd;             /* [-] Output attitude command data to send */
+    DvBurnCmdMsgPayload localBurnData;   /* [-] input message container */
+    AttRefMsgPayload attCmd;             /* [-] Output attitude command data to send */
 
-    /*! - zero the input and output message containers */
-    memset(&localBurnData, 0x0, sizeof(DvBurnCmdFswMsg));
-    memset(&attCmd, 0x0, sizeof(AttRefFswMsg));
+    /*! - zero the output message containers */
+    attCmd = AttRefMsg_C_zeroMsgPayload();
 
     /*! - read in DV burn command input message */
-    ReadMessage(configData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
+    localBurnData = DvBurnCmdMsg_C_read(&configData->burnDataInMsg);
 
     /*! - evaluate DCM from inertial to the base Burn Frame */
     v3Normalize(localBurnData.dvInrtlCmd, dvHat_N);
@@ -125,8 +112,7 @@ void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
     v3SetZero(attCmd.domega_RN_N);
 
     /*! - Write the output message */
-    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
-        &attCmd, moduleID);
+    AttRefMsg_C_write(&attCmd, &configData->attRefOutMsg, callTime);
     
     return;
 }

@@ -20,9 +20,9 @@
 #ifndef _DV_GUIDANCE_POINT_H_
 #define _DV_GUIDANCE_POINT_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "fswMessages/dvBurnCmdFswMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/DvBurnCmdMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
@@ -32,10 +32,9 @@
 /*! @brief Top level structure for the nominal delta-V guidance
  */
 typedef struct {
-    char outputDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
-    char inputBurnDataName[MAX_STAT_MSG_LENGTH]; //!< Input message that configures the vehicle burn
-    int32_t outputMsgID;     //!< (-) ID for the outgoing body estimate message
-    int32_t inputBurnCmdID;  //!< [-] ID for the incoming burn command data
+    AttRefMsg_C attRefOutMsg;           //!< The name of the output message
+    DvBurnCmdMsg_C burnDataInMsg;       //!< Input message that configures the vehicle burn
+
     BSKLogger *bskLogger;   //!< BSK Logging
 }dvGuidanceConfig;
 
