@@ -88,9 +88,9 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
 {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer;
-    memset(&attRefInMsgBuffer, 0x0, sizeof(AttRefMsgPayload));
+
     attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
-    
+
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
     if (configData->priorTime == 0)
@@ -102,15 +102,15 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
     }
     
     /*! - Generate inertial 3D Spinning Reference */
+    configData->attRefOutBuffer = AttRefMsg_C_zeroMsgPayload();
     computeReference_inertial3DSpin(configData,
                                     attRefInMsgBuffer.omega_RN_N,
                                     attRefInMsgBuffer.domega_RN_N,
                                     configData->omega_spin,
                                     dt);
-    printf("HPS_C: 5\n");
     /*! - Write output message */
     AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg, callTime);
-    printf("HPS_C: 6\n");
+
     /*! Update prior time to current for next evaluation */
     configData->priorTime = callTime;
 }

@@ -20,9 +20,9 @@
 #ifndef _INERTIAL3D_SPIN_
 #define _INERTIAL3D_SPIN_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
+
 #include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
 
 /*!@brief module configuration structure definition.
@@ -34,7 +34,8 @@ typedef struct {
     uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
     /* declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;                     //!< reference attitude output message
-    AttRefMsg_C attRefInMsg;                      //!< reference atttiude input message
+    AttRefMsg_C attRefInMsg;                      //!< reference attitude input message
+    
     AttRefMsgPayload attRefOutBuffer;                    //!< [-] structure for the output data
     BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DSpinConfig;
