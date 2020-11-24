@@ -31,13 +31,16 @@
 %constant void Reset_dvAttEffect(void*, uint64_t, uint64_t);
 %ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)
-%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-GEN_SIZEOF(effPairs);
-GEN_SIZEOF(ThrustGroupData);
-GEN_SIZEOF(dvAttEffectConfig);
-GEN_SIZEOF(THRArrayOnTimeCmdIntMsg);
+
+%include "cMsgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+struct ThrustGroupData;
+struct effPairs;
 
 %include "dvAttEffect.h"
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

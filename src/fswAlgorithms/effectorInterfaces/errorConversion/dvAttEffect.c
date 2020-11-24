@@ -37,43 +37,31 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
     /*! - Loop over number of thruster blocks and create output messages */
     for(i=0; i<configData->numThrGroups; i=i+1)
     {
-        configData->thrGroups[i].outputMsgID = CreateNewMessage(
-            configData->thrGroups[i].outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
-            "THRArrayOnTimeCmdIntMsg", moduleID);
+        THRArrayOnTimeCmdMsg_C_init(&configData->thrGroups[i].thrOnTimeOutMsg);
     }
  
     
 }
 
 /*! This method performs the second stage of initialization for the sun safe ACS
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
+ interface.
  @return void
  @param configData The configuration data associated with the sun safe ACS control
  @param moduleID The ID associated with the configData
  */
 void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->inputMsgID = subscribeToMessage(configData->inputControlName,
-        sizeof(CmdTorqueBodyIntMsg), moduleID);
-    
 }
+
 void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
                         int64_t moduleID)
 {
     uint32_t i;
-    THRArrayOnTimeCmdIntMsg nullEffect;
-    
-    memset(&(nullEffect), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
-    
+
     for(i=0; i<configData->numThrGroups; i=i+1)
     {
-        memcpy(&(configData->thrGroups[i].cmdRequests), &nullEffect,
-            sizeof(THRArrayOnTimeCmdIntMsg));
-        WriteMessage(configData->thrGroups[i].outputMsgID, callTime,
-            sizeof(THRArrayOnTimeCmdIntMsg), (void*)
-            &(configData->thrGroups[i].cmdRequests), moduleID);
+        configData->thrGroups[i].cmdRequests = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
+        THRArrayOnTimeCmdMsg_C_write(&configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, callTime);
     }
 
 }
@@ -88,15 +76,11 @@ void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
 void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     uint32_t i;
-    CmdTorqueBodyIntMsg cntrRequest;
+    CmdTorqueBodyMsgPayload cntrRequest;
     
     /*! - Read the input requested torque from the feedback controller*/
-    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
+    cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
     
     for(i=0; i<configData->numThrGroups; i=i+1)
     {
@@ -108,7 +92,7 @@ void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
 }
 
 void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-CmdTorqueBodyIntMsg *contrReq, int64_t moduleID)
+CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID)
 {
     double unSortOnTime[MAX_EFF_CNT];
     effPairs unSortPairs[MAX_EFF_CNT];
@@ -139,14 +123,13 @@ CmdTorqueBodyIntMsg *contrReq, int64_t moduleID)
         unSortPairs[i].thrustIndex = i;
     }
     effectorVSort(unSortPairs, sortPairs, thrData->numEffectors);
-    memset(thrData->cmdRequests.OnTimeRequest, 0x0,sizeof(THRArrayOnTimeCmdIntMsg));
+    thrData->cmdRequests = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
     for(i=0; i<thrData->maxNumCmds; i=i+1)
     {
         thrData->cmdRequests.OnTimeRequest[sortPairs[i].thrustIndex] =
         sortPairs[i].onTime;
     }
-    WriteMessage(thrData->outputMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
-                 (void*) &(thrData->cmdRequests), moduleID);
+    THRArrayOnTimeCmdMsg_C_write(&thrData->cmdRequests, &thrData->thrOnTimeOutMsg, callTime);
 }
 
 void effectorVSort(effPairs *Input, effPairs *Output, size_t dim)

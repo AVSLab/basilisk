@@ -74,6 +74,10 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | dvAttEffect               | ``inputControlName``          | ``cmdTorqueBodyInMsg``            |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``outputDataName``            | ``thrOnTimeOutMsg``               |
+    +---------------------------+-------------------------------+-----------------------------------+
     | dvExecuteGuidance         | ``outputDataName``            | ``burnExecOutMsg``                |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``outputThrName``             | ``thrCmdOutMsg``                  |
@@ -152,7 +156,11 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | spacecraftPlus            | ``scMassStateOutMsgName``     | ``scMassOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
-    | velocityPoint             | ``outputDataName``            | ``attRefOutMsg``                  |
+    | sunSafeACS                | ``outputDataName``            | ``cmdTorqueBodyInMsg``            |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputGuidName``             | ``guidInMsg``                     |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | velocityPoint             | ``inputControlName``          | ``attRefOutMsg``                  |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputCelMessName``          | ``celBodyInMsg``                  |
     +                           +-------------------------------+-----------------------------------+

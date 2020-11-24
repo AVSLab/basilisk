@@ -29,12 +29,16 @@
 %constant void CrossInit_sunSafeACS(void*, uint64_t);
 %ignore CrossInit_sunSafeACS;
 %include "dvAttEffect.h"
-GEN_SIZEOF(sunSafeACSConfig);
+
 %include "sunSafeACS.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
-%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-GEN_SIZEOF(THRArrayOnTimeCmdIntMsg);
+
+%include "cMsgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+
+struct ThrustGroupData;
+
 
 %pythoncode %{
 import sys

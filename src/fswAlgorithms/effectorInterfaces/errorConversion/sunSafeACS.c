@@ -32,26 +32,17 @@
  */
 void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->thrData.outputMsgID = CreateNewMessage(
-        configData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
-        "THRArrayOnTimeCmdIntMsg", moduleID);
-    
+    THRArrayOnTimeCmdMsg_C_init(&configData->thrData.thrOnTimeOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the sun safe ACS
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
+ interface.
  @return void
  @param configData The configuration data associated with the sun safe ACS control
  @param moduleID The ID associated with the configData
  */
 void CrossInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
-{
-    /*! - Get the control data message ID*/
-    configData->inputMsgID = subscribeToMessage(configData->inputControlName,
-        sizeof(CmdTorqueBodyIntMsg), moduleID);
-    
+{    
 }
 
 /*! This method takes the estimated body-observed sun vector and computes the
@@ -64,13 +55,10 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
 void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    CmdTorqueBodyIntMsg cntrRequest;
+    CmdTorqueBodyMsgPayload cntrRequest;
     
     /*! - Read the input parsed CSS sensor data message*/
-    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
+    cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
     computeSingleThrustBlock(&(configData->thrData), callTime,
                              &cntrRequest, moduleID);
     
