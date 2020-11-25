@@ -33,11 +33,7 @@
  */
 void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
 {
-    /*! - Create commanded control torque output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(ArrayMotorTorqueIntMsg),
-                                               "ArrayMotorTorqueIntMsg",
-                                               moduleID);
+    ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -48,20 +44,6 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
  */
 void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
 {
-    /*! - subscribe to the control vector Lr input message  */
-    configData->controlTorqueInMsgID = subscribeToMessage(configData->inputVehControlName,
-                                                       sizeof(CmdTorqueBodyIntMsg), moduleID);
-
-    /*! - suscribe to the RW parameter message */
-    configData->rwParamsInMsgID = subscribeToMessage(configData->rwParamsInMsgName,
-                                                     sizeof(RWArrayConfigFswMsg), moduleID);
-
-    /*! - If the rwAvailInMsgName is set, subscribe to the RW availability message */
-    configData->rwAvailInMsgID = -1;
-    if (strlen(configData->rwAvailInMsgName) > 0){
-        configData->rwAvailInMsgID = subscribeToMessage(configData->rwAvailInMsgName,
-                                                        sizeof(RWAvailabilityFswMsg), moduleID);
-    }
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -73,8 +55,6 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double *pAxis;                 /* pointer to the current control axis */
     int i;
     
@@ -93,13 +73,11 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
     }
     
     /*! - Read static RW config data message and store it in module variables */
-    memset(&(configData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
-    ReadMessage(configData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
+    configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
     
     /*! - If no info is provided about RW availability we'll assume that all are available
      and create the [Gs] projection matrix once */
-    if (configData->rwAvailInMsgID < 0){
+    if (!RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg)) {
         configData->numAvailRW = configData->rwConfigParams.numRW;
         for (i = 0; i < configData->rwConfigParams.numRW; i++){
             v3Copy(&configData->rwConfigParams.GsMatrix_B[i * 3], &configData->GsMatrix_B[i * 3]);
@@ -115,37 +93,32 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
  */
 void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    RWAvailabilityFswMsg wheelsAvailability;    /* Msg containing RW availability */
-    CmdTorqueBodyIntMsg LrInputMsg;             /* Msg containing Lr control torque */
-    ArrayMotorTorqueIntMsg rwMotorTorques;         /* Msg struct to store the output message */
+    RWAvailabilityMsgPayload wheelsAvailability;    /*!< Msg containing RW availability */
+    CmdTorqueBodyMsgPayload LrInputMsg;             /*!< Msg containing Lr control torque */
+    ArrayMotorTorqueMsgPayload rwMotorTorques;      /*!< Msg struct to store the output message */
     int i,j,k;
-    double Lr_B[3];                             /* [Nm]    commanded ADCS control torque in body frame*/
-    double Lr_C[3];                             /* [Nm]    commanded ADCS control torque projected onto control axes */
-    double us[MAX_EFF_CNT];                     /* [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
-    double CGs[3][MAX_EFF_CNT];                 /* []      projection matrix from gs_i onto control axes */
+    double Lr_B[3];                             /*!< [Nm]    commanded ADCS control torque in body frame*/
+    double Lr_C[3];                             /*!< [Nm]    commanded ADCS control torque projected onto control axes */
+    double us[MAX_EFF_CNT];                     /*!< [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
+    double CGs[3][MAX_EFF_CNT];                 /*!< []      projection matrix from gs_i onto control axes */
 
     /*! - zero control torque and RW motor torque variables */
     v3SetZero(Lr_C);
     vSetZero(us, MAX_EFF_CNT);
-    memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); // wheelAvailability set to 0 (AVAILABLE) by default
+    // wheelAvailability set to 0 (AVAILABLE) by default
+    wheelsAvailability = RWAvailabilityMsg_C_zeroMsgPayload();
     
     /*! - Read the input messages */
-    memset(&LrInputMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
-    ReadMessage(configData->controlTorqueInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(LrInputMsg), moduleID);
+    LrInputMsg = CmdTorqueBodyMsg_C_read(&configData->vehControlInMsg);
     v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
 
     /*! - Check if RW availability message is available */
-    if (configData->rwAvailInMsgID >= 0)
+    if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg))
     {
         int numAvailRW = 0;
 
         /*! - Read in current RW availabilit Msg */
-        ReadMessage(configData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
-
+        wheelsAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
         /*! - create the current [Gs] projection matrix with the available RWs */
         for (i = 0; i < configData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
@@ -212,10 +185,9 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     }
     
     /* store the output message */
-    memset(&(rwMotorTorques), 0x0, sizeof(ArrayMotorTorqueIntMsg));
+    rwMotorTorques = ArrayMotorTorqueMsg_C_zeroMsgPayload();
     vCopy(us, configData->rwConfigParams.numRW, rwMotorTorques.motorTorque);
-    WriteMessage(configData->outputMsgID, callTime, sizeof(ArrayMotorTorqueIntMsg),
-                 (void*) &(rwMotorTorques), moduleID);
+    ArrayMotorTorqueMsg_C_write(&rwMotorTorques, &configData->rwMotorTorqueOutMsg, callTime);
     
     return;
 }

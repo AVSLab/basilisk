@@ -1,13 +1,5 @@
 % !TEX root = ./Basilisk-rwMotorTorque-20190320.tex
 
-\begin{figure}[htb]
-	\centerline{
-	\includegraphics[]{Figures/moduleImg}
-	}
-	\caption{Illustration of Module Input and Output Messages}
-	\label{fig:moduleImg}
-\end{figure}
-
 
 \section{Model Description}
 
@@ -64,5 +56,5 @@ The final step is to map the array of available motor torques $\bm u_{s}$ onto t
 
 
 \subsection{RW Availability} 
-If the input message name {\tt rwAvailInMsgName} is defined, then the RW availability message is read in. The torque mapping is only used for RW's whose availability setting is {\tt AVAILABLE}.  If it is {\tt UNAVAILABLE} then that RW output torque is set to zero.  
+If the input message  {\tt rwAvailInMsg} is linked, then the RW availability message is read in. The torque mapping is only used for RW's whose availability setting is {\tt AVAILABLE}.  If it is {\tt UNAVAILABLE} then that RW output torque is set to zero.  
 

@@ -30,19 +30,19 @@
 %ignore CrossInit_rwMotorTorque;
 %constant void Reset_rwMotorTorque(void*, uint64_t, uint64_t);
 %ignore Reset_rwMotorTorque;
-ARRAYASLIST(FSWdeviceAvailability)
-GEN_SIZEOF(rwMotorTorqueConfig);
-GEN_SIZEOF(RWAvailabilityFswMsg);
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(ArrayMotorTorqueIntMsg);
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+
 %include "rwMotorTorque.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
-%include "../../fswMessages/rwAvailabilityFswMsg.h"
+
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+%include "cMsgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
+%include "cMsgPayloadDef/RWAvailabilityMsgPayload.h"
+struct RWAvailabilityMsg_C;
+%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+
 %include "../../fswUtilities/fswDefinitions.h"
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
 
 %pythoncode %{
 import sys

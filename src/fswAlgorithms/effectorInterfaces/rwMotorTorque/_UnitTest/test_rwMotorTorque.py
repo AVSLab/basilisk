@@ -25,22 +25,13 @@
 #
 
 import pytest
-import sys, os, inspect
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-
-
-
-
-
-
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
+from Basilisk.simulation import messaging2
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -66,25 +57,17 @@ def rwMotorTorqueTest(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
     # Construct algorithm and associated C++ container
     moduleConfig = rwMotorTorque.rwMotorTorqueConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rwMotorTorque"
-    # Initialize the test module msg names
-    moduleConfig.outputDataName = "rwMotorTorqueOut"
-    moduleConfig.inputVehControlName = "LrRequested"
-    moduleConfig.rwAvailInMsgName = "rw_availability"
-    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+
     # Initialize module variables
     controlAxes_B = [
              1,0,0
@@ -99,20 +82,13 @@ def rwMotorTorqueTest(show_plots):
 
 
     # attControl message
-    inputMessageData = rwMotorTorque.CmdTorqueBodyIntMsg()  # Create a structure for the input message
-    inputMessageSize = inputMessageData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputVehControlName,
-                                          inputMessageSize, 2) # number of buffers (leave at 2 as default)
+    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
     inputMessageData.torqueRequestBody = requestedTorque # write torque request to input message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName, inputMessageSize,
-                                          0, inputMessageData) # write data into the simulator
+    cmdTorqueInMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
 
     # wheelConfigData message
-    rwConfigParams = rwMotorTorque.RWArrayConfigFswMsg()
-    inputMessageSize = rwConfigParams.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
-                                          inputMessageSize, 2) # number of buffers (leave at 2 as default)
+    rwConfigParams = messaging2.RWArrayConfigMsgPayload()
     rwConfigParams.GsMatrix_B = [
         1.0, 0.0, 0.0,
         0.0, 1.0, 0.0,
@@ -121,24 +97,22 @@ def rwMotorTorqueTest(show_plots):
     ]
     rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
     rwConfigParams.numRW = 4
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
-                                          0, rwConfigParams)
+    rwConfigInMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
 
     # wheelAvailability message
-    def writeMsgInWheelAvailability():
-        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityFswMsg()
-        inputMessageSize = rwAvailabilityMessage.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
-                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
-        rwAvailabilityMessage.wheelAvailability = avail
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
-                                              0, rwAvailabilityMessage)
-    if len(moduleConfig.rwAvailInMsgName)>0:
-        writeMsgInWheelAvailability()
+    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
+    avail = [messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE]
+    rwAvailabilityMessage.wheelAvailability = avail
+    rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    dataLog = moduleConfig.rwMotorTorqueOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.vehControlInMsg.subscribeTo(cmdTorqueInMsg)
+    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -156,22 +130,16 @@ def rwMotorTorqueTest(show_plots):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "motorTorque"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(rwConfigParams.numRW)))
-
-    print('\n', moduleOutput[:, 1:])
+    moduleOutput = dataLog.motorTorque
+    # print('\n', moduleOutput)
 
     # set the output truth states
+    ans = [0]*messaging2.MAX_EFF_CNT
+    ans[0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
     trueVector = [
-                   [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755],
-                   [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
+                   ans,
+                   ans
     ]
-
-        # else:
-        #     testFailCount+=1
-        #     testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
-
 
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -179,14 +147,15 @@ def rwMotorTorqueTest(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], rwConfigParams.numRW, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed motorTorque unit test at t=" +
+                                str(dataLog.times()[i]*macros.NANO2SEC) +
                                 "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag)
+    else:
+        print(testMessages)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

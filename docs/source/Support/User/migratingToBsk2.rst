@@ -142,6 +142,10 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRateSteeringName``     | ``rateSteeringInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
+    | rwMotorTorque             | ``scMassStateOutMsgName``     | ``rwMotorTorqueOutMsg``           |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputVehControlName``       | ``vehControlInMsg``               |
+    +---------------------------+-------------------------------+-----------------------------------+
     | simpleDeadband            | ``outputDataName``            | ``attGuidOutMsg``                 |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
