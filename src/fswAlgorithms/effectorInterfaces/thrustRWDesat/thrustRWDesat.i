@@ -30,13 +30,21 @@
 %ignore CrossInit_thrustRWDesat;
 %constant void Reset_thrustRWDesat(void*, uint64_t, uint64_t);
 %ignore Reset_thrustRWDesat;
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-GEN_SIZEOF(thrustRWDesatConfig);
-GEN_SIZEOF(VehicleConfigFswMsg);
+
+
+%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "cMsgPayloadDef/RWConstellationMsgPayload.h"
+struct RWConstellationMsg_C;
+%include "cMsgPayloadDef/THRArrayConfigMsgPayload.h"
+struct THRArrayConfigMsg_C;
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "cMsgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
+
 %include "thrustRWDesat.h"
-%include "../../fswMessages/thrArrayConfigFswMsg.h"
-GEN_SIZEOF(THRArrayConfigFswMsg);
-%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+
 
 %pythoncode %{
 import sys

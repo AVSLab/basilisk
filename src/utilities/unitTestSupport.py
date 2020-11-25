@@ -200,7 +200,7 @@ def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, t
             # check a vector values
             if not isArrayEqual(dataStates[i], trueStates[i], size, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
+                testMessages.append("FAILED: " + msg)
     return testFailCount, testMessages
 
 

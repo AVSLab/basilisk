@@ -32,6 +32,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ARRAYASLIST(FSWdeviceAvailability)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
+STRUCTASLIST(RWConfigElementMsgPayload)
 
 
 %pythoncode %{
@@ -126,5 +127,8 @@ typedef struct messageType;
 %enddef
 
 %include ../dist3/autoSource/messaging2.auto.i
+
+%array_functions(THRConfigMsgPayload, ThrustConfigArray);
+%array_functions(RWConfigElementMsgPayload, RWConfigArray);
 
 %include "messaging2.h"

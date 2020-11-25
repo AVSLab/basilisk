@@ -27,7 +27,7 @@ import sys, os, inspect
 import math
 import numpy
 
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import messaging2
 
 
 thrList = []
@@ -46,7 +46,7 @@ def create(
     global thrList
 
     # create the blank Thruster object
-    thrPointer = fswMessages.THRConfigFswMsg()
+    thrPointer = messaging2.THRConfigMsgPayload()
 
     thrPointer.rThrust_B = rThrust_B
     thrPointer.tHatThrust_B = tHatThrust_B
@@ -62,30 +62,20 @@ def create(
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #
-def writeConfigMessage(thrConfigMsgName, simObject, processName):
+def writeConfigMessage():
     global thrList
 
-    thrClass = fswMessages.THRArrayConfigFswMsg()
+    thrClass = messaging2.THRArrayConfigMsgPayload()
 
     i = 0
     for item in thrList:
-        fswMessages.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
+        messaging2.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
         i += 1
 
-    messageSize = thrClass.getStructSize()
-
     thrClass.numThrusters = len(thrList)
+    thrConfigInMsg = messaging2.THRArrayConfigMsg().write(thrClass)
 
-    simObject.CreateNewMessage(processName,
-                               thrConfigMsgName,
-                               messageSize,
-                               2)
-    simObject.WriteMessageData(thrConfigMsgName,
-                               messageSize,
-                               0,
-                               thrClass)
-
-    return
+    return thrConfigInMsg
 
 def clearSetup():
     global thrList

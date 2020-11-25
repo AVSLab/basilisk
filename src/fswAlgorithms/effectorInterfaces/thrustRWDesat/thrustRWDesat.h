@@ -20,13 +20,13 @@
 #ifndef _THRUST_RW_DESAT_H_
 #define _THRUST_RW_DESAT_H_
 
-#include "messaging/static_messaging.h"
-#include "effectorInterfaces/errorConversion/dvAttEffect.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/thrArrayConfigFswMsg.h"
-#include "fswMessages/rwConstellationFswMsg.h"
-#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/RWConstellationMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/RWSpeedMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -36,11 +36,12 @@
 
 /*! @brief module configuration message */
 typedef struct {
-    char inputSpeedName[MAX_STAT_MSG_LENGTH]; /*!< (-) The name of the input RW speeds message*/
-    char inputRWConfigData[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the RWA configuration message*/
-    char inputThrConfigName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the thruster configuration message*/
-    char inputMassPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Tha name of the input mass properties message*/
-	char outputThrName[MAX_STAT_MSG_LENGTH];  /*!< (-) The name of the output thrust command block*/
+    RWSpeedMsg_C rwSpeedInMsg; /*!< (-) The name of the input RW speeds message*/
+    RWConstellationMsg_C rwConfigInMsg; /*!< [-] The name of the RWA configuration message*/
+    THRArrayConfigMsg_C thrConfigInMsg; /*!< [-] The name of the thruster configuration message*/
+    VehicleConfigMsg_C vecConfigInMsg; /*!< [-] The name of the input spacecraft mass properties message*/
+	THRArrayOnTimeCmdMsg_C thrCmdOutMsg;  /*!< (-) The name of the output thrust command block*/
+
 	double rwAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the reaction wheel spin axes*/
 	double thrAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thrusters*/
 	double thrTorqueMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thruster torques*/
@@ -53,12 +54,8 @@ typedef struct {
 	double totalAccumFiring;   /*!< (s) The total thruster duration we've commanded*/
 	double DMThresh;           /*!< (r/s) The point at which to stop decrementing momentum*/
 	uint64_t previousFiring;   /*!< (ns) Time that the last firing command was given*/
-    int32_t inputRWConfID;      /*!< [-] ID for the incoming RWA configuration data*/
-    int32_t inputSpeedID;      /*!< (-) ID for the incoming RW speeds*/
-    int32_t inputThrConID;     /*!< [-] ID for the thruster configuration data*/
-    int32_t inputMassPropID;   /*!< [-] ID for the incoming mass property information*/
-	int32_t outputThrID;       /*!< (-) ID for the outgoing thruster commands*/
-  BSKLogger *bskLogger;                             //!< BSK Logging
+
+    BSKLogger *bskLogger;                             //!< BSK Logging
 }thrustRWDesatConfig;
 
 #ifdef __cplusplus
@@ -67,9 +64,9 @@ extern "C" {
     
     void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
     void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
+    void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
         int64_t moduleID);
-	void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID);
     
 #ifdef __cplusplus
 }
