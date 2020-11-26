@@ -40,9 +40,6 @@ LimbFinding::LimbFinding()
     this->cannyThreshHigh = 200;
     this->cannyThreshLow = 100;
     this->limbNumThresh = 50;
-
-    this->writeOpnavLimbOutMsg = this->opnavLimbOutMsg.addAuthor();
-
 }
 
 
@@ -121,7 +118,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->writeOpnavLimbOutMsg(&limbMsg, this->moduleID, CurrentSimNanos);
+        this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);
         return;}
     /*! - Greyscale the image */
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
@@ -147,7 +144,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     limbMsg.timeTag = this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
-    this->writeOpnavLimbOutMsg(&limbMsg, this->moduleID, CurrentSimNanos);
+    this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);
 
     return;
 }

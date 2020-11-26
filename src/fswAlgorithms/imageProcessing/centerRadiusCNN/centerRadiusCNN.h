@@ -59,7 +59,6 @@ public:
     double pixelNoise[3];                 //!< [-] Pixel Noise for the estimate
 
 private:
-    WriteFunctor<CirclesOpNavMsgPayload>  writeOpnavCirclesOutMsg;        //!< write msg
     cv::dnn::Net positionNet2;           //!< Network for evaluation of centers
 };
 

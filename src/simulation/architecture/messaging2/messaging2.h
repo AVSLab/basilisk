@@ -164,8 +164,8 @@ private:
     messageType payload = {};   //! struct defining message payload, zero'd on creation
     Msg2Header header = {};     //! struct defining the message header, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);
-    WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
 public:
+    WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
     //! -- request read rights. returns ref to this->read
     ReadFunctor<messageType> addSubscriber();
     //! -- request write rights.

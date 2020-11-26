@@ -38,7 +38,6 @@ CenterRadiusCNN::CenterRadiusCNN()
         this->pixelNoise[i] = 5;
     }
     this->pathToNetwork = "./position_net2_trained_11-14.onnx";
-    this->writeOpnavCirclesOutMsg = this->opnavCirclesOutMsg.addAuthor();
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -120,7 +119,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->writeOpnavCirclesOutMsg(&circleBuffer, this->moduleID, CurrentSimNanos);
+        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
         return;
     }
     /*!-  evaluate CNN on image */
@@ -145,7 +144,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
         }
     }
 
-    this->writeOpnavCirclesOutMsg(&circleBuffer, this->moduleID, CurrentSimNanos);
+    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
     
     return;
 }

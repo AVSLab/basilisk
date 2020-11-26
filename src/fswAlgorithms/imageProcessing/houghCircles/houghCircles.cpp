@@ -45,7 +45,6 @@ HoughCircles::HoughCircles()
     this->houghMinDist = 50;
     this->houghMinRadius = 0;
     this->houghMaxRadius = 0; // Maximum circle radius. If <= 0, uses the maximum image dimension. If < 0, returns centers without finding the radius
-    this->writeOpnavCirclesOutMsg = this->opnavCirclesOutMsg.addAuthor();
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -120,7 +119,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->writeOpnavCirclesOutMsg(&circleBuffer, this->moduleID, CurrentSimNanos);
+        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
         return;}
 
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
@@ -149,7 +148,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.planetIds[0] = 2;
     }
     
-    this->writeOpnavCirclesOutMsg(&circleBuffer, this->moduleID, CurrentSimNanos);
+    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
 
 //    free(imageBuffer.imagePointer);
     return;

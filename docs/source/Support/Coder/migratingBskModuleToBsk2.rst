@@ -243,19 +243,7 @@ Updating a C++ Module
 
          ReadFunctor<InputMsgPayload>   moduleInMsg;     //!< sensor input message
 
-    - If the module writes to an output message, then add the write functor as a ``private`` functor:
-
-      .. code:: cpp
-
-         WriteFunctor<OutputMsgPayload> writeModuleOutMsg;     //!< interface to writing to output message
-
 #. Updating the ``module.cpp`` file:
-
-    - In the constructor, connect the output message object to the write functor through:
-
-      .. code:: cpp
-
-         this->writeModuleOutMsg = this->moduleOutMsg.addAuthor();
 
     - There is no need for additional code to create an output connector.  Thus, delete old message
       creation code such as:
@@ -344,7 +332,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         this->writeModuleOutMsg(&outMsgBuffer, this->moduleID, clockTime);
+         this->moduleOutMsg.write(&outMsgBuffer, this->moduleID, clockTime);
 
       Again, stop and marvel.
 

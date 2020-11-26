@@ -67,10 +67,6 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< read input msg
 
 private:
-    WriteFunctor<NavAttMsgPayload>  writeAttOutMsg;        //!< write msg
-    WriteFunctor<NavTransMsgPayload> writeTransOutMsg;     //!< write msg
-
-private:
     Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state
     GaussMarkov errorModel;            //!< -- Gauss-markov error states
     uint64_t prevTime;                 //!< -- Previous simulation time observed

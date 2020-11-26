@@ -63,8 +63,6 @@ public:
     int32_t limbNumThresh;                  //!< [-] Threshold for when a limb is detected
     
     BSKLogger bskLogger;                //!< -- BSK Logging
-private:
-    WriteFunctor<LimbOpNavMsgPayload> writeOpnavLimbOutMsg;
 
 };
 

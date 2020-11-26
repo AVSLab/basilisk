@@ -40,9 +40,6 @@ SimpleNav::SimpleNav()
     this->walkBounds.resize(18);
     this->walkBounds.fill(0.0);
     this->errorModel =  GaussMarkov(18, this->RNGSeed);
-    this->writeAttOutMsg = this->attOutMsg.addAuthor();
-    this->writeTransOutMsg = this->transOutMsg.addAuthor();
-    return;
 }
 
 /*! Destructor.  Nothing here. */
@@ -115,8 +112,8 @@ void SimpleNav::readInputMessages()
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
-  this->writeAttOutMsg(&this->estAttState, this->moduleID, Clock);
-  this->writeTransOutMsg(&this->estTransState, this->moduleID, Clock);
+  this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
+  this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
 }
 
 void SimpleNav::applyErrors()

@@ -106,8 +106,6 @@ private:
 
 private:
     void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude
-    WriteFunctor<SCPlusStatesMsgPayload> writeScStateOutMsg;
-    WriteFunctor<SCPlusMassPropsMsgPayload> writeScMassOutMsg;
 };
 
 

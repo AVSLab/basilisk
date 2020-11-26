@@ -67,8 +67,6 @@ public:
     int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     BSKLogger bskLogger;                //!< -- BSK Logging
-private:
-    WriteFunctor<CirclesOpNavMsgPayload>  writeOpnavCirclesOutMsg;
 };
 
 
