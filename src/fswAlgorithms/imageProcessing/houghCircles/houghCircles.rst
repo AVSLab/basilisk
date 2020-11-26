@@ -23,18 +23,12 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - opNavOutMsg
-      - :ref:`OpNavMsgPayload`
+    * - opnavCirclesOutMsg
+      - :ref:`CirclesOpNavMsgPayload`
       - output navigation message for relative position
-    * - cameraConfigInMsg
-      - :ref:`CameraConfigMsgPayload`
-      - camera config input message
-    * - attInMsg
-      - :ref:`NavAttMsgPayload`
-      - attitude input message
-    * - limbInMsg
-      - :ref:`LimbOpNavMsgPayload`
-      - limb input message
+    * - imageInMsg
+      - :ref:`CameraImageMsgPayload`
+      - camera image input message
 
 
 

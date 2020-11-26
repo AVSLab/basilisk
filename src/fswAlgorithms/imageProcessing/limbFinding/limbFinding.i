@@ -28,14 +28,14 @@ from Basilisk.simulation.swig_common_model import *
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.h"
-%include "limbFinding.h"
-%include "../../simulation/simFswInterfaceMessages/limbOpNavMsg.h"
-%include "../../simulation/simFswInterfaceMessages/cameraImageMsg.h"
 %include "swig_conly_data.i"
 
-GEN_SIZEOF(LimbOpNavMsg)
-GEN_SIZEOF(CameraImageMsg)
+%include "limbFinding.h"
 
+%include "cMsgPayloadDef/CameraImageMsgPayload.h"
+struct CameraImageMsg_C;
+%include "cMsgPayloadDef/LimbOpNavMsgPayload.h"
+struct LimbOpNavMsg_C;
 
 %pythoncode %{
 import sys

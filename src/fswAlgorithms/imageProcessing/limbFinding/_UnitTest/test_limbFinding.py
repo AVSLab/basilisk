@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        LimbFinding
@@ -25,7 +23,7 @@
 #
 
 import pytest
-import sys, os, inspect
+import os, inspect
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -45,6 +43,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
+from Basilisk.simulation import messaging2
 try:
     from Basilisk.fswAlgorithms import limbFinding
 except ImportError:
@@ -98,11 +97,6 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
-
-    bitmapArray = []
 
     # # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -116,8 +110,6 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.opnavLimbOutMsgName = "limbPoints"
 
     moduleConfig.filename = imagePath
     moduleConfig.cannyThreshHigh = cannyHigh
@@ -137,16 +129,16 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
         refPoints = 2*270.0
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = limbFinding.CameraImageMsg()
+    inputMessageData = messaging2.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.imageInMsgName,
-                               inputMessageData)
+    imageInMsg = messaging2.CameraImageMsg().write(inputMessageData)
+    moduleConfig.imageInMsg.subscribeTo(imageInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.opnavLimbOutMsgName, testProcessRate)
+    dataLog = moduleConfig.opnavLimbOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -160,9 +152,9 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    valid = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".valid", list(range(1)))
-    points = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".limbPoints", list(range(2*1000)))
-    numPoints = unitTestSim.pullMessageLogData(moduleConfig.opnavLimbOutMsgName + ".numLimbPoints", list(range(1)))
+    valid = dataLog.valid
+    points = dataLog.limbPoints[:, :2*1000]
+    numPoints = dataLog.numLimbPoints
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)
@@ -171,8 +163,8 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 
     imageProcLimb = []
     for j in range(int(len(points[-1,1:])/2)):
-        if points[-1,2*j+1]>1E-2:
-            imageProcLimb.append((points[-1,2*j+1], points[-1,2*j+2]))
+        if points[-1,2*j]>1E-2:
+            imageProcLimb.append((points[-1,2*j], points[-1,2*j+1]))
 
     draw_result.point(imageProcLimb, fill=128)
 
@@ -188,16 +180,19 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     for i in range(2):
         if np.abs((reference[i] - imageProcLimb[0][i])/reference[i])>1:
             print(np.abs((reference[i] - imageProcLimb[0][i])/reference[i]))
-            testFailCount+=1
+            testFailCount += 1
             testMessages.append("Limb Test failed processing " + image)
-    if np.abs(valid[-1,0]-1)<1E-5:
-        testFailCount+=1
+    if valid[-1] != 1:
+        testFailCount += 1
         testMessages.append("Validity test failed processing " + image)
-    if np.abs(numPoints[-1,1]-refPoints)>10:
-        testFailCount+=1
+    if np.abs(numPoints[-1]-refPoints)>10:
+        testFailCount += 1
         testMessages.append("NumPoints test failed processing " + image)
 
-
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("Passed")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
