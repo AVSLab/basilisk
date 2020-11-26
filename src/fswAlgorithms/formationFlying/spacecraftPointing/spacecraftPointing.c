@@ -34,28 +34,17 @@
  */
 void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->attReferenceOutMsgID = CreateNewMessage(configData->attReferenceOutMsgName,
-                                               sizeof(AttRefFswMsg),
-                                               "AttRefFswMsg",
-                                               moduleID);
-    
+    AttRefMsg_C_init(&configData->attReferenceOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the spacecraft pointing
- module interface. It's primary function is to link the input messages that were
- created elsewhere.
+ module interface.
  @return void
  @param configData The configuration data associated with the spacecraft pointing module
  @param moduleID The Basilisk module identifier
  */
 void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
-    configData->chiefPositionInMsgID = subscribeToMessage(configData->chiefPositionInMsgName,
-                                                          sizeof(NavTransIntMsg), moduleID);
-    configData->deputyPositionInMsgID = subscribeToMessage(configData->deputyPositionInMsgName,
-                                                           sizeof(NavTransIntMsg), moduleID);
-    
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -109,10 +98,8 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t cal
 void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    NavTransIntMsg chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
-    NavTransIntMsg deputyTransMsg;                  /*!< ---  Input message that consists of the position and velocity of the deputy */
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
+    NavTransMsgPayload chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
+    NavTransMsgPayload deputyTransMsg;                  /*!< ---  Input message that consists of the position and velocity of the deputy */
     double rho_N[3];                                /*!< ---  Vector pointing from deputy to chief in inertial frame components */
     double dcm_RN[3][3];                            /*!< ---  DCM from R-frame to N-frame */
     double temp_z[3] = {0.0, 0.0, 1.0};             /*!< ---  z-axis used for cross-product */
@@ -139,14 +126,10 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     double delta_omega_RN_N[3];                     /*!< ---  Difference between omega at t-1 and t */
     double domega_RN_N[3];                          /*!< ---  Angular acceleration of vector pointing from deputy to chief */
     double sigma_R1N[3];                            /*!< ---  MRP of R1-frame with respect to N-frame */
-    
-    memset(&(chiefTransMsg), 0x0, sizeof(NavTransIntMsg));
-    memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
-    
-    ReadMessage(configData->chiefPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(chiefTransMsg), moduleID);
-    ReadMessage(configData->deputyPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
+
+    /* read in messages */
+    chiefTransMsg = NavTransMsg_C_read(&configData->chiefPositionInMsg);
+    deputyTransMsg = NavTransMsg_C_read(&configData->deputyPositionInMsg);
 
     /* Find the vector that points from the deputy spacecraft to the chief spacecraft. */
     v3Subtract(chiefTransMsg.r_BN_N, deputyTransMsg.r_BN_N, rho_N);
@@ -250,7 +233,6 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     v3Copy(domega_RN_N, configData->attReferenceOutBuffer.domega_RN_N);
     
     /* write the Guidance output message */
-    WriteMessage(configData->attReferenceOutMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(configData->attReferenceOutBuffer), moduleID);
+    AttRefMsg_C_write(&configData->attReferenceOutBuffer, &configData->attReferenceOutMsg, moduleID, callTime);
     return;
 }

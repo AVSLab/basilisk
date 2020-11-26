@@ -31,13 +31,13 @@
 %ignore CrossInit_spacecraftPointing;
 %constant void Reset_spacecraftPointing(void*, uint64_t, uint64_t);
 %ignore Reset_spacecraftPointing;
-%include "spacecraftPointing.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
 
-GEN_SIZEOF(spacecraftPointingConfig);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(AttRefFswMsg);
+%include "spacecraftPointing.h"
+
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "cMsgPayloadDef/AttRefMsgPayload.h"
+struct AttRefMsg_C;
 
 %pythoncode %{
 import sys

@@ -20,30 +20,27 @@
 #ifndef _SPACECRAFTPOINTING_H_
 #define _SPACECRAFTPOINTING_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
 
 /*! @brief Top level structure for the spacecraft pointing module.*/
 typedef struct {
-    char attReferenceOutMsgName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message */
-    char chiefPositionInMsgName[MAX_STAT_MSG_LENGTH];   /*!< The name of the Input message of the chief */
-    char deputyPositionInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the Input message of the deputy */
+    AttRefMsg_C attReferenceOutMsg;                     /*!< The name of the output message */
+    NavTransMsg_C chiefPositionInMsg;                   /*!< The name of the Input message of the chief */
+    NavTransMsg_C deputyPositionInMsg;                  /*!< The name of the Input message of the deputy */
+
     double alignmentVector_B[3];                        /*!< Vector within the B-frame that points to antenna */
     double sigma_BA[3];                                 /*!< -- MRP of B-frame with respect to A-frame */
     double old_sigma_RN[3];                             /*!< -- MRP of previous timestep */
     double old_omega_RN_N[3];                           /*!< -- Omega of previous timestep */
     int i;                                              /*!< -- Flag used to set incorrect numerical answers to zero */
-    int32_t attReferenceOutMsgID;                       /*!< -- ID for the outgoing reference message */
-    int32_t chiefPositionInMsgID;                       /*!< -- ID for the incoming chief position message */
-    int32_t deputyPositionInMsgID;                      /*!< -- ID for the incoming deputy position message */
     uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
-    AttRefFswMsg attReferenceOutBuffer;                 //!< output msg copy
+    AttRefMsgPayload attReferenceOutBuffer;                 //!< output msg copy
+    
     BSKLogger *bskLogger;                             //!< BSK Logging
 }spacecraftPointingConfig;
 

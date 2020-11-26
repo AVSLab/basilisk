@@ -7,9 +7,9 @@
 The module has 2 required input messages and 1 output message:
 
 \begin{itemize}
-    \item {\tt chiefPositionInMsgName} - This input message, of type {\tt NavTransIntMsg}, consists of the location of the chief spacecraft in the inertial frame.
-    \item {\tt deputyPositionInMsgName} - This input message, of type {\tt NavTransIntMsg}, consists of the location of the deputy spacecraft in the inertial frame.
-    \item {\tt attReferenceOutMsgName} - This output message, of type {\tt AttRefFswMsg}, consists of the orientation, angular velocity and angular acceleration of the reference frame with respect to the inertial frame.
+    \item {\tt chiefPositionInMsg} - This input message, of type {\tt NavTransMsgPayload}, consists of the location of the chief spacecraft in the inertial frame.
+    \item {\tt deputyPositionInMsg} - This input message, of type {\tt NavTransMsgPayload}, consists of the location of the deputy spacecraft in the inertial frame.
+    \item {\tt attReferenceOutMsg} - This output message, of type {\tt AttRefMsgPayload}, consists of the orientation, angular velocity and angular acceleration of the reference frame with respect to the inertial frame.
 \end{itemize}
 
 \subsection{Module Parameters and States}
