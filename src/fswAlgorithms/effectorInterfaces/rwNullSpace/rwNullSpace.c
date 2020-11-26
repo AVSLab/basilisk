@@ -34,29 +34,17 @@
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
-    /* Create output message for module */
-    configData->outputMsgID = CreateNewMessage(
-        configData->outputControlName, sizeof(ArrayMotorTorqueIntMsg),
-        "ArrayMotorTorqueIntMsg", moduleID);
-	
+    ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the RW null space control
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
+ interface.  
  @return void
  @param configData The configuration data associated with the sun safe ACS control
  @param moduleID The ID associated with the configData
  */
 void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
-    configData->inputRWCmdsID = subscribeToMessage(configData->inputRWCommands,
-        sizeof(ArrayMotorTorqueIntMsg), moduleID);
-	configData->inputSpeedsID = subscribeToMessage(configData->inputRWSpeeds,
-		sizeof(RWSpeedIntMsg), moduleID);
-    configData->inputRWConfID = subscribeToMessage(configData->inputRWConfigData,
-        sizeof(RWConstellationFswMsg), moduleID);
-
 }
 
 /*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any module specific variables.  The output message is reset to zero.
@@ -73,15 +61,11 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     double GsInvHalf[3 * 3];                        /* [-]  ([Gs][Gs]^T)^-1 */
     double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];    /* [-]  [I_NxN] identity matrix */
     double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];         /* [-]  temp matrix */
-    RWConstellationFswMsg localRWData;              /*      local copy of RW configuration data */
+    RWConstellationMsgPayload localRWData;          /*      local copy of RW configuration data */
     int i, j;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
 
-    memset(&localRWData, 0x0, sizeof(RWConstellationFswMsg));
     /*! -# read in the RW spin axis headings */
-    ReadMessage(configData->inputRWConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWConstellationFswMsg), (void *) &localRWData, moduleID);
+    localRWData = RWConstellationMsg_C_read(&configData->rwConfigInMsg);
 
     /*! -# create the 3xN [Gs] RW spin axis projection matrix */
     configData->numWheels = (uint32_t) localRWData.numRW;
@@ -119,27 +103,19 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    ArrayMotorTorqueIntMsg cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
-	RWSpeedIntMsg rwSpeeds;                 /* [r/s] array of RW speeds */
-	ArrayMotorTorqueIntMsg finalControl;       /* [Nm]  array of final RW motor torques containing both
+    ArrayMotorTorqueMsgPayload cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
+	RWSpeedMsgPayload rwSpeeds;                 /* [r/s] array of RW speeds */
+	ArrayMotorTorqueMsgPayload finalControl;       /* [Nm]  array of final RW motor torques containing both
                                                        the control and null motion torques */
 	double dVector[MAX_EFF_CNT];            /* [Nm]  null motion wheel speed control array */
     
-    /*! - zero all message containers prior to evaluation */
-    memset(&finalControl, 0x0, sizeof(ArrayMotorTorqueIntMsg));
-    memset(&cntrRequest, 0x0, sizeof(ArrayMotorTorqueIntMsg));
-    memset(&rwSpeeds, 0x0, sizeof(RWSpeedIntMsg));
-
+    /*! - zero all outut message containers prior to evaluation */
+    finalControl = ArrayMotorTorqueMsg_C_zeroMsgPayload();
 
     /*! - Read the input RW commands to get the raw RW requests*/
-    ReadMessage(configData->inputRWCmdsID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(ArrayMotorTorqueIntMsg), (void*) &(cntrRequest), moduleID);
+    cntrRequest = ArrayMotorTorqueMsg_C_read(&configData->rwMotorTorqueInMsg);
     /*! - Read the RW speeds*/
-	ReadMessage(configData->inputSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
-		sizeof(RWSpeedIntMsg), (void*)&(rwSpeeds), moduleID);
+    rwSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
 
     /*! - compute the wheel speed control vector d = -K.Omega */
 	vScale(-configData->OmegaGain, rwSpeeds.wheelSpeeds,
@@ -152,8 +128,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 		cntrRequest.motorTorque, finalControl.motorTorque);
 
     /*! - write the final RW torque solution to the output message */
-	WriteMessage(configData->outputMsgID, callTime, sizeof(ArrayMotorTorqueIntMsg),
-		&finalControl, moduleID);
+    ArrayMotorTorqueMsg_C_write(&finalControl, &configData->rwMotorTorqueOutMsg, callTime);
 
     return;
 }

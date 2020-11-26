@@ -148,6 +148,14 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | rwMotorVoltage            | ``inputRWSpeedsInMsgName``    | ``rwSpeedInMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
+    | rwNullSpace               | ``inputRWCommands``           | ``rwMotorTorqueInMsg``            |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputRWSpeeds``             | ``rwSpeedsInMsg``                 |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputRWConfigData``         | ``rwConfigInMsg``                 |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``outputControlName``         | ``rwMotorTorqueOutMsg``           |
+    +---------------------------+-------------------------------+-----------------------------------+
     | simpleDeadband            | ``outputDataName``            | ``attGuidOutMsg``                 |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
