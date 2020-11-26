@@ -122,7 +122,7 @@ void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
-    this->writeScStateOutMsg(stateOut, this->moduleID, clockTime);
+    this->writeScStateOutMsg(&stateOut, this->moduleID, clockTime);
 
     // - Populate mass state output message
     SCPlusMassPropsMsgPayload massStateOut;
@@ -130,7 +130,7 @@ void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
-    this->writeScMassOutMsg(massStateOut, this->moduleID, clockTime);
+    this->writeScMassOutMsg(&massStateOut, this->moduleID, clockTime);
 
     return;
 }

@@ -213,7 +213,13 @@ Updating a C++ Module
 
          #include "cMsgPayloadDef/OutputMsgPayload.h"
 
-    - Add the include statement for the new message system using:
+    - Replace the include statement for the old message system
+
+      .. code:: cpp
+
+        #include "architecture/messaging/system_messaging.h"
+
+      with the include for the new message system
 
       .. code:: cpp
 
@@ -225,7 +231,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         SimMessage<OutputMsg>  moduleOutMsg;    //!< sensor output message
+         SimMessage<OutputMsgPayload>  moduleOutMsg;    //!< sensor output message
 
       This creates an instance of the output message object that is contained within this module.
 
@@ -235,13 +241,13 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         ReadFunctor<InputMsg>   moduleInMsg;     //!< sensor input message
+         ReadFunctor<InputMsgPayload>   moduleInMsg;     //!< sensor input message
 
     - If the module writes to an output message, then add the write functor as a ``private`` functor:
 
       .. code:: cpp
 
-         WriteFunctor<OutputMsg> writeModuleOutMsg;     //!< interface to writing to output message
+         WriteFunctor<OutputMsgPayload> writeModuleOutMsg;     //!< interface to writing to output message
 
 #. Updating the ``module.cpp`` file:
 
@@ -338,7 +344,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         this->writeModuleOutMsg(outMsgBuffer, this->moduleID, clockTime);
+         this->writeModuleOutMsg(&outMsgBuffer, this->moduleID, clockTime);
 
       Again, stop and marvel.
 

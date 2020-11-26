@@ -143,8 +143,8 @@ public:
     //! method description
     WriteFunctor(messageType* payloadPointer, Msg2Header *headerPointer) : payloadPointer(payloadPointer), headerPointer(headerPointer){};
     //! method description
-    void operator()(messageType payload, int64_t moduleID, uint64_t callTime){
-        *this->payloadPointer = payload;
+    void operator()(messageType *payload, int64_t moduleID, uint64_t callTime){
+        *this->payloadPointer = *payload;
         this->headerPointer->isWritten = 1;
         this->headerPointer->timeWritten = callTime;
         this->headerPointer->moduleID = moduleID;
