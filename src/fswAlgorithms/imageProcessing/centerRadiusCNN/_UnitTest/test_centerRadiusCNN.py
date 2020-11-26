@@ -44,6 +44,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.simulation import messaging2
 
 try:
     from Basilisk.fswAlgorithms import centerRadiusCNN
@@ -91,18 +92,11 @@ def cnnTest(show_plots, image, saveImage):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
-    unitTestSim.TotalSim.terminateSimulation()
-
-    bitmapArray = []
 
     # # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     moduleConfig = centerRadiusCNN.CenterRadiusCNN()
@@ -110,8 +104,6 @@ def cnnTest(show_plots, image, saveImage):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    # moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.opnavCirclesOutMsgName = "circles"
 
     moduleConfig.pathToNetwork = path + "/../CAD.onnx"
     moduleConfig.filename = imagePath
@@ -124,7 +116,8 @@ def cnnTest(show_plots, image, saveImage):
         circles = [(269.21127319, 231.63162231, 144.85394287)]
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.opnavCirclesOutMsgName, testProcessRate)
+    dataLog = moduleConfig.opnavCirclesOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -138,8 +131,8 @@ def cnnTest(show_plots, image, saveImage):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", list(range(10*2)))
-    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", list(range(10)))
+    centers = dataLog.circlesCenters[:, :10*2]
+    radii = dataLog.circlesRadii[:, :10]
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)
@@ -147,9 +140,9 @@ def cnnTest(show_plots, image, saveImage):
     draw_result = ImageDraw.Draw(output_image)
 
     imageProcCircles = []
-    for j in range(len(radii[-1,1:])):
+    for j in range(len(radii[-1, 0:])):
         if radii[-1,j] > 0:
-            imageProcCircles.append((centers[-1, 2*j+1], centers[-1, 2*j+2], radii[-1, j+1]))
+            imageProcCircles.append((centers[-1, 2*j], centers[-1, 2*j+1], radii[-1, j]))
     for x, y, r in imageProcCircles:
         draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
 

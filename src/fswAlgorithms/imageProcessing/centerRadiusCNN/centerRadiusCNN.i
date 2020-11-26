@@ -30,11 +30,10 @@ from Basilisk.simulation.swig_common_model import *
 %include "sys_model.h"
 %include "centerRadiusCNN.h"
 
-%include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-GEN_SIZEOF(CirclesOpNavMsg)
-GEN_SIZEOF(CameraImageMsg)
-
+%include "cMsgPayloadDef/CirclesOpNavMsgPayload.h"
+struct CirclesOpNavMsg_C;
+%include "cMsgPayloadDef/CameraImageMsgPayload.h"
+struct CameraImageMsg_C;
 
 %pythoncode %{
 import sys

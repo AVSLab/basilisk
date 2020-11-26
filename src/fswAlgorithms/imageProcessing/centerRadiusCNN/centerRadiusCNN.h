@@ -22,13 +22,16 @@
 
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/messaging/system_messaging.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
-#include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-#include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
+
+#include "cMsgPayloadDef/CameraImageMsgPayload.h"
+#include "cMsgPayloadDef/CirclesOpNavMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
+
+
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
@@ -45,8 +48,10 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
-    std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
+    SimMessage<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
+    
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the ImageFswMsg output message
+    
     std::string pathToNetwork;                  //!< Path to the trained CNN
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
@@ -54,9 +59,8 @@ public:
     double pixelNoise[3];                 //!< [-] Pixel Noise for the estimate
 
 private:
+    WriteFunctor<CirclesOpNavMsgPayload>  writeOpnavCirclesOutMsg;        //!< write msg
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-    int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
-    int32_t imageInMsgID;                //!< ID for the outgoing message
     cv::dnn::Net positionNet2;           //!< Network for evaluation of centers
 };
 
