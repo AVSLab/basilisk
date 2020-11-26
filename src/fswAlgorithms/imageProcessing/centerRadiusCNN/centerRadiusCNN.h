@@ -60,7 +60,6 @@ public:
 
 private:
     WriteFunctor<CirclesOpNavMsgPayload>  writeOpnavCirclesOutMsg;        //!< write msg
-    uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     cv::dnn::Net positionNet2;           //!< Network for evaluation of centers
 };
 

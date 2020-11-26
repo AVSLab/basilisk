@@ -1,31 +1,30 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ # ISC License
+ #
+ # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ #
+ # Permission to use, copy, modify, and/or distribute this software for any
+ # purpose with or without fee is hereby granted, provided that the above
+ # copyright notice and this permission notice appear in all copies.
+ #
+ # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ # ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
-#   Module Name:        HoughCirlces
+#   Module Name:        HoughCircles
 #   Author:             Thibaud Teil
 #   Creation Date:      March 13, 2019
 #
 
 import pytest
-import sys, os, inspect
+import os, inspect
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -45,6 +44,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
+from Basilisk.simulation import messaging2
 
 try:
     from Basilisk.fswAlgorithms import houghCircles
@@ -95,11 +95,6 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
-
-    bitmapArray = []
 
     # # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -113,8 +108,6 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.opnavCirclesOutMsgName = "circles"
 
     moduleConfig.filename = imagePath
     moduleConfig.expectedCircles = maxCircles
@@ -133,17 +126,15 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
         circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = houghCircles.CameraImageMsg()
+    inputMessageData = messaging2.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.imageInMsgName,
-                               inputMessageData)
+    imgInMsg = messaging2.CameraImageMsg().write(inputMessageData)
+    moduleConfig.imageInMsg.subscribeTo(imgInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.imageInMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.opnavCirclesOutMsgName, testProcessRate)
+    dataLog = moduleConfig.opnavCirclesOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -157,9 +148,8 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    # pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
-    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", list(range(10*2)))
-    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", list(range(10)))
+    centers = dataLog.circlesCenters
+    radii = dataLog.circlesRadii
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)
@@ -169,7 +159,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     imageProcCircles = []
     for j in range(len(radii[-1,1:])):
         if radii[-1,j] > 0:
-            imageProcCircles.append((centers[-1, 2*j+1], centers[-1, 2*j+2], radii[-1, j+1]))
+            imageProcCircles.append((centers[-1, 2*j], centers[-1, 2*j+1], radii[-1, j]))
     for x, y, r in imageProcCircles:
         draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
 

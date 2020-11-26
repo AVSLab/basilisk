@@ -22,15 +22,17 @@
 
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/messaging/system_messaging.h"
+#include "architecture/messaging2/messaging2.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/dnn.hpp"
-#include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-#include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
+
+#include "cMsgPayloadDef/CameraImageMsgPayload.h"
+#include "cMsgPayloadDef/CirclesOpNavMsgPayload.h"
+
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/bskLogging.h"
@@ -49,8 +51,8 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
-    std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
+    SimMessage<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the ImageFswMsg output message
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
@@ -66,9 +68,7 @@ public:
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     BSKLogger bskLogger;                //!< -- BSK Logging
 private:
-    uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-    int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
-    int32_t imageInMsgID;                //!< ID for the outgoing message
+    WriteFunctor<CirclesOpNavMsgPayload>  writeOpnavCirclesOutMsg;
 };
 
 

@@ -32,7 +32,6 @@
 /*! The constructor for the CenterRadiusCNN module. It also sets some default values at its creation.  */
 CenterRadiusCNN::CenterRadiusCNN()
 {
-    this->OutputBufferCount = 2;
     this->filename = "";
     this->saveImages = 0;
     for (int i=0; i<3; i++){

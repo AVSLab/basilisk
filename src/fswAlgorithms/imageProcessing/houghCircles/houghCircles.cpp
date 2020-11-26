@@ -38,7 +38,6 @@ HoughCircles::HoughCircles()
     this->noiseSF = 4;
     this->blurrSize = 5;
     this->dpValue = 1;
-    this->OutputBufferCount = 2;
     this->expectedCircles = MAX_CIRCLE_NUM;
     this->saveDir = "";
     this->cannyThresh = 200;
@@ -46,6 +45,7 @@ HoughCircles::HoughCircles()
     this->houghMinDist = 50;
     this->houghMinRadius = 0;
     this->houghMaxRadius = 0; // Maximum circle radius. If <= 0, uses the maximum image dimension. If < 0, returns centers without finding the radius
+    this->writeOpnavCirclesOutMsg = this->opnavCirclesOutMsg.addAuthor();
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -54,8 +54,6 @@ HoughCircles::HoughCircles()
  */
 void HoughCircles::SelfInit()
 {
-    /*! - Create output message for module */
-    this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,sizeof(CirclesOpNavMsg),this->OutputBufferCount,"CirclesOpNavMsg",moduleID);
 }
 
 
@@ -65,8 +63,6 @@ void HoughCircles::SelfInit()
  */
 void HoughCircles::CrossInit()
 {
-    /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
 }
 
 /*! This is the destructor */
@@ -92,11 +88,12 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
 void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
-    CameraImageMsg imageBuffer;
-    CirclesOpNavMsg circleBuffer;
-    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
-    
+    CameraImageMsgPayload imageBuffer;
+    CirclesOpNavMsgPayload circleBuffer;
+
+    imageBuffer = this->imageInMsg.zeroMsgPayload();
+    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload();
+
     cv::Mat imageCV, blurred;
     int circlesFound=0;
     if (this->saveDir != ""){
@@ -104,12 +101,10 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
     else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
     /*! - Read in the bitmap*/
-    SingleMessageHeader localHeader;
-    if(this->imageInMsgName != "")
+    if(this->imageInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
-                                                    sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
-        this->sensorTimeTag = localHeader.WriteClockNanos;
+        imageBuffer = this->imageInMsg();
+        this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
@@ -125,7 +120,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+        this->writeOpnavCirclesOutMsg(&circleBuffer, this->moduleID, CurrentSimNanos);
         return;}
 
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
@@ -154,7 +149,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.planetIds[0] = 2;
     }
     
-    SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+    this->writeOpnavCirclesOutMsg(&circleBuffer, this->moduleID, CurrentSimNanos);
 
 //    free(imageBuffer.imagePointer);
     return;
