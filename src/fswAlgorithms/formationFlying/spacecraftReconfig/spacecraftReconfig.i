@@ -32,15 +32,15 @@
 %ignore Reset_spacecraftReconfig;
 
 %include "spacecraftReconfig.h"
-GEN_SIZEOF(spacecraftReconfigConfig);
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(NavTransIntMsg);
-%include "../../fswMessages/thrArrayConfigFswMsg.h"
-GEN_SIZEOF(THRArrayConfigFswMsg);
-%include "../../fswMessages/attRefFswMsg.h"
-GEN_SIZEOF(AttRefFswMsg);
-%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-GEN_SIZEOF(THRArrayOnTimeCmdIntMsg);
+
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "cMsgPayloadDef/THRArrayConfigMsgPayload.h"
+struct THRArrayConfigMsg_C;
+%include "cMsgPayloadDef/AttRefMsgPayload.h"
+struct AttRefMsg_C;
+%include "cMsgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
 
 %pythoncode %{
 import sys

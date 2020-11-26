@@ -35,13 +35,8 @@
  */
 void SelfInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t moduleID)
 {
-    configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
-                                                  sizeof(AttRefFswMsg),
-                                                  "AttRefFswMsg",moduleID);
-    configData->onTimeOutMsgID = CreateNewMessage(configData->onTimeOutMsgName,
-                                                  sizeof(THRArrayOnTimeCmdIntMsg),
-                                                  "THRArrayOnTimeCmdIntMsg",moduleID);
-    return;
+    AttRefMsg_C_init(&configData->attRefOutMsg);
+    THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -53,19 +48,6 @@ void SelfInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t m
  */
 void CrossInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t moduleID)
 {
-    configData->chiefTransInMsgID   = subscribeToMessage(configData->chiefTransInMsgName,
-                                                         sizeof(NavTransIntMsg),moduleID);
-    configData->deputyTransInMsgID  = subscribeToMessage(configData->deputyTransInMsgName,
-                                                         sizeof(NavTransIntMsg),moduleID);
-    configData->thrustConfigInMsgID = subscribeToMessage(configData->thrustConfigInMsgName,
-                                                         sizeof(THRArrayConfigFswMsg),moduleID);
-    // reference attitude message is optional
-    configData->attRefInMsgID = -1;
-    if(strlen(configData->attRefInMsgName) > 0) {
-        configData->attRefInMsgID   = subscribeToMessage(configData->attRefInMsgName,
-                                                         sizeof(AttRefFswMsg),moduleID);
-    }
-    return;
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -84,6 +66,9 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
     memset(&configData->dvArray[0], 0x0, sizeof(spacecraftReconfigConfigBurnInfo));
     memset(&configData->dvArray[1], 0x0, sizeof(spacecraftReconfigConfigBurnInfo));
     memset(&configData->dvArray[2], 0x0, sizeof(spacecraftReconfigConfigBurnInfo));
+
+    configData->attRefInIsLinked = AttRefMsg_C_isLinked(&configData->attRefInMsg);
+
     return;
 }
 
@@ -96,30 +81,21 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
 void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     // in
-    NavTransIntMsg chiefTransMsg;
-    NavTransIntMsg deputyTransMsg;
-    THRArrayConfigFswMsg thrustConfigMsg;
-    AttRefFswMsg attRefInMsg;
+    NavTransMsgPayload chiefTransMsg;
+    NavTransMsgPayload deputyTransMsg;
+    THRArrayConfigMsgPayload thrustConfigMsg;
+    AttRefMsgPayload attRefInMsg;
     // out
-    AttRefFswMsg attRefMsg;
-    THRArrayOnTimeCmdIntMsg thrustOnMsg;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    // memset
-    memset(&(chiefTransMsg), 0x0, sizeof(NavTransIntMsg));
-    memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
-    memset(&(thrustConfigMsg), 0x0, sizeof(THRArrayConfigFswMsg));
-    memset(&(attRefInMsg), 0x0, sizeof(AttRefFswMsg));
+    AttRefMsgPayload attRefMsg;
+    THRArrayOnTimeCmdMsgPayload thrustOnMsg;
+
     /*! - Read the input messages */
-    ReadMessage(configData->chiefTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(chiefTransMsg), moduleID);
-    ReadMessage(configData->deputyTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
-    ReadMessage(configData->thrustConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(THRArrayConfigFswMsg), (void*) &(thrustConfigMsg), moduleID);
-    if (configData->attRefInMsgID >= 0) {
-        ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(AttRefFswMsg), (void*) &(attRefInMsg), moduleID);
+    chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);
+    deputyTransMsg = NavTransMsg_C_read(&configData->deputyTransInMsg);
+    thrustConfigMsg = THRArrayConfigMsg_C_read(&configData->thrustConfigInMsg);
+    attRefInMsg = AttRefMsg_C_zeroMsgPayload();
+    if (configData->attRefInIsLinked) {
+        attRefInMsg = AttRefMsg_C_read(&configData->attRefInMsg);
     }
 
     if(configData->prevCallTime == 0) {
@@ -130,16 +106,18 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
     configData->tCurrent = configData->tCurrent + elapsed_time;
 	configData->prevCallTime = callTime;
 
+    /* zero output messages */
+    attRefMsg = AttRefMsg_C_zeroMsgPayload();
+    thrustOnMsg = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
+
     UpdateManeuver(configData, chiefTransMsg, deputyTransMsg, attRefInMsg,
                      thrustConfigMsg, &attRefMsg, &thrustOnMsg, callTime, moduleID);
 
     /*! - write the module output message */
-    WriteMessage(configData->attRefOutMsgID, callTime,
-                     sizeof(AttRefFswMsg),(void*) &(attRefMsg), moduleID);
+    AttRefMsg_C_write(&attRefMsg, &configData->attRefOutMsg, moduleID, callTime);
     if(configData->thrustOnFlag == 1){
         // only when thrustOnFlag is 1, thrustOnMessage is output
-        WriteMessage(configData->onTimeOutMsgID, callTime,
-                     sizeof(THRArrayOnTimeCmdIntMsg),(void*) &(thrustOnMsg), moduleID);
+        THRArrayOnTimeCmdMsg_C_write(&thrustOnMsg, &configData->onTimeOutMsg, moduleID, callTime);
     }
     return;
 }
@@ -157,10 +135,10 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTransMsg,
-                     NavTransIntMsg deputyTransMsg, AttRefFswMsg attRefInMsg,
-                     THRArrayConfigFswMsg thrustConfigMsg, AttRefFswMsg *attRefMsg,
-                     THRArrayOnTimeCmdIntMsg *thrustOnMsg, uint64_t callTime, int64_t moduleID)
+void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chiefTransMsg,
+                     NavTransMsgPayload deputyTransMsg, AttRefMsgPayload attRefInMsg,
+                     THRArrayConfigMsgPayload thrustConfigMsg, AttRefMsgPayload *attRefMsg,
+                     THRArrayOnTimeCmdMsgPayload *thrustOnMsg, uint64_t callTime, int64_t moduleID)
 {
     /* conversion from r,v to classical orbital elements */
     classicElements oe_c, oe_d;
@@ -180,9 +158,9 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTr
     /* Overall, configData->dvArray[i].flag is checked sequentially (i=0,1,2)  */
     if(configData->dvArray[0].flag == 1){
         double t_left = configData->dvArray[0].t - configData->tCurrent; // remaining time until first burn
-        if(t_left > configData->attControlTime && configData->attRefInMsgID>=0){
+        if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until first burn, so reference input attitude is set as target
-            v3Copy(attRefInMsg.sigma_RN, attRefMsg->sigma_RN);
+            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
         }else{
             // in this case, first burn attitude is set at target
             v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
@@ -205,9 +183,9 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTr
            configData->tCurrent < (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters))){
             // in this case, first burn is still executed, so first burn attitude is set as target
             v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
-        }else if(t_left > configData->attControlTime && configData->attRefInMsgID>=0){
+        }else if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until second burn, so reference input attitude is set as target
-            v3Copy(attRefInMsg.sigma_RN, attRefMsg->sigma_RN);
+            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
         }else{
             // in this case, second burn attitude is set at target
             v3Copy(configData->dvArray[1].sigma_RN, attRefMsg->sigma_RN);
@@ -233,9 +211,9 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTr
            configData->tCurrent < (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters))){
             // in this case, first burn is still executed, so first burn attitude is set as target
             v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
-        }else if(t_left > configData->attControlTime && configData->attRefInMsgID>=0){
+        }else if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until second burn, so reference input attitude is set as target
-            v3Copy(attRefInMsg.sigma_RN, attRefMsg->sigma_RN);
+            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
         }else{
             // in this case, third burn attitude is set at target
             v3Copy(configData->dvArray[2].sigma_RN, attRefMsg->sigma_RN);
@@ -256,27 +234,27 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTr
         // we have to consider a case when one dvArray[].flag is set to 3, which means that the burn is combined with another
         if(configData->dvArray[2].flag == 2){
             if(configData->tCurrent > (configData->dvArray[2].t+configData->dvArray[2].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
-               configData->attRefInMsgID>=0){
-                v3Copy(attRefInMsg.sigma_RN, attRefMsg->sigma_RN);
+               configData->attRefInIsLinked){
+                AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
             }else{
                 v3Copy(configData->dvArray[2].sigma_RN, attRefMsg->sigma_RN);
             }
         }else if(configData->dvArray[1].flag == 2){
             if(configData->tCurrent > (configData->dvArray[1].t+configData->dvArray[1].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
-               configData->attRefInMsgID>=0){
-                v3Copy(attRefInMsg.sigma_RN, attRefMsg->sigma_RN);
+               configData->attRefInIsLinked){
+                AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
             }else{
                 v3Copy(configData->dvArray[1].sigma_RN, attRefMsg->sigma_RN);
             }  
         }else if(configData->dvArray[0].flag == 2){
             if(configData->tCurrent > (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
-               configData->attRefInMsgID>=0){
-                v3Copy(attRefInMsg.sigma_RN, attRefMsg->sigma_RN);
+               configData->attRefInIsLinked){
+                AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
             }else{
                 v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
             }
         }else{
-            v3Copy(attRefInMsg.sigma_RN, attRefMsg->sigma_RN);
+            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
         }
         configData->thrustOnFlag = 0;
     }
@@ -285,11 +263,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTr
     if(configData->tCurrent > configData->resetPeriod){
         Reset_spacecraftReconfig(configData, callTime, moduleID);
     }
-    // omega and domega reference attitude (set to zero)
-    double omega_RN[3] = {0,0,0};
-    double domega_RN[3] = {0,0,0};
-    v3Copy(omega_RN, attRefMsg->omega_RN_N);
-    v3Copy(domega_RN, attRefMsg->domega_RN_N);
+    
     return;
 }
 
@@ -348,7 +322,7 @@ int CompareTime(const void * n1, const void * n2)
  @param thrustConfigMsg
  */
 void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
-                          classicElements oe_d, THRArrayConfigFswMsg thrustConfigMsg)
+                          classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsg)
 {
     // calculation necessary variables
     double da     = oe_d.a - oe_c.a;

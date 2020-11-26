@@ -31,10 +31,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
-from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
-
+from Basilisk.simulation import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -67,13 +66,6 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     moduleConfig = spacecraftReconfig.spacecraftReconfigConfig()  # update with current values
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig
-    moduleConfig.chiefTransInMsgName = "chiefInputMsg"
-    moduleConfig.deputyTransInMsgName = "deputyInputMsg"
-    moduleConfig.thrustConfigInMsgName = "thrustConfigInputMsg"
-    if(useRefAttitude):
-        moduleConfig.attRefInMsgName = "attRefInputMsg"
-    moduleConfig.onTimeOutMsgName = "onTImeOutputMsg"
-    moduleConfig.attRefOutMsgName = "attRefOutputMsg"
     moduleConfig.targetClassicOED = [0.0000, 0.0000, 0.0000, 0.0001, 0.0002, 0.0003]
     moduleConfig.scMassDeputy = 500  # [kg]
     moduleConfig.attControlTime = 400  # [s]
@@ -93,14 +85,13 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     oe.omega = 0.4
     oe.f = 0.5
     (r_BN_N, v_BN_N) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe)
-    chiefNavStateOutData = spacecraftReconfig.NavTransIntMsg()  # Create a structure for the input message
+    chiefNavStateOutData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
     chiefNavStateOutData.timeTag = 0
     chiefNavStateOutData.r_BN_N = r_BN_N
     chiefNavStateOutData.v_BN_N = v_BN_N
     chiefNavStateOutData.vehAccumDV = [0, 0, 0]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
-                               moduleConfig.chiefTransInMsgName,
-                               chiefNavStateOutData)
+    chiefInMsg = messaging2.NavTransMsg().write(chiefNavStateOutData)
+    moduleConfig.chiefTransInMsg.subscribeTo(chiefInMsg)
     #
     # Deputy Navigation Message
     #
@@ -112,25 +103,25 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     oe2.omega = 0.0 + 0.0002
     oe2.f = 0.0001
     (r_BN_N2, v_BN_N2) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe2)
-    deputyNavStateOutData = spacecraftReconfig.NavTransIntMsg()  # Create a structure for the input message
+    deputyNavStateOutData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
     deputyNavStateOutData.timeTag = 0
     deputyNavStateOutData.r_BN_N = r_BN_N2
     deputyNavStateOutData.v_BN_N = v_BN_N2
     deputyNavStateOutData.vehAccumDV = [0, 0, 0]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
-                               moduleConfig.deputyTransInMsgName,
-                               deputyNavStateOutData)
+    deputyInMsg = messaging2.NavTransMsg().write(deputyNavStateOutData)
+    moduleConfig.deputyTransInMsg.subscribeTo(deputyInMsg)
+
     # 
     # reference attitude message
     #
-    if(useRefAttitude):
-        attRefInData = spacecraftReconfig.AttRefFswMsg()
+    if useRefAttitude:
+        attRefInData = messaging2.AttRefMsgPayload()
         attRefInData.sigma_RN = [1.0, 0.0, 0.0]
         attRefInData.omega_RN_N = [0.0, 0.0, 0.0]
         attRefInData.domega_RN_N = [0.0, 0.0, 0.0]
-        unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
-                               moduleConfig.attRefInMsgName,
-                               attRefInData)
+        attRefInMsg = messaging2.AttRefMsg().write(attRefInData)
+        moduleConfig.attRefInMsg.subscribeTo(attRefInMsg)
+
     #
     # thruster configuration message
     #
@@ -139,11 +130,14 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     fswSetupThrusters.clearSetup()
     for i in range(len(location)):
         fswSetupThrusters.create(location[i], direction[i], 22.6)
-    fswSetupThrusters.writeConfigMessage(moduleConfig.thrustConfigInMsgName, unitTestSim.TotalSim, unitProcessName)
+    thrConfMsg = fswSetupThrusters.writeConfigMessage()
+    moduleConfig.thrustConfigInMsg.subscribeTo(thrConfMsg)
 
     # Setup logging on the test spacecraftReconfig output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
+    dataLog = moduleConfig.attRefOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".resetPeriod", testProcessRate)
+
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
@@ -157,9 +151,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    attOutput = unitTestSim.pullMessageLogData(
-        moduleConfig.attRefOutMsgName + ".sigma_RN", list(range(3)))
+    attOutput = dataLog.sigma_RN
     resetPeriod = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".resetPeriod")
     # set the filtered output truth states
     if useRefAttitude:
@@ -174,9 +166,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed "
-                                + moduleConfig.attRefOutMsgName
-                                + ".sigma_RN" + " unit test at t="
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN" + " unit test at t="
                                 + str(attOutput[i, 0]*macros.NANO2SEC) + "sec\n")
 
     if (not unitTestSupport.isDoubleEqualRelative(resetPeriod[0,1], trueResetPeriod, accuracy)):

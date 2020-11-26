@@ -1,5 +1,6 @@
-Summary
--------
+Executive Summary
+-----------------
+
 The primary purpose of this module is to schedule burn timing and attitude for spacecraft formation reconfiguration.
 Basic idea is described in section 14.8.3 of `Analytical Mechanics of Space Systems <http://doi.org/10.2514/4.105210>`__.
 Based on keplerian dynamics, formation reconfiguration from one initial orbital element difference to target orbital element difference
@@ -31,20 +32,20 @@ provides information on what this message is used for.
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
     | Msg Variable Name        | Msg Type                          | Description                                                   |
     +==========================+===================================+===============================================================+
-    | chiefTransInMsgName      | :ref:`NavTransIntMsg`             | The name of the chief's position and velocity input message   |
+    | chiefTransInMsg          | :ref:`NavTransMsgPayload`         | The name of the chief's position and velocity input message   |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | deputyTransInMsgName     | :ref:`NavTransIntMsg`             | The name of the deputy's position and velocity input message  |
+    | deputyTransInMsg         | :ref:`NavTransMsgPayload`         | The name of the deputy's position and velocity input message  |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | thrustConfigInMsgName    | :ref:`THRArrayConfigFswMsg`       | The name of deputy's thruster configuration input message     |
+    | thrustConfigInMsg        | :ref:`THRArrayConfigMsgPayload`   | The name of deputy's thruster configuration input message     |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | attRefInMsgName          | :ref:`AttRefFswMsg`               | (optional) The name of deputy's reference attitude            |
+    | attRefInMsg              | :ref:`AttRefMsgPayload`           | (optional) The name of deputy's reference attitude            |
     |                          |                                   | input message. If set, then the deputy will point along this  |
     |                          |                                   | reference attitude unless it must point the thrusters in a    |
     |                          |                                   | control direction.                                            |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | attRefOutMsgName         | :ref:`AttRefFswMsg`               | The name of deputy's target attitude output message           |
+    | attRefOutMsg             | :ref:`AttRefMsgPayload`           | The name of deputy's target attitude output message           |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | onTimeOutMsgName         | :ref:`THRArrayOnTimeCmdIntMsg`    | The name of deputy's reference attitude input message         |
+    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`| The name of deputy's reference attitude input message         |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
 
 Module Assumptions and Limitations

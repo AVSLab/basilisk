@@ -20,12 +20,13 @@
 #ifndef _SPACECRAFT_RECONFIG_H_
 #define _SPACECRAFT_RECONFIG_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "../../fswMessages/thrArrayConfigFswMsg.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+
+#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 #include "simulation/utilities/orbitalMotion.h"
 
@@ -41,19 +42,15 @@ typedef struct {
 typedef struct {
     /* declare module IO interfaces */
     // in
-    char chiefTransInMsgName[MAX_STAT_MSG_LENGTH];      //!< msg name
-    int32_t chiefTransInMsgID;                          //!< msg ID
-    char deputyTransInMsgName[MAX_STAT_MSG_LENGTH];     //!< msg name
-    int32_t deputyTransInMsgID;                         //!< msg ID
-    char thrustConfigInMsgName[MAX_STAT_MSG_LENGTH];    //!< msg name
-    int32_t thrustConfigInMsgID;                        //!< msg ID
-    char attRefInMsgName[MAX_STAT_MSG_LENGTH];          //!< msg name
-    int32_t attRefInMsgID;                              //!< msg ID
+    NavTransMsg_C chiefTransInMsg;                      //!< chief orbit input msg
+    NavTransMsg_C deputyTransInMsg;                     //!< deputy orbit input msg
+    THRArrayConfigMsg_C thrustConfigInMsg;              //!< THR configuration input msg
+    AttRefMsg_C attRefInMsg;                            //!< nominal attitude reference input msg
+
     // out
-    char attRefOutMsgName[MAX_STAT_MSG_LENGTH];         //!< msg name
-    int32_t attRefOutMsgID;                             //!< msg ID
-    char onTimeOutMsgName[MAX_STAT_MSG_LENGTH];         //!< msg name
-    int32_t onTimeOutMsgID;                             //!< msg ID
+    AttRefMsg_C attRefOutMsg;                           //!< attitude reference output msg
+    THRArrayOnTimeCmdMsg_C onTimeOutMsg;                //!< THR on-time output msg
+
     double mu;  //!< [m^3/s^2] gravity constant of planet being orbited
     double attControlTime; //!< [s] attitude control margin time (time necessary to change sc's attitude)
     double targetClassicOED[6]; //!< target classic orital element difference, SMA should be normalized
@@ -62,6 +59,7 @@ typedef struct {
     double tCurrent; //!< [s] timer
     uint64_t prevCallTime; //!< [ns]
     uint8_t thrustOnFlag; //!< thrust control
+    int    attRefInIsLinked;        //!< flag if the attitude reference input message is linked
     spacecraftReconfigConfigBurnInfo dvArray[3];    //!< array of burns
 }spacecraftReconfigConfig;
 
@@ -73,14 +71,14 @@ extern "C" {
     void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransIntMsg chiefTransMsg,
-                             NavTransIntMsg deputyTransMsg, AttRefFswMsg attRefInMsg,
-                             THRArrayConfigFswMsg thrustConfigMsg, AttRefFswMsg *attRefMsg,
-                             THRArrayOnTimeCmdIntMsg *thrustOnMsg, uint64_t callTime, int64_t moduleID);
+    void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chiefTransMsg,
+                             NavTransMsgPayload deputyTransMsg, AttRefMsgPayload attRefInMsg,
+                             THRArrayConfigMsgPayload thrustConfigMsg, AttRefMsgPayload *attRefMsg,
+                             THRArrayOnTimeCmdMsgPayload *thrustOnMsg, uint64_t callTime, int64_t moduleID);
     double AdjustRange(double lower, double upper, double angle);
     int CompareTime(const void * n1, const void * n2);
     void ScheduleDV(spacecraftReconfigConfig *configData, classicElements oe_c,
-                         classicElements oe_d, THRArrayConfigFswMsg thrustConfigMsg);
+                         classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsg);
 
 #ifdef __cplusplus
 }
