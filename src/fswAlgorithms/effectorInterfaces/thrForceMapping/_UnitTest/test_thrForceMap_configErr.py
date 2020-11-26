@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ # ISC License
+ #
+ # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ #
+ # Permission to use, copy, modify, and/or distribute this software for any
+ # purpose with or without fee is hereby granted, provided that the above
+ # copyright notice and this permission notice appear in all copies.
+ #
+ # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ # ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        thrForceMapping
@@ -28,13 +27,11 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import messaging2
 
 
 import os, inspect
@@ -79,57 +76,32 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
     # Construct algorithm and associated C++ container
     moduleConfig = thrForceMapping.thrForceMappingConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "thrForceMapping"
 
-
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
-    # Initialize the test module configuration data
-    moduleConfig.inputVehControlName = "LrRequested"
-    moduleConfig.inputThrusterConfName = "RCSThrusters"
-    moduleConfig.outputDataName = "thrusterForceOut"
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-
     # write vehicle configuration message
-    vehicleConfigOut = thrForceMapping.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     if useCOMOffset == 1:
         CoM_B = [0.03,0.001,0.02]
     else:
         CoM_B = [0,0,0]
     vehicleConfigOut.CoM_B = CoM_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
+    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = thrForceMapping.CmdTorqueBodyIntMsg()  # Create a structure for the input message
-    inputMessageSize = inputMessageData.getStructSize()                           # 3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehControlName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
+    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
     if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
@@ -139,14 +111,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         moduleConfig.angErrThresh = 40.0*macros.D2R
 
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
-                                          inputMessageSize,
-                                          0,
-                                          inputMessageData)             # write data into the simulator
+    cmdTorqueInMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
 
     moduleConfig.epsilon = 0.0005
     fswSetupThrusters.clearSetup()
-    MAX_EFF_CNT = simFswInterfaceMessages.MAX_EFF_CNT
+    MAX_EFF_CNT = messaging2.MAX_EFF_CNT
     rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
     rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
 
@@ -251,12 +220,16 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         else:
             maxThrustConfig = maxThrust
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrustConfig)
-    fswSetupThrusters.writeConfigMessage(  moduleConfig.inputThrusterConfName,
-                                           unitTestSim.TotalSim,
-                                           unitProcessName)
+    thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    dataLog = moduleConfig.thrForceCmdOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
+    moduleConfig.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -271,11 +244,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "thrForce"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(MAX_EFF_CNT)))
-
+    moduleOutput = dataLog.thrForce
     if misconfigThruster:
         return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
 

@@ -174,6 +174,14 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +---------------------------+-------------------------------+-----------------------------------+
+    | thrForceMapping           | ``outputDataName``            | ``thrForceCmdOutMsg``             |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputVehControlName``       | ``cmdTorqueInMsg``                |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputThrusterConfName``     | ``thrConfigInMsg``                |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputVehicleConfigDataName``| ``vehConfigInMsg``                |
+    +---------------------------+-------------------------------+-----------------------------------+
     | thrustRWDesat             | ``inputSpeedName``            | ``rwSpeedInMsg``                  |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRWConfigData``         | ``rwConfigInMsg``                 |

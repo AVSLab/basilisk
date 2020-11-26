@@ -37,11 +37,7 @@
  */
 void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->thrusterForceOutMsgId = CreateNewMessage(configData->outputDataName,
-                                               sizeof(THRArrayCmdForceFswMsg),
-                                               "THRArrayCmdForceFswMsg",
-                                               moduleID);
+    THRArrayCmdForceMsg_C_init(&configData->thrForceCmdOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -52,20 +48,6 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleI
  */
 void CrossInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID)
 {
-    /*! - subscribe to the attitude control torque input message */
-    configData->controlTorqueInMsgId = subscribeToMessage(configData->inputVehControlName,
-                                                sizeof(CmdTorqueBodyIntMsg),
-                                                moduleID);
-
-    /*! - subscribe to the thruster configuration input message */
-    configData->thrusterConfigInMsgId = subscribeToMessage(configData->inputThrusterConfName,
-                                                       sizeof(THRArrayConfigFswMsg),
-                                                       moduleID);
-
-    /*! - subscribe to the vehicle configuration input message */
-    configData->vehicleConfigDataInMsgId = subscribeToMessage(configData->inputVehicleConfigDataName,
-                                                              sizeof(VehicleConfigFswMsg), moduleID);
-
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -79,9 +61,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
 {
     double             *pAxis;                  /* pointer to the current control axis */
     int                 i;
-    THRArrayConfigFswMsg   localThrusterData;   /* local copy of the thruster data message */
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
+    THRArrayConfigMsgPayload   localThrusterData;   /* local copy of the thruster data message */
 
     /*! - configure the number of axes that are controlled */
     configData->numControlAxes = 0;
@@ -104,12 +84,8 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
 
 
     /*! - read in the support thruster and vehicle configuration messages */
-    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-    ReadMessage(configData->thrusterConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
-    memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
-    ReadMessage(configData->vehicleConfigDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
+    localThrusterData = THRArrayConfigMsg_C_read(&configData->thrConfigInMsg);
+    configData->sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     configData->numThrusters = localThrusterData.numThrusters;
@@ -150,12 +126,11 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     double      Lr_B_Bar[3];                     /* [Nm]    Control torque that we actually control*/
     double      maxFractUse;                  /* []      ratio of maximum requested thruster force relative to maximum thruster limit */
     double      rCrossGt[3];
-    CmdTorqueBodyIntMsg LrInputMsg;
-    THRArrayCmdForceFswMsg thrusterForceOut;
-    /*! - zero all message copies */
-    memset(&LrInputMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
-    memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
-    memset(&thrusterForceOut, 0x0, sizeof(THRArrayCmdForceFswMsg));
+    CmdTorqueBodyMsgPayload LrInputMsg;
+    THRArrayCmdForceMsgPayload thrusterForceOut;
+
+    /*! - zero all output message copies */
+    thrusterForceOut = THRArrayCmdForceMsg_C_zeroMsgPayload();
     
     /*! - clear arrays of the thruster mapping algorithm */
     vSetZero(F, MAX_EFF_CNT);
@@ -164,10 +139,8 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     mSetZero(C, 3, 3);
     
     /*! - Read the input messages */
-    ReadMessage(configData->controlTorqueInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(LrInputMsg), moduleID);
-    ReadMessage(configData->vehicleConfigDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
+    LrInputMsg = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueInMsg);
+    configData->sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
 
     /*! - copy the request 3D attitude control torque vector */
     v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
@@ -270,8 +243,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
 
     /* store the output message */
     mCopy(F, configData->numThrusters, 1, thrusterForceOut.thrForce);
-    WriteMessage(configData->thrusterForceOutMsgId, callTime, sizeof(THRArrayCmdForceFswMsg),   /* update module name */
-                 (void*) &(thrusterForceOut), moduleID);
+    THRArrayCmdForceMsg_C_write(&thrusterForceOut, &configData->thrForceCmdOutMsg, moduleID, callTime);
 
     return;
 }

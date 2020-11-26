@@ -32,14 +32,16 @@
 %ignore Reset_thrForceMapping;
 
 %include "thrForceMapping.h"
-GEN_SIZEOF(thrForceMappingConfig);
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-GEN_SIZEOF(VehicleConfigFswMsg);
-%include "../../fswMessages/thrArrayConfigFswMsg.h"
-GEN_SIZEOF(THRArrayConfigFswMsg);
-%include "../../fswMessages/thrArrayCmdForceFswMsg.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+
+%include "cMsgPayloadDef/THRArrayCmdForceMsgPayload.h"
+struct THRArrayCmdForceMsg_C;
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "cMsgPayloadDef/THRArrayConfigMsgPayload.h"
+struct THRArrayConfigMsg_C;
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

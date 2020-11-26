@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        thrForceMapping
@@ -31,13 +30,11 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import messaging2
 
 import numpy as np
 
@@ -81,9 +78,6 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -101,38 +95,20 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputVehControlName = "LrRequested"
-    moduleConfig.inputThrusterConfName = "RCSThrusters"
-    moduleConfig.outputDataName = "thrusterForceOut"
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
     moduleConfig.use2ndLoop = use2ndLoop
 
     # write vehicle configuration message
-    vehicleConfigOut = thrForceMapping.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     if useCOMOffset == 1:
         CoM_B = [0.03,0.001,0.02]
     else:
         CoM_B = [0,0,0]
     vehicleConfigOut.CoM_B = CoM_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
+    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = thrForceMapping.CmdTorqueBodyIntMsg()  # Create a structure for the input message
-    inputMessageSize = inputMessageData.getStructSize()                           # 3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehControlName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
+    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
     if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
@@ -142,14 +118,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         moduleConfig.angErrThresh = 40.0*macros.D2R
 
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
-                                          inputMessageSize,
-                                          0,
-                                          inputMessageData)             # write data into the simulator
+    cmdTorqueInMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
 
     moduleConfig.epsilon = 0.0005
     fswSetupThrusters.clearSetup()
-    MAX_EFF_CNT = simFswInterfaceMessages.MAX_EFF_CNT
+    MAX_EFF_CNT = messaging2.MAX_EFF_CNT
     rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
     rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
 
@@ -254,12 +227,16 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         else:
             maxThrustConfig = maxThrust
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrustConfig)
-    fswSetupThrusters.writeConfigMessage(  moduleConfig.inputThrusterConfName,
-                                           unitTestSim.TotalSim,
-                                           unitProcessName)
+    thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    dataLog = moduleConfig.thrForceCmdOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
+    moduleConfig.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -274,10 +251,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "thrForce"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  list(range(MAX_EFF_CNT)))
+    moduleOutput = dataLog.thrForce
 
     if misconfigThruster:
         return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
@@ -297,13 +271,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     trueVector[0,:] = F
     trueVector[1,:] = F
 
-
     C = np.reshape(controlAxes_B, (numControlAxis, 3))
     CT = np.transpose(C)
     D = np.cross(rcsDirectionData,rcsLocationData-CoM_B)
-    receivedTorque = -1.0*np.array([np.matmul(np.transpose(D), np.transpose(moduleOutput[0, 1:MAX_EFF_CNT+1]))])
-    receivedTorque = np.append(np.array([0.0]), receivedTorque)
-
+    receivedTorque = -1.0*np.array([np.matmul(np.transpose(D), np.transpose(moduleOutput[0]))])
+    receivedTorque = np.append(np.array([]), receivedTorque)
 
     Lr_offset = np.array([0.0, 0.0, 0.0])
     Lr_B = np.array([0.0, 0.0, 0.0])
@@ -315,21 +287,17 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     # This computes the requested torque direction and the received torque directions
     Lr_Req_B_Unit = Lr_B / np.linalg.norm(Lr_B)
-    Lr_Rec_B_Unit= receivedTorque[1:4] / np.linalg.norm(receivedTorque[1:4])
+    Lr_Rec_B_Unit = receivedTorque / np.linalg.norm(receivedTorque)
 
     # This is the requested and recieved torque projected onto the control axes
-    Lr_Req_Bar_B = np.matmul(CT, np.matmul(C,Lr_B))
-    Lr_Rec_Bar_B = np.matmul(CT, np.matmul(C,receivedTorque[1:4]))
-    Lr_Rec_Bar_B = np.append(0, Lr_Rec_Bar_B)
+    Lr_Req_Bar_B = np.matmul(CT, np.matmul(C, Lr_B))
+    Lr_Rec_Bar_B = np.matmul(CT, np.matmul(C, receivedTorque))
 
     # This computes the projected requested and received control torque directions
     Lr_Req_Bar_B_Unit = Lr_Req_Bar_B/np.linalg.norm(Lr_Req_Bar_B)
-    Lr_Rec_Bar_B_Unit = Lr_Rec_Bar_B[1:4]/np.linalg.norm(Lr_Rec_Bar_B[1:4])
-    if np.linalg.norm(Lr_Rec_Bar_B[1:4]) == 0.0:
+    Lr_Rec_Bar_B_Unit = Lr_Rec_Bar_B/np.linalg.norm(Lr_Rec_Bar_B)
+    if np.linalg.norm(Lr_Rec_Bar_B) == 0.0:
         Lr_Rec_Bar_B_Unit = [0.0, 0.0, 0.0]
-    Lr_Rec_Bar_B_Unit = np.append(0, Lr_Rec_Bar_B_Unit)
-
-
 
     accuracy = 1E-6
 
@@ -338,13 +306,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                                                  "CompareForces",
                                                                  MAX_EFF_CNT, testFailCount, testMessages)
 
-
     # Checks to make sure that no forces are negative
-    if not useDVThruster and np.any(moduleOutput[0,1:]<0):
+    if not useDVThruster and np.any(moduleOutput[0] < 0):
         testFailCount += 1
         print("A negative force exists in the C RCS solution. This is not allowed!\n")
 
-    if not useDVThruster and np.any(F<0):
+    if not useDVThruster and np.any(F < 0):
         testFailCount += 1
         print("A negative force exists in the Python RCS solution. This is not allowed!\n")
 
@@ -354,14 +321,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     # Check that Torques are Sensible
     print("\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B))
-    print("Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4]))
+    print("Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B))
 
-    testFailCount = 0
     testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B_Unit]),
                                                                  np.array([Lr_Rec_Bar_B_Unit]), accuracy,
                                                                  "CompareTorques",
                                                                  3, testFailCount, testMessages)
-
 
     snippetName = "LrData_" + str(useDVThruster) + "_" + str(dropThruster) + "_" + str(numControlAxis) + "_" + str(useCOMOffset) + "____" + str(asymmetricDrop) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
 
@@ -377,14 +342,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     snippetTex += "Original [B]:\t" + str(requestedTorque) + "\n"
 
     snippetTex += "Requested (Original + Offset) [B]:\t" + str(Lr_B) + "\n"
-    snippetTex += "Received [B]:\t\t" + str(receivedTorque[1:4]) + "\n\n"
+    snippetTex += "Received [B]:\t\t" + str(receivedTorque) + "\n\n"
     snippetTex += "Requested Unit:\t\t" + str(Lr_Req_B_Unit) + "\n"
     snippetTex += "Received Unit:\t\t" + str(Lr_Rec_B_Unit) + "\n\n"
 
     snippetTex += "Requested On Control Axes (Original + Offset) [B]:\t" + str(Lr_Req_Bar_B) + "\n"
-    snippetTex += "Received On Control Axes [B]:\t\t" + str(Lr_Rec_Bar_B[1:4]) + "\n\n"
+    snippetTex += "Received On Control Axes [B]:\t\t" + str(Lr_Rec_Bar_B) + "\n\n"
     snippetTex += "Requested On Control Axes Unit:\t\t" + str(Lr_Req_Bar_B_Unit) + "\n"
-    snippetTex += "Received On Control Axes Unit:\t\t" + str(Lr_Rec_Bar_B_Unit[1:4]) + "\n\n"
+    snippetTex += "Received On Control Axes Unit:\t\t" + str(Lr_Rec_Bar_B_Unit) + "\n\n"
 
     snippetTex += "D-Matrix:\n" + str(D) + "\n\n"
     snippetTex += "Forces:\n" + str(np.transpose(F)) + "\n\n"
@@ -396,9 +361,8 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     if testFailCount > 0:
         unitTestSupport.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
         print("FAILED: " + moduleWrap.ModelTag)
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                            moduleOutputName + " unit test at t=" +
-                            str(moduleOutput[0, 0] * macros.NANO2SEC) +
+        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed  unit test at t=" +
+                            str(dataLog.times()[0] * macros.NANO2SEC) +
                             "sec\n")
     else:
         unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
