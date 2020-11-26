@@ -30,15 +30,17 @@
 %ignore CrossInit_thrMomentumDumping;
 %constant void Reset_thrMomentumDumping(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumDumping;
-GEN_SIZEOF(thrMomentumDumpingConfig);
+
 %include "thrMomentumDumping.h"
-%include "../../fswMessages/thrArrayConfigFswMsg.h"
-%include "../../fswMessages/thrArrayCmdForceFswMsg.h"
-%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(THRArrayConfigFswMsg);
-GEN_SIZEOF(THRArrayCmdForceFswMsg);
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+
+%include "cMsgPayloadDef/THRArrayCmdForceMsgPayload.h"
+struct THRArrayCmdForceMsg_C;
+%include "cMsgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
+%include "cMsgPayloadDef/THRArrayConfigMsgPayload.h"
+struct THRArrayConfigMsg_C;
+%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
 
 %pythoncode %{
 import sys

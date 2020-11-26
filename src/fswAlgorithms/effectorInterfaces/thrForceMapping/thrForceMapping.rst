@@ -12,12 +12,6 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_thrFiringSchmitt:
-.. figure:: /../../src/fswAlgorithms/effectorInterfaces/thrFiringSchmitt/_Documentation/Images/moduleImgThrFiringSchmitt.svg
-    :align: center
-
-    Figure 1: ``thrFiringSchmitt()`` Module I/O Illustration
-
 
 .. list-table:: Module I/O Messages
     :widths: 25 25 50
@@ -30,7 +24,7 @@ provides information on what this message is used for.
       - :ref:`THRArrayCmdForceMsgPayload`
       - thruster force output message
     * - cmdTorqueInMsg
-      - :ref:`CmdTorqueBodyMsg_C`
+      - :ref:`CmdTorqueBodyMsgPayload`
       - commanded attitude control torque vector input message
     * - thrConfigInMsg
       - :ref:`THRArrayConfigMsgPayload`
