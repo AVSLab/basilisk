@@ -102,6 +102,8 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | inertial3D                | ``outputDataName``            | ``attRefOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
+    | horizonOpNav              | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
     | inertial3DSpin            | ``outputDataName``            | ``attRefOutMsg``                  |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRefName``              | ``attRefInMsg``                   |

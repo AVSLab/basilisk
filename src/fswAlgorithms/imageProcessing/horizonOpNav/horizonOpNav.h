@@ -20,12 +20,12 @@
 #ifndef _HORIZON_OPNAV_H_
 #define _HORIZON_OPNAV_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/limbOpNavMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/LimbOpNavMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
+
 #include "utilities/macroDefinitions.h"
-#include "fswMessages/opNavFswMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
@@ -34,16 +34,14 @@
 
 /*! @brief The configuration structure for the horizon OpNav module.*/
 typedef struct {
-    char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
-    char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
-    char limbInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the limb message
+    OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
+    CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
+    NavAttMsg_C attInMsg; //!< attitude input message
+    LimbOpNavMsg_C limbInMsg; //!< limb input message
+    
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
     double noiseSF;   //!< A scale factor to control measurement noise
-    int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t limbInMsgID;    //!< [-] The ID associated with the incoming circle message
-    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 }HorizonOpNavData;
 

@@ -31,16 +31,17 @@
 %constant void Update_horizonOpNav(void*, uint64_t, uint64_t);
 %ignore Update_horizonOpNav;
 STRUCTASLIST(HorizonOpNavData)
-GEN_SIZEOF(LimbOpNavMsg)
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(NavAttIntMsg)
-GEN_SIZEOF(OpNavFswMsg)
-%include "simFswInterfaceMessages/limbOpNavMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
-%include "horizonOpNav.h"
 
+%include "cMsgPayloadDef/LimbOpNavMsgPayload.h"
+struct LimbOpNavMsg_C;
+%include "cMsgPayloadDef/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+
+%include "horizonOpNav.h"
 
 %pythoncode %{
 import sys

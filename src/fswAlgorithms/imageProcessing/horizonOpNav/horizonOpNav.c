@@ -31,10 +31,7 @@
  */
 void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
 {
-    configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
-                                                 sizeof(OpNavFswMsg),
-                                                 "OpNavFswMsg",
-                                                 moduleID);
+    OpNavMsg_C_init(&configData->opNavOutMsg);
 }
 
 /*! This method subscribes to the camera and circle messages
@@ -44,9 +41,6 @@ void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
  */
 void CrossInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
 {
-    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleID);
-    configData->limbInMsgID = subscribeToMessage(configData->limbInMsgName, sizeof(LimbOpNavMsg),moduleID);
-    configData->attInMsgID = subscribeToMessage(configData->attInMsgName, sizeof(NavAttIntMsg),moduleID);
 }
 
 /*! This resets the module to original states.
@@ -68,35 +62,26 @@ void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_
  */
 void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3], Q[3][3], B[3][3];
     double planetRad_Eq, planetRad_Pol;
     double covar_In_C[3][3], covar_In_B[3][3], covar_In_N[3][3];
-    CameraConfigMsg cameraSpecs;
-    LimbOpNavMsg limbIn;
-    OpNavFswMsg opNavMsgOut;
-    NavAttIntMsg attInfo;
+    CameraConfigMsgPayload cameraSpecs;
+    LimbOpNavMsgPayload limbIn;
+    OpNavMsgPayload opNavMsgOut;
+    NavAttMsgPayload attInfo;
 
-    /*! - zero copies of input/output messages */
-    memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
-    memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
-    memset(&limbIn, 0x0, sizeof(LimbOpNavMsg));
-    memset(&opNavMsgOut, 0x0, sizeof(OpNavFswMsg));
+    /*! - zero copies of output messages */
+    opNavMsgOut = OpNavMsg_C_zeroMsgPayload();
 
     /*! - read input messages */
-    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CameraConfigMsg), &cameraSpecs, moduleID);
-    ReadMessage(configData->limbInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(LimbOpNavMsg), &limbIn, moduleID);
-    ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), &attInfo, moduleID);
+    cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
+    limbIn = LimbOpNavMsg_C_read(&configData->limbInMsg);
+    attInfo = NavAttMsg_C_read(&configData->attInMsg);
     
     /*! Check the validity of the image*/
     if (limbIn.valid == 0){
         opNavMsgOut.valid = 0;
-        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                     &opNavMsgOut, moduleID);
+        OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         return;
     }
     /*! Create Q matrix, the square root inverse of the A matrix, eq (6) in Engineering Note*/
@@ -262,8 +247,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     opNavMsgOut.timeTag = limbIn.timeTag;
     opNavMsgOut.valid =1;
-    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                 &opNavMsgOut, moduleID);
+    OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
 
     /* free allocated memory */
     free(H);

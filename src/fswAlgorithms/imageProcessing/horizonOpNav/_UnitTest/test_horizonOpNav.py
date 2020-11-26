@@ -8,6 +8,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import horizonOpNav
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.simulation import messaging2
 
 import os, inspect
 import numpy as np
@@ -153,9 +154,6 @@ def horizonOpNav_update():
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # This is needed if multiple unit test scripts are run
-    # This create a fresh and consistent simulation environment for each test run
-
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -164,9 +162,6 @@ def horizonOpNav_update():
     # Construct the ephemNavConverter module
     # Set the names for the input messages
     opNav = horizonOpNav.HorizonOpNavData()  # Create a config struct
-    opNav.limbInMsgName = "limb_name"
-    opNav.cameraConfigMsgName = "camera_config_name"
-    opNav.attInMsgName = "nav_att_name"
     opNav.noiseSF = 2
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
@@ -250,31 +245,36 @@ def horizonOpNav_update():
        384., 189., 384., 190., 385., 191., 385., 192., 386.]
 
     # Create the input messages.
-    inputCamera = horizonOpNav.CameraConfigMsg()
-    inputLimbMsg = horizonOpNav.LimbOpNavMsg()
-    inputAtt = horizonOpNav.NavAttIntMsg()
+    inputCamera = messaging2.CameraConfigMsgPayload()
+    inputLimbMsg = messaging2.LimbOpNavMsgPayload()
+    inputAtt = messaging2.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / 1. )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.2,0.3]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.cameraConfigMsgName, inputCamera)
+    camInMsg = messaging2.CameraConfigMsg().write(inputCamera)
+    opNav.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set circles
     inputLimbMsg.valid = 1
     inputLimbMsg.limbPoints = inputPoints
     inputLimbMsg.numLimbPoints = int(len(inputPoints)/2)
     inputLimbMsg.timeTag = 12345
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.limbInMsgName, inputLimbMsg)
+    limbInMsg = messaging2.LimbOpNavMsg().write(inputLimbMsg)
+    opNav.limbInMsg.subscribeTo(limbInMsg)
+
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, opNav.attInMsgName, inputAtt)
+    attInMsg = messaging2.NavAttMsg().write(inputAtt)
+    opNav.attInMsg.subscribeTo(attInMsg)
+
 
     # Set module for Mars
     opNav.planetTarget = 2
-    opNav.opNavOutMsgName = "output_nav_msg"
-    unitTestSim.TotalSim.logThisMessage(opNav.opNavOutMsgName)
+    dataLog = opNav.opNavOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -369,18 +369,17 @@ def horizonOpNav_update():
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
-    outputR = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.r_BN_C',  list(range(3)))
-    outputCovar = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.covar_C',  list(range(9)))
-    outputTime = unitTestSim.pullMessageLogData(opNav.opNavOutMsgName + '.timeTag')
-
+    outputR = dataLog.r_BN_C
+    outputCovar = dataLog.covar_C
+    outputTime = dataLog.timeTag
 
     for i in range(len(outputR[-1, 1:])):
-        if np.abs((r_BN_C[i] - outputR[0, i+1])/r_BN_C[i]) > posErr or np.isnan(outputR.any()):
+        if np.abs((r_BN_C[i] - outputR[0, i])/r_BN_C[i]) > posErr or np.isnan(outputR.any()):
             testFailCount += 1
             testMessages.append("FAILED: Position Check in Horizon Nav for index "+ str(i) + " with error " + str(np.abs((r_BN_C[i] - outputR[-1, i+1])/r_BN_C[i])))
 
     for i in range(len(outputCovar[-1, 1:])):
-        if np.abs((Covar_C_test.flatten()[i] - outputCovar[0, i+1])/Covar_C_test.flatten()[i]) > covarErr or np.isnan(outputTime.any()):
+        if np.abs((Covar_C_test.flatten()[i] - outputCovar[0, i])/Covar_C_test.flatten()[i]) > covarErr or np.isnan(outputTime.any()):
             testFailCount += 1
             testMessages.append("FAILED: Covar Check in Horizon Nav for index "+ str(i) + " with error " + str(np.abs((Covar_C_test.flatten()[i] - outputCovar[-1, i+1]))))
 
