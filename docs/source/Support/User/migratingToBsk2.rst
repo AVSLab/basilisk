@@ -146,6 +146,8 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputVehControlName``       | ``vehControlInMsg``               |
     +---------------------------+-------------------------------+-----------------------------------+
+    | rwMotorVoltage            | ``inputRWSpeedsInMsgName``    | ``rwSpeedInMsg``                  |
+    +---------------------------+-------------------------------+-----------------------------------+
     | simpleDeadband            | ``outputDataName``            | ``attGuidOutMsg``                 |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |

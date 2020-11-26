@@ -35,40 +35,16 @@
  */
 void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->voltageOutMsgID = CreateNewMessage(configData->voltageOutMsgName,
-                                               sizeof(RWArrayVoltageIntMsg),
-                                               "RWArrayVoltageIntMsg",          /* add the output structure name */
-                                               moduleID);
+    RWArrayVoltageMsg_C_init(&configData->voltageOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
 */
 void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->torqueInMsgID = subscribeToMessage(configData->torqueInMsgName,
-                                                sizeof(ArrayMotorTorqueIntMsg),
-                                                moduleID);
-    configData->rwParamsInMsgID = -1;
-    configData->inputRWSpeedsInMsgID = -1;
-    configData->rwAvailInMsgID = -1;
-
-    configData->rwParamsInMsgID = subscribeToMessage(configData->rwParamsInMsgName,
-                                                     sizeof(RWArrayConfigFswMsg), moduleID);
-
-    if (strlen(configData->inputRWSpeedsInMsgName) > 0) {
-        configData->inputRWSpeedsInMsgID = subscribeToMessage(configData->inputRWSpeedsInMsgName,
-                                                         sizeof(RWSpeedIntMsg), moduleID);
-    }
-    if(strlen(configData->rwAvailInMsgName) > 0) {
-        configData->rwAvailInMsgID = subscribeToMessage(configData->rwAvailInMsgName,
-                                                        sizeof(RWAvailabilityFswMsg), moduleID);
-    }
 }
 
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that retain
@@ -81,10 +57,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID
 void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read static RW config data message and store it in module variables*/
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    ReadMessage(configData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
+    configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
 
     /* reset variables */
     memset(configData->rwSpeedOld, 0, sizeof(double)*MAX_EFF_CNT);
@@ -104,33 +77,35 @@ void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, i
 void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
+//    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
+    ArrayMotorTorqueMsgPayload torqueCmd;           /*!< copy of RW motor torque input message*/
+    RWArrayVoltageMsgPayload voltageOut;            /*!< -- copy of the output message */
     uint32_t i;
-    ReadMessage(configData->torqueInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(ArrayMotorTorqueIntMsg), (void*) torqueCmd, moduleID);
-    RWSpeedIntMsg       rwSpeed;                    /*!< [r/s] Reaction wheel speed estimates */
-    if (configData->inputRWSpeedsInMsgID >= 0) {
-        ReadMessage(configData->inputRWSpeedsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWSpeedIntMsg), (void*) &(rwSpeed), moduleID);
+
+    voltageOut = RWArrayVoltageMsg_C_zeroMsgPayload();
+
+    torqueCmd = ArrayMotorTorqueMsg_C_read(&configData->torqueInMsg);
+
+    RWSpeedMsgPayload  rwSpeed;                    /*!< [r/s] Reaction wheel speed estimates */
+    rwSpeed = RWSpeedMsg_C_zeroMsgPayload();
+    if(RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
+        rwSpeed = RWSpeedMsg_C_read(&configData->rwSpeedInMsg);
     }
-    RWAvailabilityFswMsg  rwAvailability;             /*!< []    Reaction wheel availability */
-    memset(rwAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
-    if (configData->rwAvailInMsgID >= 0){
-        ReadMessage(configData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWAvailabilityFswMsg), &rwAvailability, moduleID);
+    RWAvailabilityMsgPayload  rwAvailability;
+    rwAvailability = RWAvailabilityMsg_C_zeroMsgPayload(); // wheelAvailability set to 0 (AVAILABLE) by default
+    if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg)){
+        rwAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
     }
 
     /* zero the output voltage vector */
-    double              voltage[MAX_EFF_CNT];       /*!< [V]   RW voltage output commands */
+    double  voltage[MAX_EFF_CNT];       /*!< [V]   RW voltage output commands */
     memset(voltage, 0, sizeof(double)*MAX_EFF_CNT);
 
     /* compute the often used double array size of RW double values */
     uint32_t rwArrayMemorySize = configData->rwConfigParams.numRW*sizeof(double);
 
     /* if the torque closed-loop is on, evaluate the feedback term */
-    if (configData->inputRWSpeedsInMsgID >= 0) {
+    if (RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
         /* make sure the clock didn't just initialize, or the module was recently reset */
         if (configData->priorTime != 0) {
             double dt = (callTime - configData->priorTime) * NANO2SEC; /*!< [s]   control update period */
@@ -138,7 +113,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
             for (i=0; i<configData->rwConfigParams.numRW; i++) {
                 if (rwAvailability.wheelAvailability[i] == AVAILABLE && configData->resetFlag == BOOL_FALSE) {
                     OmegaDot[i] = (rwSpeed.wheelSpeeds[i] - configData->rwSpeedOld[i])/dt;
-                    torqueCmd[i] -= configData->K * (configData->rwConfigParams.JsList[i] * OmegaDot[i] - torqueCmd[i]);
+                    torqueCmd.motorTorque[i] -= configData->K * (configData->rwConfigParams.JsList[i] * OmegaDot[i] - torqueCmd.motorTorque[i]);
                 }
                 configData->rwSpeedOld[i] = rwSpeed.wheelSpeeds[i];
             }
@@ -151,7 +126,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     for (i=0; i<configData->rwConfigParams.numRW; i++) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
             voltage[i] = (configData->VMax - configData->VMin)/configData->rwConfigParams.uMax[i]
-                        * torqueCmd[i];
+                        * torqueCmd.motorTorque[i];
             if (voltage[i]>0.0) voltage[i] += configData->VMin;
             if (voltage[i]<0.0) voltage[i] -= configData->VMin;
         }
@@ -165,17 +140,13 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
         if (voltage[i] < -configData->VMax) {
             voltage[i] = -configData->VMax;
         }
+        voltageOut.voltage[i] = voltage[i];
     }
 
     /*
      store the output message 
      */
-    memcpy(configData->voltageOut.voltage,
-           voltage,
-           rwArrayMemorySize);
-
-    WriteMessage(configData->voltageOutMsgID, callTime, sizeof(RWArrayVoltageIntMsg),
-                 (void*) &(configData->voltageOut), moduleID);
+    RWArrayVoltageMsg_C_write(&voltageOut, &configData->voltageOutMsg, callTime);
 
     return;
 }

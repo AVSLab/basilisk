@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        rwMotorVoltage
@@ -25,23 +23,23 @@
 #
 
 import pytest
-import sys, os, inspect
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
+import os, inspect
 import numpy as np
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+def addTimeColumn(time, data):
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import macros
+from Basilisk.simulation import messaging2
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -73,15 +71,11 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     moduleConfig = rwMotorVoltage.rwMotorVoltageConfig()
@@ -92,9 +86,9 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.torqueInMsgName = "rw_torque_Lr"
-    moduleConfig.rwParamsInMsgName = "rw_parameters"
-    moduleConfig.voltageOutMsgName = "rw_volt_cmd"
+    # moduleConfig.torqueInMsgName = "rw_torque_Lr"
+    # moduleConfig.rwParamsInMsgName = "rw_parameters"
+    # moduleConfig.voltageOutMsgName = "rw_volt_cmd"
 
     # set module parameters
     moduleConfig.VMin = 1.0     # Volts
@@ -102,13 +96,10 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
 
     if useTorqueLoop:
         moduleConfig.K = 1.5
-        moduleConfig.inputRWSpeedsInMsgName = "rw_speeds"
-        rwSpeedMessage = rwMotorVoltage.RWSpeedIntMsg()
+        rwSpeedMessage = messaging2.RWSpeedMsgPayload()
         rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   moduleConfig.inputRWSpeedsInMsgName,
-                                   rwSpeedMessage)
+        rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
+        moduleConfig.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
         unitTestSupport.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
@@ -128,37 +119,32 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
         fswSetupRW.create(GsMatrix_B[i],    #           spin axis
                           0.1,              # kg*m^2    J2
                           0.2)              # Nm        uMax
-    fswSetupRW.writeConfigMessage(moduleConfig.rwParamsInMsgName, unitTestSim.TotalSim, unitProcessName)
+    rwConfigInMsg = fswSetupRW.writeConfigMessage()
+    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
     numRW = fswSetupRW.getNumOfDevices()
 
     # Create RW motor torque input message
-    usMessageData = rwMotorVoltage.ArrayMotorTorqueIntMsg()
+    usMessageData = messaging2.ArrayMotorTorqueMsgPayload()
     if useLargeVoltage:
         usMessageData.motorTorque = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
     else:
         usMessageData.motorTorque = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
-
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.torqueInMsgName,
-                               usMessageData)
+    rwMotorTorqueInMsg = messaging2.ArrayMotorTorqueMsg().write(usMessageData)
+    moduleConfig.torqueInMsg.subscribeTo(rwMotorTorqueInMsg)
 
     # create RW availability message
     if useAvailability:
-        moduleConfig.rwAvailInMsgName = "rw_availability"
-        rwAvailabilityMessage = rwMotorVoltage.RWAvailabilityFswMsg()
-        rwAvailArray = np.zeros(rwMotorVoltage.MAX_EFF_CNT)
-        rwAvailArray.fill(rwMotorVoltage.AVAILABLE)
-        rwAvailArray[2] = rwMotorVoltage.UNAVAILABLE        # make 3rd RW unavailable
+        rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
+        rwAvailArray = np.zeros(messaging2.MAX_EFF_CNT)
+        rwAvailArray.fill(messaging2.AVAILABLE)
+        rwAvailArray[2] = messaging2.UNAVAILABLE        # make 3rd RW unavailable
         rwAvailabilityMessage.wheelAvailability = rwAvailArray
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   moduleConfig.rwAvailInMsgName,
-                                   rwAvailabilityMessage)
-
+        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+        moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.voltageOutMsgName, testProcessRate)
+    dataLog = moduleConfig.voltageOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -174,10 +160,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
 
     if useTorqueLoop:
         rwSpeedMessage.wheelSpeeds = [1.1, 2.1, 1.1, -4.1]  # rad/sec Omega's
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsInMsgName,
-                                              rwSpeedMessage.getStructSize(),
-                                              0,
-                                              rwSpeedMessage)
+        rwSpeedInMsg.write(rwSpeedMessage)
         unitTestSupport.writeTeXSnippet("Omega2", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
@@ -193,9 +176,8 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
 
 
     # This pulls the actual data log from the simulation run.
-    moduleOutputName = "voltage"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.voltageOutMsgName + '.' + moduleOutputName,
-                                                  list(range(numRW)))
+    moduleOutput = dataLog.voltage[:, :numRW]
+    print(moduleOutput)
 
 
     # set the filtered output truth states
@@ -253,16 +235,16 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     # plot a sample variable.
-    plt.close("all")    # close all prior figures so we start with a clean slate
-    plt.figure(1)
+    # plt.close("all")    # close all prior figures so we start with a clean slate
+    # plt.figure(1)
     # plt.plot(variableState[:, 0]*macros.NANO2SEC, variableState[:, 1],
     #          label='Case useLargeVoltage = ' + str(useLargeVoltage))
     # plt.legend(loc='upper left')
     # plt.xlabel('Time [s]')
     # plt.ylabel('Variable Description [unit]')
-    if show_plots:
-        plt.show()
-        plt.close('all')
+    # if show_plots:
+    #     plt.show()
+    #     plt.close('all')
 
     #   print out success message if no error were found
     snippentName = "passFail" + testName
@@ -276,6 +258,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # write TeX Tables for documentation
+    moduleOutput = addTimeColumn(dataLog.times(), dataLog.voltage)[:, :numRW+1]
     resultTable = moduleOutput
     resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
     diff = np.delete(moduleOutput, 0, 1) - trueVector

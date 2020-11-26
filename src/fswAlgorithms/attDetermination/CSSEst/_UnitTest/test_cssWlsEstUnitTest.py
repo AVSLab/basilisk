@@ -24,7 +24,6 @@
 
 import pytest
 import os, inspect
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy
 import math
 import logging

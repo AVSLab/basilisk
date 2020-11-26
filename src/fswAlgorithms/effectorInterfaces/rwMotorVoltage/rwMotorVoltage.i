@@ -30,20 +30,23 @@
 %ignore CrossInit_rwMotorVoltage;
 %constant void Reset_rwMotorVoltage(void*, uint64_t, uint64_t);
 %ignore Reset_rwMotorVoltage;
-ARRAYASLIST(FSWdeviceAvailability)
-GEN_SIZEOF(rwMotorVoltageConfig);
-GEN_SIZEOF(ArrayMotorTorqueIntMsg);
-GEN_SIZEOF(RWAvailabilityFswMsg);
-GEN_SIZEOF(RWSpeedIntMsg);
-GEN_SIZEOF(RWArrayConfigFswMsg);
+
 %include "rwMotorVoltage.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "utilities/macroDefinitions.h"
-%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
-%include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
-%include "../../fswMessages/rwAvailabilityFswMsg.h"
+
+%include "cMsgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
+%include "cMsgPayloadDef/RWAvailabilityMsgPayload.h"
+struct RWAvailabilityMsg_C;
+%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "cMsgPayloadDef/RWArrayVoltageMsgPayload.h"
+struct RWArrayVoltageMsg_C;
+
 %include "../../fswUtilities/fswDefinitions.h"
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
+%include "utilities/macroDefinitions.h"
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
