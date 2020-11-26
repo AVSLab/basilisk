@@ -196,7 +196,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 	}
 
     /*! - Write the output message to the thruster system */
-    THRArrayOnTimeCmdMsg_C_write(&outputData, &configData->thrCmdOutMsg, callTime);
+    THRArrayOnTimeCmdMsg_C_write(&outputData, &configData->thrCmdOutMsg, moduleID, callTime);
 
     return;
 }

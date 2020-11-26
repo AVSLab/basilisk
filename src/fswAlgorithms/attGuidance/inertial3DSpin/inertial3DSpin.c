@@ -109,7 +109,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
                                     configData->omega_spin,
                                     dt);
     /*! - Write output message */
-    AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg, callTime);
+    AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg, moduleID, callTime);
 
     /*! Update prior time to current for next evaluation */
     configData->priorTime = callTime;

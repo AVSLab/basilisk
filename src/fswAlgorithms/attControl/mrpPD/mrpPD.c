@@ -117,7 +117,7 @@ void Update_mrpPD(MrpPDConfig *configData, uint64_t callTime,
 
     /*! - Store and write the output message */
     v3Copy(Lr, controlOutMsg.torqueRequestBody);
-    CmdTorqueBodyMsg_C_write(&controlOutMsg, &configData->cmdTorqueOutMsg, callTime);
+    CmdTorqueBodyMsg_C_write(&controlOutMsg, &configData->cmdTorqueOutMsg, moduleID, callTime);
     
     return;
 }

@@ -96,13 +96,13 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     if(configData->burnComplete)
     {
         effCmd = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
-        THRArrayOnTimeCmdMsg_C_write(&effCmd, &configData->thrCmdOutMsg, callTime);
+        THRArrayOnTimeCmdMsg_C_write(&effCmd, &configData->thrCmdOutMsg, moduleID, callTime);
     }
 
     localExeData = DvExecutionDataMsg_C_zeroMsgPayload();
     localExeData.burnComplete = configData->burnComplete;
     localExeData.burnExecuting = configData->burnExecuting;
-    DvExecutionDataMsg_C_write(&localExeData, &configData->burnExecOutMsg, callTime);
+    DvExecutionDataMsg_C_write(&localExeData, &configData->burnExecOutMsg, moduleID, callTime);
     
     return;
 }

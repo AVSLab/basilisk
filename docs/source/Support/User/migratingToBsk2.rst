@@ -218,6 +218,8 @@ to it at a later time you simply use::
 
     msg.write(msgData, time)
 
+Note that stand-alone messages written in Python don't have a module ID.  The message module ID is thus set to -1.
+
 Reading a Basilisk Message from Python
 --------------------------------------
 Assume ``bskObject`` is the Basilisk module created in Python.  To read an output message ``someOutMsg``

@@ -245,7 +245,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     v3Normalize(configData->outputSunline.vehSunPntBdy,
         configData->outputSunline.vehSunPntBdy);
     configData->outputSunline.timeTag = configData->timeTag;
-    NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, callTime);
+    NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, moduleID, callTime);
     
     /*! - Switch the rates back to omega_BN instead of omega_SB */
     vCopy(configData->state, SKF_N_STATES_SWITCH, states_BN);
@@ -258,7 +258,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
-    SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, callTime);
+    SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
     
     return;
 }

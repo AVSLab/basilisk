@@ -39,9 +39,7 @@
 */
 void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
-
 }
 
 /*! @brief This method performs the second stage of initialization for this module.
@@ -213,7 +211,7 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
 
     /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, callTime);
+    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, moduleID, callTime);
 
     return;
 }

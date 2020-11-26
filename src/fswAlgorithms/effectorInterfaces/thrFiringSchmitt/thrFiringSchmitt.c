@@ -114,7 +114,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 			thrOnTimeOut.OnTimeRequest[i] = (double)(configData->baseThrustState) * 2.0;
 		}
 
-        THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, callTime);
+        THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 		return;
 	}
 
@@ -170,7 +170,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 		thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 	}
 
-    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, callTime);
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 
 	return;
 

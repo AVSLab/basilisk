@@ -80,7 +80,7 @@ STRUCTASLIST(RWConfigElementMsgPayload)
         def write(self, payload, time=0):
             """write the message payload.  The second argument is time in nanoseconds.  It is optional and defaults to 0."""
             writeMsg = self.addAuthor()
-            writeMsg(payload, time)
+            writeMsg(payload, -1, time)  # msgs written in python have -1 module ID
             return self
 
         def read(self):

@@ -267,7 +267,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
         configData->filtStatus.numObs = (int) configData->numActiveCss;
         configData->filtStatus.timeTag = (double) (callTime*NANO2SEC);
         v3Copy(sunlineOutBuffer.vehSunPntBdy, configData->filtStatus.state);
-        SunlineFilterMsg_C_write(&configData->filtStatus, &configData->cssWLSFiltResOutMsg, callTime);
+        SunlineFilterMsg_C_write(&configData->filtStatus, &configData->cssWLSFiltResOutMsg, moduleID, callTime);
 
     }
     /*! Writing Outputs */
@@ -279,6 +279,6 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
         configData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
     }
     /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
-    NavAttMsg_C_write(&sunlineOutBuffer, &configData->navStateOutMsg, callTime);
+    NavAttMsg_C_write(&sunlineOutBuffer, &configData->navStateOutMsg, moduleID, callTime);
     return;
 }

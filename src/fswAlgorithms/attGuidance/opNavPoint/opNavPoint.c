@@ -178,7 +178,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     }
 
     /* write the Guidance output message */
-    AttGuidMsg_C_write(&configData->attGuidanceOutBuffer, &configData->attGuidanceOutMsg, callTime);
+    AttGuidMsg_C_write(&configData->attGuidanceOutBuffer, &configData->attGuidanceOutMsg, moduleID, callTime);
     
     return;
 }

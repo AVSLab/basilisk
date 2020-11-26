@@ -219,7 +219,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     
     /*! - Set output message and pass it to the message bus */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, callTime);
+    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, moduleID, callTime);
 
     return;
 }

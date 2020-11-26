@@ -221,7 +221,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     mCopy(configData->covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, headingDataOutBuffer.covar);
     vCopy(states_BN, HEAD_N_STATES_SWITCH, headingDataOutBuffer.state);
     v3Copy(configData->postFits, headingDataOutBuffer.postFitRes);
-    HeadingFilterMsg_C_write(&headingDataOutBuffer, &configData->filtDataOutMsg, callTime);
+    HeadingFilterMsg_C_write(&headingDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
     
     /*! - Write the heading estimate into the copy of the OpNav message structure*/
     opnavOutputBuffer.timeTag = configData->timeTag;
@@ -238,7 +238,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     }
     opnavOutputBuffer.valid = configData->opnavInBuffer.valid;
     opnavOutputBuffer.timeTag = configData->opnavInBuffer.timeTag;
-    OpNavMsg_C_write(&opnavOutputBuffer, &configData->opnavDataOutMsg, callTime);
+    OpNavMsg_C_write(&opnavOutputBuffer, &configData->opnavDataOutMsg, moduleID, callTime);
     
     return;
 }

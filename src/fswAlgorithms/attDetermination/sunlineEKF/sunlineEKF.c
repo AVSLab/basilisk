@@ -152,7 +152,7 @@ void Update_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
     v3Normalize(configData->outputSunline.vehSunPntBdy,
         configData->outputSunline.vehSunPntBdy);
     configData->outputSunline.timeTag = configData->timeTag;
-    NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, callTime);
+    NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = configData->timeTag;
@@ -162,7 +162,7 @@ void Update_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
     memmove(sunlineDataOutBuffer.state, configData->state, SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.stateError, configData->x, SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
-    SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, callTime);
+    SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
 
     return;
 }

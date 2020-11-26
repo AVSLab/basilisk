@@ -74,7 +74,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     /*! - Compute the pointing requirements */
     computeCelestialTwoBodyPoint(configData, callTime);
     /*! - Write the output message */
-    AttRefMsg_C_write(&configData->attRefOut, &configData->attRefOutMsg, callTime);
+    AttRefMsg_C_write(&configData->attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 }
 
 /*! This method takes the navigation translational info as well as the spice data of the

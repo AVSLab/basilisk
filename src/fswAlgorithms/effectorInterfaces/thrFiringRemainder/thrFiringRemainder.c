@@ -111,7 +111,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
 			thrOnTimeOut.OnTimeRequest[i] = (double)(configData->baseThrustState) * 2.0;
 		}
 
-        THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, callTime);
+        THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 		return;
 	}
 
@@ -160,7 +160,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
 	}
 
     /*! - write the moduel output message */
-    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, callTime);
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 
 	return;
 

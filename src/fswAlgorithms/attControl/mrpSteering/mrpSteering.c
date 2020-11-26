@@ -89,7 +89,7 @@ void Update_mrpSteering(MrpSteeringConfig *configData, uint64_t callTime,
     MRPSteeringLaw(configData, guidCmd.sigma_BR, outMsg.omega_BastR_B, outMsg.omegap_BastR_B);
 
     /*! - Store the output message and pass it to the message bus */
-    RateCmdMsg_C_write(&outMsg, &configData->rateCmdOutMsg, callTime);
+    RateCmdMsg_C_write(&outMsg, &configData->rateCmdOutMsg, moduleID, callTime);
 
     return;
 }

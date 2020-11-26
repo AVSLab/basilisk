@@ -129,7 +129,7 @@ extern "C" {
     
     void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId);
     void CrossInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId);
-    void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId);
+    void Read_STMessages(InertialUKFConfig *configData);
     void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         int64_t moduleId);
 	void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,

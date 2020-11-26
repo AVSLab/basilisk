@@ -86,12 +86,24 @@ public:
 
     //! return the time at which the message was written
     uint64_t timeWritten(){
-        if (this->initialized) {
-            return this->headerPointer->timeWritten;
-        } else {
+        if (!this->initialized) {
             bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting the write time of an unconnected msg.");
             return 0;
         }
+        return this->headerPointer->timeWritten;
+    };
+
+    //! return the moduleID of who wrote wrote the message
+    int64_t moduleID(){
+        if (!this->initialized) {
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unconnected msg.");
+            return 0;
+        }
+        if (!this->headerPointer->timeWritten) {
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unwritten msg.");
+            return 0;
+        }
+        return this->headerPointer->moduleID;
     };
 
     //! subscribe to a C message
@@ -131,10 +143,11 @@ public:
     //! method description
     WriteFunctor(messageType* payloadPointer, Msg2Header *headerPointer) : payloadPointer(payloadPointer), headerPointer(headerPointer){};
     //! method description
-    void operator()(messageType payload, uint64_t callTime){
+    void operator()(messageType payload, int64_t moduleID, uint64_t callTime){
         *this->payloadPointer = payload;
         this->headerPointer->isWritten = 1;
         this->headerPointer->timeWritten = callTime;
+        this->headerPointer->moduleID = moduleID;
         return;
     }
 };

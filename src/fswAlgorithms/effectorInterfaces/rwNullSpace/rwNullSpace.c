@@ -128,7 +128,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 		cntrRequest.motorTorque, finalControl.motorTorque);
 
     /*! - write the final RW torque solution to the output message */
-    ArrayMotorTorqueMsg_C_write(&finalControl, &configData->rwMotorTorqueOutMsg, callTime);
+    ArrayMotorTorqueMsg_C_write(&finalControl, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
 
     return;
 }

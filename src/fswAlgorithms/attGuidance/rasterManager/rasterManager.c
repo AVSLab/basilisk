@@ -84,7 +84,7 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
         _bskLog(configData->bskLogger, BSK_INFORMATION, info);
     }
     
-    AttStateMsg_C_write(&configData->attOutSet, &configData->attStateOutMsg, callTime);
+    AttStateMsg_C_write(&configData->attOutSet, &configData->attStateOutMsg, moduleID, callTime);
 
     return;
 }

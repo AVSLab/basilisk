@@ -24,6 +24,7 @@ typedef struct {
     int isLinked;          //!< flag if the message has is connected to another message
     int isWritten;         //!< flag if the message conntent has ever been written
     uint64_t timeWritten;  //!< [ns] time the message was written
+    int64_t moduleID;      //!< ID of the module who wrote the message, -1 means it was a stand-alone Python message, non-negative means a module wrote the message
 }Msg2Header;
 
 #endif /* msg2Header_h */

@@ -112,7 +112,7 @@ void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
     v3SetZero(attCmd.domega_RN_N);
 
     /*! - Write the output message */
-    AttRefMsg_C_write(&attCmd, &configData->attRefOutMsg, callTime);
+    AttRefMsg_C_write(&attCmd, &configData->attRefOutMsg, moduleID, callTime);
     
     return;
 }

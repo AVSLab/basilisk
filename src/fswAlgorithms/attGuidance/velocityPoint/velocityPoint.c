@@ -106,7 +106,7 @@ void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, in
                                      primPlanet.v_BdyZero_N,
                                      &attRefOut);
     
-    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, callTime);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 
     return;
 }

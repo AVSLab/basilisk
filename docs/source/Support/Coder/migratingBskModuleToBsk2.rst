@@ -135,6 +135,7 @@ Updating a C Module
       - To check is a message has been connected to, check the value of ``ModuleMsg_C_isLinked()``
       - To check if a message has ever been written to, check the value of ``ModuleMsg_C_isWritten()``
       - To get the time when a message was written, use ``ModuleMsg_C_timeWritten()``
+      - To get the ID of the module who wrote the message, use ``ModuleMsg_C_moduleID()``
 
     - To zero a message payload variable ``someMsgBuffer`` of type ``SomeMsgPayload``,
       while enjoyoing strong type checking, you can remove the use of ``memset()`` and use instead
@@ -169,7 +170,7 @@ Updating a C Module
 
          outputMsgBuffer = ModuleMsg_C_zeroMsgPayload();
          outputMsgBuffer.variable = 42;      // specify output msg values
-         ModuleMsg_C_write(&outputMsgBuffer, &configData->moduleOutMsg, callTime);
+         ModuleMsg_C_write(&outputMsgBuffer, &configData->moduleOutMsg, moduleID, callTime);
 
       Note that you should still zero the local ``outputMsgBuffer`` structure in C Modules such that the message
       has zero default values if some fields are note set.
@@ -297,6 +298,7 @@ Updating a C++ Module
       - To check is an input message has been connected to, check the value of ``this->moduleInMsg.isLinked()``
       - To check if a message has ever been written to, check the value of ``this->moduleInMsg.isWritten()``
       - To get the time when a message was written, use ``this->moduleInMsg.timeWritten()``
+      - To get the ID of the module who wrote the message, use ``this->moduleInMsg.moduleID()``
 
 
     - To check if an input message has been connected to, check the status of
@@ -336,7 +338,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         this->writeModuleOutMsg(outMsgBuffer, clockTime);
+         this->writeModuleOutMsg(outMsgBuffer, this->moduleID, clockTime);
 
       Again, stop and marvel.
 

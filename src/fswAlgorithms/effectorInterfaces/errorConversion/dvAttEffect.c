@@ -61,7 +61,7 @@ void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
     for(i=0; i<configData->numThrGroups; i=i+1)
     {
         configData->thrGroups[i].cmdRequests = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
-        THRArrayOnTimeCmdMsg_C_write(&configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, callTime);
+        THRArrayOnTimeCmdMsg_C_write(&configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, moduleID, callTime);
     }
 
 }
@@ -129,7 +129,7 @@ CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID)
         thrData->cmdRequests.OnTimeRequest[sortPairs[i].thrustIndex] =
         sortPairs[i].onTime;
     }
-    THRArrayOnTimeCmdMsg_C_write(&thrData->cmdRequests, &thrData->thrOnTimeOutMsg, callTime);
+    THRArrayOnTimeCmdMsg_C_write(&thrData->cmdRequests, &thrData->thrOnTimeOutMsg, moduleID, callTime);
 }
 
 void effectorVSort(effPairs *Input, effPairs *Output, size_t dim)

@@ -114,7 +114,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
 
 
     /*! - write attitude guidance reference output */
-    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, callTime);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 
     /*! - Update last time the module was called to current call time */
     configData->priorTime = callTime;

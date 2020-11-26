@@ -23,7 +23,7 @@ typedef struct {type};
     def write(self, payload, time=0):
         """write the message payload.  The second argument is time in nanoseconds.  It is optional and defaults to 0."""
         {type}_C_addAuthor(self, self)
-        {type}_C_write(payload, self, time)
+        {type}_C_write(payload, self, -1, time)  # msgs written in Python have -1 module ID
         return self
 
     def read(self):

@@ -86,7 +86,7 @@ void Update_prvSteering(PrvSteeringConfig *configData, uint64_t callTime,
     PRVSteeringLaw(configData, guidCmd.sigma_BR, outMsgBuffer.omega_BastR_B, outMsgBuffer.omegap_BastR_B);
     
     /* Store the output message and pass it to the message bus */
-    RateCmdMsg_C_write(&outMsgBuffer, &configData->rateCmdOutMsg, callTime);
+    RateCmdMsg_C_write(&outMsgBuffer, &configData->rateCmdOutMsg, moduleID, callTime);
     
     return;
 }

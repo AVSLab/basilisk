@@ -149,7 +149,7 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
         store the output message 
      */
     v3Copy(configData->LrF[0], controlOut.torqueRequestBody);
-    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, callTime);
+    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, moduleID, callTime);
     
     return;
 }

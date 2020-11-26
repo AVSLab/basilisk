@@ -146,7 +146,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     /*
      store the output message 
      */
-    RWArrayVoltageMsg_C_write(&voltageOut, &configData->voltageOutMsg, callTime);
+    RWArrayVoltageMsg_C_write(&voltageOut, &configData->voltageOutMsg, moduleID, callTime);
 
     return;
 }

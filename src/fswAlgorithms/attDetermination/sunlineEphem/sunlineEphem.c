@@ -93,6 +93,6 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int6
     
     /*! - store the output message*/
     v3Copy(r_SB_B_hat, outputSunline.vehSunPntBdy);
-    NavAttMsg_C_write(&outputSunline, &configData->navStateOutMsg, callTime);
+    NavAttMsg_C_write(&outputSunline, &configData->navStateOutMsg, moduleID, callTime);
     return;
 }

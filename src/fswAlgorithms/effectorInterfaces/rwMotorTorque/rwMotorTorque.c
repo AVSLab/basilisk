@@ -187,7 +187,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     /* store the output message */
     rwMotorTorques = ArrayMotorTorqueMsg_C_zeroMsgPayload();
     vCopy(us, configData->rwConfigParams.numRW, rwMotorTorques.motorTorque);
-    ArrayMotorTorqueMsg_C_write(&rwMotorTorques, &configData->rwMotorTorqueOutMsg, callTime);
+    ArrayMotorTorqueMsg_C_write(&rwMotorTorques, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
     
     return;
 }

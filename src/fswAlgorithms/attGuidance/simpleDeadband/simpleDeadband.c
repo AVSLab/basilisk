@@ -92,7 +92,7 @@ void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, 
     applyDBLogic_simpleDeadband(configData);
     
     /*! - Write output guidance message and update module knowledge of control status*/
-    AttGuidMsg_C_write(&configData->attGuidOut, &configData->attGuidOutMsg, callTime);
+    AttGuidMsg_C_write(&configData->attGuidOut, &configData->attGuidOutMsg, moduleID, callTime);
     return;
 }
 

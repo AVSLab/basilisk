@@ -123,7 +123,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     v3Copy(configData->state, configData->sigma_BNOut);
     v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
     configData->timeTagOut = configData->timeTag;
-    Read_STMessages(configData, moduleId);
+    Read_STMessages(configData);
 
     if (badUpdate <0){
         _bskLog(configData->bskLogger, BSK_WARNING, "Reset method contained bad update");
@@ -136,7 +136,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
  @param configData The configuration data associated with the CSS estimator
  @param moduleId The module identifier
  */
-void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
+void Read_STMessages(InertialUKFConfig *configData)
 {
     uint64_t timeOfMsgWritten; /* [ns] Read time when the message was written*/
     int isWritten;      /* has the message been written */
@@ -181,7 +181,7 @@ void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
  @param moduleId The module identifier
  */
 void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-    int64_t moduleId)
+    int64_t moduleID)
 {
     double newTimeTag;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
@@ -207,7 +207,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     gyrBuffer = AccDataMsg_C_read(&configData->gyrBuffInMsgName);
     configData->rwSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
     timeOfRWSpeeds = RWSpeedMsg_C_timeWritten(&configData->rwSpeedsInMsg);
-    Read_STMessages(configData, moduleId);
+    Read_STMessages(configData);
 
     m33Inverse(RECAST3X3 configData->localConfigData.ISCPntB_B, configData->IInv);
     /*! - Handle initializing time in filter and discard initial messages*/
@@ -309,14 +309,14 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     v3Copy(configData->omega_BN_BOut, outputInertial.omega_BN_B);
     outputInertial.timeTag = configData->timeTagOut;
 	
-    NavAttMsg_C_write(&outputInertial, &configData->navStateOutMsg, callTime);
+    NavAttMsg_C_write(&outputInertial, &configData->navStateOutMsg, moduleID, callTime);
     
     /*! - Populate the filter states output buffer and write the output message*/
     inertialDataOutBuffer.timeTag = configData->timeTag;
     memmove(inertialDataOutBuffer.covar, configData->covar,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
     memmove(inertialDataOutBuffer.state, configData->state, AKF_N_STATES*sizeof(double));
-    InertialFilterMsg_C_write(&inertialDataOutBuffer, &configData->filtDataOutMsg, callTime);
+    InertialFilterMsg_C_write(&inertialDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
     RWSpeedMsg_C_copyMsgPayload(&(configData->rwSpeedPrev), &(configData->rwSpeeds));
     
     return;

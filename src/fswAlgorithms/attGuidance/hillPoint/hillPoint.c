@@ -103,7 +103,7 @@ void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t mo
                                  primPlanet.v_BdyZero_N,
                                  &attRefOut);
 
-    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, callTime);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 
     return;
 }

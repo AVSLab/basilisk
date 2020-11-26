@@ -111,7 +111,7 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, in
                                   &attRefOut);
 
     /* - Write output messages */
-    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, callTime);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 
     /* - Update last time the module was called to current call time */
     configData->priorTime = callTime;

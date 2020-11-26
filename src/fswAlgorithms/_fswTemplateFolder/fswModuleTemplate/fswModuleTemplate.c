@@ -107,7 +107,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     v3Copy(Lr, outMsgBuffer.outputVector);
 
     /*! - write the module output message */
-    FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, callTime);
+    FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
 
     return;
 }
