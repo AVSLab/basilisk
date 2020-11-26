@@ -32,11 +32,11 @@
 %ignore Reset_meanOEFeedback;
 
 %include "meanOEFeedback.h"
-GEN_SIZEOF(meanOEFeedbackConfig);
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(NavTransIntMsg);
-%include "simFswInterfaceMessages/cmdForceInertialIntMsg.h"
-GEN_SIZEOF(CmdForceInertialIntMsg);
+
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "cMsgPayloadDef/CmdForceInertialMsgPayload.h"
+struct CmdForceInertialMsg_C;
 
 %pythoncode %{
 import sys

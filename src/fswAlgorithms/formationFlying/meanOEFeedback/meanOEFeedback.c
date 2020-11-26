@@ -29,8 +29,8 @@
 #include "simulation/utilities/orbitalMotion.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 
-static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransIntMsg chiefTransMsg,
-                                  NavTransIntMsg deputyTransMsg, CmdForceInertialIntMsg *forceMsg);
+static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
+                                  NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg);
 static void calc_B_cl(double mu, classicElements oe_cl, double B[6][3]);
 static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
 static double adjust_range(double lower, double upper, double angle);
@@ -43,9 +43,7 @@ static double adjust_range(double lower, double upper, double angle);
  @param moduleID The Basilisk module identifier
  */
 void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID) {
-    configData->forceOutMsgID = CreateNewMessage(configData->forceOutMsgName,
-                                                 sizeof(CmdForceInertialIntMsg),
-                                                 "CmdForceInertialIntMsg", moduleID);
+    CmdForceInertialMsg_C_init(&configData->forceOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -56,10 +54,6 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
  @param moduleID The Basilisk module identifier
  */
 void CrossInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID) {
-    configData->chiefTransInMsgID = subscribeToMessage(configData->chiefTransInMsgName,
-                                                       sizeof(NavTransIntMsg), moduleID);
-    configData->deputyTransInMsgID = subscribeToMessage(configData->deputyTransInMsgName,
-                                                        sizeof(NavTransIntMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -93,26 +87,20 @@ void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, i
  */
 void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID) {
     // in
-    NavTransIntMsg chiefTransMsg;
-    NavTransIntMsg deputyTransMsg;
+    NavTransMsgPayload chiefTransMsg;
+    NavTransMsgPayload deputyTransMsg;
     // out
-    CmdForceInertialIntMsg forceMsg;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-
-    memset(&(chiefTransMsg), 0x0, sizeof(NavTransIntMsg));
-    memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
+    CmdForceInertialMsgPayload forceMsg;
 
     /*! - Read the input messages */
-    ReadMessage(configData->chiefTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void *)&(chiefTransMsg), moduleID);
-    ReadMessage(configData->deputyTransInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void *)&(deputyTransMsg), moduleID);
+    chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);
+    deputyTransMsg = NavTransMsg_C_read(&configData->deputyTransInMsg);
 
     /*! - write the module output message */
+    forceMsg = CmdForceInertialMsg_C_zeroMsgPayload();
     calc_LyapunovFeedback(configData, chiefTransMsg, deputyTransMsg, &forceMsg);
-    WriteMessage(configData->forceOutMsgID, callTime,
-                 sizeof(CmdForceInertialIntMsg), (void *)&(forceMsg), moduleID);
+
+    CmdForceInertialMsg_C_write(&forceMsg, &configData->forceOutMsg, moduleID, callTime);
     return;
 }
 
@@ -124,8 +112,8 @@ void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, 
  @param deputyTransMsg Deputy's position and velocity
  @param forceMsg force output (3-axis)
  */
-static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransIntMsg chiefTransMsg,
-                                  NavTransIntMsg deputyTransMsg, CmdForceInertialIntMsg *forceMsg) {
+static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
+                                  NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg) {
     // position&velocity to osculating classic orbital elements
     classicElements oe_cl_osc_c, oe_cl_osc_d;
     rv2elem(configData->mu, chiefTransMsg.r_BN_N, chiefTransMsg.v_BN_N, &oe_cl_osc_c);
