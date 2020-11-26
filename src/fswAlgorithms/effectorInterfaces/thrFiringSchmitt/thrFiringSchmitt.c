@@ -43,11 +43,7 @@
  */
 void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->onTimeOutMsgId = CreateNewMessage(configData->onTimeOutMsgName,
-                                               sizeof(THRArrayOnTimeCmdIntMsg),
-                                               "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
-                                               moduleID);
+    THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
 }
 
 /*!
@@ -62,13 +58,6 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modul
  */
 void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
-	/*! - Get the input message ID's */
-	configData->thrForceInMsgId = subscribeToMessage(configData->thrForceInMsgName,
-														 sizeof(THRArrayCmdForceFswMsg),
-														 moduleID);
-	configData->thrConfInMsgId = subscribeToMessage(configData->thrConfInMsgName,
-												sizeof(THRArrayConfigFswMsg),
-												moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -80,17 +69,13 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modu
  */
 void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-	THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
-	uint64_t            timeOfMsgWritten;
-	uint32_t            sizeOfMsgWritten;
+	THRArrayConfigMsgPayload   localThrusterData;     /* local copy of the thruster data message */
 	int 				i;
 
 	configData->prevCallTime = 0;
 
 	/*! - Zero and read in the support messages */
-    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-	ReadMessage(configData->thrConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-				sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
+    localThrusterData = THRArrayConfigMsg_C_read(&configData->thrConfInMsg);
 
     /*! - store the number of installed thrusters */
 	configData->numThrusters = localThrusterData.numThrusters;
@@ -110,18 +95,15 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
  */
 void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-
-	uint64_t            timeOfMsgWritten;
-	uint32_t            sizeOfMsgWritten;
 	int 				i;
 	double 				level;					/* [-] duty cycle fraction */
 	double				controlPeriod;			/* [s] control period */
 	double				onTime[MAX_EFF_CNT];	/* [s] array of commanded on time for thrusters */
-    THRArrayCmdForceFswMsg thrForceIn;          /* -- copy of the thruster force input message */
-    THRArrayOnTimeCmdIntMsg thrOnTimeOut;       /* -- copy of the thruster on-time output message */
+    THRArrayCmdForceMsgPayload thrForceIn;          /* -- copy of the thruster force input message */
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut;       /* -- copy of the thruster on-time output message */
 
     /*! - zero the output message */
-    memset(&thrOnTimeOut, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
+    thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
 
     /*! - the first time update() is called there is no information on the time step.  Here
      return either all thrusters off or on depending on the baseThrustState state */
@@ -132,8 +114,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 			thrOnTimeOut.OnTimeRequest[i] = (double)(configData->baseThrustState) * 2.0;
 		}
 
-		WriteMessage(configData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
-					 (void*) &(thrOnTimeOut), moduleID);
+        THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, callTime);
 		return;
 	}
 
@@ -141,10 +122,8 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
 	configData->prevCallTime = callTime;
 
-    /*! - Zero and read the input thruster force message */
-    memset(&thrForceIn, 0x0, sizeof(THRArrayCmdForceFswMsg));
-	ReadMessage(configData->thrForceInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-				sizeof(THRArrayCmdForceFswMsg), (void*) &thrForceIn, moduleID);
+    /*! - read the input thruster force message */
+    thrForceIn = THRArrayCmdForceMsg_C_read(&configData->thrForceInMsg);
 
     /*! - Loop through thrusters */
 	for(i = 0; i < configData->numThrusters; i++) {
@@ -191,8 +170,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 		thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 	}
 
-	WriteMessage(configData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
-				 (void*) &thrOnTimeOut, moduleID);
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, callTime);
 
 	return;
 

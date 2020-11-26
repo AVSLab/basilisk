@@ -69,7 +69,7 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t cal
 
 	configData->prevCallTime = 0;
 
-	/*! - zero and read in the support messages */
+	/*! - read in the support messages */
     localThrusterData = THRArrayConfigMsg_C_read(&configData->thrConfInMsg);
 
     /*! - store the number of installed thrusters */

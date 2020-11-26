@@ -1,14 +1,6 @@
 % !TEX root = ./Basilisk-thrFiringSchmitt-2019-03-29.tex
 
 
-\begin{figure}[h]
-	\centerline{
-		\includegraphics{Figures/moduleImg}
-	}
-	\caption{Illustration of the module input and output messages.}
-	\label{fig:moduleImg}
-\end{figure}
-
 
 \section{Model Description}
 This module implements a Schmitt trigger thruster firing logic.  More details can be found in Reference~\citenum{Alcorn:2016rz}.    Here if the minimum desired on-time $t_{\text{min}}$ is specified.  If the commanded on-time $t_{i}>t_{\text{min}}$ then the thruster is turned off for the duration of $t_{i}$.  If $t_{i}< t_{\text{min}}$ then the Schmitt trigger logic is invoked.  Let $l$ be the current thruster duty cycle relative to this minimum thruster firing time.
