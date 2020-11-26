@@ -30,13 +30,16 @@
 %ignore CrossInit_thrFiringRemainder;
 %constant void Reset_thrFiringRemainder(void*, uint64_t, uint64_t);
 %ignore Reset_thrFiringRemainder;
-GEN_SIZEOF(thrFiringRemainderConfig);
+
 %include "thrFiringRemainder.h"
-%include "../../fswMessages/thrArrayConfigFswMsg.h"
-GEN_SIZEOF(THRArrayConfigFswMsg);
-%include "../../fswMessages/thrArrayCmdForceFswMsg.h"
-GEN_SIZEOF(THRArrayCmdForceFswMsg);
-%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+
+%include "cMsgPayloadDef/THRArrayConfigMsgPayload.h"
+struct THRArrayConfigMsg_C;
+%include "cMsgPayloadDef/THRArrayCmdForceMsgPayload.h"
+struct THRArrayCmdForceMsg_C;
+%include "cMsgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
