@@ -33,6 +33,7 @@ ARRAYASLIST(FSWdeviceAvailability)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
+STRUCTASLIST(CSSArraySensorMsgPayload)
 
 
 %pythoncode %{

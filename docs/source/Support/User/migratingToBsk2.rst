@@ -74,6 +74,10 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | cssComm                   | ``SensorListName``            | ``sensorListInMsg``               |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``OutputDataName``            | ``cssArrayOutMsg``                |
+    +---------------------------+-------------------------------+-----------------------------------+
     | dvAttEffect               | ``inputControlName``          | ``cmdTorqueBodyInMsg``            |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``outputDataName``            | ``thrOnTimeOutMsg``               |

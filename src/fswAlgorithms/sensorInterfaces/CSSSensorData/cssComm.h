@@ -23,8 +23,8 @@
 
 #define MAX_NUM_CHEBY_POLYS 32
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/CSSArraySensorMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
@@ -32,15 +32,14 @@
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
-    uint32_t  NumSensors;   //!< The number of sensors we are processing
-    char SensorListName[MAX_STAT_MSG_LENGTH]; //!< The message name that contains CSS data
-    char OutputDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
-    int32_t SensorMsgID; //!< Sensor ID tied to the sensor data name
-    int32_t OutputMsgID; //!< Message ID for the output port
-    CSSArraySensorIntMsg InputValues; //!< Input values we took off the messaging system
-    double MaxSensorValue; //!< Scale factor to go from sensor values to cosine
-    uint32_t ChebyCount; //!< Count on the number of chebyshev polynominals we have
-    double KellyCheby[MAX_NUM_CHEBY_POLYS]; //!< Chebyshev polynominals to fit output to cosine
+    uint32_t  numSensors;   //!< The number of sensors we are processing
+    CSSArraySensorMsg_C sensorListInMsg; //!< input message that contains CSS data
+    CSSArraySensorMsg_C cssArrayOutMsg; //!< output message of corrected CSS data
+
+    CSSArraySensorMsgPayload inputValues; //!< Input values we took off the messaging system
+    double maxSensorValue; //!< Scale factor to go from sensor values to cosine
+    uint32_t chebyCount; //!< Count on the number of chebyshev polynominals we have
+    double kellyCheby[MAX_NUM_CHEBY_POLYS]; //!< Chebyshev polynominals to fit output to cosine
     BSKLogger *bskLogger;                             //!< BSK Logging
 }CSSConfigData;
 
