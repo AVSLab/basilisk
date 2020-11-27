@@ -16,27 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module imuComm
-%{
-   #include "imuComm.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_imuProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_imuProcessTelem;
-%constant void SelfInit_imuProcessTelem(void*, uint64_t);
-%ignore SelfInit_imuProcessTelem;
-%constant void CrossInit_imuProcessTelem(void*, uint64_t);
-%ignore CrossInit_imuProcessTelem;
+#ifndef _IMU_SENSOR_BODY_MESSAGE_H
+#define _IMU_SENSOR_BODY_MESSAGE_H
 
-%include "imuComm.h"
 
-%include "cMsgPayloadDef/IMUSensorBodyMsgPayload.h"
-struct IMUSensorBodyMsg_C;
-%include "cMsgPayloadDef/IMUSensorMsgPayload.h"
-struct IMUSensorMsg_C;
+/*! @brief Output structure for IMU structure in vehicle body frame*/
+typedef struct {
+    double DVFrameBody[3];      //!< m/s Accumulated DVs in body
+    double AccelBody[3];        //!< m/s2 Apparent acceleration of the body
+    double DRFrameBody[3];      //!< r  Accumulated DRs in body
+    double AngVelBody[3];       //!< r/s Angular velocity in platform body
+}IMUSensorBodyMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif

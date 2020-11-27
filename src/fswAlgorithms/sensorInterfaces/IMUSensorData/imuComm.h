@@ -20,10 +20,9 @@
 #ifndef _IMU_COMM_H_
 #define _IMU_COMM_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/imuSensorBodyFswMsg.h"
-#include "simFswInterfaceMessages/imuSensorIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/IMUSensorBodyMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/IMUSensorMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
@@ -31,13 +30,10 @@
 /*! @brief module configuration message */
 typedef struct {
     double dcm_BP[9];    /*!< Row major platform 2 bdy DCM*/
-    char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
-    char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< The name of the ADCS config data message*/
-    char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    int32_t SensorMsgID; /*!< Sensor IDs tied to the input name*/
-    int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
-    int32_t OutputMsgID; /*!< Message ID for the output port*/
-    IMUSensorBodyFswMsg LocalOutput; /*!< Output data structure*/
+    IMUSensorMsg_C imuComInMsg;             /*!< imu input message*/
+    IMUSensorBodyMsg_C imuSensorOutMsg;     /*!< imu output message*/
+
+    IMUSensorBodyMsgPayload outMsgBuffer; /*!< Output data structure*/
     BSKLogger *bskLogger;   //!< BSK Logging
 }IMUConfigData;
 
@@ -47,6 +43,7 @@ extern "C" {
     
     void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID);
     void CrossInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID);
+    void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleId);
     void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime,
         int64_t moduleID);
     
