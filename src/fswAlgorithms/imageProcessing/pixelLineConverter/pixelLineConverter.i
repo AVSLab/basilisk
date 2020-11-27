@@ -31,14 +31,16 @@
 %constant void Update_pixelLineConverter(void*, uint64_t, uint64_t);
 %ignore Update_pixelLineConverter;
 STRUCTASLIST(PixelLineConvertData)
-GEN_SIZEOF(CirclesOpNavMsg)
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(NavAttIntMsg)
-GEN_SIZEOF(OpNavFswMsg)
-%include "simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
+
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/CirclesOpNavMsgPayload.h"
+struct CirclesOpNavMsg_C;
+%include "cMsgPayloadDef/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "cMsgPayloadDef/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+
 %include "pixelLineConverter.h"
 
 

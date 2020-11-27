@@ -20,12 +20,12 @@
 #ifndef _PIXEL_LINE_CONVERTER_H_
 #define _PIXEL_LINE_CONVERTER_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/circlesOpNavMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/CirclesOpNavMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
+
 #include "utilities/macroDefinitions.h"
-#include "fswMessages/opNavFswMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
@@ -34,15 +34,13 @@
 
 /*! @brief The configuration structure for the pixelLine Converter module.*/
 typedef struct {
-    char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
-    char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
-    char circlesInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the circles message
+    OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
+    CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
+    NavAttMsg_C attInMsg; //!< attitude input message
+    CirclesOpNavMsg_C circlesInMsg; //!< circles input message
+
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-    int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t circlesInMsgID;    //!< [-] The ID associated with the incoming circle message
-    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 }PixelLineConvertData;
 

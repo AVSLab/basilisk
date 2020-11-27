@@ -7,6 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import pixelLineConverter
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.simulation import messaging2
 
 import os, inspect
 import numpy as np
@@ -62,9 +63,6 @@ def pixelLineConverterTestFunction():
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # This is needed if multiple unit test scripts are run
-    # This create a fresh and consistent simulation environment for each test run
-
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -73,10 +71,6 @@ def pixelLineConverterTestFunction():
     # Construct the ephemNavConverter module
     # Set the names for the input messages
     pixelLine = pixelLineConverter.PixelLineConvertData()  # Create a config struct
-    pixelLine.circlesInMsgName = "circles_name"
-    pixelLine.cameraConfigMsgName = "camera_config_name"
-    pixelLine.attInMsgName = "nav_att_name"
-    # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     pixelLineWrap = unitTestSim.setModelDataWrap(pixelLine)
@@ -86,31 +80,35 @@ def pixelLineConverterTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, pixelLineWrap, pixelLine)
 
     # Create the input messages.
-    inputCamera = pixelLineConverter.CameraConfigMsg()
-    inputCircles = pixelLineConverter.CirclesOpNavMsg()
-    inputAtt = pixelLineConverter.NavAttIntMsg()
+    inputCamera = messaging2.CameraConfigMsgPayload()
+    inputCircles = messaging2.CirclesOpNavMsgPayload()
+    inputAtt = messaging2.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
+    camInMsg = messaging2.CameraConfigMsg().write(inputCamera)
+    pixelLine.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set circles
     inputCircles.circlesCenters = [152, 251]
     inputCircles.circlesRadii = [75]
     inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     inputCircles.timeTag = 12345
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
+    circlesInMsg = messaging2.CirclesOpNavMsg().write(inputCircles)
+    pixelLine.circlesInMsg.subscribeTo(circlesInMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.attInMsgName, inputAtt)
+    attInMsg = messaging2.NavAttMsg().write(inputAtt)
+    pixelLine.attInMsg.subscribeTo(attInMsg)
 
     # Set module for Mars
     pixelLine.planetTarget = 2
-    pixelLine.opNavOutMsgName = "output_nav_msg"
-    unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)
+
+    dataLog = pixelLine.opNavOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -143,22 +141,22 @@ def pixelLineConverterTestFunction():
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
-    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_BN_N',  list(range(3)))
-    outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar_N',  list(range(9)))
-    outputTime = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.timeTag')
+    outputR = dataLog.r_BN_N
+    outputCovar = dataLog.covar_N
+    outputTime = dataLog.timeTag
     #
     #
     for i in range(len(outputR[-1, 1:])):
-        if np.abs(r_Nexp[i] - outputR[-1, i+1]) > 1E-10 and np.isnan(outputR.any()):
+        if np.abs(r_Nexp[i] - outputR[-1, i]) > 1E-10 and np.isnan(outputR.any()):
             testFailCount += 1
             testMessages.append("FAILED: Position Check in pixelLine")
 
-    for i in range(len(outputCovar[-1, 1:])):
-        if np.abs((covar_Nexp[i] - outputCovar[-1, i+1])) > 1E-10 and np.isnan(outputTime.any()):
+    for i in range(len(outputCovar[-1, 0:])):
+        if np.abs((covar_Nexp[i] - outputCovar[-1, i])) > 1E-10 and np.isnan(outputTime.any()):
             testFailCount += 1
             testMessages.append("FAILED: Covar Check in pixelLine")
 
-    if np.abs((timTagExp - outputTime[-1, 1])/timTagExp) > 1E-10 and np.isnan(outputTime.any()):
+    if np.abs((timTagExp - outputTime[-1])/timTagExp) > 1E-10 and np.isnan(outputTime.any()):
         testFailCount += 1
         testMessages.append("FAILED: Time Check in pixelLine")
     #

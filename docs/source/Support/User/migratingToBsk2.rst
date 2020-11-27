@@ -130,6 +130,8 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | opNavPoint                | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
+    | pixelLineConverter        | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
     | PRV_Steering →            | ``outputDataName``            | ``rateCmdOutMsg``                 |
     + ``prvSteering``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
