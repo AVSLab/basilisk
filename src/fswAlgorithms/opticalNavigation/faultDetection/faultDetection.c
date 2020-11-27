@@ -98,7 +98,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
     else if (opNavIn1.valid == 1 && opNavIn2.valid == 0){
         /*! - Only one of two are valid */
         if (configData->faultMode<2){
-            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn1);
+            opNavMsgOut = opNavIn1;
             OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         else{
@@ -109,7 +109,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
     else if (opNavIn1.valid == 0 && opNavIn2.valid == 1){
         /*! - If secondary measurments are trusted use them as primary */
         if (configData->faultMode==0){
-            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn2);
+            opNavMsgOut = opNavIn2;
             OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         /*! - If secondaries are not trusted, do not risk corrupting measurment */
@@ -132,14 +132,14 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         
         /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
         if (faultNorm > configData->sigmaFault*sqrt((vNorm(opNavIn1.covar_C, 9) + vNorm(opNavIn2.covar_C, 9)))){
-            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn2);
+            opNavMsgOut = opNavIn2;
             opNavMsgOut.faultDetected = 1;
             OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         /*! If the difference between vectors is low, use primary */
         else if (configData->faultMode>0){
             /*! Bring all the measurements and covariances into their respective frames */
-            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn1);
+            opNavMsgOut = opNavIn1;
             OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         /*! -- Merge mode combines the two measurements and uncertainties if they are similar */

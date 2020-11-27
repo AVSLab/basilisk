@@ -145,15 +145,6 @@ Updating a C Module
          SomeMsgPayload someMsgBuffer;
          someMsgBuffer = SomeMsg_C_zeroMsgPayload();
 
-    - To copy the msg payload structure from one variable ``sourceMsgBuffer`` to another ``destMsgBuffer``,
-      you can replace the use of ``memcpy()`` with
-
-      .. code:: cpp
-
-         SomeMsgPayload sourceMsgBuffer, destMsgBuffer;
-         sourceMsgBuffer.variable = ...
-         SomeMsg_C_copyMsgPayload(&destMsgBuffer, &sourceMsgBuffer);
-
     - To write to an output message, assuming ``outputMsgBuffer`` is a local variable holding
       the message content (payload), replace
 
@@ -310,16 +301,6 @@ Updating a C++ Module
       If the buffer is related to an output message ``someOutMsg``, the same basic syntax works.
       Just replace ``someInMsg`` with ``someOutMsg`` above.  This ensures the correct message type is zero'd
       and assigned to the local buffer variable.
-
-    - Assume you want to copy the message payload structure associated with an message ``someInMsg`` or ``someOutMsg``.
-      To copy the msg payload structure from one variable ``sourceMsgBuffer`` to another ``destMsgBuffer``,
-      you can replace the use of ``memcpy()``
-
-      .. code:: cpp
-
-         SomeMsgPayload destMsgBuffer, sourceMsgBuffer;
-         sourceMsgBuffer.variable = ...
-         this->someOutMsg.copyMsgPayload(&destMsgBuffer, &sourceMsgBuffer);
 
     - To write to an output message, replace this old code:
 

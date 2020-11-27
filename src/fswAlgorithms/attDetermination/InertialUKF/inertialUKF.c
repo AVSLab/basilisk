@@ -214,8 +214,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     if(configData->firstPassComplete == 0)
     {
         /*! - Set wheel speeds so that acceleration can be safely computed*/
-        RWSpeedMsg_C_copyMsgPayload(&(configData->rwSpeedPrev), &(configData->rwSpeeds));
-
+        configData->rwSpeedPrev = configData->rwSpeeds;
         configData->timeWheelPrev = timeOfRWSpeeds;
 
         /*! - Loop through ordered time-tags and select largest valid one*/
@@ -317,8 +316,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
     memmove(inertialDataOutBuffer.state, configData->state, AKF_N_STATES*sizeof(double));
     InertialFilterMsg_C_write(&inertialDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
-    RWSpeedMsg_C_copyMsgPayload(&(configData->rwSpeedPrev), &(configData->rwSpeeds));
-    
+    configData->rwSpeedPrev = configData->rwSpeeds;
     return;
 }
 

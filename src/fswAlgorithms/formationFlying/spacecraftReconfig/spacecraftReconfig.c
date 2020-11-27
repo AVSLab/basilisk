@@ -160,7 +160,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
         double t_left = configData->dvArray[0].t - configData->tCurrent; // remaining time until first burn
         if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until first burn, so reference input attitude is set as target
-            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
+            *attRefMsg = attRefInMsg;
         }else{
             // in this case, first burn attitude is set at target
             v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
@@ -185,7 +185,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
             v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
         }else if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until second burn, so reference input attitude is set as target
-            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
+            *attRefMsg = attRefInMsg;
         }else{
             // in this case, second burn attitude is set at target
             v3Copy(configData->dvArray[1].sigma_RN, attRefMsg->sigma_RN);
@@ -213,7 +213,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
             v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
         }else if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until second burn, so reference input attitude is set as target
-            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
+            *attRefMsg = attRefInMsg;
         }else{
             // in this case, third burn attitude is set at target
             v3Copy(configData->dvArray[2].sigma_RN, attRefMsg->sigma_RN);
@@ -235,26 +235,26 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
         if(configData->dvArray[2].flag == 2){
             if(configData->tCurrent > (configData->dvArray[2].t+configData->dvArray[2].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
                configData->attRefInIsLinked){
-                AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
+                *attRefMsg = attRefInMsg;
             }else{
                 v3Copy(configData->dvArray[2].sigma_RN, attRefMsg->sigma_RN);
             }
         }else if(configData->dvArray[1].flag == 2){
             if(configData->tCurrent > (configData->dvArray[1].t+configData->dvArray[1].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
                configData->attRefInIsLinked){
-                AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
+                *attRefMsg = attRefInMsg;
             }else{
                 v3Copy(configData->dvArray[1].sigma_RN, attRefMsg->sigma_RN);
             }  
         }else if(configData->dvArray[0].flag == 2){
             if(configData->tCurrent > (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
                configData->attRefInIsLinked){
-                AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
+                *attRefMsg = attRefInMsg;
             }else{
                 v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
             }
         }else{
-            AttRefMsg_C_copyMsgPayload(attRefMsg, &attRefInMsg);
+            *attRefMsg = attRefInMsg;
         }
         configData->thrustOnFlag = 0;
     }

@@ -64,13 +64,6 @@ public:
         return zeroMsg;
     };
 
-    //! copy the message payload from source to destination
-    void copyMsgPayload(messageType *destination, messageType *source){
-        memcpy(destination, source, sizeof(messageType));
-        return;
-    };
-
-
     //! check if this msg has been connected to
     bool isLinked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
 
@@ -175,8 +168,6 @@ public:
     Log<messageType> log(){return Log<messageType>(this);}
     //! - returned a zero'd copy of the messagy payload structure
     messageType zeroMsgPayload();
-    //! - copies the source structure to the destination structure
-    void copyMsgPayload(messageType *destination, messageType *source);
 
     //! check if this msg has been connected to
     bool isLinked(){return this->header.isLinked;};
@@ -188,13 +179,6 @@ messageType SimMessage<messageType>::zeroMsgPayload(){
     memset(&zeroMsg, 0x0, sizeof(messageType));
     return zeroMsg;
 }
-
-template<typename messageType>
-void SimMessage<messageType>::copyMsgPayload(messageType *destination, messageType *source){
-    memcpy(destination, source, sizeof(messageType));
-    return;
-}
-
 
 template<typename messageType>
 ReadFunctor<messageType> SimMessage<messageType>::addSubscriber(){

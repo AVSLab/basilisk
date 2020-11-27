@@ -163,7 +163,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     newTimeTag = NavAttMsg_C_timeWritten(&configData->attInMsg) * NANO2SEC;
     if(newTimeTag >= configData->timeTag && NavAttMsg_C_isWritten(&configData->attInMsg) && inputCircles.valid ==1)
     {
-        CirclesOpNavMsg_C_copyMsgPayload(&configData->circlesInBuffer, &inputCircles);
+        configData->circlesInBuffer = inputCircles;
         configData->planetId = inputCircles.planetIds[0];
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
         pixelLineBiasUKFMeasUpdate(configData);
