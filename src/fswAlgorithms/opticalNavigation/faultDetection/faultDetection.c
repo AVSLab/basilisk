@@ -31,10 +31,7 @@
  */
 void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 {
-    configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
-                                                 sizeof(OpNavFswMsg),
-                                                 "OpNavFswMsg",
-                                                 moduleID);
+    OpNavMsg_C_init(&configData->opNavOutMsg);
 }
 
 /*! This method subscribes to the camera and attitude, and navigation messages
@@ -44,14 +41,6 @@ void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
  */
 void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 {
-    /*! Read two messages that need to be compared */
-    configData->navMeas1MsgID = subscribeToMessage(configData->navMeasPrimaryMsgName,sizeof(OpNavFswMsg),moduleID);
-    configData->navMeas2MsgID = subscribeToMessage(configData->navMeasSecondaryMsgName, sizeof(OpNavFswMsg),moduleID);
-
-    /*! Read camera specs and attitude for frame modifications */
-    configData->cameraMsgID = subscribeToMessage(configData->cameraConfigMsgName, sizeof(OpNavFswMsg),moduleID);
-    configData->attInMsgID = subscribeToMessage(configData->attInMsgName, sizeof(OpNavFswMsg),moduleID);
-
 }
 
 /*! This resets the module to original states.
@@ -77,31 +66,22 @@ void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int
  */
 void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    OpNavFswMsg opNavIn1;
-    OpNavFswMsg opNavIn2;
-    OpNavFswMsg opNavMsgOut;
-    CameraConfigMsg cameraSpecs;
-    NavAttIntMsg attInfo;
+    OpNavMsgPayload opNavIn1;
+    OpNavMsgPayload opNavIn2;
+    OpNavMsgPayload opNavMsgOut;
+    CameraConfigMsgPayload cameraSpecs;
+    NavAttMsgPayload attInfo;
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3];
 
-    memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
-    memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
-    memset(&opNavIn1, 0x0, sizeof(OpNavFswMsg));
-    memset(&opNavIn2, 0x0, sizeof(OpNavFswMsg));
-    memset(&opNavMsgOut, 0x0, sizeof(OpNavFswMsg));
+    /* zero the output message */
+    opNavMsgOut = OpNavMsg_C_zeroMsgPayload();
 
     /*! - read input opnav messages */
-    ReadMessage(configData->navMeas1MsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(OpNavFswMsg), &opNavIn1, moduleID);
-    ReadMessage(configData->navMeas2MsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(OpNavFswMsg), &opNavIn2, moduleID);
+    opNavIn1 = OpNavMsg_C_read(&configData->navMeasPrimaryInMsg);
+    opNavIn2 = OpNavMsg_C_read(&configData->navMeasSecondaryInMsg);
     /*! - read dcm messages */
-    ReadMessage(configData->cameraMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CameraConfigMsg), &cameraSpecs, moduleID);
-    ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), &attInfo, moduleID);
+    cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
+    attInfo = NavAttMsg_C_read(&configData->attInMsg);
     /*! - compute dcms */
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
@@ -112,35 +92,30 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
     /*! - If none of the message contain valid nav data, unvalidate the nav and populate a zero message */
     if (opNavIn1.valid == 0 && opNavIn2.valid == 0){
         opNavMsgOut.valid = 0;
-        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                     &opNavMsgOut, moduleID);
+        OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
     }
     /*! - Only one of two are valid */
     else if (opNavIn1.valid == 1 && opNavIn2.valid == 0){
         /*! - Only one of two are valid */
         if (configData->faultMode<2){
-        memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
-        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                     &opNavMsgOut, moduleID);
+            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn1);
+            OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         else{
             opNavMsgOut.valid = 0;
-            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                         &opNavMsgOut, moduleID);
+            OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
     }
     else if (opNavIn1.valid == 0 && opNavIn2.valid == 1){
         /*! - If secondary measurments are trusted use them as primary */
         if (configData->faultMode==0){
-            memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
-            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                         &opNavMsgOut, moduleID);
+            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn2);
+            OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         /*! - If secondaries are not trusted, do not risk corrupting measurment */
         if (configData->faultMode>0){
             opNavMsgOut.valid = 0;
-            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                         &opNavMsgOut, moduleID);
+            OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
     }
     /*! - If they are both valid proceed to the fault detection */
@@ -157,17 +132,15 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         
         /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
         if (faultNorm > configData->sigmaFault*sqrt((vNorm(opNavIn1.covar_C, 9) + vNorm(opNavIn2.covar_C, 9)))){
-            memcpy(&opNavMsgOut, &opNavIn2, sizeof(OpNavFswMsg));
+            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn2);
             opNavMsgOut.faultDetected = 1;
-            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                         &opNavMsgOut, moduleID);
+            OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         /*! If the difference between vectors is low, use primary */
         else if (configData->faultMode>0){
             /*! Bring all the measurements and covariances into their respective frames */
-            memcpy(&opNavMsgOut, &opNavIn1, sizeof(OpNavFswMsg));
-            WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                         &opNavMsgOut, moduleID);
+            OpNavMsg_C_copyMsgPayload(&opNavMsgOut, &opNavIn1);
+            OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         }
         /*! -- Merge mode combines the two measurements and uncertainties if they are similar */
         else if (configData->faultMode==0){
@@ -201,8 +174,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
             opNavMsgOut.timeTag = opNavIn1.timeTag;
             opNavMsgOut.planetID = opNavIn1.planetID;
         }
-        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
-                     &opNavMsgOut, moduleID);
+        OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
     }
 
     

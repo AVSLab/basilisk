@@ -90,6 +90,12 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputBurnDataName``         | ``burnDataInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | faultDetection            | ``navMeasPrimaryMsgName``     | ``navMeasPrimaryInMsg``           |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``navMeasSecondaryMsgName``   | ``navMeasSecondaryInMsg``         |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
     | gravityEffector           | ``bodyInMsgName``             | ``planetBodyInMsg``               |
     +---------------------------+-------------------------------+-----------------------------------+
     | headingSuKF               | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
