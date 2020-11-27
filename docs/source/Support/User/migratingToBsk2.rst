@@ -192,6 +192,10 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | spacecraftPlus            | ``scMassStateOutMsgName``     | ``scMassOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
+    | stComm                    | ``InputDataName``             | ``stSensorInMsg``                 |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``OutputDataName``            | ``stAttOutMsg``                   |
+    +---------------------------+-------------------------------+-----------------------------------+
     | sunSafeACS                | ``outputDataName``            | ``cmdTorqueBodyInMsg``            |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |

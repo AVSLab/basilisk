@@ -23,19 +23,14 @@
 #include "utilities/macroDefinitions.h"
 #include <string.h>
 
-/*! This method initializes the configData for theST sensor interface.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*! This method initializes the configData for the ST sensor interface.
  @return void
  @param configData The configuration data associated with the ST sensor interface
  @param moduleID The ID associated with the configData
  */
 void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->OutputMsgID = CreateNewMessage(configData->OutputDataName,
-        sizeof(STAttFswMsg), "STAttFswMsg", moduleID);
-    
+    STAttMsg_C_init(&configData->stAttOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the ST sensor
@@ -47,21 +42,17 @@ void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
  */
 void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    VehicleConfigFswMsg LocalConfigData;
+}
 
-    /*! - Link the message ID for the incoming sensor data message to here */
-    configData->SensorMsgID = subscribeToMessage(configData->InputDataName,
-        sizeof(STSensorIntMsg), moduleID);
-    configData->PropsMsgID = subscribeToMessage(configData->InputPropsName,
-        sizeof(VehicleConfigFswMsg), moduleID);
-    if(configData->PropsMsgID >= 0)
-    {
-        ReadMessage(configData->PropsMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(VehicleConfigFswMsg), (void*) &LocalConfigData, moduleID);
-    }
-    
+
+/*! This method resets the module.
+ @return void
+ @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
+ */
+void Reset_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t moduleID)
+{
 }
 
 /*! This method takes the raw sensor data from the star tracker and
@@ -73,20 +64,18 @@ void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
  */
 void Update_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
-    
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double dcm_CN[3][3];            /* dcm, inertial to case frame */
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
-    STSensorIntMsg LocalInput;
-    ReadMessage(configData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(STSensorIntMsg), (void*) &LocalInput, moduleID);
-    EP2C(LocalInput.qInrtl2Case, dcm_CN);
+    STSensorMsgPayload localInput;
+    localInput = STSensorMsg_C_read(&configData->stSensorInMsg);
+
+    EP2C(localInput.qInrtl2Case, dcm_CN);
     m33MultM33(RECAST3X3 configData->dcm_BP, dcm_CN, dcm_BN);
-    C2MRP(dcm_BN, configData->LocalOutput.MRP_BdyInrtl);
-    configData->LocalOutput.timeTag = LocalInput.timeTag;
-    WriteMessage(configData->OutputMsgID, callTime, sizeof(STAttFswMsg),
-                 (void*) &(configData->LocalOutput), moduleID);
+
+    C2MRP(dcm_BN, configData->attOutBuffer.MRP_BdyInrtl);
+    configData->attOutBuffer.timeTag = localInput.timeTag;
+
+    STAttMsg_C_write(&configData->attOutBuffer, &configData->stAttOutMsg, moduleID, callTime);
     
     return;
 }

@@ -16,27 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module stComm
-%{
-   #include "stComm.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_stProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_stProcessTelem;
-%constant void SelfInit_stProcessTelem(void*, uint64_t);
-%ignore SelfInit_stProcessTelem;
-%constant void CrossInit_stProcessTelem(void*, uint64_t);
-%ignore CrossInit_stProcessTelem;
+#ifndef _ST_HW_OUTPUT_
+#define _ST_HW_OUTPUT_
+#include <stdint.h>
 
-%include "cMsgPayloadDef/STSensorMsgPayload.h"
-struct STSensorMsg_C;
-%include "cMsgPayloadDef/stAttMsgPayload.h"
-struct stAttMsg_C;
 
-%include "stComm.h"
+/*! @brief Output structure for ST structure in vehicle body frame*/
+typedef struct {
+    uint64_t timeTag;               //!< [ns] Time tag placed on the output state
+    double qInrtl2Case[4];          //!< [-] Quaternion to go from the inertial to case
+}STSensorMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif
