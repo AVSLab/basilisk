@@ -30,12 +30,13 @@
 %ignore CrossInit_rwConfigData;
 %constant void Reset_rwConfigData(void*, uint64_t, uint64_t);
 %ignore Reset_rwConfigData;
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(rwConfigData_Config);
-GEN_SIZEOF(VehicleConfigFswMsg);
+
 %include "rwConfigData.h"
-%include "../fswMessages/vehicleConfigFswMsg.h"
-%include "../fswMessages/rwArrayConfigFswMsg.h"
+
+%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+%include "cMsgPayloadDef/RWConstellationMsgPayload.h"
+struct RWConstellationMsg_C;
 
 %pythoncode %{
 import sys

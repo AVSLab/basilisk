@@ -8,7 +8,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import rwConfigData
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import messaging2
 
 import numpy as np
 
@@ -38,15 +38,9 @@ def rwConfigDataTestFunction():
 
     # Construct the cssComm module
     moduleConfig = rwConfigData.rwConfigData_Config() # Create a config struct
-    # Populate the config
-    moduleConfig.rwParamsOutMsgName = "rwConfigParamsOutMsg"
-    moduleConfig.vehConfigInMsgName = "vehConfigInMsg"
-    moduleConfig.rwConstellationInMsgName = "rwConstellationInMsg"
 
     # Create the messages
-    vehConfigFswMsg = fswMessages.VehicleConfigFswMsg()
-
-    rwConstellationFswMsg = fswMessages.RWConstellationFswMsg()
+    rwConstellationFswMsg = messaging2.RWConstellationMsgPayload()
     numRW = 3
     rwConstellationFswMsg.numRW = 3
     gsHat_initial = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
@@ -56,7 +50,7 @@ def rwConfigDataTestFunction():
     # Iterate over all of the reaction wheels, create a rwConfigElementFswMsg, and add them to the rwConstellationFswMsg
     rwConfigElementList = list()
     for rw in range(numRW):
-        rwConfigElementMsg = fswMessages.RWConfigElementFswMsg()
+        rwConfigElementMsg = messaging2.RWConfigElementMsgPayload()
         rwConfigElementMsg.gsHat_B = gsHat_initial[rw]  # Spin axis unit vector of the wheel in structure # [1, 0, 0]
         rwConfigElementMsg.Js = js_initial[rw]  # Spin axis inertia of wheel [kgm2]
         rwConfigElementMsg.uMax = uMax_initial[rw]  # maximum RW motor torque [Nm]
@@ -68,9 +62,8 @@ def rwConfigDataTestFunction():
     rwConstellationFswMsg.reactionWheels = rwConfigElementList
 
     # Set these messages
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.vehConfigInMsgName, vehConfigFswMsg)
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.rwConstellationInMsgName,
-                               rwConstellationFswMsg)
+    rwConstInMsg = messaging2.RWConstellationMsg().write(rwConstellationFswMsg)
+    moduleConfig.rwConstellationInMsg.subscribeTo(rwConstInMsg)
 
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig) # This calls the algContain to setup the selfInit, crossInit, and update
     moduleWrap.ModelTag = "rwConfigData"
@@ -79,7 +72,8 @@ def rwConfigDataTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Log the output message
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.rwParamsOutMsgName, testProcessRate)
+    dataLog = moduleConfig.rwParamsOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -88,20 +82,19 @@ def rwConfigDataTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # Get the output from this simulation
-    JsListLog = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.JsList', list(range(numRW)))
-    uMaxLog = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.uMax', list(range(numRW)))
-    GsMatrix_B_Log = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.GsMatrix_B', list(range(3*numRW)))
+    JsListLog = dataLog.JsList[:, :numRW]
+    uMaxLog = dataLog.uMax[:, :numRW]
+    GsMatrix_B_Log = dataLog.GsMatrix_B[:, :(3*numRW)]
 
     accuracy = 1e-6
-
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND([js_initial], JsListLog, accuracy,
+    testFailCount, testMessages = unitTestSupport.compareArrayND([js_initial]*2, JsListLog, accuracy,
                                                                  "rwConfigData JsList",
                                                                  3, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArrayND([uMax_initial], uMaxLog, accuracy,
+    testFailCount, testMessages = unitTestSupport.compareArrayND([uMax_initial]*2, uMaxLog, accuracy,
                                                                  "rwConfigData uMax",
                                                                  3, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArrayND([gsHat_initial.flatten()], GsMatrix_B_Log, accuracy,
+    testFailCount, testMessages = unitTestSupport.compareArrayND([gsHat_initial.flatten()]*2, GsMatrix_B_Log, accuracy,
                                                                  "rwConfigData GsMatrix_B",
                                                                  3*numRW, testFailCount, testMessages)
 

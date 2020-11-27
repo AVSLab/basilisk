@@ -42,10 +42,7 @@
  */
 void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->rwParamsOutMsgID = CreateNewMessage(configData->rwParamsOutMsgName,
-                                                    sizeof(RWArrayConfigFswMsg), "RWArrayConfigFswMsg", moduleID);
-    
+    RWArrayConfigMsg_C_init(&configData->rwParamsOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -56,20 +53,6 @@ void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
  */
 void CrossInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
 {
-    /*! - Read vehicle config data, convert RW info from S to B and write it in the output mesage */
-    /*! - NOTE: it is important that this initialization takes place in CrossInit and not Reset.
-     When Reset call takes place in all the modules, this RW message should already be available.*/
-    configData->vehConfigInMsgID = subscribeToMessage(configData->vehConfigInMsgName,
-                                                              sizeof(VehicleConfigFswMsg), moduleID);
-
-    configData->rwConstellationInMsgID = -1;
-    if(strlen(configData->rwConstellationInMsgName) > 0)
-    {
-        configData->rwConstellationInMsgID = subscribeToMessage(configData->rwConstellationInMsgName,
-                                                          sizeof(RWConstellationFswMsg), moduleID);
-    }
-
-
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -85,10 +68,10 @@ void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int6
     uint32_t sizeOfMsgWritten;
     int i;
 
-    if(configData->rwConstellationInMsgID >= 0)
+    configData->rwConstellation = RWConstellationMsg_C_zeroMsgPayload();
+    if(RWConstellationMsg_C_isLinked(&configData->rwConstellationInMsg))
     {
-        ReadMessage(configData->rwConstellationInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(RWConstellationFswMsg),
-                    (void *) &configData->rwConstellation, moduleID);
+        configData->rwConstellation = RWConstellationMsg_C_read(&configData->rwConstellationInMsg);
     }
     configData->rwConfigParamsOut.numRW = configData->rwConstellation.numRW;
 
@@ -100,8 +83,7 @@ void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int6
     }
 
     /*! - Write output RW config data to the messaging system*/
-    WriteMessage(configData->rwParamsOutMsgID, callTime, sizeof(RWArrayConfigFswMsg),
-                 &(configData->rwConfigParamsOut), moduleID);
+    RWArrayConfigMsg_C_write(&configData->rwConfigParamsOut, &configData->rwParamsOutMsg, moduleID, callTime);
 
 }
 
