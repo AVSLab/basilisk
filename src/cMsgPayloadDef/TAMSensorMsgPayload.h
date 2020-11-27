@@ -16,27 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module tamComm
-%{
-   #include "tamComm.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_tamProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_tamProcessTelem;
-%constant void SelfInit_tamProcessTelem(void*, uint64_t);
-%ignore SelfInit_tamProcessTelem;
-%constant void CrossInit_tamProcessTelem(void*, uint64_t);
-%ignore CrossInit_tamProcessTelem;
+#ifndef _TAM_SENSOR_MESSAGE_H
+#define _TAM_SENSOR_MESSAGE_H
 
-%include "tamComm.h"
 
-%include "cMsgPayloadDef/TAMSensorBodyMsgPayload.h"
-struct TAMSensorBodyMsg_C;
-%include "cMsgPayloadDef/TAMSensorMsgPayload.h"
-struct TAMSensorMsg_C;
+//! @brief Simulated TAM Sensor output message definition.
+typedef struct {
+	double tam_S[3];    //!< [T] Magnetic field measurements in sensor frame
+}TAMSensorMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif

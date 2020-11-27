@@ -33,9 +33,7 @@
  */
 void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->tamOutMsgID = CreateNewMessage(configData->tamOutMsgName,
-        sizeof(TAMSensorBodyFswMsg), "TAMSensorBodyFswMsg", moduleID);
+    TAMSensorBodyMsg_C_init(&configData->tamOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the TAM sensor
@@ -47,9 +45,6 @@ void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
  */
 void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
-    /*! - Link the message ID for the incoming sensor data message to here */
-    configData->tamSensorMsgID = subscribeToMessage(configData->tamInMsgName,
-        sizeof(TAMSensorIntMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -77,21 +72,15 @@ void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t
  */
 void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    TAMSensorIntMsg LocalInput;
+    TAMSensorMsgPayload localInput;
 
-    memset(&LocalInput, 0x0, sizeof(TAMSensorIntMsg));
+    localInput = TAMSensorMsg_C_read(&configData->tamInMsg);
 
-    ReadMessage(configData->tamSensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(TAMSensorIntMsg), (void*) &LocalInput, moduleID);
-
-    m33MultV3(RECAST3X3 configData->dcm_BS, LocalInput.tam_S,
+    m33MultV3(RECAST3X3 configData->dcm_BS, localInput.tam_S,
               configData->tamLocalOutput.tam_B);
 
     /*! - Write aggregate output into output message */
-    WriteMessage(configData->tamOutMsgID, callTime,    sizeof(TAMSensorBodyFswMsg),
-                (void*) & (configData->tamLocalOutput), moduleID);
+    TAMSensorBodyMsg_C_write(&configData->tamLocalOutput, &configData->tamOutMsg, moduleID, callTime);
     
     return;
 }

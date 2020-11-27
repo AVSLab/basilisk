@@ -20,21 +20,19 @@
 #ifndef _TAM_COMM_H_
 #define _TAM_COMM_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/tamSensorBodyFswMsg.h"
-#include "simFswInterfaceMessages/tamSensorIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/TAMSensorBodyMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/TAMSensorMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
 /*! module configuration message definition */
 typedef struct {
-    double dcm_BS[9];                         //!< [T] Row - Sensor to Body DCM
-    char tamInMsgName[MAX_STAT_MSG_LENGTH];   //!< [-] The name of the TAM interface input message
-    char tamOutMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the TAM interface output message
-    int32_t tamSensorMsgID;                   //!< [-] TAM sensor IDs tied to the input name
-    int32_t tamOutMsgID;                      //!< [-] TAM message ID for the output port
-    TAMSensorBodyFswMsg tamLocalOutput;       //!< [-] TAM output data structure
+    double dcm_BS[9];                           //!< [T] Row - Sensor to Body DCM
+    TAMSensorMsg_C tamInMsg;                    //!< [-] TAM interface input message
+    TAMSensorBodyMsg_C tamOutMsg;               //!< [-] TAM interface output message
+
+    TAMSensorBodyMsgPayload tamLocalOutput;     //!< [-] buffer of TAM output data structure
     BSKLogger *bskLogger;                       //!< BSK Logging
 }tamConfigData;
 
