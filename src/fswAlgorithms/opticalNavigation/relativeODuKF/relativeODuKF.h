@@ -22,11 +22,11 @@
 
 #include <stdint.h>
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/OpNavFilterMsg_C.h"
+
 #include "utilities/macroDefinitions.h"
-#include "fswMessages/opNavFswMsg.h"
-#include "fswMessages/opNavFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simulation/utilities/bskLogging.h"
@@ -34,27 +34,13 @@
 
 
 
-
-/*! @brief Structure to gather the OpNav messages and content */
-typedef struct {
-    char opNavInMsgName[MAX_STAT_MSG_LENGTH];    //!< [-] Input message buffer from opNav measurement method
-    int32_t opNavInMsgId;                        //!< [-] Input message Id from opNav measurement method
-    double noise[3*3];                        //!< [-] Per axis noise on the measurement
-}OpNavMeas;
-
-/*! @brief Structure to gather the OpNav messages and content */
-typedef struct {
-    int numMethods;                                  //!< Number of opNav measurement methods
-    OpNavMeas OpNav[MAX_ST_VEH_COUNT];     //!< [-] Decoded data for both measurement methods
-}OpNavParsing;
-
 /*! @brief Top level structure for the relative OD unscented kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
  */
 typedef struct {
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
-    char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output filter data message
-    char opNavInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
+    NavTransMsg_C navStateOutMsg;       //!< navigation output message
+    OpNavFilterMsg_C filtDataOutMsg;    //!< output filter data message
+    OpNavMsg_C opNavInMsg;              //!<  opnav input message
     
     size_t numStates;             //!< [-] Number of states for this filter
     size_t countHalfSPs;          //!< [-] Number of sigma points over 2
@@ -101,10 +87,7 @@ typedef struct {
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     
-    OpNavFswMsg opNavInMsg; //!< [-] ST sensor data read in from message bus
-    int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
-    int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
-    int32_t opNavInMsgId;     //!< [-] Id for the incoming mass properties message
+    OpNavMsgPayload opNavInBuffer; //!< [-] ST sensor data read in from message bus
 
     BSKLogger *bskLogger;   //!< BSK Logging
 

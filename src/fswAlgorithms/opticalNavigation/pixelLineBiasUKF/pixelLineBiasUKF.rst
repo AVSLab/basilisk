@@ -25,7 +25,7 @@ provides information on what this message is used for.
       - :ref:`NavTransMsgPayload`
       - navigation translation output message
     * - filtDataOutMsg
-      - :ref:`PixelLineFilterMsgMsgPayload`
+      - :ref:`PixelLineFilterMsgPayload`
       - output filter data message
     * - circlesInMsg
       - :ref:`CirclesOpNavMsgPayload`

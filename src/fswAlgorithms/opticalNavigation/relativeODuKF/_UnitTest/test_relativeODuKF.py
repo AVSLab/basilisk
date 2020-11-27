@@ -17,17 +17,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
-import numpy as np
+
 import pytest
-import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 from Basilisk.fswAlgorithms import relativeODuKF  # import the module that is to be tested
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import messaging2
 
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
+
+def addTimeColumn(time, data):
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 def rk4(f, t, x0):
     x = np.zeros([len(t),len(x0)+1])
@@ -53,9 +54,6 @@ def twoBodyGrav(t, x, mu = 42828.314*1E9):
 
 
 def setupFilterData(filterObject):
-    filterObject.navStateOutMsgName = "relod_state_estimate"
-    filterObject.filtDataOutMsgName = "relod_filter_data"
-    filterObject.opNavInMsgName = "reold_opnav_meas"
 
     filterObject.planetIdInit = 2
     filterObject.alpha = 0.02
@@ -120,10 +118,10 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = relativeODuKF.RelODuKFConfig()
-    msg = relativeODuKF.OpNavFswMsg()
+    msg = messaging2.OpNavMsgPayload()
     msg.r_BN_N = [300, 200, 100]
     data.planetId = 2
-    data.opNavInMsg = msg
+    data.opNavInBuffer = msg
     data.countHalfSPs = 6
     data.noiseSF = 1
 
@@ -161,6 +159,11 @@ def relOD_method_test(show_plots):
     if np.linalg.norm((np.array(propedState) - expected[-1,1:])/(expected[-1,1:])) > 1.0E-15:
         testFailCount += 1
         testMessages.append("State Prop Failure")
+
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("Passed")
     return [testFailCount, ''.join(testMessages)]
 
 
@@ -198,7 +201,9 @@ def StateUpdateRelOD(show_plots):
 
     setupFilterData(moduleConfig)
     moduleConfig.noiseSF = 1
-    unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
+
+    dataLog = moduleConfig.filtDataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     time = np.linspace(0, int(multT1*t1), int(multT1*t1//dt)+1)
     dydt = np.zeros(6)
@@ -215,12 +220,9 @@ def StateUpdateRelOD(show_plots):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
-    inputData = relativeODuKF.OpNavFswMsg()
-    inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.opNavInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    inputData = messaging2.OpNavMsgPayload()
+    opnavInMsg = messaging2.OpNavMsg()
+    moduleConfig.opNavInMsg.subscribeTo(opnavInMsg)
 
     inputData.planetID = 2
     inputData.r_BN_B = expected[0, 1:4]
@@ -234,14 +236,11 @@ def StateUpdateRelOD(show_plots):
             inputData.covar_N = [5.*1E-2, 0., 0.,
                                  0., 5.*1E-2, 0.,
                                  0., 0., 5.*1E-2]
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
-                                                  inputMessageSize,
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputData)
+            opnavInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     for i in range(6):
         if (covarLog[t1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
@@ -256,17 +255,15 @@ def StateUpdateRelOD(show_plots):
             inputData.covar_N = [5.*1E-2, 0.,0.,
                                  0., 5.*1E-2, 0.,
                                  0., 0., 5.*1E-2]
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
-                                                  inputMessageSize,
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputData)
+            opnavInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", list(range(6)))
-    stateErrorLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".stateError", list(range(6)))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", list(range(3)))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    stateErrorLog = addTimeColumn(dataLog.times(), dataLog.stateError)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
+
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -288,6 +285,8 @@ def StateUpdateRelOD(show_plots):
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag + " state update")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -324,7 +323,12 @@ def StatePropRelOD(show_plots, dt):
 
     setupFilterData(moduleConfig)
     moduleConfig.noiseSF = 1
-    unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
+
+    dataLog = moduleConfig.filtDataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    opnavInMsg = messaging2.OpNavMsg()
+    moduleConfig.opNavInMsg.subscribeTo(opnavInMsg)
 
     timeSim = 60
     unitTestSim.InitializeSimulation()
@@ -342,8 +346,8 @@ def StatePropRelOD(show_plots, dt):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", list(range(6)))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -371,5 +375,5 @@ def StatePropRelOD(show_plots, dt):
 
 if __name__ == "__main__":
     # relOD_method_test(True)
-    # StatePropRelOD(True, 1.0)
-    StateUpdateRelOD(True)
+    StatePropRelOD(True, 1.0)
+    # StateUpdateRelOD(False)
