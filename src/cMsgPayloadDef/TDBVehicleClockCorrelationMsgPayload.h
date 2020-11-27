@@ -16,32 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module dvAccumulation
-%{
-   #include "dvAccumulation.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_dvAccumulation(void*, uint64_t, uint64_t);
-%ignore Update_dvAccumulation;
-%constant void SelfInit_dvAccumulation(void*, uint64_t);
-%ignore SelfInit_dvAccumulation;
-%constant void CrossInit_dvAccumulation(void*, uint64_t);
-%ignore CrossInit_dvAccumulation;
-%constant void Reset_dvAccumulation(void*, uint64_t, uint64_t);
-%ignore Reset_dvAccumulation;
+#ifndef _EPHEMERIS_INTERFACE_DATA_H_
+#define _EPHEMERIS_INTERFACE_DATA_H_
 
-%include "dvAccumulation.h"
 
-%include "cMsgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "cMsgPayloadDef/AccDataMsgPayload.h"
-struct AccDataMsg_C;
-%include "cMsgPayloadDef/AccPktDataMsgPayload.h"
-struct AccPktDataMsg_C;
+/*! @brief time correlation factor structure used to take vehicle time and convert
+ it over to ephemeris time (TDB)
+ */
+typedef struct {
+    double ephemerisTime;                //!< [s] Ephemeris time associated with the vehicle time
+    double vehicleClockTime;             //!< [s] Vehicle time code converted over to seconds
+}TDBVehicleClockCorrelationMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
-
+#endif

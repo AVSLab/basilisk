@@ -22,6 +22,8 @@
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdlib.h>
+#include "utilities/bsk_Print.h"
+
 
 /*! This method initializes the configData for the nav aggregation algorithm.
     It initializes the output message in the messaging system.
@@ -31,8 +33,7 @@
  */
 void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
-    configData->outputNavMsgID = CreateNewMessage(configData->outputNavName,
-        sizeof(NavTransIntMsg), "NavTransIntMsg", moduleID);
+    NavTransMsg_C_init(&configData->dvAcumOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the nav aggregration
@@ -44,23 +45,17 @@ void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
  */
 void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
-        configData->accPktInMsgID= subscribeToMessage(
-            configData->accPktInMsgName, sizeof(AccDataFswMsg), moduleID);
 }
 
 void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
                           int64_t moduleID)
 {
     /*! - Configure accumulator to reset itself*/
-    AccDataFswMsg inputAccData;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
+    AccDataMsgPayload inputAccData;
     int i;
 
-    /*! - zero the input message container and read in the accelerometer data message */
-    memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
-    ReadMessage(configData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AccDataFswMsg), (void *) &inputAccData, moduleID);
+    /*! - read in the accelerometer data message */
+    inputAccData = AccDataMsg_C_read(&configData->accPktInMsg);
 
     /*! - stacks data in time order*/
     dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1);
@@ -87,13 +82,13 @@ void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
 }
 
 /* Experimenting QuickSort START */
-void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q){
-    AccPktDataFswMsg t;
+void dvAccumulation_swap(AccPktDataMsgPayload *p, AccPktDataMsgPayload *q){
+    AccPktDataMsgPayload t;
     t=*p;
     *p=*q;
     *q=t;
 }
-int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
+int dvAccumulation_partition(AccPktDataMsgPayload *A, int start, int end){
     int i;
     uint64_t pivot=A[end].measTime;
     int partitionIndex=start;
@@ -112,13 +107,13 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
   @param A --> Array to be sorted,
   @param start  --> Starting index,
   @param end  --> Ending index */
-void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
+void dvAccumulation_QuickSort (AccPktDataMsgPayload *A, int start, int end)
 {
     /*! - Create an auxiliary stack array. This contains indicies. */
     int stack[MAX_ACC_BUF_PKT];
     if((end-start + 1) > MAX_ACC_BUF_PKT)
     {
-        _bskLog(A->bskLogger, BSK_ERROR, "Stack insufficiently sized for quick-sort somehow");
+        BSK_PRINT(MSG_ERROR,"dvAccumulation_QuickSort: Stack insufficiently sized for quick-sort somehow.");
     }
 
     /*! - initialize the index of the top of the stack */
@@ -166,21 +161,17 @@ void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
  */
 void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     int i;
     double dt;
     double frameDV_B[3];            /* [m/s] The DV of an integrated acc measurement */
-    AccDataFswMsg inputAccData;     /* [-] Input message container */
-    NavTransIntMsg outputData;      /* [-] The local storage of the outgoing message data */
+    AccDataMsgPayload inputAccData;     /* [-] Input message container */
+    NavTransMsgPayload outputData;      /* [-] The local storage of the outgoing message data */
     
-    /*! - zero input and output message container */
-    memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
-    memset(&outputData, 0x0, sizeof(NavTransIntMsg));
+    /*! - zero output message container */
+    outputData = NavTransMsg_C_zeroMsgPayload();
 
     /*! - read accelerometer input message */
-    ReadMessage(configData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AccDataFswMsg), &inputAccData, moduleID);
+    inputAccData = AccDataMsg_C_read(&configData->accPktInMsg);
 
     /*! - stack data in time order */
     
@@ -219,8 +210,7 @@ void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, in
     v3Copy(configData->vehAccumDV_B, outputData.vehAccumDV);
 
     /*! - write accumulated Dv message */
-    WriteMessage(configData->outputNavMsgID, callTime, sizeof(NavTransIntMsg),
-                 &outputData, moduleID);
+    NavTransMsg_C_write(&outputData, &configData->dvAcumOutMsg, moduleID, callTime);
 
     return;
 

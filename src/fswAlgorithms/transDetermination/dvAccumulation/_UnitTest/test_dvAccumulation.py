@@ -6,7 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import dvAccumulation
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import messaging2
 from numpy import random
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -17,7 +17,7 @@ def generateAccData():
     """ Returns a list of random AccPktDataFswMsg."""
     accPktList = list()
     for _ in range(120):
-        accPacketData = fswMessages.AccPktDataFswMsg()
+        accPacketData = messaging2.AccPktDataMsgPayload()
         accPacketData.measTime = abs(int(random.normal(5e7, 1e7)))
         accPacketData.accel_B = random.normal(0.1, 0.2, 3)  # Acceleration in platform frame [m/s2]
         accPktList.append(accPacketData)
@@ -41,23 +41,23 @@ def dvAccumulationTestFunction():
     # Generate (1) random packet measurement times and (2) completely inverted measurement times
     randMeasTimes = []
     invMeasTimes = []
-    randData = fswMessages.AccDataFswMsg()
-    invData = fswMessages.AccDataFswMsg()
-    for i in range(0, fswMessages.MAX_ACC_BUF_PKT):
+    randData = messaging2.AccDataMsgPayload()
+    invData = messaging2.AccDataMsgPayload()
+    for i in range(0, messaging2.MAX_ACC_BUF_PKT):
         randMeasTimes.append(random.randint(0, 1000000))
         randData.accPkts[i].measTime = randMeasTimes[i]
 
-        invMeasTimes.append(fswMessages.MAX_ACC_BUF_PKT - i)
+        invMeasTimes.append(messaging2.MAX_ACC_BUF_PKT - i)
         invData.accPkts[i].measTime = invMeasTimes[i]
 
     # Run module quicksort function
-    dvAccumulation.dvAccumulation_QuickSort(randData.accPkts[0], 0, fswMessages.MAX_ACC_BUF_PKT - 1)
-    dvAccumulation.dvAccumulation_QuickSort(invData.accPkts[0], 0, fswMessages.MAX_ACC_BUF_PKT - 1)
+    dvAccumulation.dvAccumulation_QuickSort(randData.accPkts[0], 0, messaging2.MAX_ACC_BUF_PKT - 1)
+    dvAccumulation.dvAccumulation_QuickSort(invData.accPkts[0], 0, messaging2.MAX_ACC_BUF_PKT - 1)
 
     # Check that sorted packets properly
     randMeasTimes.sort()
     invMeasTimes.sort()
-    for i in range(0, fswMessages.MAX_ACC_BUF_PKT):
+    for i in range(0, messaging2.MAX_ACC_BUF_PKT):
         if randData.accPkts[i].measTime != randMeasTimes[i]:
             testFailCount += 1
         if invData.accPkts[i].measTime != invMeasTimes[i]:
@@ -78,9 +78,6 @@ def dvAccumulationTestFunction():
     # Construct the dvAccumulation module
     # Set the names for the input messages
     moduleConfig = dvAccumulation.DVAccumulationData()  # Create a config struct
-    moduleConfig.accPktInMsgName = "inputs_acceleration_packets"
-    moduleConfig.outputNavName = "output_navigation_name"
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputNavName, testProcessRate)
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
@@ -89,48 +86,51 @@ def dvAccumulationTestFunction():
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
+    dataLog = moduleConfig.dvAcumOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
     # Create the input message.
-    inputAccData = fswMessages.AccDataFswMsg()
+    inputAccData = messaging2.AccDataMsgPayload()
 
     # Set this as the packet data in the acceleration data
     random.seed(12345)
     inputAccData.accPkts = generateAccData()
+    inMsg = messaging2.AccDataMsg()
+    moduleConfig.accPktInMsg.subscribeTo(inMsg)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.accPktInMsgName, inputAccData)
+    inMsg.write(inputAccData)
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     # Create the input message again to simulate multiple acceleration inputs.
-    inputAccData = fswMessages.AccDataFswMsg()
+    inputAccData = messaging2.AccDataMsgPayload()
 
     # Set this as the packet data in the acceleration data. Test the module with different inputs.
     inputAccData.accPkts = generateAccData()
 
     # Write this message
-    msgSize = inputAccData.getStructSize()
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.accPktInMsgName, msgSize, 0, inputAccData)
+    inMsg.write(inputAccData)
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # This doesn't work if only 1 number is passed in as the second argument, but we don't need the second
-    outputNavMsgData = unitTestSim.pullMessageLogData(moduleConfig.outputNavName + '.' + 'vehAccumDV', list(range(3)))
-    timeMsgData = unitTestSim.pullMessageLogData(moduleConfig.outputNavName + '.' + 'timeTag')
+    outputNavMsgData = dataLog.vehAccumDV
+    timeMsgData = dataLog.timeTag
 
     # print(outputNavMsgData)
-    # print timeMsgData
+    # print(timeMsgData)
 
     trueDVVector = [[4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
                  [ 4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
                  [ 4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
                  [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03],
                  [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03]]
-    trueTime = [ [7.2123026e+07], [7.2123026e+07], [7.2123026e+07], [7.6667436e+07], [7.6667436e+07]]
+    trueTime = [ 7.2123026e+07, 7.2123026e+07, 7.2123026e+07, 7.6667436e+07, 7.6667436e+07]
 
     accuracy = 1e-6
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
@@ -140,8 +140,8 @@ def dvAccumulationTestFunction():
                                                                  accuracy,
                                                                  "dvAccumulation output",
                                                                  2, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueTime, timeMsgData,
-                                                                 accuracy, "timeTag", 1,
+    testFailCount, testMessages = unitTestSupport.compareArrayND([trueTime], [timeMsgData],
+                                                                 accuracy, "timeTag", 5,
                                                                  testFailCount, testMessages)
 
     snippentName = "passFail"

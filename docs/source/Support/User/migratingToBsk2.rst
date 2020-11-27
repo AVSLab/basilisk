@@ -78,6 +78,8 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``OutputDataName``            | ``cssArrayOutMsg``                |
     +---------------------------+-------------------------------+-----------------------------------+
+    | dvAccumulation            | ``outputNavName``             | ``dvAcumOutMsg``                  |
+    +---------------------------+-------------------------------+-----------------------------------+
     | dvAttEffect               | ``inputControlName``          | ``cmdTorqueBodyInMsg``            |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``outputDataName``            | ``thrOnTimeOutMsg``               |

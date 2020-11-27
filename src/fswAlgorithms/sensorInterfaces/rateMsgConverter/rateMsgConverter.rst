@@ -17,7 +17,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - navRateOutMsg
-      - :ref:`NNavAttMsgPayload`
+      - :ref:`NavAttMsgPayload`
       - attitude output message
     * - imuRateInMsg
       - :ref:`IMUSensorBodyMsgPayload`
