@@ -17,16 +17,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
-import numpy as np
 import pytest
-import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, unitTestSupport
 from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
 from Basilisk.utilities import RigidBodyKinematics as rbk
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
+from Basilisk.simulation import messaging2
+
+def addTimeColumn(time, data):
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 def rk4(f, t, x0):
     x = np.zeros([len(t),len(x0)+1])
@@ -52,11 +53,6 @@ def twoBodyGrav(t, x, mu = 42828.314*1E9):
 
 
 def setupFilterData(filterObject):
-    filterObject.navStateOutMsgName = "relod_state_estimate"
-    filterObject.filtDataOutMsgName = "relod_filter_data"
-    filterObject.circlesInMsgName = "circles_data"
-    filterObject.cameraConfigMsgName = "camera_config_data"
-    filterObject.attInMsgName = "simple_att_nav_output"
 
     filterObject.planetIdInit = 2
     filterObject.alpha = 0.02
@@ -123,11 +119,11 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
-    msg = pixelLineBiasUKF.CirclesOpNavMsg()
+    msg = messaging2.CirclesOpNavMsgPayload()
     msg.circlesCenters = [100, 200]
     msg.circlesRadii = [100]
     msg.planetIds = [2]
-    data.cirlcesInMsg = msg
+    data.circlesInBuffer = msg
     data.planetId = 2
     data.countHalfSPs = len(state)
     data.numStates = len(state)
@@ -153,23 +149,23 @@ def relOD_method_test(show_plots):
     # Set up a measurement test
     data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
     # Set up a circle input message
-    msg = pixelLineBiasUKF.CirclesOpNavMsg()
+    msg = messaging2.CirclesOpNavMsgPayload()
     msg.circlesCenters = [100, 200]
     msg.circlesRadii = [100]
     msg.planetIds = [2]
-    data.cirlcesInMsg = msg
+    data.circlesInBuffer = msg
     data.planetId = 2
     data.countHalfSPs = len(state)
     data.numStates = len(state)
 
     # Set up attitud message
-    att = pixelLineBiasUKF.NavAttIntMsg()
+    att = messaging2.NavAttMsgPayload()
     att.sigma_BN = [0, 0.2,-0.1]
     att.omega_BN_B = [0.,0.,0.]
     data.attInfo = att
 
     # Set up a camera message
-    cam = pixelLineBiasUKF.CameraConfigMsg()
+    cam = messaging2.CameraConfigMsgPayload()
     cam.sigma_CB = [-0.2, 0., 0.3]
     cam.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     cam.resolution = [512, 512]
@@ -231,6 +227,11 @@ def relOD_method_test(show_plots):
         testFailCount += 1
         testMessages.append("State Prop Failure")
 
+    if testFailCount == 0:
+        print("PASSED: ")
+    else:
+        print(testMessages)
+
     return [testFailCount, ''.join(testMessages)]
 
 
@@ -266,20 +267,26 @@ def StatePropRelOD(show_plots, dt):
     setupFilterData(moduleConfig)
 
     # Create the input messages.
-    inputCamera = pixelLineBiasUKF.CameraConfigMsg()
-    inputAtt = pixelLineBiasUKF.NavAttIntMsg()
+    inputCamera = messaging2.CameraConfigMsgPayload()
+    inputAtt = messaging2.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / 0.01)  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.cameraConfigMsgName, inputCamera)
+    camInMsg = messaging2.CameraConfigMsg().write(inputCamera)
+    moduleConfig.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.attInMsgName, inputAtt)
+    attInMsg = messaging2.NavAttMsg().write(inputAtt)
+    moduleConfig.attInMsg.subscribeTo(attInMsg)
 
-    unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
+    circlesInMsg = messaging2.CirclesOpNavMsg()
+    moduleConfig.circlesInMsg.subscribeTo(circlesInMsg)
+
+    dataLog = moduleConfig.filtDataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     timeSim = 60
     unitTestSim.InitializeSimulation()
@@ -297,8 +304,8 @@ def StatePropRelOD(show_plots, dt):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:7]).a)
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(len(moduleConfig.stateInit)))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(len(moduleConfig.stateInit) * len(moduleConfig.stateInit)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -318,6 +325,8 @@ def StatePropRelOD(show_plots, dt):
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

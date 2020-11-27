@@ -42,13 +42,4 @@ In order for the filter to run, the user must set a few parameters:
   \texttt{     filterObject.qNoise = qNoiseIn.reshape(9*9).tolist()}
 \end{itemize}
 
-The messages must also be set as such:
-
-\begin{itemize}
- \item    \texttt{   filterObject.navStateOutMsgName = "pixelLine\_state\_estimate"}
- \item    \texttt{   filterObject.filtDataOutMsgName = "pixelLine\_filter\_data"}
- \item    \texttt{   filterObject.circlesInMsgName = "circles\_data"}
- \item    \texttt{   filterObject.cameraConfigMsgName = "camera\_config\_data"}
- \item    \texttt{   filterObject.attInMsgName = "simple\_att\_nav\_output"}
-\end{itemize}
 

@@ -30,27 +30,17 @@
  */
 void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
-    /*! - Create a navigation message to be used for control */
-    configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
-                                                    sizeof(NavTransIntMsg), "NavTransIntMsg", moduleId);
-    /*! - Create filter states output message for filter states, covariance, postfits, and debugging*/
-    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-                                                    sizeof(PixelLineFilterFswMsg), "PixelLineFilterFswMsg", moduleId);
-    
+    NavTransMsg_C_init(&configData->navStateOutMsg);
+    PixelLineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
+/*! This method performs the second stage of initialization for the OD filter.
  @return void
  @param configData The configuration data associated with the OD filter
  @param moduleId The ID associated with the configData
  */
 void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
-    /*! Read in the treated position measurement from pixelLineConverter */
-    configData->circlesInMsgId = subscribeToMessage(configData->circlesInMsgName, sizeof(CirclesOpNavMsg), moduleId);
-    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleId);
-    configData->attInMsgID = subscribeToMessage(configData->attInMsgName, sizeof(NavAttIntMsg),moduleId);
-    
 }
 
 /*! This method resets the relative OD filter to an initial state and
@@ -145,42 +135,35 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
                         int64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
-    uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
-    uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double yBar[PIXLINE_N_MEAS], tempYVec[PIXLINE_N_MEAS];
     uint64_t i;
     int computePostFits;
-    PixelLineFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
-    NavTransIntMsg outputRelOD;
-    CirclesOpNavMsg inputCircles;
+    PixelLineFilterMsgPayload opNavOutBuffer; /* [-] Output filter info*/
+    NavTransMsgPayload outputRelOD;
+    CirclesOpNavMsgPayload inputCircles;
     configData->moduleId = moduleId;
     
     computePostFits = 0;
     v3SetZero(configData->postFits);
-    memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
-    memset(&opNavOutBuffer, 0x0, sizeof(PixelLineFilterFswMsg));
-    memset(&inputCircles, 0x0, sizeof(CirclesOpNavMsg));
-    ReadMessage(configData->circlesInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CirclesOpNavMsg), &inputCircles, moduleId);
-    
-    memset(&configData->cameraSpecs, 0x0, sizeof(CameraConfigMsg));
-    memset(&configData->attInfo, 0x0, sizeof(NavAttIntMsg));
-    
+
+    opNavOutBuffer = PixelLineFilterMsg_C_zeroMsgPayload();
+    outputRelOD = NavTransMsg_C_zeroMsgPayload();
+
+
     /*! - read input messages */
-    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CameraConfigMsg), &configData->cameraSpecs, configData->moduleId);
-    ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), &configData->attInfo, configData->moduleId);
-    
+    inputCircles = CirclesOpNavMsg_C_read(&configData->circlesInMsg);
+    configData->cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
+    configData->attInfo = NavAttMsg_C_read(&configData->attInMsg);
+
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
-    newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0 && inputCircles.valid ==1)
+    newTimeTag = NavAttMsg_C_timeWritten(&configData->attInMsg) * NANO2SEC;
+    if(newTimeTag >= configData->timeTag && NavAttMsg_C_isWritten(&configData->attInMsg) && inputCircles.valid ==1)
     {
-        configData->cirlcesInMsg = inputCircles;
+        CirclesOpNavMsg_C_copyMsgPayload(&configData->circlesInBuffer, &inputCircles);
         configData->planetId = inputCircles.planetIds[0];
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
         pixelLineBiasUKFMeasUpdate(configData);
@@ -220,8 +203,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     v3Copy(&configData->state[3], outputRelOD.v_BN_N);
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
     outputRelOD.timeTag = configData->timeTagOut;
-    WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavTransIntMsg),
-                 &(outputRelOD), moduleId);
+    NavTransMsg_C_write(&outputRelOD, &configData->navStateOutMsg, moduleId, callTime);
     
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
@@ -231,8 +213,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     memmove(opNavOutBuffer.postFitRes, configData->postFits, PIXLINE_N_MEAS*sizeof(double));
     v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
     vScale(1E6, opNavOutBuffer.covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES+PIXLINE_DYN_STATES, opNavOutBuffer.covar); // Convert to m
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(PixelLineFilterFswMsg),
-                 &opNavOutBuffer, moduleId);
+    PixelLineFilterMsg_C_write(&opNavOutBuffer, &configData->filtDataOutMsg, moduleId, callTime);
     
     return;
 }
@@ -436,7 +417,7 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
     double reCentered[2], rNorm, denom, planetRad;
     double r_C[3];
 
-    v3Set(configData->cirlcesInMsg.circlesCenters[0], configData->cirlcesInMsg.circlesCenters[1], configData->cirlcesInMsg.circlesRadii[0], configData->obs);
+    v3Set(configData->circlesInBuffer.circlesCenters[0], configData->circlesInBuffer.circlesCenters[1], configData->circlesInBuffer.circlesRadii[0], configData->obs);
 
     MRP2C(configData->cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(configData->attInfo.sigma_BN, dcm_BN);
@@ -449,14 +430,14 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
     X = pX/configData->cameraSpecs.resolution[0];
     Y = pY/configData->cameraSpecs.resolution[1];
     
-    if(configData->cirlcesInMsg.planetIds[0] > 0){
-        if(configData->cirlcesInMsg.planetIds[0] ==1){
+    if(configData->circlesInBuffer.planetIds[0] > 0){
+        if(configData->circlesInBuffer.planetIds[0] ==1){
             planetRad = REQ_EARTH;//in km
         }
-        if(configData->cirlcesInMsg.planetIds[0] ==2){
+        if(configData->circlesInBuffer.planetIds[0] ==2){
             planetRad = REQ_MARS;//in km
         }
-        if(configData->cirlcesInMsg.planetIds[0] ==3){
+        if(configData->circlesInBuffer.planetIds[0] ==3){
             planetRad = REQ_JUPITER;//in km
         }
     }
@@ -558,8 +539,8 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
      decomposition of the observation variance matrix constructed for our number
      of observations*/
     mSetZero(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
-    mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 3,3);
-    mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 0, 0);
+    mSetSubMatrix(configData->circlesInBuffer.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 3,3);
+    mSetSubMatrix(configData->circlesInBuffer.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 0, 0);
     badUpdate += ukfCholDecomp(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, cholNoise);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            cholNoise, configData->numObs*configData->numObs*sizeof(double));

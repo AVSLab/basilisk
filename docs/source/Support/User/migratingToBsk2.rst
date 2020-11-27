@@ -138,6 +138,8 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | pixelLineConverter        | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
+    | pixelLineBiasUKF          | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
     | PRV_Steering →            | ``outputDataName``            | ``rateCmdOutMsg``                 |
     + ``prvSteering``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |

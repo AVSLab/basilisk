@@ -31,19 +31,20 @@
 %ignore CrossInit_pixelLineBiasUKF;
 %constant void Reset_pixelLineBiasUKF(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineBiasUKF;
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(PixelLineFilterFswMsg);
-GEN_SIZEOF(PixelLineBiasUKFConfig);
-GEN_SIZEOF(CirclesOpNavMsg);
-GEN_SIZEOF(CameraConfigMsg);
-GEN_SIZEOF(NavAttIntMsg);
+
 %include "pixelLineBiasUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/pixelLineFilterFswMsg.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
+
+%include "cMsgPayloadDef/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/PixelLineFilterMsgPayload.h"
+struct PixelLineFilterMsg_C;
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "cMsgPayloadDef/CirclesOpNavMsgPayload.h"
+struct CirclesOpNavMsg_C;
 
 %pythoncode %{
 import sys
