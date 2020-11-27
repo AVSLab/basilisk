@@ -30,14 +30,13 @@
 %ignore CrossInit_rateMsgConverter;
 %constant void Reset_rateMsgConverter(void*, uint64_t, uint64_t);
 %ignore Reset_rateMsgConverter;
-GEN_SIZEOF(rateMsgConverterConfig);
 
 %include "rateMsgConverter.h"
 
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../../fswMessages/imuSensorBodyFswMsg.h"
-GEN_SIZEOF(NavAttIntMsg);
-GEN_SIZEOF(IMUSensorBodyFswMsg);
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/IMUSensorBodyMsgPayload.h"
+struct IMUSensorBodyMsg_C;
 
 %pythoncode %{
 import sys

@@ -39,10 +39,7 @@
  */
 void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
 {
-    configData->navRateOutMsgID = CreateNewMessage(configData->navRateOutMsgName,
-                                                   sizeof(NavAttIntMsg),
-                                                   "NavAttIntMsg",
-                                                   moduleID);
+    NavAttMsg_C_init(&configData->navRateOutMsg);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -53,10 +50,6 @@ void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t modul
  */
 void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->imuRateInMsgID = subscribeToMessage(configData->imuRateInMsgName,
-                                                    sizeof(IMUSensorBodyFswMsg),
-                                                    moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -79,23 +72,18 @@ void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTim
  */
 void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    IMUSensorBodyFswMsg inMsg;
-    NavAttIntMsg outMsg;
+    IMUSensorBodyMsgPayload inMsg;
+    NavAttMsgPayload outMsg;
     
     /*! - read in the message of type IMUSensorBodyFswMsg */
-    memset(&inMsg, 0x0, sizeof(inMsg));
-    ReadMessage(configData->imuRateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(IMUSensorBodyFswMsg), (void*) &inMsg, moduleID);
+    inMsg = IMUSensorBodyMsg_C_read(&configData->imuRateInMsg);
     
     /*! - create a zero message of type NavAttIntMsg which has the rate vector from the input message */
-    memset(&outMsg, 0x0, sizeof(outMsg));
+    outMsg = NavAttMsg_C_zeroMsgPayload();
     v3Copy(inMsg.AngVelBody, outMsg.omega_BN_B);
     
     /*! - write output message */
-    WriteMessage(configData->navRateOutMsgID, callTime, sizeof(NavAttIntMsg),
-                 (void*) &outMsg, moduleID);
+    NavAttMsg_C_write(&outMsg, &configData->navRateOutMsg, moduleID, callTime);
     
     return;
 }
