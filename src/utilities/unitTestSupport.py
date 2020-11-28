@@ -240,7 +240,7 @@ def isDoubleEqual(result, truth, accuracy):
     if foundNAN(result): return 0
 
     # the result array is of dimension dim+1, as the first entry is the time stamp
-    if (math.fabs(result[1] - truth) > accuracy):
+    if (math.fabs(result - truth) > accuracy):
         return 0    # return 0 to indicate the doubles are not equal
 
     return 1        # return 1 to indicate the doubles are equal

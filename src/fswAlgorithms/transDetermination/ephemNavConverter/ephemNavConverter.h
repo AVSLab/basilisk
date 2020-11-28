@@ -20,16 +20,17 @@
 #ifndef _EPHEM_NAV_CONVERTER_H_
 #define _EPHEM_NAV_CONVERTER_H_
 
-#include "messaging/static_messaging.h"
 #include "simulation/utilities/bskLogging.h"
+
+#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
 
 
 /*! @brief The configuration structure for the ephemNavConverter module.*/
 typedef struct {
-    char stateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for pos/vel
-    char ephInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the clock correlation message
-    int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t ephInMsgID;  //!< [-] The ID associated with the incoming clock correlation
+    NavTransMsg_C stateOutMsg; //!< [-] output navigation message for pos/vel
+    EphemerisMsg_C ephInMsg; //!< ephemeris input message
+
     BSKLogger *bskLogger;   //!< BSK Logging
 }EphemNavConverterData;
 

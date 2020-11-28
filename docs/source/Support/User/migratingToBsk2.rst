@@ -96,8 +96,11 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputBurnDataName``         | ``burnDataInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
-    | ephem_Difference →        | ``ephBaseInMsgName``          | ``ephBaseInMsg``                  |
+    | ephem_Difference →        |                               |                                   |
     | ``ephemDifference``       |                               |                                   |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | ephem_nav_converter →     |                               |                                   |
+    | ``ephemNavConverter``     |                               |                                   |
     +---------------------------+-------------------------------+-----------------------------------+
     | faultDetection            | ``navMeasPrimaryMsgName``     | ``navMeasPrimaryInMsg``           |
     +                           +-------------------------------+-----------------------------------+

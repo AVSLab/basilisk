@@ -101,7 +101,7 @@ def rateMsgConvertFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    print("accuracy = " + str(accuracy))
 
     # This pulls the actual data log from the simulation run.
     moduleOutput = dataLog.omega_BN_B

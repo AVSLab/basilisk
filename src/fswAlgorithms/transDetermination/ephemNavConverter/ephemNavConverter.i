@@ -16,12 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module ephem_nav_converter
+%module ephemNavConverter
 %{
-   #include "ephemNavConverter.h"
-   #include "simFswInterfaceMessages/navTransIntMsg.h"
-   #include "simFswInterfaceMessages/ephemerisIntMsg.h"
-   
+   #include "ephemNavConverter.h"   
 %}
 
 %include "swig_conly_data.i"
@@ -34,11 +31,12 @@
 %constant void Reset_ephemNavConverter(void*, uint64_t, uint64_t);
 %ignore Reset_ephemNavConverter;
 
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "simFswInterfaceMessages/ephemerisIntMsg.h"
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
 
 %include "ephemNavConverter.h"
-GEN_SIZEOF(EphemerisIntMsg)
 
 %pythoncode %{
 import sys
