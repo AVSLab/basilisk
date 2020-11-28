@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import fswModuleTemplate                 # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.simulation import messaging2                      # import the message definitions
-
+import numpy as np
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -154,6 +154,7 @@ def fswModuleTestFunction(show_plots):
     # compare the module results to the truth values
     accuracy = 1e-12
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
+    variableStateNoTime = np.transpose(variableState)[1]
     for i in range(0, len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.outputVector[i], trueVector[i], 3, accuracy):
@@ -164,7 +165,7 @@ def fswModuleTestFunction(show_plots):
                                 "sec\n")
 
         # check a scalar double value
-        if not unitTestSupport.isDoubleEqual(variableState[i], dummyTrue[i], accuracy):
+        if not unitTestSupport.isDoubleEqual(variableStateNoTime[i], dummyTrue[i], accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 variableName + " unit test at t=" +
