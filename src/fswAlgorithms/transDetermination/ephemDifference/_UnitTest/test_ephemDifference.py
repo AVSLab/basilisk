@@ -12,7 +12,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephemDifference
 from Basilisk.utilities import astroFunctions
-
+from Basilisk.simulation import messaging2
 
 @pytest.mark.parametrize("ephBdyCount", [3, 0])
 

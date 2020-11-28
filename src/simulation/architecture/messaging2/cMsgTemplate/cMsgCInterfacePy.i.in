@@ -18,6 +18,7 @@ typedef struct {type};
 
     def log(self):
         from Basilisk.simulation.messaging2 import {type}Logger
+        self.header.isLinked = 1
         return {type}Logger(self)
 
     def write(self, payload, time=0):
