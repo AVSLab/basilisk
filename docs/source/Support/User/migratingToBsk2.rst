@@ -152,6 +152,14 @@ This list makes it simple to see what naming will need to be changed.
     + ``mrpSteering``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +---------------------------+-------------------------------+-----------------------------------+
+    | navAggregate              | ``outputAttName``             | ``navAttOutMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``outputTransName``           | ``navTransOutMsg``                |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputNavName``              | ``navAttInMsg``                   |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``inputNavName``              | ``navTransInMsg``                 |
+    +---------------------------+-------------------------------+-----------------------------------+
     | opNavPoint                | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
     | pixelLineConverter        | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |

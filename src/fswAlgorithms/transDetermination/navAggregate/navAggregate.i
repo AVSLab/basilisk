@@ -32,16 +32,13 @@
 %ignore Reset_aggregateNav;
 STRUCTASLIST(AggregateAttInput)
 STRUCTASLIST(AggregateTransInput)
-GEN_SIZEOF(AggregateAttInput);
-GEN_SIZEOF(AggregateTransInput);
-GEN_SIZEOF(NavAggregateData);
+
 %include "navAggregate.h"
 
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-GEN_SIZEOF(NavAttIntMsg);
-GEN_SIZEOF(NavTransIntMsg);
-
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
+struct NavTransMsg_C;
 
 %pythoncode %{
 import sys
