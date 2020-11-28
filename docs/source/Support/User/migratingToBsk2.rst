@@ -96,6 +96,9 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputBurnDataName``         | ``burnDataInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | ephem_Difference →        | ``ephBaseInMsgName``          | ``ephBaseInMsg``                  |
+    | ``ephemDifference``       |                               |                                   |
+    +---------------------------+-------------------------------+-----------------------------------+
     | faultDetection            | ``navMeasPrimaryMsgName``     | ``navMeasPrimaryInMsg``           |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``navMeasSecondaryMsgName``   | ``navMeasSecondaryInMsg``         |

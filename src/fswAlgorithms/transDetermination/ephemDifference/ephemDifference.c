@@ -35,12 +35,10 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
     configData->ephBdyCount = 0;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
-        if (strlen(configData->changeBodies[i].ephOutMsgName) == 0 || strlen(configData->changeBodies[i].ephInMsgName) == 0) {
+        if (!EphemerisMsg_C_isLinked(&configData->changeBodies[i].ephInMsg)) {
             break;
         }
-        configData->changeBodies[i].ephOutMsgId = CreateNewMessage(
-                                                                       configData->changeBodies[i].ephOutMsgName,
-                                                                       sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+        EphemerisMsg_C_init(&configData->changeBodies[i].ephOutMsg);
         configData->ephBdyCount++;
     }
 
@@ -57,17 +55,6 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
  */
 void CrossInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
-    uint32_t i;
-    for(i = 0; i < configData->ephBdyCount; i++)
-    {
-        configData->changeBodies[i].ephInMsgId = subscribeToMessage(
-                            configData->changeBodies[i].ephInMsgName,
-                            sizeof(EphemerisIntMsg), moduleID);
-    }
-
-    configData->ephBaseInMsgId = subscribeToMessage(configData->ephBaseInMsgName,
-                                                    sizeof(EphemerisIntMsg),
-                                                    moduleID);
 }
 
 /*! @brief This method resets the module.
@@ -92,25 +79,16 @@ void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
  */
 void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     uint32_t i;
-    EphemerisIntMsg tmpBaseEphem;
-    EphemerisIntMsg tmpEphStore;
-    memset(&tmpBaseEphem, 0x0, sizeof(EphemerisIntMsg));
-    
-    ReadMessage(configData->ephBaseInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(EphemerisIntMsg), (void *)&tmpBaseEphem, moduleID);
-    
-    
+    EphemerisMsgPayload tmpBaseEphem;
+    EphemerisMsgPayload tmpEphStore;
+
+    tmpBaseEphem = EphemerisMsg_C_read(&configData->ephBaseInMsg);
+
     for(i = 0; i < configData->ephBdyCount; i++)
     {
-        memset(&tmpEphStore, 0x0, sizeof(EphemerisIntMsg));
+        tmpEphStore = EphemerisMsg_C_read(&configData->changeBodies[i].ephInMsg);
 
-        ReadMessage(configData->changeBodies[i].ephInMsgId, &timeOfMsgWritten,
-                    &sizeOfMsgWritten, sizeof(EphemerisIntMsg), (void *)&tmpEphStore,
-                    moduleID);
-        
         v3Subtract(tmpEphStore.r_BdyZero_N,
                    tmpBaseEphem.r_BdyZero_N,
                    tmpEphStore.r_BdyZero_N);
@@ -118,9 +96,7 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
                    tmpBaseEphem.v_BdyZero_N,
                    tmpEphStore.v_BdyZero_N);
         
-        WriteMessage(configData->changeBodies[i].ephOutMsgId, callTime,
-                     sizeof(EphemerisIntMsg), &tmpEphStore,
-                     moduleID);
+        EphemerisMsg_C_write(&tmpEphStore, &configData->changeBodies[i].ephOutMsg, moduleID, callTime);
     }
     return;
 }

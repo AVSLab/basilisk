@@ -22,25 +22,24 @@
 
 #define MAX_NUM_CHANGE_BODIES 10
 
-#include "messaging/static_messaging.h"
-#include "./simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
 /*! @brief Container with paired input/output message names and IDs */
 typedef struct{
-    char ephInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] Input name for the ephemeris message
-    int32_t ephInMsgId;                      //!< [-] Input message ID for ephemeris
-    char ephOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name converted output message
-    int32_t ephOutMsgId;                     //!< [-] Ephemeris output message ID
+    EphemerisMsg_C ephInMsg;  //!< [-] Input name for the ephemeris message
+    EphemerisMsg_C ephOutMsg; //!< [-] The name converted output message
 }EphemChangeConfig;
 
 /*! @brief Container holding ephemDifference module variables */
 typedef struct {
-    char ephBaseInMsgName[MAX_STAT_MSG_LENGTH]; //!< Name of the base ephemeris input message name
+    EphemerisMsg_C ephBaseInMsg; //!< base ephemeris input message name
     EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; //!< [-] The list of bodies to change out
+    
     uint32_t ephBdyCount; //!< [-] The number of ephemeris bodies we are changing
-    int32_t ephBaseInMsgId; //!< [-] The ID associated with the incoming clock correlation
+
     BSKLogger *bskLogger; //!< BSK Logging
 }EphemDifferenceData;
 

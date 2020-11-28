@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module ephem_difference
+%module ephemDifference
 %{
    #include "ephemDifference.h"
 %}
@@ -33,7 +33,11 @@
 
 STRUCTASLIST(EphemChangeConfig)
 %include "ephemDifference.h"
-%include "simFswInterfaceMessages/ephemerisIntMsg.h"
+struct EphemChangeConfig;
+
+%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

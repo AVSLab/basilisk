@@ -10,14 +10,14 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import ephem_difference
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms import ephemDifference
+from Basilisk.simulation import messaging2
 from Basilisk.utilities import astroFunctions
 
 
 @pytest.mark.parametrize("ephBdyCount", [3, 0])
 
-def test_ephem_difference(ephBdyCount):
+def test_ephemDifference(ephBdyCount):
     """ Test ephemDifference. """
     [testResults, testMessage] = ephemDifferenceTestFunction(ephBdyCount)
     assert testResults < 1, testMessage
@@ -33,19 +33,12 @@ def ephemDifferenceTestFunction(ephBdyCount):
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # This is needed if multiple unit test scripts are run
-    # This create a fresh and consistent simulation environment for each test run
-
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
 
-    # Construct the rwNullSpace module
-    # Set the names for the input messages
-    ephemDiffConfig = ephem_difference.EphemDifferenceData()  # Create a config struct
-    ephemDiffConfig.ephBaseInMsgName = "input_eph_base_name"
-
+    ephemDiffConfig = ephemDifference.EphemDifferenceData()  # Create a config struct
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     ephemDiffWrap = unitTestSim.setModelDataWrap(ephemDiffConfig)
@@ -55,51 +48,45 @@ def ephemDifferenceTestFunction(ephBdyCount):
     unitTestSim.AddModelToTask(unitTaskName, ephemDiffWrap, ephemDiffConfig)
 
     # Create the input message.
-    inputEphemBase = simFswInterfaceMessages.EphemerisIntMsg() # The clock correlation message ?
+    inputEphemBase = messaging2.EphemerisMsgPayload() # The clock correlation message ?
     # Get the Earth's position and velocity
     position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
     inputEphemBase.r_BdyZero_N = position
     inputEphemBase.v_BdyZero_N = velocity
     inputEphemBase.timeTag = 1234.0
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, ephemDiffConfig.ephBaseInMsgName, inputEphemBase)
-
+    ephBaseInMsg = messaging2.EphemerisMsg().write(inputEphemBase)
+    ephemDiffConfig.ephBaseInMsg.subscribeTo(ephBaseInMsg)
     functions = [astroFunctions.Mars_RV, astroFunctions.Jupiter_RV, astroFunctions.Saturn_RV]
 
     changeBodyList = list()
-
+    ephInMsgList = list()
     if ephBdyCount == 3:
         for i in range(ephBdyCount):
             # Create the change body message
-            changeBodyMsg = ephem_difference.EphemChangeConfig()
-            changeBodyMsg.ephInMsgName = 'input_change_body_' + str(i)
-            changeBodyMsg.ephOutMsgName = 'output_change_body_' + str(i)
+            changeBodyMsg = ephemDifference.EphemChangeConfig()
 
             changeBodyList.append(changeBodyMsg)
 
             # Create the input message to the change body config
-            inputMsg = simFswInterfaceMessages.EphemerisIntMsg()
+            inputMsg = messaging2.EphemerisMsgPayload()
             position, velocity = functions[i](astroFunctions.JulianDate([2018, 10, 16]))
             inputMsg.r_BdyZero_N = position
             inputMsg.v_BdyZero_N = velocity
             inputMsg.timeTag = 321.0
 
             # Set this message
-            unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, changeBodyMsg.ephInMsgName, inputMsg)
-
-            # Log the output message
-            unitTestSim.TotalSim.logThisMessage(changeBodyMsg.ephOutMsgName, testProcessRate)
-
-
-        # add more ephemeris change objects, but have miss-configured I/O messages, or empty message
-        # to trigger the end of the message counting
-        changeBodyList.append(ephem_difference.EphemChangeConfig())
-        changeBodyList.append(ephem_difference.EphemChangeConfig())
-        changeBodyList[ephBdyCount+0].ephOutMsgName = "out1_name"  # should not count as the input name is missing
-        changeBodyList[ephBdyCount+1].ephOutMsgName = "out2_name"  # output message name should not be considered
+            ephInMsgList.append(messaging2.EphemerisMsg().write(inputMsg))
+            changeBodyMsg.ephInMsg.subscribeTo(ephInMsgList[-1])
 
     ephemDiffConfig.changeBodies = changeBodyList
 
-    # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputNavName, testProcessRate)
+    # the logging setup must occur on the actual ephemDiffConfig.changeBodies[i].ephOutMsg as we are providing
+    # pointers to the message payload.  Logging changeBodyList.ephOutMsg won't work as this message has a
+    # different location.
+    dataLogList = list()
+    for i in range(ephBdyCount):
+        dataLogList.append(ephemDiffConfig.changeBodies[i].ephOutMsg.log())
+        unitTestSim.AddModelToTask(unitTaskName, dataLogList[i])
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -125,9 +112,11 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
         for i in range(ephBdyCount):
 
-            outputData_R = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.r_BdyZero_N', list(range(3)))
-            outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', list(range(3)))
-            timeTag = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.timeTag')
+            outputData_R = dataLogList[i].r_BdyZero_N
+            outputData_V = dataLogList[i].v_BdyZero_N
+            timeTag = dataLogList[i].timeTag
+            # print(timeTag)
+            # print(outputData_R)
 
             # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
             testFailCount, testMessages = unitTestSupport.compareArrayND([trueRVector[i]], outputData_R,
@@ -138,7 +127,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
                                                                          velAcc,
                                                                          "ephemDifference velocity output body " + str(i),
                                                                          2, testFailCount, testMessages)
-            if timeTag[0, 1] != 321.0:
+            if timeTag[0] != 321.0:
                 testFailCount += 1
                 testMessages.append("ephemDifference timeTag output body " + str(i))
 
@@ -161,4 +150,4 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
 
 if __name__ == '__main__':
-    test_ephem_difference(3)
+    test_ephemDifference(3)
