@@ -31,11 +31,11 @@
 %ignore CrossInit_vehicleConfigData;
 %constant void Reset_vehicleConfigData(void*, uint64_t, uint64_t);
 %ignore Reset_vehicleConfigData;
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(VehConfigInputData);
 
 %include "vehicleConfigData.h"
-%include "../fswMessages/vehicleConfigFswMsg.h"
+
+%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
 
 %pythoncode %{
 import sys

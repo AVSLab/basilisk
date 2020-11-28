@@ -223,6 +223,8 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``outputThrName``             | ``thrCmdOutMsg``                  |
     +---------------------------+-------------------------------+-----------------------------------+
+    | vehicleConfigData         | ``outputPropsName``           | ``vecConfigOutMsg``               |
+    +---------------------------+-------------------------------+-----------------------------------+
     | velocityPoint             | ``inputControlName``          | ``attRefOutMsg``                  |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputCelMessName``          | ``celBodyInMsg``                  |

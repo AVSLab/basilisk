@@ -21,9 +21,10 @@
 #define _VEHICLE_CONFIG_DATA_H_
 
 #include <stdint.h>
-#include "messaging/static_messaging.h"
 #include "utilities/macroDefinitions.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
+
+#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
+
 #include "simulation/utilities/bskLogging.h"
 
 
@@ -31,8 +32,8 @@
 typedef struct {
     double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
     double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
-    char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
-    int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
+    VehicleConfigMsg_C vecConfigOutMsg; /*!< [-] Name of the output properties message*/
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 }VehConfigInputData;
 

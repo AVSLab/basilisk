@@ -30,11 +30,7 @@
  */
 void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
-    /*! - Create the output message for the mass properties of the spacecraft*/
-    configData->outputPropsID = CreateNewMessage(
-        configData->outputPropsName, sizeof(VehicleConfigFswMsg),
-        "VehicleConfigFswMsg", moduleID);
-
+    VehicleConfigMsg_C_init(&configData->vecConfigOutMsg);
 }
 
 /*! This method performs the second stage of initialization for the vehicle config
@@ -50,11 +46,11 @@ void CrossInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleI
 
 void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
 {
-    VehicleConfigFswMsg localConfigData;
+    VehicleConfigMsgPayload localConfigData;
     /*! Begin function steps*/
 
     /*! - Zero the output message data */
-    memset(&localConfigData, 0x0, sizeof(VehicleConfigFswMsg));
+    localConfigData = VehicleConfigMsg_C_zeroMsgPayload();
 
     /*! - Convert over the center of mass location */
     v3Copy(configData->CoM_B, localConfigData.CoM_B);
@@ -63,8 +59,7 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
     m33Copy(RECAST3X3 configData->ISCPntB_B, RECAST3X3 localConfigData.ISCPntB_B);
 
     /*! - Write output properties to the messaging system*/
-    WriteMessage(configData->outputPropsID, callTime, sizeof(VehicleConfigFswMsg),
-                 &localConfigData, moduleID);
+    VehicleConfigMsg_C_write(&localConfigData, &configData->vecConfigOutMsg, moduleID, callTime);
 }
 
 /*! There are no runtime operations performed by the vehicle configuration
