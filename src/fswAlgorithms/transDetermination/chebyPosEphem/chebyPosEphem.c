@@ -33,8 +33,7 @@
  */
 void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
-    configData->posFitOutMsgID = CreateNewMessage(configData->posFitOutMsgName,
-        sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+    EphemerisMsg_C_init(&configData->posFitOutMsg);
 }
 
 /*! This method initializes the input time correlation factor structure
@@ -44,10 +43,6 @@ void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
  */
 void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
-
-    configData->clockCorrInMsgID = subscribeToMessage(
-        configData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
-
 }
 
 /*! This method takes the chebyshev coefficients loaded for the position
@@ -103,18 +98,14 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
 {
 
     double currentEphTime;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double currentScaledValue;
     ChebyEphemRecord *currRec;
     int i;
-    TDBVehicleClockCorrelationFswMsg localCorr;
-    
-    ReadMessage(configData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
-    
-    memset(&configData->outputState, 0x0, sizeof(EphemerisIntMsg));
-    
+    TDBVehicleClockCorrelationMsgPayload localCorr;
+
+    localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
+    configData->outputState = EphemerisMsg_C_zeroMsgPayload();
+
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
     
@@ -150,9 +141,8 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
         
     }
     
-    WriteMessage(configData->posFitOutMsgID, callTime,
-                 sizeof(EphemerisIntMsg), &configData->outputState, moduleID);
-
+    EphemerisMsg_C_write(&configData->outputState, &configData->posFitOutMsg, moduleID, callTime);
+    
     return;
 
 }

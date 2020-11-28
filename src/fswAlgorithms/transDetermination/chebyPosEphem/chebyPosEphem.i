@@ -16,26 +16,29 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module oe_state_ephem
+%module chebyPosEphem
 %{
-   #include "oeStateEphem.h"
+   #include "chebyPosEphem.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_oeStateEphem(void*, uint64_t, uint64_t);
-%ignore Update_oeStateEphem;
-%constant void SelfInit_oeStateEphem(void*, uint64_t);
-%ignore SelfInit_oeStateEphem;
-%constant void CrossInit_oeStateEphem(void*, uint64_t);
-%ignore CrossInit_oeStateEphem;
-%constant void Reset_oeStateEphem(void*, uint64_t, uint64_t);
-%ignore Reset_oeStateEphem;
-STRUCTASLIST(ChebyOERecord)
-GEN_SIZEOF(TDBVehicleClockCorrelationFswMsg)
-GEN_SIZEOF(EphemerisIntMsg)
-%include "oeStateEphem.h"
-%include "../../fswMessages/TDBVehicleClockCorrelationFswMsg.h"
-%include "simFswInterfaceMessages/ephemerisIntMsg.h"
+%constant void Update_chebyPosEphem(void*, uint64_t, uint64_t);
+%ignore Update_chebyPosEphem;
+%constant void SelfInit_chebyPosEphem(void*, uint64_t);
+%ignore SelfInit_chebyPosEphem;
+%constant void CrossInit_chebyPosEphem(void*, uint64_t);
+%ignore CrossInit_chebyPosEphem;
+%constant void Reset_chebyPosEphem(void*, uint64_t, uint64_t);
+%ignore Reset_chebyPosEphem;
+STRUCTASLIST(ChebyEphemRecord)
+
+%include "chebyPosEphem.h"
+
+%include "cMsgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
+struct TDBVehicleClockCorrelationMsg_C;
+%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

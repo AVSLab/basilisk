@@ -36,8 +36,7 @@
  */
 void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 {
-    configData->stateFitOutMsgId = CreateNewMessage(configData->stateFitOutMsgName,
-        sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+    EphemerisMsg_C_init(&configData->stateFitOutMsg);
 }
 
 /*! This method initializes the input time correlation factor structure
@@ -47,8 +46,6 @@ void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
  */
 void CrossInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 {
-    configData->clockCorrInMsgId = subscribeToMessage(
-        configData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
 }
 
 /*! This Reset method is empty
@@ -73,8 +70,6 @@ void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
  */
 void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double currentScaledValue;              /* [s] scaled time value to within [-1,1] */
     double currentEphTime;                  /* [s] current ephemeris time */
     double smallestTimeDifference;          /* [s] smallest difference to the time interval mid-point */
@@ -82,15 +77,14 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
     double anomalyAngle;                    /* [r] general anomaly angle variable */
     ChebyOERecord *currRec;                 /* []  pointer to the current Chebyshev record being used */
     int i;
-    TDBVehicleClockCorrelationFswMsg localCorr;
-    memset(&localCorr, 0x0 ,sizeof(TDBVehicleClockCorrelationFswMsg));
-    EphemerisIntMsg tmpOutputState;
-    memset(&tmpOutputState, 0x0, sizeof(EphemerisIntMsg));
+    TDBVehicleClockCorrelationMsgPayload localCorr;
+    EphemerisMsgPayload tmpOutputState;
     classicElements orbEl;
 
+    tmpOutputState = EphemerisMsg_C_zeroMsgPayload();
+
     /*! - read in the input message */
-    ReadMessage(configData->clockCorrInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
+    localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
 
     /*! - compute time for fitting interval */
     currentEphTime = callTime*NANO2SEC;
@@ -157,10 +151,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
             tmpOutputState.v_BdyZero_N);
 
     /*! - Write the output message */
-    WriteMessage(configData->stateFitOutMsgId, callTime,
-                 sizeof(EphemerisIntMsg), &tmpOutputState,
-                 moduleID);
+    EphemerisMsg_C_write(&tmpOutputState, &configData->stateFitOutMsg, moduleID, callTime);
 
     return;
-
 }

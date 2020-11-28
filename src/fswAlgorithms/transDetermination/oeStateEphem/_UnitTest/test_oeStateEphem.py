@@ -1,34 +1,34 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import os, inspect
 import numpy
 import math
 import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import oe_state_ephem
+from Basilisk.fswAlgorithms import oeStateEphem
 from Basilisk.simulation import sim_model
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import messaging2
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -147,13 +147,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, macros.sec2nano(logPeriod)))
 
-    oeStateModel = oe_state_ephem.OEStateEphemData()
+    oeStateModel = oeStateEphem.OEStateEphemData()
     oeStateModelWrap = sim.setModelDataWrap(oeStateModel)
     oeStateModelWrap.ModelTag = "oeStateModel"
     sim.AddModelToTask(unitTaskName, oeStateModelWrap, oeStateModel)
 
-    oeStateModel.stateFitOutMsgName = "veh_state_est"
-    oeStateModel.clockCorrInMsgName = "vehicle_clock_ephem_corr"
     oeStateModel.muCentral = centralBodyMu
 
     oeStateModel.ephArray[0].rPeriapCoeff = chebRpCoeff.tolist()
@@ -168,17 +166,17 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     if not (anomFlag == -1):
         oeStateModel.ephArray[0].anomalyFlag = anomFlag
 
-    clockCorrData = oe_state_ephem.TDBVehicleClockCorrelationFswMsg()
+    clockCorrData = messaging2.TDBVehicleClockCorrelationMsgPayload()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = oeStateModel.ephArray[0].ephemTimeMid - \
         oeStateModel.ephArray[0].ephemTimeRad
 
-    sim.TotalSim.CreateNewMessage(unitProcessName, oeStateModel.clockCorrInMsgName,
-                                  clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelationMessage")
-    sim.TotalSim.WriteMessageData(oeStateModel.clockCorrInMsgName,
-                                  clockCorrData.getStructSize(), 0, clockCorrData)
+    clockInMsg = messaging2.TDBVehicleClockCorrelationMsg().write(clockCorrData)
+    oeStateModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
-    sim.TotalSim.logThisMessage(oeStateModel.stateFitOutMsgName)
+    dataLog = oeStateModel.stateFitOutMsg.log()
+    sim.AddModelToTask(unitTaskName, dataLog)
+
 
     if not validChebyCurveTime :
         sim.InitializeSimulation()
@@ -191,32 +189,30 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         sim.ConfigureStopTime(int(curveDurationSeconds*1.0E9))
         sim.ExecuteSimulation()
 
-    posChebData = sim.pullMessageLogData(oeStateModel.stateFitOutMsgName + ".r_BdyZero_N",
-                                         list(range(3)))
-    velChebData = sim.pullMessageLogData(oeStateModel.stateFitOutMsgName + ".v_BdyZero_N",
-                                         list(range(3)))
+    posChebData = dataLog.r_BdyZero_N
+    velChebData = dataLog.v_BdyZero_N
 
     if not validChebyCurveTime:
         lastLogidx = (curveDurationSeconds + logPeriod) // logPeriod - 1
-        secondLastPos = posChebData[lastLogidx + 1, 1:] - tdrssPosList[lastLogidx, :]
-        lastPos = posChebData[lastLogidx, 1:] - tdrssPosList[lastLogidx, :]
+        secondLastPos = posChebData[lastLogidx + 1, 0:] - tdrssPosList[lastLogidx, :]
+        lastPos = posChebData[lastLogidx, 0:] - tdrssPosList[lastLogidx, :]
         if not numpy.array_equal(secondLastPos, lastPos):
             testFailCount += 1
             testMessages.append("FAILED: Expected Chebychev position to rail high or low " + str(secondLastPos) + " != " + str(lastPos) )
 
-        secondLastVel = velChebData[lastLogidx + 1, 1:] - tdrssVelList[lastLogidx, :]
-        lastVel = velChebData[lastLogidx, 1:] - tdrssVelList[lastLogidx, :]
+        secondLastVel = velChebData[lastLogidx + 1, 0:] - tdrssVelList[lastLogidx, :]
+        lastVel = velChebData[lastLogidx, 0:] - tdrssVelList[lastLogidx, :]
         if not numpy.array_equal(secondLastVel, lastVel):
             testFailCount += 1
             testMessages.append("FAILED: Expected Chebychev velocity to rail high or low " + str(secondLastVel) + " != " + str(lastVel) )
 
     else:
-        maxErrVec = [abs(max(posChebData[:, 1] - tdrssPosList[:, 0])),
-            abs(max(posChebData[:, 2] - tdrssPosList[:, 1])),
-            abs(max(posChebData[:,3] - tdrssPosList[:, 2]))]
-        maxVelErrVec = [abs(max(velChebData[:, 1] - tdrssVelList[:, 0])),
-                 abs(max(velChebData[:, 2] - tdrssVelList[:, 1])),
-                 abs(max(velChebData[:, 3] - tdrssVelList[:, 2]))]
+        maxErrVec = [abs(max(posChebData[:, 0] - tdrssPosList[:, 0])),
+            abs(max(posChebData[:, 1] - tdrssPosList[:, 1])),
+            abs(max(posChebData[:,2] - tdrssPosList[:, 2]))]
+        maxVelErrVec = [abs(max(velChebData[:, 0] - tdrssVelList[:, 0])),
+                 abs(max(velChebData[:, 1] - tdrssVelList[:, 1])),
+                 abs(max(velChebData[:, 2] - tdrssVelList[:, 2]))]
 
         if max(maxErrVec) >= orbitPosAccuracy:
             testFailCount += 1
@@ -231,12 +227,12 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         fig = plt.gcf()
         ax = fig.gca()
         ax.ticklabel_format(useOffset=False, style='plain')
-        for idx in range(1, 4):
-            plt.plot(posChebData[:, 0]*macros.NANO2HOUR, posChebData[:, idx]/1000,
+        for idx in range(0, 3):
+            plt.plot(dataLog.times()*macros.NANO2HOUR, posChebData[:, idx]/1000,
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
                      label='$r_{fit,' + str(idx) + '}$')
-            plt.plot(posChebData[:, 0]*macros.NANO2HOUR, tdrssPosList[:, idx-1]/1000,
+            plt.plot(dataLog.times()*macros.NANO2HOUR, tdrssPosList[:, idx]/1000,
                      color=unitTestSupport.getLineColor(idx, 3),
                      linestyle='dashed', linewidth=2,
                      label='$r_{true,' + str(idx) + '}$')
@@ -246,12 +242,12 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
         # plot the fitted and actual velocity coordinates
         plt.figure(2)
-        for idx in range(1, 4):
-            plt.plot(velChebData[:, 0]*macros.NANO2HOUR, velChebData[:, idx]/1000,
+        for idx in range(0, 3):
+            plt.plot(dataLog.times()*macros.NANO2HOUR, velChebData[:, idx]/1000,
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
                      label='$v_{fit,' + str(idx) + '}$')
-            plt.plot(velChebData[:, 0]*macros.NANO2HOUR, tdrssVelList[:, idx-1]/1000,
+            plt.plot(dataLog.times()*macros.NANO2HOUR, tdrssVelList[:, idx]/1000,
                      color=unitTestSupport.getLineColor(idx, 3),
                      linestyle='dashed', linewidth=2,
                      label='$v_{true,' + str(idx) + '}$')
@@ -262,14 +258,14 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         # plot the difference in position coordinates
         plt.figure(3)
         arrayLength = posChebData[:, 0].size
-        for idx in range(1,4):
-            plt.plot(posChebData[:, 0] * macros.NANO2HOUR, posChebData[:, idx]  - tdrssPosList[:, idx-1],
+        for idx in range(0,3):
+            plt.plot(dataLog.times() * macros.NANO2HOUR, posChebData[:, idx]  - tdrssPosList[:, idx],
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
                      label=r'$\Delta r_{' + str(idx) + '}$')
-        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitPosAccuracy*numpy.ones(arrayLength),
+        plt.plot(dataLog.times() * macros.NANO2HOUR, orbitPosAccuracy*numpy.ones(arrayLength),
                  color='r', linewidth=1)
-        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitPosAccuracy * numpy.ones(arrayLength),
+        plt.plot(dataLog.times() * macros.NANO2HOUR, -orbitPosAccuracy * numpy.ones(arrayLength),
                  color='r', linewidth=1)
         plt.legend(loc='lower right')
         plt.xlabel('Time [h]')
@@ -278,14 +274,14 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         # plot the difference in velocity coordinates
         plt.figure(4)
         arrayLength = velChebData[:, 0].size
-        for idx in range(1,4):
-            plt.plot(velChebData[:, 0] * macros.NANO2HOUR, velChebData[:, idx]  - tdrssVelList[:, idx-1],
+        for idx in range(0,3):
+            plt.plot(dataLog.times() * macros.NANO2HOUR, velChebData[:, idx]  - tdrssVelList[:, idx],
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
                      label=r'$\Delta v_{' + str(idx) + '}$')
-        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitVelAccuracy*numpy.ones(arrayLength),
+        plt.plot(dataLog.times() * macros.NANO2HOUR, orbitVelAccuracy*numpy.ones(arrayLength),
                  color='r', linewidth=1)
-        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitVelAccuracy * numpy.ones(arrayLength),
+        plt.plot(dataLog.times() * macros.NANO2HOUR, -orbitVelAccuracy * numpy.ones(arrayLength),
                  color='r', linewidth=1)
         plt.legend(loc='lower right')
         plt.xlabel('Time [h]')

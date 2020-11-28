@@ -74,6 +74,9 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | cheby_pos_ephem  →        |                               |                                   |
+    | ``chebyPosEphem``         |                               |                                   |
+    +---------------------------+-------------------------------+-----------------------------------+
     | cssComm                   | ``SensorListName``            | ``sensorListInMsg``               |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``OutputDataName``            | ``cssArrayOutMsg``                |
@@ -135,6 +138,9 @@ This list makes it simple to see what naming will need to be changed.
     | lowPassFilterTorqueCommand| ``outputDataName``            | ``cmdTorqueOutMsg``               |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputDataName``             | ``cmdTorqueInMsg``                |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | oe_state_ephem  →         |                               |                                   |
+    | ``oeStateEphem``          |                               |                                   |
     +---------------------------+-------------------------------+-----------------------------------+
     | MRP_Feedback →            | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     + ``mrpFeedback``           +-------------------------------+-----------------------------------+

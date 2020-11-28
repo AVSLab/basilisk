@@ -20,10 +20,10 @@
 #ifndef _OE_STATE_EPHEM_H_
 #define _OE_STATE_EPHEM_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
+#include "../dist3/autoSource/cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
+#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include "simulation/utilities/bskLogging.h"
 
 #define MAX_OE_RECORDS 10
@@ -54,12 +54,11 @@ typedef struct {
            a given body is in space
 */
 typedef struct {
-    char stateFitOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for pos/vel
-    char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the clock correlation message
+    EphemerisMsg_C stateFitOutMsg; //!< [-] output navigation message for pos/vel
+    TDBVehicleClockCorrelationMsg_C clockCorrInMsg; //!< clock correlation input message
+
     double muCentral;                             //!< [m3/s^2] Gravitational parameter for center of orbital elements
     ChebyOERecord ephArray[MAX_OE_RECORDS];       //!< [-] Array of Chebyshev records for ephemeris
-    int32_t stateFitOutMsgId;                     //!< [-] The ID associated with the outgoing message
-    int32_t clockCorrInMsgId;                     //!< [-] The ID associated with the incoming clock correlation
     uint32_t coeffSelector;                       //!< [-] Index in the ephArray that we are currently using
     BSKLogger *bskLogger;                             //!< BSK Logging
 }OEStateEphemData;
