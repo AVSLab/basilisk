@@ -1,35 +1,34 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 
 import matplotlib.pyplot as plt
 import numpy
 import math
 import os
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.simulation import spice_interface
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import sim_model
 from Basilisk.utilities import unitTestSupport
-
+from Basilisk.simulation import messaging2
 
 def listNorm(inputList):
    normValue = 0.0
@@ -69,11 +68,11 @@ def unitSimpleNav(show_plots):
     unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
 
     #Now initialize the modules that we are using.  I got a little better as I went along
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
-    spiceMessage = spice_interface.SpicePlanetStateSimMsg()
-    stateMessage = simple_nav.SCPlusStatesSimMsg()
+    spiceMessage = messaging2.SpicePlanetStateMsgPayload()
+    stateMessage = messaging2.SCPlusStatesMsgPayload()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
@@ -82,26 +81,12 @@ def unitSimpleNav(show_plots):
     spiceMessage.PlanetName = "sun"
 
     # Inertial State output Message
-    inputMessageSize =  stateMessage.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          "inertial_state_output",
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData("inertial_state_output",
-                                          inputMessageSize,
-                                          0,
-                                          stateMessage)
+    scStateMsg = messaging2.SCPlusStatesMsg().write(stateMessage)
+    sNavObject.scStateInMsg.subscribeTo(scStateMsg)
 
     # Sun Planet Data Message
-    inputMessageSize =  spiceMessage.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          "sun_planet_data",
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData("sun_planet_data",
-                                          inputMessageSize,
-                                          0,
-                                          spiceMessage)
+    sunStateMsg = messaging2.SpicePlanetStateMsg().write(spiceMessage)
+    sNavObject.sunStateInMsg.subscribeTo(sunStateMsg)
 
     sNavObject.ModelTag = "SimpleNavigation"
     posBound = numpy.array([1000.0] * 3)
@@ -145,34 +130,24 @@ def unitSimpleNav(show_plots):
     sNavObject.crossTrans = True
     sNavObject.crossAtt = False
 
-    unitTestSim.TotalSim.logThisMessage("simple_att_nav_output", int(1E8))
-    unitTestSim.TotalSim.logThisMessage("simple_trans_nav_output", int(1E8))
+    # setup logging
+    dataAttLog = sNavObject.attOutMsg.log()
+    dataTransLog = sNavObject.transOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataAttLog)
+    unitTestSim.AddModelToTask(unitTaskName, dataTransLog)
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))
     unitTestSim.ExecuteSimulation()
 
-    # def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
-    #                         SimContainer, VarName, VarType, startIndex, stopIndex,
-    #                         messageType=sim_model.messageBuffer):
-    moduleName = 'Basilisk.simulation.simple_nav'
-    posNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", moduleName,
-                                                 'NavTransIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'r_BN_N',
-                                                 'double', 0, 2, sim_model.logBuffer)
-    velNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", moduleName,
-                                                 'NavTransIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'v_BN_N',
-                                                 'double', 0, 2, sim_model.logBuffer)
-    attNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", moduleName,
-                                                 'NavAttIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'sigma_BN',
-                                                 'double', 0, 2, sim_model.logBuffer)
-    rateNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", moduleName,
-                                                  'NavAttIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'omega_BN_B',
-                                                  'double', 0, 2, sim_model.logBuffer)
-    dvNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", moduleName,
-                                                'NavTransIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'vehAccumDV',
-                                                'double', 0, 2, sim_model.logBuffer)
-    sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", moduleName,
-                                                 'NavAttIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'vehSunPntBdy',
-                                                 'double', 0, 2, sim_model.logBuffer)
+
+    # pull simulation data
+    posNav = dataTransLog.r_BN_N
+    velNav = dataTransLog.v_BN_N
+    attNav = dataAttLog.sigma_BN
+    rateNav = dataAttLog.omega_BN_B
+    dvNav = dataTransLog.vehAccumDV
+    sunNav = dataAttLog.vehSunPntBdy
 
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)
     listNorm(sunHatPred)
@@ -187,12 +162,12 @@ def unitSimpleNav(show_plots):
     sunDiffCount = 0
     i=0
     while i< posNav.shape[0]:
-        posVecDiff = posNav[i,1:] - vehPosition
-        velVecDiff = velNav[i,1:]
-        attVecDiff = attNav[i,1:]
-        rateVecDiff = rateNav[i,1:]
-        dvVecDiff = dvNav[i,1:]
-        sunVecDiff = math.acos(numpy.dot(sunNav[i, 1:], sunHatPred))
+        posVecDiff = posNav[i,0:] - vehPosition
+        velVecDiff = velNav[i,0:]
+        attVecDiff = attNav[i,0:]
+        rateVecDiff = rateNav[i,0:]
+        dvVecDiff = dvNav[i,0:]
+        sunVecDiff = math.acos(numpy.dot(sunNav[i, 0:], sunHatPred))
         j=0
         while j<3:
             if(abs(posVecDiff[j]) > posBound[j]):
@@ -227,12 +202,12 @@ def unitSimpleNav(show_plots):
     sunDiffCount = 0
     i=0
     while i< posNav.shape[0]:
-        posVecDiff = posNav[i,1:] - vehPosition
-        velVecDiff = velNav[i,1:]
-        attVecDiff = attNav[i,1:]
-        rateVecDiff = rateNav[i,1:]
-        dvVecDiff = dvNav[i,1:]
-        sunVecDiff = math.acos(numpy.dot(sunNav[i, 1:], sunHatPred))
+        posVecDiff = posNav[i,0:] - vehPosition
+        velVecDiff = velNav[i,0:]
+        attVecDiff = attNav[i,0:]
+        rateVecDiff = rateNav[i,0:]
+        dvVecDiff = dvNav[i,0:]
+        sunVecDiff = math.acos(numpy.dot(sunNav[i, 0:], sunHatPred))
         j=0
         while j<3:
             if(abs(posVecDiff[j]) > posBound[j]*sigmaThreshold):
@@ -261,9 +236,9 @@ def unitSimpleNav(show_plots):
     plt.figure(1)
     plt.clf()
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(posNav[:,0] * 1.0E-9 , posNav[:,1], label='x-position')
-    plt.plot(posNav[:,0] * 1.0E-9, posNav[:,2], label='y-position')
-    plt.plot(posNav[:,0] * 1.0E-9, posNav[:,3], label='z-position')
+    plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,0], label='x-position')
+    plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,1], label='y-position')
+    plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,2], label='z-position')
 
     plt.legend(loc='upper left')
     plt.xlabel('Time (s)')
@@ -276,9 +251,9 @@ def unitSimpleNav(show_plots):
     plt.figure(2)
     plt.clf()
     plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 1], label='x-rotation')
-    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 2], label='y-rotation')
-    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 3], label='z-rotation')
+    plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 0], label='x-rotation')
+    plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 1], label='y-rotation')
+    plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 2], label='z-rotation')
 
     plt.legend(loc='upper left')
     plt.xlabel('Time (s)')
@@ -306,8 +281,8 @@ def unitSimpleNav(show_plots):
     sNavObject.walkBounds = stateBoundsBad
     sNavObject.PMatrix = pMatrixBad
 
-    sNavObject.inputStateName = "random_name"
-    sNavObject.inputSunName = "weirdly_not_the_sun"
+    # sNavObject.inputStateName = "random_name"
+    # sNavObject.inputSunName = "weirdly_not_the_sun"
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(int(1E8))
     unitTestSim.ExecuteSimulation()
@@ -324,4 +299,4 @@ def unitSimpleNav(show_plots):
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    unitSimpleNav(False)
+    unitSimpleNav(True)

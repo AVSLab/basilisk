@@ -48,19 +48,35 @@ SimpleNav::~SimpleNav()
     return;
 }
 
-/*! This is the self-init routine for the simple navigation model.  It
-    initializes the various containers used in the model as well as creates the
-    output message.  The error states are allocated as follows:
-    Total states: 18
-        - Position errors [0-2]
-        - Velocity errors [3-5]
-        - Attitude errors [6-8]
-        - Body Rate errors [9-11]
-        - Sun Point error [12-14]
-        - Accumulated DV errors [15-17]
+/*! This is the self-init routine for the simple navigation model.
     @return void
 */
 void SimpleNav::SelfInit()
+{
+}
+
+/*! This method pulls the input message IDs from the messaging system.  It will
+    alert the user if either of them are not found in the messaging database
+    @return void
+*/
+void SimpleNav::CrossInit()
+{
+    return;
+}
+
+/*! This method is used to reset the module. It
+ initializes the various containers used in the model as well as creates the
+ output message.  The error states are allocated as follows:
+ Total states: 18
+     - Position errors [0-2]
+     - Velocity errors [3-5]
+     - Attitude errors [6-8]
+     - Body Rate errors [9-11]
+     - Sun Point error [12-14]
+     - Accumulated DV errors [15-17]
+ @return void
+ */
+void SimpleNav::Reset(uint64_t CurrentSimNanos)
 {
     int64_t numStates = 18;
 
@@ -83,14 +99,6 @@ void SimpleNav::SelfInit()
     this->errorModel.setUpperBounds(this->walkBounds);
 }
 
-/*! This method pulls the input message IDs from the messaging system.  It will
-    alert the user if either of them are not found in the messaging database
-    @return void
-*/
-void SimpleNav::CrossInit()
-{
-    return;
-}
 
 /*! This method reads the input messages associated with the vehicle state and
  the sun state

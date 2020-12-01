@@ -30,15 +30,15 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "sys_model.h"
 %include "simpleNav.h"
+
 %include "cMsgPayloadDef/SCPlusStatesMsgPayload.h"
-%include "cMsgPayloadDef/NavAttMsgPayload.h"
-%include "cMsgPayloadDef/NavTransMsgPayload.h"
-GEN_SIZEOF(SCPlusStatesMsgPayload);
-GEN_SIZEOF(NavAttMsgPayload);
-GEN_SIZEOF(NavTransMsgPayload);
 struct SCPlusStatesMsg_C;
+%include "cMsgPayloadDef/NavAttMsgPayload.h"
 struct NavAttMsg_C;
+%include "cMsgPayloadDef/NavTransMsgPayload.h"
 struct NavTransMsg_C;
+%include "cMsgPayloadDef/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
 
 %pythoncode %{
 import sys

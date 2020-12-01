@@ -39,6 +39,7 @@ public:
 
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void computeTrueOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);
@@ -51,8 +52,8 @@ public:
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
-    SimMessage<NavAttMsgPayload> attOutMsg;        //!< output msg
-    SimMessage<NavTransMsgPayload> transOutMsg;    //!< output msg
+    SimMessage<NavAttMsgPayload> attOutMsg;        //!< attitude navigation output msg
+    SimMessage<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
     NavAttMsgPayload trueAttState;        //!< -- attitude nav state without errors
@@ -63,8 +64,8 @@ public:
     SpicePlanetStateMsgPayload sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;      //!< read input msg
-    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< read input msg
+    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;      //!< spacecraft state input msg
+    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< sun state input input msg
 
 private:
     Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state
