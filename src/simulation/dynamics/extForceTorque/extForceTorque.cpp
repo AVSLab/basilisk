@@ -46,7 +46,6 @@ ExtForceTorque::~ExtForceTorque()
  */
 void ExtForceTorque::SelfInit()
 {
-    return;
 }
 
 /*! This method is used to connect the input message.
@@ -56,7 +55,6 @@ void ExtForceTorque::SelfInit()
  */
 void ExtForceTorque::CrossInit()
 {
-    return;
 }
 
 /*! This method is used to reset the module. C
@@ -68,8 +66,6 @@ void ExtForceTorque::Reset(uint64_t CurrentSimNanos)
     this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg.zeroMsgPayload();
     this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg.zeroMsgPayload();
     this->incomingCmdForceInertialBuffer = this->cmdForceInertialInMsg.zeroMsgPayload();
-
-    return;
 }
 
 

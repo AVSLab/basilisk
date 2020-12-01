@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Integrated Unit Test Script
 #   Purpose:  Run the external ForceTorque dynEffector by specifying the forces and torques
@@ -26,27 +25,13 @@
 #
 
 import pytest
-import sys, os, inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
 
-
-
-
-
-
-
-
-from Basilisk.simulation import sim_model
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import extForceTorque
-
+from Basilisk.simulation import messaging2
 
 
 
@@ -89,7 +74,6 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
 
     scSim = SimulationBaseClass.SimBaseClass()
 
-
     #
     #  create the dynamics simulation process
     #
@@ -98,33 +82,32 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     # create the dynamics task and specify the integration update time
     dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
-
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
 
     if torqueInput==1 or torqueInput==3:
         extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
     if torqueInput==2 or torqueInput==3:
-        msgName = "extTorquePntB_B_cmds"
-        msgData = extForceTorque.CmdTorqueBodyIntMsg()
+        msgData = messaging2.CmdTorqueBodyMsgPayload()
         msgData.torqueRequestBody = [-1.0, 1.0, -1.0]
-        unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
+        cmdTorqueMsg = messaging2.CmdTorqueBodyMsg().write(msgData)
+        extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
 
     if forceNInput==1 or forceNInput==3:
         extFTObject.extForce_N = [[-10.], [-5.], [5.]]
     if forceNInput==2 or forceNInput==3:
-        msgName = "extForce_N_cmds"
-        msgData = extForceTorque.CmdForceInertialIntMsg()
+        msgData = messaging2.CmdForceInertialMsgPayload()
         msgData.forceRequestInertial = [-10.0, -5.0, 5.0]
-        unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
+        cmdForceInertialMsg = messaging2.CmdForceInertialMsg().write(msgData)
+        extFTObject.cmdForceInertialInMsg.subscribeTo(cmdForceInertialMsg)
 
     if forceBInput==1 or forceBInput==3:
         extFTObject.extForce_B = [[10.], [20.], [30.]]
     if forceBInput==2 or forceBInput==3:
-        msgName = "extForce_B_cmds"
-        msgData = extForceTorque.CmdForceBodyIntMsg()
+        msgData = messaging2.CmdForceBodyMsgPayload()
         msgData.forceRequestBody = [10.0, 20.0, 30.0]
-        unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
+        cmdForceBodyMsg = messaging2.CmdForceBodyMsg().write(msgData)
+        extFTObject.cmdForceBodyInMsg.subscribeTo(cmdForceBodyMsg)
 
     scSim.AddModelToTask(unitTaskName, extFTObject)
 
@@ -157,17 +140,16 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
 
 
     # log the data
-    dataForceN = scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableForceN)
-    dataForceB = scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableForceB)
-    dataTorque = scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableTorque)
+    dataForceN = (scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableForceN))[-1]
+    dataForceB = (scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableForceB))[-1]
+    dataTorque = (scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableTorque))[-1]
 
     np.set_printoptions(precision=16)
 
     # Remove time zero from list
-    dataForceN = dataForceN[1:len(dataForceN),:]
-    dataForceB = dataForceB[1:len(dataForceB),:]
-    dataTorque = dataTorque[1:len(dataTorque),:]
-
+    dataForceN = [dataForceN[1:len(dataForceN)]]
+    dataForceB = [dataForceB[1:len(dataForceB)]]
+    dataTorque = [dataTorque[1:len(dataTorque)]]
 
     #
     #   set true position information
@@ -211,7 +193,6 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
         trueForceN = [
             [0, 0, 0]
         ]
-
 
     # compare the module results to the truth values
     accuracy = 1e-12

@@ -23,9 +23,11 @@
 #include "architecture/messaging2/messaging2.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
+
 #include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "cMsgPayloadDef/CmdForceBodyMsgPayload.h"
 #include "cMsgPayloadDef/CmdForceInertialMsgPayload.h"
+
 #include "utilities/bskLogging.h"
 
 
@@ -57,9 +59,9 @@ public:
     Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;           //!< input msg
-    ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;         //!< input msg
-    ReadFunctor<CmdForceInertialMsgPayload>cmdForceInertialInMsg;  //!< input msg
+    ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;           //!< commanded torque input msg
+    ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;         //!< commanded force input msg in B frame
+    ReadFunctor<CmdForceInertialMsgPayload>cmdForceInertialInMsg;  //!< commanded force input msg in N frame
 
 };
 

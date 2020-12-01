@@ -31,15 +31,14 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
+
 %include "extForceTorque.h"
+
 %include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
-%include "cMsgPayloadDef/CmdForceBodyMsgPayload.h"
-%include "cMsgPayloadDef/CmdForceInertialMsgPayload.h"
-GEN_SIZEOF(CmdTorqueBodyMsgPayload);
-GEN_SIZEOF(CmdForceBodyMsgPayload);
-GEN_SIZEOF(CmdForceInertialMsgPayload);
 struct CmdTorqueBodyMsg_C;
+%include "cMsgPayloadDef/CmdForceBodyMsgPayload.h"
 struct CmdForceBodyMsg_C;
+%include "cMsgPayloadDef/CmdForceInertialMsgPayload.h"
 struct CmdForceInertialMsg_C;
 
 
