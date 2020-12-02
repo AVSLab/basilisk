@@ -25,6 +25,8 @@ Version |release|
   ``protoc`` command each time the protobuffer message definitions changed.
 - centerRadiusCNN is now supported on all the platforms
 - Support Terminal Progress bar while running a Basilisk simulation
+- Improved the build system to re-swig the module if the dependencies have changed.
+  This avoids having to do a clean build or manually deleting the swing python files from within dist3/Basilisk.
 
 Version 1.8.7
 -------------

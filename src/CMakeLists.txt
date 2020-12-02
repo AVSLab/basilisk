@@ -230,6 +230,8 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         string(REPLACE "/" ";" DirList "${TARGET_LIST}")
         list(GET DirList 1 SUBMODULE)
 
+        #It is redundant to compute simulation modules for each target.
+        #This should be fixed when modules' directories are restructured.
         file(GLOB GEN_FILES
             "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
             "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp"
@@ -281,7 +283,10 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         endif()
 
         # Add Target
-         set(SWIG_MODULE_${TARGET_NAME}_EXTRA_DEPS ${SWIG_DEP} ${GEN_FILES} ${GEN_FILES_LOCAL})
+        #To add dependency so that any change to source file will reswig the interface file
+        #https://stackoverflow.com/questions/31007635/is-there-a-way-for-cmake-to-utilize-dependencies-generated-by-swig-mm
+        #https://public.kitware.com/pipermail/cmake/2012-December/053045.html
+        set(SWIG_MODULE_${TARGET_NAME}_EXTRA_DEPS ${SWIG_DEP} ${GEN_FILES} ${GEN_FILES_LOCAL})
         swig_add_library(${TARGET_NAME}
                            LANGUAGE "python"
                            TYPE MODULE
