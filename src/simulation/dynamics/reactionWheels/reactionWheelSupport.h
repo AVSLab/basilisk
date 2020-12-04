@@ -17,20 +17,12 @@
 
  */
 
-#ifndef FSW_VSCMG_TORQUE_H
-#define FSW_VSCMG_TORQUE_H
 
-#include "utilities/macroDefinitions.h"
+#ifndef REACTIONWHEELSUPPORT_H
+#define REACTIONWHEELSUPPORT_H
 
-
-/*! @brief Structure used to define the output definition for vehicle effectors*/
-typedef struct {
-    double wheelTorque[MAX_EFF_CNT];	//!< [N-m] VSCMG wheel torque array
-	double gimbalTorque[MAX_EFF_CNT];	//!< [N-m] VSCMG gimbal torque array
-}VSCMGArrayTorqueMsgPayload;
+/*! @brief enumeration definiting the types of RW modes */
+enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
 
 
-
-
-
-#endif
+#endif /* STATE_EFFECTOR_H */

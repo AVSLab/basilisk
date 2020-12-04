@@ -21,10 +21,7 @@
 #define SIM_RW_CONFIG_MESSAGE_H
 
 #include <Eigen/Dense>
-
-
-/*! @brief enumeration definiting the types of RW modes */ 
-enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
+#include "dynamics/reactionWheels/reactionWheelSupport.h"
 
 
 /*! @brief Structure used to define the individual RW configuration data message*/

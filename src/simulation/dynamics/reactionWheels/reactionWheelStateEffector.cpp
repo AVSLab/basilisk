@@ -431,6 +431,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         }
         it->Omega = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
 
+        memset(&tmpRW, 0x0, sizeof(RWConfigLogSimMsg));
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
         tmpRW.frictionTorque = it->frictionTorque;

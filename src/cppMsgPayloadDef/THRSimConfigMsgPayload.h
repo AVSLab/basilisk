@@ -1,4 +1,4 @@
-/*
+ /*
  ISC License
 
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -22,8 +22,8 @@
 
 #include <vector>
 #include <Eigen/Dense>
-#include "thrOperationMsgPayload.h"
-#include "thrTimePairMsgPayload.h"
+#include "THROperationMsgPayload.h"
+#include "THRTimePairMsgPayload.h"
 
 
 //! @brief Container for overall thruster configuration data for single thruster
