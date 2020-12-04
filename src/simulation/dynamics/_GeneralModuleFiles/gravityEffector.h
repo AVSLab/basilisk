@@ -139,7 +139,7 @@ public:
     std::string inertialVelocityPropName;           //!< [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //!< [-] Name of the s/c this gravity model is attached to
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    SimMessage<SpicePlanetStateMsgPayload> centralBodyOutMsg;  //!< central planet body state output message
+    Message<SpicePlanetStateMsgPayload> centralBodyOutMsg;  //!< central planet body state output message
 
 private:
     Eigen::MatrixXd *gravProperty;                  //!< [-] g_N property for output

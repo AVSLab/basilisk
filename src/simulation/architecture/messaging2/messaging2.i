@@ -75,8 +75,8 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 
 %template(messageType ## Writer) WriteFunctor<messageTypePayload>;
 
-%template(messageType) SimMessage<messageTypePayload>;
-%extend SimMessage<messageTypePayload>{
+%template(messageType) Message<messageTypePayload>;
+%extend Message<messageTypePayload>{
     %pythoncode %{
         def write(self, payload, time=0):
             """write the message payload.  The second argument is time in nanoseconds.  It is optional and defaults to 0."""

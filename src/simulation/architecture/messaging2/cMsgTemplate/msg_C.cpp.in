@@ -84,7 +84,7 @@ int64_t {type}_C_moduleID({type}_C *data) {{
 
 //! method description
 void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
-    SimMessage<{type}Payload>* source_t = (SimMessage<{type}Payload>*) source;
+    Message<{type}Payload>* source_t = (Message<{type}Payload>*) source;
     Msg2Header *msgPtr;
     subscriber->payloadPointer = source_t->subscribeRaw(&(msgPtr));
     subscriber->headerPointer = msgPtr;

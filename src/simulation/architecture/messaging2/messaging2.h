@@ -26,7 +26,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
-class SimMessage;
+class Message;
 
 template<typename messageType>
 class Log;
@@ -115,7 +115,7 @@ public:
     };
 
     //! Subscribe to a C++ message
-    void subscribeTo(SimMessage<messageType> source){
+    void subscribeTo(Message<messageType> source){
         *this = source.addSubscriber();
         this->initialized = true;
     };
@@ -152,7 +152,7 @@ class Log;
  * base class template for bsk messages
  */
 template<typename messageType>
-class SimMessage{
+class Message{
 private:
     messageType payload = {};   //! struct defining message payload, zero'd on creation
     Msg2Header header = {};     //! struct defining the message header, zero'd on creation
@@ -174,25 +174,25 @@ public:
 };
 
 template<typename messageType>
-messageType SimMessage<messageType>::zeroMsgPayload(){
+messageType Message<messageType>::zeroMsgPayload(){
     messageType zeroMsg;
     memset(&zeroMsg, 0x0, sizeof(messageType));
     return zeroMsg;
 }
 
 template<typename messageType>
-ReadFunctor<messageType> SimMessage<messageType>::addSubscriber(){
+ReadFunctor<messageType> Message<messageType>::addSubscriber(){
     this->header.isLinked = 1;
     return this->read;
 }
 
 template<typename messageType>
-WriteFunctor<messageType> SimMessage<messageType>::addAuthor(){
+WriteFunctor<messageType> Message<messageType>::addAuthor(){
     return this->write;
 }
 
 template<typename messageType>
-messageType* SimMessage<messageType>::subscribeRaw(Msg2Header **msgPtr){
+messageType* Message<messageType>::subscribeRaw(Msg2Header **msgPtr){
     *msgPtr = &this->header;
     this->header.isLinked = 1;
     return &this->payload;
@@ -204,7 +204,7 @@ class Log : public SysModel{
 public:
     Log(){};
     //! -- Use this to log cpp messages
-    Log(SimMessage<messageType>* message){
+    Log(Message<messageType>* message){
         this->readMessage = message->addSubscriber();
     }
     //! -- Use this to log C messages

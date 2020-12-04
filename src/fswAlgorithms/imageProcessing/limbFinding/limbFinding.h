@@ -50,7 +50,7 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    SimMessage<LimbOpNavMsgPayload> opnavLimbOutMsg;  //!< The name of the Limb output message
+    Message<LimbOpNavMsgPayload> opnavLimbOutMsg;  //!< The name of the Limb output message
     ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the ImageFswMsg output message
     std::string saveDir;                //!< Directory to save images to
 

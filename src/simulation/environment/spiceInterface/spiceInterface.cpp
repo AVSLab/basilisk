@@ -200,7 +200,7 @@ void SpiceInterface::computeGPSData()
  */
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    std::vector<SimMessage<SpicePlanetStateMsgPayload>>::iterator planMsgit;
+    std::vector<Message<SpicePlanetStateMsgPayload>>::iterator planMsgit;
     SpiceTimeMsgPayload OutputData;
 
     //! - Set the members of the time output message structure and write
@@ -260,7 +260,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     this->planetData.clear();
 
     for (it = planetNames.begin(); it != planetNames.end(); it++) {
-        SimMessage<SpicePlanetStateMsgPayload> spiceOutMsg;
+        Message<SpicePlanetStateMsgPayload> spiceOutMsg;
         this->planetStateOutMsgs.push_back(spiceOutMsg);
 
         SpicePlanetStateMsgPayload newPlanet;

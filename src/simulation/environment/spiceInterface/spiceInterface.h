@@ -53,9 +53,9 @@ public:
     void addPlanetNames(std::vector<std::string> planetNames);
     
 public:
-    SimMessage<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
+    Message<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
     ReadFunctor<EpochMsgPayload> epochInMsg;            //!< (optional) input epoch message
-    std::vector<SimMessage<SpicePlanetStateMsgPayload>> planetStateOutMsgs; //!< vector of planet state output messages
+    std::vector<Message<SpicePlanetStateMsgPayload>> planetStateOutMsgs; //!< vector of planet state output messages
 
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use

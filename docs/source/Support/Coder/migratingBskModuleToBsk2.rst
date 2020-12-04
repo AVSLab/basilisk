@@ -222,7 +222,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         SimMessage<OutputMsgPayload>  moduleOutMsg;    //!< sensor output message
+         Message<OutputMsgPayload>  moduleOutMsg;    //!< sensor output message
 
       This creates an instance of the output message object that is contained within this module.
 

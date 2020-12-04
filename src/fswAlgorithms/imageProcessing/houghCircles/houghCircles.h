@@ -51,7 +51,7 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    SimMessage<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
+    Message<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
     ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the ImageFswMsg output message
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out

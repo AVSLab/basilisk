@@ -52,8 +52,8 @@ public:
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
-    SimMessage<NavAttMsgPayload> attOutMsg;        //!< attitude navigation output msg
-    SimMessage<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg
+    Message<NavAttMsgPayload> attOutMsg;        //!< attitude navigation output msg
+    Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
     NavAttMsgPayload trueAttState;        //!< -- attitude nav state without errors
