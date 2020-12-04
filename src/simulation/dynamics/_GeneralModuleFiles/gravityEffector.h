@@ -82,7 +82,7 @@ public:
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
     void registerProperties(DynParamManager& statesIn);  //!< class method
-    ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg;       //!< read functor
+    ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg;       //!< planet spice ephemerisis input message
 
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
@@ -94,12 +94,9 @@ public:
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
     SpicePlanetStateMsgPayload localPlanet;//!< [-]   Class storage of ephemeris info from scheduled portion
-    SingleMessageHeader localHeader;//!< [-]      Header information for ephemeris storage
-    std::string bodyInMsgName;      //!<          Gravitational body name
-    std::string outputMsgName;      //!<          Ephemeris information relative to display frame
-    std::string planetEphemName;    //!<          Ephemeris name for the planet
-    int64_t outputMsgID;            //!<          ID for output message data
-    int64_t bodyMsgID;              //!<          ID for ephemeris data message
+    uint64_t timeWritten;           //!< [ns]     time the input planet state message was written
+    std::string planetName;         //!<          Gravitational body name
+
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
     BSKLogger bskLogger;            //!< -- BSK Logging
     Eigen::MatrixXd *r_PN_N;        //!< [m]      (state engine property) planet inertial position vector
@@ -118,6 +115,7 @@ public:
     ~GravityEffector();
     void SelfInit(); //!< class method
     void CrossInit(); //!< class method
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn); //!< class method
     void registerProperties(DynParamManager& statesIn);
@@ -131,7 +129,6 @@ public:
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData); //!< class method
     void writeOutputMessages(uint64_t currentSimNanos); //!< class method
-    WriteFunctor<SpicePlanetStateMsgPayload> writeCentralBodyOutMsg;
 
 public:
     std::string vehicleGravityPropName;            //!< [-] Name of the vehicle mass state
@@ -142,15 +139,13 @@ public:
     std::string inertialVelocityPropName;           //!< [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //!< [-] Name of the s/c this gravity model is attached to
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    SimMessage<SpicePlanetStateMsgPayload> centralBodyOutMsg;  //!< output message
+    SimMessage<SpicePlanetStateMsgPayload> centralBodyOutMsg;  //!< central planet body state output message
 
 private:
     Eigen::MatrixXd *gravProperty;                  //!< [-] g_N property for output
     Eigen::MatrixXd *timeCorr;                      //!< [-] Time correlation property
-    int64_t centralBodyOutMsgId;                //!< [-] Id for the central body spice data output message
-    std::string centralBodyOutMsgName;              //!< [-] Unique name for the central body spice data output message
-    Eigen::MatrixXd *inertialPositionProperty;             //!< [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
-    Eigen::MatrixXd *inertialVelocityProperty;             //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *inertialPositionProperty;      //!< [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *inertialVelocityProperty;      //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
 
 };
 

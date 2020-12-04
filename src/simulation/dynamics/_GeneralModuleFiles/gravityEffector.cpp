@@ -293,6 +293,11 @@ void GravBodyData::initBody(int64_t moduleID)
     spherFound = this->spherHarm.initializeParameters();
     this->mu = spherFound ? this->spherHarm.muBody : this->mu;
     this->radEquator = spherFound ? this->spherHarm.radEquator : this->radEquator;
+
+    if (this->planetName == "") {
+        this->bskLogger.bskLog(BSK_ERROR, "You must specify a planetary body name in GravBodyData");
+    }
+
     return;
 }
 
@@ -300,16 +305,16 @@ void GravBodyData::registerProperties(DynParamManager& statesIn)
 {
     Eigen::Vector3d stateInit;
     stateInit.fill(0.0);
-    this->r_PN_N = statesIn.createProperty(this->bodyInMsgName + ".r_PN_N", stateInit);
-    this->v_PN_N = statesIn.createProperty(this->bodyInMsgName + ".v_PN_N", stateInit);
+    this->r_PN_N = statesIn.createProperty(this->planetName + ".r_PN_N", stateInit);
+    this->v_PN_N = statesIn.createProperty(this->planetName + ".v_PN_N", stateInit);
 
     Eigen::MatrixXd muInit(1,1);
     muInit.setZero();
-    this->muPlanet = statesIn.createProperty(this->bodyInMsgName + ".mu", muInit);
+    this->muPlanet = statesIn.createProperty(this->planetName + ".mu", muInit);
 
-    this->J20002Pfix = statesIn.createProperty(this->bodyInMsgName + ".J20002Pfix",
+    this->J20002Pfix = statesIn.createProperty(this->planetName + ".J20002Pfix",
                                                Eigen::Map<Eigen::Matrix3d> (&(this->localPlanet.J20002Pfix[0][0]), 3, 3));
-    this->J20002Pfix_dot = statesIn.createProperty(this->bodyInMsgName + ".J20002Pfix_dot",
+    this->J20002Pfix_dot = statesIn.createProperty(this->planetName + ".J20002Pfix_dot",
                                                    Eigen::Map<Eigen::Matrix3d> (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3));
 
     return;
@@ -329,7 +334,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     gravOut  = -r_I*this->mu/(rMag*rMag*rMag);
 
     /* compute orientation of the body */
-    double dt = ((int64_t) simTimeNanos - (int64_t) this->localHeader.WriteClockNanos)*NANO2SEC;
+    double dt = ((int64_t) simTimeNanos - (int64_t) this->timeWritten)*NANO2SEC;
     Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
         (&(this->localPlanet.J20002Pfix[0][0]), 3, 3);
     Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>
@@ -370,6 +375,7 @@ void GravBodyData::loadEphemeris(int64_t moduleID)
 {
     if(this->planetBodyInMsg.isLinked()){
         this->localPlanet = this->planetBodyInMsg();
+        this->timeWritten = this->planetBodyInMsg.timeWritten();
     } else {
         /* use default zero planet state information, including a zero orientation */
         m33SetIdentity(this->localPlanet.J20002Pfix);
@@ -382,10 +388,8 @@ GravityEffector::GravityEffector()
     this->centralBody = nullptr;
     this->systemTimeCorrPropName = "systemTime";
     this->vehicleGravityPropName = "g_N";
-    this->centralBodyOutMsgId = -1;
     this->inertialPositionPropName = "r_BN_N";
     this->inertialVelocityPropName = "v_BN_N";
-    this->writeCentralBodyOutMsg = this->centralBodyOutMsg.addAuthor();
     return;
 }
 
@@ -401,7 +405,14 @@ void GravityEffector::SelfInit()
 
 void GravityEffector::CrossInit()
 {
-    //! - For each gravity body in the data vector, find message ID
+}
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void GravityEffector::Reset(uint64_t CurrentSimNanos)
+{
+    //! - reset each gravity body object
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
@@ -434,8 +445,8 @@ void GravityEffector::UpdateState(uint64_t currentSimNanos)
 */
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
-    if (this->centralBodyOutMsgId > 0) {
-        this->writeCentralBodyOutMsg(&this->centralBody->localPlanet, this->centralBodyOutMsgId, currentSimNanos);
+    if (this->centralBodyOutMsg.isLinked()) {
+        this->centralBodyOutMsg.write(&this->centralBody->localPlanet, this->moduleID, currentSimNanos);
     }
     return;
 }
@@ -546,7 +557,7 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *bodyData)
 {
     uint64_t systemClock = this->timeCorr->data()[0];
-    double dt = (systemClock - bodyData->localHeader.WriteClockNanos)*NANO2SEC;
+    double dt = (systemClock - bodyData->timeWritten)*NANO2SEC;
     Eigen::Vector3d r_PN_N = Eigen::Map<Eigen::MatrixXd>
     (&(bodyData->localPlanet.PositionVector[0]), 3, 1);
     r_PN_N += Eigen::Map<Eigen::Vector3d>

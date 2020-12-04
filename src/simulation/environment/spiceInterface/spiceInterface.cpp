@@ -16,11 +16,10 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "environment/spice/spice_interface.h"
+#include "environment/spiceInterface/spiceInterface.h"
 #include <iostream>
 #include <sstream>
 #include "../libs/cspice/include/SpiceUsr.h"
-#include "architecture/messaging/system_messaging.h"
 #include <string.h>
 #include "utilities/simDefinitions.h"
 #include "utilities/macroDefinitions.h"
@@ -45,12 +44,10 @@ SpiceInterface::SpiceInterface()
     timeDataInit = false;
     JDGPSEpoch = 0.0;
     GPSEpochTime = "1980 January 6, 00:00:00.0";
-    outputTimePort = "spice_time_output_data";
-    outputBufferCount = 2;
+
     referenceBase = "j2000";
     zeroBase = "SSB";
 	timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
-    this->epochInMsgId = -1;
 
     //! - set default epoch time information
     char string[255];
@@ -83,7 +80,23 @@ void SpiceInterface::clearKeeper()
  @return void*/
 void SpiceInterface::SelfInit()
 {
+    return;
+}
 
+/*! Should subscribe to module input messages.  However, the epoch message is subscribed to in the SelfInit() routine due to how Spice is being loaded and setup.
+ @return void
+ */
+void SpiceInterface::CrossInit()
+{
+
+    return;
+}
+
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void SpiceInterface::Reset(uint64_t CurrenSimNanos)
+{
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
@@ -107,45 +120,21 @@ void SpiceInterface::SelfInit()
         }
         this->SPICELoaded = true;
     }
-
-    //! - Create the output time message for SPICE
-    this->timeOutMsgID = SystemMessaging::GetInstance()->
-    CreateNewMessage(this->outputTimePort, sizeof(SpiceTimeSimMsg),
-                     this->outputBufferCount, "SpiceTimeSimMsg", this->moduleID);
-
-    if (this->epochInMsgName.length() > 0) {
-        this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
-    }
-
+    printf("HPS: 0\n");
     //! Set the zero time values that will be used to compute the system time
     this->initTimeData();
+    printf("HPS: 1\n");
     this->J2000Current = this->J2000ETInit;
     //! Compute planetary data so that it is present at time zero
-    this->planetData.clear();
-    this->computePlanetData();
+    printf("HPS: 2\n");
+//    this->planetData.clear();
+    printf("HPS: 3\n");
+//    this->computePlanetData();
     this->timeDataInit = true;
-
-    this->Reset(0);
-
-    return;
-}
-
-/*! Should subscribe to module input messages.  However, the epoch message is subscribed to in the SelfInit() routine due to how Spice is being loaded and setup.
- @return void
- */
-void SpiceInterface::CrossInit()
-{
-
-    return;
-}
-
-/*! Reset the module to origina configuration values.
- @return void
- */
-void SpiceInterface::Reset(uint64_t CurrenSimNanos)
-{
+    printf("HPS: 4\n");
     // - Call Update state so that the spice bodies are inputted into the messaging system on reset
     this->UpdateState(CurrenSimNanos);
+    printf("HPS: 5\n");
 }
 
 
@@ -159,16 +148,12 @@ void SpiceInterface::initTimeData()
     double EpochDelteET;
     
     /* set epoch information.  If provided, then the epoch message information should be used.  */
-    if (this->epochInMsgId >= 0) {
+    if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
-        EpochSimMsg epochMsg;
-        SingleMessageHeader LocalHeader;
-        memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
-        if (!SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
-                                                    sizeof(EpochSimMsg),
-                                                         reinterpret_cast<uint8_t*> (&epochMsg), moduleID)) {
+        EpochMsgPayload epochMsg;
+        epochMsg = this->epochInMsg();
+        if (!this->epochInMsg.isWritten()) {
             bskLogger.bskLog(BSK_ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
-            this->epochInMsgId = -1;
         } else {
             // Set the epoch information from the input message
             char string[255];
@@ -215,8 +200,8 @@ void SpiceInterface::computeGPSData()
  */
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    std::map<uint32_t, SpicePlanetStateSimMsg>::iterator planit;
-    SpiceTimeSimMsg OutputData;
+    std::vector<SimMessage<SpicePlanetStateMsgPayload>>::iterator planMsgit;
+    SpiceTimeMsgPayload OutputData;
 
     //! - Set the members of the time output message structure and write
     OutputData.J2000Current = this->J2000Current;
@@ -224,14 +209,14 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
     OutputData.GPSSeconds = this->GPSSeconds;
     OutputData.GPSWeek = this->GPSWeek;
     OutputData.GPSRollovers = this->GPSRollovers;
-    SystemMessaging::GetInstance()->WriteMessage(this->timeOutMsgID, CurrentClock,
-                                                 sizeof(SpiceTimeSimMsg), reinterpret_cast<uint8_t*> (&OutputData), this->moduleID);
+    this->spiceTimeOutMsg.write(&OutputData, this->moduleID, CurrentClock);
     
     //! - Iterate through all of the planets that are on and write their outputs
-    for(planit = this->planetData.begin(); planit != this->planetData.end(); planit++)
+    int c = 0;
+    for(planMsgit = this->planetStateOutMsgs.begin(); planMsgit != this->planetStateOutMsgs.end(); planMsgit++)
     {
-        SystemMessaging::GetInstance()->WriteMessage(planit->first, CurrentClock,
-                                                     sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&planit->second), this->moduleID);
+        planMsgit->write(&this->planetData[c], this->moduleID, CurrentClock);
+        c++;
     }
 }
 
@@ -243,6 +228,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
  */
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
+    printf("HPS: update:00\n");
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
     
@@ -252,11 +238,49 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     std::string localString = reinterpret_cast<char*> (&this->spiceBuffer[3]);
     this->julianDateCurrent = std::stod(localString);
     //! Get GPS and Planet data and then write the message outputs
+    printf("HPS: update:0\n");
     this->computeGPSData();
+    printf("HPS: update:1\n");
     this->computePlanetData();
+    printf("HPS: update:2\n");
     this->writeOutputMessages(CurrentSimNanos);
+    printf("HPS: update:3\n");
 }
 
+/*! take a vector of planet name strings and create the vector of
+    planet state output messages and the vector of planet state message payloads */
+void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
+    std::vector<std::string>::iterator it;
+    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    SpiceBoolean frmFound;
+    SpiceInt frmCode;
+
+    /* clear the planet state message and payload vectors */
+    this->planetStateOutMsgs.clear();
+    this->planetData.clear();
+
+    for (it = planetNames.begin(); it != planetNames.end(); it++) {
+        SimMessage<SpicePlanetStateMsgPayload> spiceOutMsg;
+        this->planetStateOutMsgs.push_back(spiceOutMsg);
+
+        SpicePlanetStateMsgPayload newPlanet;
+        if(it->size() >= MAX_BODY_NAME_LENGTH)
+        {
+            bskLogger.bskLog(BSK_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
+            continue;
+        }
+        newPlanet = spiceOutMsg.zeroMsgPayload();
+        strcpy(newPlanet.PlanetName, it->c_str());
+
+        std::string planetFrame = *it;
+        cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
+        newPlanet.computeOrient = frmFound;
+        this->planetData.push_back(newPlanet);
+    }
+    delete [] name;
+
+    return;
+}
 
 /*! This method gets the state of each planet that has been added to the model
  and saves the information off into the planet array.
@@ -264,43 +288,7 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
  */
 void SpiceInterface::computePlanetData()
 {
-    std::vector<std::string>::iterator it;
-    std::map<uint32_t, SpicePlanetStateSimMsg>::iterator planit;
-
-    //! - Check to see if our planet vectors don't match (new planet requested)
-    if(this->planetData.size() != this->planetNames.size())
-    {
-        SpiceChar *name = new SpiceChar[this->charBufferSize];
-        SpiceBoolean frmFound;
-        SpiceInt frmCode;
-        //! - If we have a new planet, clear the old output vector and reset
-        this->planetData.clear();
-        //! - Loop over the planet names and create new data
-        for(it = this->planetNames.begin(); it != this->planetNames.end(); it++)
-        {
-            //! <pre>       Hard limit on the maximum name length </pre>
-            SpicePlanetStateSimMsg newPlanet;
-            if(it->size() >= MAX_BODY_NAME_LENGTH)
-            {
-                bskLogger.bskLog(BSK_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
-                continue;
-            }
-            //! <pre>       Set the new planet name and zero the other struct elements </pre>
-            std::string planetMsgName = *it + "_planet_data";
-            memset(&newPlanet, 0x0, sizeof(SpicePlanetStateSimMsg));
-            strcpy(newPlanet.PlanetName, it->c_str());
-            //! <pre>       Create the new planet's ID and insert the planet into the vector </pre>
-            uint32_t msgID = (uint32_t)SystemMessaging::GetInstance()->
-                CreateNewMessage(planetMsgName, sizeof(SpicePlanetStateSimMsg),
-                this->outputBufferCount, "SpicePlanetStateSimMsg", this->moduleID);
-            std::string planetFrame = *it;
-            cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
-            newPlanet.computeOrient = frmFound;
-            this->planetData.insert(std::pair<uint32_t, SpicePlanetStateSimMsg>
-                              (msgID, newPlanet));
-        }
-        delete [] name;
-    }
+    std::vector<SpicePlanetStateMsgPayload>::iterator planit;
     
     /*! - Loop over the PlanetData vector and compute values.
      
@@ -316,16 +304,16 @@ void SpiceInterface::computePlanetData()
         double localState[6];
         std::string planetFrame = "";
 
-        spkezr_c(planit->second.PlanetName, this->J2000Current, this->referenceBase.c_str(),
+        spkezr_c(planit->PlanetName, this->J2000Current, this->referenceBase.c_str(),
             "NONE", zeroBase.c_str(), localState, &lighttime);
-        memcpy(planit->second.PositionVector, &localState[0], 3*sizeof(double));
-        memcpy(planit->second.VelocityVector, &localState[3], 3*sizeof(double));
+        memcpy(planit->PositionVector, &localState[0], 3*sizeof(double));
+        memcpy(planit->VelocityVector, &localState[3], 3*sizeof(double));
         for(uint32_t i=0; i<3; i++)
         {
-            planit->second.PositionVector[i]*=1000.0;
-            planit->second.VelocityVector[i]*=1000.0;
+            planit->PositionVector[i]*=1000.0;
+            planit->VelocityVector[i]*=1000.0;
         }
-        planit->second.J2000Current = this->J2000Current;
+        planit->J2000Current = this->J2000Current;
         if (this->planetFrames.size() > 0) {
             if (this->planetFrames[c].size() > 0) {
                 /* use custom planet frame name */
@@ -334,9 +322,9 @@ void SpiceInterface::computePlanetData()
         } else {
             /* use default IAU planet frame name */
             planetFrame = "IAU_";
-            planetFrame += planit->second.PlanetName;
+            planetFrame += planit->PlanetName;
         }
-        if(planit->second.computeOrient)
+        if(planit->computeOrient)
         {
             //pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
             //    planit->second.J20002Pfix);
@@ -345,9 +333,9 @@ void SpiceInterface::computePlanetData()
             
             sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux); //returns attitude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF in Spice.
             
-            m66Get33Matrix(0, 0, aux, planit->second.J20002Pfix);
+            m66Get33Matrix(0, 0, aux, planit->J20002Pfix);
             
-            m66Get33Matrix(1, 0, aux, planit->second.J20002Pfix_dot);
+            m66Get33Matrix(1, 0, aux, planit->J20002Pfix_dot);
         }
         c++;
     }

@@ -1,24 +1,24 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import pytest
-import os, inspect
+import os
+import inspect
 
 #
 # Spice Unit Test
@@ -40,7 +40,8 @@ import datetime
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 import numpy
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spiceInterface
+from Basilisk.simulation import messaging2
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
 
@@ -53,7 +54,6 @@ class DataStore:
         self.EarthPosErr = []
         self.SunPosErr = []
 
-
     def plotData(self):
         fig1 = plt.figure(1)
         rect = fig1.patch
@@ -63,8 +63,6 @@ class DataStore:
         plt.plot(self.MarsPosErr, 'r', label='Mars')
         plt.plot(self.EarthPosErr, 'bs', label='Earth')
         plt.plot(self.SunPosErr, 'yo', label='Sun')
-#        plt.ylim(0,0.000005)
-#        plt.ylim(0,0.02)
 
         plt.rc('font', size=50)
         plt.legend(loc='upper left')
@@ -76,7 +74,7 @@ class DataStore:
     def giveData(self):
         plt.figure(1)
         plt.close(1)
-        fig1 = plt.figure(1,figsize=(7,5), dpi=80, facecolor='w', edgecolor='k')
+        fig1 = plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
 
         plt.xticks(numpy.arange(len(self.Date)), self.Date)
         plt.plot(self.MarsPosErr, 'r', label='Mars')
@@ -89,6 +87,7 @@ class DataStore:
         plt.ylabel('Position Error [m]')
 
         return plt
+
 
 # Py.test fixture in order to plot
 @pytest.fixture(scope="module")
@@ -169,12 +168,11 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
     # Initialize the spice modules that we are using.
-    SpiceObject = spice_interface.SpiceInterface()
+    SpiceObject = spiceInterface.SpiceInterface()
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.outputBufferCount = 10000
     planetNames = ["earth", "mars barycenter", "sun"]
-    SpiceObject.planetNames = spice_interface.StringVector(planetNames)
+    SpiceObject.addPlanetNames(spiceInterface.StringVector(planetNames))
     SpiceObject.UTCCalInit = DateSpice
 
     if useMsg:      # in this case check that the planet frame names can be set as well
@@ -182,17 +180,13 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
         for planet in planetNames:
             planetFrames.append("IAU_" + planet)
         planetFrames[1] = ""    # testing that default IAU values are used here
-        SpiceObject.planetFrames = spice_interface.StringVector(planetFrames)
+        SpiceObject.planetFrames = spiceInterface.StringVector(planetFrames)
 
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 
     if useMsg:
-        SpiceObject.epochInMsgName = "simEpoch"
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(DateSpice)
-        unitTestSupport.setMessage(TotalSim.TotalSim,
-                                  unitProcessName,
-                                  SpiceObject.epochInMsgName,
-                                  epochMsg)
+        SpiceObject.epochInMsg.subscribeTo(epochMsg)
 
         # The following value is set, but should not be used by the module.  This checks that the above
         # epoch message over-rules any info set in this variable.
@@ -200,31 +194,36 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
 
     # Configure simulation
     TotalSim.ConfigureStopTime(int(60.0 * 1E9))
+    print("HPS: before add variable for logging")
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.julianDateCurrent')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek')
 
     # Execute simulation
+    print("HPS: before initialize")
     TotalSim.InitializeSimulation()
+    print("HPS: after initialize")
     TotalSim.ExecuteSimulation()
-
+    print("HPS: done executing simulation")
     # Get the logged variables (GPS seconds, Julian Date)
     DataGPSSec = TotalSim.GetLogVariableData('SpiceInterfaceData.GPSSeconds')
     DataJD = TotalSim.GetLogVariableData('SpiceInterfaceData.julianDateCurrent')
 
-    #Get parametrized date from DatePlot
+    # Get parametrized date from DatePlot
     year = "".join(("20", DatePlot[6:8]))
     date = datetime.datetime( int(year), int(DatePlot[0:2]), int(DatePlot[3:5]))
 
+    print("HPS: before plot")
     testPlottingFixture.Date = DatePlot[0:8]
+    print("HPS: after plot")
 
-    #Get the GPS time
-    date2 = datetime.datetime(1980, 0o1, 6) #Start of GPS time
-    timeDiff = date-date2 #Time in days since GPS time
+    # Get the GPS time
+    date2 = datetime.datetime(1980, 0o1, 6)  # Start of GPS time
+    timeDiff = date-date2  # Time in days since GPS time
     GPSTimeSeconds = timeDiff.days*86400
 
-    #Get the Julian day
+    # Get the Julian day
     JulianStartDate = date.toordinal()+1721424.5
 
     #
@@ -239,13 +238,13 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
 
     # Compare the GPS seconds values
     AllowTolerance = 1E-6
-    while (i < DataGPSSec.shape[0]):
-        if date.isoweekday() == 7: # Skip test on Sundays, because it's the end of a GPS week (seconds go to zero)
+    while i < DataGPSSec.shape[0]:
+        if date.isoweekday() == 7:  # Skip test on Sundays, because it's the end of a GPS week (seconds go to zero)
             i += 1
         else:
             GPSRow = DataGPSSec[i, :]
             CurrDiff = GPSRow[1] - GPSRow[0] * 1.0E-9
-            if (abs(CurrDiff - InitDiff) > AllowTolerance):
+            if abs(CurrDiff - InitDiff) > AllowTolerance:
                 testFailCount += 1
                 testMessages.append("FAILED: Time delta check failed with difference of: %(DiffVal)f \n"% \
                                 {"DiffVal": CurrDiff - InitDiff})
@@ -253,10 +252,10 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
 
     # Truth values
     # For absolute GPS time check
-    if (date>datetime.datetime(2015,0o6,30)): # Taking into account the extra leap second added on 6/30/2015
-        GPSEndTime = GPSTimeSeconds + 17 + 60.0 - 68.184 # 17 GPS skip seconds passed that date
+    if date > datetime.datetime(2015, 0o6, 30):  # Taking into account the extra leap second added on 6/30/2015
+        GPSEndTime = GPSTimeSeconds + 17 + 60.0 - 68.184  # 17 GPS skip seconds passed that date
     else:
-        GPSEndTime = GPSTimeSeconds + 16 + 60.0 - 67.184 # 16 GPS skip seconds before
+        GPSEndTime = GPSTimeSeconds + 16 + 60.0 - 67.184  # 16 GPS skip seconds before
 
     GPSWeek = int(GPSEndTime / (86400 * 7))
     GPSSecondAssumed = GPSEndTime - GPSWeek * 86400 * 7
@@ -266,22 +265,23 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     AllowTolerance = 1E-4
     if useMsg:
         AllowTolerance = 2E-2
-    if (date.isoweekday() != 7 and GPSSecDiff > AllowTolerance): #Skip test days that are Sunday because of the end of a GPS week
+    # Skip test days that are Sunday because of the end of a GPS week
+    if date.isoweekday() != 7 and GPSSecDiff > AllowTolerance:
         testFailCount += 1
         testMessages.append("FAILED: Absolute GPS time check failed with difference of: %(DiffVal)f \n" % \
                             {"DiffVal": GPSSecDiff})
 
     # Truth values
     # For absolute Julian date time check
-    if (date>datetime.datetime(2015,0o6,30)): # Taking into account the extra leap second added on 6/30/2015
-        JDEndTime = JulianStartDate + 0.0006944440 - 68.184 / (86400)
+    if date>datetime.datetime(2015, 0o6, 30):  # Taking into account the extra leap second added on 6/30/2015
+        JDEndTime = JulianStartDate + 0.0006944440 - 68.184 / 86400
     else:
-        JDEndTime = JulianStartDate + 0.0006944440 - 67.184 / (86400)
+        JDEndTime = JulianStartDate + 0.0006944440 - 67.184 / 86400
 
-    #Simulated values
+    # Simulated values
     JDEndSim = DataJD[i - 1, 1]
     JDTimeErrorAllow = 0.1 / (24.0 * 3600.0)
-    if (abs(JDEndSim - JDEndTime) > JDTimeErrorAllow):
+    if abs(JDEndSim - JDEndTime) > JDTimeErrorAllow:
         testFailCount += 1
         testMessages.append("FAILED: Absolute Julian Date time check failed with difference of: %(DiffVal)f \n" % \
                             {"DiffVal": abs(JDEndSim - JDEndTime)})
@@ -292,7 +292,13 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     MarsPosEnd = MarsPosEnd * 1000.0
 
     # Get Simulated values
-    FinalMarsMessage = spice_interface.SpicePlanetStateSimMsg()
+    print("HPS:0")
+    FinalMarsMessage = messaging2.SpicePlanetStateMsgPayload()
+    FinalMarsMessage = SpiceObject.testOutMsg.read()     # Mars
+    print("HPS:00")
+    FinalMarsMessage = SpiceObject.planetStateOutMsg[1].read()     # Mars
+    print("HPS:1")
+    exit(0)
     TotalSim.TotalSim.GetWriteData("mars barycenter_planet_data", 120, FinalMarsMessage, 0)
     MarsPosVec = FinalMarsMessage.PositionVector
 
@@ -395,11 +401,11 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
 if __name__ == "__main__":
     test_unitSpice(
                    testPlottingFixture,
-                   False,  # show_plots
+                   True,  # show_plots
                    "2015 February 10, 00:00:00.00 TDB",
                    "02/10/15",
                    [2.049283795042291E+08, 4.654550957513031E+07, 1.580778617009296E+07],
                    [-1.137790671899544E+08, 8.569008401822130E+07, 3.712507705247846E+07],
                    [4.480338216752146E+05, -7.947764237588293E+04, -5.745748832696378E+04],
-                    True   # useMsg
+                   True   # useMsg
                    )

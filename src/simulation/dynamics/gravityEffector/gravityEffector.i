@@ -41,6 +41,10 @@ namespace std {
     %template(GravBodyVector) vector<GravBodyData *>;
 }
 
+%include "cMsgPayloadDef/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

@@ -57,7 +57,7 @@ void ExtForceTorque::CrossInit()
 {
 }
 
-/*! This method is used to reset the module. C
+/*! This method is used to reset the module. 
  @return void
  */
 void ExtForceTorque::Reset(uint64_t CurrentSimNanos)

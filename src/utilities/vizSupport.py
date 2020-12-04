@@ -30,7 +30,7 @@ import numpy as np
 from Basilisk.utilities import unitTestSupport
 from Basilisk import __path__
 bskPath = __path__[0]
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import messaging2
 
 # set the string type that works with Python 2 and 3
 try:
@@ -98,105 +98,6 @@ def setSprite(shape, **kwargs):
         answer += " " + " ".join(map(str, colorValues))
 
     return answer
-
-locationList = []
-def addLocation(viz, **kwargs):
-    if not vizFound:
-        print('vizFound is false. Skipping this method.')
-        return
-
-    vizElement = vizInterface.LocationPbMsg()
-
-    unitTestSupport.checkMethodKeyword(
-        ['stationName', 'parentBodyName', 'r_GP_P', 'gHat_P', 'fieldOfView', 'color', 'range'],
-        kwargs)
-
-    if 'stationName' in kwargs:
-        stationName = kwargs['stationName']
-        if not isinstance(stationName, basestring):
-            print('ERROR: stationName must be a string')
-            exit(1)
-        vizElement.stationName = stationName
-    else:
-        print("ERROR: stationName argument must be provided to addLocation")
-        exit(0)
-
-    if 'parentBodyName' in kwargs:
-        parentBodyName = kwargs['parentBodyName']
-        if not isinstance(parentBodyName, basestring):
-            print('ERROR: parentBodyName must be a string')
-            exit(1)
-        vizElement.parentBodyName = parentBodyName
-    else:
-        print("ERROR: parentBodyName argument must be provided to addLocation")
-        exit(1)
-
-    if 'r_GP_P' in kwargs:
-        r_GP_P = kwargs['r_GP_P']
-        if not isinstance(r_GP_P, list):
-            print('ERROR: r_GP_P must be a list of floats')
-            print(r_GP_P)
-            exit(1)
-        if len(r_GP_P) != 3:
-            print('ERROR: r_GP_P must be list of three floats')
-            exit(1)
-        try:
-            # check if vector is a list
-            vizElement.r_GP_P = r_GP_P
-        except:
-            try:
-                # convert Eigen array to list
-                vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
-            except:
-                pass
-    else:
-        print("ERROR: r_GP_P argument must be provided to addLocation")
-        exit(0)
-
-    if 'gHat_P' in kwargs:
-        gHat_P = kwargs['gHat_P']
-        if not isinstance(gHat_P, list):
-            print('ERROR: gHat_P must be a list of three floats')
-            exit(1)
-        if len(gHat_P) != 3:
-            print('ERROR: gHat_P must be list of three floats')
-            exit(1)
-        vizElement.gHat_P = gHat_P
-    else:
-        vizElement.gHat_P = r_GP_P / np.linalg.norm(r_GP_P)
-
-    if 'fieldOfView' in kwargs:
-        fieldOfView = kwargs['fieldOfView']
-        if not isinstance(fieldOfView, float):
-            print('ERROR: fieldOfView must be a float value in radians')
-            exit(1)
-        if fieldOfView > np.pi or fieldOfView < 0.0:
-            print('ERROR: fieldOfView must be a value between 0 and Pi')
-            exit(1)
-        vizElement.fieldOfView = fieldOfView
-
-    if 'color' in kwargs:
-        color = kwargs['color']
-        vizElement.color = toRGBA255(color)
-
-    if 'sprite' in kwargs:
-        spriteName = kwargs['sprite']
-        if not isinstance(spriteName, basestring):
-            print('ERROR: spriteName must be a string')
-            exit(1)
-
-        shapeList = ["CIRCLE", "SQUARE", "TRIANGLE", "STAR"]
-        if spriteName not in shapeList:
-            print("The sprite argument was provided this unknown sprite shape primitive: " + spriteName)
-            exit(1)
-        vizElement.sprite = spriteName
-
-    locationList.append(vizElement)
-    del viz.locations[:]  # clear settings list to replace it with updated list
-    viz.locations = vizInterface.LocationConfig(locationList)
-
-    return
-
 
 pointLineList = []
 def createPointLine(viz, **kwargs):
@@ -1052,8 +953,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         if (gravBodies):
             for key in gravBodies:
                 msgName = key + '_planet_data'
-                if (not scSim.TotalSim.IsMsgCreated(msgName)) and len(gravFactory.spicePlanetNames) == 0:
-                    ephemData = spice_interface.SpicePlanetStateSimMsg()
+                if (not scSim.TotalSim.IsMsgCreated(msgName)):
+                    ephemData = messaging2.SpicePlanetStateMsgPayload()
                     ephemData.J2000Current = 0.0
                     ephemData.PositionVector = [0.0, 0.0, 0.0]
                     ephemData.VelocityVector = [0.0, 0.0, 0.0]
@@ -1061,7 +962,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
                     ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
                     ephemData.PlanetName = key
                     # setting the msg structure name is required below to all the planet msg to be logged
-                    unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
-                                               ephemData, "SpicePlanetStateSimMsg")
+                    # unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
+                    #                            ephemData, "SpicePlanetStateSimMsg")
 
     return vizMessenger

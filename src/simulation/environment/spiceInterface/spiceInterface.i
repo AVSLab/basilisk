@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module spice_interface
+%module spiceInterface
 %{
-   #include "spice_interface.h"
+   #include "spiceInterface.h"
 %}
 
 %pythoncode %{
@@ -29,15 +29,16 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_vector.i"
 
 %include "sys_model.h"
-%include "simMessages/spicePlanetStateSimMsg.h"
-%include "simMessages/spiceTimeSimMsg.h"
-%include "spice_interface.h"
-%include "../../simMessages/epochSimMsg.h"
 
+%include "spiceInterface.h"
 
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(SpiceTimeSimMsg);
-GEN_SIZEOF(EpochSimMsg)
+%include "cMsgPayloadDef/EpochMsgPayload.h"
+struct EpochMsg_C;
+%include "cMsgPayloadDef/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "cMsgPayloadDef/SpiceTimeMsgPayload.h"
+struct SpiceTimeMsg_C;
+
 
 %pythoncode %{
 import sys

@@ -19,7 +19,7 @@
 '''
 
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spiceInterface
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
 
@@ -114,8 +114,9 @@ class gravBodyFactory(object):
 
     def createEarth(self):
         earth = gravityEffector.GravBodyData()
-        earth.bodyInMsgName = "earth_planet_data"
-        earth.outputMsgName = "earth_display_frame_data"
+        # earth.bodyInMsgName = "earth_planet_data"
+        # earth.outputMsgName = "earth_display_frame_data"
+        earth.planetName = "earth_planet_data"
         earth.mu = 0.3986004415E+15  # meters^3/s^2
         earth.radEquator = 6378136.6  # meters
         earth.isCentralBody = False

@@ -23,10 +23,7 @@ import numpy
 import math
 import os
 from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spice_interface
-from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import sim_model
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import messaging2
 

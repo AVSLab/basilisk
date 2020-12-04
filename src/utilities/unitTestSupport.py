@@ -26,7 +26,7 @@ import os,errno
 import numpy as np
 import matplotlib as mpl
 from datetime import datetime, timedelta
-from Basilisk.simulation import simMessages
+from Basilisk.simulation import messaging2
 from Basilisk.topLevelModules import pyswice
 
 mpl.rc("figure", facecolor="white")
@@ -471,9 +471,9 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
             print('ERROR: dataPath must be a string argument')
             exit(1)
     else:
-        dataPath = bskPath +'/supportData/EphemerisData/'  # default value
+        dataPath = bskPath + '/supportData/EphemerisData/'  # default value
 
-    # load spice kernal and convert the string into a UTC date/time string
+    # load spice kernel and convert the string into a UTC date/time string
     pyswice.furnsh_c(dataPath + 'naif0012.tls')
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(DateSpice, et)
@@ -485,15 +485,15 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     datetime_object = datetime.strptime(ep1, '%Y %b %d %H:%M:%S.%f')
 
     # populate the epochMsg with the gregorian UTC date/time information
-    epochMsg = simMessages.EpochSimMsg()
-    epochMsg.year = datetime_object.year
-    epochMsg.month = datetime_object.month
-    epochMsg.day = datetime_object.day
-    epochMsg.hours = datetime_object.hour
-    epochMsg.minutes = datetime_object.minute
-    epochMsg.seconds = datetime_object.second + datetime_object.microsecond / 1e6
+    epochMsgStructure = messaging2.EpochMsgPayload()
+    epochMsgStructure.year = datetime_object.year
+    epochMsgStructure.month = datetime_object.month
+    epochMsgStructure.day = datetime_object.day
+    epochMsgStructure.hours = datetime_object.hour
+    epochMsgStructure.minutes = datetime_object.minute
+    epochMsgStructure.seconds = datetime_object.second + datetime_object.microsecond / 1e6
 
-    return epochMsg
+    return messaging2.EpochMsg().write(epochMsgStructure)
 
 
 #

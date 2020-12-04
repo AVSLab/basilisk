@@ -24,12 +24,13 @@
 #include <map>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/linearAlgebra.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/spiceTimeSimMsg.h"
-#include "utilities/avsEigenSupport.h"
-#include "simMessages/epochSimMsg.h"
 #include "utilities/bskLogging.h"
+#include "utilities/avsEigenSupport.h"
 
+#include "cMsgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include "cMsgPayloadDef/SpiceTimeMsgPayload.h"
+#include "cMsgPayloadDef/EpochMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 /*! @brief spice interface class */
 class SpiceInterface: public SysModel {
@@ -49,8 +50,13 @@ public:
     void computePlanetData();
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();                         //!< class method
+    void addPlanetNames(std::vector<std::string> planetNames);
     
 public:
+    SimMessage<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
+    ReadFunctor<EpochMsgPayload> epochInMsg;            //!< (optional) input epoch message
+    std::vector<SimMessage<SpicePlanetStateMsgPayload>> planetStateOutMsgs; //!< vector of planet state output messages
+
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use
     std::string zeroBase;                //!< -- Base zero point to use for states
@@ -59,8 +65,7 @@ public:
     int charBufferSize;         //!< -- avert your eyes we're getting SPICE
     uint8_t *spiceBuffer;       //!< -- General buffer to pass down to spice
     std::string UTCCalInit;     //!< -- UTC time string for init time
-    std::string outputTimePort; //!< -- Output time sampling port name to use
-    uint64_t outputBufferCount; //!< -- Number of output buffers to use
+
     std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
     std::vector<std::string>planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
     
@@ -72,16 +77,14 @@ public:
     uint16_t GPSWeek;           //!< -- Current GPS week value
     uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
 
-    std::string epochInMsgName; //!< -- Message name of the epoch message (optional)
-    int64_t epochInMsgId;       //!< ID of the epoch message
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
-    int64_t timeOutMsgID;       //!< -- Output time message ID
-    std::map<uint32_t, SpicePlanetStateSimMsg> planetData; //!< -- Internal vector of planets
-    
+
+    std::vector<SpicePlanetStateMsgPayload> planetData;
+
 };
 
 
