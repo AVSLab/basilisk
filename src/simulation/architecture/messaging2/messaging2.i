@@ -69,7 +69,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
                 elif type(source) == messageType ## _C:
                     self.__subscribe_to_C(source)
                 else:
-                    raise Exception('tried to subscribe ReadFunctor<messageType> to another message type')
+                    raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type' + str(type(source)))
         %}
 };
 

@@ -275,7 +275,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         InputFswMsg moduleInMsgBuffer;
+         InputMsgPayload moduleInMsgBuffer;
          moduleInMsgBuffer = this->moduleInMsg();
 
       Take a moment to marvel at the simplicity of this message reading!

@@ -111,7 +111,9 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
-    | gravityEffector           | ``bodyInMsgName``             | ``planetBodyInMsg``               |
+    | GravBodyData              | ``bodyInMsgName``             | ``planetBodyInMsg``               |
+    +                           +-------------------------------+-----------------------------------+
+    |                           |                               | ``planetName``                    |
     +---------------------------+-------------------------------+-----------------------------------+
     | headingSuKF               | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
@@ -121,6 +123,8 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | horizonOpNav              | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
+    +---------------------------+-------------------------------+-----------------------------------+
     | imuComm                   | ``InputDataName``             | ``imuComInMsg``                   |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``InputPropsName``            | ``vehConfigInMsg``                |
@@ -128,8 +132,6 @@ This list makes it simple to see what naming will need to be changed.
     |                           | ``OutputDataName``            | ``imuSensorOutMsg``               |
     +---------------------------+-------------------------------+-----------------------------------+
     | inertial3D                | ``outputDataName``            | ``attRefOutMsg``                  |
-    +---------------------------+-------------------------------+-----------------------------------+
-    | horizonOpNav              | ``cameraConfigMsgName``       | ``cameraConfigInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
     | inertial3DSpin            | ``outputDataName``            | ``attRefOutMsg``                  |
     +                           +-------------------------------+-----------------------------------+
