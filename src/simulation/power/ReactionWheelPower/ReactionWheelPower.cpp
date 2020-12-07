@@ -18,8 +18,6 @@
  */
 
 #include "ReactionWheelPower.h"
-#include "../../simMessages/powerNodeUsageSimMsg.h"
-#include "architecture/messaging/system_messaging.h"
 #include <math.h>
 
 /*! Constructor
@@ -38,22 +36,6 @@ ReactionWheelPower::~ReactionWheelPower(){
     return;
 }
 
-/*! This method subscribes to the RW state message.
- @return void
- */
-void ReactionWheelPower::customCrossInit()
-{
-    //! - subscribe to the RW state message
-    if(this->rwStateInMsgName.length() > 0) {
-        this->rwStateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->rwStateInMsgName,
-                                                                                  sizeof(RWConfigLogSimMsg),
-                                                                                  moduleID);
-    } else {
-        bskLogger.bskLog(BSK_ERROR, "PowerRW failed to have rwStateInMsgName defined.");
-    }
-
-    return;
-}
 
 /*! This method is used to reset the module. Here variables are checked for correct values.
  @return void
@@ -72,20 +54,20 @@ void ReactionWheelPower::customReset(uint64_t CurrentSimNanos)
  */
 bool ReactionWheelPower::customReadMessages()
 {
-    RWConfigLogSimMsg statusMsg;
-    SingleMessageHeader localHeader;
+    RWConfigLogMsgPayload statusMsg;
 
     //! - read in the power node use/supply messages
     bool rwRead = true;
     bool tmpStatusRead = false;
-    if(this->rwStateInMsgId >= 0)
+    if(this->rwStateInMsg.isLinked() >= 0)
     {
         memset(&statusMsg, 0x0, sizeof(DeviceStatusIntMsg));
         tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->rwStateInMsgId, &localHeader,
                                                                     sizeof(RWConfigLogSimMsg),
                                                                     reinterpret_cast<uint8_t*>(&statusMsg),
                                                                     moduleID);
-
+        statusMsg = this->rwStateInMsg();
+        tmpStatusRead = this->rwStateInMsg.isWritten();
         this->rwStatus = statusMsg;
 
         rwRead = rwRead && tmpStatusRead;
@@ -101,7 +83,7 @@ bool ReactionWheelPower::customReadMessages()
 
 /*! Computes the RW power load. Determines the netPower attribute in powerUsageSimMessage.
 */
-void ReactionWheelPower::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
+void ReactionWheelPower::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageSimMsg){
     double rwPowerNeed;
     double wheelPower;
 

@@ -35,19 +35,16 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/powerNodeBase.h"
 %include "simpleSolarPanel.h"
 
-
-
-%include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/eclipseSimMsg.h"
-
-GEN_SIZEOF(PowerNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
-GEN_SIZEOF(EclipseSimMsg);
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
+%include "cMsgPayloadDef/PowerNodeUsageMsgPayload.h"
+struct PowerNodeUsageMsg_C;
+%include "cMsgPayloadDef/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
+%include "cMsgPayloadDef/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "cMsgPayloadDef/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "cMsgPayloadDef/EclipseMsgPayload.h"
+struct EclipseMsg_C;
 
 %pythoncode %{
 import sys

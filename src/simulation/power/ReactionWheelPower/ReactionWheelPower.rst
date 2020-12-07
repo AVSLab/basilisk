@@ -33,7 +33,7 @@ provides information on what this message is used for.
     +-----------------------+-----------------------------------+---------------------------------------------------+
     | Msg Variable Name     | Msg Type                          | Description                                       |
     +=======================+===================================+===================================================+
-    | rwStateInMsgName      | :ref:`RWConfigLogSimMsg`          | RW state input message to provide the reaction    |
+    | rwStateInMsg          | :ref:`RWConfigLogMsgPayload`      | RW state input message to provide the reaction    |
     |                       |                                   | wheel speed and motor torque information.         |
     +-----------------------+-----------------------------------+---------------------------------------------------+
 
@@ -129,14 +129,13 @@ connected to the first RW (thus the ``0`` label)::
     testModule = PowerRW.PowerRW()
     testModule.ModelTag = "bskSat"
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
-    testModule.rwStateInMsgName = testModule.ModelTag + "_rw_config_0_data"
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
 The user needs to specify a base power consumption :math:`p_{\text{base}}` through the variable ``basePowerNeed``.
 This should be a positive value to reflect the power required just to turn on the RW device, even without
 any motor torque commands being applied.
 
-You also need to specify the RW state message with the module variable ``rwStateInMsgName``.
+You also need to subscribe to the RW state message with the module variable ``rwStateInMsg``.
 
 This setup will evaluate the RW power using Eq. :eq:`eq:prw:2` where 100% efficiency is assumed in converting
 electrical to mechanical energy  with ``elecToMechEfficiency`` = :math:`\eta_{e2m}` = 1, and no electrical energy is recovered

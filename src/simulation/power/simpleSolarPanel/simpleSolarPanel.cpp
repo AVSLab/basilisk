@@ -6,8 +6,6 @@
 #include <cstring>
 #include <algorithm>
 #include "simpleSolarPanel.h"
-#include "../../simMessages/powerNodeUsageSimMsg.h"
-#include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
@@ -18,17 +16,10 @@
 SimpleSolarPanel::SimpleSolarPanel(){
 
     this->nodePowerOut = 0.0;
-    this->sunInMsgID = -1;
-    this->stateInMsgID = -1;
-    this->sunEclipseInMsgID = -1;
 
     this->panelArea = -1;
     this->panelEfficiency = -1;
     this->nHat_B.setZero();
-
-    this->sunInMsgName = "";
-    this->stateInMsgName = "";
-    this->sunEclipseInMsgName = "";
 
     this->shadowFactor = 1;
 
@@ -39,37 +30,6 @@ SimpleSolarPanel::SimpleSolarPanel(){
 SimpleSolarPanel::~SimpleSolarPanel(){
 
     return;
-}
-
-void SimpleSolarPanel::customCrossInit(){
-    //! - If we have a valid sun msg ID, subscribe to it
-    if(this->sunInMsgName.length() > 0)
-    {
-        this->sunInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->sunInMsgName,
-                                                           sizeof(SpicePlanetStateSimMsg),
-                                                           moduleID);
-    }
-    else{
-        bskLogger.bskLog(BSK_ERROR,"SimpleSolarPanel did not have sunInMsgName specified.");
-    }
-
-    //! - If we have a state in msg name, subscribe to it
-    if(this->stateInMsgName.length() > 0)
-    {
-        this->stateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName,
-                                                                              sizeof(SCPlusStatesSimMsg),
-                                                                              moduleID);
-    }
-    else{
-        bskLogger.bskLog(BSK_ERROR,"SimpleSolarPanel did not have stateInMsgName specified.");
-    }
-
-    //! - subscribe to optional sun eclipse message
-    if(this->sunEclipseInMsgName.length() > 0) {
-        this->sunEclipseInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
-                                                                              sizeof(EclipseSimMsg),
-                                                                              moduleID);
-    }
 }
 
 
@@ -96,34 +56,24 @@ void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
 
 bool SimpleSolarPanel::customReadMessages()
 {
-    SingleMessageHeader localHeader;
-
     //! - Zero ephemeris information
-    memset(&this->sunData, 0x0, sizeof(SpicePlanetStateSimMsg));
-    memset(&this->stateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
+    this->sunData = sunInMsg.zeroMsgPayload();
+    this->stateCurrent = stateInMsg.zeroMsgPayload();
+
     //! - If we have a valid sun ID, read Sun ephemeris message
-    if(this->sunInMsgID >= 0)
+    if(this->sunInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->sunInMsgID, &localHeader,
-                                                    sizeof(SpicePlanetStateSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&this->sunData),
-                                                    this->moduleID);
+        this->sunData = this->sunInMsg();
     }
     //! - If we have a valid state ID, read vehicle state ephemeris message
-    if(this->stateInMsgID >= 0)
+    if(this->stateInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgID, &localHeader,
-                                                    sizeof(SCPlusStatesSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&this->stateCurrent),
-                                                    this->moduleID);
+        this->stateCurrent = this->stateInMsg();
     }
     //! - Read in optional sun eclipse input message 
-    if(this->sunEclipseInMsgID >= 0) {
-        EclipseSimMsg sunVisibilityFactor;          // sun visiblity input message
-        SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgID, &localHeader,
-                                                    sizeof(EclipseSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&sunVisibilityFactor),
-                                                    this->moduleID);
+    if(this->sunEclipseInMsg.isLinked()) {
+        EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
+        sunVisibilityFactor = this->sunEclipseInMsg();
         this->shadowFactor = sunVisibilityFactor.shadowFactor;
     }
     return(true);
@@ -188,7 +138,7 @@ void SimpleSolarPanel::computeSunData()
 2. Compute how much of that power is captured and converted to power using the projectedArea and panelEfficiency attributes.
  @return void
  */
-void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg) {
+void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageSimMsg) {
 
     this->computeSunData();
     double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->shadowFactor;

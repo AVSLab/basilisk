@@ -27,8 +27,11 @@
 #include <vector>
 #include <string>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/powerNodeUsageSimMsg.h"
-#include "simFswInterfaceMessages/deviceStatusIntMsg.h"
+#include "architecture/messaging2/messaging2.h"
+
+#include "cMsgPayloadDef/PowerNodeUsageMsgPayload.h"
+#include "cMsgPayloadDef/DeviceStatusMsgPayload.h"
+
 #include "utilities/bskLogging.h"
 
 /*! @brief power node base class */
@@ -45,7 +48,7 @@ public:
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages(); 
-    virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
+    virtual void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
     virtual void customSelfInit();//!< Custom output input reading method.  This allows a child class to add additional functionality.
     virtual void customCrossInit(); //!< Custom subscription method, similar to customSelfInit.
     virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
@@ -53,23 +56,17 @@ protected:
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
 public:
-    std::string nodePowerOutMsgName; //!< Message name for the node's output message
-    std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
+    Message<PowerNodeUsageMsgPayload> nodePowerOutMsg; //!< output power message
+    ReadFunctor<DeviceStatusMsgPayload> nodeStatusInMsg; //!< note status input message
     double nodePowerOut; //!< [W] Power provided (+) or consumed (-).
     uint64_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 protected:
-    int64_t nodePowerOutMsgId;                  //!< class variable
-    int64_t nodeStatusInMsgId;                  //!< class variable
-    PowerNodeUsageSimMsg nodePowerMsg;          //!< class variable
-    DeviceStatusIntMsg nodeStatusMsg;           //!< class variable
+    PowerNodeUsageMsgPayload nodePowerMsg;          //!< buffer of output message
+    DeviceStatusMsgPayload nodeStatusMsg;           //!< copy of input message
     double currentPowerConsumption;             //!< class variable
     double previousTime; //!< Previous time used for integration
-
-private:
-    uint64_t outputBufferCount;
-
 
 };
 

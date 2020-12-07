@@ -34,11 +34,10 @@ from Basilisk.simulation.swig_common_model import *
 %include "simplePowerSink.h"
 %include "swig_conly_data.i"
 
-%include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-
-GEN_SIZEOF(PowerNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
+%include "cMsgPayloadDef/PowerNodeUsageMsgPayload.h"
+struct PowerNodeUsageMsg_C;
+%include "cMsgPayloadDef/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
 
 %pythoncode %{
 import sys

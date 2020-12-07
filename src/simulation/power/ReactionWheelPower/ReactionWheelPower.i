@@ -28,13 +28,12 @@
 %include "../_GeneralModuleFiles/powerNodeBase.h"
 %include "ReactionWheelPower.h"
 
-%include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-%include "../../simMessages/rwConfigLogSimMsg.h"
-
-GEN_SIZEOF(PowerNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
-GEN_SIZEOF(RWConfigLogSimMsg)
+%include "cMsgPayloadDef/PowerNodeUsageMsgPayload.h"
+struct PowerNodeUsageMsg_C;
+%include "cMsgPayloadDef/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
+%include "cMsgPayloadDef/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
 
 %pythoncode %{
 import sys

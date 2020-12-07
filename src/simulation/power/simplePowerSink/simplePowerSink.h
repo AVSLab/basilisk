@@ -33,7 +33,7 @@ public:
     ~SimplePowerSink();
 
 private:
-    void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg);
+    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
 
 };
 

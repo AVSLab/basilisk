@@ -2,10 +2,10 @@ Executive Summary
 -----------------
 This module provides first-order modeling of power generation from an attitude and orbitally coupled solar panel. Specifically, it:
 
-1.  Evaluates the impact of shadowing using an assigned :ref:`EclipseSimMsg`
+1.  Evaluates the impact of shadowing using an assigned :ref:`EclipseMsgPayload`
 2.  Computes power generation using a cosine law based on the panel area, efficiency, and attitude
 3.  Allows for the panel body-fixed orientation ``nHat_B``, the panel area, and the panel efficiency to be set via ``setPanelParameters()``.
-4.  Writes out a :ref:`PowerNodeUsageSimMsg` describing its power generation.
+4.  Writes out a :ref:`PowerNodeUsageMsgPayload` describing its power generation.
 
     Power generation is computed according to `SMAD <https://www.springer.com/gp/book/9780792309710>`__:
 
@@ -25,28 +25,31 @@ Message Connection Descriptions
 -------------------------------
 The following table lists additional module input messages beyond those specified in :ref:`PowerNodeBase`.
 
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - sunInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - Describes sun position
+    * - stateInMsg
+      - :ref:`SCPlusStatesMsgPayload`
+      - Describes spacecraft position, attitude.
+    * - sunEclipseInMsg
+      - :ref:`EclipseMsgPayload`
+      - (optional) Describes shadow factor due to planetary bodies.
 
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name     | Msg Type                        | Description                                       |
-        +=======================+=================================+===================================================+
-        | sunInMsgName          | :ref:`SpicePlanetStateSimMsg`   | Describes sun position.                           |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | stateInMsgName        | :ref:`SCPlusStatesSimMsg`       | Describes spacecraft position, attitude.          |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | sunEclipseInMsgName   | :ref:`EclipseSimMsg`            | Optional input message. Describes shadow factor   |
-        |                       |                                 | due to planetary bodies.                          |
-        +-----------------------+---------------------------------+---------------------------------------------------+
 
 
 User Guide
 ----------
 This module inherits the user guide from the PowerNodeBase base class.  Module specific instructions include:
 
-- must specify ``sunInMsgName`` and ``stateInMsgName`` input message names
-- the ``sunEclipseInMsgName`` message name is optional.  If provided the modules uses the eclipse shadow factor to adjust the power generation if needed.
+- must connect ``sunInMsg`` and ``stateInMsg`` input messages
+- the ``sunEclipseInMsg`` message is optional.  If provided the modules uses the eclipse shadow factor to adjust the power generation if needed.
 - must specify the variables ``panelArea``, ``panelEfficiency`` and ``nHat_B``.  These there parameters can also be set at the same time through ``setPanelParameters(nHat_B, panelArea, panelEfficiency)``
 
 For more information on how to set up and use this module, see the simple power system example: :ref:`scenarioPowerDemo`

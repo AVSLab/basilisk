@@ -36,7 +36,7 @@ SimplePowerSink::~SimplePowerSink(){
 
 /*! Loads the nodePowerOut attribute into the powerUsageSimMessage instance.
 */
-void SimplePowerSink::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
+void SimplePowerSink::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageSimMsg){
 
 
     powerUsageSimMsg->netPower = this->nodePowerOut;

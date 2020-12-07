@@ -17,7 +17,6 @@
 
  */
 
-#include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
@@ -29,14 +28,8 @@
  */
 PowerNodeBase::PowerNodeBase()
 {
-    this->outputBufferCount = 2;
-
-    this->nodePowerOutMsgName = "powerNodeOutputMessage";
-    this->nodeStatusInMsgName = ""; //By default, no node status message name is used.
-    this->nodePowerOutMsgId = -1;
-    this->nodeStatusInMsgId = -1;
     this->powerStatus = 1; //! Node defaults to on unless overwritten.
-    memset(&(this->nodePowerMsg), 0x0, sizeof(PowerNodeUsageSimMsg)); //! Power node message is zero by default.
+    this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload();  //! Power node message is zero by default.
     return;
 }
 
@@ -53,7 +46,6 @@ PowerNodeBase::~PowerNodeBase()
 */
 void PowerNodeBase::SelfInit()
 {
-    this->nodePowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->nodePowerOutMsgName, sizeof(PowerNodeUsageSimMsg),this->outputBufferCount, "PowerNodeUsageSimMsg",this->moduleID);
     //! - call the custom SelfInit() method to add addtional self initialization steps
     customSelfInit();
 
@@ -65,12 +57,6 @@ void PowerNodeBase::SelfInit()
  */
 void PowerNodeBase::CrossInit()
 {
-    //! - subscribe to the spacecraft messages and create associated output message buffer
-    if(this->nodeStatusInMsgName.length() > 0) {
-        this->nodeStatusInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
-                                                                                     sizeof(DeviceStatusIntMsg),
-                                                                                     moduleID);
-    }
     //!- call the custom CrossInit() method to all additional cross initialization steps
     customCrossInit();
 
@@ -94,12 +80,8 @@ void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
 void PowerNodeBase::writeMessages(uint64_t CurrentClock)
 {
     std::vector<int64_t>::iterator it;
-    //! - write magnetic field output messages for each spacecaft's locations
-    SystemMessaging::GetInstance()->WriteMessage(this->nodePowerOutMsgId,
-                                                 CurrentClock,
-                                                 sizeof(PowerNodeUsageSimMsg),
-                                                 reinterpret_cast<uint8_t*>(&(this->nodePowerMsg)),
-                                                         moduleID);
+    //! - write power output message
+    this->nodePowerOutMsg.write(&this->nodePowerMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -113,20 +95,15 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
  */
 bool PowerNodeBase::readMessages()
 {
-    DeviceStatusIntMsg statusMsg;
-    SingleMessageHeader localHeader;
+    DeviceStatusMsgPayload statusMsg;
 
     //! - read in the power node use/supply messages
     bool powerRead = true;
     bool tmpStatusRead = true;
-    if(this->nodeStatusInMsgId >= 0)
+    if(this->nodeStatusInMsg.isLinked())
     {
-        memset(&statusMsg, 0x0, sizeof(DeviceStatusIntMsg));
-        tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->nodeStatusInMsgId, &localHeader,
-                                                                       sizeof(DeviceStatusIntMsg),
-                                                                       reinterpret_cast<uint8_t*>(&statusMsg),
-                                                                       moduleID);
-
+        statusMsg = this->nodeStatusInMsg();
+        tmpStatusRead = this->nodeStatusInMsg.isWritten();
         this->nodeStatusMsg = statusMsg;
         this->powerStatus = this->nodeStatusMsg.deviceStatus;
         powerRead = powerRead && tmpStatusRead;
@@ -150,7 +127,7 @@ void PowerNodeBase::computePowerStatus(double currentTime)
     }
     else
     {
-        memset(&(this->nodePowerMsg), 0x0, sizeof(PowerNodeUsageSimMsg));
+        this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload();
     }
 
     return;
@@ -168,7 +145,7 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
         this->computePowerStatus(CurrentSimNanos*NANO2SEC);
     } else {
         /* if the read was not successful then zero the output message */
-        memset(&(this->nodePowerMsg), 0x0, sizeof(PowerNodeUsageSimMsg));
+        this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload();
     }
 
     this->writeMessages(CurrentSimNanos);
