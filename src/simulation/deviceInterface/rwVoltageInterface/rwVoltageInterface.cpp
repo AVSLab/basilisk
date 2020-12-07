@@ -17,7 +17,7 @@
 
  */
 #include "deviceInterface/rwVoltageInterface/rwVoltageInterface.h"
-#include "architecture/messaging/system_messaging.h"
+
 #include <iostream>
 #include <cstring>
 
@@ -25,11 +25,6 @@
     values and initializes the various parts of the model */
 RWVoltageInterface::RWVoltageInterface()
 {
-    this->rwVoltageInMsgName = "rw_voltage_input";
-    this->rwMotorTorqueOutMsgName = "reactionwheel_cmds";
-    this->outputBufferCount = 2;
-    this->rwVoltageInMsgID = -1;
-    this->rwMotorTorqueOutMsgID = -1;
     this->prevTime = 0;
     this->bias.resize(MAX_EFF_CNT);
     this->bias.fill(0.0);
@@ -46,57 +41,20 @@ RWVoltageInterface::~RWVoltageInterface()
     return;
 }
 
-/*! This is the self-init routine for the RW voltage interface module.  It
-    creates the desired RW motor torque output message.
-    @return void
-*/
-void RWVoltageInterface::SelfInit()
-{
-    this->rwMotorTorqueOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->rwMotorTorqueOutMsgName,
-                         sizeof(ArrayMotorTorqueIntMsg),
-                         outputBufferCount,
-                         "ArrayMotorTorqueIntMsg",
-                         moduleID);
-    return;
-}
-
-/*! This method pulls the input message IDs from the messaging system.  It will
-    alert the user if either of them are not found in the messaging database.
-    @return void
-*/
-void RWVoltageInterface::CrossInit()
-{
-    //! - Obtain the ID associated with the input state name and alert if not found.
-    this->rwVoltageInMsgID = SystemMessaging::GetInstance()->
-        subscribeToMessage(this->rwVoltageInMsgName,
-                           sizeof(RWArrayVoltageIntMsg),
-                           moduleID);
-    if(this->rwVoltageInMsgID < 0)
-    {
-        bskLogger.bskLog(BSK_WARNING, "RWVoltageInterface() did not find a valid message with name: %s ", this->rwVoltageInMsgName.c_str());
-    }
-    return;
-}
 
 /*! This method reads the RW voltage input messages
  */
 void RWVoltageInterface::readInputMessages()
 {
-    if(this->rwVoltageInMsgID < 0)
+    if(!this->rwVoltageInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_WARNING, "rwVoltageInMsgName message ID not set.");
+        bskLogger.bskLog(BSK_WARNING, "rwVoltageInMsg is not linked.");
         return;
     }
 
-    //! - Zero the input buffer and read the incoming array of voltages
-    SingleMessageHeader LocalHeader;
-    memset(&(this->inputVoltageBuffer), 0x0, sizeof(RWArrayVoltageIntMsg));
-    SystemMessaging::GetInstance()->ReadMessage(this->rwVoltageInMsgID, &LocalHeader,
-                                                sizeof(RWArrayVoltageIntMsg),
-                                                reinterpret_cast<uint8_t*> (&(this->inputVoltageBuffer)),
-                                                moduleID);
-
+    // read the incoming array of voltages
+    this->inputVoltageBuffer = this->rwVoltageInMsg();
+    
     return;
 }
 
@@ -105,9 +63,9 @@ void RWVoltageInterface::readInputMessages()
  */
 void RWVoltageInterface::computeRWMotorTorque()
 {
-    memset(&(this->rwTorque), 0x0, sizeof(ArrayMotorTorqueIntMsg));
+    this->outputRWTorqueBuffer = this->rwMotorTorqueOutMsg.zeroMsgPayload();
     for (uint64_t i=0; i < MAX_EFF_CNT; i++) {
-        this->rwTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
+        this->outputRWTorqueBuffer.motorTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
     }
     return;
 }
@@ -165,13 +123,8 @@ void RWVoltageInterface::setBiases(Eigen::VectorXd biases)
  */
 void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    for (int i=0; i<MAX_EFF_CNT; i++) {
-        this->outputRWTorqueBuffer.motorTorque[i] = this->rwTorque[i];
-    }
-    SystemMessaging::GetInstance()->WriteMessage(this->rwMotorTorqueOutMsgID, CurrentClock,
-                                                 sizeof(ArrayMotorTorqueIntMsg),
-                                                 reinterpret_cast<uint8_t*> (&this->outputRWTorqueBuffer),
-                                                 moduleID);
+    this->rwMotorTorqueOutMsg.write(&this->outputRWTorqueBuffer, this->moduleID, CurrentClock);
+
     return;
 }
 

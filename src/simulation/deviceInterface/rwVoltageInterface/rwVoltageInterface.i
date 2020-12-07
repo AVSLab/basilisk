@@ -30,11 +30,14 @@ from Basilisk.simulation.swig_common_model import *
 %include "swig_conly_data.i"
 %include "sys_model.h"
 %include "rwVoltageInterface.h"
-%include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
-%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+
+%include "cMsgPayloadDef/RWArrayVoltageMsgPayload.h"
+struct RWArrayVoltageMsg_C;
+%include "cMsgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
+
 %include "utilities/macroDefinitions.h"
 
-GEN_SIZEOF(RWArrayVoltageIntMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

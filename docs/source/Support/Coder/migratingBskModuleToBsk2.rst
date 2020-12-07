@@ -334,6 +334,7 @@ Updating a C++ Module
       .. code:: cpp
 
          %include "cMsgPayloadDef/OutputMsgPayload.h"
+         struct OutputMsg_C;
 
     - Any custom Swig'd interfaces to access message content, such as
 

@@ -22,8 +22,11 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
-#include "../../simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+#include "architecture/messaging2/messaging2.h"
+
+#include "cMsgPayloadDef/RWArrayVoltageMsgPayload.h"
+#include "cMsgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+
 #include "../../utilities/macroDefinitions.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
@@ -34,8 +37,6 @@ public:
     RWVoltageInterface();
     ~RWVoltageInterface();
    
-    void SelfInit();
-    void CrossInit();
     void computeRWMotorTorque();
     void UpdateState(uint64_t CurrentSimNanos);
     void readInputMessages();
@@ -45,21 +46,17 @@ public:
     void setBiases(Eigen::VectorXd biases); //!< --     Takes in an array of biases to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
     
 public:
-    uint64_t outputBufferCount;         //!< --     Number of output state buffers in msg
-    std::string rwVoltageInMsgName;     //!< --     Message that contains RW voltage input states
-    std::string rwMotorTorqueOutMsgName;//!< --     Output Message for RW motor torques
-    double rwTorque[MAX_EFF_CNT];       //!< Nm     RW motor torque array
+    ReadFunctor<RWArrayVoltageMsgPayload> rwVoltageInMsg;     //!< --     Message that contains RW voltage input states
+    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;//!< --     Output Message for RW motor torques
     Eigen::VectorXd voltage2TorqueGain;          //!< Nm/V   gain to convert voltage to motor torque
     Eigen::VectorXd scaleFactor;                 //!<        scale the output - like a constant gain error
     Eigen::VectorXd bias;                        //!< Nm     A bias to add to the torque output
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    int64_t rwVoltageInMsgID;           //!< -- Message ID associated with RW voltage input state
-    int64_t rwMotorTorqueOutMsgID;      //!< -- Message ID associated with RW motor torque output state
-    ArrayMotorTorqueIntMsg outputRWTorqueBuffer;//!< [Nm] copy of module output buffer
+    ArrayMotorTorqueMsgPayload outputRWTorqueBuffer;//!< [Nm] copy of module output buffer
     uint64_t prevTime;                  //!< -- Previous simulation time observed
-    RWArrayVoltageIntMsg inputVoltageBuffer;//!< [V] One-time allocation for time savings
+    RWArrayVoltageMsgPayload inputVoltageBuffer;//!< [V] One-time allocation for time savings
 };
 
 
