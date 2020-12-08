@@ -23,7 +23,7 @@
 
 #define MAX_ACC_BUF_PKT 120
 
-#include "../dist3/autoSource/cMsgCInterface/AccPktDataMsg_C.h"
+#include "AccPktDataMsgPayload.h"
 
 
 /*! @brief Structure used to define accelerometer package data */

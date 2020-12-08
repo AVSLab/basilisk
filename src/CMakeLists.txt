@@ -108,6 +108,11 @@ function(sub_dir_list result curdir)
   SET(${result} ${dirlist} PARENT_SCOPE)
 endfunction(sub_dir_list)
 
+# add header search directories
+include_directories("${CMAKE_SOURCE_DIR}/fswAlgorithms")
+include_directories("${CMAKE_SOURCE_DIR}/simulation")
+include_directories("${CMAKE_SOURCE_DIR}")
+
 
 function(generate_package_libraries INIT_DIRECTORY)
     # Find all _GeneralModuleFiles and put them into library targets so they aren't rewrapped, built with every module.
@@ -146,7 +151,6 @@ function(generate_package_libraries INIT_DIRECTORY)
         target_link_libraries(${LIB_NAME} SimUtilities)
         target_link_libraries(${LIB_NAME} SimMessaging)
         target_link_libraries(${LIB_NAME} cMsgCInterface)
-        target_link_libraries(${LIB_NAME} AlgorithmMessaging)
         target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
         target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
 
@@ -307,9 +311,6 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
         target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file (not located in src)
 
-        #TODO: V2 change recommended -- messages should be in there own messaging folder at same level as sim/fsw/framework.
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation") # Exposes simulation modules for easy includes
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/fswAlgorithms") # Exposes FSW modules for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles") # Exposes framework files for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../libs") # Exposes third party library include folders
 
@@ -318,9 +319,6 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
             target_link_libraries(${TARGET_NAME} ${LIB}) 
         endforeach()
 
-        # TODO: This is a better way to organize the dist olders, but it doesn't adhere to current python import structure
-        # Would make (from Basilisk.simulation import SpacecraftPlus) --> (from Basilisk.simulation.dynamics.SpacecraftDynamics import SpacecraftPlus)
-        # to do this, set the output directories to ${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR}) 
         
         set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
 
@@ -477,7 +475,6 @@ else()
 endif()
 
 set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimUtilities;SimMessaging")
-set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
@@ -486,7 +483,6 @@ add_subdirectory("simulation/utilities")
 add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("architecture/messaging")
 add_subdirectory("architecture/messaging2/cMsgCInterface")
-add_subdirectory("fswAlgorithms/messaging")
 
 
 # TODO: Currently the libraries generated works well except for the simulationLib which really is the architectureLib -- I'd like for these files to be moved.

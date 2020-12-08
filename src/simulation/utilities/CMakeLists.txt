@@ -18,7 +18,7 @@ FOLDER "${DIR_NAME_STRING}")
 if(NOT WIN32)
 	target_compile_options(SimUtilities PUBLIC "-fPIC")
 endif()
-target_include_directories(SimUtilities PUBLIC "${CMAKE_SOURCE_DIR}/simulation")
+
 set_target_properties(SimUtilities PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
 set_target_properties(SimUtilities PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
 set_target_properties(SimUtilities PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
