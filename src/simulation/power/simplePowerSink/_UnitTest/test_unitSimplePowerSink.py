@@ -25,8 +25,6 @@
 
 import pytest
 import os, inspect
-import numpy as np
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -37,12 +35,11 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
-from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import messaging2
 from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name
-def test_module():
+def allTest_module():
     """Module Unit Test"""
     # each test method requires a single assert method to be called
 
@@ -72,10 +69,11 @@ def test_default():
 
     testModule = simplePowerSink.SimplePowerSink()
     testModule.ModelTag = "powerSink"
-    testModule.nodePowerOut = 10. # Watts
+    testModule.nodePowerOut = 10.  # Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
-    unitTestSim.TotalSim.logThisMessage(testModule.nodePowerOutMsgName, testProcessRate)
+    dataLog = testModule.nodePowerOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
@@ -84,17 +82,21 @@ def test_default():
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    drawData = unitTestSim.pullMessageLogData(testModule.nodePowerOutMsgName + ".netPower")
+    drawData = dataLog.netPower
 
     # compare the module results to the truth values
     accuracy = 1e-16
 
-    truePower = 10.0 #Module should be off
+    truePower = 10.0  # Module should be off
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         [truePower]*3, drawData, accuracy, "powerSinkOutput",
         testFailCount, testMessages)
+
+    if testFailCount:
+        print("Failed test_default()")
+    else:
+        print("Passed")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -117,21 +119,18 @@ def test_status():
 
     testModule = simplePowerSink.SimplePowerSink()
     testModule.ModelTag = "powerSink"
-    testModule.nodeStatusInMsgName="PowerStatusMsg"
-    testModule.nodePowerOut = 10. # Watts
+    testModule.nodePowerOut = 10.  # Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # create the input messages
-    powerStatusMsg = simFswInterfaceMessages.DeviceStatusIntMsg()  # Create a structure for the input message
+    powerStatusMsg = messaging2.DeviceStatusMsgPayload()  # Create a structure for the input message
     powerStatusMsg.deviceStatus = 0
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               testModule.nodeStatusInMsgName,
-                               powerStatusMsg)
+    powerMsg = messaging2.DeviceStatusMsg().write(powerStatusMsg)
+    testModule.nodeStatusInMsg.subscribeTo(powerMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-
-    unitTestSim.TotalSim.logThisMessage(testModule.nodePowerOutMsgName, testProcessRate)
+    dataLog = testModule.nodePowerOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -146,18 +145,21 @@ def test_status():
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    drawData = unitTestSim.pullMessageLogData(testModule.nodePowerOutMsgName + ".netPower")
+    drawData = dataLog.netPower
 
     # compare the module results to the truth values
     accuracy = 1e-16
 
-    truePower = 0.0 #Module should be off
-
+    truePower = 0.0  # Module should be off
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         [truePower]*3, drawData, accuracy, "powerSinkStatusTest",
         testFailCount, testMessages)
+
+    if testFailCount:
+        print("Failed test_status()")
+    else:
+        print("Passed")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -169,4 +171,5 @@ def test_status():
 # stand-alone python script
 #
 if __name__ == "__main__":
-    test_module()
+    allTest_module()
+    # test_default()

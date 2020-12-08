@@ -59,13 +59,8 @@ bool ReactionWheelPower::customReadMessages()
     //! - read in the power node use/supply messages
     bool rwRead = true;
     bool tmpStatusRead = false;
-    if(this->rwStateInMsg.isLinked() >= 0)
+    if(this->rwStateInMsg.isLinked())
     {
-        memset(&statusMsg, 0x0, sizeof(DeviceStatusIntMsg));
-        tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->rwStateInMsgId, &localHeader,
-                                                                    sizeof(RWConfigLogSimMsg),
-                                                                    reinterpret_cast<uint8_t*>(&statusMsg),
-                                                                    moduleID);
         statusMsg = this->rwStateInMsg();
         tmpStatusRead = this->rwStateInMsg.isWritten();
         this->rwStatus = statusMsg;

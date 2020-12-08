@@ -295,7 +295,7 @@ def compareDoubleArray(trueStates, dataStates, accuracy, msg, testFailCount, tes
             # check a vector values
             if not isDoubleEqual(dataStates[i], trueStates[i], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
+                testMessages.append("FAILED: " + msg + "\n")
     return testFailCount, testMessages
 
 
