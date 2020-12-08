@@ -19,7 +19,7 @@
 #include "environment/planetEphemeris/planetEphemeris.h"
 #include <iostream>
 #include <sstream>
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include <string.h>
 #include "utilities/macroDefinitions.h"
 #include "utilities/astroConstants.h"

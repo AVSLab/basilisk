@@ -32,11 +32,11 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "spiceInterface.h"
 
-%include "../architecture/msgPayloadDefC/EpochMsgPayload.h"
+%include "msgPayloadDefC/EpochMsgPayload.h"
 struct EpochMsg_C;
-%include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "../architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
+%include "msgPayloadDefC/SpiceTimeMsgPayload.h"
 struct SpiceTimeMsg_C;
 
 

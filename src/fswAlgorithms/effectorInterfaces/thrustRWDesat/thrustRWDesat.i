@@ -32,15 +32,15 @@
 %ignore Reset_thrustRWDesat;
 
 
-%include "../architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "../architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
+%include "msgPayloadDefC/RWConstellationMsgPayload.h"
 struct RWConstellationMsg_C;
-%include "../architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
+%include "msgPayloadDefC/THRArrayConfigMsgPayload.h"
 struct THRArrayConfigMsg_C;
-%include "../architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+%include "msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "../architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
 
 %include "thrustRWDesat.h"

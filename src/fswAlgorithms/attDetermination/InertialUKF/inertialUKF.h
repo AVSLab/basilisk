@@ -38,7 +38,7 @@
 /*! @brief Star Tracker (ST) sensor container structure.  Contains the msg input name and Id and sensor noise value.
  */
 typedef struct {
-    STAttMsg_C stInMsg;
+    STAttMsg_C stInMsg;                       //!< star tracker input message 
     double noise[3*3];                        //!< [-] Per axis noise on the ST
 }STMessage;
 

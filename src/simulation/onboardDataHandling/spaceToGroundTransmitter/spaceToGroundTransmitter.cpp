@@ -18,7 +18,7 @@
  */
 
 #include "spaceToGroundTransmitter.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "utilities/bskLogging.h"
 #include <array>
 

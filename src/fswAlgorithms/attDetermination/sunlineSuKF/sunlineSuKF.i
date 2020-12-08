@@ -33,13 +33,13 @@
 %ignore Reset_sunlineSuKF;
 STRUCTASLIST(SunlineSuKFCFit)
 
-%include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "../architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+%include "msgPayloadDefC/CSSArraySensorMsgPayload.h"
 struct CSSArraySensorMsg_C;
-%include "../architecture/msgPayloadDefC/SunlineFilterMsgPayload.h"
+%include "msgPayloadDefC/SunlineFilterMsgPayload.h"
 struct SunlineFilterMsg_C;
-%include "../architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
+%include "msgPayloadDefC/CSSConfigMsgPayload.h"
 struct CSSConfigMsg_C;
 
 %include "sunlineSuKF.h"

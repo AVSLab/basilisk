@@ -32,13 +32,13 @@
 %ignore Update_horizonOpNav;
 STRUCTASLIST(HorizonOpNavData)
 
-%include "../architecture/msgPayloadDefC/LimbOpNavMsgPayload.h"
+%include "msgPayloadDefC/LimbOpNavMsgPayload.h"
 struct LimbOpNavMsg_C;
-%include "../architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+%include "msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
-%include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "../architecture/msgPayloadDefC/OpNavMsgPayload.h"
+%include "msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
 
 %include "horizonOpNav.h"

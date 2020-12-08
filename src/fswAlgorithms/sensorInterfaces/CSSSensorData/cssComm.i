@@ -33,7 +33,7 @@
 
 %include "cssComm.h"
 
-%include "../architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+%include "msgPayloadDefC/CSSArraySensorMsgPayload.h"
 struct CSSArraySensorMsg_C;
 
 %pythoncode %{

@@ -20,7 +20,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <memory>
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
-#include "../architecture/messaging2/msg2Header.h"
+#include "messaging2/msg2Header.h"
 #include "utilities/bskLogging.h"
 
 
@@ -158,6 +158,7 @@ private:
     Msg2Header header = {};     //! struct defining the message header, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);
 public:
+    //! write functor to this message
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
     //! -- request read rights. returns ref to this->read
     ReadFunctor<messageType> addSubscriber();
@@ -165,6 +166,7 @@ public:
     WriteFunctor<messageType> addAuthor();
     //! for plain ole c modules
     messageType* subscribeRaw(Msg2Header **msgPtr);
+    //! Log object
     Log<messageType> log(){return Log<messageType>(this);}
     //! - returned a zero'd copy of the messagy payload structure
     messageType zeroMsgPayload();

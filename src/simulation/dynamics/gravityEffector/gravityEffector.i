@@ -41,7 +41,7 @@ namespace std {
     %template(GravBodyVector) vector<GravBodyData *>;
 }
 
-%include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 
 

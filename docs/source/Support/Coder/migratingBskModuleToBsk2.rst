@@ -175,7 +175,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         %include "../architecture/msgPayloadDefC/ModuleMsgPayload.h"
+         %include "msgPayloadDefC/ModuleMsgPayload.h"
          struct ModuleMsg_C;
     - Any custom Swig'd interfaces to access message content, such as
 
@@ -198,11 +198,17 @@ Updating a C++ Module
 
 #. Updating the ``module.h`` file:
 
-    - Update the ``#include`` statement to read in the message definition through
+    - Update the ``#include`` statement to read in a C message definition through
 
       .. code:: cpp
 
-         #include "../architecture/msgPayloadDefC/OutputMsgPayload.h"
+         #include "msgPayloadDefC/OutputMsgPayload.h"
+
+      To include a C++ message definition use
+
+      .. code:: cpp
+
+         #include "msgPayloadDefCpp/OutputMsgPayload.h"
 
     - Replace the include statement for the old message system
 
@@ -214,7 +220,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "../architecture/messaging2/messaging2.h"
+         #include "messaging2/messaging2.h"
 
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated
@@ -333,8 +339,10 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         %include "../architecture/msgPayloadDefC/OutputMsgPayload.h"
+         %include "msgPayloadDefC/OutputMsgPayload.h"
          struct OutputMsg_C;
+
+      Replace ``msgPayloadDefC`` with ``msgPayloadDefCpp`` if including a C++ message.
 
     - Any custom Swig'd interfaces to access message content, such as
 

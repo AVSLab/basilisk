@@ -33,11 +33,11 @@
 
 %include "hillPoint.h"
 
-%include "../architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
-%include "../architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "../architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
 
 %pythoncode %{

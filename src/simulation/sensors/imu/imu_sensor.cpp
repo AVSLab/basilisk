@@ -17,7 +17,7 @@
 
  */
 #include "sensors/imu/imu_sensor.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include <math.h>

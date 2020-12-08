@@ -18,7 +18,7 @@
  */
 
 #include "_GeneralModuleFiles/sys_interface.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
 

@@ -17,7 +17,7 @@
 
  */
 #include "dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include <iostream>
 #include "utilities/avsEigenSupport.h"
 #include "utilities/macroDefinitions.h"

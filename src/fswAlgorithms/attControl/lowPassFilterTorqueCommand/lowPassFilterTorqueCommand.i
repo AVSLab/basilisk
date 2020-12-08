@@ -33,8 +33,8 @@
 
 %include "lowPassFilterTorqueCommand.h"
 
-// sample Module supportfile to be included in this sub-module
-%include "../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+// sample Module support file to be included in this sub-module
+%include "msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
 
 %pythoncode %{

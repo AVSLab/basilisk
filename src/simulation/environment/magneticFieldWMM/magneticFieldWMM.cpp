@@ -22,7 +22,7 @@
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "EGM9615.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 
 #define MAX_CHAR_LENGTH 100
 

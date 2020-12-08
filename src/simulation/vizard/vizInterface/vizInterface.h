@@ -26,7 +26,7 @@
 #include <zmq.h>
 
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "simFswInterfaceMessages/cameraImageMsg.h"

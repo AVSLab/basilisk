@@ -21,7 +21,7 @@
 
 #include "vizInterface.h"
 #include "utilities/macroDefinitions.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "sensors/sun_sensor/coarse_sun_sensor.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"

@@ -33,15 +33,15 @@
 
 %include "rwMotorVoltage.h"
 
-%include "../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
-%include "../architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
+%include "msgPayloadDefC/RWAvailabilityMsgPayload.h"
 struct RWAvailabilityMsg_C;
-%include "../architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
-%include "../architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "../architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
+%include "msgPayloadDefC/RWArrayVoltageMsgPayload.h"
 struct RWArrayVoltageMsg_C;
 
 %include "../../fswUtilities/fswDefinitions.h"

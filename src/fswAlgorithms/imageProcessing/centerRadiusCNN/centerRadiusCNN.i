@@ -30,9 +30,9 @@ from Basilisk.simulation.swig_common_model import *
 %include "sys_model.h"
 %include "centerRadiusCNN.h"
 
-%include "../architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+%include "msgPayloadDefC/CirclesOpNavMsgPayload.h"
 struct CirclesOpNavMsg_C;
-%include "../architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+%include "msgPayloadDefC/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
 
 %pythoncode %{

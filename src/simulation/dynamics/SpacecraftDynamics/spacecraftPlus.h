@@ -29,11 +29,11 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "../architecture/msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
 #include "hubEffector.h"
 #include "utilities/bskLogging.h"
-#include "../architecture/messaging2/messaging2.h"
+#include "messaging2/messaging2.h"
 
 
 

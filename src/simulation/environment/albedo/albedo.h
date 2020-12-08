@@ -28,7 +28,7 @@
 #include <inttypes.h>
 #include <vector>
 #include <string>
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "_GeneralModuleFiles/sys_model.h"
 // Utilities
 #include "utilities/astroConstants.h"

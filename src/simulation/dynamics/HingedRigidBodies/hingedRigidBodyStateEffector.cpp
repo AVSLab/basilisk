@@ -21,7 +21,7 @@
 #include "utilities/avsEigenSupport.h"
 #include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "../../utilities/rigidBodyKinematics.h"
 #include "../../utilities/avsEigenSupport.h"
 #include "utilities/macroDefinitions.h"

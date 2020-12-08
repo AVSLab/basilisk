@@ -34,9 +34,9 @@
 
 %include "mrpRotation.h"
 
-%include "../architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
-%include "../architecture/msgPayloadDefC/AttStateMsgPayload.h"
+%include "msgPayloadDefC/AttStateMsgPayload.h"
 struct AttStateMsg_C;
 
 %pythoncode %{

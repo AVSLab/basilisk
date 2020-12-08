@@ -156,10 +156,12 @@ manner.
 
 .. code:: cpp
 
-   descriptionInMsg sunEphmInMsg;
+   SomeMsg_C descriptionInMsg;                      // C interface to input msg
+   SomeMsg_C descriptionOutMsg;                     // C interface to output msg
+   ReadFunctor<SomeMsgPayload> descriptionInMsg;    // C++ interface to input message
+   Message<SomeMsgPayload> descriptionOutMsg;       // C++ interface to output message
 
--  ``descriptionInMsg``: message structure definition
--  ``sunEphm``: description of the message content.
+-  ``SomeMsgPayload``: message structure definition
 -  ``In`` (``Out``): indicates the direction of the message with respect to the module.
 -  ``Msg``: explicitly identifies the variable as a message.
 
@@ -167,9 +169,9 @@ Variables holding data from a read message are to be composed in the following m
 
 .. code:: cpp
 
-   RWCmdMsgPayload rwCommandInBuffer;
+   SomeMsgPayload descriptionInBuffer;
 
--  ``rwCommand``: description of the data.
+-  ``description``: description of the data.
 -  ``In`` (``Out``): indicates the direction of the data being written
    to the buffer with respect to the module.
 -  ``Buffer``: explicitly identifies the variable as having a data
@@ -179,7 +181,8 @@ Variables holding data from a read message are to be composed in the following m
 
 Message Definitions
 ~~~~~~~~~~~~~~~~~~~
-The C based messages are stored in ``src/cMsgPayloadDef`` as a ``*.h`` file.
+The C based messages are stored in ``src/architecture/msgPayloadDefC`` as a ``*.h`` file.
+The C++  messages are stored in ``src/architecture/msgPayloadDefCpp`` as a ``*.h`` file.
 The file name uses Upper Camel Case and should be identical to the message name within the file.
 The last  letters should be ``MsgPayload``.
 For example, a particular spacecraft sensor message could be named ``SpecialSensorMsgPayload.h``.  The contents

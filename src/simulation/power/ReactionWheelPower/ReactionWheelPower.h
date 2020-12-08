@@ -21,10 +21,10 @@
 #ifndef BASILISK_POWERRW_H
 #define BASILISK_POWERRW_H
 
-#include "../architecture/messaging2/messaging2.h"
+#include "messaging2/messaging2.h"
 #include "power/_GeneralModuleFiles/powerNodeBase.h"
 
-#include "../architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "msgPayloadDefC/RWConfigLogMsgPayload.h"
 
 #include "utilities/bskLogging.h"
 

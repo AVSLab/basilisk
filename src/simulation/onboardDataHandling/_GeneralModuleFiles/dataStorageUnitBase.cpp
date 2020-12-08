@@ -17,7 +17,7 @@
 
  */
 
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "dataStorageUnitBase.h"
 #include "utilities/macroDefinitions.h"
 

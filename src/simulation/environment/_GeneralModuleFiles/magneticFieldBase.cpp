@@ -18,7 +18,7 @@
  */
 
 #include "magneticFieldBase.h"
-#include "../architecture/messaging/system_messaging.h"
+#include "messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"

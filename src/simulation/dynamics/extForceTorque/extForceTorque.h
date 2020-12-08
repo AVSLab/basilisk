@@ -20,13 +20,13 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
-#include "../architecture/messaging2/messaging2.h"
+#include "messaging2/messaging2.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 
-#include "../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include "../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
-#include "../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+#include "msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "msgPayloadDefC/CmdForceBodyMsgPayload.h"
+#include "msgPayloadDefC/CmdForceInertialMsgPayload.h"
 
 #include "utilities/bskLogging.h"
 

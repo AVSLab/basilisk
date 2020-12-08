@@ -34,7 +34,7 @@
 %include "fswModuleTemplate.h"
 
 // sample Module support file to be included in this sub-module
-%include "../architecture/msgPayloadDefC/FswModuleTemplateMsgPayload.h"
+%include "msgPayloadDefC/FswModuleTemplateMsgPayload.h"
 struct FswModuleTemplateMsg_C;
 
 %pythoncode %{

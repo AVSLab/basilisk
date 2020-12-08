@@ -27,10 +27,10 @@
 #include "utilities/bskLogging.h"
 #include "utilities/avsEigenSupport.h"
 
-#include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "../architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
-#include "../architecture/msgPayloadDefC/EpochMsgPayload.h"
-#include "../architecture/messaging2/messaging2.h"
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/SpiceTimeMsgPayload.h"
+#include "msgPayloadDefC/EpochMsgPayload.h"
+#include "messaging2/messaging2.h"
 
 /*! @brief spice interface class */
 class SpiceInterface: public SysModel {
