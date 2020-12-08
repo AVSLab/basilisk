@@ -30,8 +30,8 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/dnn.hpp"
 
-#include "cMsgPayloadDef/CameraImageMsgPayload.h"
-#include "cMsgPayloadDef/CirclesOpNavMsgPayload.h"
+#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
 
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"

@@ -35,9 +35,9 @@ STRUCTASLIST(AggregateTransInput)
 
 %include "navAggregate.h"
 
-%include "cMsgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "cMsgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
 
 %pythoncode %{

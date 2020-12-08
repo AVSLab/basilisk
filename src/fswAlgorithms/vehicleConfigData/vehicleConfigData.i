@@ -34,7 +34,7 @@
 
 %include "vehicleConfigData.h"
 
-%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
 
 %pythoncode %{

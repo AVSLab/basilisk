@@ -31,11 +31,11 @@
 %constant void Reset_sunlineEphem(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineEphem;
 
-%include "cMsgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "cMsgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
 %include "sunlineEphem.h"

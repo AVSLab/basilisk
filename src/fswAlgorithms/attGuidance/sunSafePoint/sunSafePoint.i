@@ -32,9 +32,9 @@
 %constant void Reset_sunSafePoint(void*, uint64_t, uint64_t);
 %ignore Reset_sunSafePoint;
 
-%include "cMsgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
 
 %include "sunSafePoint.h"

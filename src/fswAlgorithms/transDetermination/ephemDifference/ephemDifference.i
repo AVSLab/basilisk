@@ -35,7 +35,7 @@ STRUCTASLIST(EphemChangeConfig)
 %include "ephemDifference.h"
 struct EphemChangeConfig;
 
-%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
 %pythoncode %{

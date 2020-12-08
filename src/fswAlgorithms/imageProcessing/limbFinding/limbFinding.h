@@ -28,8 +28,8 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "cMsgPayloadDef/CameraImageMsgPayload.h"
-#include "cMsgPayloadDef/LimbOpNavMsgPayload.h"
+#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDefC/LimbOpNavMsgPayload.h"
 
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"

@@ -33,11 +33,11 @@
 
 %include "rwNullSpace.h"
 
-%include "cMsgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
-%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "cMsgPayloadDef/RWConstellationMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
 struct RWConstellationMsg_C;
 
 %pythoncode %{

@@ -33,13 +33,13 @@
 
 %include "thrForceMapping.h"
 
-%include "cMsgPayloadDef/THRArrayCmdForceMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 struct THRArrayCmdForceMsg_C;
-%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "cMsgPayloadDef/THRArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 struct THRArrayConfigMsg_C;
-%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
 
 %pythoncode %{

@@ -33,19 +33,19 @@
 
 %include "rateServoFullNonlinear.h"
 
-%include "cMsgPayloadDef/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
-%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
-%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
-%include "cMsgPayloadDef/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "cMsgPayloadDef/RWAvailabilityMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
 struct RWAvailabilityMsg_C;
-%include "cMsgPayloadDef/RateCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/RateCmdMsgPayload.h"
 struct RateCmdMsg_C;
 
 

@@ -31,9 +31,9 @@ from Basilisk.simulation.swig_common_model import *
 %include "sys_model.h"
 %include "rwVoltageInterface.h"
 
-%include "cMsgPayloadDef/RWArrayVoltageMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
 struct RWArrayVoltageMsg_C;
-%include "cMsgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
 
 %include "utilities/macroDefinitions.h"

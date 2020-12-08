@@ -27,9 +27,9 @@
 #include "utilities/bskLogging.h"
 #include "utilities/avsEigenSupport.h"
 
-#include "cMsgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "cMsgPayloadDef/SpiceTimeMsgPayload.h"
-#include "cMsgPayloadDef/EpochMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
+#include "architecture/msgPayloadDefC/EpochMsgPayload.h"
 #include "architecture/messaging2/messaging2.h"
 
 /*! @brief spice interface class */

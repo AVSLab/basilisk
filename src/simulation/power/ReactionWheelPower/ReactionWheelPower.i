@@ -28,11 +28,11 @@
 %include "../_GeneralModuleFiles/powerNodeBase.h"
 %include "ReactionWheelPower.h"
 
-%include "cMsgPayloadDef/PowerNodeUsageMsgPayload.h"
+%include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
 struct PowerNodeUsageMsg_C;
-%include "cMsgPayloadDef/DeviceStatusMsgPayload.h"
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 struct DeviceStatusMsg_C;
-%include "cMsgPayloadDef/RWConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 
 %pythoncode %{

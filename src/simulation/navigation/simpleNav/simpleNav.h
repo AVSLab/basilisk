@@ -23,10 +23,10 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "cMsgPayloadDef/SCPlusStatesMsgPayload.h"
-#include "cMsgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "cMsgPayloadDef/NavAttMsgPayload.h"
-#include "cMsgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include "architecture/messaging2/messaging2.h"

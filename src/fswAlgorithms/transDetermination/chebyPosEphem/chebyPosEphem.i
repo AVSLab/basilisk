@@ -34,9 +34,9 @@ STRUCTASLIST(ChebyEphemRecord)
 
 %include "chebyPosEphem.h"
 
-%include "cMsgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
+%include "architecture/msgPayloadDefC/TDBVehicleClockCorrelationMsgPayload.h"
 struct TDBVehicleClockCorrelationMsg_C;
-%include "cMsgPayloadDef/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
 %pythoncode %{

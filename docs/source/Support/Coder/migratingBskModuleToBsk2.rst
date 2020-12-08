@@ -175,7 +175,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         %include "cMsgPayloadDef/ModuleMsgPayload.h"
+         %include "architecture/msgPayloadDefC/ModuleMsgPayload.h"
          struct ModuleMsg_C;
     - Any custom Swig'd interfaces to access message content, such as
 
@@ -202,7 +202,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "cMsgPayloadDef/OutputMsgPayload.h"
+         #include "architecture/msgPayloadDefC/OutputMsgPayload.h"
 
     - Replace the include statement for the old message system
 
@@ -333,7 +333,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         %include "cMsgPayloadDef/OutputMsgPayload.h"
+         %include "architecture/msgPayloadDefC/OutputMsgPayload.h"
          struct OutputMsg_C;
 
     - Any custom Swig'd interfaces to access message content, such as

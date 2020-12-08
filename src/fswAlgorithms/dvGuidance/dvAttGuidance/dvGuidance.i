@@ -33,9 +33,9 @@
 
 %include "dvGuidance.h"
 
-%include "cMsgPayloadDef/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
-%include "cMsgPayloadDef/DvBurnCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
 struct DvBurnCmdMsg_C;
 
 %pythoncode %{

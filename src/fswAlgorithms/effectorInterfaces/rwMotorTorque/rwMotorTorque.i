@@ -33,13 +33,13 @@
 
 %include "rwMotorTorque.h"
 
-%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
-%include "cMsgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
-%include "cMsgPayloadDef/RWAvailabilityMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
 struct RWAvailabilityMsg_C;
-%include "cMsgPayloadDef/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
 
 %include "../../fswUtilities/fswDefinitions.h"

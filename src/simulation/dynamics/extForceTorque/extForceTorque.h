@@ -24,9 +24,9 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 
-#include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "cMsgPayloadDef/CmdForceBodyMsgPayload.h"
-#include "cMsgPayloadDef/CmdForceInertialMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
 
 #include "utilities/bskLogging.h"
 

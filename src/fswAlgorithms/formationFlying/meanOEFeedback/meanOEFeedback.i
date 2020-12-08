@@ -33,9 +33,9 @@
 
 %include "meanOEFeedback.h"
 
-%include "cMsgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "cMsgPayloadDef/CmdForceInertialMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
 struct CmdForceInertialMsg_C;
 
 %pythoncode %{

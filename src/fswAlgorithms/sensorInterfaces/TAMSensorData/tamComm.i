@@ -31,9 +31,9 @@
 
 %include "tamComm.h"
 
-%include "cMsgPayloadDef/TAMSensorBodyMsgPayload.h"
+%include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
 struct TAMSensorBodyMsg_C;
-%include "cMsgPayloadDef/TAMSensorMsgPayload.h"
+%include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
 struct TAMSensorMsg_C;
 
 %pythoncode %{

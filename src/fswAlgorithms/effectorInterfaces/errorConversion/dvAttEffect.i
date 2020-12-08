@@ -32,9 +32,9 @@
 %ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)
 
-%include "cMsgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
-%include "cMsgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
 struct ThrustGroupData;
 struct effPairs;

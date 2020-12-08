@@ -35,13 +35,13 @@
 %include "headingSuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 
-%include "cMsgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "cMsgPayloadDef/HeadingFilterMsgPayload.h"
+%include "architecture/msgPayloadDefC/HeadingFilterMsgPayload.h"
 struct HeadingFilterMsg_C;
-%include "cMsgPayloadDef/OpNavMsgPayload.h"
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
-%include "cMsgPayloadDef/CameraConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
 
 %pythoncode %{

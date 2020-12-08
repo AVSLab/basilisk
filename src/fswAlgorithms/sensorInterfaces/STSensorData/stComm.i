@@ -29,9 +29,9 @@
 %constant void CrossInit_stProcessTelem(void*, uint64_t);
 %ignore CrossInit_stProcessTelem;
 
-%include "cMsgPayloadDef/STSensorMsgPayload.h"
+%include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 struct STSensorMsg_C;
-%include "cMsgPayloadDef/stAttMsgPayload.h"
+%include "architecture/msgPayloadDefC/stAttMsgPayload.h"
 struct stAttMsg_C;
 
 %include "stComm.h"
