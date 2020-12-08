@@ -378,8 +378,7 @@ class fileCrawler():
                 if "fswMessages" in src_path \
                         or "simFswInterfaceMessages" in src_path \
                         or "simMessages" in src_path\
-                        or "cMsgPayloadDef" in src_path\
-                        or "cMsgCInterface" in src_path\
+                        or "architecture" in src_path\
                         or "utilities" in src_path:
                     lines += c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
                 else:

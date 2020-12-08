@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module provides a MRP based PD attitude control module. It is similar to :ref:`MRP_Feedback`, but without the RW or the integral feedback option. The feedback control is able to asymptotically track a reference attitude if there are no unknown dynamics and the attitude control torque is implemented with a thruster set.
+This module provides a MRP based PD attitude control module. It is similar to :ref:`mrpFeedback`, but without the RW or the integral feedback option. The feedback control is able to asymptotically track a reference attitude if there are no unknown dynamics and the attitude control torque is implemented with a thruster set.
 
 Message Connection Descriptions
 -------------------------------
@@ -12,7 +12,7 @@ provides information on what this message is used for.
 .. figure:: /../../src/fswAlgorithms/attControl/mrpPD/_Documentation/Images/moduleIOMrpPd.svg
     :align: center
 
-    Figure 1: ``MRP_PD()`` Module I/O Illustration
+    Figure 1: ``mrpPD()`` Module I/O Illustration
 
 .. table:: Module I/O Messages
     :widths: 25 25 100

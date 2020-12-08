@@ -32,8 +32,8 @@ provides information on what this message is used for.
       - blended translation navigation output message
     * - navAttInMsg
       - :ref:`NavAttMsgPayload`
-      - attitude navigation input message stored inside the :ref:`AggregateAttInput` structure
+      - attitude navigation input message stored inside the ``AggregateAttInput`` structure
     * - navTransInMsg
       - :ref:`NavTransMsgPayload`
-      - translation navigation input message stored inside the :ref:`AggregateTransInput` structure
+      - translation navigation input message stored inside the ``AggregateTransInput`` structure
 

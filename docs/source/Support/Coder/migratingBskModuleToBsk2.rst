@@ -202,13 +202,13 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "msgPayloadDefC/OutputMsgPayload.h"
+         #include "msgPayloadDefC/SomeMsgPayload.h"
 
       To include a C++ message definition use
 
       .. code:: cpp
 
-         #include "msgPayloadDefCpp/OutputMsgPayload.h"
+         #include "msgPayloadDefCpp/SomeMsgPayload.h"
 
     - Replace the include statement for the old message system
 

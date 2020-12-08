@@ -21,12 +21,12 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - attGuidanceOutMsgName
-      - :ref:`AttGuidMsg_C`
+      - :ref:`AttGuidMsgPayload`
       - attitude guidance output message
     * - sunDirectionInMsgName
-      - :ref:`NavAttMsg_C`
+      - :ref:`NavAttMsgPayload`
       - sun direction input message
     * - imuInMsgName
-      - :ref:`NavAttMsg_C`
+      - :ref:`NavAttMsgPayload`
       - IMU input message
 
