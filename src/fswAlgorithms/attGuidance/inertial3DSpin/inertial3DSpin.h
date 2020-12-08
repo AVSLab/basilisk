@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
 
-#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
 
 /*!@brief module configuration structure definition.
  */

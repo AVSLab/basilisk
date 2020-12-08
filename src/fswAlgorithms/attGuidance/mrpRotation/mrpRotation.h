@@ -22,8 +22,8 @@
 
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/AttStateMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/AttStateMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

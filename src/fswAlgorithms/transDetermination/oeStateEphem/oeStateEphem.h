@@ -20,8 +20,8 @@
 #ifndef _OE_STATE_EPHEM_H_
 #define _OE_STATE_EPHEM_H_
 
-#include "../dist3/autoSource/cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+#include "cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
 
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "simulation/utilities/bskLogging.h"

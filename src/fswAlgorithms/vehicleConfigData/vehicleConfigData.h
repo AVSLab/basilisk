@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include "utilities/macroDefinitions.h"
 
-#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

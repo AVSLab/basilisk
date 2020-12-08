@@ -22,7 +22,7 @@
 
 #define MAX_NUM_CHANGE_BODIES 10
 
-#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

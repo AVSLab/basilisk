@@ -20,11 +20,11 @@
 #ifndef _HEADING_UKF_H_
 #define _HEADING_UKF_H_
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/HeadingFilterMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/HeadingFilterMsg_C.h"
+#include "cMsgCInterface/OpNavMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
 
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"

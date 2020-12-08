@@ -23,12 +23,12 @@
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/RWSpeedMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWAvailabilityMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWArrayConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
+#include "cMsgCInterface/RWAvailabilityMsg_C.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */

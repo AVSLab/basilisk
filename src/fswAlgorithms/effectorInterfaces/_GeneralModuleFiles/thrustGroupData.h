@@ -21,7 +21,7 @@
 #define _THRUST_GROUP_DATA_
 
 #include "utilities/macroDefinitions.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 
 

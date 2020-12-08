@@ -23,10 +23,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CSSArraySensorMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/SunlineFilterMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CSSConfigMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/CSSArraySensorMsg_C.h"
+#include "cMsgCInterface/SunlineFilterMsg_C.h"
+#include "cMsgCInterface/CSSConfigMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

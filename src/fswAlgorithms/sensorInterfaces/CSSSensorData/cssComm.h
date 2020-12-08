@@ -23,7 +23,7 @@
 
 #define MAX_NUM_CHEBY_POLYS 32
 
-#include "../dist3/autoSource/cMsgCInterface/CSSArraySensorMsg_C.h"
+#include "cMsgCInterface/CSSArraySensorMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

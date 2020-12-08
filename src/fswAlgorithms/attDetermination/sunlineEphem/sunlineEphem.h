@@ -20,9 +20,9 @@
 #ifndef _SUNLINE_EPHEM_FSW_MSG_H_
 #define _SUNLINE_EPHEM_FSW_MSG_H_
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

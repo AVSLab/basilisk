@@ -20,8 +20,8 @@
 #ifndef _DV_GUIDANCE_POINT_H_
 #define _DV_GUIDANCE_POINT_H_
 
-#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/DvBurnCmdMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/DvBurnCmdMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

@@ -20,8 +20,8 @@
 #ifndef _IMU_COMM_H_
 #define _IMU_COMM_H_
 
-#include "../dist3/autoSource/cMsgCInterface/IMUSensorBodyMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/IMUSensorMsg_C.h"
+#include "cMsgCInterface/IMUSensorBodyMsg_C.h"
+#include "cMsgCInterface/IMUSensorMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

@@ -20,8 +20,8 @@
 #ifndef _TAM_COMM_H_
 #define _TAM_COMM_H_
 
-#include "../dist3/autoSource/cMsgCInterface/TAMSensorBodyMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/TAMSensorMsg_C.h"
+#include "cMsgCInterface/TAMSensorBodyMsg_C.h"
+#include "cMsgCInterface/TAMSensorMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

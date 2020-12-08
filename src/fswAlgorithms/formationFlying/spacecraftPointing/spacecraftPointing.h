@@ -20,8 +20,8 @@
 #ifndef _SPACECRAFTPOINTING_H_
 #define _SPACECRAFTPOINTING_H_
 
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

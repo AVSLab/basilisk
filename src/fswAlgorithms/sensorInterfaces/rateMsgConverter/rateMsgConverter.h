@@ -22,8 +22,8 @@
 
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/IMUSensorBodyMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/IMUSensorBodyMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

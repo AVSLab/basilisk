@@ -20,12 +20,12 @@
 #ifndef _THRUST_RW_DESAT_H_
 #define _THRUST_RW_DESAT_H_
 
-#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWConstellationMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWSpeedMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "cMsgCInterface/RWConstellationMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

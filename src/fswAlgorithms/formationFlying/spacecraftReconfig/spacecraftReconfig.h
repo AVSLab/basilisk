@@ -22,10 +22,10 @@
 
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include "simulation/utilities/orbitalMotion.h"

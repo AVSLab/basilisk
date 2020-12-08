@@ -22,9 +22,9 @@
 
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/OpNavFilterMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/OpNavMsg_C.h"
+#include "cMsgCInterface/OpNavFilterMsg_C.h"
 
 #include "utilities/macroDefinitions.h"
 #include "simulation/utilities/linearAlgebra.h"

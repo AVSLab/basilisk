@@ -63,7 +63,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         #include "../dist3/autoSource/cMsgCInterface/ModuleMsg_C.h"
+         #include "cMsgCInterface/ModuleMsg_C.h"
 
       This import provides access to the message object as well as the C message structure definition.
 

@@ -20,8 +20,8 @@
 #ifndef _ST_COMM_H_
 #define _ST_COMM_H_
 
-#include "../dist3/autoSource/cMsgCInterface/STSensorMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/STAttMsg_C.h"
+#include "cMsgCInterface/STSensorMsg_C.h"
+#include "cMsgCInterface/STAttMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

@@ -20,8 +20,8 @@
 #ifndef _NAV_AGGREGATE_H_
 #define _NAV_AGGREGATE_H_
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

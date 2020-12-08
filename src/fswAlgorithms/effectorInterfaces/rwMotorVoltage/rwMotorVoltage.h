@@ -22,12 +22,12 @@
 
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/ArrayMotorTorqueMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWAvailabilityMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWArrayConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWSpeedMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWArrayVoltageMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/ArrayMotorTorqueMsg_C.h"
+#include "cMsgCInterface/RWAvailabilityMsg_C.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
+#include "cMsgCInterface/RWArrayVoltageMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

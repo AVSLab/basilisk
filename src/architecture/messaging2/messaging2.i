@@ -17,7 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define SWIGPYTHON_BUILTIN
 
-%include ../dist3/autoSource/messaging2.header.auto.i
+%include messaging2.header.auto.i
 
 %module messaging2
 %pythoncode %{
@@ -127,7 +127,7 @@ typedef struct messageType;
 };
 %enddef
 
-%include ../dist3/autoSource/messaging2.auto.i
+%include messaging2.auto.i
 
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);

@@ -1,8 +1,8 @@
 %{{
-#include "../dist3/autoSource/cMsgCInterface/{type}_C.h"
+#include "cMsgCInterface/{type}_C.h"
 %}}
-%include "../dist3/autoSource/cMsgCInterface/{type}_C.h"
-%include "../Msg2Header.h"
+%include "cMsgCInterface/{type}_C.h"
+%include "messaging2/msg2Header.h"
 typedef struct {type};
 %extend {type}_C {{
     %pythoncode %{{

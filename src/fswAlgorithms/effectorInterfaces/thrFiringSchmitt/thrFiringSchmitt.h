@@ -23,9 +23,9 @@
 #include <stdint.h>
 #include "fswUtilities/fswDefinitions.h"
 
-#include "../dist3/autoSource/cMsgCInterface/THRArrayConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayCmdForceMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "cMsgCInterface/THRArrayCmdForceMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 #include "utilities/macroDefinitions.h"
 #include "simulation/utilities/bskLogging.h"

@@ -20,10 +20,10 @@
 #ifndef _HORIZON_OPNAV_H_
 #define _HORIZON_OPNAV_H_
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/LimbOpNavMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/LimbOpNavMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/OpNavMsg_C.h"
 
 #include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"

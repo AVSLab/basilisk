@@ -20,8 +20,8 @@
 #ifndef _MRP_STEERING_CONTROL_H_
 #define _MRP_STEERING_CONTROL_H_
 
-#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RateCmdMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/RateCmdMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 

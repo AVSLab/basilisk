@@ -22,11 +22,11 @@
 
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CirclesOpNavMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/PixelLineFilterMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/CirclesOpNavMsg_C.h"
+#include "cMsgCInterface/PixelLineFilterMsg_C.h"
 
 #include "utilities/macroDefinitions.h"
 #include "simulation/utilities/linearAlgebra.h"

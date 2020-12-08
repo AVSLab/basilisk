@@ -22,8 +22,8 @@
 
 #include <stdint.h>
 
-#include "../dist3/autoSource/cMsgCInterface/CmdForceInertialMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/CmdForceInertialMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include "simulation/utilities/orbitalMotion.h"

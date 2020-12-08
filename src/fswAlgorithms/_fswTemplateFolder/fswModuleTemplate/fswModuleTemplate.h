@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"
-#include "../dist3/autoSource/cMsgCInterface/FswModuleTemplateMsg_C.h"
+#include "cMsgCInterface/FswModuleTemplateMsg_C.h"
 
 
 

@@ -20,13 +20,13 @@
 #ifndef _INERTIAL_UKF_H_
 #define _INERTIAL_UKF_H_
 
-#include "../dist3/autoSource/cMsgCInterface/RWSpeedMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/InertialFilterMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/STAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWArrayConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AccDataMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/InertialFilterMsg_C.h"
+#include "cMsgCInterface/STAttMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/AccDataMsg_C.h"
 
 #include "simulation/utilities/signalCondition.h"
 #include "simulation/utilities/bskLogging.h"

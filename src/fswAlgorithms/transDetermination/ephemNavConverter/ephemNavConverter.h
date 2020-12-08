@@ -22,8 +22,8 @@
 
 #include "simulation/utilities/bskLogging.h"
 
-#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
 
 
 /*! @brief The configuration structure for the ephemNavConverter module.*/

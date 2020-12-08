@@ -20,9 +20,9 @@
 #ifndef _MRP_PD_CONTROL_H_
 #define _MRP_PD_CONTROL_H_
 
-#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/VehicleConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>
 

@@ -20,8 +20,8 @@
 #ifndef _CHEBY_POS_EPHEM_H_
 #define _CHEBY_POS_EPHEM_H_
 
-#include "../dist3/autoSource/cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/EphemerisMsg_C.h"
+#include "cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

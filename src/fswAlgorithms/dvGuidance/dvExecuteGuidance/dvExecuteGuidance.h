@@ -20,10 +20,10 @@
 #ifndef _DV_EXECUTE_GUIDANCE_H_
 #define _DV_EXECUTE_GUIDANCE_H_
 
-#include "../dist3/autoSource/cMsgCInterface/NavTransMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/DvBurnCmdMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/DvExecutionDataMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/DvBurnCmdMsg_C.h"
+#include "cMsgCInterface/DvExecutionDataMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

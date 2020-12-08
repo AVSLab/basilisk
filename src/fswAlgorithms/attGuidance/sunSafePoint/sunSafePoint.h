@@ -20,8 +20,8 @@
 #ifndef _SUN_SAFE_POINT_H_
 #define _SUN_SAFE_POINT_H_
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

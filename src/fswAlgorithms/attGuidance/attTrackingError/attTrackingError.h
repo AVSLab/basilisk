@@ -20,9 +20,9 @@
 #ifndef _ATT_TRACKING_ERROR_
 #define _ATT_TRACKING_ERROR_
 
-#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
 
 #include <stdint.h>
 #include "simulation/utilities/bskLogging.h"

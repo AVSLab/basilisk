@@ -21,10 +21,10 @@
 #define _OPNAV_POINT_H_
 
 
-#include "../dist3/autoSource/cMsgCInterface/NavAttMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/CameraConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/OpNavMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/OpNavMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

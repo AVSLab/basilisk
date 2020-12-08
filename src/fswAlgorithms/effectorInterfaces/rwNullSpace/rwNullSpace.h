@@ -20,9 +20,9 @@
 #ifndef _RW_NULL_SPACE_H_
 #define _RW_NULL_SPACE_H_
 
-#include "../dist3/autoSource/cMsgCInterface/ArrayMotorTorqueMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWSpeedMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWConstellationMsg_C.h"
+#include "cMsgCInterface/ArrayMotorTorqueMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
+#include "cMsgCInterface/RWConstellationMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

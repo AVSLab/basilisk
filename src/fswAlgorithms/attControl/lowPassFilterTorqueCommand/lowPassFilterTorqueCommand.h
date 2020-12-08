@@ -21,7 +21,7 @@
 #define _LOW_PASS_FILTER_TORQUE_COMMAND_
 
 #include <stdint.h>
-#include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
 
 

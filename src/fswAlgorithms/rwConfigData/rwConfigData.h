@@ -20,8 +20,8 @@
 #ifndef _RW_CONFIG_DATA_H_
 #define _RW_CONFIG_DATA_H_
 
-#include "../dist3/autoSource/cMsgCInterface/RWArrayConfigMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/RWConstellationMsg_C.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/RWConstellationMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 #include <stdint.h>

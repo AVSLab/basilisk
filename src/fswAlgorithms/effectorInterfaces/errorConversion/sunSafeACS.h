@@ -25,8 +25,8 @@
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "../_GeneralModuleFiles/thrustGroupData.h"
 
-#include "../dist3/autoSource/cMsgCInterface/CmdTorqueBodyMsg_C.h"
-#include "../dist3/autoSource/cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 #include "simulation/utilities/bskLogging.h"
 

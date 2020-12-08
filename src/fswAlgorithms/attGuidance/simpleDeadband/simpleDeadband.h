@@ -21,7 +21,7 @@
 #define _SIMPLE_DEADBAND_
 
 #include <stdint.h>
-#include "../dist3/autoSource/cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
 #include "simulation/utilities/bskLogging.h"
 
 
