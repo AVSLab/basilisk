@@ -98,7 +98,7 @@ drag_ctrl_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000
                      [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
                      [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
                      [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,2.229340680802995532e-05],
+                     [0.000000000000000000e+00,0.000000000000000000e+00,4.1681080996120926e-05],
                      [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]
                      ]
 drag_sens_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
@@ -107,12 +107,21 @@ drag_sens_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000
                      [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675151888e-10,0.000000000000000000e+00,0.000000000000000000e+00],
                      [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-1.435758240535030378e-09,0.000000000000000000e+00],
                      [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]]
-drag_R_inv = [[-1e-8,0,0],
-              [0,-1e-8,0],
-              [0,0,-1e-8]]
+drag_R_inv = [[1e-8,0,0],
+              [0,1e-8,0],
+              [0,0,1e-8]]
 #/home/andrew/dev/basilisk/src/examples/data/ddsen_gain.npz
-gain_set = np.load('./data/ddsen_gain.npz')['gain']
-gain_set = np.transpose(gain_set, (2,0,1))
+#   Time-varying LQR gain
+lqr_gain_set = np.load('./data/lqr_tv_gain.npz')['arr_0.npy']
+lqr_gain_set = np.transpose(lqr_gain_set, (2,0,1))
+
+#   Desensitized gain (no control sensitivities)
+dsen_gain_set = np.load('./data/desensitized_gain.npz')['arr_0.npy']
+dsen_gain_set = np.transpose(dsen_gain_set, (2,0,1))
+#   Desensitized gain (includes control sensitivites)
+
+ddsen_gain_set = np.load('./data/ctrl_desensitized_gain.npz')['arr_0.npy']
+ddsen_gain_set = np.transpose(ddsen_gain_set, (2,0,1))
 
 def setup_spacecraft_plant(rN, vN, modelName,):
     """
@@ -128,9 +137,9 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     scObject.scMassStateOutMsgName = modelName+'_mass_states'
     scObject.hub.mHub = 3.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    I = [10., 0., 0.,
-         0., 9., 0.,
-         0., 0., 8.]
+    I = [1000., 0., 0.,
+         0., 900., 0.,
+         0., 0., 800.]
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.r_CN_NInit = rN
     scObject.hub.v_CN_NInit = vN
@@ -141,7 +150,7 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     scNav.outputAttName = modelName + '_att_nav_state'
 
     dragArea = 2.0
-    dragCoeff = 1.0
+    dragCoeff = 2.2
     normalVector = rbk.euler3(np.radians(45.)).dot(np.array([0,1,0]))
     panelLocation = [0,0,0]
     dragEffector = facetDragDynamicEffector.FacetDragDynamicEffector()
@@ -172,8 +181,8 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     dynTaskName = "dynTask"
     fswTaskName = "fswTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(1.0) #   Timestep to evaluate dynamics at
-    fswTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
+    dynTimeStep = macros.sec2nano(0.1) #   Timestep to evaluate dynamics at
+    fswTimeStep = macros.sec2nano(5.0) #   Timestep to evaluate FSW at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
     simProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
@@ -182,14 +191,14 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['earth'])
     gravBodies['earth'].isCentralBody = True
+    #simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
     gravBodies['earth'].useSphericalHarmParams = False
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
 
     #   Density
     atmosphere = exponentialAtmosphere.ExponentialAtmosphere()
-    atmosphere.ModelTag = 'exponential'
-    atmosphere.planetRadius = orbitalMotion.REQ_EARTH*1e3   #   m
-    atmosphere.scaleHeight = 8e3    # m
+    atmosphere.ModelTag = 'atmosphere'
+    atmosphere.planetRadius = 6378137.0#orbitalMotion.REQ_EARTH*1e3   #   m
+    atmosphere.scaleHeight = 8.0e3    # m
     atmosphere.baseDensity = 1.020 * densMultiplier #    kg/m^3
 
     ##   Set up chief, deputy orbits:
@@ -197,19 +206,19 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     chief_oe = orbitalMotion.ClassicElements()
     chief_oe.a = orbitalMotion.REQ_EARTH * 1e3 + 230e3 # meters
     chief_oe.e = 0.
-    chief_oe.i = 60.
-    chief_oe.Omega = 00.0 * macros.D2R
-    chief_oe.omega = 0.0 * macros.D2R
-    chief_oe.f = 180.*macros.D2R
+    chief_oe.i = 45.
+    chief_oe.Omega = 20.0 * macros.D2R
+    chief_oe.omega = 30.0 * macros.D2R
+    chief_oe.f = 20.*macros.D2R
     chief_rN, chief_vN = orbitalMotion.elem2rv(mu, chief_oe)
 
     dep_oe = orbitalMotion.ClassicElements()
     dep_oe.a = orbitalMotion.REQ_EARTH * 1e3 + 230e3 + (altOffset)  # meters
     dep_oe.e = 0.
-    dep_oe.i = 60.
-    dep_oe.Omega = 00.0 * macros.D2R
-    dep_oe.omega = 0.0 * macros.D2R
-    dep_oe.f = (180. + trueAnomOffset) * macros.D2R
+    dep_oe.i = 45.
+    dep_oe.Omega = 20.0 * macros.D2R
+    dep_oe.omega = 30.0 * macros.D2R
+    dep_oe.f = (20. - trueAnomOffset) * macros.D2R
     dep_rN, dep_vN = orbitalMotion.elem2rv(mu, dep_oe)
 
     #   Initialize s/c dynamics, drag, navigation solutions
@@ -226,13 +235,13 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     chiefDrag.atmoDensInMsgName = atmosphere.envOutMsgNames[-1]
 
     #   Add all dynamics stuff to dynamics task
-    scSim.AddModelToTask(dynTaskName, chiefSc)
-    scSim.AddModelToTask(dynTaskName, depSc)
-    scSim.AddModelToTask(dynTaskName, atmosphere)
-    scSim.AddModelToTask(dynTaskName, chiefDrag)
-    scSim.AddModelToTask(dynTaskName, depDrag)
-    scSim.AddModelToTask(dynTaskName, chiefNav)
-    scSim.AddModelToTask(dynTaskName, depNav)
+    scSim.AddModelToTask(dynTaskName, atmosphere,920)
+    scSim.AddModelToTask(dynTaskName, chiefDrag,890)
+    scSim.AddModelToTask(dynTaskName, depDrag,891)
+    scSim.AddModelToTask(dynTaskName, chiefSc,810)
+    scSim.AddModelToTask(dynTaskName, depSc,811)
+    scSim.AddModelToTask(dynTaskName, chiefNav,800)
+    scSim.AddModelToTask(dynTaskName, depNav,801)
 
     ##  FSW setup
     #   Chief S/C
@@ -255,16 +264,25 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
 
     # linear sensitivity propagator
     sensProp = linSensitivityProp.LinSensProp()
-    sensProp.depAttInMsgName = depNav.outputAttName
+    sensProp.depAttInMsgName = depNav.outputAttName 
     sensProp.chiefAttInMsgName = chiefNav.outputAttName
     sensProp.hillStateInMsgName = 'dep_hill_nav'
     sensProp.sensOutMsgName = 'dep_sens_nav'
     sensProp.C = hillToAttRef.MultiArray(drag_sens_effects)
-    sensProp.D = hillToAttRef.MultiArray(drag_ctrl_effects)
     sensProp.A = hillToAttRef.MultiArray(drag_state_dynamics)
+    if ctrlType=='ddesen':
+        sensProp.D = hillToAttRef.MultiArray(drag_ctrl_effects)
+    else:
+        sensProp.D = hillToAttRef.MultiArray(np.zeros(np.array(drag_ctrl_effects).shape))  
 
     #   Configure module-specific control parameters
-    if ctrlType == 'desen':
+    if ctrlType == 'desen' or ctrlType=='ddesen':
+        if ctrlType=='desen':
+            gain_set = dsen_gain_set
+        else:
+            gain_set = ddsen_gain_set
+            drag_R_inv = -np.linalg.inv(1e7*np.identity(3))
+
         #   desensitized relative attitude control w/ dynamic gain
         depAttRef = desenHillToAttRef.DesenHillToAttRef()
         depAttRef.ModelTag = 'dep_att_ref'
@@ -273,6 +291,18 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
         depAttRef.Rinv = hillToAttRef.MultiArray(drag_R_inv)
         depAttRef.stateGainVec = hillToAttRef.MultiArray3d(gain_set[:,0:6,0:6])
         depAttRef.sensGainVec = hillToAttRef.MultiArray3d(gain_set[:,0:6,6:])
+
+    elif ctrlType == 'tv_lqr':
+        # hillToAtt guidance law w/ time-varying gain
+        depAttRef = desenHillToAttRef.DesenHillToAttRef()
+        depAttRef.ModelTag = 'dep_att_ref'
+        depAttRef.sensInMsgName = sensProp.sensOutMsgName
+        depAttRef.B = hillToAttRef.MultiArray(drag_ctrl_effects)
+        
+        drag_R_inv = -np.linalg.inv(1e7*np.identity(3))
+        depAttRef.Rinv = hillToAttRef.MultiArray(drag_R_inv)
+        depAttRef.stateGainVec = hillToAttRef.MultiArray3d(lqr_gain_set)
+        depAttRef.sensGainVec = hillToAttRef.MultiArray3d(np.zeros(lqr_gain_set.shape))
 
     else:
         # hillToAtt guidance law w/ static gain
@@ -287,24 +317,26 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     depAttRef.attStateInMsgName = chiefNav.outputAttName
     depAttRef.attRefOutMsgName = 'dep_att_ref'
     depAttRef.relMRPMin = -0.2
-    depAttRef.relMRPMax = 0.5
+    depAttRef.relMRPMax = 0.2
     #   Set the deputy spacecraft to directly follow the attRefMessage
     depSc.attRefInMsgName = depAttRef.attRefOutMsgName
 
-    scSim.AddModelToTask(fswTaskName, chiefAttRefWrap, chiefAttRefData)
-    scSim.AddModelToTask(fswTaskName, hillStateNavWrap, hillStateNavData)
-    scSim.AddModelToTask(fswTaskName, sensProp)
-    scSim.AddModelToTask(fswTaskName, depAttRef)
+    scSim.AddModelToTask(fswTaskName, chiefAttRefWrap, chiefAttRefData, 710)
+    scSim.AddModelToTask(fswTaskName, hillStateNavWrap, hillStateNavData,790)
+    scSim.AddModelToTask(fswTaskName, sensProp,780)
+    scSim.AddModelToTask(fswTaskName, depAttRef,700)
     # ----- log ----- #
     orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
-    simulationTime = 30*orbit_period
+    simulationTime = 80*orbit_period#106920.14366466808 
     simulationTime = macros.sec2nano(simulationTime)
-    numDataPoints = 1000
+    numDataPoints = 21384
     samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(chiefSc.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(depSc.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(hillStateNavData.hillStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(sensProp.sensOutMsgName, samplingTime)
+    for msg in atmosphere.envOutMsgNames:
+        scSim.TotalSim.logThisMessage(msg, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
@@ -355,6 +387,7 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     results_dict['dynTimeData'] = results_dict[chiefSc.scStateOutMsgName+'.r_BN_N'][:, 0]*macros.NANO2SEC/orbit_period
     results_dict['fswTimeData'] = results_dict[sensProp.sensOutMsgName+'.r_DC_H'][:, 0]*macros.NANO2SEC/orbit_period
     results_dict['mu'] = mu
+    results_dict['dens_mult'] = densMultiplier
     pullTimeStamp = time.time()
     pullTime = pullTimeStamp - execTimeStamp
     overallTime = pullTimeStamp - startTime
@@ -377,8 +410,16 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr'):
     hillVel = results['dep_hill_nav.v_DC_H']
     hillPosSens = results['dep_sens_nav.r_DC_H']
     hillVelSens = results['dep_sens_nav.v_DC_H']
+    # depDensity = results[atmosphere.envOutMsgNames[0]+'.density']
+    # chiefDensity = results[atmosphere.envOutMsgNames[1]+'.density']
+    densData = results
     numDataPoints = len(timeData)
     mu = results['mu']
+
+    rel_mrp_hist = np.empty([numDataPoints,3])
+
+    for ind in range(0,numDataPoints):
+        rel_mrp_hist[ind,:] = rbk.subMRP(depAtt[ind,1:4], chiefAtt[ind,1:4])
 
     #swTimeData, pos, vel, chiefAtt, pos2, vel2, depAtt, hillPos, hillVel, hillPosSens, hillVelSens, numDataPoints, mu,
     # ----- plot ----- #
@@ -490,6 +531,12 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr'):
     plt.xlabel('Time')
     plt.ylabel('Sensitivity value')
 
+    plt.figure()
+    plt.plot(timeData, rel_mrp_hist)
+    plt.grid()
+    plt.xlabel('Time')
+    plt.ylabel('Relative MRP Value')
+
     if(show_plots):
         plt.show()
     plt.close("all")
@@ -497,8 +544,8 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr'):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        10.0, #   altitude offset (m)
-        0.02, #  True anomaly offset (deg)
+        0.0, #   altitude offset (m)
+        0.005, #  True anomaly offset (deg)
         1, #    Density multiplier (nondimensional)
-        ctrlType='desen'
+        ctrlType='lqr'
     )
