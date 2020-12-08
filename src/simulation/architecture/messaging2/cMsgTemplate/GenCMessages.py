@@ -36,11 +36,11 @@ if platform == "linux" or platform == "linux2":
 with open(autoSourceDestDir + 'messaging2.header.auto.i', 'w') as w:
     w.write(messaging2_header_i_template)
 
-messaging2_i_template = ""
+messaging2_i_template = "//C messages:"
 for file in os.listdir("../../../../cMsgPayloadDef"):
     if file.endswith(".h"):
         msgName = (os.path.splitext(file)[0])[:-7]
-        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " + msgName + "Payload)"
+        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " + msgName + "Payload, cMsgPayloadDef)"
 with open(autoSourceDestDir + 'messaging2.auto.i', 'w') as w:
     w.write(messaging2_i_template)
 
@@ -61,6 +61,17 @@ with open('./cMsgCInterfacePy.i.in', 'r') as f:
 
 with open(autoSourceDestDir + 'messaging2.auto.i', 'r') as fb:
     lines = fb.readlines()
+
+# The following cpp message definitions must be included after the `lines` variable is set above.
+# We only need to create Python interfaces to C++ messages, not C wrappers.
+messaging2_i_template = "\n\n//C++ messages:"
+for file in os.listdir("../../../../cppMsgPayloadDef"):
+    if file.endswith(".h"):
+        msgName = (os.path.splitext(file)[0])[:-7]
+        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " + msgName + "Payload, cppMsgPayloadDef)"
+with open(autoSourceDestDir + 'messaging2.auto.i', 'a') as w:
+    w.write(messaging2_i_template)
+
 
 def to_message(struct_data):
     if struct_data:

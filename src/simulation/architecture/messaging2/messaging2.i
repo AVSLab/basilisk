@@ -53,11 +53,11 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
 %rename(__time_vector) times;  // It's not really useful to give the user back a time vector
 %rename(__record_vector) record;
-%define INSTANTIATE_TEMPLATES(messageType, messageTypePayload)
+%define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
 %{
-#include "cMsgPayloadDef/messageTypePayload.h"
+#include "folder/messageTypePayload.h"
 %}
-%include "cMsgPayloadDef/messageTypePayload.h"
+%include "folder/messageTypePayload.h"
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {
