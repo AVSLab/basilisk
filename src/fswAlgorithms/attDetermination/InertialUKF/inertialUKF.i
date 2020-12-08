@@ -40,19 +40,19 @@ STRUCTASLIST(STMessage)
 
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 
-%include "architecture/msgPayloadDefC/InertialFilterMsgPayload.h"
+%include "../architecture/msgPayloadDefC/InertialFilterMsgPayload.h"
 struct InertialFilterMsg_C;
-%include "architecture/msgPayloadDefC/STAttMsgPayload.h"
+%include "../architecture/msgPayloadDefC/STAttMsgPayload.h"
 struct STAttMsg_C;
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+%include "../architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "../architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
-%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "../architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
+%include "../architecture/msgPayloadDefC/AccDataMsgPayload.h"
 struct AccDataMsg_C;
-%include "architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
+%include "../architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
 struct AccPktDataMsg_C;
 
 %include "utilities/signalCondition.h"

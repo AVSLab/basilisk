@@ -17,8 +17,8 @@
 
  */
 
-#include "messaging/static_messaging.h"
-#include "simulation/architecture/messaging/system_messaging.h"
+#include "static_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/bsk_Print.h"
 #include <stdio.h>
 #include <iostream>

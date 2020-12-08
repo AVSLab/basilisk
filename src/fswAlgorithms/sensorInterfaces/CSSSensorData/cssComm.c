@@ -18,7 +18,6 @@
  */
 
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
-#include "messaging/static_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdio.h> 

@@ -31,9 +31,9 @@
 %constant void Reset_ephemNavConverter(void*, uint64_t, uint64_t);
 %ignore Reset_ephemNavConverter;
 
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "../architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
 %include "ephemNavConverter.h"

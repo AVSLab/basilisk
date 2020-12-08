@@ -33,9 +33,9 @@
 
 %include "rateMsgConverter.h"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
+%include "../architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
 struct IMUSensorBodyMsg_C;
 
 %pythoncode %{

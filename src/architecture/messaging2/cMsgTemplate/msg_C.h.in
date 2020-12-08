@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "{structHeader}"
-#include "architecture/messaging2/msg2Header.h"
+#include "../architecture/messaging2/msg2Header.h"
 
 //! structure definition
 typedef struct {{

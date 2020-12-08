@@ -31,9 +31,9 @@
 
 %include "imuComm.h"
 
-%include "architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
+%include "../architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
 struct IMUSensorBodyMsg_C;
-%include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
+%include "../architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
 struct IMUSensorMsg_C;
 
 %pythoncode %{

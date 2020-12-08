@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/system_model/sys_model_task.h"
+#include "sys_model_task.h"
 #include <cstring>
 #include <iostream>
 

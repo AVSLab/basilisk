@@ -17,7 +17,7 @@
 
  */
 #include "dynamics/DynOutput/orbElemConvert/orb_elem_convert.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
 #include "simMessages/spicePlanetStateSimMsg.h"

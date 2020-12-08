@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "architecture/alg_contain/alg_contain.h"
+#include "alg_contain.h"
 
 AlgContain::AlgContain()
 {

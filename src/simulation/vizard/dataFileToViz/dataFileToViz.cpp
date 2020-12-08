@@ -17,7 +17,7 @@
 
 
 #include "dataFileToViz.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"

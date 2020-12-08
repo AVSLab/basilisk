@@ -23,12 +23,12 @@
 
 #include "dynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include <vector>
 #include <Eigen/Dense>
 #include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "utilities/bskLogging.h"
-#include "architecture/messaging2/messaging2.h"
+#include "../architecture/messaging2/messaging2.h"
 
 /*! @brief spherical harmonics class */
 class SphericalHarmonics

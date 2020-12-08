@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/system_model/sys_process.h"
+#include "sys_process.h"
 #include <cstring>
 #include <iostream>
 

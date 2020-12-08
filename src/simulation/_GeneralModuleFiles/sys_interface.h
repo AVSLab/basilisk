@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <stdint.h>
-#include "architecture/system_model/sys_model_task.h"
+#include "../architecture/system_model/sys_model_task.h"
 #include "utilities/bskLogging.h"
 
 /*!

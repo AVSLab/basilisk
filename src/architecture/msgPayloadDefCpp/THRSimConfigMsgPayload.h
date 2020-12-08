@@ -22,8 +22,8 @@
 
 #include <vector>
 #include <Eigen/Dense>
-#include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
+#include "../architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
+#include "../architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
 
 
 //! @brief Container for overall thruster configuration data for single thruster

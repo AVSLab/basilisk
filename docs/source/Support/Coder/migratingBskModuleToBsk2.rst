@@ -175,7 +175,7 @@ Updating a C Module
 
       .. code:: cpp
 
-         %include "architecture/msgPayloadDefC/ModuleMsgPayload.h"
+         %include "../architecture/msgPayloadDefC/ModuleMsgPayload.h"
          struct ModuleMsg_C;
     - Any custom Swig'd interfaces to access message content, such as
 
@@ -183,7 +183,7 @@ Updating a C Module
 
          ARRAYASLIST(FSWdeviceAvailability)
 
-      should be removed the ``module.i`` file and moved to ``src/simulation/architecture/messaging2/messaging2.i``
+      should be removed the ``module.i`` file and moved to ``src/architecture/messaging2/messaging2.i``
       file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
       Basilisk python script.
 
@@ -202,7 +202,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "architecture/msgPayloadDefC/OutputMsgPayload.h"
+         #include "../architecture/msgPayloadDefC/OutputMsgPayload.h"
 
     - Replace the include statement for the old message system
 
@@ -214,7 +214,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "architecture/messaging2/messaging2.h"
+         #include "../architecture/messaging2/messaging2.h"
 
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated
@@ -333,7 +333,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         %include "architecture/msgPayloadDefC/OutputMsgPayload.h"
+         %include "../architecture/msgPayloadDefC/OutputMsgPayload.h"
          struct OutputMsg_C;
 
     - Any custom Swig'd interfaces to access message content, such as
@@ -342,7 +342,7 @@ Updating a C++ Module
 
          %template(RWConfigVector) vector<RWConfigSimMsg>;
 
-      should be removed the ``module.i`` file and moved to ``src/simulation/architecture/messaging2/messaging2.i``
+      should be removed the ``module.i`` file and moved to ``src/architecture/messaging2/messaging2.i``
       file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
       Basilisk python script.
 

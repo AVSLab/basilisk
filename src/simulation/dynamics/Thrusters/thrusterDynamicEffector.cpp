@@ -22,7 +22,7 @@
 #include <cmath>
 
 #include "thrusterDynamicEffector.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/macroDefinitions.h"

@@ -18,7 +18,7 @@
  */
 
 #include "groundLocation.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "../utilities/avsEigenSupport.h"
 #include "../utilities/linearAlgebra.h"
 

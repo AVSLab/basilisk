@@ -18,7 +18,7 @@
  */
 
 #include "fuelTank.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include <iostream>
 
 /*Able to be accesses from python, used to set up fuel tank model*/

@@ -32,11 +32,11 @@
 %ignore Update_faultDetection;
 STRUCTASLIST(FaultDetectionData)
 
-%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+%include "../architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+%include "../architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
 
 %include "faultDetection.h"

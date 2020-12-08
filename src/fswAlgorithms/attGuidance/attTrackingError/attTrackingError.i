@@ -32,11 +32,11 @@
 %ignore Reset_attTrackingError;
 %include "attTrackingError.h"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+%include "../architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "../architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
 
 %pythoncode %{

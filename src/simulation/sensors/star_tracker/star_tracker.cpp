@@ -17,7 +17,7 @@
 
  */
 #include "sensors/star_tracker/star_tracker.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"

@@ -23,13 +23,13 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "../architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "../architecture/msgPayloadDefC/NavTransMsgPayload.h"
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
-#include "architecture/messaging2/messaging2.h"
+#include "../architecture/messaging2/messaging2.h"
 
 /*! @brief simple navigation module class */
 class SimpleNav: public SysModel {

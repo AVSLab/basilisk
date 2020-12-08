@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/system_model/sim_model.h"
+#include "sim_model.h"
 #include <cstring>
 #include <iostream>
 

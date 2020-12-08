@@ -17,7 +17,7 @@
 
  */
 #include "sim_synch/clock_synch.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include <iostream>
 #include <cstring>
 #include <thread>

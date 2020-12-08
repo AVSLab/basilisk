@@ -22,14 +22,14 @@
 
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/messaging2/messaging2.h"
+#include "../architecture/messaging2/messaging2.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDefC/LimbOpNavMsgPayload.h"
+#include "../architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "../architecture/msgPayloadDefC/LimbOpNavMsgPayload.h"
 
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"

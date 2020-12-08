@@ -35,15 +35,15 @@
 %include "pixelLineBiasUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 
-%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+%include "../architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "architecture/msgPayloadDefC/PixelLineFilterMsgPayload.h"
+%include "../architecture/msgPayloadDefC/PixelLineFilterMsgPayload.h"
 struct PixelLineFilterMsg_C;
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+%include "../architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
 struct CirclesOpNavMsg_C;
 
 %pythoncode %{

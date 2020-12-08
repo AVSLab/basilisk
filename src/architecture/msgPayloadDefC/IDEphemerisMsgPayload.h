@@ -20,8 +20,8 @@
 #ifndef ID_EPHEMERIS_OUTPUT_MESSAGE_H
 #define ID_EPHEMERIS_OUTPUT_MESSAGE_H
 
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "../architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 
 
 /*! @brief Message to store the converted Spice ephemeris data */

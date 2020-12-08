@@ -22,8 +22,8 @@
 #include <vector>
 #include <stdint.h>
 #include <set>
-#include "architecture/system_model/sys_process.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/system_model/sys_process.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/message_logger.h"
 #include "utilities/bskLogging.h"
 

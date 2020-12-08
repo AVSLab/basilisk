@@ -19,7 +19,7 @@
  */
 
 #include "atmosphereBase.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"

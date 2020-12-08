@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/messaging/system_messaging.h"
+#include "system_messaging.h"
 #include <cstring>
 #include <string>
 #include <iostream>

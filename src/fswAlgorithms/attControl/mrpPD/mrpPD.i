@@ -31,11 +31,11 @@
 %constant void Reset_mrpPD(void*, uint64_t, uint64_t);
 %ignore Reset_mrpPD;
 
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+%include "../architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+%include "../architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+%include "../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
 
 %include "mrpPD.h"

@@ -31,13 +31,13 @@ from Basilisk.simulation.swig_common_model import *
 %include "sys_model.h"
 %include "simpleNav.h"
 
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "../architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "../architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 
 %pythoncode %{

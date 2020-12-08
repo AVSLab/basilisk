@@ -19,7 +19,7 @@
 
 #include "simpleTransmitter.h"
 //#include "../../simMessages/dataStorageStatusSimMsg.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/bskLogging.h"
 #include <array>
 

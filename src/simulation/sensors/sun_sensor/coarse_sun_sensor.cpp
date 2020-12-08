@@ -18,7 +18,7 @@
  */
 
 #include "sensors/sun_sensor/coarse_sun_sensor.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"

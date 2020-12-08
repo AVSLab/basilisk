@@ -308,8 +308,8 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file (not located in src)
 
         #TODO: V2 change recommended -- messages should be in there own messaging folder at same level as sim/fsw/framework.
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation") # Exposes simMessages, simFswInterfaceMessages for easy includes
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/fswAlgorithms") # Exposes fswMessages for easy includes
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation") # Exposes simulation modules for easy includes
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/fswAlgorithms") # Exposes FSW modules for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles") # Exposes framework files for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../libs") # Exposes third party library include folders
 
@@ -484,8 +484,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Targets that must be built first
 add_subdirectory("simulation/utilities")
 add_subdirectory("utilities") # has protobuffers included
-add_subdirectory("simulation/architecture/messaging")
-add_subdirectory("simulation/architecture/messaging2/cMsgCInterface")
+add_subdirectory("architecture/messaging")
+add_subdirectory("architecture/messaging2/cMsgCInterface")
 add_subdirectory("fswAlgorithms/messaging")
 
 
@@ -590,7 +590,7 @@ generate_package_targets("${FSW_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "fswA
 ##################
 # ARCHITECTURE #
 ##################
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/architecture" ARCHITECTURE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
 generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" SIM_TARGETS)
@@ -610,6 +610,7 @@ generate_package_targets("${PYSWICE_TARGETS}" "${ARCHITECTURE_LIBS};${library_de
 
 # Must make the build directories first, so that cmake can insert empty init files before build (linux specific need)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 

@@ -25,7 +25,7 @@
 #include <string>
 #include <set>
 #include <mutex>
-#include "architecture/messaging/blank_storage.h"
+#include "blank_storage.h"  
 #include "utilities/bsk_Print.h"
 
 

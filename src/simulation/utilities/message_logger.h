@@ -22,7 +22,7 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/bskLogging.h"
 
 /*! struct definition */

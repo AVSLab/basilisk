@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/messaging/blank_storage.h"
+#include "blank_storage.h"
 #include <cstring>
 
 /*!

@@ -4,7 +4,7 @@ import os,errno
 import shutil
 from sys import platform
 
-with open("../../../../../LICENSE", 'r') as f:
+with open("../../../../LICENSE", 'r') as f:
     license = "/*"
     license += f.read()
     license += "*/\n\n"
@@ -12,7 +12,7 @@ messaging2_template = license
 header_template = license
 
 # clear out an old folder and create a fresh folder of wrapped C message interfaces
-autoSourceDestDir = '../../../../../dist3/autoSource/'
+autoSourceDestDir = '../../../../dist3/autoSource/'
 if os.path.exists(autoSourceDestDir):
     shutil.rmtree(autoSourceDestDir, ignore_errors=True)
 try:
@@ -37,11 +37,11 @@ with open(autoSourceDestDir + 'messaging2.header.auto.i', 'w') as w:
     w.write(messaging2_header_i_template)
 
 messaging2_i_template = "//C messages:"
-for file in os.listdir("../../../../architecture/msgPayloadDefC"):
+for file in os.listdir("../../msgPayloadDefC"):
     if file.endswith(".h"):
         msgName = (os.path.splitext(file)[0])[:-7]
         messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
-                                 + msgName + "Payload, architecture/msgPayloadDefC)"
+                                 + msgName + "Payload, ../architecture/msgPayloadDefC)"
 with open(autoSourceDestDir + 'messaging2.auto.i', 'w') as w:
     w.write(messaging2_i_template)
 
@@ -66,11 +66,11 @@ with open(autoSourceDestDir + 'messaging2.auto.i', 'r') as fb:
 # The following cpp message definitions must be included after the `lines` variable is set above.
 # We only need to create Python interfaces to C++ messages, not C wrappers.
 messaging2_i_template = "\n\n//C++ messages:"
-for file in os.listdir("../../../../architecture/msgPayloadDefCpp"):
+for file in os.listdir("../../msgPayloadDefCpp"):
     if file.endswith(".h"):
         msgName = (os.path.splitext(file)[0])[:-7]
         messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
-                                 + msgName + "Payload, architecture/msgPayloadDefCpp)"
+                                 + msgName + "Payload, ../architecture/msgPayloadDefCpp)"
 with open(autoSourceDestDir + 'messaging2.auto.i', 'a') as w:
     w.write(messaging2_i_template)
 
@@ -79,7 +79,7 @@ def to_message(struct_data):
     if struct_data:
         struct_data = struct_data.replace(' ', '').split(',')
         struct_name = struct_data[0]
-        source_header_file = 'architecture/msgPayloadDefC/' + struct_name + 'Payload.h'
+        source_header_file = '../architecture/msgPayloadDefC/' + struct_name + 'Payload.h'
         definitions = messaging2_template.format(type=struct_name)
         header = header_template.format(type=struct_name, structHeader=source_header_file)
         swig_template.write(swig_template_block.format(type=struct_name))

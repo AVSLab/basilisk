@@ -19,7 +19,7 @@
 
 #include <iostream>
 #include "dynamics/RadiationPressure/radiation_pressure.h"
-#include "architecture/messaging/system_messaging.h"
+#include "../architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
