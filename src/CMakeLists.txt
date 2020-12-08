@@ -579,8 +579,6 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simFswInterfaceMessages" SI
 generate_package_targets("${SIM_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
-find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/fswMessages" FSW_MESSAGES_TARGETS)
-generate_package_targets("${FSW_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 
 
 

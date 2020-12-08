@@ -23,7 +23,6 @@
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
 #include <iostream>
-#include "fswMessages/attRefFswMsg.h"
 
 
 /*! This is the constructor, setting variables to default values */
@@ -31,13 +30,11 @@ SpacecraftPlus::SpacecraftPlus()
 {
     // - Set default names
     this->sysTimePropertyName = "systemTime";
-    this->attRefInMsgName = "";
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
     this->timePrevious = 0.0;
     this->simTimePrevious = 0;
-    this->attRefInMsgId = -1;
     this->numOutMsgBuffers = 2;
     this->dvAccum_B.setZero();
     this->dvAccum_BN_B.setZero();
@@ -66,13 +63,6 @@ void SpacecraftPlus::SelfInit()
 /*! This method is used to cross link the messages and to initialize the dynamics */
 void SpacecraftPlus::CrossInit()
 {
-    /* check if the optional attitude reference message name has been set */
-    if (this->attRefInMsgName.length() > 0) {
-        this->attRefInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->attRefInMsgName,
-                                                                                     sizeof(AttRefFswMsg),
-                                                                                     moduleID);
-    }
-
     // - Call gravity field cross initialization
     this->gravField.CrossInit();
     // - Call method for initializing the dynamics of spacecraftPlus
@@ -135,15 +125,11 @@ void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
 /*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the hub*/
 void SpacecraftPlus::readAttRefMsg()
 {
-    if (this->attRefInMsgId >= 0) {
+    if (this->attRefInMsg.isLinked()) {
         Eigen::MRPd sigma_BN;
         Eigen::Vector3d omega_BN_B;
-        SingleMessageHeader LocalHeader;
-        AttRefFswMsg attRefMsg;
-        memset(&attRefMsg, 0x0, sizeof(AttRefFswMsg));
-        SystemMessaging::GetInstance()->ReadMessage(this->attRefInMsgId, &LocalHeader,
-                                                    sizeof(AttRefFswMsg),
-                                                    reinterpret_cast<uint8_t*> (&attRefMsg), moduleID);
+        AttRefMsgPayload attRefMsg;
+        attRefMsg = this->attRefInMsg();
         sigma_BN = cArray2EigenVector3d(attRefMsg.sigma_RN);
         Eigen::Vector3d omega_BN_N = cArray2EigenVector3d(attRefMsg.omega_RN_N);
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();

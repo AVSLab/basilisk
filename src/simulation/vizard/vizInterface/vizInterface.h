@@ -36,7 +36,6 @@
 #include "simMessages/cssConfigLogSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
 #include "utilities/bskLogging.h"
 #include "simMessages/epochSimMsg.h"
 #include "utilities/simDefinitions.h"

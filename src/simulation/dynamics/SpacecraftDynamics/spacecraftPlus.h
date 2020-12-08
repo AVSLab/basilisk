@@ -29,8 +29,11 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
+
 #include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
+#include "msgPayloadDefC/AttRefMsgPayload.h"
+
 #include "hubEffector.h"
 #include "utilities/bskLogging.h"
 #include "messaging2/messaging2.h"
@@ -43,7 +46,7 @@ public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< -- Name of the system time property
-    std::string attRefInMsgName;         //!< -- (optional) reference attitude input message name
+    ReadFunctor<AttRefMsgPayload> attRefInMsg; //!< -- (optional) reference attitude input message name
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
@@ -102,7 +105,6 @@ private:
     StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-    int64_t attRefInMsgId;                      //!< -- Message ID for the optional incoming attitude reference message
 
 private:
     void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude

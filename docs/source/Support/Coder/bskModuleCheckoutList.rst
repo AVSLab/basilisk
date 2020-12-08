@@ -27,10 +27,6 @@ Style and Formatting
 Module Programming
 ------------------
 
--  If new message types are declared, are these also Swig’d in
-   ``simulation/simMessages/simMessages.i``,
-   ``simulation/simFswInterfaceMessages/simFswInterfaceMessages.i`` or
-   ``fswAlgorithms/fswMessages/fswMessages.i``
 -  Are all module input and output messages Swig’d in the module ``*.i``
    file
 -  Does the code contain appropriate general comments
