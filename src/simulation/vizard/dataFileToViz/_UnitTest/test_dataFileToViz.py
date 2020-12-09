@@ -47,7 +47,7 @@ except ImportError:
 
 path = os.path.dirname(os.path.abspath(__file__))
 
-
+dataFileName = None
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000])
 @pytest.mark.parametrize("attType", [-1, 0, 1, 2])
 @pytest.mark.parametrize("checkThruster", [False, True])
@@ -85,6 +85,13 @@ def test_module(show_plots, convertPosUnits, attType, checkThruster, checkRW):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, convertPosUnits, attType, checkThruster, checkRW, False)
     assert testResults < 1, testMessage
+    global dataFileName
+    if os.path.exists(dataFileName):
+        os.remove(dataFileName)
+
+
+
+
 
 def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
 
@@ -117,6 +124,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     vB2N = [-1.95308, 6.31239, 3.64446]
     betaB2N = [-0.182574, 0.365148, 0.547723, 0.730297]
     sigmaB2N = [-0.1, 0.1, 0.3]
+    global dataFileName
     dataFileName = "data" + str(convertPosUnits) + str(attType) + str(checkThruster) + str(checkRW) + ".txt"
     dataFileName = os.path.join(path, dataFileName)
     delimiter = ","
@@ -408,6 +416,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
             testFailCount += 1
             testMessages.append("FAILED: " + testModule.ModelTag + " Module failed u1sc2 check.")
 
+
     # print out success or failure message
     if testFailCount == 0:
         print("PASSED: " + testModule.ModelTag)
@@ -415,12 +424,8 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         print("Failed: " + testModule.ModelTag)
         print(testMessages)
 
-    if os.path.exists(dataFileName):
-        os.remove(dataFileName)
-    else:
-        print("Couldn't close file.")
-
     return [testFailCount, ''.join(testMessages)]
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a
@@ -435,3 +440,6 @@ if __name__ == "__main__":
          False,      # checkRW
          True       # verbose
        )
+    if os.path.exists(dataFileName):
+        os.remove(dataFileName)
+

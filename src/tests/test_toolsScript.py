@@ -52,8 +52,7 @@ def test_toolsFolder(show_plots, toolCase):
     testMessages = []                       # create empty array to store test log messages
 
     pathFile = Path(__file__).parents[2] / "externalTools" / toolCase
-
-    shellCmd = [sys.executable, pathFile]
+    shellCmd = [sys.executable, str(pathFile)]
     try:
         subprocess.check_call(shellCmd)
 
