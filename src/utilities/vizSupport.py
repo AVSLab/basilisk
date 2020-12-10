@@ -108,17 +108,17 @@ def addGroundLocation(viz, **kwargs):
     vizElement = vizInterface.GroundLocationPbMsg()
 
     unitTestSupport.checkMethodKeyword(
-        ['name', 'parentBodyName', 'r_GP_P', 'gHat_P', 'fieldOfView', 'color', 'sprite'],
+        ['stationName', 'parentBodyName', 'r_GP_P', 'gHat_P', 'fieldOfView', 'color', 'range'],
         kwargs)
 
-    if 'name' in kwargs:
-        name = kwargs['name']
-        if not isinstance(name, basestring):
-            print('ERROR: name must be a string')
+    if 'stationName' in kwargs:
+        stationName = kwargs['stationName']
+        if not isinstance(stationName, basestring):
+            print('ERROR: stationName must be a string')
             exit(1)
-        vizElement.name = name
+        vizElement.stationName = stationName
     else:
-        print("ERROR: name argument must be provided to addGroundLocation")
+        print("ERROR: stationName argument must be provided to addGroundLocation")
         exit(0)
 
     if 'parentBodyName' in kwargs:

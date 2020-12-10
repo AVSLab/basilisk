@@ -216,13 +216,18 @@ def run(show_plots):
                                               , saveFile=__file__
                                               , gravBodies=gravFactory
                                               )
-    vizSupport.addGroundLocation(viz, name="Boulder Station"
+    vizSupport.addGroundLocation(viz, stationName="Boulder Station"
                                  , parentBodyName='earth'
                                  , r_GP_P=groundStation.r_LP_P_Init
                                  , fieldOfView=np.radians(160.)
                                  , color='pink'
-                                 , sprite='STAR'
+                                 , range=1000.0
                                  )
+    viz.settings.spacecraftSizeMultiplier = 1.5
+    viz.settings.showGroundLocationCommLines = 1
+    viz.settings.showGroundLocationCones = 1
+    viz.settings.showGroundLocationLabels = 1
+
 
     # Need to call the self-init and cross-init methods
     scenarioSim.InitializeSimulation()
