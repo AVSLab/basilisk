@@ -198,16 +198,20 @@ message VizMessage{
         int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
         string relativeOrbitChief = 34; // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
         double spacecraftShadowBrightness = 35; // Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
+        double spacecraftSizeMultiplier = 36; // Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
+        int32 showGroundLocationCommLines = 37; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showGroundLocationCones = 38; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showGroundLocationLabels = 39; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     message GroundLocation{
-        string name = 1; // ground location text label
+        string stationName = 1; // ground location text label
         string parentBodyName = 2; // name of the parent planet body P on which the ground location G is positioned
-        repeated double r_GP_P = 3; // [m] Position of G relative to parent body frame P
+        repeated double r_GP_P = 3; //[m] Position of G relative to parent body frame P
         repeated double gHat_P = 4; // ground location Normal relative to parent body frame. 
         double fieldOfView = 5; // [deg] Edge-to-Edge, -1 -> use default, values between 0.0001 and 179.9999 valid
-        repeated int32 color = 6; // Send desired RGBA as values between 0 and 255, -1 -> use default
-        string sprite = 7; // Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE", default is "CIRCLE"
+        repeated int32 color = 6; //Send desired RGBA as values between 0 and 255, default is white
+        double range = 7; // [m] Value of 0 (protobuffer default) to use viz default
     }
 
     TimeStamp currentTime = 1;

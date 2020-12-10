@@ -108,13 +108,13 @@ typedef struct {
 /*! Structure defining ground location information
  */
 typedef struct {
-    std::string name;                   //!< ground location text label
+    std::string stationName;                   //!< ground location text label
     std::string parentBodyName;         //!< name of the parent planet body P on which the ground location G is positioned
     double r_GP_P[3];                   //!< [m] Position of location G relative to planet frame P
     double gHat_P[3];                   //!< ground location Normal relative to parent body frame.
     double fieldOfView = -1;            //!< [rad] Edge-to-Edge, -1 -> use default, values between 0.0001deg and 179.9999deg valid
     int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default
-    std::string sprite = "";            //!< Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE", default is "CIRCLE"
+    double range = 0;                   //!< [m] range of the ground location, use 0 (protobuffer default) to use viz default
 }GroundLocationPbMsg;
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
@@ -191,6 +191,10 @@ typedef struct {
     int relativeOrbitFrame = 0; //!< Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
     std::string relativeOrbitChief = "";            //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     double spacecraftShadowBrightness = -1.0;       //!< Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
+    double spacecraftSizeMultiplier = -1; //!< Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
+    int32_t showGroundLocationCommLines = 0; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32_t showGroundLocationCones = 0; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32_t showGroundLocationLabels = 0; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 
