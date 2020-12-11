@@ -79,6 +79,13 @@ Updating a C Module
       messaging system.  This step is the same regardless if this message connects to/from a C or
       C++ Basilisk module.
 
+    - If you want to create an array of output messages, this can be done with
+
+      .. code:: cpp
+
+         SomeMsg_C descriptionOutMsgs[10];
+
+
 #. Updating the ``module.c`` file:
 
     - To initialize the module output message, replace
@@ -187,6 +194,13 @@ Updating a C Module
       file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
       Basilisk python script.
 
+    - If you want to create an array of output messages ``SomeMsg_C``, the array of messages must be swig'd to be
+      accessible from python.  In the module ``*.i`` file, add this statement
+
+      .. code:: cpp
+
+         STRUCTASLIST(SomeMsg_C)
+
 #. Updating the ``module.rst`` documentation file:
 
     - In the table of module messages, update any message variable names that were changed
@@ -240,6 +254,12 @@ Updating a C++ Module
 
          ReadFunctor<InputMsgPayload>   moduleInMsg;     //!< sensor input message
 
+    - It is possible to create a vector of output messages of type ``SomeMsgPayload`` using
+
+      .. code:: cpp
+
+         std::vector<Message<SomeMsgPayload>> descriptionOutMsgs;
+
 #. Updating the ``module.cpp`` file:
 
     - There is no need for additional code to create an output connector.  Thus, delete old message
@@ -253,6 +273,15 @@ Updating a C++ Module
                                                                              "ModuleSimMsg", this->moduleID);
 
       The new message object is automatically created through the above process in the ``module.h`` file.
+
+    - If a ``std::vector`` of output messages of type ``SomeMsgPayload`` was created in the module ``*.h`` file
+      then these message objects must be created dynamically in the ``*.cpp`` code using
+
+      .. code:: cpp
+
+         Message<SomeMsgPayload> *msg;
+         msg = new Message<SomeMsgPayload>;
+         this->descriptionOutMsgs.push_back(*msg);
 
     - To check is an output message has been connected to, check the value of ``this->moduleOutMsg.isLinked()``
 
@@ -353,6 +382,11 @@ Updating a C++ Module
       should be removed the ``module.i`` file and moved to ``src/architecture/messaging2/messaging2.i``
       file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
       Basilisk python script.
+
+    - To create the swig interface to a vector of messages of type ``SomeMsgPayload``,
+      near the bottom of the ``messaging2.i`` file add this line::
+
+        %template(SomeMsgsVector) std::vector<Message<SomeMsgPayload>>;
 
 #. Updating the ``module.rst`` documentation file:
 

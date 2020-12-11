@@ -134,6 +134,6 @@ typedef struct messageType;
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
 
-%template(RWConfigOutMsgVector) std::vector<Message<RWConfigLogMsgPayload>>;
+%template(RWConfigLogMsgsVector) std::vector<Message<RWConfigLogMsgPayload>>;
 
 %include "messaging2.h"
