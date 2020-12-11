@@ -194,18 +194,15 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
 
     # Configure simulation
     TotalSim.ConfigureStopTime(int(60.0 * 1E9))
-    print("HPS: before add variable for logging")
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.julianDateCurrent')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek')
 
     # Execute simulation
-    print("HPS: before initialize")
     TotalSim.InitializeSimulation()
-    print("HPS: after initialize")
     TotalSim.ExecuteSimulation()
-    print("HPS: done executing simulation")
+
     # Get the logged variables (GPS seconds, Julian Date)
     DataGPSSec = TotalSim.GetLogVariableData('SpiceInterfaceData.GPSSeconds')
     DataJD = TotalSim.GetLogVariableData('SpiceInterfaceData.julianDateCurrent')
@@ -214,9 +211,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     year = "".join(("20", DatePlot[6:8]))
     date = datetime.datetime( int(year), int(DatePlot[0:2]), int(DatePlot[3:5]))
 
-    print("HPS: before plot")
     testPlottingFixture.Date = DatePlot[0:8]
-    print("HPS: after plot")
 
     # Get the GPS time
     date2 = datetime.datetime(1980, 0o1, 6)  # Start of GPS time
@@ -292,22 +287,14 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     MarsPosEnd = MarsPosEnd * 1000.0
 
     # Get Simulated values
-    print("HPS:0")
-    FinalMarsMessage = messaging2.SpicePlanetStateMsgPayload()
-    FinalMarsMessage = SpiceObject.testOutMsg.read()     # Mars
-    print("HPS:00")
-    FinalMarsMessage = SpiceObject.planetStateOutMsg[1].read()     # Mars
-    print("HPS:1")
-    exit(0)
-    TotalSim.TotalSim.GetWriteData("mars barycenter_planet_data", 120, FinalMarsMessage, 0)
-    MarsPosVec = FinalMarsMessage.PositionVector
+    MarsPosVec = SpiceObject.planetStateOutMsgs[1].read().PositionVector
 
     # Compare Mars position values
     MarsPosArray = numpy.array([MarsPosVec[0], MarsPosVec[1], MarsPosVec[2]])
     MarsPosDiff = MarsPosArray - MarsPosEnd
     PosDiffNorm = numpy.linalg.norm(MarsPosDiff)
 
-    # Plot Mars postion values
+    # Plot Mars position values
     testPlottingFixture.MarsPosErr = PosDiffNorm
 
     # Test Mars position values
@@ -324,10 +311,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     EarthPosEnd = numpy.array(EarthTruthPos)
     EarthPosEnd = EarthPosEnd * 1000.0
 
-    #Simulated Earth position values
-    FinalEarthMessage = spice_interface.SpicePlanetStateSimMsg()
-    TotalSim.TotalSim.GetWriteData("earth_planet_data", 120, FinalEarthMessage, 0)
-    EarthPosVec = FinalEarthMessage.PositionVector
+    # Simulated Earth position values
+    EarthPosVec = SpiceObject.planetStateOutMsgs[0].read().PositionVector
 
     # Compare Earth position values
     EarthPosArray = numpy.array([EarthPosVec[0], EarthPosVec[1], EarthPosVec[2]])
@@ -348,9 +333,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     SunPosEnd = SunPosEnd * 1000.0
 
     #Simulated Sun position values
-    FinalSunMessage = spice_interface.SpicePlanetStateSimMsg()
-    TotalSim.TotalSim.GetWriteData("sun_planet_data", 120, FinalSunMessage, 0)
-    SunPosVec = FinalSunMessage.PositionVector
+    SunPosVec = SpiceObject.planetStateOutMsgs[2].read().PositionVector
 
     # Compare Sun position values
     SunPosArray = numpy.array([SunPosVec[0], SunPosVec[1], SunPosVec[2]])
@@ -366,25 +349,25 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
         testMessages.append("FAILED: Sun position check failed with difference of: %(DiffVal)f \n" % \
                             {"DiffVal": PosDiffNorm})
 
-    if date==datetime.datetime(2016,12,20): # Only test the false files on the last test
+    if date == datetime.datetime(2016,12,20): # Only test the false files on the last test
 
         # Test non existing directory
         SpiceObject.SPICEDataPath = "ADirectoryThatDoesntreallyexist"
         SpiceObject.SPICELoaded = False
 
-        #TotalSim.ConfigureStopTime(int(1E9)) #Uncomment these 3 lines to test false directory
-        #TotalSim.InitializeSimulation()
-        #TotalSim.ExecuteSimulation()
+        # TotalSim.ConfigureStopTime(int(1E9)) #Uncomment these 3 lines to test false directory
+        # TotalSim.InitializeSimulation()
+        # TotalSim.ExecuteSimulation()
 
         # Test overly long planet name
         SpiceObject.SPICEDataPath = ""
         SpiceObject.SPICELoaded = False
-        SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars", "sun",
-                                                            "thisisaplanetthatisntreallyanythingbutIneedthenametobesolongthatIhitaninvalidconditioninmycode"])
-
-        #TotalSim.ConfigureStopTime(int(1E9)) #Uncomment these 3 lines to test false planet names
-        #TotalSim.InitializeSimulation()
-        #TotalSim.ExecuteSimulation()
+        # Uncomment these 4 lines to test false planet names
+        # SpiceObject.addPlanetNames(spiceInterface.StringVector(["earth", "mars", "sun",
+        #                                                     "thisisaplanetthatisntreallyanythingbutIneedthenametobesolongthatIhitaninvalidconditioninmycode"]))
+        # TotalSim.ConfigureStopTime(int(1E9))
+        # TotalSim.InitializeSimulation()
+        # TotalSim.ExecuteSimulation()
 
     # print out success message if no error were found
     if testFailCount == 0:

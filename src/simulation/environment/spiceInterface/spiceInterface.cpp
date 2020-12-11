@@ -120,21 +120,13 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
         }
         this->SPICELoaded = true;
     }
-    printf("HPS: 0\n");
+
     //! Set the zero time values that will be used to compute the system time
     this->initTimeData();
-    printf("HPS: 1\n");
     this->J2000Current = this->J2000ETInit;
-    //! Compute planetary data so that it is present at time zero
-    printf("HPS: 2\n");
-//    this->planetData.clear();
-    printf("HPS: 3\n");
-//    this->computePlanetData();
     this->timeDataInit = true;
-    printf("HPS: 4\n");
     // - Call Update state so that the spice bodies are inputted into the messaging system on reset
     this->UpdateState(CurrenSimNanos);
-    printf("HPS: 5\n");
 }
 
 
@@ -228,7 +220,6 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
  */
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
-    printf("HPS: update:00\n");
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
     
@@ -238,13 +229,9 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     std::string localString = reinterpret_cast<char*> (&this->spiceBuffer[3]);
     this->julianDateCurrent = std::stod(localString);
     //! Get GPS and Planet data and then write the message outputs
-    printf("HPS: update:0\n");
     this->computeGPSData();
-    printf("HPS: update:1\n");
     this->computePlanetData();
-    printf("HPS: update:2\n");
     this->writeOutputMessages(CurrentSimNanos);
-    printf("HPS: update:3\n");
 }
 
 /*! take a vector of planet name strings and create the vector of
@@ -260,8 +247,9 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     this->planetData.clear();
 
     for (it = planetNames.begin(); it != planetNames.end(); it++) {
-        Message<SpicePlanetStateMsgPayload> spiceOutMsg;
-        this->planetStateOutMsgs.push_back(spiceOutMsg);
+        Message<SpicePlanetStateMsgPayload> *spiceOutMsg;
+        spiceOutMsg = new Message<SpicePlanetStateMsgPayload>;
+        this->planetStateOutMsgs.push_back(*spiceOutMsg);
 
         SpicePlanetStateMsgPayload newPlanet;
         if(it->size() >= MAX_BODY_NAME_LENGTH)
@@ -269,7 +257,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
             bskLogger.bskLog(BSK_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
             continue;
         }
-        newPlanet = spiceOutMsg.zeroMsgPayload();
+        newPlanet = spiceOutMsg->zeroMsgPayload();
         strcpy(newPlanet.PlanetName, it->c_str());
 
         std::string planetFrame = *it;

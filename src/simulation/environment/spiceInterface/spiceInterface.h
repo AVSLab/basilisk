@@ -66,7 +66,6 @@ public:
     uint8_t *spiceBuffer;       //!< -- General buffer to pass down to spice
     std::string UTCCalInit;     //!< -- UTC time string for init time
 
-    std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
     std::vector<std::string>planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
     
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
@@ -80,6 +79,7 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
+    std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
 

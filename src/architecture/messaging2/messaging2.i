@@ -135,5 +135,6 @@ typedef struct messageType;
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
 
 %template(RWConfigLogMsgsVector) std::vector<Message<RWConfigLogMsgPayload>>;
+%template(SpicePlanetStateMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>>;
 
 %include "messaging2.h"
