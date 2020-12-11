@@ -192,9 +192,9 @@ typedef struct {
     std::string relativeOrbitChief = "";            //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     double spacecraftShadowBrightness = -1.0;       //!< Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
     double spacecraftSizeMultiplier = -1; //!< Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
-    int32_t showGroundLocationCommLines = 0; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int32_t showGroundLocationCones = 0; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int32_t showGroundLocationLabels = 0; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32_t showGroundLocationCommLines = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32_t showGroundLocationCones = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32_t showGroundLocationLabels = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 

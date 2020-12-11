@@ -151,6 +151,20 @@ default setting for that behavior.
       - double
       - Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value
         to use viz default
+    * - ``spacecraftSizeMultiplier``
+      - double
+      - Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0,
+        use negative value to use viz default
+    * - ``showGroundLocationCommLines``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showGroundLocationCones``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showGroundLocationLabels``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -647,12 +661,12 @@ The :ref:`groundLocation` is able to simulate a ground target, including if a sa
 field of view of this ground object.  Vizard can illustrate this ground location using the
 ``addGroundLocation()`` method, such as::
 
-    vizSupport.addGroundLocation(viz, name="Boulder Station"
+    vizSupport.addGroundLocation(viz, stationName="Boulder Station"
                                  , parentBodyName='earth'
                                  , r_GP_P=groundStation.r_LP_P_Init
                                  , fieldOfView=np.radians(160.)
                                  , color='pink'
-                                 , sprite='STAR'
+                                 , range=1000.0
                                  )
 
 The following table lists all required and optional arguments that can be provided to ``addGroundLocation``:
@@ -666,7 +680,7 @@ The following table lists all required and optional arguments that can be provid
       - Units
       - Required
       - Description
-    * - ``name``
+    * - ``stationName``
       - string
       -
       - Yes
@@ -696,8 +710,8 @@ The following table lists all required and optional arguments that can be provid
       -
       - No
       - specify the ground station color using RGBA value of 0-255
-    * - ``sprite``
-      - string
-      -
+    * - ``range``
+      - double
+      - m
       - No
-      - specify the sprite shape option ``CIRCLE``, ``SQUARE``, ``STAR``, ``TRIANGLE``, default is ``CIRCLE``
+      - range of the ground location, use 0 (protobuffer default) to use viz default
