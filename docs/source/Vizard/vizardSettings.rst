@@ -93,7 +93,7 @@ default setting for that behavior.
     * - ``defaultSpacecraftSprite``
       - string
       - Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255].
-        Possible settings: ``CIRCLE``,``SQUARE``, ``STAR``, ``TRIANGLE`` or ``bskSat`` for a 2D spacecraft
+        Possible settings: ``CIRCLE``, ``SQUARE``, ``STAR``, ``TRIANGLE`` or ``bskSat`` for a 2D spacecraft
         sprite of the bskSat shape.  Default value is empty yielding a white ``CIRCLE``.
         To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``
     * - ``showSpacecraftAsSprites``
@@ -151,6 +151,20 @@ default setting for that behavior.
       - double
       - Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value
         to use viz default
+    * - ``spacecraftSizeMultiplier``
+      - double
+      - Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0,
+        use negative value to use viz default
+    * - ``showGroundLocationCommLines``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showGroundLocationCones``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showGroundLocationLabels``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -641,3 +655,63 @@ Note that if the maximum force of a thruster is less than 0.01N (i.e. a micro-th
 The thruster information for each spacecraft can also be set directly by specifying the ``sc.thrMsgData``
 as demonstrated in :ref:`test_dataFileToViz`.
 
+Adding Ground Location/Stations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The :ref:`groundLocation` is able to simulate a ground target, including if a satellite is within the
+field of view of this ground object.  Vizard can illustrate this ground location using the
+``addGroundLocation()`` method, such as::
+
+    vizSupport.addGroundLocation(viz, stationName="Boulder Station"
+                                 , parentBodyName='earth'
+                                 , r_GP_P=groundStation.r_LP_P_Init
+                                 , fieldOfView=np.radians(160.)
+                                 , color='pink'
+                                 , range=1000.0
+                                 )
+
+The following table lists all required and optional arguments that can be provided to ``addGroundLocation``:
+
+.. list-table:: Ground Location Parameter Options
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``stationName``
+      - string
+      -
+      - Yes
+      - Label of the ground location
+    * - ``parentBodyName``
+      - string
+      -
+      - Yes
+      - name of the planet object
+    * - ``r_GP_P``
+      - float(3)
+      - m
+      - Yes
+      - position vector of the ground location G relatiave to planet frame P in P frame components
+    * - ``gHat_P``
+      - float(3)
+      -
+      - No
+      - normal vector of the ground station boresight, default is unit vector of ``r_GP_P``
+    * - ``fieldOfView``
+      - float
+      - rad
+      - No
+      - edge-to-edge ground station field of view, default is :math:`\pi`
+    * - ``color``
+      - int(4)
+      -
+      - No
+      - specify the ground station color using RGBA value of 0-255
+    * - ``range``
+      - double
+      - m
+      - No
+      - range of the ground location, use 0 (protobuffer default) to use viz default

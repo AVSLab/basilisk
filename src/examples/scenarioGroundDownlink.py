@@ -71,6 +71,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import astroFunctions
+from Basilisk.utilities import vizSupport
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -97,21 +98,22 @@ def run(show_plots):
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    planet.isCentralBody = True  # ensure this is the central gravitational body
+
+    planet.useSphericalHarmParams = True
+    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
+                                        planet.spherHarm, 2)
+    mu = planet.mu
+
     # setup Spice interface for some solar system bodies
     timeInitString = '2020 MAY 21 18:28:03 (UTC)'
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
                                      , timeInitString
-                                     , spicePlanetNames=["earth"]
                                      )
     scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
 
-    planet = gravFactory.createEarth()
-    planet.isCentralBody = True          # ensure this is the central gravitational body
 
-    planet.useSphericalHarmParams=True
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
-                                        planet.spherHarm, 2)
-    mu = planet.mu
     # The value 2 indicates that the first two harmonics, exclud
 
     #   setup orbit using orbitalMotion library
@@ -143,7 +145,7 @@ def run(show_plots):
     groundStation.ModelTag = "BoulderGroundStation"
     groundStation.currentGroundStateOutMsgName = "BoulderGroundStation_Location"
     groundStation.planetRadius = astroFunctions.E_radius*1e3
-    groundStation.specifyLocation(np.radians(40.009971),np.radians(-105.243895), 1624)
+    groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     groundStation.planetInMsgName = planet.bodyInMsgName
     groundStation.minimumElevation = np.radians(10.)
     groundStation.maximumRange = 1e9
@@ -208,6 +210,25 @@ def run(show_plots):
     scenarioSim.TotalSim.logThisMessage(planet.bodyInMsgName, testProcessRate)
     scenarioSim.TotalSim.logThisMessage(groundStation.currentGroundStateOutMsgName, testProcessRate)
     scenarioSim.TotalSim.logThisMessage(groundStation.accessOutMsgNames[-1], testProcessRate)
+
+    # setup Vizard support
+    viz = vizSupport.enableUnityVisualization(scenarioSim, taskName, processname
+                                              , saveFile=__file__
+                                              , gravBodies=gravFactory
+                                              )
+    vizSupport.addGroundLocation(viz, stationName="Boulder Station"
+                                 , parentBodyName='earth'
+                                 , r_GP_P=groundStation.r_LP_P_Init
+                                 , fieldOfView=np.radians(160.)
+                                 , color='pink'
+                                 , range=1000.0
+                                 )
+    viz.settings.spacecraftSizeMultiplier = 1.5
+    viz.settings.showGroundLocationCommLines = 1
+    viz.settings.showGroundLocationCones = 1
+    viz.settings.showGroundLocationLabels = 1
+
+
     # Need to call the self-init and cross-init methods
     scenarioSim.InitializeSimulation()
 

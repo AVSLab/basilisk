@@ -261,7 +261,7 @@ class gravBodyFactory(object):
                 for planetFrame in kwargs['spicePlanetFrames']:
                     self.spicePlanetFrames.append(planetFrame)
             except TypeError:
-                raise TypeError('spicePlanetNames expects a list')
+                raise TypeError('spicePlanetFrames expects a list')
 
         self.spiceObject = spice_interface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
