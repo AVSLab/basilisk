@@ -34,24 +34,28 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
-%include "reactionWheelStateEffector.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "simMessages/rwCmdSimMsg.h"
-%include "simMessages/rwConfigSimMsg.h"
-%include "simMessages/rwConfigLogSimMsg.h"
-%include "utilities/macroDefinitions.h"
-%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+%include "dynamics/reactionWheels/reactionWheelSupport.h"
 
-//%include "spacecraftPlus.h"
-//%include "hubEffector.h"
+%include "reactionWheelStateEffector.h"
+%include "utilities/macroDefinitions.h"
+
+%include "msgPayloadDefC/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "msgPayloadDefC/RWCmdMsgPayload.h"
+struct RWCmdMsg_C;
+%include "msgPayloadDefCpp/RWConfigMsgPayload.h"
+struct RWConfigMsg_C;
+%include "msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
+%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
 
 %include "std_vector.i"
 namespace std {
-    %template(RWConfigVector) vector<RWConfigSimMsg>;
-	%template(RWCmdVector) vector<RWCmdSimMsg>;
+    %template(RWConfigVector) vector<RWConfigMsgPayload>;
+	%template(RWCmdVector) vector<RWCmdMsgPayload>;
 }
-GEN_SIZEOF(ArrayMotorTorqueIntMsg);
-GEN_SIZEOF(RWConfigLogSimMsg);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

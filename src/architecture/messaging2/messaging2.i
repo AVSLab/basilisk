@@ -26,8 +26,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "swig_conly_data.i"
 %include "std_vector.i"
 %include "std_string.i"
+%include "swig_eigen.i"
 %include "utilities/macroDefinitions.h"
 %include "fswUtilities/fswDefinitions.h"
+%include "dynamics/reactionWheels/reactionWheelSupport.h"
 
 ARRAYASLIST(FSWdeviceAvailability)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
@@ -131,5 +133,7 @@ typedef struct messageType;
 
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
+
+%template(RWConfigOutMsgVector) std::vector<Message<RWConfigLogMsgPayload>>;
 
 %include "messaging2.h"

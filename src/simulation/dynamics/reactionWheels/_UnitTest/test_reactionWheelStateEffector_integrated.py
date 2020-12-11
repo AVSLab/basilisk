@@ -1,32 +1,28 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+import os, inspect
 import numpy as np
 import pytest
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
-
-
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -37,9 +33,9 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import messaging2
 
-mpl.rc("figure", figsize=(5.75,4))
+mpl.rc("figure", figsize=(5.75, 4))
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'BalancedWheels'),
@@ -74,7 +70,6 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    rwCommandName = "reactionwheel_cmds"
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -97,11 +92,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     varMaxMomentum = 100.            # Nms
 
     if testCase == 'BalancedWheels' or testCase == 'BOE' or testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-        varRWModel = 0
+        varRWModel = reactionWheelStateEffector.BalancedWheels
     elif testCase == 'JitterSimple':
-        varRWModel = 1
+        varRWModel = reactionWheelStateEffector.JitterSimple
     elif testCase == 'JitterFullyCoupled':
-        varRWModel = 2
+        varRWModel = reactionWheelStateEffector.JitterFullyCoupled
 
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         rwFactory.create(
@@ -175,17 +170,15 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
+    cmdArray = messaging2.ArrayMotorTorqueMsgPayload()
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
     if testCase == 'BOE' or testCase == 'FrictionSpinDown':
         cmdArray.motorTorque = [0.0] # [Nm]
     if testCase == 'FrictionSpinUp':
         cmdArray.motorTorque = [0.1, -0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               rwCommandName,
-                               cmdArray)
+    cmdMsg = messaging2.ArrayMotorTorqueMsg().write(cmdArray)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
@@ -193,17 +186,18 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-        unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-        unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-        unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+        unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
         unitTestSim.earthGravBody.isCentralBody = True
         unitTestSim.earthGravBody.useSphericalHarmParams = False
 
         scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     # log data
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(rwStateEffector.OutputDataString, testProcessRate)
+    scDataLog = scObject.scStateOutMsg.log()
+    speedDataLog = rwStateEffector.rwSpeedOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, scDataLog)
+    unitTestSim.AddModelToTask(unitTaskName, speedDataLog)
+
 
     # Define initial conditions of the sim
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
@@ -224,11 +218,12 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.35]]
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
             scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
-            unitTestSim.TotalSim.logThisMessage(rwStateEffector.ModelTag + "_rw_config_0_data", testProcessRate)
-            unitTestSim.TotalSim.logThisMessage(rwStateEffector.ModelTag + "_rw_config_1_data", testProcessRate)
+            rw0DataLog = rwStateEffector.rwOutMsgs[0].log()
+            rw1DataLog = rwStateEffector.rwOutMsgs[1].log()
+            unitTestSim.AddModelToTask(unitTaskName, rw0DataLog)
+            unitTestSim.AddModelToTask(unitTaskName, rw1DataLog)
         scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
         scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
@@ -251,10 +246,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'BOE':
         motorTorque = 0.2
         cmdArray.motorTorque = [motorTorque]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               rwCommandName,
-                               cmdArray)
+    cmdMsg.write(cmdArray)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
@@ -264,13 +256,13 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
-    posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
-    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',list(range(3)))
-    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',list(range(3)))
+    posData = scDataLog.r_BN_N
+    sigmaData = scDataLog.sigma_BN
+    omegaData = scDataLog.omega_BN_B
     if testCase == 'BOE' or testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-        wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", list(range(2)))
+        wheelSpeeds = speedDataLog.wheelSpeeds[:, 0]
         if testCase == 'BOE':
-            thetaOut = 4.0*np.arctan(sigmaData[:,3])
+            thetaOut = 4.0*np.arctan(sigmaData[:, 2])
             # Find BOE calculations
             timeBOE = np.array([2.0, 4.0, 6.0, 8.0, 10.0])
             timeTorqueOn = 5.0
@@ -287,11 +279,10 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                     wheelSpeedBOE[i] = initialWheelSpeed*macros.RPM
                     thetaBOE[i] = scObject.hub.omega_BN_BInit[2][0]*(timeBOE[i])
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-            wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData(rwStateEffector.ModelTag + "_rw_config_0_data.Omega", list(range(1)))
-            wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData(rwStateEffector.ModelTag + "_rw_config_1_data.Omega", list(range(1)))
-            frictionTorque1 = unitTestSim.pullMessageLogData(rwStateEffector.ModelTag + "_rw_config_0_data.frictionTorque", list(range(1)))
-            frictionTorque2 = unitTestSim.pullMessageLogData(rwStateEffector.ModelTag + "_rw_config_1_data.frictionTorque", list(range(1)))
-
+            wheelSpeedBeforeInteg1 = rw0DataLog.Omega
+            wheelSpeedBeforeInteg2 = rw1DataLog.Omega
+            frictionTorque1 = rw0DataLog.frictionTorque
+            frictionTorque2 = rw1DataLog.frictionTorque
 
     dataPos = posData[-1]
     dataSigma = sigmaData[-1]
@@ -328,7 +319,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
                  ]
 
     initialRotAngMom_N = [
@@ -336,7 +327,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                [rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
     initialOrbEnergy = [
@@ -344,7 +335,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                [orbEnergy[-1,1]]
                  ]
 
     initialRotEnergy = [
@@ -352,7 +343,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                [rotEnergy[-1,1]]
                  ]
 
     plt.close("all")
@@ -388,7 +379,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'BOE':
         plt.figure()
         plt.clf()
-        plt.plot(sigmaData[:,0]*1e-9, thetaOut, label = 'Basilisk')
+        plt.plot(scDataLog.times()*1e-9, thetaOut, label = 'Basilisk')
         plt.plot(timeBOE, thetaBOE, 'ro', label='BOE')
         plt.legend(loc='upper left', numpoints=1)
         plt.xlabel("Time (s)")
@@ -397,7 +388,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
         plt.figure()
         plt.clf()
-        plt.plot(omegaData[:,0]*1e-9, omegaData[:,3], label = 'Basilisk')
+        plt.plot(scDataLog.times()*1e-9, omegaData[:,2], label = 'Basilisk')
         plt.plot(timeBOE, omegaBOE, 'ro', label='BOE')
         plt.legend(loc='upper right', numpoints=1)
         plt.xlabel("Time (s)")
@@ -406,7 +397,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
         plt.figure()
         plt.clf()
-        plt.plot(wheelSpeeds[:,0]*1e-9, wheelSpeeds[:,1], label = 'Basilisk')
+        plt.plot(scDataLog.times()*1e-9, wheelSpeeds, label = 'Basilisk')
         plt.plot(timeBOE, wheelSpeedBOE, 'ro', label='BOE')
         plt.legend(loc ='upper left', numpoints=1)
         plt.xlabel("Time (s)")
@@ -419,24 +410,26 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
         plt.figure()
         plt.clf()
-        plt.plot(omegaData[:,0]*1e-9, omegaData[:,3], label='Basilisk')
+        plt.plot(scDataLog.times()*1e-9, omegaData[:,2], label='Basilisk')
         plt.xlabel("Time (s)")
         plt.ylabel("Body Rate (rad/s)")
         unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestBodyRates", "Reaction Wheel " + testCase + " Test Body Rates", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
-        plt.plot(wheelSpeeds[:,0]*1e-9, wheelSpeeds[:,1], label = 'RW 1 Wheel Speed')
-        plt.plot(wheelSpeeds[:,0]*1e-9, wheelSpeeds[:,2], label = 'RW 2 Wheel Speed')
+        plt.plot(speedDataLog.times()*1e-9, wheelSpeeds, label = 'RW 1 Wheel Speed')
+        plt.plot(speedDataLog.times()*1e-9, wheelSpeeds, label = 'RW 2 Wheel Speed')
         plt.legend(loc='upper right')
         plt.xlabel("Time (s)")
         plt.ylabel("Wheel Speed (rad/s)")
         unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestWheelSpeed", "Reaction Wheel " + testCase + " Test Wheel Speed", plt, r"width=0.8\textwidth", path)
 
+        print(wheelSpeedBeforeInteg1)
+        print(frictionTorque1)
         plt.figure()
         plt.clf()
-        plt.plot(wheelSpeedBeforeInteg1[:,1], frictionTorque1[:,1], label = 'RW 1 Friction Torque')
-        plt.plot(wheelSpeedBeforeInteg2[:,1], frictionTorque2[:,1], label = 'RW 2 Friction Torque')
+        plt.plot(wheelSpeedBeforeInteg1, frictionTorque1, label = 'RW 1 Friction Torque')
+        plt.plot(wheelSpeedBeforeInteg2, frictionTorque2, label = 'RW 2 Friction Torque')
         plt.legend(loc='upper right')
         plt.xlabel("Wheel Speed (rad/s)")
         plt.ylabel("Friction Torque (N-m)")
@@ -490,13 +483,13 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     accuracy = 1e-8
     if testCase == 'BOE':
         for i in range(5):
-            if abs((omegaBOE[i] - omegaData[int(timeBOE[i]/stepSize),3])/omegaBOE[i]) > accuracy:
+            if abs((omegaBOE[i] - omegaData[int(timeBOE[i]/stepSize),2])/omegaBOE[i]) > accuracy:
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE body rates unit test")
             if abs((thetaBOE[i] - thetaOut[int(timeBOE[i]/stepSize)])/thetaBOE[i]) > accuracy:
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE theta unit test")
-            if abs((wheelSpeedBOE[i] - wheelSpeeds[int(timeBOE[i]/stepSize),1])/wheelSpeedBOE[i]) > accuracy:
+            if abs((wheelSpeedBOE[i] - wheelSpeeds[int(timeBOE[i]/stepSize)])/wheelSpeedBOE[i]) > accuracy:
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE wheel speed unit test")
 
@@ -525,4 +518,5 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    reactionWheelIntegratedTest(True,True,'BalancedWheels')
+    # reactionWheelIntegratedTest(True,True,'BalancedWheels')
+    reactionWheelIntegratedTest(True,True,'BOE')

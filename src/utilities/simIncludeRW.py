@@ -23,9 +23,9 @@
 import sys
 import numpy
 
-from . import macros
-from Basilisk.simulation import simMessages
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.utilities import macros
+from Basilisk.simulation import messaging2
+
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -33,9 +33,6 @@ except ImportError:
 
 class rwFactory(object):
     def __init__(self):
-        self.BalancedWheels = 0
-        self.JitterSimple = 1
-        self.JitterFullyCoupled = 2
         self.rwList = OrderedDict()
         self.maxMomentum = 0.0
 
@@ -71,7 +68,7 @@ class rwFactory(object):
         """
 
         # create the blank RW object
-        RW = simMessages.RWConfigSimMsg()
+        RW = messaging2.RWConfigMsgPayload()
 
         # process optional input arguments
         if 'RWModel' in kwargs:
@@ -80,7 +77,7 @@ class rwFactory(object):
                 print('ERROR: RWModel must be a INT argument')
                 exit(1)
         else:
-            varRWModel = self.BalancedWheels    # default value
+            varRWModel = messaging2.BalancedWheels    # default value
 
         if 'useRWfriction' in kwargs:
             varUseRWfriction = kwargs['useRWfriction']

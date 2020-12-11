@@ -188,6 +188,12 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRateSteeringName``     | ``rateSteeringInMsg``             |
     +---------------------------+-------------------------------+-----------------------------------+
+    | reactionWheelStateEffector| ``OutputDataString``          | ``rwSpeedOutMsg``                 |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``InputCmds``                 | ``rwMotorCmdInMsg``               |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``rwOutMsgNames``             | ``rwOutMsgs``                     |
+    +---------------------------+-------------------------------+-----------------------------------+
     | rwMotorTorque             | ``scMassStateOutMsgName``     | ``rwMotorTorqueOutMsg``           |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputVehControlName``       | ``vehControlInMsg``               |

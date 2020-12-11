@@ -19,7 +19,6 @@
 
 
 #include "reactionWheelStateEffector.h"
-#include "messaging/system_messaging.h"
 #include "utilities/avsEigenSupport.h"
 #include <cstring>
 #include <iostream>
@@ -29,11 +28,6 @@
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {
 	CallCounts = 0;
-	InputCmds = "reactionwheel_cmds";
-	OutputDataString = "reactionwheel_output_states";
-	OutputBufferCount = 2;
-	CmdsInMsgID = -1;
-	StateOutMsgID = -1;
 	prevCommandTime = 0xFFFFFFFFFFFFFFFF;
 
     effProps.mEff = 0.0;
@@ -70,7 +64,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
     this->numRW = 0;
-    std::vector<RWConfigSimMsg>::iterator RWIt;
+    std::vector<RWConfigMsgPayload>::iterator RWIt;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
 
@@ -108,7 +102,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPrimePntB_B.setZero();
     
     int thetaCount = 0;
-    std::vector<RWConfigSimMsg>::iterator RWIt;
+    std::vector<RWConfigMsgPayload>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
@@ -200,7 +194,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 
 	omegaLoc_BN_B = this->hubOmega->getState();
 
-    std::vector<RWConfigSimMsg>::iterator RWIt;
+    std::vector<RWConfigMsgPayload>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		OmegaSquared = RWIt->Omega * RWIt->Omega;
@@ -289,7 +283,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
 	Eigen::Vector3d rDDotBNLoc_B;                  /*! second time derivative of rBN in B frame */
 	int RWi = 0;
     int thetaCount = 0;
-	std::vector<RWConfigSimMsg>::iterator RWIt;
+	std::vector<RWConfigMsgPayload>::iterator RWIt;
 
 	//! Grab necessarry values from manager
 	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
@@ -331,7 +325,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
-    std::vector<RWConfigSimMsg>::iterator RWIt;
+    std::vector<RWConfigMsgPayload>::iterator RWIt;
     for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
     {
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
@@ -350,36 +344,25 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
     return;
 }
 
+//!< add a RW data object to the reactionWheelStateEffector
+void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
+{
+    /* store the RW information */
+    this->ReactionWheelData.push_back(*NewRW);
+
+    /* add a RW state log output message for this wheel */
+    Message<RWConfigLogMsgPayload> *msg;
+    msg = new Message<RWConfigLogMsgPayload>;
+    this->rwOutMsgs.push_back(*msg);
+}
+
+
 /*! This method is used to clear out the current RW states and make sure
  that the overall model is ready
  @return void
  */
 void ReactionWheelStateEffector::SelfInit()
 {
-	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	RWCmdSimMsg RWCmdInitializer;
-	RWCmdInitializer.u_cmd = 0.0;
-
-	//! - Clear out any currently firing RWs and re-init cmd array
-	NewRWCmds.clear();
-	NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
-
-	// Reserve a message ID for each reaction wheel config output message
-	int64_t tmpWheeltMsgId;
-	std::string tmpWheelMsgName;
-	std::vector<RWConfigSimMsg>::iterator it;
-	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
-	{
-		tmpWheelMsgName = this->ModelTag + "_rw_config_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
-		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(RWConfigLogSimMsg), OutputBufferCount, "RWConfigLogSimMsg", moduleID);
-		this->rwOutMsgNames.push_back(tmpWheelMsgName);
-		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
-	}
-
-	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(RWSpeedIntMsg),
-												 OutputBufferCount, "RWSpeedIntMsg", moduleID);
-
-    return;
 }
 
 /*! This method is used to connect the input command message to the RWs.
@@ -389,29 +372,38 @@ void ReactionWheelStateEffector::SelfInit()
  */
 void ReactionWheelStateEffector::CrossInit()
 {
-	//! - Find the message ID associated with the InputCmds string.
-	//! - Warn the user if the message is not successfully linked.
-    if (this->InputCmds.length() == 0) {
-        this->CmdsInMsgID = -1;
-    } else {
-        this->CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputCmds,
-                                                                         sizeof(ArrayMotorTorqueIntMsg),
-                                                                         moduleID);
+}
+
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
+{
+    RWCmdMsgPayload RWCmdInitializer;
+    RWCmdInitializer.u_cmd = 0.0;
+
+    //! - Clear out any currently firing RWs and re-init cmd array
+    this->NewRWCmds.clear();
+    for (int i=0; i<this->ReactionWheelData.size(); i++) {
+        this->NewRWCmds.push_back(RWCmdInitializer);
     }
 
-	std::vector<RWConfigSimMsg>::iterator it;
-	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
-	{
+    std::vector<RWConfigMsgPayload>::iterator it;
+    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+    {
         if (it->betaStatic == 0.0)
         {
             bskLogger.bskLog(BSK_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!");
         }
-		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
-		if (it->RWModel == JitterFullyCoupled) {
-			it->d = it->U_s/it->mass; //!< determine CoM offset from static imbalance parameter
-			it->J13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
-		}
-	}
+        //! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
+        if (it->RWModel == JitterFullyCoupled) {
+            it->d = it->U_s/it->mass; //!< determine CoM offset from static imbalance parameter
+            it->J13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
+        }
+    }
+
+    /* zero the RW wheel output message buffer */
+    this->rwSpeedMsgBuffer = this->rwSpeedOutMsg.zeroMsgPayload();
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -421,17 +413,18 @@ void ReactionWheelStateEffector::CrossInit()
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	RWConfigLogSimMsg tmpRW;
-	std::vector<RWConfigSimMsg>::iterator it;
-	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+    RWConfigMsgPayload test;
+	RWConfigLogMsgPayload tmpRW;
+	std::vector<RWConfigMsgPayload>::iterator it;
+    int c = 0;
+    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
         if (numRWJitter > 0) {
             it->theta = this->thetasState->getState()(it - ReactionWheelData.begin(), 0);
         }
         it->Omega = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
 
-        memset(&tmpRW, 0x0, sizeof(RWConfigLogSimMsg));
+        tmpRW = this->rwOutMsgs[c].zeroMsgPayload();
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
         tmpRW.frictionTorque = it->frictionTorque;
@@ -447,11 +440,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         eigenVector3d2CArray(it->gsHat_B, tmpRW.gsHat_B);
         eigenVector3d2CArray(it->rWB_B, tmpRW.rWB_B);
 		// Write out config data for eachreaction wheel
-		messageSys->WriteMessage(this->rwOutMsgIds.at((size_t)(it - ReactionWheelData.begin())),
-								 CurrentClock,
-								 sizeof(RWConfigLogSimMsg),
-								 reinterpret_cast<uint8_t*> (&tmpRW),
-								 moduleID);
+        this->rwOutMsgs[c].write(&tmpRW, this->moduleID, CurrentClock);
 	}
 
     return;
@@ -464,21 +453,19 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    std::vector<RWConfigSimMsg>::iterator it;
+    std::vector<RWConfigMsgPayload>::iterator it;
     for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
     {
         if (numRWJitter > 0) {
             it->theta = this->thetasState->getState()(it - ReactionWheelData.begin(), 0);
-            outputStates.wheelThetas[it - ReactionWheelData.begin()] = it->theta;
+            this->rwSpeedMsgBuffer.wheelThetas[it - ReactionWheelData.begin()] = it->theta;
         }
         it->Omega = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
-        outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
+        this->rwSpeedMsgBuffer.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
     }
 
     // Write this message once for all reaction wheels
-    messageSys->WriteMessage(StateOutMsgID, integTimeNanos,
-                             sizeof(RWSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+    this->rwSpeedOutMsg.write(&this->rwSpeedMsgBuffer, this->moduleID, integTimeNanos);
 }
 
 /*! This method is used to read the incoming command message and set the
@@ -492,32 +479,26 @@ void ReactionWheelStateEffector::ReadInputs()
 	uint64_t i;
 
     //! - If the input message ID is invalid, return without touching states
-	if(CmdsInMsgID < 0)
+	if(!this->rwMotorCmdInMsg.isLinked())
 	{
 		return;
 	}
 
 	//! - Zero the command buffer and read the incoming command array
-	SingleMessageHeader LocalHeader;
-	memset(IncomingCmdBuffer.motorTorque, 0x0, sizeof(ArrayMotorTorqueIntMsg));
-	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-												sizeof(ArrayMotorTorqueIntMsg),
-												reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
+    this->incomingCmdBuffer = this->rwMotorCmdInMsg();
 
 	//! - Check if message has already been read, if stale return
 	//    if(prevCommandTime==LocalHeader.WriteClockNanos) {
 	//        return;
 	//    }
-	prevCommandTime = LocalHeader.WriteClockNanos;
+	this->prevCommandTime = this->rwMotorCmdInMsg.timeWritten();
 
 	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
-	RWCmdSimMsg *CmdPtr;
-	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
-		CmdPtr++, i++)
+	RWCmdMsgPayload *CmdPtr;
+	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size(); CmdPtr++, i++)
 	{
-		CmdPtr->u_cmd = IncomingCmdBuffer.motorTorque[i];
+		CmdPtr->u_cmd = this->incomingCmdBuffer.motorTorque[i];
 	}
-
 }
 
 /*! This method is used to read the new commands vector and set the RW
@@ -528,11 +509,11 @@ void ReactionWheelStateEffector::ReadInputs()
  */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
-	std::vector<RWCmdSimMsg>::iterator CmdIt;
+	std::vector<RWCmdMsgPayload>::iterator CmdIt;
 	size_t RWIter = 0;
 
 	// loop through commands
-	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
+	for(CmdIt = NewRWCmds.begin(); CmdIt != NewRWCmds.end(); CmdIt++)
 	{
 		// Torque saturation
 		if (this->ReactionWheelData[RWIter].u_max > 0) {
@@ -577,8 +558,8 @@ void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
 	ReadInputs();
-	ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
-	WriteOutputMessages(CurrentSimNanos);
+    ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
+    WriteOutputMessages(CurrentSimNanos);
 //
 }
 

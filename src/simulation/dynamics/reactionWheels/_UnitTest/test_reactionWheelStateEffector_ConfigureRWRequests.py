@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Integrated Unit Test Script
 #   Purpose:  Run a test of the reaction wheel sim module
@@ -25,12 +24,8 @@
 #
 
 import pytest
-import sys, os, inspect
+import os, inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -38,32 +33,38 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import messaging2
+
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
-def writeNewRWCmds(self,u_cmd,numRW):
-    NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
-    cmds = reactionWheelStateEffector.RWCmdSimMsg()
-    for i in range(0,numRW):
+
+def writeNewRWCmds(self, u_cmd, numRW):
+    # create standard vector from SWIG template (see .i file)
+    NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW)
+    cmds = messaging2.RWCmdMsgPayload()
+    for i in range(0, numRW):
         cmds.u_cmd = u_cmd[i]
-        NewRWCmdsVec[i] = cmds # set the data
-        self.NewRWCmds = NewRWCmdsVec # set in module
+        NewRWCmdsVec[i] = cmds  # set the data
+        self.NewRWCmds = NewRWCmdsVec  # set in module
+
 
 def defaultReactionWheel():
-    RW = reactionWheelStateEffector.RWConfigSimMsg()
-    RW.rWB_B = [[0.],[0.],[0.]]
-    RW.gsHat_B = [[1.],[0.],[0.]]
-    RW.w2Hat0_B = [[0.],[1.],[0.]]
-    RW.w3Hat0_B = [[0.],[0.],[1.]]
-    RW.RWModel = 0
+    RW = messaging2.RWConfigMsgPayload()
+    RW.rWB_B = [[0.], [0.], [0.]]
+    RW.gsHat_B = [[1.], [0.], [0.]]
+    RW.w2Hat0_B = [[0.], [1.], [0.]]
+    RW.w3Hat0_B = [[0.], [0.], [1.]]
+    RW.RWModel = reactionWheelStateEffector.BalancedWheels
     return RW
+
 
 def asEigen(v):
     out = []
-    for i in range(0,len(v)):
+    for i in range(0, len(v)):
         out.append([v[i]])
     return out
 
@@ -71,13 +72,15 @@ def asEigen(v):
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useFlag, testCase", [
-    (False,'saturation'),
-    (False,'minimum'),
-    (False,'speedSaturation')
+    (False, 'saturation'),
+    (False, 'minimum'),
+    (False, 'speedSaturation')
 ])
+
 
 # provide a unique test method name, starting with test_
 def test_unitSimReactionWheel(show_plots, useFlag, testCase):
@@ -99,11 +102,10 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     numRW = 2
 
     RWs = []
-    for i in range(0,numRW):
+    for i in range(0, numRW):
         RWs.append(defaultReactionWheel())
 
-
-    expOut = dict() # expected output
+    expOut = dict()  # expected output
 
     print(testCase)
     if testCase == 'basic':
@@ -114,18 +116,18 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         RWs[0].u_max = 1.
         RWs[1].u_max = 2.
         RWs[2].u_max = 2.
-        u_cmd = [-1.2,1.5,2.5]
-        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
+        u_cmd = [-1.2, 1.5, 2.5]
+        writeNewRWCmds(ReactionWheel, u_cmd, len(RWs))
 
-        expOut['u_current'] = [-1.,1.5,2.]
+        expOut['u_current'] = [-1., 1.5, 2.]
 
     elif testCase == 'minimum':
         RWs[0].u_min = .1
         RWs[1].u_min = .0
-        u_cmd = [-.09,0.0001]
-        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
+        u_cmd = [-.09, 0.0001]
+        writeNewRWCmds(ReactionWheel, u_cmd, len(RWs))
 
-        expOut['u_current'] = [0.,0.0001]
+        expOut['u_current'] = [0., 0.0001]
 
     elif testCase == 'speedSaturation':
         RWs.append(defaultReactionWheel())
@@ -135,35 +137,31 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         RWs[0].Omega = 49.
         RWs[1].Omega = 51.
         RWs[2].Omega = -52.
-        u_cmd = [1.5,1.5,1.5]
-        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
+        u_cmd = [1.5, 1.5, 1.5]
+        writeNewRWCmds(ReactionWheel, u_cmd, len(RWs))
 
-        expOut['u_current'] = [1.5,0.0,0.0]
+        expOut['u_current'] = [1.5, 0.0, 0.0]
 
     else:
         raise Exception('invalid test case')
 
-    for i in range(0,len(RWs)):
+    for i in range(0, len(RWs)):
         ReactionWheel.addReactionWheel(RWs[i])
 
     ReactionWheel.ConfigureRWRequests(0.)
 
-
-
-    if not 'accuracy' in vars():
+    if 'accuracy' not in vars():
         accuracy = 1e-10
 
     for outputName in list(expOut.keys()):
-        for i in range(0,len(RWs)):
-            if expOut[outputName][i] != getattr(ReactionWheel.ReactionWheelData[i],outputName):
+        for i in range(0, len(RWs)):
+            if expOut[outputName][i] != ReactionWheel.ReactionWheelData[i].u_current:
                 print("expected: " + str(expOut[outputName][i]))
-                print("got :" + str(getattr(ReactionWheel.ReactionWheelData[i],outputName)))
+                print("got :" + str(ReactionWheel.ReactionWheelData[i].u_current))
                 testFail = 1
                 break
         if testFail:
             break
-
-
 
     if testFail:
         testFailCount += 1
@@ -194,7 +192,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 # stand-along python script
 if __name__ == "__main__":
     test_unitSimReactionWheel(
-        False, # show_plots
-        False, # useFlag
-        'speedSaturation' # testCase
+        False,  # show_plots
+        False,  # useFlag
+        'speedSaturation'  # testCase
     )
