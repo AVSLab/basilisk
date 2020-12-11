@@ -27,6 +27,7 @@ Version |release|
 - Support Terminal Progress bar while running a Basilisk simulation
 - Improved the build system to re-swig the module if the dependencies have changed.
   This avoids having to do a clean build or manually deleting the swing python files from within ``dist3/Basilisk``.
+- All unit test cases are compatible with windows platform
 
 Version 1.8.7
 -------------
