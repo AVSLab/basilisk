@@ -23,7 +23,6 @@
 
 #include "dynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "messaging/system_messaging.h"
 #include <vector>
 #include <Eigen/Dense>
 #include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
@@ -82,7 +81,7 @@ public:
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
     void registerProperties(DynParamManager& statesIn);  //!< class method
-    ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg;       //!< planet spice ephemerisis input message
+    ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg;       //!< planet spice ephemeris input message
 
 public:
     bool isCentralBody;             //!<          Flag indicating that object is center
@@ -93,8 +92,8 @@ public:
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
-    SpicePlanetStateMsgPayload localPlanet;//!< [-]   Class storage of ephemeris info from scheduled portion
-    uint64_t timeWritten;           //!< [ns]     time the input planet state message was written
+    SpicePlanetStateMsgPayload localPlanet = {};  //!< [-]   Class storage of ephemeris info from scheduled portion
+    uint64_t timeWritten = 0;       //!< [ns]     time the input planet state message was written
     std::string planetName;         //!<          Gravitational body name
 
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field

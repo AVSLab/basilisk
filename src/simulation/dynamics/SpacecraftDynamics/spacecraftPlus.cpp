@@ -54,21 +54,22 @@ SpacecraftPlus::~SpacecraftPlus()
 /*! This method creates the messages for s/c output data and initializes the gravity field*/
 void SpacecraftPlus::SelfInit()
 {
-    // - Call the gravity fields selfInit method
-    this->gravField.SelfInit();
-
     return;
 }
 
 /*! This method is used to cross link the messages and to initialize the dynamics */
 void SpacecraftPlus::CrossInit()
 {
-    // - Call gravity field cross initialization
-    this->gravField.CrossInit();
+    return;
+}
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void SpacecraftPlus::Reset(uint64_t CurrentSimNanos)
+{
     // - Call method for initializing the dynamics of spacecraftPlus
     this->initializeDynamics();
-
-    return;
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */

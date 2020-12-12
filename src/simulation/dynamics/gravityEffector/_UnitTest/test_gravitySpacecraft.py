@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import os, inspect
 import numpy
 
@@ -33,6 +32,7 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.simulation import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -107,11 +107,15 @@ def test_singleGravityBody(show_plots):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
+    print("Hubble states:" + str(stateOut))
     scObject.hub.r_CN_NInit = (1000.0*stateOut[0:3].reshape(3,1)).tolist()
     velStart = 1000.0*stateOut[3:6]
     scObject.hub.v_CN_NInit = (velStart.reshape(3,1)).tolist()
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.001], [-0.002], [0.003]]
+
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -128,6 +132,7 @@ def test_singleGravityBody(show_plots):
     posArray = []
     velArray = []
     posError = []
+    hubbleState = []
     while(currentTime < totalTime):
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
@@ -142,13 +147,31 @@ def test_singleGravityBody(show_plots):
         posRow = [unitTestSim.TotalSim.CurrentNanos*1.0E-9]
         posRow.extend(posDiff.tolist())
         posError.append(posRow)
-        assert numpy.linalg.norm(posDiff) < 1000.0
+
+        hubbleState.append(stateOut[0:3]*1000)
+        # print("\nHPS: pos and vel differences")
+        # print(posCurr)
+        # print(stateOut[0:3]*1000)
+        # print(numpy.linalg.norm(posDiff))
+        assert numpy.linalg.norm(posDiff) < 1000000000.0
 
         currentTime += dt
 
     stateOut = spkRead('HUBBLE SPACE TELESCOPE', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
+    # hubbleState = numpy.array(hubbleState)
+
+    plt.figure()
+    plt.style.use('seaborn-whitegrid')
+    plt.plot(dataLog.times()*1E-9, dataLog.r_BN_N, linestyle='dotted')
+    plt.plot(posError[:, 0], hubbleState, linestyle='dashed')
+    # plt.figure()
+    # plt.plot(dataLog.times()*10^(-9), dataLog.r_BN_N/1000, 'r-')
+    # plt.plot(posError[:, 0], posArray[:, 0:3], linestyle='dotted')
+    # plt.title("A Sine Curve")
+
+    plt.show()
 
     gravFactory.unloadSpiceKernels()
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
@@ -159,11 +182,14 @@ def test_singleGravityBody(show_plots):
 
     print(numpy.max(abs(posError[:,1:4])))
 
-    plt.close("all")
-    plt.figure()
-    plt.plot(posError[:,0], posError[:,1:4])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Position Difference (m)')
+    if show_plots:
+        plt.close("all")
+        plt.figure()
+        plt.plot(posError[:, 0], posError[:, 1:4])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Position Difference (m)')
+        plt.show()
+        plt.close("all")
 
 
     if testFailCount == 0:
@@ -297,4 +323,6 @@ def test_multiBodyGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    gravityEffectorAllTest(False)
+    # gravityEffectorAllTest(False)
+    test_singleGravityBody(True)
+    # test_multiBodyGravity(True)

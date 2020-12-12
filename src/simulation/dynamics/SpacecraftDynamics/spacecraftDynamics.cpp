@@ -24,6 +24,7 @@
 #include "utilities/avsEigenMRP.h"
 #include "../../utilities/rigidBodyKinematics.h"
 #include <iostream>
+#include "messaging/system_messaging.h"
 
 Spacecraft::Spacecraft()
 {

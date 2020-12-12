@@ -271,11 +271,8 @@ GravBodyData::GravBodyData()
     this->radEquator = 0;              //!< [m]      Equatorial radius for the body
     this->spherHarm.maxDeg = 0;
     // Default these values to zero just in case they don't get populated
-    this->localPlanet.J2000Current = 0.0;
-    v3SetZero(this->localPlanet.PositionVector);
-    v3SetZero(this->localPlanet.VelocityVector);
+    this->localPlanet = this->planetBodyInMsg.zeroMsgPayload();
     m33SetIdentity(this->localPlanet.J20002Pfix);
-    m33SetZero(this->localPlanet.J20002Pfix_dot);
     return;
 }
 
@@ -294,15 +291,15 @@ void GravBodyData::initBody(int64_t moduleID)
     this->mu = spherFound ? this->spherHarm.muBody : this->mu;
     this->radEquator = spherFound ? this->spherHarm.radEquator : this->radEquator;
 
-    if (this->planetName == "") {
-        this->bskLogger.bskLog(BSK_ERROR, "You must specify a planetary body name in GravBodyData");
-    }
-
     return;
 }
 
 void GravBodyData::registerProperties(DynParamManager& statesIn)
 {
+    if (this->planetName == "") {
+        this->bskLogger.bskLog(BSK_ERROR, "You must specify a planetary body name in GravBodyData");
+    }
+
     Eigen::Vector3d stateInit;
     stateInit.fill(0.0);
     this->r_PN_N = statesIn.createProperty(this->planetName + ".r_PN_N", stateInit);
@@ -378,11 +375,18 @@ void GravBodyData::loadEphemeris(int64_t moduleID)
         this->timeWritten = this->planetBodyInMsg.timeWritten();
     } else {
         /* use default zero planet state information, including a zero orientation */
+        this->localPlanet = this->planetBodyInMsg.zeroMsgPayload();
         m33SetIdentity(this->localPlanet.J20002Pfix);
+        this->timeWritten = 0;
     }
     return;
 }
 
+
+
+/*
+ GravityEffector
+ */
 GravityEffector::GravityEffector()
 {
     this->centralBody = nullptr;
@@ -445,7 +449,7 @@ void GravityEffector::UpdateState(uint64_t currentSimNanos)
 */
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
-    if (this->centralBodyOutMsg.isLinked()) {
+    if (this->centralBodyOutMsg.isLinked() && this->centralBody) {
         this->centralBodyOutMsg.write(&this->centralBody->localPlanet, this->moduleID, currentSimNanos);
     }
     return;

@@ -305,19 +305,17 @@ def singleGravityBody(show_plots):
 
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.outputBufferCount = 10000
-    SpiceObject.planetNames = spiceInterface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.addPlanetNames(spiceInterface.StringVector(["earth", "mars barycenter", "sun"]))
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
 
-
     gravBody1 = gravityEffector.GravBodyData()
-    gravBody1.bodyInMsgName = "earth_planet_data"
-    gravBody1.outputMsgName = "earth_display_frame_data"
+    gravBody1.planetName = "earth_planet_data"
     gravBody1.isCentralBody = False
     gravBody1.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', gravBody1.spherHarm, 60)
+    gravBody1.planetBodyInMsg.subscribeTo(SpiceObject.planetStateOutMsgs[0])
 
     # Use the python spice utility to load in spacecraft SPICE ephemeris data
     # Note: this following SPICE data only lives in the Python environment, and is
@@ -467,14 +465,13 @@ def multiBodyGravity(show_plots):
 
 
     #Create a message struct to place gravBody1 where it is wanted
-    localPlanetEditor = simMessages.SpicePlanetStateSimMsg()
+    localPlanetEditor = messaging2.SpicePlanetStateMsgPayload()
     localPlanetEditor.PositionVector = [om.AU/10., 0., 0.]
     localPlanetEditor.VelocityVector = [0., 0., 0.]
 
     #Grav Body 1 is twice the size of the other two
     gravBody1 = gravityEffector.GravBodyData()
-    gravBody1.bodyInMsgName = "gravBody1_planet_data"
-    gravBody1.outputMsgName = "gravBody1_display_frame_data"
+    gravBody1.planetName = "gravBody1_planet_data"
     gravBody1.mu = 1000000.
     gravBody1.radEquator = 6500.
     gravBody1.isCentralBody = False
@@ -497,8 +494,7 @@ def multiBodyGravity(show_plots):
 
     #grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
     gravBody2 = gravityEffector.GravBodyData()
-    gravBody2.bodyInMsgName = "gravBody2_planet_data"
-    gravBody2.outputMsgName = "gravBody2_display_frame_data"
+    gravBody2.planetName = "gravBody2_planet_data"
     gravBody2.mu = gravBody1.mu/2.
     gravBody2.radEquator = 6500.
     gravBody2.isCentralBody = False
@@ -517,8 +513,7 @@ def multiBodyGravity(show_plots):
     step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
     # grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
     gravBody3 = gravityEffector.GravBodyData()
-    gravBody3.bodyInMsgName = "gravBody3_planet_data"
-    gravBody3.outputMsgName = "gravBody3_display_frame_data"
+    gravBody3.planetName = "gravBody3_planet_data"
     gravBody3.mu = gravBody2.mu
     gravBody3.radEquator = 6500.
     gravBody3.isCentralBody = False
@@ -578,4 +573,6 @@ def multiBodyGravity(show_plots):
 if __name__ == "__main__":
     # test_gravityEffectorAllTest(False)
     # independentSphericalHarmonics(False)
-    sphericalHarmonics(False)
+    # sphericalHarmonics(False)
+    # singleGravityBody(True)
+    multiBodyGravity(True)
