@@ -107,15 +107,11 @@ def test_singleGravityBody(show_plots):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
-    print("Hubble states:" + str(stateOut))
     scObject.hub.r_CN_NInit = (1000.0*stateOut[0:3].reshape(3,1)).tolist()
     velStart = 1000.0*stateOut[3:6]
     scObject.hub.v_CN_NInit = (velStart.reshape(3,1)).tolist()
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.001], [-0.002], [0.003]]
-
-    dataLog = scObject.scStateOutMsg.log()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -132,7 +128,6 @@ def test_singleGravityBody(show_plots):
     posArray = []
     velArray = []
     posError = []
-    hubbleState = []
     while(currentTime < totalTime):
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
@@ -147,31 +142,13 @@ def test_singleGravityBody(show_plots):
         posRow = [unitTestSim.TotalSim.CurrentNanos*1.0E-9]
         posRow.extend(posDiff.tolist())
         posError.append(posRow)
-
-        hubbleState.append(stateOut[0:3]*1000)
-        # print("\nHPS: pos and vel differences")
-        # print(posCurr)
-        # print(stateOut[0:3]*1000)
-        # print(numpy.linalg.norm(posDiff))
-        assert numpy.linalg.norm(posDiff) < 1000000000.0
+        assert numpy.linalg.norm(posDiff) < 1000.0
 
         currentTime += dt
 
     stateOut = spkRead('HUBBLE SPACE TELESCOPE', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
-    # hubbleState = numpy.array(hubbleState)
-
-    plt.figure()
-    plt.style.use('seaborn-whitegrid')
-    plt.plot(dataLog.times()*1E-9, dataLog.r_BN_N, linestyle='dotted')
-    plt.plot(posError[:, 0], hubbleState, linestyle='dashed')
-    # plt.figure()
-    # plt.plot(dataLog.times()*10^(-9), dataLog.r_BN_N/1000, 'r-')
-    # plt.plot(posError[:, 0], posArray[:, 0:3], linestyle='dotted')
-    # plt.title("A Sine Curve")
-
-    plt.show()
 
     gravFactory.unloadSpiceKernels()
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')

@@ -555,7 +555,7 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
     }
 }
 /*!
-    compute planet position eiht Euler integration
+    compute planet position with Euler integration
     @param bodyData planet data
  */
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *bodyData)

@@ -68,6 +68,7 @@ void SpacecraftPlus::CrossInit()
  */
 void SpacecraftPlus::Reset(uint64_t CurrentSimNanos)
 {
+    this->gravField.Reset(CurrentSimNanos);
     // - Call method for initializing the dynamics of spacecraftPlus
     this->initializeDynamics();
 }
