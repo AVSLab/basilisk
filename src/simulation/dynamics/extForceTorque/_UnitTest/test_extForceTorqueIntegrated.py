@@ -73,15 +73,12 @@ def test_extForceBodyAndTorque():
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
     # Define initial conditions
     scObject.hub.mHub = 750.0
@@ -110,8 +107,8 @@ def test_extForceBodyAndTorque():
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
                 [-6.78136423e+06, 4.94628599e+06, 5.48655395e+06]
@@ -170,9 +167,8 @@ def test_extForceInertialAndTorque():
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
@@ -205,8 +201,8 @@ def test_extForceInertialAndTorque():
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
                 [-6.78183900e+06, 4.94674963e+06, 5.48686274e+06]
