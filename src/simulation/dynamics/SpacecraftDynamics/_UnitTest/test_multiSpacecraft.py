@@ -1,26 +1,24 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+import os, inspect
 import numpy
 import pytest
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -32,6 +30,11 @@ from Basilisk.simulation import spacecraftDynamics
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import hingedRigidBodyStateEffector
+from Basilisk.simulation import messaging2
+
+def addTimeColumn(time, data):
+    return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -105,8 +108,7 @@ def test_SCConnected(show_plots):
     scSystem.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
@@ -175,7 +177,8 @@ def test_SCConnected(show_plots):
     # Attach spacecraft3 to spacecraft2
     scSystem.attachSpacecraftToPrimary(sc3, dock1SC3.portName, dock2SC2.portName)
 
-    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
+    dataLog = scSystem.primaryCentralSpacecraft.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
@@ -192,10 +195,8 @@ def test_SCConnected(show_plots):
     rotAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
 
-    r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.r_BN_N',
-                                                  list(range(3)))
-    sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.sigma_BN',
-                                                  list(range(3)))
+    r_BN_NOutput = dataLog.r_BN_N
+    sigma_BNOutput = dataLog.sigma_BN
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -210,7 +211,7 @@ def test_SCConnected(show_plots):
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
                  ]
 
     initialRotAngMom_N = [
@@ -218,7 +219,7 @@ def test_SCConnected(show_plots):
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                [rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
     initialOrbEnergy = [
@@ -226,7 +227,7 @@ def test_SCConnected(show_plots):
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                [orbEnergy[-1,1]]
                  ]
 
     initialRotEnergy = [
@@ -234,7 +235,7 @@ def test_SCConnected(show_plots):
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                [rotEnergy[-1,1]]
                  ]
 
     plt.close("all")
@@ -385,8 +386,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     scSystem.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
@@ -503,14 +503,18 @@ def test_SCConnectedAndUnconnected(show_plots):
 
     scSystem.addSpacecraftUndocked(sc5)
 
-
-    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft4inertial_state_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft5inertial_state_output", testProcessRate)
-
-    unitTestSim.TotalSim.logThisMessage("spacecraftenergy_momentum_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft4energy_momentum_output", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage("spacecraft5energy_momentum_output", testProcessRate)
+    dataLog = scSystem.primaryCentralSpacecraft.scStateOutMsg.log()
+    dataLog4 = sc4.scStateOutMsg.log()
+    dataLog5 = sc5.scStateOutMsg.log()
+    dataEngLog = scSystem.primaryCentralSpacecraft.scEnergyMomentumOutMsg.log()
+    dataEngLog4 = sc4.scEnergyMomentumOutMsg.log()
+    dataEngLog5 = sc5.scEnergyMomentumOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    unitTestSim.AddModelToTask(unitTaskName, dataLog4)
+    unitTestSim.AddModelToTask(unitTaskName, dataLog5)
+    unitTestSim.AddModelToTask(unitTaskName, dataEngLog)
+    unitTestSim.AddModelToTask(unitTaskName, dataEngLog4)
+    unitTestSim.AddModelToTask(unitTaskName, dataEngLog5)
 
     unitTestSim.InitializeSimulation()
 
@@ -518,47 +522,27 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.r_BN_N',
-                                                  list(range(3)))
-    sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraftinertial_state_output" + '.sigma_BN',
-                                                  list(range(3)))
+    r_BN_NOutput = addTimeColumn(dataLog.times(), dataLog.r_BN_N)
+    sigma_BNOutput = addTimeColumn(dataLog.times(), dataLog.sigma_BN)
+    r_BN_NOutput1 = addTimeColumn(dataLog4.times(), dataLog4.r_BN_N)
+    sigma_BNOutput1 = addTimeColumn(dataLog4.times(), dataLog4.sigma_BN)
+    r_BN_NOutput2 = addTimeColumn(dataLog5.times(), dataLog5.r_BN_N)
+    sigma_BNOutput2 = addTimeColumn(dataLog5.times(), dataLog5.sigma_BN)
 
-    r_BN_NOutput1 = unitTestSim.pullMessageLogData("spacecraft4inertial_state_output" + '.r_BN_N',
-                                                  list(range(3)))
-    sigma_BNOutput1 = unitTestSim.pullMessageLogData("spacecraft4inertial_state_output" + '.sigma_BN',
-                                                  list(range(3)))
+    rotEnergy = addTimeColumn(dataEngLog.times(), dataEngLog.spacecraftRotEnergy)
+    orbEnergy = addTimeColumn(dataEngLog.times(), dataEngLog.spacecraftOrbEnergy)
+    rotAngMom_N = addTimeColumn(dataEngLog.times(), dataEngLog.spacecraftRotAngMomPntC_N)
+    orbAngMom_N = addTimeColumn(dataEngLog.times(), dataEngLog.spacecraftOrbAngMomPntN_N)
 
-    r_BN_NOutput2 = unitTestSim.pullMessageLogData("spacecraft5inertial_state_output" + '.r_BN_N',
-                                                  list(range(3)))
-    sigma_BNOutput2 = unitTestSim.pullMessageLogData("spacecraft5inertial_state_output" + '.sigma_BN',
-                                                  list(range(3)))
+    rotEnergy1 = addTimeColumn(dataEngLog4.times(), dataEngLog4.spacecraftRotEnergy)
+    orbEnergy1 = addTimeColumn(dataEngLog4.times(), dataEngLog4.spacecraftOrbEnergy)
+    rotAngMom1_N = addTimeColumn(dataEngLog4.times(), dataEngLog4.spacecraftRotAngMomPntC_N)
+    orbAngMom1_N = addTimeColumn(dataEngLog4.times(), dataEngLog4.spacecraftOrbAngMomPntN_N)
 
-    rotEnergy = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftRotEnergy',
-                                                  list(range(1)))
-    orbEnergy = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  list(range(1)))
-    rotAngMom_N = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftRotAngMomPntC_N',
-                                                  list(range(3)))
-    orbAngMom_N = unitTestSim.pullMessageLogData("spacecraftenergy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
-                                                  list(range(3)))
-
-    rotEnergy1 = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftRotEnergy',
-                                                  list(range(1)))
-    orbEnergy1 = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  list(range(1)))
-    rotAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
-                                                  list(range(3)))
-    orbAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
-                                                  list(range(3)))
-
-    rotEnergy2 = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftRotEnergy',
-                                                  list(range(1)))
-    orbEnergy2 = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  list(range(1)))
-    rotAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
-                                                  list(range(3)))
-    orbAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
-                                                  list(range(3)))
+    rotEnergy2 = addTimeColumn(dataEngLog5.times(), dataEngLog5.spacecraftRotEnergy)
+    orbEnergy2 = addTimeColumn(dataEngLog5.times(), dataEngLog5.spacecraftOrbEnergy)
+    rotAngMom2_N = addTimeColumn(dataEngLog5.times(), dataEngLog5.spacecraftRotAngMomPntC_N)
+    orbAngMom2_N = addTimeColumn(dataEngLog5.times(), dataEngLog5.spacecraftOrbAngMomPntN_N)
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -573,7 +557,7 @@ def test_SCConnectedAndUnconnected(show_plots):
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
                  ]
 
     initialRotAngMom_N = [
@@ -581,7 +565,7 @@ def test_SCConnectedAndUnconnected(show_plots):
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                [rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
     initialOrbEnergy = [
@@ -589,7 +573,7 @@ def test_SCConnectedAndUnconnected(show_plots):
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                [orbEnergy[-1,1]]
                  ]
 
     initialRotEnergy = [
@@ -597,7 +581,7 @@ def test_SCConnectedAndUnconnected(show_plots):
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                [rotEnergy[-1,1]]
                  ]
 
     plt.figure()
@@ -764,4 +748,5 @@ def test_SCConnectedAndUnconnected(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCConnected(True)
+    # test_SCConnected(True)
+    test_SCConnectedAndUnconnected(True)

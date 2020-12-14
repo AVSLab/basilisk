@@ -24,21 +24,13 @@
 #include "utilities/avsEigenMRP.h"
 #include "../../utilities/rigidBodyKinematics.h"
 #include <iostream>
-#include "messaging/system_messaging.h"
 
 Spacecraft::Spacecraft()
 {
     // - Set default names
     this->spacecraftName = "spacecraft";
-    this->scStateOutMsgName = "inertial_state_output";
-    this->scMassStateOutMsgName = "mass_state_output";
-    this->scEnergyMomentumOutMsgName = "energy_momentum_output";
-    this->numOutMsgBuffers = 2;
 
     // - Set values to either zero or default values
-    this->scStateOutMsgId = -1;
-    this->scMassStateOutMsgId = -1;
-    this->scEnergyMomentumOutMsgId = -1;
     this->dvAccum_B.setZero();
     this->dvAccum_BN_B.setZero();
 
@@ -76,41 +68,23 @@ void Spacecraft::addDockingPort(DockingData *newDockingPort)
 
 void Spacecraft::SelfInitSC(int64_t moduleID)
 {
-    this->scStateOutMsgName = this->spacecraftName + this->scStateOutMsgName;
-    this->scMassStateOutMsgName = this->spacecraftName + this->scMassStateOutMsgName;
-    this->scEnergyMomentumOutMsgName = this->spacecraftName + this->scEnergyMomentumOutMsgName;
-    this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
-                                                                                                      sizeof(SCStatesSimMsg),
-                                                                                                      this->numOutMsgBuffers,
-                                                                                                      "SCStatesSimMsg", moduleID);
-    // - Create the message for the spacecraft mass state
-    this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
-                                                                                                          sizeof(SCMassPropsSimMsg),
-                                                                                                          this->numOutMsgBuffers,
-                                                                                                          "SCMassPropsSimMsg", moduleID);
-    // - Create the message for the spacecraft energy and momentum
-    this->scEnergyMomentumOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scEnergyMomentumOutMsgName,
-                                                                                 sizeof(SCEnergyMomentumSimMsg),
-                                                                                 this->numOutMsgBuffers,
-                                                                                 "SCEnergyMomentumSimMsg", moduleID);
-    // - Call the gravity fields selfInit method
-    this->gravField.SelfInit();
-    return;
 }
 
-void Spacecraft::CrossInitSC()
-{
-    // - Need to crossinit gravity
-    this->gravField.CrossInit();
 
-    return;
+/*! This method is used to reset the module.
+ @return void
+ */
+void Spacecraft::ResetSC(uint64_t CurrentSimNanos)
+{
+    this->gravField.Reset(CurrentSimNanos);
 }
 
 void Spacecraft::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
 {
     // - Write output messages for each spacecraft
     // - Populate state output message
-    SCStatesSimMsg stateOut;
+    SCStatesMsgPayload stateOut;
+    stateOut = this->scStateOutMsg.zeroMsgPayload();
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
@@ -127,26 +101,24 @@ void Spacecraft::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
-    SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCStatesSimMsg),
-                                                 reinterpret_cast<uint8_t*> (&stateOut), moduleID);
+    this->scStateOutMsg.write(&stateOut, moduleID, clockTime);
 
     // - Populate mass state output message
-    SCMassPropsSimMsg massStateOut;
+    SCMassPropsMsgPayload massStateOut;
+    massStateOut = this->scMassStateOutMsg.zeroMsgPayload();
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
-    SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCMassPropsSimMsg),
-                                                 reinterpret_cast<uint8_t*> (&massStateOut), moduleID);
+    this->scMassStateOutMsg.write(&massStateOut, moduleID, clockTime);
 
     // - Populate energy momentum output message
-    SCEnergyMomentumSimMsg energyMomentumOut;
+    SCEnergyMomentumMsgPayload energyMomentumOut;
+    energyMomentumOut = this->scEnergyMomentumOutMsg.zeroMsgPayload();
     energyMomentumOut.spacecraftRotEnergy = this->totRotEnergy;
     energyMomentumOut.spacecraftOrbEnergy = this->totOrbEnergy;
     eigenVector3d2CArray(this->totRotAngMomPntC_N, energyMomentumOut.spacecraftRotAngMomPntC_N);
     eigenVector3d2CArray(this->totOrbAngMomPntN_N, energyMomentumOut.spacecraftOrbAngMomPntN_N);
-    SystemMessaging::GetInstance()->WriteMessage(this->scEnergyMomentumOutMsgId, clockTime, sizeof(SCEnergyMomentumSimMsg),
-                                                 reinterpret_cast<uint8_t*> (&energyMomentumOut), moduleID);
-
+    this->scEnergyMomentumOutMsg.write(&energyMomentumOut, moduleID, clockTime);
     return;
 }
 void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
@@ -349,51 +321,36 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
 /*! This method creates the messages for s/c output data and initializes the gravity field*/
 void SpacecraftDynamics::SelfInit()
 {
-    // - Call this for the primary spacecraft
-    // - Create the message for the spacecraft state
-    this->primaryCentralSpacecraft.SelfInitSC(this->moduleID);
-
-    // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
-    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
-    {
-        (*spacecraftConnectedIt)->SelfInitSC(this->moduleID);
-    }
-
-    // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
-    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
-    {
-        (*spacecraftUnConnectedIt)->SelfInitSC(this->moduleID);
-    }
-
-    return;
 }
 
 /*! This method is used to cross link the messages and to initialize the dynamics */
 void SpacecraftDynamics::CrossInit()
 {
-    // - Call gravity field cross initialization for all spacecraft
-    this->primaryCentralSpacecraft.CrossInitSC();
+}
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void SpacecraftDynamics::Reset(uint64_t CurrentSimNanos)
+{
+    this->primaryCentralSpacecraft.ResetSC(CurrentSimNanos);
 
     // - Call this for all of the connected spacecraft
     std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
-        (*spacecraftConnectedIt)->CrossInitSC();
+        (*spacecraftConnectedIt)->ResetSC(CurrentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
     std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        (*spacecraftUnConnectedIt)->CrossInitSC();
+        (*spacecraftUnConnectedIt)->ResetSC(CurrentSimNanos);
     }
 
     // - Call method for initializing the dynamics of spacecraftPlus
     this->initializeDynamics();
-
-    return;
 }
 
 /*! This is the method where the messages of the state of vehicle are written */

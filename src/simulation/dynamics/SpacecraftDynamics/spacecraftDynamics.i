@@ -46,6 +46,13 @@ namespace std {
 %include "spacecraftDynamics.h"
 %include "hubEffector.h"
 
+%include "msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "msgPayloadDefC/SCMassPropsMsgPayload.h"
+struct SCMassPropsMsg_C;
+%include "msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
+struct SCEnergyMomentumMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

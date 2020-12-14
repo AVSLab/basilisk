@@ -30,9 +30,12 @@
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "../_GeneralModuleFiles/sys_model.h"
 #include "hubEffector.h"
-#include "simMessages/scStatesSimMsg.h"
-#include "simMessages/scMassPropsSimMsg.h"
-#include "../../simMessages/scEnergyMomentumSimMsg.h"
+
+#include "msgPayloadDefC/SCStatesMsgPayload.h"
+#include "msgPayloadDefC/SCMassPropsMsgPayload.h"
+#include "msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/bskLogging.h"
 
 
@@ -57,14 +60,10 @@ struct DockingData {
 class Spacecraft {
 public:
     bool docked;                         //!< class variable
-    int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
-    int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
-    int64_t scEnergyMomentumOutMsgId;           //!< -- Message ID for the outgoing spacecraft mass state
-    uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string spacecraftName;          //!< -- Name of the spacecraft so that multiple spacecraft can be distinguished
-    std::string scStateOutMsgName;       //!< -- Name of the state output message
-    std::string scMassStateOutMsgName;   //!< -- Name of the state output message
-    std::string scEnergyMomentumOutMsgName;   //!< -- Name of the state output message
+    Message<SCStatesMsgPayload> scStateOutMsg;       //!< -- Name of the state output message
+    Message<SCMassPropsMsgPayload> scMassStateOutMsg;   //!< -- Name of the state output message
+    Message<SCEnergyMomentumMsgPayload> scEnergyMomentumOutMsg;   //!< -- Name of the state output message
     
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
@@ -124,8 +123,8 @@ public:
     void addDockingPort(DockingData *newDockingPort);  //!< -- Attaches a dynamicEffector
 
     void SelfInitSC(int64_t moduleID);                     //!< -- Lets spacecraft plus create its own msgs
-    void CrossInitSC();                    //!< -- Hook to tie s/c plus back into provided msgs
-    
+    void ResetSC(uint64_t CurrentSimNanos);
+
     void writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID); //!< -- Method to write all of the class output messages
     void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void initializeDynamicsSC(DynParamManager& statesIn); //!< class method
@@ -162,6 +161,7 @@ public:
     void initializeSCPosVelocity(Spacecraft& spacecraft); //!< class method
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
+    void Reset(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
