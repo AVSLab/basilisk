@@ -30,10 +30,11 @@
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "simMessages/gravityGradientSimMsg.h"
+
 %include "GravityGradientEffector.h"
 
-GEN_SIZEOF(GravityGradientSimMsg)
+%include "msgPayloadDefC/GravityGradientMsgPayload.h"
+struct GravityGradientMsg_C;
 
 %pythoncode %{
 import sys

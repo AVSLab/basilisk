@@ -52,13 +52,12 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("outMsgType", ["default", "custom"])
 @pytest.mark.parametrize("planetCase", [0, 1, 2, 3])
 @pytest.mark.parametrize("cmOffset", [[[0.1], [0.15], [-0.1]], [[0.0], [0.0], [0.0]]])
 
 
 # provide a unique test method name, starting with test_
-def test_gravityGradientModule(show_plots, outMsgType, cmOffset, planetCase):
+def test_gravityGradientModule(show_plots, cmOffset, planetCase):
     r"""
     **Validation Test Description**
 
@@ -73,8 +72,6 @@ def test_gravityGradientModule(show_plots, outMsgType, cmOffset, planetCase):
     all possible permutations (except show_plots of course) which is turned off for ``pytest`` usage.
 
     :param show_plots:  flag to show some simulation plots
-    :param outMsgType:  flag indicating if a default effector output message name should be used, or a custom name.
-                        The flag values can be either "default" or "custom".
     :param cmOffset:    center of mass offset vector in meters
     :param planetCase: integer flag with values (0,1,2,3).  The cases consider the following simulation scenarios:
 
@@ -92,7 +89,7 @@ def test_gravityGradientModule(show_plots, outMsgType, cmOffset, planetCase):
     """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(
-            show_plots, outMsgType, cmOffset, planetCase, 2.0)
+            show_plots, cmOffset, planetCase, 2.0)
     assert testResults < 1, testMessage
 
 
@@ -106,7 +103,7 @@ def truthGravityGradient(mu, rN, sigmaBN, hub):
 
     return ggTorque
 
-def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
+def run(show_plots, cmOffset, planetCase, simTime):
     """Call this routine directly to run the unit test."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -138,13 +135,10 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
         # for gravity acceleration calculations
         venus = gravFactory.createVenus()
         timeInitString = "2012 MAY 1 00:28:30.0"
-        spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                                                 timeInitString,
-                                                                 epochInMsgName='simEpoch')
-        unitTestSupport.setMessage(scSim.TotalSim,
-                                   simProcessName,
-                                   spiceObject.epochInMsgName,
-                                   epochMsg)
+        gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                         timeInitString,
+                                         epochInMsgName=True)
+
         scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
 
         if planetCase == 3:
@@ -190,14 +184,9 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()
     ggEff.ModelTag = scObject.ModelTag
-    ggEff.addPlanetName(earth.bodyInMsgName)
+    ggEff.addPlanetName(earth.planetName)
     if planetCase >= 2:
-        ggEff.addPlanetName(venus.bodyInMsgName)
-    if outMsgType == "default":
-        logMsgName = ggEff.ModelTag + "_gravityGradient"
-    else:
-        logMsgName = "test_gravityGradient"
-        ggEff.gravityGradientOutMsgName = logMsgName
+        ggEff.addPlanetName(venus.planetName)
     scObject.addDynamicEffector(ggEff)
     scSim.AddModelToTask(simTaskName, ggEff)
 
@@ -206,9 +195,12 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     #
     numDataPoints = 50
     samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(logMsgName, samplingTime)
-
+    logTaskName = "logTask"
+    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    dataLog = scObject.scStateOutMsg.log()
+    dataLogGG = ggEff.gravityGradientOutMsg.log()
+    scSim.AddModelToTask(logTaskName, dataLog)
+    scSim.AddModelToTask(logTaskName, dataLogGG)
 
     #
     #   initialize Simulation
@@ -224,9 +216,9 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', list(range(3)))
-    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN', list(range(3)))
-    ggData = scSim.pullMessageLogData(logMsgName+'.gravityGradientTorque_B', list(range(3)))
+    posData = dataLog.r_BN_N
+    attData = dataLog.sigma_BN
+    ggData = dataLogGG.gravityGradientTorque_B
     np.set_printoptions(precision=16)
 
     #
@@ -238,8 +230,8 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
         # draw the inertial position vector components
         plt.close("all")  # clears out plots from earlier test runs
         plt.figure(1)
-        for idx in range(1, 4):
-            plt.plot(attData[:, 0] * macros.NANO2MIN, attData[:, idx],
+        for idx in range(0, 3):
+            plt.plot(dataLog.times() * macros.NANO2MIN, attData[:, idx],
                      color=unitTestSupport.getLineColor(idx, 3),
                      label=r'$\sigma_' + str(idx) + '$')
         plt.legend(loc='lower right')
@@ -247,8 +239,8 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
         plt.ylabel(r'MRP Attitude $\sigma_{B/N}$')
 
         plt.figure(2)
-        for idx in range(1, 4):
-            plt.plot(posData[:, 0] * macros.NANO2MIN, posData[:, idx]/1000,
+        for idx in range(0, 3):
+            plt.plot(dataLog.times() * macros.NANO2MIN, posData[:, idx]/1000,
                      color=unitTestSupport.getLineColor(idx, 3),
                      label=r'$r_' + str(idx) + '$')
         plt.legend(loc='lower right')
@@ -256,8 +248,8 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
         plt.ylabel(r'Inertial Position coordinates [km]')
 
         plt.figure(3)
-        for idx in range(1, 4):
-            plt.plot(ggData[:, 0] * macros.NANO2MIN, ggData[:, idx] ,
+        for idx in range(0, 3):
+            plt.plot(dataLogGG.times() * macros.NANO2MIN, ggData[:, idx] ,
                      color=unitTestSupport.getLineColor(idx, 3),
                      label=r'$r_' + str(idx) + '$')
         plt.legend(loc='lower right')
@@ -270,8 +262,8 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     # compare gravity gradient torque vector to the truth
     accuracy = 1e-10
     for rV, sV, ggV in zip(posData, attData, ggData):
-        ggTruth = truthGravityGradient(mu, rV[1:4], sV[1:4], scObject.hub)
-        testFailCount, testMessages = unitTestSupport.compareVector(ggV[1:4],
+        ggTruth = truthGravityGradient(mu, rV[0:3], sV[0:3], scObject.hub)
+        testFailCount, testMessages = unitTestSupport.compareVector(ggV[0:3],
                                                                     ggTruth,
                                                                     accuracy,
                                                                     "gravityGradientTorque_B",
@@ -288,7 +280,6 @@ def run(show_plots, outMsgType, cmOffset, planetCase, simTime):
     # close the plots being saved off to avoid over-writing old and new figures
 if __name__ == '__main__':
     run(True,           # show_plots
-        "default",      # msgOutType (default, custom)
         [[0.0], [0.0], [0.0]], # cmOffset
         3,              # planetCase
         3600)  # simTime (seconds)

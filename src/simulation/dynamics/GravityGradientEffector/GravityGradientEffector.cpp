@@ -19,15 +19,11 @@
 
 #include <iostream>
 #include "GravityGradientEffector.h"
-#include "messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 
 GravityGradientEffector::GravityGradientEffector()
 {
-	this->gravityGradientOutMsgId = -1;
-    this->OutputBufferCount = 2;
-
 	return;
 }
 
@@ -42,21 +38,6 @@ GravityGradientEffector::~GravityGradientEffector()
  */
 void GravityGradientEffector::SelfInit()
 {
-    std::string outMsgName;         /* output msg name */
-
-    if (this->gravityGradientOutMsgName.length() > 0) {
-        /* use the user specified msg name */
-        outMsgName = this->gravityGradientOutMsgName;
-    } else {
-        /* auto-generate a default output msg name */
-        outMsgName = this->ModelTag + "_gravityGradient";
-    }
-    this->gravityGradientOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(outMsgName,
-                                                                sizeof(GravityGradientSimMsg),
-                                                                this->OutputBufferCount,
-                                                                "GravityGradientSimMsg",
-                                                                moduleID);
-    
     return;
 }
 
@@ -106,10 +87,9 @@ void GravityGradientEffector::addPlanetName(std::string planetName)
  */
 void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-    GravityGradientSimMsg outMsg;
+    GravityGradientMsgPayload outMsg;
     eigenVector3d2CArray(this->torqueExternalPntB_B, outMsg.gravityGradientTorque_B);
-    SystemMessaging::GetInstance()->WriteMessage(this->gravityGradientOutMsgId, CurrentClock,
-                                                 sizeof(GravityGradientSimMsg), reinterpret_cast<uint8_t*>(&outMsg), this->moduleID);
+    this->gravityGradientOutMsg.write(&outMsg, this->moduleID, CurrentClock);
 
 	return;
 }
