@@ -43,13 +43,15 @@ namespace std {
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "../_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftPlus.h"
+
 %include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-%include "msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
-%include "hubEffector.h"
-GEN_SIZEOF(SCPlusStatesMsgPayload)
-GEN_SIZEOF(SCPlusMassPropsMsgPayload)
 struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
 struct SCPlusMassPropsMsg_C;
+%include "msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
+
+%include "hubEffector.h"
 
 %pythoncode %{
 import sys

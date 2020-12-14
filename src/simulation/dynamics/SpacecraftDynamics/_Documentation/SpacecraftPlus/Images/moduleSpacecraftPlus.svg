@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="623.5 260.5 625.5 87.18181" width="625.5" height="87.18181">
+<svg version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="623.5 260.5 582 87.18181" width="582" height="87.18181">
   <defs>
     <font-face font-family="Courier" font-size="12" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
       <font-face-src>
@@ -23,14 +23,14 @@
       </font-face-src>
     </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.17.5\n2020-10-01 18:40:54 +0000</metadata>
-  <g id="Canvas_1" fill-opacity="1" stroke="none" stroke-dasharray="none" fill="none" stroke-opacity="1">
+  <metadata> Produced by OmniGraffle 7.18.1\n2020-12-14 14:34:53 +0000</metadata>
+  <g id="Canvas_1" fill="none" fill-opacity="1" stroke-opacity="1" stroke-dasharray="none" stroke="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
       <title>Layer 1</title>
       <g id="Graphic_11">
         <text transform="translate(1006.0922 288.05067)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCPlusStatesSimMsg</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCPlusStatesMsgPayload</tspan>
         </text>
       </g>
       <g id="Graphic_10">
@@ -48,22 +48,22 @@
       </g>
       <g id="Graphic_7">
         <text transform="translate(1006.0922 271.04582)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">scStateOutMsgName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">scStateOutMsg</tspan>
         </text>
       </g>
       <g id="Graphic_6">
         <text transform="translate(628.5 287.68923)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="84.34467" y="11">AttRefFswMsg</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="55.53998" y="11">AttRefMsgPayload</tspan>
         </text>
       </g>
       <g id="Graphic_5">
         <text transform="translate(642.01165 273.1851)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="60.54396" y="11">attRefInMsgName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="92.55373" y="11">attRefInMsg</tspan>
         </text>
       </g>
       <g id="Graphic_4">
         <text transform="translate(1005.5272 328.18994)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCPlusMassPropsSimMsg</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCPlusMassPropsMsgPayload</tspan>
         </text>
       </g>
       <g id="Line_3">
@@ -71,7 +71,7 @@
       </g>
       <g id="Graphic_2">
         <text transform="translate(1005.5272 311.1851)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">scMassStateOutMsgName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">scMassStateOutMsg</tspan>
         </text>
       </g>
     </g>

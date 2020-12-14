@@ -1,26 +1,24 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+import os, inspect
 import numpy
 import pytest
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -33,10 +31,12 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import GravityGradientEffector
+from Basilisk.simulation import messaging2
 
+def addTimeColumn(time, data):
+    return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -53,6 +53,8 @@ def spacecraftPlusAllTest(show_plots):
     [testResults, testMessage] = test_SCTransBOE(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_SCPointBVsPointC(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = test_scAttRef(show_plots, 1e-3)
     assert testResults < 1, testMessage
 
 def test_SCTranslation(show_plots):
@@ -83,15 +85,15 @@ def test_SCTranslation(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 100
@@ -126,8 +128,7 @@ def test_SCTranslation(show_plots):
         plt.show()
         plt.close('all')
 
-    moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  list(range(3)))
+    moduleOutput = dataLog.r_BN_N
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -138,7 +139,7 @@ def test_SCTranslation(show_plots):
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
                  ]
 
     initialOrbEnergy = [
@@ -146,7 +147,7 @@ def test_SCTranslation(show_plots):
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                [orbEnergy[-1,1]]
                  ]
 
     accuracy = 1e-10
@@ -205,15 +206,15 @@ def test_SCTransAndRotation(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 100
@@ -239,10 +240,8 @@ def test_SCTransAndRotation(show_plots):
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
-    r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  list(range(3)))
-    sigma_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  list(range(3)))
+    r_BN_NOutput = dataLog.r_BN_N
+    sigma_BNOutput = dataLog.sigma_BN
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -257,7 +256,7 @@ def test_SCTransAndRotation(show_plots):
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
                  ]
 
     initialRotAngMom_N = [
@@ -265,7 +264,7 @@ def test_SCTransAndRotation(show_plots):
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                [rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
     initialOrbEnergy = [
@@ -273,7 +272,7 @@ def test_SCTransAndRotation(show_plots):
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                [orbEnergy[-1,1]]
                  ]
 
     initialRotEnergy = [
@@ -281,7 +280,7 @@ def test_SCTransAndRotation(show_plots):
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                [rotEnergy[-1,1]]
                  ]
 
     plt.close('all')
@@ -388,7 +387,8 @@ def test_SCRotation(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
     scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
@@ -440,7 +440,7 @@ def test_SCRotation(show_plots):
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], numpy.linalg.norm(numpy.asarray(rotAngMom_N[-1,1:4]))]
+                [numpy.linalg.norm(numpy.asarray(rotAngMom_N[-1,1:4]))]
                  ]
 
     initialRotEnergy = [
@@ -448,13 +448,11 @@ def test_SCRotation(show_plots):
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                [rotEnergy[-1,1]]
                  ]
 
-    moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  list(range(3)))
-    omega_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.omega_BN_B',
-                                                  list(range(3)))
+    moduleOutput = addTimeColumn(dataLog.times(), dataLog.sigma_BN)
+    omega_BNOutput = addTimeColumn(dataLog.times(), dataLog.omega_BN_B)
 
     check = 0
     for i in range(0,len(moduleOutput)):
@@ -543,10 +541,11 @@ def test_SCRotation(show_plots):
         plt.show()
         plt.close("all")
 
+    moduleOutput = dataLog.sigma_BN
     accuracy = 1e-8
     for i in range(0,len(trueSigma)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(moduleOutput[-1,:],trueSigma[i],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(moduleOutput[-1],trueSigma[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed attitude unit test")
 
@@ -563,7 +562,7 @@ def test_SCRotation(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Rotation Integrated test failed rotational energy unit test")
 
-    omegaArray = omegaArray.transpose()
+    omegaArray = (numpy.delete(omegaArray, 0, 0)).transpose()
     omegaAnalyticalArray = omegaAnalyticalArray.transpose()
     for i in range(0,len(omegaAnalyticalArray)):
         # check a vector values
@@ -572,7 +571,7 @@ def test_SCRotation(show_plots):
             testMessages.append("FAILED: Spacecraft Rotation Integrated test Rotational BOE unit test")
 
     accuracy = 1e-5
-    if not unitTestSupport.isArrayEqualRelative(sigmaAfterSwitch,sigmaAfterAnalytical,1,accuracy):
+    if not unitTestSupport.isArrayEqualRelative(numpy.delete(sigmaAfterSwitch, 0,), sigmaAfterAnalytical,1,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: Spacecraft Rotation Integrated test failed MRP Switching unit test")
 
@@ -628,7 +627,8 @@ def test_SCTransBOE(show_plots):
     scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 100
@@ -660,10 +660,8 @@ def test_SCTransBOE(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  list(range(3)))
-    v_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N',
-                                                  list(range(3)))
+    r_BN_NOutput = addTimeColumn(dataLog.times(), dataLog.r_BN_N)
+    v_BN_NOutput = addTimeColumn(dataLog.times(), dataLog.v_BN_N)
 
     # BOE calcs
     a1 = F1/scObject.hub.mHub
@@ -773,7 +771,8 @@ def test_SCPointBVsPointC(show_plots):
     scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 100
@@ -790,10 +789,8 @@ def test_SCPointBVsPointC(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    r_CN_NOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
-                                                  list(range(3)))
-    sigma_BNOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  list(range(3)))
+    r_CN_NOutput1 = addTimeColumn(dataLog.times(), dataLog.r_CN_N)
+    sigma_BNOutput1 = addTimeColumn(dataLog.times(), dataLog.sigma_BN)
 
     ####################
 
@@ -827,7 +824,8 @@ def test_SCPointBVsPointC(show_plots):
     scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog2 = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog2)
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 100
@@ -844,10 +842,8 @@ def test_SCPointBVsPointC(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    r_CN_NOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
-                                                  list(range(3)))
-    sigma_BNOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  list(range(3)))
+    r_CN_NOutput2 = addTimeColumn(dataLog2.times(), dataLog2.r_CN_N)
+    sigma_BNOutput2 = addTimeColumn(dataLog2.times(), dataLog2.sigma_BN)
 
     plt.figure()
     plt.clf()
@@ -881,11 +877,11 @@ def test_SCPointBVsPointC(show_plots):
         plt.close('all')
 
     accuracy = 1e-8
-    if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):
+    if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,1:4],r_CN_NOutput2[-1,1:4],3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
 
-    if not unitTestSupport.isArrayEqualRelative(sigma_BNOutput1[-1,:],sigma_BNOutput2[-1,1:4],3,accuracy):
+    if not unitTestSupport.isArrayEqualRelative(sigma_BNOutput1[-1,1:4],sigma_BNOutput2[-1,1:4],3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed attitude unit test")
 
@@ -927,7 +923,8 @@ def test_scAttRef(show_plots, accuracy):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # add Earth
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -938,7 +935,7 @@ def test_scAttRef(show_plots, accuracy):
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()
     ggEff.ModelTag = scObject.ModelTag
-    ggEff.addPlanetName(earth.bodyInMsgName)
+    ggEff.addPlanetName(earth.planetName)
     scObject.addDynamicEffector(ggEff)
     unitTestSim.AddModelToTask(unitTaskName, ggEff)
 
@@ -951,17 +948,14 @@ def test_scAttRef(show_plots, accuracy):
     scObject.hub.sigma_BNInit = [[0.5], [0.4], [0.3]]
     scObject.hub.sigma_BNInit = [[0.], [0.], [1.0]]
     scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
-    scObject.attRefInMsgName = "attRefMsg"
 
     # write attitude reference message
-    attRef = fswMessages.AttRefFswMsg()
+    attRef = messaging2.AttRefMsgPayload()
     attRef.sigma_RN = [0.0, 0.0, 1.0]
     attRef.omega_RN_N = [1.0, 2.0, 3.0]
     attRef.omega_RN_N = [0.0001, 0.0002, 0.0003]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               scObject.attRefInMsgName,
-                               attRef)
+    attRefMsg = messaging2.AttRefMsg().write(attRef)
+    scObject.attRefInMsg.subscribeTo(attRefMsg)
 
     unitTestSim.InitializeSimulation()
 
@@ -969,10 +963,8 @@ def test_scAttRef(show_plots, accuracy):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    omegaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.omega_BN_B',
-                                                  list(range(3)))
-    sigmaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  list(range(3)))
+    omegaOut = dataLog.omega_BN_B
+    sigmaOut = dataLog.sigma_BN
 
     trueSigma = [attRef.sigma_RN]*3
     trueOmega = [[-0.0001, -0.0002, 0.0003]]*3
@@ -992,4 +984,10 @@ def test_scAttRef(show_plots, accuracy):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_scAttRef(True, 1e-3)
+    # test_scAttRef(True, 1e-3)
+    # test_SCTranslation(True)
+    # test_SCTransAndRotation(True)
+    # test_SCRotation(True)
+    # test_SCTransBOE(True)
+    # test_SCPointBVsPointC(True)
+    test_scAttRef(True, 0.001)

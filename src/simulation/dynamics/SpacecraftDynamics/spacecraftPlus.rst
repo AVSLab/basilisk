@@ -35,14 +35,14 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - scStateOutMsgName
-      - :ref:`SCPlusStatesSimMsg`
+    * - scStateOutMsg
+      - :ref:`SCPlusStatesMsgPayload`
       - Spacecraft state output message
-    * - scMassStateOutMsgName
-      - :ref:`SCPlusMassPropsSimMsg`
+    * - scMassStateOutMsg
+      - :ref:`SCPlusMassPropsMsgPayload`
       - Output message containing the spacecraft mass properties
-    * - attRefInMsgName
-      - :ref:`AttRefFswMsg`
+    * - attRefInMsg
+      - :ref:`AttRefMsgPayload`
       - (Optional) Input message to specify a prescribed attitude motion
 
 User Guide
@@ -78,7 +78,7 @@ This section is to outline the steps needed to setup a SpacecraftPlus module in 
 #.  If you want to prescribe the spacecraft hub rotational motion, this can be specified through an optional
     input message of type :ref:`attRefFswMsg`::
 
-        scObject.attRefInMsgName = "attRefMsg"
+        scObject.attRefInMsg.subscribeTo(someAttRefMsg)
 
 .. list-table:: Spacecraft Parameters Table
     :widths: 25 25 50

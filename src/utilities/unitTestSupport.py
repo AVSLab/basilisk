@@ -123,7 +123,7 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
 
     for i in range(0,dim):
         if truth[i] == 0:
-            if result[i+1] == 0:
+            if result[i] == 0:
                 continue
             else:
                 print("Truth array contains zero")
