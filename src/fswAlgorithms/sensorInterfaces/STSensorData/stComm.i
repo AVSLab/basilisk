@@ -31,8 +31,8 @@
 
 %include "msgPayloadDefC/STSensorMsgPayload.h"
 struct STSensorMsg_C;
-%include "msgPayloadDefC/stAttMsgPayload.h"
-struct stAttMsg_C;
+%include "msgPayloadDefC/STAttMsgPayload.h"
+struct STAttMsg_C;
 
 %include "stComm.h"
 
