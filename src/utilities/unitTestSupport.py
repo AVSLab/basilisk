@@ -275,9 +275,9 @@ def compareDoubleArrayRelative(trueStates, dataStates, accuracy, msg, testFailCo
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
-            if not isDoubleEqualRelative(dataStates[i,1], trueStates[i], accuracy):
+            if not isDoubleEqualRelative(dataStates[i], trueStates[i], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
+                testMessages.append("FAILED: "+msg+"\n")
     return testFailCount, testMessages
 
 #

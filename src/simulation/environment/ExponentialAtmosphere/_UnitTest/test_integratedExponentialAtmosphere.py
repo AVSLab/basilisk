@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 import os, inspect
 import numpy as np
@@ -35,6 +34,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.simulation import messaging2
 
 
 def test_unitExponentialAtmosphere():
@@ -66,6 +66,8 @@ def test_unitExponentialAtmosphere():
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
+    if testSum == 0:
+        print("Passed")
 
     assert testSum < 1, testMessage
 
@@ -76,21 +78,20 @@ def AddSpacecraftToModel(atmoModel):
     # create the dynamics task and specify the integration update time
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.scStateOutMsgName = "inertial_state_output_0"
 
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject2.ModelTag = "spacecraftBody"
-    scObject.scStateOutMsgName = "inertial_state_output_1"
     # add spacecraftPlus object to the simulation process
-    atmoModel.addSpacecraftToModel(scObject.scStateOutMsgName)
-    atmoModel.addSpacecraftToModel(scObject2.scStateOutMsgName)
+    atmoModel.setupNumberOfSpacecraft(2)
+    atmoModel.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
+    atmoModel.scStateInMsgs[1].subscribeTo(scObject2.scStateOutMsg)
 
-    if len(atmoModel.scStateInMsgNames) != 2:
+    if len(atmoModel.scStateInMsgs) != 2:
         testFailCount += 1
         testMessages.append(
             "FAILED: ExponentialAtmosphere does not have enough input message names.")
 
-    if len(atmoModel.envOutMsgNames) != 2:
+    if len(atmoModel.envOutMsgs) != 2:
         testFailCount += 1
         testMessages.append(
             "FAILED: ExponentialAtmosphere does not have enough output message names.")
@@ -125,7 +126,6 @@ def TestExponentialAtmosphere():
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
 
-
     #
     #   setup the simulation tasks/objects
     #
@@ -134,10 +134,10 @@ def TestExponentialAtmosphere():
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
-
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+    newAtmo.setupNumberOfSpacecraft(1)
+    newAtmo.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
 
     planet = gravFactory.createEarth()
 
@@ -190,14 +190,16 @@ def TestExponentialAtmosphere():
     #
     numDataPoints = 10
     samplingTime = simulationTime // (numDataPoints-1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
-
+    logTaskName = "logTask"
+    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    dataLog = scObject.scStateOutMsg.log()
+    denLog = newAtmo.envOutMsgs[0].log()
 
     # add BSK objects to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     scSim.AddModelToTask(simTaskName, newAtmo)
-
+    scSim.AddModelToTask(logTaskName, dataLog)
+    scSim.AddModelToTask(logTaskName, denLog)
 
     #
     #   initialize Simulation
@@ -213,12 +215,9 @@ def TestExponentialAtmosphere():
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
-    densData = scSim.pullMessageLogData(newAtmo.ModelTag+"_0_data.neutralDensity")
+    posData = dataLog.r_BN_N
+    densData = denLog.neutralDensity
     np.set_printoptions(precision=16)
-
-
-
 
     #   Compare to expected values
     accuracy = 1e-5
@@ -226,12 +225,12 @@ def TestExponentialAtmosphere():
 
     if len(densData) > 0:
         for ind in range(0,len(densData)):
-            dist = np.linalg.norm(posData[ind, 1:])
+            dist = np.linalg.norm(posData[ind])
             alt = dist - newAtmo.planetRadius
 
             trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
             # check a vector values
-            if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], trueDensity,accuracy):
+            if not unitTestSupport.isDoubleEqualRelative(densData[ind], trueDensity, accuracy):
                 testFailCount += 1
                 testMessages.append(
                     "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
@@ -242,4 +241,5 @@ def TestExponentialAtmosphere():
     return testFailCount, testMessages
 
 if __name__=='__main__':
-    TestExponentialAtmosphere()
+    # TestExponentialAtmosphere()
+    test_unitExponentialAtmosphere()

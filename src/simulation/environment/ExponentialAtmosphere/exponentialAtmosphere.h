@@ -25,9 +25,7 @@
 #include <vector>
 #include <string>
 #include "../../_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/atmoPropsSimMsg.h"
+
 #include "../_GeneralModuleFiles/atmosphereBase.h"
 #include "utilities/bskLogging.h"
 
@@ -38,7 +36,7 @@ public:
     ~ExponentialAtmosphere();
 
 private:
-    void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime);
+    void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
 
 
 public:

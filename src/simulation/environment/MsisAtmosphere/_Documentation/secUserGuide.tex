@@ -14,9 +14,10 @@ newAtmo.ModelTag = "MsisAtmo"
 By design this module is only applicable to Earth.  The earth radius is set automatically within the module.  As with all planetary environment models, the epoch case be set in three ways:
 \begin{enumerate}
 	\item  {\bfseries Default:} If no epoch information is provided, then the BSK default epoch date and time are set.
-	\item  {\bfseries Use Epoch Message:}  An epoch message input message name is specified.  This is read in on reset.
+	\item  {\bfseries Use Epoch Message:}  An epoch input message  is connected.  This is read in on reset.
 	\begin{verbatim}
-		newAtmo.epochInMsgName = "simEpoch"
+		epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
+		newAtmo.epochInMsg.subscribeTo(epochMsg)
 	\end{verbatim}
 	\item  {\bfseries Direct Setting:} The module variable {\tt epochDoy} can be set directly as well.  However, note that if the input message is specified, the {\tt epochDoy} value is not used.
 	\begin{verbatim}
@@ -30,13 +31,14 @@ To add spacecraft to the model the spacecraft state output message name is sent 
 \begin{verbatim}
 scObject = spacecraftPlus.SpacecraftPlus()
 scObject.ModelTag = "spacecraftBody"
-newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+newAtmo.setupNumberOfSpacecraft(1)
+newAtmo.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
 \end{verbatim}
 
 \subsection{Planet Ephemeris Information}
 The optional planet state message name can be set by directly adjusting that attribute of the class:
 \begin{verbatim}
-newAtmo.planetPosInMsgName = "PlanetSPICEMsgName"
+newAtmo.planetPosInMsg.subscribeTo(planetMsg)
 \end{verbatim}
 If SPICE is not being used, the planet is assumed to reside at the origin.
 

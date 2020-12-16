@@ -27,7 +27,6 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../../simMessages/atmoPropsSimMsg.h"
-#include "../dragEffector/dragDynamicEffector.h"
 #include "../../utilities/rigidBodyKinematics.h"
 #include "utilities/bskLogging.h"
 

@@ -3,22 +3,11 @@
 \section{Test Description and Success Criteria}
 This section describes the specific unit tests conducted on this module.
 
-\subsection{General Functionality}
 
-\subsubsection{setEpoch}
-
-This test verifies that the user can set the initial date (``epoch'') arbitrarily.
-
-\subsubsection{addSpacecraftToModel}
-
-This test verifies that the user can both add additional spacecraft to the module. This is accomplished by checking the number of input and output messages of the module after adding multiple spacecraft.
-
-\subsection{Model-Specific Tests}
-
-\subsubsection{test\_integratedTestAtmosphere.py}
+\subsection{test\_integratedTestAtmosphere.py}
 This integrated runs a section of an orbit and verifies that the exponential atmosphere model both correctly calculates the orbit altitude and the atmospheric density against a Python implementation of the model.   A single spacecraft is simulated about Earth, and no minimum or maximum reach is set.  No planet ephemeris message is setup causing the simulation to assume the planet center is at the coordinate frame origin.
 
-\subsubsection{test\_unitTestAtmosphere.py}
+\subsection{test\_unitTestAtmosphere.py}
 This unit test only runs the atmosphere Basilisk module with two fixed spacecraft state input messages.  The simulation option {\tt useDefault} checks if the default atmosphere parameters for an Earth-based exponential atmosphere module are used, or if the exponential model information is setup manually.  The option {\tt useMinReach} dictates if the minimum altitude check is performed, while the option {\tt useMaxReach} checks if the maximum reach check is performed.  The option {\tt usePlanetEphemeris} checks if a planet state input message should be created.  All permutations are checked.
 
 \section{Test Parameters}

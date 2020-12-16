@@ -78,8 +78,8 @@ public:
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    Message<SCPlusStatesMsgPayload> scStateOutMsg;      //!< output message
-    Message<SCPlusMassPropsMsgPayload> scMassOutMsg;    //!< output message
+    Message<SCPlusStatesMsgPayload> scStateOutMsg;      //!< spacecraft state output message
+    Message<SCPlusMassPropsMsgPayload> scMassOutMsg;    //!< spacecraft mass properties output message
 
 public:
     SpacecraftPlus();                    //!< -- Constructor

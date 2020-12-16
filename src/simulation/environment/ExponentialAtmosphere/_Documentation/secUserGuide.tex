@@ -18,22 +18,27 @@ By default the module uses parameters such that there is no neutral density, and
 \end{verbatim}
 To specify a preset exponential model, such as for Earth, the following macro can be used:
 \begin{verbatim}
-	simSetPlanetEnvironment.exponentialAtmosphere(testModule, "earth")
+	simSetPlanetEnvironment.exponentialAtmosphere(newAtmo, "earth")
 \end{verbatim}
 
 The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft.
 
-To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
+To specify the number of spacecraft input and associated density output messages, use:
 \begin{verbatim}
-scObject = spacecraftPlus.SpacecraftPlus()
-scObject.ModelTag = "spacecraftBody"
-newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+newAtmo.setupNumberOfSpacecraft(value)
 \end{verbatim}
+Note that this command must be run before any module input or output messages can be connected to.
+
+To subscribe the spacecraft {\tt sc} output message to the $i^{\text{th}}$  input message, use
+\begin{verbatim}
+newAtmo.scStateInMsgs[i].subscribeTo(sc.scStateOutMsg)
+\end{verbatim}
+
 
 \subsection{Planet Ephemeris Information}
 The optional planet state message name can be set by directly adjusting that attribute of the class:
 \begin{verbatim}
-newAtmo.planetPosInMsgName = "PlanetSPICEMsgName"
+newAtmo.planetPosInMsg.subscribeTo(planetMsg)
 \end{verbatim}
 If SPICE is not being used, the planet is assumed to reside at the origin.
 

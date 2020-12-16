@@ -33,17 +33,21 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "msisAtmosphere.h"
 #include "nrlmsise-00.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/atmoPropsSimMsg.h"
-%include "../../simMessages/swDataSimMsg.h"
+
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/AtmoPropsMsgPayload.h"
+struct AtmoPropsMsg_C;
+%include "msgPayloadDefC/SwDataMsgPayload.h"
+struct SwDataMsg_C;
+%include "msgPayloadDefC/EpochMsgPayload.h"
+struct EpochMsg_C;
+
 %include "swig_conly_data.i"
 
 
-GEN_SIZEOF(AtmoPropsSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(SwDataSimMsg)
 GEN_SIZEOF(ap_array)
 GEN_SIZEOF(nrlmsise_input)
 GEN_SIZEOF(nrlmsise_flags)
