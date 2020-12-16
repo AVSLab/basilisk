@@ -26,8 +26,10 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../simMessages/atmoPropsSimMsg.h"
-#include "../../simFswInterfaceMessages/navAttIntMsg.h"
+
+#include "msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/bskLogging.h"
@@ -52,27 +54,25 @@ public:
     void computeForceTorque(double integTime);
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void cannonballDrag();
     void updateDragDir();
-    void setDensityMessage(std::string newDensMessage);
 
 public:
     DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
-    std::string atmoDensInMsgName;                         //!< -- message used to read command inputs
-    std::string navAttInMsgName;                         //!< -- message used to read spacecraft attitude
+    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;        //!< -- message used to read density inputs
     std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d v_hat_B;                          //!< -- Drag force direction in the inertial frame
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
+    Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
+    BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 private:
-    uint64_t densInMsgId;                            //!< -- Message ID for incoming data
-    AtmoPropsSimMsg atmoInData;
+    AtmoPropsMsgPayload atmoInData;
     
 };
 

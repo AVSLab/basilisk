@@ -35,11 +35,11 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include  "simMessages/atmoPropsSimMsg.h"
+
 %include "dragDynamicEffector.h"
 
-
-GEN_SIZEOF(AtmoPropsSimMsg)
+%include "msgPayloadDefC/AtmoPropsMsgPayload.h"
+struct AtmoPropsMsg_C;
 
 %pythoncode %{
 import sys
