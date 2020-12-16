@@ -24,6 +24,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.8
+-------------
 - The protobuffer interface files are now automatically created from
   ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
   ``protoc`` command each time the protobuffer message definitions changed.
@@ -60,7 +64,7 @@ Version 1.8.6
 
 
 Version 1.8.5
--------------
+
 - Provide support of Vizard 1.5.1 scripting
 - Updated conan to 1.29.2 to address issues building with opNav and support xcode 12
 - Disable freetype for windows because of opencv build issues.
