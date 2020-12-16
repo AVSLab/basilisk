@@ -1,23 +1,22 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+import os, inspect
 import matplotlib.pyplot as plt
 import numpy
 import pytest
@@ -33,7 +32,7 @@ from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
 from Basilisk.simulation import spacecraftDynamics
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import messaging2
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False, 'NoGravity'),
@@ -144,8 +143,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
 
     if testCase == 'Gravity':
         unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-        unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-        unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+        unitTestSim.earthGravBody.planetName = "earth_planet_data"
         unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
         unitTestSim.earthGravBody.isCentralBody = True
         unitTestSim.earthGravBody.useSphericalHarmParams = False
@@ -153,8 +151,9 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
         scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-    
+    dataLog = scObject.scStateOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
     unitTestSim.InitializeSimulation()
 
     # Add energy and momentum variables to log
@@ -177,7 +176,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1, 0], orbAngMom_N[-1, 1], orbAngMom_N[-1, 2], orbAngMom_N[-1, 3]]
+                [orbAngMom_N[-1, 1], orbAngMom_N[-1, 2], orbAngMom_N[-1, 3]]
                  ]
 
     initialRotAngMom_N = [
@@ -185,7 +184,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1, 0], rotAngMom_N[-1, 1], rotAngMom_N[-1, 2], rotAngMom_N[-1, 3]]
+                [rotAngMom_N[-1, 1], rotAngMom_N[-1, 2], rotAngMom_N[-1, 3]]
                  ]
 
     initialOrbEnergy = [
@@ -193,7 +192,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1, 0], orbEnergy[-1, 1]]
+                [orbEnergy[-1, 1]]
                  ]
 
     initialRotEnergy = [
@@ -201,7 +200,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1, 0], rotEnergy[-1, 1]]
+                [rotEnergy[-1, 1]]
                  ]
 
     plt.close('all')
@@ -260,6 +259,9 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
 
     if testFailCount == 0:
         print("PASSED: " + " Dual Hinged Rigid Body Test")
+    else:
+        print("FAILED: Dual Hinged Rigid Body Test")
+        print(testMessages)
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -320,15 +322,12 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.theta1DotInit = 0.0
     unitTestSim.panel1.theta2Init = 0.0
     unitTestSim.panel1.theta2DotInit = 0.0
-    unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"
 
     # set a fixed motor torque message
-    motorMsg = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
-    motorMsg.motorTorque = [2.0, 4.0]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               unitTestSim.panel1.motorTorqueInMsgName,
-                               motorMsg)
+    motorMsgData = messaging2.ArrayMotorTorqueMsgPayload()
+    motorMsgData.motorTorque = [2.0, 4.0]
+    motorMsg = messaging2.ArrayMotorTorqueMsg().write(motorMsgData)
+    unitTestSim.panel1.motorTorqueInMsg.subscribeTo(motorMsg)
 
     # Define Variables for panel 2
     unitTestSim.panel2.ModelTag = "panel2"
@@ -353,8 +352,6 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.theta1DotInit = 0.0
     unitTestSim.panel2.theta2Init = 0.0
     unitTestSim.panel2.theta2DotInit = 0.0
-    unitTestSim.panel2.dualHingedRigidBodyOutMsgName = "panelTwo"
-    unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName = "panelTwo"
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
@@ -380,18 +377,20 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    scStateLogName = "inertial_state_output"
-    if not useScPlus:
-        scStateLogName = scObject.primaryCentralSpacecraft.spacecraftName + scStateLogName
-    unitTestSim.TotalSim.logThisMessage(scStateLogName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates0", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag + "_OutputStates1", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.dualHingedRigidBodyOutMsgName + "_OutputStates0", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.dualHingedRigidBodyOutMsgName + "_OutputStates1", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.ModelTag
-                                        + "_InertialStates0", testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
-                                        + "_InertialStates1", testProcessRate)
+    dataLog = scObjectPrimary.scStateOutMsg.log()
+    dataPanel10Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[0].log()
+    dataPanel11Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[1].log()
+    dataPanel20Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[0].log()
+    dataPanel21Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[1].log()
+    data10Log = unitTestSim.panel1.dualHingedRigidBodyConfigLogOutMsgs[0].log()
+    data21Log = unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgs[1].log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel10Log)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel11Log)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel20Log)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel21Log)
+    unitTestSim.AddModelToTask(unitTaskName, data10Log)
+    unitTestSim.AddModelToTask(unitTaskName, data21Log)
 
     unitTestSim.InitializeSimulation()
 
@@ -406,32 +405,21 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    rOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.r_CN_N', list(range(3)))
-    vOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.v_CN_N', list(range(3)))
-    sigma_BN = unitTestSim.pullMessageLogData(scStateLogName + '.sigma_BN', list(range(3)))
-    thetaP1A1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates0.theta')
-    thetaP1A2 = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag + '_OutputStates1.theta')
-    thetaP2A1 = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyOutMsgName
-                                               + '_OutputStates0.theta')
-    thetaP2A2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyOutMsgName
-                                               + '_OutputStates1.theta')
-
-    rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag
-                                          + '_InertialStates0.r_BN_N', list(range(3)))[0]
-    vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag
-                                          + '_InertialStates0.v_BN_N', list(range(3)))[0]
-    sB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag
-                                          + '_InertialStates0.sigma_BN', list(range(3)))[0]
-    oB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.ModelTag +
-                                          '_InertialStates0.omega_BN_B', list(range(3)))[0]
-    rB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
-                                          + '_InertialStates1.r_BN_N', list(range(3)))[0]
-    vB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
-                                          + '_InertialStates1.v_BN_N', list(range(3)))[0]
-    sB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
-                                          + '_InertialStates1.sigma_BN', list(range(3)))[0]
-    oB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgName
-                                          + '_InertialStates1.omega_BN_B', list(range(3)))[0]
+    rOut_CN_N = dataLog.r_CN_N
+    vOut_CN_N = dataLog.v_CN_N
+    sigma_BN = dataLog.sigma_BN
+    thetaP1A1 = dataPanel10Log.theta
+    thetaP1A2 = dataPanel11Log.theta
+    thetaP2A1 = dataPanel20Log.theta
+    thetaP2A2 = dataPanel21Log.theta
+    rB1N = data10Log.r_BN_N[0]
+    vB1N = data10Log.v_BN_N[0]
+    sB1N = data10Log.sigma_BN[0]
+    oB1N = data10Log.omega_BN_B[0]
+    rB2N = data21Log.r_BN_N[0]
+    vB2N = data21Log.v_BN_N[0]
+    sB2N = data21Log.sigma_BN[0]
+    oB2N = data21Log.omega_BN_B[0]
 
     rotAngMom_N = unitTestSim.GetLogVariableData(
         variableLogTag + ".totRotAngMomPntC_N")
@@ -443,7 +431,7 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     initialRotAngMom_N = [[rotAngMom_N[0, 1], rotAngMom_N[0, 2], rotAngMom_N[0, 3]]]
 
-    finalRotAngMom = [rotAngMom_N[-1]]
+    finalRotAngMom = [rotAngMom_N[-1, 1:4]]
 
     plt.close("all")
 
@@ -457,21 +445,21 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     plt.figure()
     plt.clf()
-    plt.plot(vOut_CN_N[:, 0] * 1e-9, vOut_CN_N[:, 1], vOut_CN_N[:, 0] * 1e-9, vOut_CN_N[:, 2], vOut_CN_N[:, 0] * 1e-9,
-             vOut_CN_N[:, 3])
+    plt.plot(dataLog.times() * 1e-9, vOut_CN_N[:, 0], dataLog.times() * 1e-9, vOut_CN_N[:, 1], dataLog.times() * 1e-9,
+             vOut_CN_N[:, 2])
     plt.xlabel('time (s)')
     plt.ylabel('m/s')
 
     plt.figure()
     plt.clf()
-    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 1],
-             color=unitTestSupport.getLineColor(1, 3),
+    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 0],
+             color=unitTestSupport.getLineColor(0, 3),
              label=r'$\sigma_{1}$')
-    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 2],
-             color=unitTestSupport.getLineColor(2, 3),
+    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 1],
+             color=unitTestSupport.getLineColor(1, 3),
              label=r'$\sigma_{2}$')
-    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 3],
-             color=unitTestSupport.getLineColor(3, 3),
+    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 2],
+             color=unitTestSupport.getLineColor(2, 3),
              label=r'$\sigma_{3}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
@@ -479,17 +467,17 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     plt.figure()
     plt.clf()
-    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP1A1[:, 1]*macros.R2D,
-             color=unitTestSupport.getLineColor(1, 4),
+    plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP1A1*macros.R2D,
+             color=unitTestSupport.getLineColor(0, 4),
              label=r'Panel 1 $\theta_{1}$')
-    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP1A2[:, 1]*macros.R2D,
-             color=unitTestSupport.getLineColor(2, 4),
+    plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP1A2*macros.R2D,
+             color=unitTestSupport.getLineColor(1, 4),
              label=r'Panel 1 $\theta_{2}$')
-    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP2A1[:, 1] * macros.R2D,
-             color=unitTestSupport.getLineColor(3, 4),
+    plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP2A1 * macros.R2D,
+             color=unitTestSupport.getLineColor(2, 4),
              label=r'Panel 2 $\theta_{1}$')
-    plt.plot(thetaP1A1[:, 0] * macros.NANO2SEC, thetaP2A2[:, 1] * macros.R2D,
-             color=unitTestSupport.getLineColor(4, 4),
+    plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP2A2 * macros.R2D,
+             color=unitTestSupport.getLineColor(3, 4),
              label=r'Panel 2 $\theta_{2}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
@@ -552,6 +540,5 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
 
 if __name__ == "__main__":
-    # dualHingedRigidBodyTest(True, False, 'Gravity')
-    test_dualHingedRigidBodyMotorTorque(True,   # show plots
-                                        True)   # use scPlus
+    dualHingedRigidBodyTest(True, False, 'NoGravity')
+    # test_dualHingedRigidBodyMotorTorque(True, True)

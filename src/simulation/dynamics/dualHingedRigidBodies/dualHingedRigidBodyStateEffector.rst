@@ -24,21 +24,15 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - motorTorqueInMsgName
-      - :ref:`ArrayMotorTorqueIntMsg`
+    * - motorTorqueInMsg
+      - :ref:`ArrayMotorTorqueMsgPayload`
       - (Optional) Input message of the two hinge motor torque values
-    * - dualHingedRigidBodyOutMsgName + ``_OutputStates0``
-      - :ref:`HingedRigidBodySimMsg`
-      - Output message containing the panel 1 hinge state angle and angle rate
-    * - dualHingedRigidBodyOutMsgName + ``_OutputStates1``
-      - :ref:`HingedRigidBodySimMsg`
-      - Output message containing the panel 2 hinge state angle and angle rate
-    * - dualHingedRigidBodyConfigLogOutMsgName + ``_InertialStates0``
-      - :ref:`SCPlusStatesSimMsg`
-      - Output message containing the panel 1 inertial position and attitude states
-    * - dualHingedRigidBodyConfigLogOutMsgName + ``_InertialStates1``
-      - :ref:`SCPlusStatesSimMsg`
-      - Output message containing the panel 2 inertial position and attitude states
+    * - dualHingedRigidBodyOutMsgs
+      - :ref:`HingedRigidBodyMsgPayload`
+      - vector of output message containing the panel 1 and 2 hinge state angle and angle rate
+    * - dualHingedRigidBodyConfigLogOutMsg
+      - :ref:`SCPlusStatesMsgPayload`
+      - vector of output messages containing the panel 1 and 2 inertial position and attitude states
 
 
 Detailed Module Description
@@ -79,23 +73,13 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
     panel1.nameOfTheta2State = "dualHingedRigidBodyTheta2"
     panel1.nameOfTheta2DotState = "dualHingedRigidBodyThetaDot2"
 
-#. Define an optional motor torque input message::
-
-    panel1.motorTorqueInMsgName = "motorTorque"
+#. Define an optional motor torque input message with ``panel1.motorTorqueInMsg``
 
 #. The module creates two output messages with the panel angular states.
-   The message name is composed of the string ``dualHingedRigidBodyOutMsgName`` and appended with
-   either ``_OutputStates0`` or ``_OutputStates1``.  If this base string is not set, then the module
-   ``ModuleTag`` string is used as the base string.  An example of setting the base msg string is::
-
-    panel1.dualHingedRigidBodyOutMsgName = "panel1Angles"
+   The messages are stored in the vector ``dualHingedRigidBodyOutMsgs``.
 
 #. The module creates two output messages with each panel inertial position and attitude states.
-   The message name is composed of the string ``dualHingedRigidBodyConfigLogOutMsgName`` and appended with
-   either ``_InertialStates0`` or ``_InertialStates1``.  If this base string is not set, then the module
-   ``ModuleTag`` string is used as the base string.  An example of setting the base msg string is::
-
-    panel1.dualHingedRigidBodyConfigLogOutMsgName = "panel1Log"
+   The messages are stored in the vector ``dualHingedRigidBodyConfigLogOutMsgs``.
 
 #. Add the panel to your spacecraftPlus::
 

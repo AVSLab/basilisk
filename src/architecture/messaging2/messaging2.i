@@ -138,6 +138,8 @@ typedef struct messageType;
 %template(SpicePlanetStateMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>>;
 %template(AtmoPropsMsgsVector) std::vector<Message<AtmoPropsMsgPayload>>;
 %template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
+%template(SCPlusStatesOutMsgsVector) std::vector<Message<SCPlusStatesMsgPayload>>;
 %template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
+%template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>>;
 
 %include "messaging2.h"

@@ -29,12 +29,20 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
+%include "std_vector.i"
 
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "dualHingedRigidBodyStateEffector.h"
+
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
+%include "msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+struct HingedRigidBodyMsg_C;
 
 %pythoncode %{
 import sys
