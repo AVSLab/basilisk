@@ -27,13 +27,13 @@ By design this module is only applicable to Earth.  The earth radius is set auto
 
 The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft.
 
-To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method common to environmental models:
+To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addSpacecraftToModel| method common to environmental models:
 \begin{verbatim}
 scObject = spacecraftPlus.SpacecraftPlus()
 scObject.ModelTag = "spacecraftBody"
-newAtmo.setupNumberOfSpacecraft(1)
-newAtmo.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
+newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 \end{verbatim}
+This {\tt addSpacecraftToModel()} method subscribes the module to the spacecraft state output message, and it creates the  corresponding vector entry for the environment output message.  The output message order is the same as the order in which the spacecraft state messages are added.
 
 \subsection{Planet Ephemeris Information}
 The optional planet state message name can be set by directly adjusting that attribute of the class:

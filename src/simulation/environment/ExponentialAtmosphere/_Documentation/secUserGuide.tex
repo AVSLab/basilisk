@@ -23,17 +23,11 @@ To specify a preset exponential model, such as for Earth, the following macro ca
 
 The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft.
 
-To specify the number of spacecraft input and associated density output messages, use:
+To add spacecraft to this module, use
 \begin{verbatim}
-newAtmo.setupNumberOfSpacecraft(value)
+newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 \end{verbatim}
-Note that this command must be run before any module input or output messages can be connected to.
-
-To subscribe the spacecraft {\tt sc} output message to the $i^{\text{th}}$  input message, use
-\begin{verbatim}
-newAtmo.scStateInMsgs[i].subscribeTo(sc.scStateOutMsg)
-\end{verbatim}
-
+where {\tt sc0InMsg} is the spacecraft state output message.  This command can be run multiple times to add more than 1 spacecraft.  Note that the order of the vector of output messages will match the order that these spacecraft are added.  By adding the spacecraft this routine will subscribe the spacecraft output message as an input message to this module.
 
 \subsection{Planet Ephemeris Information}
 The optional planet state message name can be set by directly adjusting that attribute of the class:

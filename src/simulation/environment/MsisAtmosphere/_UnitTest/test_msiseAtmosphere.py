@@ -120,8 +120,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    newAtmo.setupNumberOfSpacecraft(1)
-    newAtmo.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     planet = gravFactory.createEarth()
     planet.isCentralBody = True          # ensure this is the central gravitational body
@@ -223,8 +222,6 @@ def run(show_plots, orbitCase, setEpoch):
 
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
-    print(densData)
-    print(refAtmoData)
     #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3,
     #   and must be adjusted by a factor of 1e-3 to match kg/m^3
     if not unitTestSupport.isDoubleEqualRelative(densData[0], refAtmoData[5]*1000., accuracy):

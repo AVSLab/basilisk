@@ -82,9 +82,8 @@ def AddSpacecraftToModel(atmoModel):
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject2.ModelTag = "spacecraftBody"
     # add spacecraftPlus object to the simulation process
-    atmoModel.setupNumberOfSpacecraft(2)
-    atmoModel.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
-    atmoModel.scStateInMsgs[1].subscribeTo(scObject2.scStateOutMsg)
+    atmoModel.addSpacecraftToModel(scObject.scStateOutMsg)
+    atmoModel.addSpacecraftToModel(scObject2.scStateOutMsg)
 
     if len(atmoModel.scStateInMsgs) != 2:
         testFailCount += 1
@@ -136,8 +135,7 @@ def TestExponentialAtmosphere():
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    newAtmo.setupNumberOfSpacecraft(1)
-    newAtmo.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     planet = gravFactory.createEarth()
 

@@ -40,7 +40,7 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void setupNumberOfSpacecraft(int numSc);
+    void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
     void UpdateState(uint64_t CurrentSimNanos);
 
 protected:

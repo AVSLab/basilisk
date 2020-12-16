@@ -121,7 +121,6 @@ def run(show_plots, orbitCase, planetCase):
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
-    newAtmo.setupNumberOfSpacecraft(1)
 
     projArea = 10.0  # Set drag area in m^2
     dragCoeff = 2.2  # Set drag ceofficient
@@ -145,6 +144,7 @@ def run(show_plots, orbitCase, planetCase):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     simpleNavObj = simpleNav.SimpleNav()
     scSim.AddModelToTask(simTaskName, simpleNavObj)
@@ -159,7 +159,6 @@ def run(show_plots, orbitCase, planetCase):
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     dragEffector.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
-    newAtmo.scStateInMsgs[0].subscribeTo(scObject.scStateOutMsg)
 
     if planetCase == "Earth":
         planet = gravFactory.createEarth()

@@ -55,6 +55,10 @@ AtmosphereBase::AtmosphereBase()
     this->planetState = planetPosInMsg.zeroMsgPayload();
     m33SetIdentity(this->planetState.J20002Pfix);
 
+    this->scStateInMsgs.clear();
+    this->envOutMsgs.clear();
+    this->envOutBuffer.clear();
+
     return;
 }
 
@@ -66,35 +70,28 @@ AtmosphereBase::~AtmosphereBase()
     return;
 }
 
-/*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
+/*! Adds the spacecraft message to a vector of sc messages and automatically creates the corresponding output message.
  @return void
  @param tmpScMsgName A spacecraft state message name.
  */
-void AtmosphereBase::setupNumberOfSpacecraft(int numSc){
-    int c;
-    this->scStateInMsgs.clear();
-    this->envOutMsgs.clear();
-    this->envOutBuffer.clear();
+void AtmosphereBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg){
 
-    for (c = 0; c < numSc; c++) {
-        /* create output message */
-        Message<AtmoPropsMsgPayload> *msg;
-        msg = new Message<AtmoPropsMsgPayload>;
-        this->envOutMsgs.push_back(*msg);
+    /* create input message */
+    this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
-        /* create input message */
-        ReadFunctor<SCPlusStatesMsgPayload> *msgSc;
-        msgSc = new ReadFunctor<SCPlusStatesMsgPayload>;
-        this->scStateInMsgs.push_back(*msgSc);
+    /* create output message */
+    Message<AtmoPropsMsgPayload> *msg;
+    msg = new Message<AtmoPropsMsgPayload>;
+    this->envOutMsgs.push_back(*msg);
 
-        /* create buffer message copies*/
-        AtmoPropsMsgPayload msgAtmoBuffer;
-        this->envOutBuffer.push_back(msgAtmoBuffer);
+    /* create buffer message copies*/
+    AtmoPropsMsgPayload msgAtmoBuffer;
+    this->envOutBuffer.push_back(msgAtmoBuffer);
 
-    }
-    
+
     return;
 }
+
 
 /*! SelfInit for this method creates a seperate magnetic field message for each of the spacecraft
 that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.

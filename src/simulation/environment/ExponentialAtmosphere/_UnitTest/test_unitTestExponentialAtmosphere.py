@@ -110,9 +110,6 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
         plMsg = messaging2.SpicePlanetStateMsg().write(planetStateMsg)
         testModule.planetPosInMsg.subscribeTo(plMsg)
 
-    # setup environment model for 2 spacecraft
-    testModule.setupNumberOfSpacecraft(2)
-
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # define the spacecraft locations
@@ -136,12 +133,14 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     sc0StateMsg = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc0StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc0InMsg = messaging2.SCPlusStatesMsg().write(sc0StateMsg)
-    testModule.scStateInMsgs[0].subscribeTo(sc0InMsg)
 
     sc1StateMsg = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc1StateMsg.r_BN_N = np.array(r1N) + np.array(planetPosition)
     sc1InMsg = messaging2.SCPlusStatesMsg().write(sc1StateMsg)
-    testModule.scStateInMsgs[1].subscribeTo(sc1InMsg)
+
+    # add spacecraft to environment model
+    testModule.addSpacecraftToModel(sc0InMsg)
+    testModule.addSpacecraftToModel(sc1InMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog0 = testModule.envOutMsgs[0].log()
