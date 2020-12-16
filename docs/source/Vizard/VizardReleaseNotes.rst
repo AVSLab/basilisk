@@ -13,10 +13,29 @@ Release Notes
     - articulating CAD models
     - fuel tank visualization
     - trajectory history visualization
-    - illustrate the acutal orbit trajectory rather than the osculating trajectory
     - show the battery and power state
     - show the hard drive state
     - Add the rate gyro visualization
+
+**Version 1.7.0**
+- added a protobuffer setting and a GUI setting to allow users to set the Spacecraft scale size in Planet
+  View or Solar System View.
+- changed the standard camera positioning in Planet View such that the cameras will be repositioned
+  outside of the scaled up spacecraft mesh when the view changes from Spacecraft Local View
+- added Ground Location objects to Vizard:
+
+    - Ground Locations can be created in the GUI under ``View>Add Ground Location``
+    - Ground Locations can be scripted as a sub message of the VizMessage protobuffer message
+    - Ground locations are drawn with a small sphere on their parent body
+    - Field of view of ground locations can be visualized by showing the Field of View Cone.
+      These cones can be toggled in the Ground Location panel.
+    - If a spacecraft passes within the field of view of a Ground Location, a line indicating communication
+      will be drawn between the Ground Location and Spacecraft. If another body (planet, moon, or spacecraft)
+      occludes the spacecraft, the line will not be drawn. These lines can be toggled on the
+      Ground Location panel and are on by default.
+    - Added labels for Ground Locations, a toggle in the Labels panel, and a protobuffer setting show/hide the labels
+
+
 
 **Version 1.6.1**
 

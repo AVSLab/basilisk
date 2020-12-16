@@ -16,7 +16,11 @@ Basilisk Release Notes
     - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
     - GPU based methods to evaluate solar radiation pressure forces and torques
     - atmospheric drag evaluation using multi-faceted spacecraft model
-    - working on a new messaging system that is much faster to log, avoids ever connecting to the wrong message type, etc.
+    - Basilisk 2.0 that includes:
+
+        - working on a new messaging system that is much faster to log, avoids ever connecting
+          to the wrong message type, etc.
+        - support for multi-threading when simulating multiple satellite systems
 
 Version |release|
 -----------------
@@ -28,6 +32,7 @@ Version |release|
 - Improved the build system to re-swig the module if the dependencies have changed.
   This avoids having to do a clean build or manually deleting the swing python files from within ``dist3/Basilisk``.
 - All unit test cases are compatible with windows platform
+- Added scripting support for Vizard 1.7.0
 
 Version 1.8.7
 -------------
