@@ -66,6 +66,12 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRefMessageName``       | ``attRefInMsg``                   |
     +---------------------------+-------------------------------+-----------------------------------+
+    | bore_ang_calc  →          | ``StateString``               |  ``scStateInMsg``                 |
+    | ``boreAngCalc``           +-------------------------------+-----------------------------------+
+    |                           | ``celBodyString``             | ``celBodyInMsg``                  |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``OutputDataString``          | ``angOutMsg``                     |
+    +---------------------------+-------------------------------+-----------------------------------+
     | celestialTwoBodyPoint     | ``outputDataName``            | ``attRefOutMsg``                  |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputCelMessName``          | ``celBodyInMsg``                  |

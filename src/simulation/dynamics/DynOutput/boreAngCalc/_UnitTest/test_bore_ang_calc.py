@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 #
 # Bore Angle Calculation Test
@@ -28,18 +27,15 @@
 # Creation Date:  Jun. 30, 2017
 #
 
-# @cond DOXYGEN_IGNORE
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import bore_ang_calc
+from Basilisk.simulation import boreAngCalc
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.simulation import spice_interface
-from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import messaging2
 import pytest
 import numpy
 import os
-# @endcond
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -109,9 +105,9 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(1.0)))
 
-    spiceMessage = spice_interface.SpicePlanetStateSimMsg()
-    stateMessage = spacecraftPlus.SCPlusStatesSimMsg()
-    angMessage = bore_ang_calc.AngOffValuesSimMsg()
+    spiceMessage = messaging2.SpicePlanetStateMsgPayload()
+    stateMessage = messaging2.SCPlusStatesMsgPayload()
+    angMessage = messaging2.BoreAngleMsgPayload()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
     stateMessage.r_BN_N = vehPosition
@@ -123,39 +119,25 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     spiceMessage.PositionVector = sunPosition
     spiceMessage.PlanetName = "sun"
     # Inertial State output Message
-    inputMessageSize = stateMessage.getStructSize()
-    TotalSim.TotalSim.CreateNewMessage(unitProcessName,
-                                       "inertial_state_output",
-                                       inputMessageSize,
-                                       2)  # number of buffers (leave at 2 as default, don't make zero)
-    TotalSim.TotalSim.WriteMessageData("inertial_state_output",
-                                       inputMessageSize,
-                                       0,
-                                       stateMessage)
+    scMsg = messaging2.SCPlusStatesMsg().write(stateMessage)
 
     # Sun Planet Data Message
-    inputMessageSize = spiceMessage.getStructSize()
-    TotalSim.TotalSim.CreateNewMessage(unitProcessName,
-                                       "sun_planet_data",
-                                       inputMessageSize,
-                                       2)  # number of buffers (leave at 2 as default, don't make zero)
-    TotalSim.TotalSim.WriteMessageData("sun_planet_data",
-                                       inputMessageSize,
-                                       0,
-                                       spiceMessage)
+    sunMsg = messaging2.SpicePlanetStateMsg().write(spiceMessage)
 
     # Initialize the spice modules that we are using.
-    BACObject = bore_ang_calc.BoreAngCalc()
+    BACObject = boreAngCalc.BoreAngCalc()
     BACObject.ModelTag = "solarArrayBoresight"
-    BACObject.StateString = "inertial_state_output"
-    BACObject.celBodyString = "sun_planet_data"
-    BACObject.OutputDataString = "solar_array_sun_bore"
     BACObject.boreVec_B = boresightLoc  # boresight in body frame
+    BACObject.scStateInMsg.subscribeTo(scMsg)
+    BACObject.celBodyInMsg.subscribeTo(sunMsg)
+
     TotalSim.AddModelToTask(unitTaskName, BACObject)
     #
     # Configure simulation
     TotalSim.ConfigureStopTime(int(1.0 * 1E9))
-    TotalSim.TotalSim.logThisMessage(BACObject.OutputDataString)
+
+    dataLog = BACObject.angOutMsg.log()
+    TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     # Execute simulation
     TotalSim.InitializeSimulation()
@@ -165,8 +147,8 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     #
     # Begin testing module results to truth values
 
-    simMiss = TotalSim.pullMessageLogData(BACObject.OutputDataString + '.missAngle', list(range(1)))
-    simAz = TotalSim.pullMessageLogData(BACObject.OutputDataString + '.azimuth', list(range(1)))
+    simMiss = dataLog.missAngle
+    simAz = dataLog.azimuth
     simBoreVecPt = TotalSim.GetLogVariableData(BACObject.ModelTag + ".boreVecPoint")
 
     # Truth values
@@ -209,13 +191,13 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     # Set tolersnce
     AllowTolerance = 1E-10
-    boreVecPoint_final = [boreVecPoint_1]
-    simBoreVecPt_final = [simBoreVecPt[0]]
+    boreVecPoint_final = [numpy.ndarray.tolist(boreVecPoint_1)]
+    simBoreVecPt_final = [numpy.delete([simBoreVecPt[0]],0)]
 
-    testFailCount, testMessages = unitTestSupport.compareArray(boreVecPoint_final, simBoreVecPt_final, AllowTolerance,
-                                                               "FAILED: Calculating the vector boreVecPoint.",
+    testFailCount, testMessages = unitTestSupport.compareArray(boreVecPoint_final, simBoreVecPt_final,
+                                                               AllowTolerance,
+                                                               "Calculating the vector boreVecPoint.",
                                                                testFailCount, testMessages)
-
     # Truth values
     #boreVecPoint_1 = [0.0, 1.0, 0.0]
 
@@ -229,7 +211,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     boresightMissAng_2 = numpy.arccos(dotValue_2)  # boresight calc using body frame
     if boresightMissAng == numpy.pi / 2:
         simAz_final = numpy.array(simAz[-1])
-        boresightAzimuth = simAz_final[-1]
+        boresightAzimuth = simAz_final
         print("The miss angle is 0, therefore the miss angle is ill defined!")
     else:
         boresightAzimuth = numpy.arctan2(boreVecPoint_1[2], boreVecPoint_1[1])
@@ -237,24 +219,24 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     # Next Check
     AllowTolerance = 1E-10
     simMiss_final = numpy.array(simMiss[-1])
-    if (boresightMissAng - simMiss_final[
-        -1]) > AllowTolerance:  # Skip test days that are Sunday because of the end of a GPS week
+    if (boresightMissAng - simMiss_final) > AllowTolerance:  # Skip test days that are Sunday because of the end of a GPS week
         testFailCount += 1
         testMessages.append(
             "FAILED: Calculating the miss angle of the boresight failed with difference of: %(DiffVal)f \n" % \
-            {"DiffVal": boresightMissAng - simMiss_final[-1]})
+            {"DiffVal": boresightMissAng - simMiss_final})
     simAz_final = numpy.array(simAz[-1])
-    if (boresightAzimuth - simAz_final[-1]) > AllowTolerance:  # Skip test days that are Sunday because of the end of a GPS week
+    if (boresightAzimuth - simAz_final) > AllowTolerance:  # Skip test days that are Sunday because of the end of a GPS week
         testFailCount += 1
         testMessages.append(
             "FAILED: Calculating the azimuth angle of the boresight failed with difference of: %(DiffVal)f \n" % \
-            {"DiffVal": boresightAzimuth - simAz_final[-1]})
+            {"DiffVal": boresightAzimuth - simAz_final})
 
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED")
         testFixture.PassFail.append("PASSED")
     else:
+        print(testMessages)
         testFixture.PassFail.append("FAILED")
 
     # each test method requires a single assert method to be called

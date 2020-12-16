@@ -17,7 +17,7 @@
 
  */
 
-#include "dynamics/DynOutput/boreAngCalc/bore_ang_calc.h"
+#include "dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
 #include "messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
@@ -30,16 +30,10 @@
 BoreAngCalc::BoreAngCalc()
 {
     CallCounts = 0;
-    StateString = "";
-    celBodyString = "";
-    OutputDataString = "";
-    OutputBufferCount = 2;
-    StateInMsgID = -1;
-    AngOutMsgID = -1;
     ReinitSelf = false;
     boreVecPoint[0] = boreVecPoint[1] = boreVecPoint[2]  = 0.0;
-    memset(&localPlanet, 0x0, sizeof(SpicePlanetStateSimMsg));
-    memset(&localState, 0x0, sizeof(SCPlusStatesSimMsg));
+    this->localPlanet = this->celBodyInMsg.zeroMsgPayload();
+    this->localState = this->scStateInMsg.zeroMsgPayload();
     return;
 }
 
@@ -54,11 +48,6 @@ BoreAngCalc::~BoreAngCalc()
  */
 void BoreAngCalc::SelfInit()
 {
-    //! - Determine what the size of the output should be and create the message
-    AngOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage( OutputDataString, sizeof(AngOffValuesSimMsg), OutputBufferCount,
-        "AngOffValuesSimMsg", moduleID);
-    
 }
 
 /*! This method links up the desired input messages with whoever created them.
@@ -66,10 +55,13 @@ void BoreAngCalc::SelfInit()
  */
 void BoreAngCalc::CrossInit()
 {
-    StateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
-                            StateString, sizeof(SCPlusStatesSimMsg), moduleID);
-    celInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(celBodyString,
-                            sizeof(SpicePlanetStateSimMsg), moduleID);
+}
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
+{
 }
 
 /*! This method writes the output data out into the messaging system.
@@ -78,9 +70,7 @@ void BoreAngCalc::CrossInit()
  */
 void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
 {
-    SystemMessaging::GetInstance()->WriteMessage(AngOutMsgID, CurrentClock,
-        sizeof(AngOffValuesSimMsg), reinterpret_cast<uint8_t*> (&boresightAng),
-        moduleID);
+    this->angOutMsg.write(&this->boresightAng, this->moduleID, CurrentClock);
 }
 
 /*! This method reads the input messages in from the system and sets the
@@ -89,15 +79,12 @@ void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
  */
 void BoreAngCalc::ReadInputs()
 {
-    SingleMessageHeader localHeader;
-    
-    //! - Set the input pointer and size appropriately based on input type
     //! - Read the input message into the correct pointer
-    inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &localHeader,
-        sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&localState), moduleID);
-    inputsGood &= SystemMessaging::GetInstance()->ReadMessage(celInMsgID, &localHeader,
-        sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
-    
+    this->localState = this->scStateInMsg();
+    this->localPlanet = this->celBodyInMsg();
+
+    this->inputsGood = this->scStateInMsg.isWritten();
+    this->inputsGood &= this->celBodyInMsg.isWritten();
 }
 
 /*! This method computes the vector specified in the input file in the LVLH 

@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module bore_ang_calc
+%module boreAngCalc
 %{
-   #include "bore_ang_calc.h"
+   #include "boreAngCalc.h"
 %}
 
 %include "cmalloc.i"
@@ -29,11 +29,16 @@ from Basilisk.simulation.swig_common_model import *
 %}
 %include "swig_conly_data.i"
 
-%include "simMessages/boreAngleSimMsg.h"
 %include "sys_model.h"
-GEN_SIZEOF(BoreAngCalc);
-GEN_SIZEOF(AngOffValuesSimMsg);
-%include "bore_ang_calc.h"
+%include "boreAngCalc.h"
+
+%include "msgPayloadDefC/BoreAngleMsgPayload.h"
+struct BoreAngleMsg_C;
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+
 
 %pythoncode %{
 import sys

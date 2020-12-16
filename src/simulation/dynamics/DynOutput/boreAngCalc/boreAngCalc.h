@@ -22,19 +22,17 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/boreAngleSimMsg.h"
+
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/BoreAngleMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/bskLogging.h"
 
 
 /*! @brief A class to perform a range of boresight related calculations.
- The module
- [PDF Description](Basilisk-BOREANGLECALC-20170722.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
  */
-
 class BoreAngCalc: public SysModel {
 public:
     BoreAngCalc();
@@ -42,6 +40,7 @@ public:
     
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void computeAxisPoint();
     void computeOutputData();
@@ -49,23 +48,20 @@ public:
     void ReadInputs();
     
 public:
-    std::string StateString;          //!< (-) port to use for conversion
-    std::string celBodyString;        //!< (-) celestial body we are pointing at
-    std::string OutputDataString;     //!< (-) port to use for output data
-    uint64_t OutputBufferCount;       //!< (-) Count on number of buffers to output
+    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;       //!< (-) spacecraft state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> celBodyInMsg;   //!< (-) celestial body state msg at which we pointing at
+    Message<BoreAngleMsgPayload> angOutMsg;                 //!< (-) bore sight output message
+
     bool ReinitSelf;                  //!< (-) Indicator to reset conversion type
     double boreVec_B[3];              //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
-    AngOffValuesSimMsg boresightAng; //!< (-) Boresigt angles relative to target
+    BoreAngleMsgPayload boresightAng; //!< (-) Boresigt angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    SpicePlanetStateSimMsg localPlanet;//!< (-) planet that we are pointing at
-    SCPlusStatesSimMsg localState;   //!< (-) observed state of the spacecraft
-    int64_t StateInMsgID;             // (-) MEssage ID for incoming data
-    int64_t celInMsgID;               // (-) MEssage ID for incoming data
-    int64_t AngOutMsgID;              // (-) Message ID for outgoing data
+    SpicePlanetStateMsgPayload localPlanet;//!< (-) planet that we are pointing at
+    SCPlusStatesMsgPayload localState;   //!< (-) observed state of the spacecraft
 };
 
 
