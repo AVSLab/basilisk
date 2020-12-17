@@ -83,7 +83,7 @@ def isVectorEqual(result, truth, accuracy):
 #   function to check if an array of values is the same as the truth values
 #
 def isArrayEqual(result, truth, dim, accuracy):
-    # the result array is of dimension dim+1, as the first entry is the time stamp
+    # the result array is of dimension dim, no time stamp
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
         print("Incorrect array dimension " + dim + " sent to isArrayEqual")
@@ -105,7 +105,7 @@ def isArrayEqual(result, truth, dim, accuracy):
     return 1            # return 1 to indicate the two array's are equal
 
 def isArrayEqualRelative(result, truth, dim, accuracy):
-    # the result array is of dimension dim+1, as the first entry is the time stamp
+    # the result array is of dimension dim, no time stamp
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
         print("Incorrect array dimension " + dim + " sent to isArrayEqual")
@@ -135,7 +135,7 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
 #   function to check if an array of values are zero
 #
 def isArrayZero(result, dim, accuracy):
-    # the result array is of dimension dim+1, as the first entry is the time stamp
+    # the result array is of dimension dim
     if dim < 1:
         print("Incorrect array dimension " + dim + " sent to isArrayEqual")
         return 0
@@ -212,7 +212,7 @@ def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, t
     Checks whether the relative distance between elements of a pullMessageLogData-derived array and a truth array is below a provided
     accuracy, and return an error if not.
     :param trueStates: iterable of size (m,n);
-    :param dataStates: iterable of size (m+1,n), where the first column can be ignored
+    :param dataStates: iterable of size (m,n)
     :param accuracy: Relative accuracy boundary
     :param msg:
     :param testFailCount:
@@ -239,7 +239,6 @@ def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, t
 def isDoubleEqual(result, truth, accuracy):
     if foundNAN(result): return 0
 
-    # the result array is of dimension dim+1, as the first entry is the time stamp
     if (math.fabs(result - truth) > accuracy):
         return 0    # return 0 to indicate the doubles are not equal
 
@@ -256,7 +255,6 @@ def isDoubleEqualRelative(result, truth, accuracy):
         print("truth is zero, cannot compare")
         return 0
 
-    # the result array is of dimension dim+1, as the first entry is the time stamp
     if (math.fabs((truth - result)/truth) > accuracy):
         return 0    # return 0 to indicate the doubles are not equal
 
