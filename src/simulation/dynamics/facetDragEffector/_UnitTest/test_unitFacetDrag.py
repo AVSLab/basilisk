@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 #
 #
@@ -27,15 +26,8 @@
 #
 
 
-import sys, os, inspect
-import matplotlib
+import os, inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
-import pytest
-
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -45,8 +37,6 @@ splitPath = path.split(bskName)
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -55,26 +45,19 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import facetDragDynamicEffector
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import messaging2
 #print dir(exponentialAtmosphere)
 
 
 def test_unitFacetDrag():
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
-    #   Initialize new atmosphere and drag model, add them to task
-    #newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
-    newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
-    showVal = False
     testResults = []
     testMessage = []
-
-    planetRes, planetMsg = SetDensityMsgTest(newDrag)
-    testMessage.append(planetMsg)
-    testResults.append(planetRes)
 
     dragRes, dragMsg = TestDragCalculation()
     testMessage.append(dragMsg)
@@ -100,31 +83,11 @@ def test_unitFacetDrag():
 
     assert testSum < 1, testMessage
 
-def SetDensityMsgTest(dragEffector):
-    testFailCount = 0
-    testMessages = []
-
-    # create the dynamics task and specify the integration update time
-    scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
-
-    scObject.addDynamicEffector(dragEffector)
-
-    # add spacecraftPlus object to the simulation process
-    dragEffector.setDensityMessage("testDensMsgName")
-
-    if dragEffector.atmoDensInMsgName != "testDensMsgName":
-        testFailCount += 1
-        testMessages.append(
-            "FAILED: DragEffector does not correctly set message names.")
-    return testFailCount, testMessages
 
 def TestDragCalculation():
 
     #   Init test support variables
-    showVal = False
     testFailCount = 0
-    testResults = []
     testMessages = []
 
     ##   Simulation initialization
@@ -143,12 +106,11 @@ def TestDragCalculation():
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
-    newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
-    newDrag.setDensityMessage(newAtmo.envOutMsgNames[-1])
-    newDrag.navAttInMsgName = 'nav_att_out'
     newDrag.ModelTag = "FacetDrag"
+    newDrag.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
 
     scObject.addDynamicEffector(newDrag)
 
@@ -162,8 +124,8 @@ def TestDragCalculation():
             newDrag.addFacet(scAreas[i], scCoeff[i], B_normals[i], B_locations[i])
     except:
         testFailCount += 1
-        testMessage.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
-        return testFailCount, testMessage
+        testMessages.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
+        return testFailCount, testMessages
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -206,14 +168,16 @@ def TestDragCalculation():
     scSim.AddModelToTask(simTaskName, newAtmo)
     scSim.AddModelToTask(simTaskName, newDrag)
 
+    # setup logging
+    dataLog = scObject.scStateOutMsg.log()
+    scSim.AddModelToTask(simTaskName, dataLog)
+    atmoLog = newAtmo.envOutMsgs[0].log()
+    scSim.AddModelToTask(simTaskName, atmoLog)
+
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
-    samplingTime = simulationTimeStep
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
 
     scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_B",
                                       simulationTimeStep, 0, 2, 'double')
@@ -228,10 +192,10 @@ def TestDragCalculation():
     #   Retrieve logged data
     dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
     dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', list(range(3)))
-    densData = scSim.pullMessageLogData(newAtmo.ModelTag+"_0_data.neutralDensity")
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
+    attData = dataLog.sigma_BN
+    densData = atmoLog.neutralDensity
     np.set_printoptions(precision=16)
 
     def checkFacetDragForce(dens, area, coeff, facet_dir, sigma_BN, inertial_vel):
@@ -248,14 +212,14 @@ def TestDragCalculation():
 
     #   Compare to expected values
     accuracy = 1e-3
-    #unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     test_val = np.zeros([3,])
     for i in range(len(scAreas)):
-        test_val += checkFacetDragForce(densData[1, i], scAreas[i], scCoeff[i], B_normals[i], attData[1, 1:], velData[1, 1:])
+        test_val += checkFacetDragForce(densData[i], scAreas[i], scCoeff[i], B_normals[i], attData[1], velData[1])
 
     if len(densData) > 0:
-        if not unitTestSupport.isArrayEqualRelative(dragDataForce_B[1,:], test_val, 3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dragDataForce_B[1,1:4], test_val, 3,accuracy):
             testFailCount += 1
             testMessages.append(
                 "FAILED:  FacetDragEffector failed force unit test at t=" + str(dragDataForce_B[1,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_B[1,1:]-test_val))
@@ -263,15 +227,18 @@ def TestDragCalculation():
         testFailCount += 1
         testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
 
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("PASSED")
+
     return testFailCount, testMessages
 
 
 def TestShadowCalculation():
 
     #   Init test support variables
-    showVal = False
     testFailCount = 0
-    testResults = []
     testMessages = []
 
     ##   Simulation initialization
@@ -287,20 +254,17 @@ def TestShadowCalculation():
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
-    simpleNavObj = simple_nav.SimpleNav()
-    simpleNavObj.inputStateName = scObject.scStateOutMsgName
-    simpleNavObj.outputAttName = 'nav_att_out'
+    simpleNavObj = simpleNav.SimpleNav()
+    simpleNavObj.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
-    newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
-    newDrag.setDensityMessage(newAtmo.envOutMsgNames[-1])
-    newDrag.navAttInMsgName = 'nav_att_out'
     newDrag.ModelTag = "FacetDrag"
-
+    newDrag.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
 
     scObject.addDynamicEffector(newDrag)
 
@@ -314,8 +278,8 @@ def TestShadowCalculation():
             newDrag.addFacet(scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind])
     except:
         testFailCount += 1
-        testMessage.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
-        return testFailCount, testMessage
+        testMessages.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
+        return testFailCount, testMessages
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -359,19 +323,21 @@ def TestShadowCalculation():
     scSim.AddModelToTask(simTaskName, newAtmo)
     scSim.AddModelToTask(simTaskName, newDrag)
 
+    # setup logging
+    dataLog = scObject.scStateOutMsg.log()
+    scSim.AddModelToTask(simTaskName, dataLog)
+    atmoLog = newAtmo.envOutMsgs[0].log()
+    scSim.AddModelToTask(simTaskName, atmoLog)
+
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
 
-    samplingTime = simulationTimeStep
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
-
     scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_B",
-                                      simulationTimeStep, 0, 2, 'double')
+                                simulationTimeStep, 0, 2, 'double')
     scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
-                                      simulationTimeStep, 0, 2, 'double')
+                                simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time time and execute the simulation run
     #
@@ -382,12 +348,11 @@ def TestShadowCalculation():
     #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
     dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
     dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', list(range(3)))
-    densData = scSim.pullMessageLogData(newAtmo.ModelTag+"_0_data.neutralDensity")
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
+    attData = dataLog.sigma_BN
+    densData = atmoLog.neutralDensity
     np.set_printoptions(precision=16)
-
 
     #   Compare to expected values
     accuracy = 1e-9
@@ -395,19 +360,23 @@ def TestShadowCalculation():
 
     if len(densData) > 0:
         for ind in range(1,len(densData)):
-            if not unitTestSupport.isArrayZero(dragDataForce_B[ind,:], 3,accuracy):
+            if not unitTestSupport.isArrayZero(dragDataForce_B[ind, 1:], 3,accuracy):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED:  FacetDragEffector failed shadow unit test at t=" + str(dragDataForce_B[ind,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_B[ind,1:]))
-
-
+                    "FAILED:  FacetDragEffector failed shadow unit test with a value difference of "
+                    + str(dragDataForce_B[ind,1:]))
     else:
         testFailCount += 1
         testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
 
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("PASSED")
+
     return testFailCount, testMessages
 
 if __name__=="__main__":
-    test_unitFacetDrag()
-    #TestShadowCalculation()
-    #TestDragCalculation()
+    # test_unitFacetDrag()
+    TestShadowCalculation()
+    # TestDragCalculation()

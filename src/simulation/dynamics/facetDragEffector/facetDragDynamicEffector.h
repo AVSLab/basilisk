@@ -26,7 +26,10 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../simMessages/atmoPropsSimMsg.h"
+
+#include "msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "../../utilities/rigidBodyKinematics.h"
 #include "utilities/bskLogging.h"
 
@@ -58,7 +61,6 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
-    void setDensityMessage(std::string newDensMessage); //!< class method
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
 private:
@@ -67,8 +69,7 @@ private:
     void updateDragDir();
 public:
     uint64_t numFacets;                             //!< number of facets
-    std::string atmoDensInMsgName;                  //!< -- message used to read command inputs
-    std::string navAttInMsgName;                    //!< -- message used to read command inputs
+    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< -- input message for atmospheric density information
     StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity
@@ -76,8 +77,7 @@ public:
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
 private:
-    int64_t densInMsgId;                            //!< -- Message ID for incoming data
-    AtmoPropsSimMsg atmoInData;
+    AtmoPropsMsgPayload atmoInData;
     SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
 
 };

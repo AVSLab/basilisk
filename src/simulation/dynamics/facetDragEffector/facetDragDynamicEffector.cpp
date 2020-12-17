@@ -19,7 +19,6 @@
 
 #include <iostream>
 #include "facetDragDynamicEffector.h"
-#include "messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
@@ -27,12 +26,10 @@
 
 FacetDragDynamicEffector::FacetDragDynamicEffector()
 {
-	this->atmoDensInMsgName = "atmo_dens_0_data";
     this->forceExternal_B.fill(0.0);
     this->torqueExternalPntB_B.fill(0.0);
     this->v_B.fill(0.0);
     this->v_hat_B.fill(0.0);
-    this->densInMsgId = -1;
 	this->numFacets = 0;
 	return;
 }
@@ -57,24 +54,12 @@ void FacetDragDynamicEffector::SelfInit()
  */
 void FacetDragDynamicEffector::CrossInit()
 {
-
-	//! - Find the message ID associated with the atmoDensInMsgName string.
-    this->densInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
-                                                                           sizeof(AtmoPropsSimMsg), moduleID);
 }
 
 
 void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
     return;
-}
-/*! This method is used to set the input density message produced by some atmospheric model.
-@return void
-*/
-void FacetDragDynamicEffector::setDensityMessage(std::string newDensMessage)
-{
-	this->atmoDensInMsgName = newDensMessage;
-	return;
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
@@ -93,13 +78,8 @@ atmospheric data.
 bool FacetDragDynamicEffector::ReadInputs()
 {
     bool dataGood;
-    //! - Zero the command buffer and read the incoming command array
-    SingleMessageHeader localHeader;
-    memset(&this->atmoInData, 0x0, sizeof(AtmoPropsSimMsg));
-    memset(&localHeader, 0x0, sizeof(localHeader));
-    dataGood = SystemMessaging::GetInstance()->ReadMessage(this->densInMsgId, &localHeader,
-                                                           sizeof(AtmoPropsSimMsg),
-                                                           reinterpret_cast<uint8_t*> (&this->atmoInData), moduleID);
+    this->atmoInData = this->atmoDensInMsg();
+    dataGood = this->atmoDensInMsg.isWritten();
     return(dataGood);
 }
 

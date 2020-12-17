@@ -14,7 +14,7 @@ newDrag.ModelTag = "FacetDrag"
 
 Assuming an atmospheric density model has already been set up, the density message to be used by this drag effector can be set by calling
 \begin{verbatim}
-newDrag.setDensityMessage(atmoModule.envOutMsgNames[-1])
+newDrag.setDensityMessage(atmoModule.envOutMsgs[0])
 \end{verbatim}
 
 By default, the module has no facets and drag calculation is skipped. To add a facet, call th \verb|addFacet| function with an area, drag coefficient, body-frame normal vector, and body-frame facet location. For example, to add multiple facets, call
