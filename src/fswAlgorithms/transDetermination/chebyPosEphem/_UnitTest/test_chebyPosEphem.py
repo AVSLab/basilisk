@@ -16,7 +16,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import sys, os, inspect
+import os, inspect
 import numpy
 import pytest
 import math
