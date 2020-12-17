@@ -32,7 +32,7 @@ from Basilisk.fswAlgorithms import velocityPoint                        # import
 from Basilisk.utilities import macros
 import numpy as np
 from Basilisk.utilities import astroFunctions as af
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

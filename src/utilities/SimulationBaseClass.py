@@ -24,8 +24,8 @@ import six
 # Point the path to the module storage area
 
 
-from Basilisk.simulation import sim_model
-from Basilisk.simulation import alg_contain
+from Basilisk.architecture import sim_model
+from Basilisk.architecture import alg_contain
 from Basilisk.utilities import MessagingAccess
 import numpy as np
 import array

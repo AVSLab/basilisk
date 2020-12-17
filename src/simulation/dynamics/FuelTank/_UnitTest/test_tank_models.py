@@ -27,7 +27,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 import ctypes
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface

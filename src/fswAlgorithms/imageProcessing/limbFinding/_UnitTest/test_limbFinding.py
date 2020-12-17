@@ -43,7 +43,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 try:
     from Basilisk.fswAlgorithms import limbFinding
 except ImportError:

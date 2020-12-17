@@ -34,7 +34,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import cssWlsEst
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

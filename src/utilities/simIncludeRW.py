@@ -24,7 +24,7 @@ import sys
 import numpy
 
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 try:
     from collections.abc import OrderedDict

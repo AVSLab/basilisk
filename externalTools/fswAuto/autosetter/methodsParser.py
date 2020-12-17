@@ -23,8 +23,8 @@ import modulesParser as dataParser
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.simulation import alg_contain
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import alg_contain
+from Basilisk.architecture import sim_model
 import numpy as np
 
 

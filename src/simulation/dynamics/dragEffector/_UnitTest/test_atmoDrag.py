@@ -40,7 +40,7 @@ from Basilisk.simulation import exponentialAtmosphere, simpleNav
 from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
 #print dir(exponentialAtmosphere)
 from Basilisk.simulation import dragDynamicEffector
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

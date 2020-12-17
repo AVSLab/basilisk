@@ -7,7 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephemNavConverter
 from Basilisk.utilities import astroFunctions
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename

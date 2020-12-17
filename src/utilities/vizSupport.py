@@ -30,7 +30,7 @@ import numpy as np
 from Basilisk.utilities import unitTestSupport
 from Basilisk import __path__
 bskPath = __path__[0]
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 # set the string type that works with Python 2 and 3
 try:

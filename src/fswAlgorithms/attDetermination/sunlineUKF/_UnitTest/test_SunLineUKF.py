@@ -30,7 +30,7 @@ import math
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineUKF
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 import SunLineuKF_test_utilities as FilterPlots
 
 def addTimeColumn(time, data):

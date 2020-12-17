@@ -27,7 +27,7 @@ import sys, os, inspect
 import math
 import numpy
 
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 thrList = []

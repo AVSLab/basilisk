@@ -31,7 +31,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 

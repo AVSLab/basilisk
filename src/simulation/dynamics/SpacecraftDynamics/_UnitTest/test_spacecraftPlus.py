@@ -33,7 +33,7 @@ from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import GravityGradientEffector
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))

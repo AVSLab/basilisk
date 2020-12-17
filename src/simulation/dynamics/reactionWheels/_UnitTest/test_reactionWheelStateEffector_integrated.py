@@ -33,7 +33,7 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 mpl.rc("figure", figsize=(5.75, 4))
 

@@ -30,8 +30,8 @@ Rather, the messages have become smart objects that can be directly connected to
 while before we had ``stateOutMsgName`` and ``stateOutMsgId`` variables, now a single msg variable named
 ``stateOutMsg`` is used.   See :ref:`codingGuidelines` for more info on message naming.
 
-Importing Message Definitions
------------------------------
+Importing Basilisk architecture Packages
+----------------------------------------
 All message payload definitions are now stored contained in the ``message2`` package, providing a
 unified interface to all flight software and simulation messages.  Thus, instead of importing::
 
@@ -39,7 +39,15 @@ unified interface to all flight software and simulation messages.  Thus, instead
 
 just import ``message2`` using::
 
-    from Basilisk.simulation import messaging2
+    from Basilisk.architecture import messaging2
+
+Further, the ``sim_model``, ``alg_contain`` and ``MessagingAccess`` packages are now stored
+within the new architecture library and imported using::
+
+    from Basilisk.architecture import alg_contain
+    from Basilisk.architecture import sim_model
+    from Basilisk.architecture import MessagingAccess
+
 
 Configuring Module Input/Output Message Names
 ---------------------------------------------

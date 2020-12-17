@@ -77,7 +77,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simple_nav

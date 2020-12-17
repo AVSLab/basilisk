@@ -35,7 +35,7 @@ from Basilisk.fswAlgorithms import celestialTwoBodyPoint  # module that is to be
 from Basilisk.utilities import macros
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

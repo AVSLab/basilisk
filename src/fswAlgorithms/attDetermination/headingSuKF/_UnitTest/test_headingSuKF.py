@@ -24,7 +24,7 @@ import math
 from Basilisk.utilities import SimulationBaseClass, macros
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import headingSuKF
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 import headingSuKF_test_utilities as FilterPlots
 

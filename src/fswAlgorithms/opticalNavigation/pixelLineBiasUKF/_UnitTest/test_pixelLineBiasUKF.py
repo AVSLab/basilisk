@@ -24,7 +24,7 @@ from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is
 from Basilisk.utilities import RigidBodyKinematics as rbk
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 def addTimeColumn(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))

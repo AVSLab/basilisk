@@ -29,7 +29,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to be tested
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 

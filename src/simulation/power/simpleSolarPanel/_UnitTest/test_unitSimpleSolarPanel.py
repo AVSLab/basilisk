@@ -36,7 +36,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk

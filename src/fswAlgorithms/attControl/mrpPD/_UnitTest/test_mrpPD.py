@@ -33,7 +33,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import mrpPD  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

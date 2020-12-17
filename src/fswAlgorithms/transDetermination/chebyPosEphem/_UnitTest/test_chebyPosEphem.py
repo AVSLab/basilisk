@@ -32,7 +32,7 @@ from Basilisk.fswAlgorithms import chebyPosEphem
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 orbitPosAccuracy = 1.0
 orbitVelAccuracy = 0.01

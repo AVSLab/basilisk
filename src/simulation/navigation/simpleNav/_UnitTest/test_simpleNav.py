@@ -25,7 +25,7 @@ import os
 from Basilisk.simulation import simpleNav
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 def listNorm(inputList):
    normValue = 0.0

@@ -26,7 +26,7 @@ import os,errno
 import numpy as np
 import matplotlib as mpl
 from datetime import datetime, timedelta
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 from Basilisk.topLevelModules import pyswice
 
 mpl.rc("figure", facecolor="white")

@@ -118,7 +118,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus

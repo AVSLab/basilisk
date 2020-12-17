@@ -19,7 +19,7 @@
 '''
 
 
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 import numpy
 import array
 import importlib

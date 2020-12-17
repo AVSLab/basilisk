@@ -41,7 +41,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import spacecraftPointing           # import the module that is to be tested
 from Basilisk.utilities import macros
 import numpy as np
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 @pytest.mark.parametrize("case", [
      (1)        # Regular alignment vector

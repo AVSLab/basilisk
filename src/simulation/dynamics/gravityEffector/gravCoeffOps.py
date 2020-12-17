@@ -18,7 +18,7 @@
 
 '''
 import csv
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 
 def loadGravFromFile(fileName, spherHarm, maxDeg=2):
 

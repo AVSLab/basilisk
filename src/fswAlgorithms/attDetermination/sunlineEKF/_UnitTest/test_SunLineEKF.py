@@ -29,7 +29,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.fswAlgorithms import sunlineEKF
 from Basilisk.utilities import macros
 import SunLineEKF_test_utilities as FilterPlots
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 def addTimeColumn(time, data):

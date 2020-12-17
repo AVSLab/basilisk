@@ -23,12 +23,12 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import oeStateEphem
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

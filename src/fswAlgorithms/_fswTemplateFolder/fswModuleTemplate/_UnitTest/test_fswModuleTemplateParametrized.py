@@ -45,7 +45,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import fswModuleTemplate                # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2                      # import the message definitions
+from Basilisk.architecture import messaging2                      # import the message definitions
 from Basilisk.utilities import vizSupport
 
 

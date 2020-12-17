@@ -33,7 +33,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineEphem  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 import numpy as np
 
 

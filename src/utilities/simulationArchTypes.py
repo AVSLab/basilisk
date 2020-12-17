@@ -20,8 +20,8 @@
 
 
 
-from Basilisk.simulation import sim_model
-from Basilisk.simulation import sys_model_task
+from Basilisk.architecture import sim_model
+from Basilisk.architecture import sys_model_task
 
 
 def CreateNewMessage(messageName, messageType, moduleID):

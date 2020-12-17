@@ -6,7 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, fswSetupThrusters
 from Basilisk.fswAlgorithms import thrustRWDesat
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 def test_thrustRWDesat():

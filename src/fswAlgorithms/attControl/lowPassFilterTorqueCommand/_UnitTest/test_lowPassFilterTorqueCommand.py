@@ -24,20 +24,17 @@
 #   Creation Date:      December 9, 2015
 #
 import pytest
-import sys, os, inspect
 import math
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 #   Import all of the modules that we are going to call in this simulation
-from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import sim_model
-from Basilisk.simulation import alg_contain
+
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import lowPassFilterTorqueCommand       # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

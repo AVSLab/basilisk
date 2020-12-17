@@ -21,12 +21,11 @@ import numpy
 import math, inspect, os
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

@@ -35,7 +35,7 @@ from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import prvSteering
 from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

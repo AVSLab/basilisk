@@ -8,7 +8,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import horizonOpNav
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 import os, inspect
 import numpy as np

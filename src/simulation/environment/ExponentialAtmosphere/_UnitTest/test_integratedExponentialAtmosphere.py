@@ -34,7 +34,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 def test_unitExponentialAtmosphere():

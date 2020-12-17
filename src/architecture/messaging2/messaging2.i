@@ -40,7 +40,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 
 %pythoncode %{
     import numpy as np
-    from Basilisk.simulation import cMsgCInterfacePy
+    from Basilisk.architecture import cMsgCInterfacePy
 %};
 %{
 #include "_GeneralModuleFiles/sys_model.h"
@@ -65,7 +65,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %extend ReadFunctor<messageTypePayload> {
         %pythoncode %{
             def subscribeTo(self, source):
-                from Basilisk.simulation.cMsgCInterfacePy import messageType ## _C
+                from Basilisk.architecture.cMsgCInterfacePy import messageType ## _C
                 if type(source) == messageType:
                     self.__subscribe_to(source)
                 elif type(source) == messageType ## _C:

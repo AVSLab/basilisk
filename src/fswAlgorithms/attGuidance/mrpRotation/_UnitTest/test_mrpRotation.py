@@ -35,7 +35,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import mrpRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 sys.path.append(path + '/Support')

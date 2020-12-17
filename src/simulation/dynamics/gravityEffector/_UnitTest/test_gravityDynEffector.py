@@ -35,7 +35,7 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import stateArchitecture
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 from Basilisk.simulation.gravityEffector import loadGravFromFileToList
 
 #script to check spherical harmonics calcs out to 20th degree

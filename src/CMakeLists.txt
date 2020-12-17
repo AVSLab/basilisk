@@ -587,7 +587,7 @@ generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" 
 # ARCHITECTURE #
 ##################
 find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
-generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
 
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" SIM_TARGETS)
 generate_package_targets("${SIM_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")

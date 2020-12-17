@@ -44,7 +44,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import vscmgStateEffector
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
 

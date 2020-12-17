@@ -39,7 +39,7 @@ from Basilisk.simulation import msisAtmosphere
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

@@ -37,7 +37,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simSetPlanetEnvironment

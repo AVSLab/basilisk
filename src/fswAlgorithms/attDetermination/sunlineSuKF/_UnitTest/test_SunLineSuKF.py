@@ -22,7 +22,7 @@ import pytest
 
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
 from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 import SunLineSuKF_test_utilities as FilterPlots
 

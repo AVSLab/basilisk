@@ -6,7 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import rwNullSpace
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 import pytest
 import numpy as np
 import os, inspect

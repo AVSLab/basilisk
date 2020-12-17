@@ -8,7 +8,7 @@ typedef struct {type};
     %pythoncode %{{
 
     def subscribeTo(self, source):
-        from Basilisk.simulation.messaging2 import {type}
+        from Basilisk.architecture.messaging2 import {type}
         if type(source) == type(self):
             {type}_C_subscribe(self, source)
         elif type(source) == {type}:
@@ -17,7 +17,7 @@ typedef struct {type};
             raise Exception('tried to subscribe {type} to another message type')
 
     def log(self):
-        from Basilisk.simulation.messaging2 import {type}Logger
+        from Basilisk.architecture.messaging2 import {type}Logger
         self.header.isLinked = 1
         return {type}Logger(self)
 

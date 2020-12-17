@@ -7,7 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import faultDetection
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 import os, inspect, pytest
 import numpy as np

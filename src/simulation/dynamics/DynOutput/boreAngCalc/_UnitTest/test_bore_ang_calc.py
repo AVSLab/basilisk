@@ -32,7 +32,7 @@ from Basilisk.simulation import boreAngCalc
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 import pytest
 import numpy
 import os

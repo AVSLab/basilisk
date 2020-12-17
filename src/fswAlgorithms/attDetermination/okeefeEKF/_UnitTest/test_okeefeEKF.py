@@ -31,7 +31,7 @@ import SunLineOEKF_test_utilities as FilterPlots
 from Basilisk.fswAlgorithms import okeefeEKF
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 
 def setupFilterData(filterObject):

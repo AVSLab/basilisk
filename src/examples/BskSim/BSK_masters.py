@@ -20,7 +20,7 @@
 
 # Import architectural modules
 from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.simulation import sim_model
+from Basilisk.architecture import sim_model
 
 # Get current file path
 import sys, os, inspect

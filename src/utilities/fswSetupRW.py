@@ -15,7 +15,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 import numpy
 
 #

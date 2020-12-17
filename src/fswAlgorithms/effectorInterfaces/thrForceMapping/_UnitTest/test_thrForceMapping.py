@@ -34,7 +34,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 import numpy as np
 

@@ -22,7 +22,7 @@ import pytest
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 from Basilisk.fswAlgorithms import relativeODuKF  # import the module that is to be tested
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np

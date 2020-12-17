@@ -27,7 +27,7 @@ import pytest
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.fswAlgorithms import sunlineSEKF
-from Basilisk.simulation import messaging2
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros, RigidBodyKinematics
 import SunLineSEKF_test_utilities as FilterPlots
 
