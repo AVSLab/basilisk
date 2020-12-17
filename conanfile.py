@@ -92,19 +92,7 @@ class BasiliskConan(ConanFile):
         print("conan: " + failColor + "Error configuring conan repo information." + endColor)
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
-    # auto-generate C message definition files
-    print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
-    bskPath = os.getcwd()
-    os.chdir(os.path.join(bskPath, "src/architecture/messaging2/msgTemplateInputs"))
-    cmdString = list()
-    if platform.system() == "Windows":
-        cmdString.append("py")
-    else:
-        cmdString.append("python3")
-    cmdString.append("GenCMessages.py")
-    subprocess.check_call(cmdString)
-    os.chdir(bskPath)
-    print("Done")
+
 
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
@@ -217,6 +205,19 @@ class BasiliskConan(ConanFile):
             self.copy("*.dll", "../Basilisk", "bin")
 
     def build(self):
+        # auto-generate C message definition files
+        print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
+        bskPath = os.getcwd()
+        os.chdir(os.path.join(bskPath, "src/architecture/messaging2/msgTemplateInputs"))
+        cmdString = list()
+        if platform.system() == "Windows":
+            cmdString.append("py")
+        else:
+            cmdString.append("python3")
+        cmdString.append("GenCMessages.py")
+        subprocess.check_call(cmdString)
+        os.chdir(bskPath)
+        print("Done")
         if self.options.vizInterface:
             # build the protobuffer support files
             bskPath = os.getcwd()

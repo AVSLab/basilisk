@@ -405,6 +405,7 @@ if(MSVC)
     add_definitions(/W3)
     add_definitions(/wd"4913")
     add_definitions(/wd"4251")
+    add_definitions(/bigobj)
     # Make sure we are using Multi-Threaded run time library
     foreach(flag
         CMAKE_C_FLAGS

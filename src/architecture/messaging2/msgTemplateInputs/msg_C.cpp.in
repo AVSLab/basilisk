@@ -1,6 +1,7 @@
 #include "{type}_C.h"
 #include "messaging2/messaging2.h"
 #include "utilities/bsk_Print.h"
+#include<string.h>
 
 //! C interface to subscribe to a message
 void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
