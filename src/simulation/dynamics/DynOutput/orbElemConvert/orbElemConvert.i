@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module orb_elem_convert
+%module orbElemConvert
 %{
-   #include "orb_elem_convert.h"
+   #include "orbElemConvert.h"
 %}
 
 %pythoncode %{
@@ -30,12 +30,15 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "sys_model.h"
 %include "../utilities/orbitalMotion.h"
-%include "orb_elem_convert.h"
-%include "../simMessages/scPlusStatesSimMsg.h"
-%include "../simMessages/spicePlanetStateSimMsg.h"
-GEN_SIZEOF(classicElements);
-GEN_SIZEOF(SCPlusStatesSimMsg);
-GEN_SIZEOF(SpicePlanetStateSimMsg);
+%include "orbElemConvert.h"
+
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/ClassicElementsMsgPayload.h"
+struct ClassicElementsMsg_C;
+
 
 %pythoncode %{
 import sys

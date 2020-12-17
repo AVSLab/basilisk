@@ -42,7 +42,7 @@ just import ``message2`` using::
     from Basilisk.architecture import messaging2
 
 Further, the ``sim_model``, ``alg_contain`` and ``MessagingAccess`` packages are now stored
-within the new architecture library and imported using::
+within the new ``architecture`` library and imported using::
 
     from Basilisk.architecture import alg_contain
     from Basilisk.architecture import sim_model
@@ -157,6 +157,18 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+-------------------------------+-----------------------------------+
     | oe_state_ephem  →         |                               |                                   |
     | ``oeStateEphem``          |                               |                                   |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | orb_elem_convert  →       | ``StateString``               | ``scStateInMsg``                  |
+    + ``orbElemConvert``        +-------------------------------+-----------------------------------+
+    |                           | ``StateString``               | ``spiceStateInMsg``               |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``StateString``               | ``elemInMsg``                     |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``OutputDataString``          | ``scStateOutMsg``                 |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``OutputDataString``          | ``spiceStateOutMsg``              |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``OutputDataString``          | ``elemOutMsg``                    |
     +---------------------------+-------------------------------+-----------------------------------+
     | MRP_Feedback →            | ``outputDataName``            | ``cmdTorqueOutMsg``               |
     + ``mrpFeedback``           +-------------------------------+-----------------------------------+

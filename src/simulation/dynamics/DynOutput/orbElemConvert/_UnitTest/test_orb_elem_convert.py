@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import pytest
 import os
 import inspect
@@ -37,15 +36,14 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-# @cond DOXYGEN_IGNORE
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import orb_elem_convert
+from Basilisk.simulation import orbElemConvert
 from Basilisk.utilities import macros
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
-# @endcond
+from Basilisk.architecture import messaging2
 
-# Class in order to plot using data accross the different paramatrized scenarios
+# Class in order to plot using data across the different parameterized scenarios
 class DataStore:
     def __init__(self):
         self.Date = [] # replace these with appropriate containers for the data to be stored for plotting
@@ -175,7 +173,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Initialize the modules that we are using.
-    orb_elemObject = orb_elem_convert.OrbElemConvert()
+    orb_elemObject = orbElemConvert.OrbElemConvert()
     orb_elemObject.ModelTag = "OrbElemConvertData"
 
     # Add Model To Task
@@ -184,24 +182,14 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     # Set element values
     epsDiff = 0.0000001
     orb_elemObject.mu = mu
-    orb_elemObject.Elements2Cart = True
-    orb_elemObject.inputsGood = True
-    orb_elemObject.ReinitSelf = True
-    orb_elemObject.useEphemFormat = True
-
 
     ###### ELEM2RV ######
     TotalSim.AddVariableForLogging('OrbElemConvertData.r_N', testProcessRate, 0, 2, 'double')
     TotalSim.AddVariableForLogging('OrbElemConvertData.v_N', testProcessRate, 0, 2, 'double')
-    TotalSim.AddVariableForLogging('OrbElemConvertData.ReinitSelf')
-
-    orb_elemObject.StateString = "ClassicElemString"
-    ElemMessage = orb_elem_convert.classicElements()
-    inputMessageSize = ElemMessage.getStructSize()
 
     # Create and write messages
-    TotalSim.TotalSim.CreateNewMessage(unitProcessName, orb_elemObject.StateString, inputMessageSize, 2)
-    # number of buffers (leave at 2 as default, don't make zero)
+    ElemMessage = messaging2.ClassicElementsMsgPayload()
+    elemMsg = messaging2.ClassicElementsMsg()
 
     if e == 1.0:
         ElemMessage.a = 0.0
@@ -214,10 +202,12 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     ElemMessage.omega = AP
     ElemMessage.f = f
 
-    TotalSim.TotalSim.WriteMessageData(orb_elemObject.StateString, inputMessageSize, 0, ElemMessage)
+    elemMsg.write(ElemMessage)
+    orb_elemObject.elemInMsg.subscribeTo(elemMsg)
 
     # Log Message to test WriteOutputMessage()
-    TotalSim.TotalSim.logThisMessage(orb_elemObject.OutputDataString)
+    dataLog = orb_elemObject.spiceStateOutMsg.log()
+    TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     # Execute simulation
     TotalSim.ConfigureStopTime(int(1E9))
@@ -231,43 +221,18 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     rSim = numpy.delete(rSim[-1], 0, axis=0)
 
     # Get r and v from message
-    if orb_elemObject.useEphemFormat:
-        rMsgPlanet = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.PositionVector', list(range(3)))
-        rMsgPlanet = numpy.delete(rMsgPlanet[-1], 0, axis=0)
-        vMsgPlanet = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.VelocityVector', list(range(3)))
-        vMsgPlanet = numpy.delete(vMsgPlanet[-1], 0, axis=0)
-        rMsgPlanetDiff = numpy.subtract(rSim, rMsgPlanet)
-        for g in range(3):
-            if abs(rMsgPlanetDiff[g]) > 0:
-                testMessages.append(" FAILED: Planet Position Message, column " + str(g))
-                testFailCount1 += 1
-        vMsgPlanetDiff = numpy.subtract(vSim, vMsgPlanet)
-        for g in range(3):
-            if abs(vMsgPlanetDiff[g]) > 0:
-                testMessages.append(" FAILED: Planet Velocity Message, column " + str(g))
-                testFailCount1 += 1
-    else:
-        rMsgSC = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.r_BN_N', list(range(3)))
-        rMsgSC = numpy.delete(rMsgSC[-1], 0, axis=0)
-        vMsgSC = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.v_BN_N', list(range(3)))
-        vMsgSC = numpy.delete(vMsgSC[-1], 0, axis=0)
-        rMsgSCDiff = numpy.subtract(rSim, rMsgSC)
-        for g in range(3):
-            if abs(rMsgSCDiff[g]) > 0:
-                testMessages.append(" FAILED: Spacecraft Position Message, column " + str(g))
-                testFailCount1 += 1
-        vMsgSCDiff = numpy.subtract(vSim, vMsgSC)
-        for g in range(3):
-            if abs(vMsgSCDiff[g]) > 0:
-                testMessages.append(" FAILED: Spacecraft Velocity Message, column " + str(g))
-                testFailCount1 += 1
-
-
-    ReinitSelf = TotalSim.GetLogVariableData('OrbElemConvertData.ReinitSelf')
-    ReinitSelf = numpy.delete(ReinitSelf[-1], 0, axis=0)
-    if ReinitSelf:
-        testMessages.append(" FAILED: ReinitSelf")
-        testFailCount1 += 1
+    rMsgPlanet = dataLog.PositionVector[-1]
+    vMsgPlanet = dataLog.VelocityVector[-1]
+    rMsgPlanetDiff = numpy.subtract(rSim, rMsgPlanet)
+    for g in range(3):
+        if abs(rMsgPlanetDiff[g]) > 0:
+            testMessages.append(" FAILED: Planet Position Message, column " + str(g))
+            testFailCount1 += 1
+    vMsgPlanetDiff = numpy.subtract(vSim, vMsgPlanet)
+    for g in range(3):
+        if abs(vMsgPlanetDiff[g]) > 0:
+            testMessages.append(" FAILED: Planet Velocity Message, column " + str(g))
+            testFailCount1 += 1
 
     # Calculation of elem2rv
     if e == 1.0 and a > 0.0:  # rectilinear elliptic orbit case
@@ -345,7 +310,6 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     ###### RV2ELEM ######
     # RV2Elem
     testFailCount2 = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
 
     for g in range(2):
         TotalSim = SimulationBaseClass.SimBaseClass()
@@ -356,7 +320,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, testProcessRate))
 
         # Initialize the modules that we are using.
-        orb_elemObject = orb_elem_convert.OrbElemConvert()
+        orb_elemObject = orbElemConvert.OrbElemConvert()
         orb_elemObject.ModelTag = "OrbElemConvertData"
 
         # Add Model To Task
@@ -369,37 +333,26 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.Omega')
         TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.omega')
         TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.f')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.Elements2Cart')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.inputsGood')
         TotalSim.AddVariableForLogging('OrbElemConvertData.r_N', testProcessRate, 0, 2, 'double')
         TotalSim.AddVariableForLogging('OrbElemConvertData.v_N', testProcessRate, 0, 2, 'double')
 
-        orb_elemObject.Elements2Cart = False
-        orb_elemObject.inputsGood = True
         orb_elemObject.mu = mu
 
         if g == 0:
-            orb_elemObject.useEphemFormat = False
-            CartMessage = orb_elem_convert.SCPlusStatesSimMsg()
+            CartMessage = messaging2.SCPlusStatesMsgPayload()
             CartMessage.r_BN_N = rSim
             CartMessage.v_BN_N = vSim
+            stateScMsg = messaging2.SCPlusStatesMsg().write(CartMessage)
+            orb_elemObject.scStateInMsg.subscribeTo(stateScMsg)
         else:
-            orb_elemObject.useEphemFormat = True
-            CartMessage = orb_elem_convert.SpicePlanetStateSimMsg()
+            CartMessage = messaging2.SpicePlanetStateMsgPayload()
             CartMessage.PositionVector = rSim
             CartMessage.VelocityVector = vSim
+            stateSpMsg = messaging2.SpicePlanetStateMsg().write(CartMessage)
+            orb_elemObject.spiceStateInMsg.subscribeTo(stateSpMsg)
 
-        orb_elemObject.StateString = "inertial_state_output"
-        inputMessageSize = CartMessage.getStructSize()
-
-        # Create and write messages
-        TotalSim.TotalSim.CreateNewMessage(unitProcessName, orb_elemObject.StateString, inputMessageSize, 2)
-        # number of buffers (leave at 2 as default, don't make zero)
-
-
-        TotalSim.TotalSim.WriteMessageData(orb_elemObject.StateString, inputMessageSize, 0, CartMessage)
-
-        TotalSim.TotalSim.logThisMessage(orb_elemObject.OutputDataString)
+        dataElemLog = orb_elemObject.elemOutMsg.log()
+        TotalSim.AddModelToTask(unitTaskName, dataElemLog)
 
         # Execute simulation
         TotalSim.ConfigureStopTime(int(1E9))
@@ -427,18 +380,12 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
                 testMessages.append(" FAILED: Sim Orbital Element " + str(g))
                 testFailCount2 += 1
 
-    aMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".a", list(range(1)))
-    aMsg = numpy.delete(aMsg[-1], 0, axis=0)
-    eMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".e", list(range(1)))
-    eMsg = numpy.delete(eMsg[-1], 0, axis=0)
-    iMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".i", list(range(1)))
-    iMsg = numpy.delete(iMsg[-1], 0, axis=0)
-    ANMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".Omega", list(range(1)))
-    ANMsg = numpy.delete(ANMsg[-1], 0, axis=0)
-    APMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".omega", list(range(1)))
-    APMsg = numpy.delete(APMsg[-1], 0, axis=0)
-    fMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".f", list(range(1)))
-    fMsg = numpy.delete(fMsg[-1], 0, axis=0)
+    aMsg = dataElemLog.a[-1]
+    eMsg = dataElemLog.e[-1]
+    iMsg = dataElemLog.i[-1]
+    ANMsg = dataElemLog.Omega[-1]
+    APMsg = dataElemLog.omega[-1]
+    fMsg = dataElemLog.f[-1]
 
     ElemMsgDiff = [(aOut - aMsg), (eOut - eMsg), (iOut - iMsg), (ANOut - ANMsg), (APOut - APMsg), (fOut - fMsg)]
     for g in range(6):
@@ -604,6 +551,12 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         plt.show()
         plt.close()
     testFailCount = testFailCount1+testFailCount2
+
+    if testFailCount:
+        print("Failed")
+        print(testMessages)
+    else:
+        print("PASSED")
 
     return [testFailCount, ''.join(testMessages)]
 

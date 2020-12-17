@@ -22,9 +22,13 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/scPlusStatesSimMsg.h"
+
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/ClassicElementsMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/orbitalMotion.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
 #include "utilities/bskLogging.h"
 
 
@@ -37,6 +41,7 @@ public:
     
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     void Elements2Cartesian();
@@ -47,22 +52,20 @@ public:
     double r_N[3];                    //!< m  Current position vector (inertial)
     double v_N[3];                    //!< m/s Current velocity vector (inertial)
     double mu;                        //!< -- Current grav param (inertial)
-    classicElements CurrentElem;      //!< -- Current orbital elements
-    SCPlusStatesSimMsg statesIn;      //!< -- spacecraft state message
-    SpicePlanetStateSimMsg planetIn;  //!< -- planet state message
-    std::string StateString;          //!< -- port to use for conversion
-    std::string OutputDataString;     //!< -- port to use for output data
-    uint64_t OutputBufferCount;       //!< -- Count on number of buffers to output
-	uint64_t stateMsgSize;            //!< -- Size of the state message to use
-    bool ReinitSelf;                  //!< -- Indicator to reset conversion type
-    bool Elements2Cart;               //!< -- Flag saying which direction to go
-	bool useEphemFormat;              //!< -- Flag indicating whether to use state or ephem
+    ClassicElementsMsgPayload CurrentElem;                      //!< -- Current orbital elements
+    SCPlusStatesMsgPayload statesIn;                            //!< -- spacecraft state message
+    SpicePlanetStateMsgPayload planetIn;                        //!< -- planet state message
+    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;           //!< -- sc state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> spiceStateInMsg;    //!< -- spice state input message
+    ReadFunctor<ClassicElementsMsgPayload> elemInMsg;           //!< -- orbit element input message
+    Message<SCPlusStatesMsgPayload> scStateOutMsg;              //!< -- sc state output message
+    Message<SpicePlanetStateMsgPayload> spiceStateOutMsg;       //!< -- spice state input message
+    Message<ClassicElementsMsgPayload> elemOutMsg;              //!< -- orbit element output message
+
+private:
     bool inputsGood;                  //!< -- flag indicating that inputs are good
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-private:
-    int64_t StateInMsgID;              //!< -- MEssage ID for incoming data
-    int64_t StateOutMsgID;             //!<  -- Message ID for outgoing data
 };
 
 
