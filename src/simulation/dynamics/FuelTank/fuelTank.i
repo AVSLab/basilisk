@@ -29,16 +29,14 @@ from Basilisk.simulation.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-
-
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "fuelTank.h"
-%include "simMessages/fuelTankSimMsg.h"
 
-GEN_SIZEOF(FuelTankSimMsg)
+%include "msgPayloadDefC/FuelTankMsgPayload.h"
+struct FuelTankMsg_C;
 
 %pythoncode %{
 import sys

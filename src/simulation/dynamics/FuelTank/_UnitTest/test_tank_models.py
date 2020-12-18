@@ -1,40 +1,27 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
-import numpy
+import os, inspect
 import pytest
-import math
 
-from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.architecture import sim_model
-import ctypes
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.simulation import fuelTank
+from Basilisk.architecture import messaging2
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -44,20 +31,20 @@ path = os.path.dirname(os.path.abspath(filename))
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_tankModelTest(show_plots):
+def allTest_tankModelTest(show_plots):
     """Module Unit Test"""
-    [testResults, testMessage] = tankModelConstantVolume(show_plots)
+    [testResults, testMessage] = test_tankModelConstantVolume(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = tankModelConstantDensity(show_plots)
+    [testResults, testMessage] = test_tankModelConstantDensity(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = tankModelEmptying(show_plots)
+    [testResults, testMessage] = test_tankModelEmptying(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = tankModelUniformBurn(show_plots)
+    [testResults, testMessage] = test_tankModelUniformBurn(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = tankModelCentrifugalBurn(show_plots)
+    [testResults, testMessage] = test_tankModelCentrifugalBurn(show_plots)
     assert testResults < 1, testMessage
 
-def tankModelConstantVolume(show_plots):
+def test_tankModelConstantVolume(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -103,31 +90,31 @@ def tankModelConstantVolume(show_plots):
         model.computeTankProps(trial[0])
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
-        dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
+        dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_T test")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
-        dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
+        dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_T test")
 
         dataR = model.r_TcT_T
-        dataR = [0] + [dataR[i][0] for i in range(3)]
+        dataR = [dataR[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TcT_T test")
 
         dataRPrime = model.rPrime_TcT_T
-        dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
+        dataRPrime = [dataRPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TcT_T test")
 
         dataRPPrime = model.rPPrime_TcT_T
-        dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
+        dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
@@ -144,7 +131,7 @@ def tankModelConstantVolume(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def tankModelConstantDensity(show_plots):
+def test_tankModelConstantDensity(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -190,32 +177,32 @@ def tankModelConstantDensity(show_plots):
         model.computeTankProps(trial[0])
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
-        dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
+        dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_T test")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
-        dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
+        dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             print(dataIPrimeTank, idx)
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_T test")
 
         dataR = model.r_TcT_T
-        dataR = [0] + [dataR[i][0] for i in range(3)]
+        dataR = [dataR[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TcT_T test")
 
         dataRPrime = model.rPrime_TcT_T
-        dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
+        dataRPrime = [dataRPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TcT_T test")
 
         dataRPPrime = model.rPPrime_TcT_T
-        dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
+        dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
@@ -232,7 +219,7 @@ def tankModelConstantDensity(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def tankModelEmptying(show_plots):
+def test_tankModelEmptying(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -278,31 +265,31 @@ def tankModelEmptying(show_plots):
         model.computeTankProps(trial[0])
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
-        dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
+        dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqual(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed ITankPntT_T test")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
-        dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
+        dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed IPrimeTankPntT_T test")
 
         dataR = model.r_TcT_T
-        dataR = [0] + [dataR[i][0] for i in range(3)]
+        dataR = [dataR[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed r_TcT_T test")
 
         dataRPrime = model.rPrime_TcT_T
-        dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
+        dataRPrime = [dataRPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed rPrime_TcT_T test")
 
         dataRPPrime = model.rPPrime_TcT_T
-        dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
+        dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed rPPrime_TcT_T test")
@@ -319,7 +306,7 @@ def tankModelEmptying(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def tankModelUniformBurn(show_plots):
+def test_tankModelUniformBurn(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -366,31 +353,31 @@ def tankModelUniformBurn(show_plots):
         model.computeTankProps(trial[0])
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
-        dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
+        dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed ITankPntT_T test")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
-        dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
+        dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed IPrimeTankPntT_T test")
 
         dataR = model.r_TcT_T
-        dataR = [0] + [dataR[i][0] for i in range(3)]
+        dataR = [dataR[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed r_TcT_T test")
 
         dataRPrime = model.rPrime_TcT_T
-        dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
+        dataRPrime = [dataRPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPrime_TcT_T test")
 
         dataRPPrime = model.rPPrime_TcT_T
-        dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
+        dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPPrime_TcT_T test")
@@ -408,7 +395,7 @@ def tankModelUniformBurn(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def tankModelCentrifugalBurn(show_plots):
+def test_tankModelCentrifugalBurn(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -455,31 +442,31 @@ def tankModelCentrifugalBurn(show_plots):
         model.computeTankProps(trial[0])
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
-        dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
+        dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank uniform burn unit test failed ITankPntT_T test")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
-        dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
+        dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank uniform burn unit test failed IPrimeTankPntT_T test")
 
         dataR = model.r_TcT_T
-        dataR = [0] + [dataR[i][0] for i in range(3)]
+        dataR = [dataR[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank uniform burn unit test failed r_TcT_T test")
 
         dataRPrime = model.rPrime_TcT_T
-        dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
+        dataRPrime = [dataRPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPrime_TcT_T test")
 
         dataRPPrime = model.rPPrime_TcT_T
-        dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
+        dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPPrime_TcT_T test")
@@ -509,4 +496,6 @@ def passFail(testFailCountInput, snippetName):
 
 
 if __name__ == "__main__":
-    tankModelEmptying(False)
+    # test_tankModelConstantVolume(True)
+    test_tankModelConstantDensity(True)
+    # test_tankModelEmptying(False)

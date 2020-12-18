@@ -1,23 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+import os, inspect
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -25,10 +23,10 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import fuelTank
+from Basilisk.architecture import messaging2
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -58,8 +56,7 @@ def test_massDepletionTest(show_plots):
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    thrusterCommandName = "acs_thruster_cmds"
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     
@@ -95,11 +92,10 @@ def test_massDepletionTest(show_plots):
     unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
 
     # set thruster commands
-    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
-    msgSize = ThrustMessage.getStructSize()
+    ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
     ThrustMessage.OnTimeRequest = [9.9]
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
+    thrCmdMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+    thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
@@ -107,29 +103,19 @@ def test_massDepletionTest(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
-
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName, testProcessRate)
-
-    msgSize = earthEphemData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
+    dataLog = scObject.scStateOutMsg.log()
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.log()
+    thrLog = thrustersDynamicEffector.thrusterOutMsgs[0].log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
+    unitTestSim.AddModelToTask(unitTaskName, thrLog)
 
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
@@ -140,7 +126,6 @@ def test_massDepletionTest(show_plots):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.logThisMessage(thrustersDynamicEffector.thrusterOutMsgNames[0], testProcessRate)
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
@@ -156,15 +141,10 @@ def test_massDepletionTest(show_plots):
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
-    thrust = unitTestSim.pullMessageLogData(thrustersDynamicEffector.thrusterOutMsgNames[0] + '.thrustForce_B',
-                                                  list(range(3)))
-    thrustPercentage = unitTestSim.pullMessageLogData(thrustersDynamicEffector.thrusterOutMsgNames[0] + '.thrustFactor',
-                                                  list(range(1)))
-
-    fuelMass = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
-                                                  list(range(1)))
-    fuelMassDot = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
-                                                  list(range(1)))
+    thrust = thrLog.thrustForce_B
+    thrustPercentage = thrLog.thrustFactor
+    fuelMass = fuelLog.fuelMass
+    fuelMassDot = fuelLog.fuelMassDot
 
     plt.close("all")
     plt.figure(1)
@@ -177,21 +157,21 @@ def test_massDepletionTest(show_plots):
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     plt.title("Change in Rotational Energy")
     plt.figure(4)
-    plt.plot(thrust[:,0]*1e-9, thrust[:,1], thrust[:,0]*1e-9, thrust[:,2], thrust[:,0]*1e-9, thrust[:,3])
+    plt.plot(thrLog.times()*1e-9, thrust[:,0], thrLog.times()*1e-9, thrust[:,1], thrLog.times()*1e-9, thrust[:,2])
     plt.xlim([0,20])
     plt.ylim([0,1])
     plt.title("Thrust")
     plt.figure(5)
-    plt.plot(thrustPercentage[:,0]*1e-9, thrustPercentage[:,1])
+    plt.plot(thrLog.times()*1e-9, thrustPercentage)
     plt.xlim([0,20])
     plt.ylim([0,1.1])
     plt.title("Thrust Percentage")
     plt.figure(6)
-    plt.plot(fuelMass[:,0]*1e-9, fuelMass[:,1])
+    plt.plot(fuelLog.times()*1e-9, fuelMass)
     plt.xlim([0,20])
     plt.title("Fuel Mass")
     plt.figure(7)
-    plt.plot(fuelMassDot[:,0]*1e-9, fuelMassDot[:,1])
+    plt.plot(fuelLog.times()*1e-9, fuelMassDot)
     plt.xlim([0,20])
     plt.title("Fuel Mass Dot")
 
@@ -201,8 +181,8 @@ def test_massDepletionTest(show_plots):
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
                 [-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]
@@ -211,12 +191,6 @@ def test_massDepletionTest(show_plots):
     trueSigma = [
                 [1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]
                 ]
-
-    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  list(range(3)))
-    moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  list(range(3)))
-
 
     accuracy = 1e-7
     for i in range(0,len(truePos)):
@@ -238,7 +212,7 @@ def test_massDepletionTest(show_plots):
     passFail(testFailCount, snippetName)
 
     if testFailCount == 0:
-        print("PASSED: " + " Thruster Integrated Sim Test")
+        print("PASSED: Thruster Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -252,8 +226,7 @@ def axisChangeHelper(r_BcB_B):
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    thrusterCommandName = "acs_thruster_cmds"
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     
@@ -288,41 +261,23 @@ def axisChangeHelper(r_BcB_B):
     # Add tank and thruster
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
 
-
     # set thruster commands
-    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
-    msgSize = ThrustMessage.getStructSize()
+    ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
     ThrustMessage.OnTimeRequest = [9.9]
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
+    thrCmdMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+    thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
-
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-
-    msgSize = earthEphemData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = r_BcB_B
@@ -380,3 +335,4 @@ def passFail(testFailCountInput, snippetName):
 
 if __name__ == "__main__":
     test_massDepletionTest(True)
+

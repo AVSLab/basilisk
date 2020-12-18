@@ -18,7 +18,6 @@
  */
 
 #include "fuelTank.h"
-#include "messaging/system_messaging.h"
 #include <iostream>
 
 /*Able to be accesses from python, used to set up fuel tank model*/
@@ -51,7 +50,6 @@ FuelTank::FuelTank()
 
 	// - Initialize the variables to working values
 	this->nameOfMassState = "fuelTankMass";
-    this->FuelTankOutMsgName = "fuelTankMessage";
 
     return;
 }
@@ -67,9 +65,6 @@ FuelTank::~FuelTank()
  @return void*/
 void FuelTank::SelfInit()
 {
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    this->FuelTankOutMsgId =  messageSys->CreateNewMessage(this->FuelTankOutMsgName, sizeof(FuelTankSimMsg), 2, "FuelTankSimMsg", this->moduleID);
-
     return;
 }
 
@@ -238,12 +233,10 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
  */
 void FuelTank::WriteOutputMessages(uint64_t CurrentClock)
 {
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-
-    FuelTankMassPropMsg.fuelMass = this->effProps.mEff;
-    FuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
-    messageSys->WriteMessage(this->FuelTankOutMsgId, CurrentClock,
-                             sizeof(FuelTankSimMsg), reinterpret_cast<uint8_t*> (&FuelTankMassPropMsg), this->moduleID);
+    this->fuelTankMassPropMsg = this->fuelTankOutMsg.zeroMsgPayload();
+    this->fuelTankMassPropMsg.fuelMass = this->effProps.mEff;
+    this->fuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
+    this->fuelTankOutMsg.write(&this->fuelTankMassPropMsg, this->moduleID, CurrentClock);
 }
 
 /*! This method allows the fuel tank to write out its messages to the messaging system
