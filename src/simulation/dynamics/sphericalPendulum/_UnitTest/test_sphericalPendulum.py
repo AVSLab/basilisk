@@ -1,25 +1,24 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import sys, os, inspect
+
+
+import os, inspect
 import pytest
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,13 +30,13 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import sphericalPendulum
-from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import simIncludeThruster
+from Basilisk.architecture import messaging2
 
 @pytest.mark.parametrize("useFlag, testCase", [
      (False, 1),
@@ -113,7 +112,6 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     # Pendulum frame same as Body frame
 
     if testCase == 3:
-        thrusterCommandName = "acs_thruster_cmds"
         # add thruster devices
         thFactory = simIncludeThruster.thrusterFactory()
         thFactory.create('MOOG_Monarc_445',
@@ -141,16 +139,17 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         scSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
 
         # set thruster commands
-        ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
-        msgSize = ThrustMessage.getStructSize()
+        ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
         ThrustMessage.OnTimeRequest = [5.0]
-        scSim.TotalSim.CreateNewMessage(simProcessName, thrusterCommandName, msgSize, 2)
-        scSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
+        thrCmdMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+        thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, scSim.fuelTankStateEffector)
         scSim.AddModelToTask(simTaskName, thrustersDynamicEffector)
-        scSim.TotalSim.logThisMessage(scSim.fuelTankStateEffector.FuelTankOutMsgName, simulationTimeStep)
+
+        fuelLog = scSim.fuelTankStateEffector.fuelTankOutMsg.log()
+        scSim.AddModelToTask(simTaskName, fuelLog)
 
         # Add particles to tank to activate mass depletion
         scSim.fuelTankStateEffector.pushFuelSloshParticle(scSim.pendulum1)
@@ -200,7 +199,10 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #
     numDataPoints = 100
     samplingTime = simulationTime // (numDataPoints-1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    dataLog = scObject.scStateOutMsg.log()
+    logTaskName = "logTask"
+    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    scSim.AddModelToTask(simTaskName, dataLog)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
     #   cross_init() and reset() routines on each module.
@@ -230,10 +232,8 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     scSim.ExecuteSimulation()
 
     if testCase == 3:
-        fuelMass = scSim.pullMessageLogData(scSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
-                                                  list(range(1)))
-        fuelMassDot = scSim.pullMessageLogData(scSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
-                                                  list(range(1)))
+        fuelMass = fuelLog.fuelMass
+        fuelMassDot = fuelLog.fuelMassDot
         mass1Out = scSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass1').getState()")
         mass2Out = scSim.GetLogVariableData(
@@ -278,10 +278,10 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCaseName, "Change in Rotational Energy " + testCaseName, plt, r"width=0.8\textwidth", path)
     if testCase == 3:
         plt.figure()
-        plt.plot(fuelMass[:,0]*1e-9, fuelMass[:,1])
+        plt.plot(fuelLog.times()*1e-9, fuelMass)
         plt.title("Tank Fuel Mass")
         plt.figure()
-        plt.plot(fuelMassDot[:,0]*1e-9, fuelMassDot[:,1])
+        plt.plot(fuelLog.times()*1e-9, fuelMassDot)
         plt.title("Tank Fuel Mass Dot")
         plt.figure()
         plt.plot(mass1Out[:,0]*1e-9, mass1Out[:,1])
@@ -328,10 +328,10 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
                 testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Energy (timeStep={}s)".format(timeStep))
     if testCase == 3:
         accuracy = 1e-4
-        if not unitTestSupport.isDoubleEqual(mDotParicle1Data,mDotParicle1True,accuracy):
+        if not unitTestSupport.isDoubleEqual(mDotParicle1Data[1],mDotParicle1True,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 1 dot test")
-        if not unitTestSupport.isDoubleEqual(mDotParicle2Data,mDotParicle2True,accuracy):
+        if not unitTestSupport.isDoubleEqual(mDotParicle2Data[1],mDotParicle2True,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 2 dot test")
 
@@ -346,5 +346,5 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 if __name__ == "__main__":
     sphericalPendulumTest(True,              # showplots
          False,               # useFlag
-         2,				 # testCase
+         3,				 # testCase
        )
