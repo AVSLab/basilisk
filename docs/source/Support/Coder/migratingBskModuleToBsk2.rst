@@ -358,7 +358,7 @@ Updating a C++ Module
       required with the new message system.  Thus, these ``GEN_SIZEOF()`` commands can be removed.  To create and access
       messages from Python the ``message2`` package is now used.
 
-    - Update the message definition include statement from
+    - Update the C message definition include statement from
 
       .. code:: cpp
 
@@ -371,7 +371,11 @@ Updating a C++ Module
          %include "msgPayloadDefC/OutputMsgPayload.h"
          struct OutputMsg_C;
 
-      Replace ``msgPayloadDefC`` with ``msgPayloadDefCpp`` if including a C++ message.
+      If including a C++ message payload definition, then only use:
+
+      .. code:: cpp
+
+         %include "msgPayloadDefCpp/OutputMsgPayload.h"
 
     - Any custom Swig'd interfaces to access message content, such as
 

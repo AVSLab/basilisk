@@ -44,7 +44,6 @@ struct RWSpeedMsg_C;
 %include "msgPayloadDefC/RWCmdMsgPayload.h"
 struct RWCmdMsg_C;
 %include "msgPayloadDefCpp/RWConfigMsgPayload.h"
-struct RWConfigMsg_C;
 %include "msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 %include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
