@@ -19,7 +19,6 @@
 
 #include "nHingedRigidBodyStateEffector.h"
 #include "utilities/avsEigenSupport.h"
-#include "messaging/system_messaging.h"
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
