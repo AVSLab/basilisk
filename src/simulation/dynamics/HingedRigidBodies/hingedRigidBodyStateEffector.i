@@ -36,9 +36,13 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "hingedRigidBodyStateEffector.h"
-%include "simMessages/hingedRigidBodySimMsg.h"
 
-GEN_SIZEOF(HingedRigidBodySimMsg)
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
+%include "msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+struct HingedRigidBodyMsg_C;
 
 %pythoncode %{
 import sys
