@@ -268,6 +268,10 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputVehicleConfigDataName``| ``vehConfigInMsg``                |
     +---------------------------+-------------------------------+-----------------------------------+
+    | thrusterDynamicEffector   | ``InputCmds``                 | ``cmdsInMsg``                     |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``thrusterOutMsgNames``       | ``thrusterOutMsgs``               |
+    +---------------------------+-------------------------------+-----------------------------------+
     | thrustRWDesat             | ``inputSpeedName``            | ``rwSpeedInMsg``                  |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputRWConfigData``         | ``rwConfigInMsg``                 |

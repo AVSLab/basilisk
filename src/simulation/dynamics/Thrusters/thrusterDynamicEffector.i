@@ -33,23 +33,22 @@ from Basilisk.simulation.swig_common_model import *
 // Instantiate templates used by example
 %include "std_vector.i"
 namespace std {
-    %template(ThrusterTimeVector) vector<THRTimePairSimMsg>;
-    %template(ThrusterConfigVector) vector<THRConfigSimMsg>;
+    %template(ThrusterTimeVector) vector<THRTimePairMsgPayload>;
+    %template(ThrusterConfigVector) vector<THRSimConfigMsgPayload>;
 }
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "thrusterDynamicEffector.h"
-%include "simMessages/thrTimePairSimMsg.h"
-%include "simMessages/thrConfigSimMsg.h"
-%include "simMessages/thrOperationSimMsg.h"
-%include "simulation/simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-GEN_SIZEOF(THRTimePairSimMsg)
-GEN_SIZEOF(THRConfigSimMsg)
-GEN_SIZEOF(THROperationSimMsg)
-GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
 
+%include "msgPayloadDefC/THRTimePairMsgPayload.h"
+struct THRTimePairMsg_C;
+%include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
+%include "msgPayloadDefCpp/THROperationMsgPayload.h"
+%include "msgPayloadDefCpp/THRSimConfigMsgPayload.h"
+%include "msgPayloadDefCpp/THROutputMsgPayload.h"
 
 %pythoncode %{
 import sys

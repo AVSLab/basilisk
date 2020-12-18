@@ -26,8 +26,7 @@
 import sys, os, inspect
 import numpy
 
-from Basilisk.simulation import simMessages
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging2
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -70,7 +69,7 @@ class thrusterFactory(object):
                 A handle to the thruster configuration message
         """
         # create the blank thruster object
-        TH = simMessages.THRConfigSimMsg()
+        TH = messaging2.THRSimConfigMsgPayload()
 
         # set default thruster values
         TH.areaNozzle = 0.1         # [m^2]
@@ -205,12 +204,12 @@ class thrusterFactory(object):
         :return: thrMessage: THRArrayConfigFswMsg instance
         """
 
-        thrMessage = fswMessages.THRArrayConfigFswMsg()
+        thrMessage = messaging2.THRArrayConfigMsgPayload()
 
         i = 0
         for simThruster in self.thrusterList.values():
             #   Converts from THRConfigSimMsg to THRConfigFswMsg
-            fswThruster = fswMessages.THRConfigFswMsg()
+            fswThruster = messaging2.THRConfigMsgPayload()
             fswThruster.maxThrust = simThruster.MaxThrust
             fswThruster.rThrust_B = [val for sublist in simThruster.thrLoc_B for val in sublist]
             fswThruster.tHatThrust_B = [val for sublist in simThruster.thrDir_B for val in sublist]

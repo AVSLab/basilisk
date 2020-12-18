@@ -16,7 +16,7 @@ A common set up for thrusters, contains:
 \begin{itemize}
  \item[-]      \texttt{thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()}: Construct the Thruster Dyn Effector
   \item[-]   \texttt{thrusterSet.ModelTag = "ACSThrusterDynamics"}: Set the model tag
-   \item[-]    \texttt{thruster1 = thrusterDynamicEffector.THRConfigSimMsg()}: Create a individual thruster
+   \item[-]    \texttt{thruster1 = thrusterDynamicEffector.THRSimConfigMsgPayload()}: Create a individual thruster
     \item[-] \texttt{thruster1.thrLoc\_B = [[1.0] ,[ 0.], [0.]] }: Set the thruster's location
    \item[-]  \texttt{thruster1.thrDir\_B = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]}: Set the thruster thrust direction
   \item[-]   \texttt{thruster1.MaxThrust = 1.0}: Set the max thrust

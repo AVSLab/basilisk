@@ -141,5 +141,7 @@ typedef struct messageType;
 %template(SCPlusStatesOutMsgsVector) std::vector<Message<SCPlusStatesMsgPayload>>;
 %template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
 %template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>>;
+%template(THROutputMsgsVector) std::vector<Message<THROutputMsgPayload>>;
 
 %include "messaging2.h"
+

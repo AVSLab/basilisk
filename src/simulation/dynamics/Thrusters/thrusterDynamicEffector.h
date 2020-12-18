@@ -24,11 +24,14 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/thrTimePairSimMsg.h"
-#include "simMessages/thrOperationSimMsg.h"
-#include "simMessages/thrConfigSimMsg.h"
-#include "simMessages/thrOutputSimMsg.h"
-#include "../../simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+
+#include "msgPayloadDefC/THRTimePairMsgPayload.h"
+#include "msgPayloadDefCpp/THROperationMsgPayload.h"
+#include "msgPayloadDefCpp/THRSimConfigMsgPayload.h"
+#include "msgPayloadDefCpp/THROutputMsgPayload.h"
+#include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
@@ -45,41 +48,37 @@ public:
     void computeStateContribution(double integTime);
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     //! Add a new thruster to the thruster set
-    void addThruster(THRConfigSimMsg *newThruster);
+    void addThruster(THRSimConfigMsgPayload *newThruster);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(THRConfigSimMsg *CurrentThruster,
+    void ComputeThrusterFire(THRSimConfigMsgPayload *CurrentThruster,
                              double currentTime);
-    void ComputeThrusterShut(THRConfigSimMsg *CurrentThruster,
+    void ComputeThrusterShut(THRSimConfigMsgPayload *CurrentThruster,
                              double currentTime);
     
 
 public:
+    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
+    std::vector<Message<THROutputMsgPayload>> thrusterOutMsgs;  //!< -- output message vector for thruster data
+
     int stepsInRamp;                               //!< class variable
-    std::vector<THRConfigSimMsg> thrusterData;      //!< -- Thruster information
-    std::string InputCmds;                         //!< -- message used to read command inputs
-    std::string inputProperties;                   //!< [-] The mass properties of the spacecraft
-    uint64_t thrusterOutMsgNameBufferCount;        //!< -- Count on number of buffers to output
-    std::vector<std::string> thrusterOutMsgNames;  //!< -- Message name for all thruster data
+    std::vector<THRSimConfigMsgPayload> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double prevFireTime;                           //!< s  Previous thruster firing time
-	double thrFactorToTime(THRConfigSimMsg *thrData,
-		std::vector<THRTimePairSimMsg> *thrRamp);
+	double thrFactorToTime(THRSimConfigMsgPayload *thrData,
+		std::vector<THRTimePairMsgPayload> *thrRamp);
 	StateData *hubSigma;                           //!< class variable
     StateData *hubOmega;                           //!< class varaible
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    //    bool bdyFrmReady;                         //!< [-] Flag indicating that the body frame is ready
-    std::vector<uint64_t> thrusterOutMsgIds;        //!< -- Message ID of each thruster
-    std::vector<THROutputSimMsg> thrusterOutBuffer;//!< -- Message buffer for thruster data
-    int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data
-    //int64_t propsInID;                            //!< [-] The ID associated with the mss props msg
-    THRArrayOnTimeCmdIntMsg IncomingCmdBuffer;     //!< -- One-time allocation for savings
+    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
+    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 
 };

@@ -1,4 +1,7 @@
 
+Executive Summary
+-----------------
+
 Thruster dynamics class used to provide thruster effects on body.  This class is used to hold and operate a set of thrusters that are located
 on the spacecraft.  It contains all of the configuration data for the thruster
 set, reads an array of on-time requests (double precision in seconds).  It is
@@ -14,4 +17,23 @@ The module
 contains further information on this module's function,
 how to run it, as well as testing.
 
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - cmdsInMsg
+      - :ref:`THRArrayOnTimeCmdMsgPayload`
+      - input message with thruster commands
+    * - thrusterOutMsgs
+      - :ref:`THROutputMsgPayload`
+      - output message vector for thruster data
 
