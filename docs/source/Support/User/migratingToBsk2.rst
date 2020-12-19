@@ -290,6 +290,12 @@ This list makes it simple to see what naming will need to be changed.
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputNavDataName``          | ``transNavInMsg``                 |
     +---------------------------+-------------------------------+-----------------------------------+
+    | VSCMGStateEffector        | ``InputCmds``                 | ``cmdInMsg``                      |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``OutputDataString``          | ``speedOutMsg``                   |
+    +                           +-------------------------------+-----------------------------------+
+    |                           | ``vscmgOutMsgNames``          | ``vscmgOutMsgs``                  |
+    +---------------------------+-------------------------------+-----------------------------------+
 
 
 Setting a Basilisk Message from Python

@@ -35,25 +35,23 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "vscmgStateEffector.h"
-%include "simMessages/vscmgCmdSimMsg.h"
-%include "simMessages/vscmgConfigSimMsg.h"
-%include "simFswInterfaceMessages/vscmgSpeedIntMsg.h"
-%include "simFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
-%include "utilities/macroDefinitions.h"
 
-//%include "spacecraftPlus.h"
-//%include "hubEffector.h"
+%include "msgPayloadDefC/VSCMGCmdMsgPayload.h"
+struct VSCMGCmdMsg_C;
+%include "msgPayloadDefC/VSCMGSpeedMsgPayload.h"
+struct VSCMGSpeedMsg_C;
+%include "msgPayloadDefC/VSCMGArrayTorqueMsgPayload.h"
+struct VSCMGArrayTorqueMsg_C;
+%include "msgPayloadDefCpp/VSCMGConfigMsgPayload.h"
+
+%include "utilities/macroDefinitions.h"
 
 %include "std_vector.i"
 namespace std {
-    %template(VSCMGConfigVector) vector<VSCMGConfigSimMsg>;
-	%template(VSCMGCmdVector) vector<VSCMGCmdSimMsg>;
+    %template(VSCMGConfigVector) vector<VSCMGConfigMsgPayload>;
+	%template(VSCMGCmdVector) vector<VSCMGCmdMsgPayload>;
 }
 
-
-
-
-GEN_SIZEOF(VSCMGArrayTorqueIntMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

@@ -19,19 +19,12 @@
 
 
 #include "vscmgStateEffector.h"
-#include "messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
 
 VSCMGStateEffector::VSCMGStateEffector()
 {
-	this->CallCounts = 0;
-	this->InputCmds = "vscmg_cmds";
-	this->OutputDataString = "vscmg_output_states";
-	this->OutputBufferCount = 2;
-	this->CmdsInMsgID = -1;
-	this->StateOutMsgID = -1;
 	this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;
 
     this->effProps.mEff = 0.0;
@@ -45,13 +38,6 @@ VSCMGStateEffector::VSCMGStateEffector()
 	this->nameOfVSCMGGammasState = "VSCMGGammas";
 	this->nameOfVSCMGGammaDotsState = "VSCMGGammaDots";
 
-	std::vector<VSCMGConfigSimMsg>::iterator it;
-	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++) {
-		it->theta = 0.0;
-		it->Omega = 0.0;
-		it->gamma = 0.0;
-		it->gammaDot = 0.0;
-	}
 
     return;
 }
@@ -83,7 +69,7 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
 	Eigen::MatrixXd gammasForInit(this->VSCMGData.size(),1);
 	Eigen::MatrixXd gammaDotsForInit(this->VSCMGData.size(),1);
 
-	std::vector<VSCMGConfigSimMsg>::iterator it;
+	std::vector<VSCMGConfigMsgPayload>::iterator it;
     for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++) {
         if (it->VSCMGModel == vscmgJitterSimple || it->VSCMGModel == vscmgJitterFullyCoupled) {
             this->numVSCMGJitter++;
@@ -122,7 +108,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPrimePntB_B.setZero();
 
     int thetaCount = 0;
-    std::vector<VSCMGConfigSimMsg>::iterator it;
+    std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
 	{
 		it->Omega = this->OmegasState->getState()(it - VSCMGData.begin(), 0);
@@ -304,7 +290,7 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 
 	omegaLoc_BN_B = this->hubOmega->getState();
 
-    std::vector<VSCMGConfigSimMsg>::iterator it;
+    std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
 	{
 		OmegaSquared = it->Omega * it->Omega;
@@ -421,7 +407,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rD
 	double omegat;
 	int VSCMGi = 0;
     int thetaCount = 0;
-	std::vector<VSCMGConfigSimMsg>::iterator it;
+	std::vector<VSCMGConfigMsgPayload>::iterator it;
 
 	//! Grab necessarry values from manager
 	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
@@ -472,7 +458,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
-    std::vector<VSCMGConfigSimMsg>::iterator it;
+    std::vector<VSCMGConfigMsgPayload>::iterator it;
     for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
     {
 		Eigen::Vector3d omega_GN_B = omegaLoc_BN_B + it->gammaDot*it->ggHat_B;
@@ -501,31 +487,6 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
  */
 void VSCMGStateEffector::SelfInit()
 {
-	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	VSCMGCmdSimMsg VSCMGCmdInitializer;
-	VSCMGCmdInitializer.u_s_cmd = 0.0;
-	VSCMGCmdInitializer.u_g_cmd = 0.0;
-
-	//! - Clear out any currently firing VSCMGs and re-init cmd array
-	NewVSCMGCmds.clear();
-	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), VSCMGData.size(), VSCMGCmdInitializer );
-
-	// Reserve a message ID for each VSCMG config output message
-	uint64_t tmpWheeltMsgId;
-	std::string tmpWheelMsgName;
-	std::vector<VSCMGConfigSimMsg>::iterator it;
-	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
-	{
-		tmpWheelMsgName = "vscmg_bla" + std::to_string(it - VSCMGData.begin()) + "_data";
-		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(VSCMGConfigSimMsg), OutputBufferCount, "VSCMGConfigSimMsg", moduleID);
-		this->vscmgOutMsgNames.push_back(tmpWheelMsgName);
-		this->vscmgOutMsgIds.push_back(tmpWheeltMsgId);
-	}
-
-	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(VSCMGSpeedIntMsg),
-												 OutputBufferCount, "VSCMGSpeedIntMsg", moduleID);
-
-    return;
 }
 
 /*! This method is used to connect the input command message to the VSCMGs.
@@ -535,52 +496,56 @@ void VSCMGStateEffector::SelfInit()
  */
 void VSCMGStateEffector::CrossInit()
 {
-	//! - Find the message ID associated with the InputCmds string.
-	//! - Warn the user if the message is not successfully linked.
-	CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     sizeof(VSCMGArrayTorqueIntMsg),
-																	 moduleID);
-	if(CmdsInMsgID < 0)
-	{
-        bskLogger.bskLog(BSK_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
-	}
+}
 
-	std::vector<VSCMGConfigSimMsg>::iterator it;
-	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
-	{
-		it->w2Hat0_B = it->gtHat0_B;
-		it->w3Hat0_B = it->ggHat_B;
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos)
+{
+    VSCMGCmdMsgPayload VSCMGCmdInitializer;
+    VSCMGCmdInitializer.u_s_cmd = 0.0;
+    VSCMGCmdInitializer.u_g_cmd = 0.0;
 
-		//! Define CoM offset d and off-diagonal inertia IW13 if using fully coupled model
-		if (it->VSCMGModel == vscmgJitterFullyCoupled) {
-			it->d = it->U_s/it->massW; //!< determine CoM offset from static imbalance parameter
-			it->IW13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
-		}
-		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
-			it->IV1 = it->IW1 + it->IG1;
-			it->IV2 = it->IW2 + it->IG2;
-			it->IV3 = it->IW3 + it->IG3;
-			it->IG12 = 0.;
-			it->IG13 = 0.;
-			it->IG23 = 0.;
-			it->IW13 = 0.;
-		}
+    //! - Clear out any currently firing VSCMGs and re-init cmd array
+    this->newVSCMGCmds.clear();
+    this->newVSCMGCmds.insert(this->newVSCMGCmds.begin(), this->VSCMGData.size(), VSCMGCmdInitializer );
 
-		Eigen::Matrix3d dcm_GG0 = eigenM3(it->gamma);
-		Eigen::Matrix3d dcm_BG0;
-		dcm_BG0.col(0) = it->gsHat0_B;
-		dcm_BG0.col(1) = it->gtHat0_B;
-		dcm_BG0.col(2) = it->ggHat_B;
-		Eigen::Matrix3d dcm_BG = dcm_BG0 * dcm_GG0.transpose();
-		it->gsHat_B = dcm_BG.col(0);
-		it->gtHat_B = dcm_BG.col(1);
+    std::vector<VSCMGConfigMsgPayload>::iterator it;
+    for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
+    {
+        it->w2Hat0_B = it->gtHat0_B;
+        it->w3Hat0_B = it->ggHat_B;
 
-		it->rGcG_B = dcm_BG * it->rGcG_G;
-		it->massV = it->massG + it->massW;
-		it->rhoG = it->massG/it->massV;
-		it->rhoW = it->massW/it->massV;
-	}
-    return;
+        //! Define CoM offset d and off-diagonal inertia IW13 if using fully coupled model
+        if (it->VSCMGModel == vscmgJitterFullyCoupled) {
+            it->d = it->U_s/it->massW; //!< determine CoM offset from static imbalance parameter
+            it->IW13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
+        }
+        if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
+            it->IV1 = it->IW1 + it->IG1;
+            it->IV2 = it->IW2 + it->IG2;
+            it->IV3 = it->IW3 + it->IG3;
+            it->IG12 = 0.;
+            it->IG13 = 0.;
+            it->IG23 = 0.;
+            it->IW13 = 0.;
+        }
+
+        Eigen::Matrix3d dcm_GG0 = eigenM3(it->gamma);
+        Eigen::Matrix3d dcm_BG0;
+        dcm_BG0.col(0) = it->gsHat0_B;
+        dcm_BG0.col(1) = it->gtHat0_B;
+        dcm_BG0.col(2) = it->ggHat_B;
+        Eigen::Matrix3d dcm_BG = dcm_BG0 * dcm_GG0.transpose();
+        it->gsHat_B = dcm_BG.col(0);
+        it->gtHat_B = dcm_BG.col(1);
+
+        it->rGcG_B = dcm_BG * it->rGcG_G;
+        it->massV = it->massG + it->massW;
+        it->rhoG = it->massG/it->massV;
+        it->rhoW = it->massW/it->massV;
+    }
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -590,9 +555,8 @@ void VSCMGStateEffector::CrossInit()
  */
 void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	VSCMGConfigSimMsg tmpVSCMG;
-	std::vector<VSCMGConfigSimMsg>::iterator it;
+	VSCMGConfigMsgPayload tmpVSCMG;
+	std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
         if (numVSCMGJitter > 0) {
@@ -628,16 +592,11 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpVSCMG.U_d = it->U_d;
 		tmpVSCMG.VSCMGModel = it->VSCMGModel;
 		// Write out config data for each VSCMG
-		messageSys->WriteMessage(this->vscmgOutMsgIds.at(it - VSCMGData.begin()),
-								 CurrentClock,
-								 sizeof(VSCMGConfigSimMsg),
-								 reinterpret_cast<uint8_t*> (&tmpVSCMG),
-								 moduleID);
+        this->vscmgOutMsgs.at(it - VSCMGData.begin()).write(&tmpVSCMG, this->moduleID, CurrentClock);
 	}
 
 	// Write this message once for all VSCMGs
-	messageSys->WriteMessage(StateOutMsgID, CurrentClock,
-							 sizeof(VSCMGSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+    this->speedOutMsg.write(&outputStates, this->moduleID, CurrentClock);
 }
 
 /*! This method is used to read the incoming command message and set the
@@ -650,33 +609,37 @@ void VSCMGStateEffector::ReadInputs()
 	std::vector<double>::iterator CmdIt;
 	uint64_t i;
 
+    /* zero the incoming commands */
+    VSCMGCmdMsgPayload *CmdPtr;
+    for(i=0, CmdPtr = this->newVSCMGCmds.data(); i<this->VSCMGData.size();
+        CmdPtr++, i++)
+    {
+        CmdPtr->u_s_cmd = 0.0;
+        CmdPtr->u_g_cmd = 0.0;
+    }
+
     //! - If the input message ID is invalid, return without touching states
-	if(CmdsInMsgID < 0)
+	if(!this->cmdsInMsg.isLinked() || !this->cmdsInMsg.isWritten())
 	{
 		return;
 	}
 
 	//! - Zero the command buffer and read the incoming command array
-	SingleMessageHeader LocalHeader;
-	memset(IncomingCmdBuffer.wheelTorque, 0x0, sizeof(VSCMGArrayTorqueIntMsg)/2);
-	memset(IncomingCmdBuffer.gimbalTorque, 0x0, sizeof(VSCMGArrayTorqueIntMsg)/2);
-	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-												sizeof(VSCMGArrayTorqueIntMsg),
-												reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
+    this->incomingCmdBuffer = this->cmdsInMsg();
+
 
 	//! - Check if message has already been read, if stale return
 	//    if(prevCommandTime==LocalHeader.WriteClockNanos) {
 	//        return;
 	//    }
-	prevCommandTime = LocalHeader.WriteClockNanos;
+	prevCommandTime = this->cmdsInMsg.timeWritten();
 
 	//! - Set the NewVSCMGCmds vector.  Using the data() method for raw speed
-	VSCMGCmdSimMsg *CmdPtr;
-	for(i=0, CmdPtr = NewVSCMGCmds.data(); i<VSCMGData.size();
+	for(i=0, CmdPtr = this->newVSCMGCmds.data(); i<this->VSCMGData.size();
 		CmdPtr++, i++)
 	{
-		CmdPtr->u_s_cmd = IncomingCmdBuffer.wheelTorque[i];
-		CmdPtr->u_g_cmd = IncomingCmdBuffer.gimbalTorque[i];
+		CmdPtr->u_s_cmd = this->incomingCmdBuffer.wheelTorque[i];
+		CmdPtr->u_g_cmd = this->incomingCmdBuffer.gimbalTorque[i];
 	}
 
 }
@@ -689,7 +652,7 @@ void VSCMGStateEffector::ReadInputs()
  */
 void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 {
-	std::vector<VSCMGCmdSimMsg>::iterator CmdIt;
+	std::vector<VSCMGCmdMsgPayload>::iterator CmdIt;
 	int it = 0;
 	double u_s;
 	double u_g;
@@ -697,7 +660,7 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	double gammaDotCritical;
 
 	// loop through commands
-	for(CmdIt=NewVSCMGCmds.begin(); CmdIt!=NewVSCMGCmds.end(); CmdIt++)
+	for(CmdIt=this->newVSCMGCmds.begin(); CmdIt!=this->newVSCMGCmds.end(); CmdIt++)
 	{
 		// wheel torque saturation
 		// set u_s_max to less than zero to disable saturation
@@ -805,3 +768,19 @@ void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 	ConfigureVSCMGRequests(CurrentSimNanos*NANO2SEC);
 	WriteOutputMessages(CurrentSimNanos);
 }
+
+/*!
+ This method allows VSCMG devices to be added to this effector
+ @return void
+ @param NewVSCMG VSCMG device to be added
+ */
+void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG)
+{
+    this->VSCMGData.push_back(*NewVSCMG);
+
+    /* add a VSCMG output message for this device */
+    Message<VSCMGConfigMsgPayload> *msg;
+    msg = new Message<VSCMGConfigMsgPayload>;
+    this->vscmgOutMsgs.push_back(*msg);
+}
+
