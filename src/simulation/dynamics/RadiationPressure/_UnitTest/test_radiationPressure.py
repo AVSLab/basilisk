@@ -43,6 +43,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import radiationPressure
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.architecture import messaging2
 
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -81,10 +82,17 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraft"
+    unitTestSim.AddModelToTask(testTaskName, scObject)
+
+
     srpDynEffector = radiationPressure.RadiationPressure()
     srpDynEffector.ModelTag = "RadiationPressure"
     srpDynEffector2 = radiationPressure.RadiationPressure()
     srpDynEffector2.ModelTag = "RadiationPressure2"
+    scObject.addDynamicEffector(srpDynEffector)
+    scObject.addDynamicEffector(srpDynEffector2)
 
     if modelType == "cannonball":
         srpDynEffector.setUseCannonballModel()
@@ -123,12 +131,9 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector2, None, 3)
 
-    scPlusStateMsg = messaging2.SCPlusStatesMsgPayload()
-    scPlusStateMsg.r_BN_N = r_N
-    scPlusStateMsg.sigma_BN = sigma_BN
-    scInMsg = messaging2.SCPlusStatesMsg().write(scPlusStateMsg)
-    srpDynEffector.stateInMsg.subscribeTo(scInMsg)
-    srpDynEffector2.stateInMsg.subscribeTo(scInMsg)
+    scObject.hub.r_CN_NInit = r_N
+    scObject.hub.sigma_BNInit = sigma_BN
+
 
     sunSpiceMsg = messaging2.SpicePlanetStateMsgPayload()
     sunSpiceMsg.PositionVector = sun_r_N

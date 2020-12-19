@@ -35,3 +35,5 @@ The variables in Table \ref{tabular:vars} are available for user input. Variable
 The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another.
 
 After the inputs are given, radiation\_pressure.cpp calculates the effects of radiation pressure via one of the two methods. At the end, the eclipse factor scales the output forces and torques.
+
+The spacecraft position and orientation states are obtained through the `spacecraftPlus` state engine variables {\tt hubPosition} and {\tt hubSigma}. There is no longer a need to provide spacecraft states through an input message.

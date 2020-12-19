@@ -35,8 +35,6 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
 %include "msgPayloadDefC/EclipseMsgPayload.h"
 struct EclipseMsg_C;
 

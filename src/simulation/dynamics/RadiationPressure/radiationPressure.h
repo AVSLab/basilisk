@@ -71,7 +71,6 @@ public:
     double  area; //!< m^2 Body surface area
     double  coefficientReflection;                  //!< -- Factor grouping surface optical properties
     ReadFunctor<SpicePlanetStateMsgPayload> sunEphmInMsg;   //!< -- sun state input message
-    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;         //!< -- S/C state input message
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;         //!< -- (optional) sun eclipse input message
     std::vector<Eigen::Vector3d> lookupForce_B;     //!< -- Force on S/C at 1 AU from sun
     std::vector<Eigen::Vector3d> lookupTorque_B;    //!< -- Torque on S/C
@@ -82,8 +81,10 @@ private:
     srpModel_t  srpModel; //!< -- specifies which SRP model to use
     SpicePlanetStateMsgPayload sunEphmInBuffer;    //!< -- Buffer for incoming ephemeris message data
     bool stateRead; //!< -- Indicates a succesful read of incoming SC state message data
-    SCPlusStatesMsgPayload stateInBuffer;           //!< -- Buffer for incoming state message data
     EclipseMsgPayload sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
+    StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
+    StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
+
 };
 
 

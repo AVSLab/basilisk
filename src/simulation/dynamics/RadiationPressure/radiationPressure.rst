@@ -25,9 +25,6 @@ provides information on what this message is used for.
     * - sunEphmInMsg
       - :ref:`SpicePlanetStateMsgPayload`
       - sun state input message
-    * - stateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
-      - S/C state input message
     * - sunEclipseInMsg
       - :ref:`EclipseMsgPayload`
       - (optional) sun eclipse input message

@@ -72,10 +72,6 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos)
     {
         bskLogger.bskLog(BSK_ERROR, "Did not find a valid sun ephemeris message connection.");
     }
-    if(!this->stateInMsg.isLinked())
-    {
-        bskLogger.bskLog(BSK_ERROR, "Did not find a valid spacecraft state input message connection.");
-    }
 }
 
 /*! This method retrieves pointers to parameters/data stored
@@ -83,8 +79,10 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos)
  @return void
  @param statesIn Dynamic parameter manager
  */
-void RadiationPressure::linkInStates(DynParamManager& statesIn)
+void RadiationPressure::linkInStates(DynParamManager& states)
 {
+    this->hubSigma = states.getStateObject("hubSigma");
+    this->hubR_N = states.getStateObject("hubPosition");
 }
 
 /*! This method is used to read the incoming ephmeris and 
@@ -97,10 +95,6 @@ void RadiationPressure::readInputMessages()
     /* read in sun state message */
     this->sunEphmInBuffer = this->sunEphmInMsg();
     this->stateRead = this->sunEphmInMsg.isWritten();
-
-    /* read in spacecraft state message */
-    this->stateInBuffer = this->stateInMsg();
-    this->stateRead = this->stateRead && this->stateInMsg.isWritten();
 
     /* read in optional sun eclipse message */
     if (this->sunEclipseInMsg.isLinked() && this->sunEclipseInMsg.isWritten()) {
@@ -119,7 +113,9 @@ void RadiationPressure::computeForceTorque(double integTime)
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-    Eigen::Vector3d r_N(this->stateInBuffer.r_BN_N);
+
+    Eigen::Vector3d r_N = (Eigen::Vector3d)this->hubR_N->getState();
+    std::cout << "HPS: \n" << r_N << std::endl;
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
     Eigen::Vector3d s_N = sun_r_N - r_N;
     
@@ -128,8 +124,9 @@ void RadiationPressure::computeForceTorque(double integTime)
         this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.shadowFactor;
     }
     else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
-        Eigen::MRPd sigmaLocal_BN(this->stateInBuffer.sigma_BN);
-        Eigen::Matrix3d dcmLocal_BN = sigmaLocal_BN.toRotationMatrix().transpose();
+        Eigen::MRPd sigmaLocal_NB;
+        sigmaLocal_NB = (Eigen::Vector3d)this->hubSigma->getState();
+        Eigen::Matrix3d dcmLocal_BN = sigmaLocal_NB.toRotationMatrix().transpose();
         Eigen::Vector3d s_B = dcmLocal_BN*(sun_r_N - r_N);
         this->computeLookupModel(s_B);
         this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;

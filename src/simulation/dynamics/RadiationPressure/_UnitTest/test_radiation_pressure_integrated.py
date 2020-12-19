@@ -65,12 +65,11 @@ def radiationPressureIntegratedTest(show_plots):
     scObject.ModelTag = "spacecraftBody"
     sim.AddModelToTask(simTaskName, scObject)
 
-    srp = radiationPressure.RadiationPressure() # default model is the SRP_CANNONBALL_MODEL
+    srp = radiationPressure.RadiationPressure()  # default model is the SRP_CANNONBALL_MODEL
     srp.area = 1.0
     srp.coefficientReflection = 1.3
     sim.AddModelToTask(simTaskName, srp, None, -1)
     scObject.addDynamicEffector(srp)
-    srp.stateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # setup Gravity Body
     gravFactory = gravBodyFactory()
@@ -80,6 +79,7 @@ def radiationPressureIntegratedTest(show_plots):
     gravFactory.createSun()
     spice_path = bskPath + '/supportData/EphemerisData/'
     gravFactory.createSpiceInterface(spice_path, '2021 MAY 04 07:47:49.965 (UTC)')
+    gravFactory.spiceObject.zeroBase = 'Earth'
     sim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
     srp.sunEphmInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
 
@@ -98,6 +98,7 @@ def radiationPressureIntegratedTest(show_plots):
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
     # with circular or equatorial orbit, some angles are arbitrary
+    print(rN)
 
     #
     #   initialize Spacecraft States with the initialization variables
