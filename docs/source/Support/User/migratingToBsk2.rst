@@ -204,6 +204,9 @@ This list makes it simple to see what naming will need to be changed.
     + ``prvSteering``           +-------------------------------+-----------------------------------+
     |                           | ``inputGuidName``             | ``guidInMsg``                     |
     +---------------------------+-------------------------------+-----------------------------------+
+    | radiation_pressure →      |                               |                                   |
+    | ``radiationPressure``     |                               |                                   |
+    +---------------------------+-------------------------------+-----------------------------------+
     | rasterManager             | ``AttStateOutMsgName``        | ``attStateOutMsg``                |
     +---------------------------+-------------------------------+-----------------------------------+
     | rateServoFullNonlinear    | ``outputDataName``            | ``cmdTorqueOutMsg``               |

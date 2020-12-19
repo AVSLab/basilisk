@@ -18,8 +18,7 @@
  */
 
 #include <iostream>
-#include "dynamics/RadiationPressure/radiation_pressure.h"
-#include "messaging/system_messaging.h"
+#include "dynamics/RadiationPressure/radiationPressure.h"
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
@@ -30,14 +29,9 @@
 RadiationPressure::RadiationPressure()
     :area(0.0f)
     ,coefficientReflection(1.2)
-    ,sunEphmInMsgName("sun_planet_data")
-    ,stateInMsgName("inertial_state_output")
     ,srpModel(SRP_CANNONBALL_MODEL)
-    ,sunEphmInMsgId(-1)
-    ,stateInMsgId(-1)
     ,stateRead(false)
 {
-    this->sunEclipseInMsgId = -1;
     this->sunVisibilityFactor.shadowFactor = 1.0;
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
@@ -67,26 +61,20 @@ void RadiationPressure::SelfInit()
  */
 void RadiationPressure::CrossInit()
 {
-    //! - Find the message ID associated with the ephmInMsgID string.
-    //! - Warn the user if the message is not successfully linked.
-    this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
- 
-    if(sunEphmInMsgId < 0)
-    {
-        bskLogger.bskLog(BSK_WARNING, "Did not find a valid sun ephemeris message with name: %s", this->sunEphmInMsgName.c_str());
-    }
-    
-    this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), this->moduleID);
+}
 
-    if(this->stateInMsgId < 0)
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void RadiationPressure::Reset(uint64_t CurrenSimNanos)
+{
+    if(!this->sunEphmInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_WARNING, "Did not find a valid state input message with name: %" PRId64, this->stateInMsgId);
+        bskLogger.bskLog(BSK_ERROR, "Did not find a valid sun ephemeris message connection.");
     }
-
-    /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
-    if (this->sunEclipseInMsgName.length() > 0) {
-        this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
-                                                                                     sizeof(EclipseSimMsg), moduleID);
+    if(!this->stateInMsg.isLinked())
+    {
+        bskLogger.bskLog(BSK_ERROR, "Did not find a valid spacecraft state input message connection.");
     }
 }
 
@@ -106,28 +94,17 @@ void RadiationPressure::linkInStates(DynParamManager& statesIn)
  */
 void RadiationPressure::readInputMessages()
 {
-    //! - Zero the command buffer and read the incoming command array
-    SingleMessageHeader localHeader;
-    memset(&localHeader, 0x0, sizeof(localHeader));
-    
-    if(this->sunEphmInMsgId >= 0)
-    {
-        memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetStateSimMsg));
-        SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
-    }
-    
-    memset(&localHeader, 0x0, sizeof(localHeader));
-    this->stateRead = false;
-    if(this->stateInMsgId >= 0)
-    {
-        memset(&this->stateInBuffer, 0x0, sizeof(SCPlusStatesSimMsg));
-        this->stateRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
-    }
+    /* read in sun state message */
+    this->sunEphmInBuffer = this->sunEphmInMsg();
+    this->stateRead = this->sunEphmInMsg.isWritten();
 
-    memset(&localHeader, 0x0, sizeof(localHeader));
-    if(this->sunEclipseInMsgId >= 0) {
-        SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgId, &localHeader,
-                                                    sizeof(EclipseSimMsg), reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor), moduleID);
+    /* read in spacecraft state message */
+    this->stateInBuffer = this->stateInMsg();
+    this->stateRead = this->stateRead && this->stateInMsg.isWritten();
+
+    /* read in optional sun eclipse message */
+    if (this->sunEclipseInMsg.isLinked() && this->sunEclipseInMsg.isWritten()) {
+        this->sunVisibilityFactor = this->sunEclipseInMsg();
     }
 }
 

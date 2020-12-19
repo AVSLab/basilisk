@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module radiation_pressure
+%module radiationPressure
 %{
-   #include "radiation_pressure.h"
+   #include "radiationPressure.h"
 %}
 
 %pythoncode %{
@@ -31,16 +31,14 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "sys_model.h"
-%include "radiation_pressure.h"
+%include "radiationPressure.h"
 
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/eclipseSimMsg.h"
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
-GEN_SIZEOF(EclipseSimMsg);
-
-
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
 
 %pythoncode %{
 import sys

@@ -25,9 +25,12 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/eclipseSimMsg.h"
+
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/EclipseMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/bskLogging.h"
 
 
@@ -49,6 +52,7 @@ public:
 
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
@@ -65,10 +69,10 @@ private:
 
 public:
     double  area; //!< m^2 Body surface area
-    double  coefficientReflection; //!< -- Factor grouping surface optical properties
-    std::string sunEphmInMsgName; //!< -- Message name for the sun state
-    std::string stateInMsgName; //!< -- Message name for the S/C state
-    std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
+    double  coefficientReflection;                  //!< -- Factor grouping surface optical properties
+    ReadFunctor<SpicePlanetStateMsgPayload> sunEphmInMsg;   //!< -- sun state input message
+    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;         //!< -- S/C state input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;         //!< -- (optional) sun eclipse input message
     std::vector<Eigen::Vector3d> lookupForce_B;     //!< -- Force on S/C at 1 AU from sun
     std::vector<Eigen::Vector3d> lookupTorque_B;    //!< -- Torque on S/C
     std::vector<Eigen::Vector3d> lookupSHat_B;      //!< -- S/C to sun unit vector defined in the body frame.
@@ -76,13 +80,10 @@ public:
 
 private:
     srpModel_t  srpModel; //!< -- specifies which SRP model to use
-    int64_t sunEphmInMsgId; //!< -- Message ID for incoming sun ephemeris data
-    int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
-    SpicePlanetStateSimMsg sunEphmInBuffer; //!< -- Buffer for incoming ephemeris message data
-    int64_t stateInMsgId; //!< -- Message ID for incoming SC state data
+    SpicePlanetStateMsgPayload sunEphmInBuffer;    //!< -- Buffer for incoming ephemeris message data
     bool stateRead; //!< -- Indicates a succesful read of incoming SC state message data
-    SCPlusStatesSimMsg stateInBuffer; //!< -- Buffer for incoming state message data
-    EclipseSimMsg sunVisibilityFactor;              //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
+    SCPlusStatesMsgPayload stateInBuffer;           //!< -- Buffer for incoming state message data
+    EclipseMsgPayload sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
 };
 
 
