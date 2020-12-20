@@ -20,11 +20,13 @@
 #ifndef EPHEMERIS_CONVERTER_H
 #define EPHEMERIS_CONVERTER_H
 
-#include <map>
+#include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/idEphemerisSimMsg.h"
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
+
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/EphemerisMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/bskLogging.h"
 
 
@@ -34,21 +36,22 @@ public:
     EphemerisConverter();
     ~EphemerisConverter();
     
-    bool LinkMessages();                            //!< class method
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();                                //!< class method
     void CrossInit();                               //!< class method
     void readInputMessages();                       //!< class method
     void convertEphemData(uint64_t clockNow);
     void writeOutputMessages(uint64_t Clock);
-    
+    void addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *msg);
+
 public:
-    bool messagesLinked;        //!< [-] Flag used to determine if messages are cross-linked
-    std::map<std::string, std::string> messageNameMap;   //!< [-] Map between input/output message names
-    uint64_t numOutputBuffers;  //!< [-] Number of output buffers created for messages
+    std::vector<Message<EphemerisMsgPayload>> ephemOutMsgs; //!< vector of planet ephemeris output messages
+    std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;    //!< vector of planet spice state input messages
+
     BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
-    std::map<int64_t, IDEphemerisSimMsg> messageIDMap; //!< [-] Map between input/output message IDs
+    std::vector<EphemerisMsgPayload> ephemOutBuffers;       //!< output message buffers
+    std::vector<SpicePlanetStateMsgPayload> spiceInBuffers; //!< spice input message copies
 };
 
 

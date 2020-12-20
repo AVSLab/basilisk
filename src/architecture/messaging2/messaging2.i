@@ -142,6 +142,7 @@ typedef struct messageType;
 %template(THROutputOutMsgsVector) std::vector<Message<THROutputMsgPayload>>;
 %template(VSCMGConfigOutMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>>;
 %template(EclipseOutMsgsVector) std::vector<Message<EclipseMsgPayload>>;
+%template(EphemerisOutMsgsVector) std::vector<Message<EphemerisMsgPayload>>;
 
 %template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;

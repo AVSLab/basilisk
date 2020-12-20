@@ -16,22 +16,29 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+%module ephemerisConverter
+%{
+   #include "ephemerisConverter.h"
+%}
+#pragma SWIG nowarn=503
 
-#ifndef ID_EPHEMERIS_OUTPUT_MESSAGE_H
-#define ID_EPHEMERIS_OUTPUT_MESSAGE_H
+%pythoncode %{
+from Basilisk.simulation.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
+%include "std_vector.i"
 
-#include "../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "../architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "sys_model.h"
+%include "ephemerisConverter.h"
 
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
 
-/*! @brief Message to store the converted Spice ephemeris data */
-typedef struct{
-    uint64_t clockTime;                     //!< [-] Clock time associated with msg write
-    SpicePlanetStateMsgPayload messageData;     //!< [-] Data container for message data
-    EphemerisMsgPayload outputData;             //!< [-] Data container for output ephemeris estimate
-} IDEphemerisMsgPayload;
-
-
-
-
-#endif
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

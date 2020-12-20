@@ -21,7 +21,6 @@
 #define Eclipse_H
 
 #include <vector>
-#include <map>
 #include <Eigen/Dense>
 #include "_GeneralModuleFiles/sys_model.h"
 
