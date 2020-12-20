@@ -1,5 +1,4 @@
 
-
 # ISC License
 #
 # Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -16,22 +15,17 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-
-
 import os, inspect
 import numpy as np
 import pytest
 from matplotlib import pyplot as plt
-
-from mpl_toolkits.mplot3d import Axes3D
-
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
 from Basilisk.simulation import groundLocation
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -48,8 +42,6 @@ def test_range(show_plots):
         4. Tests whether multiple spacecraft are supported in parallel
     :return:
     """
-    testFailCount = 0
-    testMessages = []
 
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -70,50 +62,53 @@ def test_range(show_plots):
     scSim.AddModelToTask(simTaskName, groundTarget)
 
     #   Write out mock planet rotation, spacecraft position messages
-    sc1_message = simMessages.SCPlusStatesSimMsg()
+    sc1_message = messaging2.SCPlusStatesMsgPayload()
     sc1_message.r_BN_N = [orbitalMotion.REQ_EARTH*1e3 + 100e3, 0, 0]  # SC1 is in range
-    sc1_message_name = "sc1_msg"
+    sc1Msg = messaging2.SCPlusStatesMsg().write(sc1_message)
 
-    sc2_message = simMessages.SCPlusStatesSimMsg()
+    sc2_message = messaging2.SCPlusStatesMsgPayload()
     #   SC2 is placed inside/outside the visibility cone for the ground station
     sc2_message.r_BN_N = [orbitalMotion.REQ_EARTH*1e3 + 101e3,0, 0]
-    sc2_message_name = "sc2_msg"
+    sc2Msg = messaging2.SCPlusStatesMsg().write(sc2_message)
 
-    sc3_message = simMessages.SCPlusStatesSimMsg()
+    sc3_message = messaging2.SCPlusStatesMsgPayload()
     #   SC3 is inside the altitude limit,  but outside the visibility cone
     sc3_message.r_BN_N = rbk.euler3(np.radians(11.)).dot(np.array([orbitalMotion.REQ_EARTH * 1e3 + 100e3, 0, 0]))
-    sc3_message_name = "sc3_msg"
+    sc3Msg = messaging2.SCPlusStatesMsg().write(sc3_message)
 
-    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc1_message_name, sc1_message)
-    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc2_message_name, sc2_message)
-    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc3_message_name, sc3_message)
-
-    groundTarget.addSpacecraftToModel(sc1_message_name)
-    groundTarget.addSpacecraftToModel(sc2_message_name)
-    groundTarget.addSpacecraftToModel(sc3_message_name)
+    groundTarget.addSpacecraftToModel(sc1Msg)
+    groundTarget.addSpacecraftToModel(sc2Msg)
+    groundTarget.addSpacecraftToModel(sc3Msg)
 
     # Log the access indicator
     numDataPoints = 2
     samplingTime = int(simulationTime / (numDataPoints - 1))
-    scSim.TotalSim.logThisMessage(groundTarget.accessOutMsgNames[0], samplingTime)
-    scSim.TotalSim.logThisMessage(groundTarget.accessOutMsgNames[1], samplingTime)
-    scSim.TotalSim.logThisMessage(groundTarget.accessOutMsgNames[2], samplingTime)
+    logTaskName = "logTask"
+    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    dataLog0 = groundTarget.accessOutMsgs[0].log()
+    dataLog1 = groundTarget.accessOutMsgs[1].log()
+    dataLog2 = groundTarget.accessOutMsgs[2].log()
+    scSim.AddModelToTask(logTaskName, dataLog0)
+    scSim.AddModelToTask(logTaskName, dataLog1)
+    scSim.AddModelToTask(logTaskName, dataLog2)
+
     # Run the sim
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
+
     # Get the logged data
-    sc1_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.hasAccess',range(1))
-    sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
-    sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
+    sc1_access = dataLog0.hasAccess
+    sc1_slant = dataLog0.slantRange
+    sc1_elevation = dataLog0.elevation
 
-    sc2_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.hasAccess',range(1))
-    sc2_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.slantRange',range(1))
-    sc2_elevation = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[1] + '.elevation',range(1))
+    sc2_access = dataLog1.hasAccess
+    sc2_slant = dataLog1.slantRange
+    sc2_elevation = dataLog1.elevation
 
-    sc3_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[2] + '.hasAccess', range(1))
-    sc3_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[2] + '.slantRange',range(1))
-    sc3_elevation = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[2] + '.elevation',range(1))
+    sc3_access = dataLog2.hasAccess
+    sc3_slant = dataLog2.slantRange
+    sc3_elevation = dataLog2.elevation
 
     #   Compare to expected values
     accuracy = 1e-8
@@ -121,9 +116,9 @@ def test_range(show_plots):
     ref_elevation = [np.radians(90.),0, 0]
     ref_access = [1, 0, 0]
 
-    test_ranges = [sc1_slant[0,1], sc2_slant[0,1], sc3_slant[0,1]]
-    test_elevation = [sc1_elevation[0,1],sc2_elevation[0,1],sc3_elevation[0,1]]
-    test_access = [sc1_access[0,1],sc2_access[0,1],sc3_access[0,1]]
+    test_ranges = [sc1_slant[1], sc2_slant[1], sc3_slant[1]*2]
+    test_elevation = [sc1_elevation[1],sc2_elevation[1],sc3_elevation[1]]
+    test_access = [sc1_access[1],sc2_access[1],sc3_access[1]]
 
     range_worked = test_ranges == pytest.approx(ref_ranges, accuracy)
     elevation_worked = test_elevation == pytest.approx(ref_elevation, accuracy)
@@ -139,8 +134,6 @@ def test_rotation(show_plots):
         it is attached to.
     :return:
     """
-    testFailCount = 0
-    testMessages = []
     simTime = 1.
 
     simTaskName = "simTask"
@@ -162,33 +155,34 @@ def test_rotation(show_plots):
     scSim.AddModelToTask(simTaskName, groundTarget)
 
     #   Write out mock planet rotation, spacecraft position messages
-    sc1_message = simMessages.SCPlusStatesSimMsg()
+    sc1_message = messaging2.SCPlusStatesMsgPayload()
     sc1_message.r_BN_N = np.array([orbitalMotion.REQ_EARTH*1e3 + 90e3, 0, 0])  # SC1 is in range
-    sc1_message_name = "sc1_msg"
+    scMsg = messaging2.SCPlusStatesMsg().write(sc1_message)
+    groundTarget.addSpacecraftToModel(scMsg)
 
-    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sc1_message_name, sc1_message)
-    groundTarget.addSpacecraftToModel(sc1_message_name)
-
-    planet_message = simMessages.SpicePlanetStateSimMsg()
-    planet_message_name = "test_planet"
+    planet_message = messaging2.SpicePlanetStateMsgPayload()
     planet_message.J20002Pfix = rbk.euler3(np.radians(-10.)).tolist()
-
-    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, planet_message_name, planet_message)
-    groundTarget.planetInMsgName = planet_message_name
+    planetMsg = messaging2.SpicePlanetStateMsg().write(planet_message)
+    groundTarget.planetInMsg.subscribeTo(planetMsg)
 
     # Log the access indicator
     numDataPoints = 2
     samplingTime = int(simulationTime / (numDataPoints - 1))
-    scSim.TotalSim.logThisMessage(groundTarget.accessOutMsgNames[0], samplingTime)
+    logTaskName = "logTask"
+    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    dataLog = groundTarget.accessOutMsgs[0].log()
+    scSim.AddModelToTask(logTaskName, dataLog)
+
     # Run the sim
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
+
     # Get the logged data
-    sc1_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.hasAccess',range(1))
-    sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
-    sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
-    sc1_azimuth = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.azimuth',range(1))
+    sc1_access = dataLog.hasAccess
+    sc1_slant = dataLog.slantRange
+    sc1_elevation = dataLog.elevation
+    sc1_azimuth = dataLog.azimuth
 
     #   Compare to expected values
     accuracy = 1e-8
@@ -196,9 +190,9 @@ def test_rotation(show_plots):
     ref_elevation = [np.radians(90.)]
     ref_access = [1]
 
-    test_ranges = [sc1_slant[0,1]]
-    test_elevation = [sc1_elevation[0,1]]
-    test_access = [sc1_access[0,1]]
+    test_ranges = [sc1_slant[1]]
+    test_elevation = [sc1_elevation[1]]
+    test_access = [sc1_access[1]]
 
     range_worked = test_ranges == pytest.approx(ref_ranges, accuracy)
     elevation_worked = test_elevation == pytest.approx(ref_elevation, accuracy)
@@ -244,3 +238,4 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
 
 if __name__ == '__main__':
     test_rotation(False)
+    # test_range(True)

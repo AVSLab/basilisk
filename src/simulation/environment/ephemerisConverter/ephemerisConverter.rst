@@ -30,4 +30,4 @@ provides information on what this message is used for.
       - vector of planet ephemeris output messages
     * - vec:spiceInMsgs
       - :ref:`SpicePlanetStateMsgPayload`
-      - ector of planet spice state input messages
+      - vector of planet spice state input messages

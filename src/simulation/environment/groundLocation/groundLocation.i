@@ -26,16 +26,17 @@
 %include "swig_common_model.i"
 %include "sys_model.h"
 %include "groundLocation.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/accessSimMsg.h"
-%include "../../simMessages/groundStateSimMsg.h"
+%include "std_vector.i"
 
-GEN_SIZEOF(AccessSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(GroundStateSimMsg)
 
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/AccessMsgPayload.h"
+struct AccessMsg_C;
+%include "msgPayloadDefC/GroundStateMsgPayload.h"
+struct GroundStateMsg_C;
 
 %pythoncode %{
 import sys
