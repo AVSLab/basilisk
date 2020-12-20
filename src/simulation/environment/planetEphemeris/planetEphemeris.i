@@ -30,18 +30,19 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_vector.i"
 
 namespace std {
-    %template(classicElementVector) vector<classicElements>;
+    %template(classicElementVector) vector<ClassicElementsMsgPayload>;
 }
 
 %include "sys_model.h"
-%include "simMessages/spicePlanetStateSimMsg.h"
 %include "planetEphemeris.h"
 %include "utilities/orbitalMotion.h"
+%include "msgPayloadDefC/ClassicElementsMsgPayload.h"
 %include "utilities/astroConstants.h"
 
 
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(classicElements);
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+
 
 %pythoncode %{
 import sys

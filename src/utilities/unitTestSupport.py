@@ -198,7 +198,15 @@ def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, t
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
-            if not isArrayEqual(dataStates[i], trueStates[i], size, accuracy):
+            try:
+                data = dataStates[i].flatten()
+            except:
+                data = dataStates[i]
+            try:
+                trueValue = trueStates[i].flatten()
+            except:
+                trueValue = trueStates[i]
+            if not isArrayEqual(data, trueValue, size, accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: " + msg)
     return testFailCount, testMessages

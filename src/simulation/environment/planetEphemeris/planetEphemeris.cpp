@@ -19,7 +19,6 @@
 #include "environment/planetEphemeris/planetEphemeris.h"
 #include <iostream>
 #include <sstream>
-#include "messaging/system_messaging.h"
 #include <string.h>
 #include "utilities/macroDefinitions.h"
 #include "utilities/astroConstants.h"
@@ -31,8 +30,6 @@
  */
 PlanetEphemeris::PlanetEphemeris()
 {
-    CallCounts = 0;
-    outputBufferCount = 2;
     return;
 }
 
@@ -42,30 +39,24 @@ PlanetEphemeris::~PlanetEphemeris()
     return;
 }
 
+/*! add list of planet names */
+void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
+{
+    this->planetNames = names;
+
+    /* create corresponding output messages */
+    for (int c=0; c<this->planetNames.size(); c++) {
+        Message<SpicePlanetStateMsgPayload> *spMsg;
+        spMsg = new Message<SpicePlanetStateMsgPayload>;
+        this->planetOutMsgs.push_back(*spMsg);
+    }
+}
+
 /*! This method initializes the object.
  @return void
  */
 void PlanetEphemeris::SelfInit()
 {
-    std::vector<std::string>::iterator it;
-    int c;
-    //! - Loop over the planet names and create new data
-    for(it = this->planetNames.begin(), c=0; it != this->planetNames.end(); it++, c++)
-    {
-        //! - Set the new planet name
-        std::string planetMsgName = *it + "_planet_data";
-        if(planetMsgName.size() >= MAX_BODY_NAME_LENGTH)
-        {
-            bskLogger.bskLog(BSK_ERROR, "Warning, your planet name %s is too long.", (*it).c_str());
-            continue;
-        }
-
-        //! - Create the planet message ID
-        uint64_t msgId = (uint32_t)SystemMessaging::GetInstance()->
-                        CreateNewMessage(planetMsgName, sizeof(SpicePlanetStateSimMsg),
-                                         this->outputBufferCount, "SpicePlanetStateSimMsg", this->moduleID);
-        this->planetOutMsgId.push_back(msgId);
-    }
 }
 
 void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
@@ -165,8 +156,8 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
     for(it = this->planetNames.begin(), c=0; it != this->planetNames.end(); it++, c++)
     {
         //! - Create new planet output message copy
-        SpicePlanetStateSimMsg newPlanet;
-        memset(&newPlanet, 0x0, sizeof(SpicePlanetStateSimMsg));
+        SpicePlanetStateMsgPayload newPlanet;
+        newPlanet = this->planetOutMsgs.at(c).zeroMsgPayload();
         //! - specify planet name in output message
         strcpy(newPlanet.PlanetName, it->c_str());
 
@@ -204,8 +195,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
         }
 
         //! - write output message
-        SystemMessaging::GetInstance()->WriteMessage(this->planetOutMsgId[c], CurrentSimNanos,
-                                                     sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&newPlanet), this->moduleID);
+        this->planetOutMsgs.at(c).write(&newPlanet, this->moduleID, CurrentSimNanos);
 
     }
     return;
