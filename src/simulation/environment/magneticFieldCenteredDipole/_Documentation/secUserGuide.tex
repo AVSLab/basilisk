@@ -22,13 +22,13 @@ To add spacecraft to the model the spacecraft state output message name is sent 
 \begin{verbatim}
 scObject = spacecraftPlus.SpacecraftPlus()
 scObject.ModelTag = "spacecraftBody"
-magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
+magModule.addSpacecraftToModel(scObject.scStateOutMsg)
 \end{verbatim}
 
 \subsection{Planet Ephemeris Information}
 The optional planet state message name can be set by directly adjusting that attribute of the class:
 \begin{verbatim}
-magModule.planetPosInMsgName = "PlanetSPICEMsgName"
+magModule.planetPosInMsg.subscribeTo(planetMsg)
 \end{verbatim}
 If SPICE is not being used, the planet is assumed to reside at the origin and $\bm r_{P/O} = \bm 0$.
 

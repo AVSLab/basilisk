@@ -47,7 +47,7 @@ MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
  @param currentTime current time (s)
  @return void
  */
-void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime)
+void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
 {
     Eigen::Vector3d magField_P;         // [T] magnetic field in Planet fixed frame
     Eigen::Vector3d rHat_P;             // [] normalized position vector in E frame components

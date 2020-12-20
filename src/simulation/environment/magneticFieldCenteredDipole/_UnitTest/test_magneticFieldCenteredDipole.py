@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        magneticField - Centered Dipole Model
@@ -33,17 +32,11 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import magneticFieldCenteredDipole
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simSetPlanetEnvironment
@@ -78,15 +71,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     testModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
@@ -104,7 +93,6 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
         refh11 = testModule.h11
         refPlanetRadius = testModule.planetRadius
 
-
     minReach = -1.0
     if useMinReach:
         minReach = (orbitalMotion.REQ_EARTH+300.)*1000.0     # meters
@@ -116,28 +104,22 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     planetPosition = np.array([0.0, 0.0, 0.0])
     refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))
     if usePlanetEphemeris:
-        planetStateMsg = simMessages.SpicePlanetStateSimMsg()
+        planetStateMsg = messaging2.SpicePlanetStateMsgPayload()
         planetPosition = [1000.0, 2000.0, -1000.0]
         planetStateMsg.PositionVector = planetPosition
         refPlanetDCM = np.array(((-1, 0, 0), (0, -1, 0), (0, 0, 1)))
         planetStateMsg.J20002Pfix = refPlanetDCM.tolist()
-        planetStateMsgName = "planet_ephemeris"
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   planetStateMsgName,
-                                   planetStateMsg)
-        testModule.planetPosInMsgName = planetStateMsgName
+        planetMsg = messaging2.SpicePlanetStateMsg().write(planetStateMsg)
+        testModule.planetPosInMsg.subscribeTo(planetMsg)
 
 
     # add spacecraft to environment model
-    sc0StateMsgName = "sc0_state"
-    sc1StateMsgName = "sc1_state"
-    testModule.addSpacecraftToModel(sc0StateMsgName)
-    testModule.addSpacecraftToModel(sc1StateMsgName)
+    sc0StateMsg = messaging2.SCPlusStatesMsg()
+    sc1StateMsg = messaging2.SCPlusStatesMsg()
+    testModule.addSpacecraftToModel(sc0StateMsg)
+    testModule.addSpacecraftToModel(sc1StateMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, testModule)
-
-
 
     # define the spacecraft locations
     r0 = 6571 * 1000.0  # meters
@@ -158,22 +140,19 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
 
     # create the input messages
-    sc0StateMsg = simMessages.SCPlusStatesSimMsg()  # Create a structure for the input message
-    sc0StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sc0StateMsgName,
-                               sc0StateMsg)
-    sc1StateMsg = simMessages.SCPlusStatesSimMsg()  # Create a structure for the input message
-    sc1StateMsg.r_BN_N = np.array(r1N) + np.array(planetPosition)
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sc1StateMsgName,
-                               sc1StateMsg)
+    sc0StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
+    sc0StateMsg.write(sc0StateMsgData)
+
+    sc1StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsgData.r_BN_N = np.array(r1N) + np.array(planetPosition)
+    sc1StateMsg.write(sc1StateMsgData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[0], testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[1], testProcessRate)
+    dataLog0 = testModule.envOutMsgs[0].log()
+    dataLog1 = testModule.envOutMsgs[1].log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog0)
+    unitTestSim.AddModelToTask(unitTaskName, dataLog1)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -187,12 +166,9 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", list(range(3)))
-    mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", list(range(3)))
-
+    mag0Data = dataLog0.magField_N
+    mag1Data = dataLog1.magField_N
 
     def centeredDipole(pos_N, X, refPlanetRadius, refPlanetDCM, minReach, maxReach):
         radius = np.linalg.norm(pos_N)

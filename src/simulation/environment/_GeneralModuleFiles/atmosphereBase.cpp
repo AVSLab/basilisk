@@ -76,7 +76,7 @@ AtmosphereBase::~AtmosphereBase()
  */
 void AtmosphereBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg){
 
-    /* create input message */
+    /* add input message */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
@@ -239,6 +239,7 @@ bool AtmosphereBase::readMessages()
     if(this->planetPosInMsg.isLinked())
     {
         this->planetState = this->planetPosInMsg();
+        planetRead = this->planetPosInMsg.isWritten();
     }
 
     //! - call the custom method to perform additional input reading

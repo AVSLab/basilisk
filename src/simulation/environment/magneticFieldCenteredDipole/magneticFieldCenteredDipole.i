@@ -34,15 +34,13 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/magneticFieldBase.h"
 %include "magneticFieldCenteredDipole.h"
 
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/MagneticFieldMsgPayload.h"
+struct MagneticFieldMsg_C;
 
-
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/magneticFieldSimMsg.h"
-
-GEN_SIZEOF(MagneticFieldSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
 
 %pythoncode %{
 import sys

@@ -22,7 +22,6 @@
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "EGM9615.h"
-#include "messaging/system_messaging.h"
 
 #define MAX_CHAR_LENGTH 100
 
@@ -58,12 +57,6 @@ MagneticFieldWMM::~MagneticFieldWMM()
  */
 void MagneticFieldWMM::customCrossInit()
 {
-    //! - Subscribe to the optional Epoch Date/Time message
-    this->epochInMsgId = -1;
-    if (this->epochInMsgName.length() > 0) {
-        this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
-    }
-
     return;
 }
 
@@ -188,7 +181,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
  @param currentTime current time (s)
  @return void
  */
-void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime)
+void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
 {
     Eigen::Vector3d rHat_P;             // []    normalized position vector in E frame components
     double phi;                         // [rad] latitude

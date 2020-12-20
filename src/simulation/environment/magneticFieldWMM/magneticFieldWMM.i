@@ -34,17 +34,14 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/magneticFieldBase.h"
 %include "magneticFieldWMM.h"
 
-
-
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/magneticFieldSimMsg.h"
-%include "../../simMessages/epochSimMsg.h"
-
-GEN_SIZEOF(MagneticFieldSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(EpochSimMsg)
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/MagneticFieldMsgPayload.h"
+struct MagneticFieldMsg_C;
+%include "msgPayloadDefC/EpochMsgPayload.h"
+struct EpochMsg_C;
 
 %pythoncode %{
 import sys

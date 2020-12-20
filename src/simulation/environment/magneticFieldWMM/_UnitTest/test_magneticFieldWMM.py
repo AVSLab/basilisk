@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        MagneticFieldWMM
@@ -33,16 +32,14 @@ path = os.path.dirname(os.path.abspath(filename))
 
 bskPath = path.split('src')[0]
 
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import magneticFieldWMM
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
-
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -91,9 +88,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -109,19 +103,17 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         testModule.epochDateFractionalYear = decimalYear
 
     if useMsg:
-        testModule.epochInMsgName = "simEpoch"
-        epochMsg = simMessages.EpochSimMsg()
+        epochMsgData = messaging2.EpochMsgPayload()
         dt = unitTestSupport.decimalYearToDateTime(decimalYear)
-        epochMsg.year = dt.year
-        epochMsg.month = dt.month
-        epochMsg.day = dt.day
-        epochMsg.hours = dt.hour
-        epochMsg.minutes = dt.minute
-        epochMsg.seconds = dt.second
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                  unitProcessName,
-                                  testModule.epochInMsgName,
-                                  epochMsg)
+        epochMsgData.year = dt.year
+        epochMsgData.month = dt.month
+        epochMsgData.day = dt.day
+        epochMsgData.hours = dt.hour
+        epochMsgData.minutes = dt.minute
+        epochMsgData.seconds = dt.second
+        epMsg = messaging2.EpochMsg().write(epochMsgData)
+        testModule.epochInMsg.subscribeTo(epMsg)
+
         if not useDefault:
             testModule.epochDateFractionalYear = decimalYear + 1.0
 
@@ -136,27 +128,21 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     planetPosition = np.array([0.0, 0.0, 0.0])
     refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))
     if usePlanetEphemeris:
-        planetStateMsg = simMessages.SpicePlanetStateSimMsg()
+        planetStateMsg = messaging2.SpicePlanetStateMsgPayload()
         planetPosition = [1000.0, 2000.0, -1000.0]
         planetStateMsg.PositionVector = planetPosition
         refPlanetDCM = np.array(((-1, 0, 0), (0, -1, 0), (0, 0, 1)))
         planetStateMsg.J20002Pfix = refPlanetDCM.tolist()
-        planetStateMsgName = "planet_ephemeris"
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   planetStateMsgName,
-                                   planetStateMsg)
-        testModule.planetPosInMsgName = planetStateMsgName
+        plMsg = messaging2.SpicePlanetStateMsg().write(planetStateMsg)
+        testModule.planetPosInMsg.subscribeTo(plMsg)
 
     # add spacecraft to environment model
-    sc0StateMsgName = "sc0_state"
-    sc1StateMsgName = "sc1_state"
-    testModule.addSpacecraftToModel(sc0StateMsgName)
-    testModule.addSpacecraftToModel(sc1StateMsgName)
+    sc0StateMsg = messaging2.SCPlusStatesMsg()
+    sc1StateMsg = messaging2.SCPlusStatesMsg()
+    testModule.addSpacecraftToModel(sc0StateMsg)
+    testModule.addSpacecraftToModel(sc1StateMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, testModule)
-
-
 
     # define the spacecraft locations
     r0 = (orbitalMotion.REQ_EARTH + Height) * 1000.0  # meters
@@ -166,44 +152,28 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     r0N = np.dot(refPlanetDCM.transpose(),r0P)
 
     # create the input messages
-    sc0StateMsg = simMessages.SCPlusStatesSimMsg()  # Create a structure for the input message
-    sc0StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sc0StateMsgName,
-                               sc0StateMsg)
-    sc1StateMsg = simMessages.SCPlusStatesSimMsg()  # Create a structure for the input message
-    sc1StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sc1StateMsgName,
-                               sc1StateMsg)
+    sc0StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
+    sc0StateMsg.write(sc0StateMsgData)
+
+    sc1StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
+    sc1StateMsg.write(sc1StateMsgData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[0], testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[1], testProcessRate)
+    dataLog0 = testModule.envOutMsgs[0].log()
+    dataLog1 = testModule.envOutMsgs[1].log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog0)
+    unitTestSim.AddModelToTask(unitTaskName, dataLog1)
 
     # Need to call the self-init and cross-init methods
-    print("\nhere")
     unitTestSim.InitializeSimulation()
-    print("\nhere")
 
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
-
-    # Begin the simulation time run set above
-    # unitTestSim.ExecuteSimulation()
-
-
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", list(range(3)))*1e9
-    mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", list(range(3)))*1e9
+    mag0Data = dataLog0.magField_N*1e9
+    mag1Data = dataLog1.magField_N*1e9
 
     def wmmInertial(pos_N, Bx, By, Bz, phi, long, refPlanetDCM, minReach, maxReach):
         radius = np.linalg.norm(pos_N)
@@ -232,7 +202,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     # check spacecraft 0 neutral density results
     if len(mag0Data) > 0:
         trueMagField = wmmInertial(r0N, BxTrue, ByTrue, BzTrue, phi, long, refPlanetDCM, minReach, maxReach)
-
         testFailCount, testMessages = unitTestSupport.compareArray(
             trueMagField, mag0Data, accuracy, "SC0 mag vector",
             testFailCount, testMessages)
