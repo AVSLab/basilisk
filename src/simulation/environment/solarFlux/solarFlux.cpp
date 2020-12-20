@@ -18,40 +18,20 @@
  */
 
 #include "solarFlux.h"
-#include "messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/solarFluxSimMsg.h"
-#include "simMessages/eclipseSimMsg.h"
 
 /*! This method is used to create messages
  @return void
  */
 void SolarFlux::SelfInit()
 {
-    auto messagingSystem = SystemMessaging::GetInstance();
-    this->solarFluxOutMsgId = messagingSystem->CreateNewMessage(this->solarFluxOutMsgName, sizeof(SolarFluxSimMsg), 2,
-            "SolarFluxSimMsg", this->moduleID);
 }
 
 /*! This method is used to subscribe to modules
  @return void
  */
-void SolarFlux::CrossInit() {
-    auto messagingSystem = SystemMessaging::GetInstance();
-
-    /*! - subscribe to required messages */
-    this->sunPositionInMsgId = messagingSystem->subscribeToMessage(this->sunPositionInMsgName,
-                                                                   sizeof(SpicePlanetStateSimMsg), this->moduleID);
-    this->spacecraftStateInMsgId = messagingSystem->subscribeToMessage(this->spacecraftStateInMsgName,
-                                                                       sizeof(SCPlusStatesSimMsg), this->moduleID);
-
-    /*! - check for optional eclipse msg */
-    if (this->eclipseInMsgName.length() > 0) {
-        this->eclipseInMsgId = messagingSystem->subscribeToMessage(this->eclipseInMsgName, sizeof(EclipseSimMsg),
-                                                                   this->moduleID);
-    }
+void SolarFlux::CrossInit()
+{
 }
 
 /*! This method is used to reset the module. Currently no tasks are required.
@@ -84,28 +64,22 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 /*! This method is used to  read messages and save values to member attributes
  @return void
  */
-void SolarFlux::readMessages() {
-    SingleMessageHeader tmpHeader;
-    memset(&tmpHeader, 0x0, sizeof(tmpHeader));
-    auto messagingSystem = SystemMessaging::GetInstance();
-
+void SolarFlux::readMessages()
+{
     /*! - read in planet state message (required) */
-    SpicePlanetStateSimMsg sunPositionMsgData;
-    messagingSystem->ReadMessage(this->sunPositionInMsgId, &tmpHeader, sizeof(SpicePlanetStateSimMsg),
-                                 reinterpret_cast<uint8_t*>(&sunPositionMsgData), this->moduleID);
+    SpicePlanetStateMsgPayload sunPositionMsgData;
+    sunPositionMsgData = this->sunPositionInMsg();
     this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
 
     /*! - read in spacecraft state message (required) */
-    SCPlusStatesSimMsg scStatesMsgData;
-    messagingSystem->ReadMessage(this->spacecraftStateInMsgId, &tmpHeader, sizeof(SCPlusStatesSimMsg),
-                                 reinterpret_cast<uint8_t*>(&scStatesMsgData), this->moduleID);
+    SCPlusStatesMsgPayload scStatesMsgData;
+    scStatesMsgData = this->spacecraftStateInMsg();
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
 
     /*! - read in eclipse message (optional) */
-    if (this->eclipseInMsgId >= 0) {
-        EclipseSimMsg eclipseInMsgData;
-        messagingSystem->ReadMessage(this->eclipseInMsgId, &tmpHeader, sizeof(EclipseSimMsg),
-                                     reinterpret_cast<uint8_t *>(&eclipseInMsgData), this->moduleID);
+    if (this->eclipseInMsg.isLinked()) {
+        EclipseMsgPayload eclipseInMsgData;
+        eclipseInMsgData = this->eclipseInMsg();
         this->eclipseFactor = eclipseInMsgData.shadowFactor;
     }
 
@@ -115,7 +89,6 @@ void SolarFlux::readMessages() {
  @return void
  */
 void SolarFlux::writeMessages(uint64_t CurrentSimNanos) {
-    SolarFluxSimMsg fluxMsgOutData = {this->fluxAtSpacecraft};
-    SystemMessaging::GetInstance()->WriteMessage(this->solarFluxOutMsgId, CurrentSimNanos, sizeof(SolarFluxSimMsg),
-                                  reinterpret_cast<uint8_t*>(&fluxMsgOutData));
+    SolarFluxMsgPayload fluxMsgOutData = {this->fluxAtSpacecraft};
+    this->solarFluxOutMsg.write(&fluxMsgOutData, this->moduleID, CurrentSimNanos);
 }

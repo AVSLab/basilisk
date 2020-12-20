@@ -25,9 +25,9 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - vec:ephemOutMsgs
+    * - ephemOutMsgs
       - :ref:`EphemerisMsgPayload`
       - vector of planet ephemeris output messages
-    * - vec:spiceInMsgs
+    * - spiceInMsgs
       - :ref:`SpicePlanetStateMsgPayload`
       - vector of planet spice state input messages

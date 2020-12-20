@@ -28,7 +28,7 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - vec:planetOutMsgs
+    * - planetOutMsgs
       - :ref:`SpicePlanetStateMsgPayload`
       - vector of planet spice state output messages
 

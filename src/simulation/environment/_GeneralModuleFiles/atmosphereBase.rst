@@ -19,10 +19,10 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - vec:scStateInMsgs
+    * - scStateInMsgs
       - :ref:`SCPlusStatesMsgPayload`
       - vector of spacecraft state input messages
-    * - vec:envOutMsgs
+    * - envOutMsgs
       - :ref:`AtmoPropsMsgPayload`
       - vector of atmospheric density output messages
     * - planetPosInMsg

@@ -20,11 +20,11 @@ provides information on what this message is used for.
         +--------------------------+-------------------------------+-----------------------------------------------------+
         | sunPositionInMsgName     | :ref:`spicePlanetStateSimMsg` | Sun input message                                   |
         +--------------------------+-------------------------------+-----------------------------------------------------+
-        | vec:planetInMsgNames     | :ref:`spicePlanetStateSimMsg` | Planet input message names are set by using the     |
+        | planetInMsgNames         | :ref:`spicePlanetStateSimMsg` | Planet input message names are set by using the     |
         |                          |                               | ``addPlanetandAlbedoAverageModel()`` method and     |
         |                          |                               | ``addPlanetandAlbedoDataModel()`` method.           |
         +--------------------------+-------------------------------+-----------------------------------------------------+
-        | vec:albOutMsgNames       | :ref:`albedoSimMsg`           | Albedo output message names are set automatically   |
+        | albOutMsgNames           | :ref:`albedoSimMsg`           | Albedo output message names are set automatically   |
         |                          |                               | using                                               |
         |                          |                               | ``ModelTag + "_" + "instrument number" + "_data"``. |
         +--------------------------+-------------------------------+-----------------------------------------------------+

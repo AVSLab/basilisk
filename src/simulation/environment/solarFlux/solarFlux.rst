@@ -13,23 +13,25 @@ Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-        +--------------------------+-------------------------------+---------------------------------------------------+
-        | Msg Variable Name        | Msg Type                      | Description                                       |
-        +==========================+===============================+===================================================+
-        | sunPositionInMsgName     | :ref:`SpicePlanetStateSimMsg` | This message is used to get the sun's position    |
-        +--------------------------+-------------------------------+---------------------------------------------------+
-        | spacecraftStateInMsgName | :ref:`SCPlusStatesSimMsg`     | This message is used to get the spacecraft's      |
-        |                          |                               | position                                          |
-        +--------------------------+-------------------------------+---------------------------------------------------+
-        | eclipseInMsgName         | :ref:`EclipseSimMsg`          | Optional. If present, the output solar flux is    |
-        |                          |                               | scaled by the eclipse shadow factor               |
-        +--------------------------+-------------------------------+---------------------------------------------------+
-        | solarFluxOutMsgName      | :ref:`SolarFluxSimMsg`        | This message is used to output the solar flux     |
-        |                          |                               | at the spacecraft's position                      |
-        +--------------------------+-------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - sunPositionInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - sun state input message
+    * - spacecraftStateInMsg
+      - :ref:`SCPlusStatesMsgPayload`
+      - spacecraft state input message
+    * - eclipseInMsg
+      - :ref:`EclipseMsgPayload`
+      - (optional) eclipse input message
+    * - solarFluxOutMsg
+      - :ref:`SolarFluxMsgPayload`
+      - solar flux output message
 
 
 Detailed Module Description
@@ -71,10 +73,10 @@ The names below are only special in that they are useful defaults and are actual
     proc.addTask(task)
 
     sf = solarFlux.SolarFlux()
-    sf.sunPositionInMsgName = "sun_planet_data"
-    sf.spacecraftStateInMsgName = "inertial_state_output"
-    sf.solarFluxOutMsgName = "solar_flux"
-    sf.eclipseInMsgName = "eclipse_data_0"
+    sf.sunPositionInMsg.subscribeTo(sunMsg)
+    sf.spacecraftStateInMsg.subscribeTo(scMsg)
+    sf.eclipseInMsg.subscribeTo(eclMsg)
     sim.AddModelToTask(task.Name, sf)
 
+    dataLog = sf.solarFluxOutMsg.log()
 
