@@ -134,15 +134,18 @@ typedef struct messageType;
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
 
-%template(RWConfigLogMsgsVector) std::vector<Message<RWConfigLogMsgPayload>>;
-%template(SpicePlanetStateMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>>;
-%template(AtmoPropsMsgsVector) std::vector<Message<AtmoPropsMsgPayload>>;
-%template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
+%template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>>;
+%template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>>;
+%template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>>;
 %template(SCPlusStatesOutMsgsVector) std::vector<Message<SCPlusStatesMsgPayload>>;
-%template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
 %template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>>;
-%template(THROutputMsgsVector) std::vector<Message<THROutputMsgPayload>>;
-%template(VSCMGConfigMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>>;
+%template(THROutputOutMsgsVector) std::vector<Message<THROutputMsgPayload>>;
+%template(VSCMGConfigOutMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>>;
+%template(EclipseOutMsgsVector) std::vector<Message<EclipseMsgPayload>>;
+
+%template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
+%template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;
+%template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
 
 %include "messaging2.h"
 

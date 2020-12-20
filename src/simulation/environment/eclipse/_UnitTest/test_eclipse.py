@@ -1,23 +1,19 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #
 # Eclipse Condition Unit Test
@@ -38,6 +34,8 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import eclipse
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import messaging2
+
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -111,32 +109,31 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     # Create a simulation container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # Ensure simulation is empty
+
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
     # Set up first spacecraft
     scObject_0 = spacecraftPlus.SpacecraftPlus()
-    scObject_0.scStateOutMsgName = "inertial_state_output"
+    scObject_0.ModelTag = "spacecraft"
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
     # setup Gravity Bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    mars = gravFactory.createMars()
     if planet == "earth":
-        earth = gravFactory.createEarth()
         earth.isCentralBody = True
-        earth.useSphericalHarmParams = False
     elif planet == "mars":
-        mars = gravFactory.createMars()
         mars.isCentralBody = True
-        mars.useSphericalHarmParams = False
     scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup Spice interface for some solar system bodies
     timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
                                      , timeInitString
-                                     , spicePlanetNames = ["sun", "venus", "earth", "mars barycenter"]
+                                     # earth and mars must come first as with gravBodies
+                                     , spicePlanetNames=["earth", "mars barycenter", "sun", "venus"]
                                      )
 
     if planet == "earth":
@@ -211,68 +208,69 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     unitTestSim.AddModelToTask(testTaskName, gravFactory.spiceObject, None, -1)
 
     eclipseObject = eclipse.Eclipse()
-    eclipseObject.addPositionMsgName(scObject_0.scStateOutMsgName)
-    eclipseObject.addPlanetName('earth')
-    eclipseObject.addPlanetName('mars barycenter')
-    eclipseObject.addPlanetName('venus')
+    eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)
+    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])   # earth
+    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[1])   # mars
+    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[3])   # venus
+    eclipseObject.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[2])   # sun
+
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
-    unitTestSim.TotalSim.logThisMessage("eclipse_data_0")
-    unitTestSim.TotalSim.logThisMessage("mars barycenter_planet_data")
-    unitTestSim.TotalSim.logThisMessage("sun_planet_data")
-    unitTestSim.TotalSim.logThisMessage("earth_planet_data")
+
+    dataLog = eclipseObject.eclipseOutMsgs[0].log()
+    unitTestSim.AddModelToTask(testTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    eclipseData_0 = unitTestSim.pullMessageLogData("eclipse_data_0.shadowFactor")
+    eclipseData_0 = dataLog.shadowFactor
     # Obtain body position vectors to check with MATLAB
 
     errTol = 1E-12
     if planet == "earth":
         if eclipseCondition == "partial":
             truthShadowFactor = 0.62310760206735027
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth partial eclipse condition")
 
         elif eclipseCondition == "full":
             truthShadowFactor = 0.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth full eclipse condition")
 
         elif eclipseCondition == "none":
             truthShadowFactor = 1.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth none eclipse condition")
         elif eclipseCondition == "annular":
             truthShadowFactor = 1.497253388113018e-04
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth annular eclipse condition")
 
     elif planet == "mars":
         if eclipseCondition == "partial":
             truthShadowFactor = 0.18745025055615416
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars partial eclipse condition")
         elif eclipseCondition == "full":
             truthShadowFactor = 0.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars full eclipse condition")
         elif eclipseCondition == "none":
             truthShadowFactor = 1.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars none eclipse condition")
         elif eclipseCondition == "annular":
             truthShadowFactor = 4.245137380531894e-05
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars annular eclipse condition")
 
@@ -281,6 +279,8 @@ def unitEclipse(show_plots, eclipseCondition, planet):
         print("PASSED: " + planet + "-" + eclipseCondition)
         # return fail count and join into a single string all messages in the list
         # testMessage
+    else:
+        print(testMessages)
 
     print('The error tolerance for all tests is ' + str(errTol))
 
@@ -292,4 +292,4 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitEclipse(False, "annular", "earth")
+    unitEclipse(False, "annular", "mars")

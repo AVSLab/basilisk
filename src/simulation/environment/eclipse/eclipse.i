@@ -28,11 +28,15 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_string.i"
 %include "sys_model.h"
 %include "eclipse.h"
-%include "simMessages/eclipseSimMsg.h"
 %include "swig_conly_data.i"
+%include "std_vector.i"
 
-
-GEN_SIZEOF(EclipseSimMsg)
+%include "msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
 
 %pythoncode %{
 import sys

@@ -24,9 +24,12 @@
 #include <map>
 #include <Eigen/Dense>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/eclipseSimMsg.h"
+
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/EclipseMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/linearAlgebra.h"
 #include "utilities/bskLogging.h"
 
@@ -41,26 +44,22 @@ public:
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
-    std::string addPositionMsgName(std::string msgName); 
-    void addPlanetName(std::string planetName);
+    void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
+    void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
     
 public:
-    uint64_t outputBufferCount;                 //!< Number of output buffers to use.  Default is 2.
-    std::string sunInMsgName;                   //!< sun ephemeris message name
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
+    std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs;  //!< A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
+    std::vector<ReadFunctor<SCPlusStatesMsgPayload>> positionInMsgs;  //!< vector of msgs for each spacecraft position state for which to evaluate eclipse conditions.
+    std::vector<Message<EclipseMsgPayload>> eclipseOutMsgs;//!< vector of eclispe output msg names
     BSKLogger bskLogger;                        //!< BSK Logging
 
 private:
-    std::vector<std::string> planetNames;       //!< Names of planets we want to track
-    std::vector<std::string> planetInMsgNames;  //!< A vector of planet incoming message names ordered by the sequence in which planet names are added to the module
-    std::map<int64_t, SpicePlanetStateSimMsg> planetInMsgIdAndStates; //!< A map of incoming planet message Ids and planet state ordered by the sequence in which planet names are added to the module
     std::vector<float> planetRadii; //!< [m] A vector of planet radii ordered by the sequence in which planet names are added to the module
-    int64_t sunInMsgId;                         //!< sun msg input ID
-    SpicePlanetStateSimMsg sunInMsgState;       //!< copy of sun input msg
-    std::vector<std::string> positionInMsgNames;  //!< vector of msg names for each position state for which to evaluate eclipse conditions.
-    std::map<int64_t, SCPlusStatesSimMsg> positionInMsgIdAndState; //!< A map of incoming spacecraft message IDs and msg states
-    std::vector<int64_t> eclipseOutMsgId;       //!< output msg ID
-    std::vector<std::string> eclipseOutMsgNames;//!< vector of eclispe output msg names
-    std::vector<double> eclipseShadowFactors;   //!< vector of shadow factor output values
+    std::vector<SCPlusStatesMsgPayload> scStateBuffer;      //!< buffer of the spacecraft state input messages
+    std::vector<SpicePlanetStateMsgPayload> planetBuffer;   //!< buffer of the spacecraft state input messages
+    SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
+    std::vector<double> eclipseShadowFactors;               //!< vector of shadow factor output values
 
 private:
     void readInputMessages();
