@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module clock_synch
+%module simSynch
 %{
-   #include "clock_synch.h"
+   #include "simSynch.h"
 %}
 
 %pythoncode %{
@@ -27,8 +27,10 @@ from Basilisk.architecture.swig_common_model import *
 
 
 %include "sys_model.h"
-%include "clock_synch.h"
-%include "simMessages/syncClockSimMsg.h"
+%include "simSynch.h"
+
+%include "msgPayloadDefC/SynchClockMsgPayload.h"
+struct SyncClockMsg_C;
 
 %pythoncode %{
 import sys

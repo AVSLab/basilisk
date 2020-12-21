@@ -16,8 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "sim_synch/clock_synch.h"
-#include "messaging/system_messaging.h"
+#include "simSynch/simSynch.h"
 #include <iostream>
 #include <cstring>
 #include <thread>
@@ -31,9 +30,6 @@ ClockSynch::ClockSynch()
 	this->startSimTimeNano = 0;
 	this->accuracyNanos = (int64_t) (0.01*NANO2SEC);
 	this->accelFactor = 1.0;
-    this->clockOutputID = -1;
-    this->outputBufferCount = 2;
-    this->clockOutputName = "clock_synch_data";
 	this->displayTime = false;
     return;
 }
@@ -51,11 +47,6 @@ ClockSynch::~ClockSynch()
 */
 void ClockSynch::SelfInit()
 {
-    //! - Initialize the output message
-    clockOutputID = SystemMessaging::GetInstance()->
-    CreateNewMessage(this->clockOutputName, sizeof(SynchClockSimMsg), this->outputBufferCount,
-                     "SynchClockSimMsg", this->moduleID);
-
 }
 
 /*! This method is blank but included in case we need to add functionality to the 
@@ -139,9 +130,7 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
     this->outputData.finalTimeDelta *= NANO2SEC;
     
     //! - Write the composite information into the output synch message.
-    SystemMessaging::GetInstance()->
-    WriteMessage(this->clockOutputID, currentSimNanos, sizeof(SynchClockSimMsg),
-                 reinterpret_cast<uint8_t*> (&this->outputData), this->moduleID);
+    this->clockOutMsg.write(&this->outputData, this->moduleID, currentSimNanos);
 
 	if (this->displayTime)
 	{

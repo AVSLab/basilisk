@@ -511,7 +511,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/deviceInterface" DEVICE_INT
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/power" POWER_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sim_synch" SIM_SYNCH_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilities" UTILITIES_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilitiesSelfCheck" UTILITIES_SELF_CHECK_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)

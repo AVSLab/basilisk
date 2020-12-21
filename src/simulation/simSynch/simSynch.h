@@ -24,7 +24,10 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include <chrono>
-#include "simMessages/syncClockSimMsg.h"
+
+#include "msgPayloadDefC/SynchClockMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/bskLogging.h"
 
 /*! @brief clock sync model class */
@@ -40,18 +43,16 @@ public:
     
 public:
 	double accelFactor;          //!< [-] Factor used to accelerate sim-time relative to clock
-    SynchClockSimMsg outputData; //!< [-] Output data for the synch module
-    std::string clockOutputName; //!< [-] Name of the output message that we are using, default is clock_synch_data
-    uint64_t outputBufferCount;  //!< [-] Count on the number of output buffers that we have, default is 2
+    SynchClockMsgPayload outputData; //!< [-] Output data for the synch module
+    Message<SynchClockMsgPayload> clockOutMsg; //!< [-] output message
+
     int64_t accuracyNanos;       //!< ns Level of accuracy that we want out of the timer, default is 10ms
 	bool displayTime;            //!< [-] Flag indicating that we want to display the time elapsed in cmd line, default is off
   BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     bool timeInitialized;        //!< [-] Flag that the module has been reset
 	std::chrono::high_resolution_clock::time_point startTime; //! [-] first time stamp of pass through data
-    uint64_t startSimTimeNano;   //!< [ns] Previous simulation time observed
-    int64_t clockOutputID;       //!< [-] Output ID for clock module
-    
+    uint64_t startSimTimeNano;   //!< [ns] Previous simulation time observed    
 };
 
 
