@@ -10,24 +10,27 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-        +--------------------------+-------------------------------+-----------------------------------------------------+
-        | Msg Variable Name        | Msg Type                      | Description                                         |
-        +==========================+===============================+=====================================================+
-        | spacecraftStateInMsgName | :ref:`SCPlusStatesSimMsg`     | Spacecraft state input message                      |
-        +--------------------------+-------------------------------+-----------------------------------------------------+
-        | sunPositionInMsgName     | :ref:`spicePlanetStateSimMsg` | Sun input message                                   |
-        +--------------------------+-------------------------------+-----------------------------------------------------+
-        | planetInMsgNames         | :ref:`spicePlanetStateSimMsg` | Planet input message names are set by using the     |
-        |                          |                               | ``addPlanetandAlbedoAverageModel()`` method and     |
-        |                          |                               | ``addPlanetandAlbedoDataModel()`` method.           |
-        +--------------------------+-------------------------------+-----------------------------------------------------+
-        | albOutMsgNames           | :ref:`albedoSimMsg`           | Albedo output message names are set automatically   |
-        |                          |                               | using                                               |
-        |                          |                               | ``ModelTag + "_" + "instrument number" + "_data"``. |
-        +--------------------------+-------------------------------+-----------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - spacecraftStateInMsg
+      - :ref:`SCPlusStatesMsgPayload`
+      - input message with thruster commands
+    * - sunPositionInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - Sun input message
+    * - planetInMsgs
+      - :ref:`SpicePlanetStateMsgPayload`
+      - vector of planet input messages are set by using either the ``addPlanetandAlbedoAverageModel()`` method and
+        ``addPlanetandAlbedoDataModel()`` method
+    * - albOutMsgs
+      - :ref:`AlbedoMsgPayload`
+      - vector of albedo output message names.  The order matches the order with which instruments are added.
+
 
 
 Detailed Module Description
@@ -147,8 +150,6 @@ This section outlines the steps needed to add Albedo module to a sim. First, the
       from Basilisk.simulation import albedo
       albModule = albedo.Albedo()
       albModule.ModelTag = "Albedo_module"
-      albModule.spacecraftStateInMsgName = "Spacecraft_message"
-      albModule.sunPositionInMsgName = "Sun_message"
 
 The instruments' configuration must be added by using,
 
@@ -158,40 +159,42 @@ The instruments' configuration must be added by using,
       instConfig.fov
       instConfig.nHat_B
       instConfig.r_IB_B
-      albModule.addInstrumentConfig(instInMsgName, instConfig)
+      albModule.addInstrumentConfig(instConfig)
 
 or by using,
 
 .. code-block:: python
 
-      albModule.addInstrumentConfig(instInMsgName, fov, nHat_B, r_IB_B)
+      albModule.addInstrumentConfig(fov, nHat_B, r_IB_B)
 
 In the first case, if the variables are not defined for some reason and they are empty; then, default values are going
 to be used as :math:`fov = 90.` deg, :math:`\hat{n}_B = [ 1.0, 0.0, 0.0 ]`, :math:`r_{{IB}_B} = [ 0.0, 0.0, 0.0 ]`.
 The default values can be defined by the user as well. Both functions for the instrument configuration has the ability
 to do a sanity check for :math:`fov` being positive and :math:`\hat{n}_B` not having all zero elements.
 Also, :math:`\hat{n}_B` is always normalized. Then, the planet and albedo model function must be added.
-There are three options based on the albedo model to be used.
-For "ALBEDO_AVG" case,
+
+There are three options based on the albedo model to be used.  In all cases the planet input message is
+provided as an argument and the method makes the albedo modue subscribe to this message.
+For ``ALBEDO_AVG`` case,
 
 .. code-block:: python
 
-      albModule.addPlanetandAlbedoAverageModel(planetName)
+      albModule.addPlanetandAlbedoAverageModel(planetMsg)
 
 where albedo average value is calculated automatically based on the given planet, and
 
 .. code-block:: python
 
-      albModule.addPlanetandAlbedoAverageModel(planetName, ALB_avg, numLat, numLon)
+      albModule.addPlanetandAlbedoAverageModel(planetMsg, ALB_avg, numLat, numLon)
 
 where the user can set the albedo average value. Number of latitude/longitude can also be specified or set to a negative
-value to let default values being used instead (``numLat = 180`` and ``numLon = 360``). The default values can
+value to let default values being used instead (``defaultNumLat = 180`` and ``defaultNumLon = 360``). The default values can
 be changed by the user as well.
 For ``ALBEDO_DATA`` case,
 
 .. code-block:: python
 
-      albModule.addPlanetandAlbedoDataModel(planetName, dataPath, fileName)
+      albModule.addPlanetandAlbedoDataModel(planetMsg, dataPath, fileName)
 
 where the user can define the data path and file name for the albedo data to be used.
 The model can  be added to a task like other simModels.

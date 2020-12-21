@@ -32,13 +32,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "albedo.h"
 
-%include "../../simMessages/albedoSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-
-GEN_SIZEOF(AlbedoSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/AlbedoMsgPayload.h"
+struct AlbedoMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
 
 %pythoncode %{
 import sys
