@@ -50,18 +50,15 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_eigen.i"
 
-
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/powerStorageBase.h"
 %include "simpleBattery.h"
 %include "swig_conly_data.i"
 
-
-%include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simMessages/powerStorageStatusSimMsg.h"
-
-GEN_SIZEOF(PowerNodeUsageSimMsg)
-GEN_SIZEOF(PowerStorageStatusSimMsg)
+%include "msgPayloadDefC/PowerNodeUsageMsgPayload.h"
+struct PowerNodeUsageMsg_C;
+%include "msgPayloadDefC/PowerStorageStatusMsgPayload.h"
+struct PowerStorageStatusMsg_C;
 
 %pythoncode %{
 import sys

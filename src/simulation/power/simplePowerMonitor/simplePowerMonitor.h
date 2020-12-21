@@ -32,7 +32,7 @@ public:
     ~SimplePowerMonitor();
 
 private:
-    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
+    void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg);
 
 
 };

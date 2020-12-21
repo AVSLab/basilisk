@@ -18,8 +18,6 @@
 
 import pytest
 import os, inspect
-import numpy as np
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -28,7 +26,7 @@ splitPath = path.split(bskName)
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
 from Basilisk.simulation import simpleBattery
 from Basilisk.utilities import macros
 
@@ -66,60 +64,51 @@ def test_storage_limits(show_plots):
 
     test_battery = simpleBattery.SimpleBattery()
     test_battery.storedCharge_Init = 5.
-    test_battery.storageCapacity = 10. #   10 W-s capacity.
+    test_battery.storageCapacity = 10.  # 10 W-s capacity.
 
-    powerMsg1 = simMessages.PowerNodeUsageSimMsg()
+    powerMsg1 = messaging2.PowerNodeUsageMsgPayload()
     powerMsg1.netPower = 5.0
-    powerMsg2 = simMessages.PowerNodeUsageSimMsg()
+    pw1Msg = messaging2.PowerNodeUsageMsg().write(powerMsg1)
+    powerMsg2 = messaging2.PowerNodeUsageMsgPayload()
     powerMsg2.netPower = 5.0
+    pw2Msg = messaging2.PowerNodeUsageMsg().write(powerMsg2)
 
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               "node_1_msg",
-                               powerMsg1)
-
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               "node_2_msg",
-                               powerMsg2)
-
-    #Test the addNodeToStorage method:
-    test_battery.addPowerNodeToModel("node_1_msg")
-    test_battery.addPowerNodeToModel("node_2_msg")
-    test_battery.batPowerOutMsgName = 'test_battery_status'
+    # Test the addNodeToStorage method:
+    test_battery.addPowerNodeToModel(pw1Msg)
+    test_battery.addPowerNodeToModel(pw2Msg)
 
     unitTestSim.AddModelToTask(unitTaskName, test_battery)
 
-    logFreq = testProcessRate
-    unitTestSim.TotalSim.logThisMessage(test_battery.batPowerOutMsgName,logFreq)
+    dataLog = test_battery.batPowerOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulationAndDiscover()
     unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))
 
     unitTestSim.ExecuteSimulation()
 
-    storedChargeLog = unitTestSim.pullMessageLogData(test_battery.batPowerOutMsgName+".storageLevel")
-    capacityLog = unitTestSim.pullMessageLogData(test_battery.batPowerOutMsgName+".storageCapacity")
-    netPowerLog= unitTestSim.pullMessageLogData(test_battery.batPowerOutMsgName+".currentNetPower")
+    storedChargeLog = dataLog.storageLevel
+    capacityLog = dataLog.storageCapacity
+    netPowerLog = dataLog.currentNetPower
 
     #   Check 1 - is net power equal to 10.?
     for ind in range(0,len(netPowerLog)):
-        currentPower = netPowerLog[ind,1]
+        currentPower = netPowerLog[ind]
         if currentPower !=10.:
             testFailCount +=1
             testMessages.append("FAILED: SimpleBattery did not correctly log the net power.")
 
-    if not unitTestSupport.isDoubleEqualRelative((10.),storedChargeLog[-1,1], 1e-8):
+    if not unitTestSupport.isDoubleEqualRelative((10.),storedChargeLog[-1], 1e-8):
         testFailCount+=1
         testMessages.append("FAILED: SimpleBattery did not track integrated power. Returned "+str(storedChargeLog[-1,1])+", expected "+str((10.)))
 
 
     for ind in range(0,len(storedChargeLog)):
-        if storedChargeLog[ind,1] > capacityLog[ind,1]:
+        if storedChargeLog[ind] > capacityLog[ind]:
             testFailCount +=1
             testMessages.append("FAILED: SimpleBattery's stored charge exceeded its capacity.")
 
-        if storedChargeLog[ind,1] < 0.:
+        if storedChargeLog[ind] < 0.:
             testFailCount +=1
             testMessages.append("FAILED: SimpleBattery's stored charge was negative.")
 

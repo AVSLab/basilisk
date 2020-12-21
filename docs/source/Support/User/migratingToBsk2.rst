@@ -228,10 +228,12 @@ This list makes it simple to see what naming will need to be changed.
     |                           | ``rwOutMsgNames``             | ``rwOutMsgs``                     |
     +---------------------------+-------------------------------+-----------------------------------+
     | rwMotorTorque             | ``scMassStateOutMsgName``     | ``rwMotorTorqueOutMsg``           |
+    +---------------------------+-------------------------------+-----------------------------------+
+    | rwMotorTorque             | ``scMassStateOutMsgName``     | ``rwMotorTorqueOutMsg``           |
     +                           +-------------------------------+-----------------------------------+
     |                           | ``inputVehControlName``       | ``vehControlInMsg``               |
     +---------------------------+-------------------------------+-----------------------------------+
-    | rwMotorVoltage            | ``inputRWSpeedsInMsgName``    | ``rwSpeedInMsg``                  |
+    | PowerStorageBase          | ``nodePowerUseMsgNames``      | ``nodePowerUseInMsgs``            |
     +---------------------------+-------------------------------+-----------------------------------+
     | rwNullSpace               | ``inputRWCommands``           | ``rwMotorTorqueInMsg``            |
     +                           +-------------------------------+-----------------------------------+

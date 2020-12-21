@@ -22,7 +22,6 @@
 
 
 #include "power/_GeneralModuleFiles/powerStorageBase.h"
-#include "../../simMessages/powerStorageStatusSimMsg.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/bskLogging.h"
 
@@ -36,7 +35,7 @@ public:
 
 private:
     void customReset(uint64_t CurrentClock);
-    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
+    void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg);
 
 public:
     double storageCapacity; //!< [W-s] Battery capacity in Watt-seconds (Joules).

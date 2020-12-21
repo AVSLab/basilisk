@@ -46,7 +46,7 @@ void SimpleBattery::customReset(uint64_t CurrentClock) {
  @param *msg:  pointer to a PowerStorageStatusSimMsg instance
  @return void
  */
-void SimpleBattery::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
+void SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) {
 
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
 

@@ -32,11 +32,7 @@ In addition to the variables that must be set for the :ref:`PowerStorageBase` ba
 
 The next step is to attach one or more :ref:`PowerNodeUsageSimMsg` instances to it using the ``addNodeToStorage()`` method::
 
-   battery.addPowerNodeToModel("msg name")
-
-The final step is to specify the output message name::
-
-   battery.batPowerOutMsgName= "outMsgName"
+   battery.addPowerNodeToModel(powerMsg)
 
 
 For more information on how to set up and use this module, see the simple power system example :ref:`scenarioPowerDemo`.
