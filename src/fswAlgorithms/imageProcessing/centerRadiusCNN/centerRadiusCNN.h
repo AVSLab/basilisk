@@ -32,8 +32,8 @@
 #include "messaging2/messaging2.h"
 
 
-#include "../simulation/_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/avsEigenMRP.h"
 
 /*! @brief The CNN based center radius visual tracking module. */
 class CenterRadiusCNN: public SysModel {

@@ -22,7 +22,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/geodeticConversion.h"
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"
-#include "../../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/macroDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.

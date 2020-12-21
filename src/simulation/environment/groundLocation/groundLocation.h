@@ -24,7 +24,7 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "../../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 
 #include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
@@ -32,7 +32,7 @@
 #include "msgPayloadDefC/GroundStateMsgPayload.h"
 #include "messaging2/messaging2.h"
 
-#include "../utilities/geodeticConversion.h"
+#include "utilities/geodeticConversion.h"
 #include "utilities/astroConstants.h"
 #include "utilities/bskLogging.h"
 

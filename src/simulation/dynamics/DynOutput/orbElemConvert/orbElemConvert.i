@@ -22,14 +22,14 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
 %include "swig_conly_data.i"
 
 %include "sys_model.h"
-%include "../utilities/orbitalMotion.h"
+%include "utilities/orbitalMotion.h"
 %include "orbElemConvert.h"
 
 %include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"

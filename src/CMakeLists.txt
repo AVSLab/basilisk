@@ -141,9 +141,9 @@ function(generate_package_libraries INIT_DIRECTORY)
 
         # Grab the framework source files
         file(GLOB BSK_FWK_FILES
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp" #Might not be needed
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp" #Might not be needed
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c"
             )
 
         # Add Target
@@ -233,27 +233,27 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     include(UseSWIG REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
     
-    #if(TARGET_LIST)
-    #    string(REPLACE "/" ";" DirList "${TARGET_LIST}")
-    #    list(GET DirList 1 SUBMODULE)
-    #
-    #    #It is redundant to compute simulation modules for each target.
-    #    #This should be fixed when modules' directories are restructured.
-    #    file(GLOB GEN_FILES
-    #        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
-    #        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp"
-    #        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
-    #        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.i"
-    #    )
-    #
-    #    file(GLOB GEN_FILES_LOCAL
-    #                "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.c"
-    #                "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.cpp"
-    #                "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.h"
-    #                "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.i"
-    #                )
-    #
-    #endif()
+    if(TARGET_LIST)
+        string(REPLACE "/" ";" DirList "${TARGET_LIST}")
+        list(GET DirList 1 SUBMODULE)
+    
+        #It is redundant to compute simulation modules for each target.
+        #This should be fixed when modules' directories are restructured.
+        file(GLOB GEN_FILES
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i"
+        )
+    
+        file(GLOB GEN_FILES_LOCAL
+                    "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.c"
+                    "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.cpp"
+                    "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.h"
+                    "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.i"
+                    )
+    
+    endif()
     foreach(TARGET_FILE ${TARGET_LIST})
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
         get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
@@ -313,7 +313,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
         target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file (not located in src)
 
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles") # Exposes framework files for easy includes
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles") # Exposes framework files for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../libs") # Exposes third party library include folders
 
         # Link all necessary libraries
@@ -488,12 +488,12 @@ add_subdirectory("architecture/messaging")
 add_subdirectory("architecture/messaging2/cMsgCInterface")
 
 
-# TODO: Currently the libraries generated works well except for the simulationLib which really is the architectureLib -- I'd like for these files to be moved.
+
 # TODO: I'd call this generate_libraries(), because it really does find all of them.
 # TODO: I'd like for all generated libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions --.dylib, .lib, .a, etc -- which gets messy in CMake).
 generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
 
-set(ARCHITECTURE_LIBS simulationLib SimUtilities SimMessaging cMsgCInterface)
+set(ARCHITECTURE_LIBS architectureLib SimUtilities SimMessaging cMsgCInterface)
 
 ##############
 # SIMULATION #
@@ -590,8 +590,6 @@ generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" 
 find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
 generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
 
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" SIM_TARGETS)
-generate_package_targets("${SIM_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 ###########
 # Pyswice #

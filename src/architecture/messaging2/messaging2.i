@@ -21,7 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %module messaging2
 %pythoncode %{
-    from Basilisk.simulation.swig_common_model import *
+    from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_conly_data.i"
 %include "std_vector.i"

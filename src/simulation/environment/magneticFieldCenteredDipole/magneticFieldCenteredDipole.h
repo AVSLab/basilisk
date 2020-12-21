@@ -24,7 +24,7 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "../../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 

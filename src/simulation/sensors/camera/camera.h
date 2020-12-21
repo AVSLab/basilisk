@@ -30,8 +30,8 @@
 #include "opencv2/imgcodecs.hpp"
 #include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
 #include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
-#include "../simulation/_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
 
 /*! @brief visual camera class */

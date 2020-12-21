@@ -22,7 +22,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_conly_data.i"
 
@@ -31,7 +31,7 @@ from Basilisk.simulation.swig_common_model import *
 %include "sys_model.h"
 %include "imu_sensor.h"
 %include "simMessages/scPlusStatesSimMsg.h"
-%include "../simFswInterfaceMessages/imuSensorIntMsg.h"
+%include "../../simFswInterfaceMessages/imuSensorIntMsg.h"
 GEN_SIZEOF(SCPlusStatesSimMsg)
 GEN_SIZEOF(IMUSensorIntMsg)
 

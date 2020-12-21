@@ -31,9 +31,9 @@
 #include "msgPayloadDefC/CameraImageMsgPayload.h"
 #include "msgPayloadDefC/LimbOpNavMsgPayload.h"
 
-#include "../simulation/_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/bskLogging.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "utilities/avsEigenMRP.h"
+#include "utilities/bskLogging.h"
 
 
 
