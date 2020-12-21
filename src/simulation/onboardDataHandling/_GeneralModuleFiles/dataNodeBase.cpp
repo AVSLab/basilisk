@@ -17,7 +17,6 @@
 
  */
 
-#include "messaging/system_messaging.h"
 #include "utilities/macroDefinitions.h"
 #include "dataNodeBase.h"
 #include "string.h"
@@ -27,13 +26,8 @@
  */
 DataNodeBase::DataNodeBase()
 {
-    this->outputBufferCount = 2;
-    this->nodeDataOutMsgName = "dataNodeOutputMessage";
-    this->nodeStatusInMsgName = ""; //!<By default, no node status message name is used.
-    this->nodeDataOutMsgId = -1;
-    this->nodeStatusInMsgId = -1;
     this->dataStatus = 1; //!< Node defaults to on unless overwritten.
-    memset(&(this->nodeDataMsg), 0x0, sizeof(DataNodeUsageSimMsg)); //!< Data node message is zero by default.
+    this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload();
 
     return;
 }
@@ -48,14 +42,12 @@ DataNodeBase::~DataNodeBase()
 
 /*!
  \verbatim embed:rst
-    SelfInit creates a :ref:`DataNodeUsageSimMsg` using the provided message output name.
+    SelfInit 
  \endverbatim
  @return void
  */
 void DataNodeBase::SelfInit()
 {
-    this->nodeDataOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->nodeDataOutMsgName, sizeof(DataNodeUsageSimMsg),this->outputBufferCount, "DataNodeUsageSimMsg",this->moduleID);
-    //! - call the custom SelfInit() method to add additional self initialization steps
     customSelfInit();
 
     return;
@@ -66,12 +58,6 @@ void DataNodeBase::SelfInit()
  */
 void DataNodeBase::CrossInit()
 {
-    //! - subscribe to the deviceStatus messages and create associated output message buffer
-    if(this->nodeStatusInMsgName.length() > 0) {
-        this->nodeStatusInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
-                                                                                     sizeof(DeviceStatusIntMsg),
-                                                                                     moduleID);
-    }
     //!- call the custom CrossInit() method to all additional cross initialization steps
     customCrossInit();
     return;
@@ -96,11 +82,7 @@ void DataNodeBase::Reset(uint64_t CurrentSimNanos)
 void DataNodeBase::writeMessages(uint64_t CurrentClock)
 {
     //! - write dataNode output messages - baud rate and name
-    SystemMessaging::GetInstance()->WriteMessage(this->nodeDataOutMsgId,
-                                                 CurrentClock,
-                                                 sizeof(DataNodeUsageSimMsg),
-                                                 reinterpret_cast<uint8_t*>(&(this->nodeDataMsg)),
-                                                 moduleID);
+    this->nodeDataOutMsg.write(&this->nodeDataMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -113,22 +95,14 @@ void DataNodeBase::writeMessages(uint64_t CurrentClock)
  */
 bool DataNodeBase::readMessages()
 {
-    DeviceStatusIntMsg statusMsg;
-    SingleMessageHeader localHeader;
-
     //! - read in the data node use/supply messages
     bool dataRead = true;
     bool tmpStatusRead = true;
-    if(this->nodeStatusInMsgId >= 0)
+    if(this->nodeStatusInMsg.isLinked())
     {
-        memset(&statusMsg, 0x0, sizeof(DeviceStatusIntMsg));
-        tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->nodeStatusInMsgId, &localHeader,
-                                                                    sizeof(DeviceStatusIntMsg),
-                                                                    reinterpret_cast<uint8_t*>(&statusMsg),
-                                                                    moduleID);
-
-        this->nodeStatusMsg = statusMsg;
+        this->nodeStatusMsg = this->nodeStatusInMsg();
         this->dataStatus = this->nodeStatusMsg.deviceStatus;
+        tmpStatusRead = this->nodeStatusInMsg.isWritten();
         dataRead = dataRead && tmpStatusRead;
     }
 
@@ -150,7 +124,7 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
     }
     else
     {
-        memset(&(this->nodeDataMsg), 0x0, sizeof(DataNodeUsageSimMsg));
+        this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload();
     }
     return;
 }
@@ -167,7 +141,7 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
         this->computeDataStatus(CurrentSimNanos*NANO2SEC);
     } else {
         //! - If the read was not successful then zero the output message
-        memset(&(this->nodeDataMsg), 0x0, sizeof(DataNodeUsageSimMsg));
+        this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload();
     }
 
     this->writeMessages(CurrentSimNanos);

@@ -1,27 +1,22 @@
 
- # ISC License
- #
- # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
- #
- # Permission to use, copy, modify, and/or distribute this software for any
- # purpose with or without fee is hereby granted, provided that the above
- # copyright notice and this permission notice appear in all copies.
- #
- # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- # ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
-
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import pytest
 import os, inspect
-import numpy as np
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -34,16 +29,15 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import simpleTransmitter
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name
 def test_module():
     # each test method requires a single assert method to be called
 
-    default_results, default_message = test_default()
-    status_results, status_message = test_status()
+    default_results, default_message = testDefault()
+    status_results, status_message = testStatus()
 
     testResults = sum([default_results, status_results])
     testMessage = [default_message, status_message]
@@ -51,7 +45,7 @@ def test_module():
     assert testResults < 1, testMessage
 
 
-def test_default():
+def testDefault():
     """
     **Validation Test Description**
 
@@ -78,10 +72,9 @@ def test_default():
     # Create the test module
     testModule = simpleTransmitter.SimpleTransmitter()
     testModule.ModelTag = "transmitter"
-    testModule.nodeBaudRate = 9600. # baud
-    testModule.packetSize = -9600 # bits
+    testModule.nodeBaudRate = 9600.  # baud
+    testModule.packetSize = -9600  # bits
     testModule.numBuffers = 1
-    testModule.nodeDataOutMsgName = "TransmitterMsg"
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # Create an instrument
@@ -89,21 +82,20 @@ def test_default():
     instrument.ModelTag = "instrument1"
     instrument.nodeBaudRate = 9600. # baud
     instrument.nodeDataName = "Instrument 1" # baud
-    instrument.nodeDataOutMsgName = "Instrument1Msg"
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageUnitDataOutMsgName = "dataMonitorMsg"
     dataMonitor.storageCapacity = 8E9 # bits (1 GB)
-    dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsgName)
-    dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsgName)
+    dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
+    dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)
     unitTestSim.AddModelToTask(unitTaskName, dataMonitor)
 
-    testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsgName)
+    testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
-    unitTestSim.TotalSim.logThisMessage(testModule.nodeDataOutMsgName, testProcessRate)
+    dataLog = testModule.nodeDataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
@@ -112,8 +104,7 @@ def test_default():
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    generatedData = unitTestSim.pullMessageLogData(testModule.nodeDataOutMsgName + ".baudRate")
+    generatedData = dataLog.baudRate
 
     print(generatedData)
 
@@ -127,11 +118,17 @@ def test_default():
         testArray, generatedData, accuracy, "dataOutput",
         testFailCount, testMessages)
 
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("Passed")
+
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-def test_status():
+
+def testStatus():
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -157,23 +154,22 @@ def test_status():
     instrument.ModelTag = "instrument1"
     instrument.nodeBaudRate = 1200. # baud
     instrument.nodeDataName = "Instrument 1" # baud
-    instrument.nodeDataOutMsgName = "Instrument1Msg"
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageUnitDataOutMsgName = "dataMonitorMsg"
     dataMonitor.storageCapacity = 8E9 # bits (1 GB)
-    dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsgName)
-    dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsgName)
+    dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
+    dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)
     unitTestSim.AddModelToTask(unitTaskName, dataMonitor)
 
-    testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsgName)
+    testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
 
-    unitTestSim.TotalSim.logThisMessage(testModule.nodeDataOutMsgName, testProcessRate)
+    dataLog = testModule.nodeDataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -188,18 +184,21 @@ def test_status():
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    drawData = unitTestSim.pullMessageLogData(testModule.nodeDataOutMsgName + ".baudRate")
+    drawData = dataLog.baudRate
 
     # compare the module results to the truth values
     accuracy = 1e-16
 
-    trueData = 0.0 #Module should be off
-
+    trueData = 0.0  # Module should be off
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         [trueData]*3, drawData, accuracy, "transmitterStatusTest",
         testFailCount, testMessages)
+
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("Passed")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -210,4 +209,5 @@ def test_status():
 # stand-alone python script
 #
 if __name__ == "__main__":
-    test_module()
+    testDefault()
+    testStatus()

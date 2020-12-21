@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module provides a model of access-dependent data downlink from a simple transmitter at a fixed baud rate. Specifically, the transmitter reads a :ref:`DataStorageStatusSimMsg` from the storage unit it is subscribed to, searches for the data buffer with the maximum amount of data, and downlinks a packet of data at a fixed baud rate. The transmitter writes out a :ref:`DataNodeUsageSimMsg` describing the data name and baud rate of the data it wants to downlink.
+This module provides a model of access-dependent data downlink from a simple transmitter at a fixed baud rate. Specifically, the transmitter reads a :ref:`DataStorageStatusMsgPayload` from the storage unit it is subscribed to, searches for the data buffer with the maximum amount of data, and downlinks a packet of data at a fixed baud rate. The transmitter writes out a :ref:`DataNodeUsageMsgPayload` describing the data name and baud rate of the data it wants to downlink.
 
 In comparison to :ref:`SimpleTransmitter`, downlink is only enabled when a :ref:`AccessSimMsg` indicates that the spacecraft for which the transmitter is associated has access to an object that can provide it (such as a :ref:`GroundLocation`.)
 
@@ -12,29 +12,22 @@ This module makes no additional assumptions outside of those already made in the
 
 Message Connection Descriptions
 -------------------------------
-This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional :ref:`DataStorageStatusSimMsg` input message subscribed to and read in `customCrossInit()` and `customRead()` methods, respectively.
+This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional :ref:`DataStorageStatusMsgPayload` input message subscribed to and read in `customCrossInit()` and `customRead()` methods, respectively.
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                        | Description                                       |
-    +=======================+=================================+===================================================+
-    | nodeDataOutMsgName    | :ref:`DataNodeUsageSimMsg`      | Writes out the data name and amount used/generated|
-    |                       |                                 | by a DataNodeBase instance.                       |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | deviceStatusInMsgName | :ref:`DeviceStatusIntMsg`       | (optional). If dataStatus is 0,                   |
-    |                       |                                 | the node is disabled; other values indicate       |
-    |                       |                                 | various data modes depending on the module.       |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | storageUnitMsgNames   | :ref:`DataStorageStatusSimMsg`  | Vector of storage units that are connected        |
-    |                       |                                 | to the transmitter. Add storage unit with the     |
-    |                       |                                 | ``addStorageUnitToTransmitter`` method.           |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | groundAccessMsgNames  | :ref:`AccessSimMsg`             | Vector of access messages available               |
-    |                       |                                 | to the transmitter. Add access msg.  with the     |
-    |                       |                                 | ``addAccessMsgToTransmitter`` method.             |
-    +-----------------------+---------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - storageUnitInMsgs
+      - :ref:`DataStorageStatusMsgPayload`
+      - Vector of storage units that are connected to the transmitter. Add storage unit with the ``addStorageUnitToTransmitter`` method.
+    * - groundAccessInMsgs
+      - :ref:`AccessMsgPayload`
+      - Vector of access messages available to the transmitter. Add input messages with the ``addAccessMsgToTransmitter`` method.
+
 
 User Guide
 ----------
@@ -59,15 +52,14 @@ Set the `nodeBaudRate`, `packetSize`, and numBuffers variables::
 
 The next step is to attach one or more :ref:`DataStorageStatusSimMsg` instances to it using the ``addStorageUnitToTransmitter()`` method::
 
-   transmitter.addStorageUnitToTransmitter("msg name")
+   transmitter.addStorageUnitToTransmitter(storageMsg)
 
 Next, attach available :ref:`AccessSimMsg` instances using the ``addAccessMsgToTransmitter()`` method::
 
-    transmitter.addAccessMsgToTransmitter("msg name")
+    transmitter.addAccessMsgToTransmitter(accessMsg)
 
-The final step is to specify the output message name and add the model to task::
+The final step is to add the model to task::
 
-    transmitter.nodeDataOutMsgName = "TransmitterMsg"
     scenarioSim.AddModelToTask(taskName, transmitter)
 
 Follow the :ref:`partitionedStorageUnit` or :ref:`simpleStorageUnit` instructions to add the transmitter to a storage unit.

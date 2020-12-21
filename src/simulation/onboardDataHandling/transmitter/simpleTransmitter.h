@@ -28,19 +28,18 @@ class SimpleTransmitter: public DataNodeBase {
 public:
     SimpleTransmitter();
     ~SimpleTransmitter();
-    void addStorageUnitToTransmitter(std::string tmpStorageUnitMsgName);
+    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg);
 
 private:
-    void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg, double currentTime);
+    void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime);
     bool customReadMessages();
     void customCrossInit();
 
 public:
     double packetSize; //!< Size of packet to downklink (bytes)
     int numBuffers; //!< Number of buffers the transmitter can access
-    std::vector<std::string> storageUnitMsgNames;           //!< Vector of data node input message names
-    std::vector<std::int64_t> storageUnitMsgIds;            //!< class variable
-    std::vector<DataStorageStatusSimMsg> storageUnitMsgs;   //!< class variable
+    std::vector<ReadFunctor<DataStorageStatusMsgPayload>> storageUnitInMsgs;  //!< Vector of data node input message names
+    std::vector<DataStorageStatusMsgPayload> storageUnitMsgs;   //!< local copies of input messages
     BSKLogger bskLogger;                                    //!< class variable
 
 private:

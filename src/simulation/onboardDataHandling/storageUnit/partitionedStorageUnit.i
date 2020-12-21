@@ -39,12 +39,10 @@ namespace std {
 struct dataInstance;
 %include "partitionedStorageUnit.h"
 
-%include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simMessages/dataStorageStatusSimMsg.h"
-
-GEN_SIZEOF(DataNodeUsageSimMsg)
-GEN_SIZEOF(DataStorageStatusSimMsg)
-GEN_SIZEOF(dataInstance)
+%include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
+struct DataStorageStatusMsg_C;
 
 %pythoncode %{
 import sys

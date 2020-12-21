@@ -150,6 +150,9 @@ typedef struct messageType;
 %template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;
 %template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
+%template(DataNodeUsageInMsgsVector) std::vector<ReadFunctor<DataNodeUsageMsgPayload>>;
+%template(DataStorageStatusInMsgsVector) std::vector<ReadFunctor<DataStorageStatusMsgPayload>>;
+%template(AccessInMsgsVector) std::vector<ReadFunctor<AccessMsgPayload>>;
 
 %include "messaging2.h"
 

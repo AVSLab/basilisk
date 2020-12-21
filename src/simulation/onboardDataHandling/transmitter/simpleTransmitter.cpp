@@ -18,8 +18,6 @@
  */
 
 #include "simpleTransmitter.h"
-//#include "../../simMessages/dataStorageStatusSimMsg.h"
-#include "messaging/system_messaging.h"
 #include "utilities/bskLogging.h"
 #include <array>
 
@@ -43,25 +41,18 @@ SimpleTransmitter::~SimpleTransmitter(){
  @return void
  @param tmpStorageUnitMsgName A spacecraft state message name.
  */
-void SimpleTransmitter::addStorageUnitToTransmitter(std::string tmpStorageUnitMsgName){
-    this->storageUnitMsgNames.push_back(tmpStorageUnitMsgName);
+void SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg){
+    this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
     return;
 }
 
 void SimpleTransmitter::customCrossInit(){
-    //! - subscribe to the spacecraft messages and create associated output message buffer
-    std::vector<std::string>::iterator it;
-    for(it = this->storageUnitMsgNames.begin(); it != this->storageUnitMsgNames.end(); it++){
-        this->storageUnitMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(DataStorageStatusSimMsg), moduleID));
-    }
-
     return;
 }
 
 bool SimpleTransmitter::customReadMessages(){
 
-    DataStorageStatusSimMsg nodeMsg;
-    SingleMessageHeader localHeader;
+    DataStorageStatusMsgPayload nodeMsg;
 
     this->storageUnitMsgs.clear();
 
@@ -69,16 +60,12 @@ bool SimpleTransmitter::customReadMessages(){
     bool dataRead = true;
     bool tmpDataRead;
 
-    if(this->storageUnitMsgIds.size() > 0)
+    if(this->storageUnitInMsgs.size() > 0)
     {
-        std::vector<int64_t>::iterator it;
-        for(it = storageUnitMsgIds.begin(); it!= storageUnitMsgIds.end(); it++)
+        for(int c=0; c<storageUnitInMsgs.size(); c++)
         {
-            memset(&nodeMsg, 0x0, sizeof(DataStorageStatusSimMsg));
-            tmpDataRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                                      sizeof(DataStorageStatusSimMsg),
-                                                                      reinterpret_cast<uint8_t*>(&nodeMsg),
-                                                                      moduleID);
+            tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
+            nodeMsg = this->storageUnitInMsgs.at(c)();
             dataRead = dataRead && tmpDataRead;
 
             this->storageUnitMsgs.push_back(nodeMsg);
@@ -94,7 +81,7 @@ bool SimpleTransmitter::customReadMessages(){
 
 /*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
 */
-void SimpleTransmitter::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg, double currentTime){
+void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime){
 
     this->currentTimestep = currentTime - this->previousTime;
 

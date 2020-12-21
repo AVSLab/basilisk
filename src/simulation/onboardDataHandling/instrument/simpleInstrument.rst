@@ -24,9 +24,8 @@ Set the `nodeBaudRate` and `nodeDataName` variables::
    instrument.nodeBaudRate = 1200. # baud
    instrument.nodeDataName = "Instrument 1" # baud
 
-The final step is to specify the output message name and add the model to task::
+The final step is to add the model to task::
 
-    instrument.nodeDataOutMsgName = "Instrument1Msg"
     scenarioSim.AddModelToTask(taskName, instrument)
 
 Follow the :ref:`partitionedStorageUnit` or :ref:`simpleStorageUnit` instructions to add the instrument to a storage unit.

@@ -37,11 +37,10 @@ namespace std {
 %include "../_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "simpleStorageUnit.h"
 
-%include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simMessages/dataStorageStatusSimMsg.h"
-
-GEN_SIZEOF(DataNodeUsageSimMsg)
-GEN_SIZEOF(DataStorageStatusSimMsg)
+%include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
+struct DataStorageStatusMsg_C;
 
 %pythoncode %{
 import sys

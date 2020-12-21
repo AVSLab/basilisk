@@ -58,7 +58,7 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
     this->netBaud = 0;
 
     //! - loop over all the data nodes and add them to the single partition.
-    std::vector<DataNodeUsageSimMsg>::iterator it;
+    std::vector<DataNodeUsageMsgPayload>::iterator it;
     for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
         if (storedData.size() == 0){
             this->storedData.push_back({{'S','T','O','R','E','D',' ','D','A','T','A'}, 0});

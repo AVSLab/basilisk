@@ -31,12 +31,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "simpleInstrument.h"
 %include "swig_conly_data.i"
 
-
-%include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-
-GEN_SIZEOF(DataNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
+%include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "msgPayloadDefC/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
+%include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
+struct DataStorageStatusMsg_C;
 
 %pythoncode %{
 import sys

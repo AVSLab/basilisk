@@ -22,7 +22,8 @@
 #define BASILISK_SPACETOGROUNDTRANSMITTER_H
 
 #include "onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
-#include "simMessages/accessSimMsg.h"
+#include "msgPayloadDefC/AccessMsgPayload.h"
+
 #include "utilities/bskLogging.h"
 
 /*! @brief space to ground data transmitter class */
@@ -30,22 +31,20 @@ class SpaceToGroundTransmitter: public DataNodeBase {
 public:
     SpaceToGroundTransmitter();
     ~SpaceToGroundTransmitter();
-    void addStorageUnitToTransmitter(std::string tmpStorageUnitMsgName);
-    void addAccessMsgToTransmitter(std::string tmpAccessMsgName);
+    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg);
+    void addAccessMsgToTransmitter(Message<AccessMsgPayload> *tmpAccessMsg);
 
 private:
-    void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg, double currentTime);
+    void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime);
     bool customReadMessages();
     void customCrossInit();
 
 public:
     double packetSize; //!< Size of packet to downklink (bytes)
     int numBuffers; //!< Number of buffers the transmitter can access
-    std::vector<std::string> storageUnitMsgNames;           //!< Vector of data node input message names
-    std::vector<std::int64_t> storageUnitMsgIds;            //!< class variable
-    std::vector<std::string> groundLocationAccessMsgNames;  //!< class variable
-    std::vector<std::int64_t> groundLocationAccessMsgIds;   //!< class variable
-    std::vector<DataStorageStatusSimMsg> storageUnitMsgs;   //!< class variable
+    std::vector<ReadFunctor<DataStorageStatusMsgPayload>> storageUnitInMsgs; //!< vector of input messages for storage unit messages
+    std::vector<ReadFunctor<AccessMsgPayload>> groundLocationAccessInMsgs;   //!< vector of input message for ground location access
+    std::vector<DataStorageStatusMsgPayload> storageUnitMsgsBuffer;   //!< local copy of data storage messages
     uint64_t hasAccess;                                     //!< class variable
     BSKLogger bskLogger;                                    //!< class variable
 
@@ -54,6 +53,6 @@ private:
     double currentTimestep; //!< Current timestep tracked for data packet integration
     double previousTime; //!< Previous timestep tracked for data packet integration
     std::vector<dataInstance> storedData; //! Vector of data. Represents the makeup of the data buffer. Created from input messages.
-    std::vector<AccessSimMsg> groundLocationAccessMsgs; //!< class variable
+    std::vector<AccessMsgPayload> groundLocationAccessMsgs; //!< local copy of ground access messages
 };
 #endif //BASILISK_SPACETOGROUNDTRANSMITTER_H

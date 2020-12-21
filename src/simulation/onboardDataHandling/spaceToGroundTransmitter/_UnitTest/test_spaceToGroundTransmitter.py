@@ -16,12 +16,8 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
-
 import pytest
 import os, inspect
-import numpy as np
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -34,14 +30,13 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import spaceToGroundTransmitter
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
 
 
 @pytest.mark.parametrize("deviceStatus", [0,1])
 @pytest.mark.parametrize("accessStatus", [0,1])
-def test_module(show_plots,deviceStatus, accessStatus):
+def test_module(show_plots, deviceStatus, accessStatus):
     """
     **Validation Test Description**
 
@@ -80,13 +75,13 @@ def run(deviceStatus, accessStatus):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create fake access messages
-    accMsg1 = simMessages.AccessSimMsg()
+    accMsg1 = messaging2.AccessMsgPayload()
     accMsg1.hasAccess = 0 # We'll never see this one, sadly
-    unitTestSupport.setMessage(unitTestSim.TotalSim, "TestProcess",'accessSimMsg1', accMsg1, 'AccessSimMsg')
+    acc1Msg = messaging2.AccessMsg().write(accMsg1)
 
-    accMsg2 = simMessages.AccessSimMsg()
+    accMsg2 = messaging2.AccessMsgPayload()
     accMsg2.hasAccess = accessStatus
-    unitTestSupport.setMessage(unitTestSim.TotalSim, "TestProcess",'accessSimMsg2', accMsg2, 'AccessSimMsg')
+    acc2Msg = messaging2.AccessMsg().write(accMsg2)
 
     # Create the test module
     testModule = spaceToGroundTransmitter.SpaceToGroundTransmitter()
@@ -95,38 +90,36 @@ def run(deviceStatus, accessStatus):
     testModule.packetSize = -9600 # bits
     testModule.numBuffers = 1
     testModule.dataStatus = deviceStatus
-    testModule.nodeDataOutMsgName = "TransmitterMsg"
-    testModule.addAccessMsgToTransmitter('accessSimMsg1')
-    testModule.addAccessMsgToTransmitter('accessSimMsg2')
+    testModule.addAccessMsgToTransmitter(acc1Msg)
+    testModule.addAccessMsgToTransmitter(acc2Msg)
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
     instrument.nodeBaudRate = 9600. # baud
-    instrument.nodeDataName = "Instrument 1" # baud
-    instrument.nodeDataOutMsgName = "Instrument1Msg"
+    instrument.nodeDataName = "Instrument 1"  # baud
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageUnitDataOutMsgName = "dataMonitorMsg"
     dataMonitor.storageCapacity = 8E9 # bits (1 GB)
-    dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsgName)
-    dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsgName)
+    dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
+    dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)
     unitTestSim.AddModelToTask(unitTaskName, dataMonitor)
 
-    testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsgName)
+    testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
-    unitTestSim.TotalSim.logThisMessage(testModule.nodeDataOutMsgName, testProcessRate)
+    datLog = testModule.nodeDataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))
     unitTestSim.ExecuteSimulation()
 
-    generatedData = unitTestSim.pullMessageLogData(testModule.nodeDataOutMsgName + ".baudRate")
-    print(generatedData[:,1])
+    generatedData = datLog.baudRate
+    print(generatedData)
     accuracy = 1e-16
 
     trueData = 9600. # Module should be on after enough data is accrued
@@ -136,6 +129,11 @@ def run(deviceStatus, accessStatus):
         testArray, generatedData, accuracy, "dataOutput",
         testFailCount, testMessages)
 
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("Passed")
+
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
@@ -144,4 +142,4 @@ def run(deviceStatus, accessStatus):
 # stand-alone python script
 #
 if __name__ == "__main__":
-    test_module(False, 1,1)
+    test_module(False, 1, 1)

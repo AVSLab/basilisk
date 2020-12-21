@@ -8,27 +8,22 @@ Module Assumptions and Limitations
 ----------------------------------
 This module makes no additional assumptions outside of those already made in the :ref:`DataNodeBase` base class.
 
+
 Message Connection Descriptions
 -------------------------------
-This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional :ref:`DataStorageStatusSimMsg` input message subscribed to and read in `customCrossInit()` and `customRead()` methods, respectively.
+This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional :ref:`DataStorageStatusMsgPayload` input message subscribed to and read in `customCrossInit()` and `customRead()` methods, respectively.
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                        | Description                                       |
-    +=======================+=================================+===================================================+
-    | nodeDataOutMsgName    | :ref:`DataNodeUsageSimMsg`      | Writes out the data name and amount used/generated|
-    |                       |                                 | by a DataNodeBase instance.                       |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | deviceStatusInMsgName | :ref:`DeviceStatusIntMsg`       | (optional). If dataStatus is 0,                   |
-    |                       |                                 | the node is disabled; other values indicate       |
-    |                       |                                 | various data modes depending on the module.       |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | storageUnitMsgNames   | :ref:`DataStorageStatusSimMsg`  | Vector of storage units that are connected        |
-    |                       |                                 | to the transmitter. Add storage unit with the     |
-    |                       |                                 | ``addStorageUnitToTransmitter`` method.           |
-    +-----------------------+---------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - storageUnitInMsgs
+      - :ref:`DataStorageStatusMsgPayload`
+      - vector of data storage input messages.  These are set using the ``addStorageUnitToTransmitter`` method
+
 
 User Guide
 ----------

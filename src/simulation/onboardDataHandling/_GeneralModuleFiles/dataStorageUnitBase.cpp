@@ -17,7 +17,6 @@
 
  */
 
-#include "messaging/system_messaging.h"
 #include "dataStorageUnitBase.h"
 #include "utilities/macroDefinitions.h"
 
@@ -25,9 +24,8 @@
  @return void
  */
 DataStorageUnitBase::DataStorageUnitBase(){
-    this->outputBufferCount = 2;
     this->previousTime = 0; //! - previousTime initialized to 0.
-    this->nodeDataUseMsgNames.clear(); //! - Clear the MsgNames.
+    this->nodeDataUseInMsgs.clear(); //! - Clear the vector of input messages.
     this->storedDataSum = 0.0; //! - Initialize the dataSum to 0.
     this->netBaud = 0.0; //! - Initialize the netBaudRate to 0.
     return;
@@ -45,8 +43,6 @@ DataStorageUnitBase::~DataStorageUnitBase(){
  @return void
  */
 void DataStorageUnitBase::SelfInit(){
-    this->storageUnitDataOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->storageUnitDataOutMsgName, sizeof(DataStorageStatusSimMsg),this->outputBufferCount, "DataStorageStatusSimMsg",this->moduleID);
-
     //! - call the custom SelfInit() method to add additional self initialization steps
     customSelfInit();
 
@@ -57,12 +53,6 @@ void DataStorageUnitBase::SelfInit(){
  @return void
  */
 void DataStorageUnitBase::CrossInit(){
-    //! - Subscribe to the data node messages and create associated output message buffer by iterating through the vector of messages to subscribe to.
-    std::vector<std::string>::iterator it;
-    for(it = this->nodeDataUseMsgNames.begin(); it != this->nodeDataUseMsgNames.end(); it++){
-        this->nodeDataUseMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(DataNodeUsageSimMsg), moduleID));
-    }
-
     //!- call the custom CrossInit() method to all additional cross initialization steps
     customCrossInit();
 
@@ -89,8 +79,9 @@ void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
  @param tmpNodeMsgName
  @return void
  */
-void DataStorageUnitBase::addDataNodeToModel(std::string tmpNodeMsgName){
-    this->nodeDataUseMsgNames.push_back(tmpNodeMsgName);
+void DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg){
+    this->nodeDataUseInMsgs.push_back(tmpNodeMsg->addSubscriber());
+
     return;
 }
 
@@ -106,7 +97,7 @@ void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
         this->integrateDataStatus(CurrentSimNanos*NANO2SEC);
     } else {
         //! - Zero the output message if no input messages were received.
-        memset(&(this->storageStatusMsg),  0x0, sizeof(DataStorageStatusSimMsg));
+        this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload();
     }
 
     //! - write out the storage unit's data status
@@ -120,24 +111,19 @@ void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
  */
 bool DataStorageUnitBase::readMessages()
 {
-    DataNodeUsageSimMsg nodeMsg;
-    SingleMessageHeader localHeader;
+    DataNodeUsageMsgPayload nodeMsg;
 
     this->nodeBaudMsgs.clear();
 
     //! - read in the data node use/supply messages
     bool dataRead = true;
     bool tmpDataRead;
-    if(this->nodeDataUseMsgIds.size() > 0)
+    if(this->nodeDataUseInMsgs.size() > 0)
     {
-        std::vector<int64_t>::iterator it;
-        for(it = nodeDataUseMsgIds.begin(); it!= nodeDataUseMsgIds.end(); it++)
+        for(int c=0; c<this->nodeDataUseInMsgs.size(); c++)
         {
-            memset(&nodeMsg, 0x0, sizeof(DataNodeUsageSimMsg));
-            tmpDataRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                                       sizeof(DataNodeUsageSimMsg),
-                                                                       reinterpret_cast<uint8_t*>(&nodeMsg),
-                                                                       moduleID);
+            nodeMsg = this->nodeDataUseInMsgs.at(c)();
+            tmpDataRead = this->nodeDataUseInMsgs.at(c).isWritten();
             dataRead = dataRead && tmpDataRead;
 
             this->nodeBaudMsgs.push_back(nodeMsg);
@@ -171,11 +157,7 @@ void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
         this->storageStatusMsg.storedData[i] = this->storedData[i].dataInstanceSum;
     }
 
-    SystemMessaging::GetInstance()->WriteMessage(this->storageUnitDataOutMsgId,
-                                                 CurrentClock,
-                                                 sizeof(DataStorageStatusSimMsg),
-                                                 reinterpret_cast<uint8_t*> (&(this->storageStatusMsg)),
-                                                 moduleID);
+    this->storageUnitDataOutMsg.write(&this->storageStatusMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -194,7 +176,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
     dataInstance tmpDataInstance;
 
     //! - loop over all the data nodes
-    std::vector<DataNodeUsageSimMsg>::iterator it;
+    std::vector<DataNodeUsageMsgPayload>::iterator it;
     for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
         index = messageInStoredData(&(*it));
 
@@ -227,7 +209,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
  * @param tmpNodeMsg
  * @return index
  */
-int DataStorageUnitBase::messageInStoredData(DataNodeUsageSimMsg *tmpNodeMsg){
+int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg){
     // Initialize index as -1 (indicates data is not in storedData)
     int index = -1;
 

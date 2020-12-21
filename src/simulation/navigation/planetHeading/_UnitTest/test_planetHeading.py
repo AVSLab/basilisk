@@ -19,7 +19,6 @@
 import pytest
 
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import planetHeading
 from Basilisk.architecture import messaging2
