@@ -24,6 +24,11 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
 
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/BodyHeadingMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 
 /*! @brief planet heading class */
 class PlanetHeading: public SysModel {
@@ -39,9 +44,10 @@ public:
     void readMessages();
 
 public:
-    std::string planetPositionInMsgName;        //!< msg name
-    std::string spacecraftStateInMsgName;       //!< msg name
-    std::string planetHeadingOutMsgName;        //!< msg name
+    ReadFunctor<SpicePlanetStateMsgPayload> planetPositionInMsg;    //!< planet state input message
+    ReadFunctor<SCPlusStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
+    Message<BodyHeadingMsgPayload> planetHeadingOutMsg;             //!< body heading output message
+
     BSKLogger bskLogger;                        //!< -- BSK Logging
 
 private:
@@ -49,7 +55,4 @@ private:
     Eigen::Vector3d r_BN_N;  //!< [m] s/c position
     Eigen::Vector3d rHat_PB_B;  //!< [] planet heading in s/c body frame (unit mag)
     Eigen::MRPd sigma_BN;  //!< [] s/c body att wrt inertial
-    int64_t planetPositionInMsgId = -1;         //!< msg ID
-    int64_t spacecraftStateInMsgId = -1;        //!< msg ID
-    int64_t planetHeadingOutMsgId = -1;         //!< msg ID
 };

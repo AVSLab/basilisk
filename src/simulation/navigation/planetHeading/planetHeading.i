@@ -19,7 +19,6 @@
 %module planetHeading
 %{
    #include "planetHeading.h"
-   #include "simMessages/bodyHeadingSimMsg.h"
 %}
 
 %pythoncode %{
@@ -29,11 +28,14 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_string.i"
 %include "sys_model.h"
 %include "planetHeading.h"
-%include "simMessages/bodyHeadingSimMsg.h"
 %include "swig_conly_data.i"
 
-
-GEN_SIZEOF(BodyHeadingSimMsg)
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/BodyHeadingMsgPayload.h"
+struct BodyHeadingMsg_C;
 
 %pythoncode %{
 import sys

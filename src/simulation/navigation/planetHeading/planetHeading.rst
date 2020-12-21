@@ -12,21 +12,22 @@ Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-        +-------------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name       | Msg Type                        | Description                                       |
-        +=========================+=================================+===================================================+
-        | planetPositionInMsgName | :ref:`SpicePlanetStateSimMsg`   | This message is used to get the planet's position |
-        +-------------------------+---------------------------------+---------------------------------------------------+
-        | spacecraftStateInMsgName| :ref:`SCPlusStatesSimMsg`       | This message is used to get the spacecraft's      |
-        |                         |                                 | position and attitude MRP                         |
-        +-------------------------+---------------------------------+---------------------------------------------------+
-        | planetHeadingOutMsgName | :ref:`BodyHeadingSimMsg`        | This message is used to output the                |
-        |                         |                                 | unit heading vector to the planet in the          |
-        |                         |                                 | spacecraft's body                                 |
-        +-------------------------+---------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - planetPositionInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - planet state input message
+    * - spacecraftStateInMsg
+      - :ref:`SCPlusStatesMsgPayload`
+      - spacecraft state input message
+    * - BodyHeadingMsgPayload
+      - :ref:`planetHeadingOutMsg`
+      - body heading output message
 
 
 Detailed Module Description
@@ -59,8 +60,7 @@ Then, it is converted to the body frame and normalized
 
 User Guide
 ^^^^^^^^^^
-The user can only instantiate this module, change the i/o names, and add it to a task.
-The names below are only special in that they are useful defaults.  Only the `spacecraftStateInMsgName` is actually a default.
+The user can only instantiate this module and add it to a task.
 
 .. code-block:: python
 
@@ -73,8 +73,9 @@ The names below are only special in that they are useful defaults.  Only the `sp
     proc.addTask(task)
 
     ph = planetHeading.PlanetHeading()
-    ph.planetPositionInMsgName = "earth_planet_data"
-    ph.spacecraftStateInMsgName = "inertial_state_output"
-    ph.planetHeadingOutMsgName = "planet_heading"
+    ph.planetPositionInMsg.subscribeTo(earthMsg)
+    ph.spacecraftStateInMsg.subscribeTo(scMsg)
     sim.AddModelToTask(task.Name, ph)
+
+    dataLog = ph.planetHeadingOutMsg.log()
 
