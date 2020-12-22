@@ -47,7 +47,6 @@ typedef enum {
     spacecraft translational state.  It is operated on by the orbital element
     routines and the OrbElemConvert module.
 */
-typedef ClassicElementsMsgPayload classicElements;
 
 /*! equinoctial elment struct definition */
 typedef struct {
