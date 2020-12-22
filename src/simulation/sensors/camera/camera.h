@@ -23,13 +23,15 @@
 #include <stdint.h>
 #include <math.h>
 #include <Eigen/Dense>
-#include "messaging/system_messaging.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
-#include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-#include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
+
+#include "msgPayloadDefC/CameraImageMsgPayload.h"
+#include "msgPayloadDefC/CameraConfigMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
@@ -53,15 +55,15 @@ public:
     void ApplyFilters(cv::Mat, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam);
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string imageInMsgName;          //!< The name of the ImageFswMsg input message
-    std::string imageOutMsgName;          //!< The name of the CameraImageMsg output message
-    std::string cameraOutMsgName;          //!< The name of the CameraConfigMsg output message
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;      //!< camera image input message
+    Message<CameraImageMsgPayload> imageOutMsg;         //!< camera image output message
+    Message<CameraConfigMsgPayload> cameraOutMsg;       //!< The name of the CameraConfigMsg output message
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     
     /*! Camera parameters */
-    char parentName[MAX_MESSAGE_SIZE];  //!< [-] Name of the parent body to which the camera should be attached
+    char parentName[MAX_STRING_LENGTH];  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn; //!< [-] Is the camera currently taking images
     int cameraID; //!< [-] Is the camera currently taking images
     int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
@@ -69,7 +71,7 @@ public:
     double fieldOfView;        //!< [r] camera y-axis field of view edge-to-edge
     double cameraPos_B[3];     //!< [m] Camera position in body frame
     double sigma_CB[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame
-    char skyBox[MAX_MESSAGE_SIZE]; //!< [-] name of skyboz in use
+    char skyBox[MAX_STRING_LENGTH]; //!< [-] name of skyboz in use
     
     /*! Noise paramters */
     double gaussian;        //!< Gaussian noise level
@@ -82,10 +84,6 @@ public:
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
-    uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-    int32_t imageInMsgID;                //!< ID for the outgoing message
-    int32_t imageOutMsgID;                //!< ID for the outgoing message
-    int32_t cameraOutID;                //!< ID for the outgoing message
     uint64_t CurrentSimNanos;
     void* pointImageOut;      //!< void pointer for image memory passing
 };

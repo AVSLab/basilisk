@@ -29,7 +29,6 @@
 #include <Eigen/Dense>
 #include <string.h>
 #include "camera.h"
-#include "messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
@@ -37,7 +36,6 @@
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
 Camera::Camera()
 {
-    this->OutputBufferCount = 2;
     this->pointImageOut = NULL;
     
     /*! Default values for the camera.  */
@@ -71,10 +69,6 @@ Camera::Camera()
  */
 void Camera::SelfInit()
 {
-    /*! - Create output message of image */
-    this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->imageOutMsgName,sizeof(CameraImageMsg),this->OutputBufferCount,"CameraImageMsg",this->moduleID);
-    /*! - Create output message for camera */
-    this->cameraOutID = SystemMessaging::GetInstance()->CreateNewMessage(this->cameraOutMsgName,sizeof(CameraConfigMsg),this->OutputBufferCount,"CameraConfigMsg",this->moduleID);
 }
 
 
@@ -84,8 +78,6 @@ void Camera::SelfInit()
  */
 void Camera::CrossInit()
 {
-    /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), this->moduleID);
 }
 
 /*! This is the destructor */
@@ -347,12 +339,13 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
     this->CurrentSimNanos = CurrentSimNanos;
     std::string localPath;
-    CameraImageMsg imageBuffer;
-    CameraImageMsg imageOut;
-    CameraConfigMsg cameraMsg;
-    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&imageOut, 0x0, sizeof(CameraImageMsg));
-    memset(&cameraMsg, 0x0, sizeof(CameraConfigMsg));
+    CameraImageMsgPayload imageBuffer;
+    CameraImageMsgPayload imageOut;
+    CameraConfigMsgPayload cameraMsg;
+
+    /* zero output messages */
+    imageOut = this->imageOutMsg.zeroMsgPayload();
+    cameraMsg = this->cameraOutMsg.zeroMsgPayload();
     
     /*! - Populate the camera message */
     cameraMsg.cameraID = this->cameraID;
@@ -367,19 +360,17 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     strcpy(cameraMsg.skyBox, this->skyBox);
     
     /*! - Update the camera config data no matter if an image is present*/
-    SystemMessaging::GetInstance()->WriteMessage(this->cameraOutID, CurrentSimNanos, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t *>(&cameraMsg), this->moduleID);
+    this->cameraOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
     
     cv::Mat imageCV, blurred;
     if (this->saveDir !=""){
         localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".png";
     }
     /*! - Read in the bitmap*/
-    SingleMessageHeader localHeader;
-    if(this->imageInMsgName != "")
+    if(this->imageInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
-                                                    sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
-        this->sensorTimeTag = localHeader.WriteClockNanos;
+        imageBuffer = this->imageInMsg();
+        this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
@@ -418,13 +409,13 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
         
-        SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageOut), this->moduleID);
+        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
         
         return;
     }
     else{
         /*! - If no image is present, write zeros in message */
-        SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
+        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
         return;}
  
 }
