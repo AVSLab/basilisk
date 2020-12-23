@@ -22,6 +22,7 @@ clean :
 	-rm -rf $(SOURCEDIR)/Documentation
 	-rm -rf $(SOURCEDIR)/breathe.data
 	-rm -rf $(SOURCEDIR)/externalTools
+	-rm -rf $(SOURCEDIR)/examples
 
 view:
 	    # works on macOS

@@ -7,12 +7,12 @@ Quick-Start
 ===========
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
+   examples/index
    Quick-Start/index
 
 
 Coming soon! For now, please refer to the ``src/examples`` directory discussed in :ref:`examples`.
-
 
