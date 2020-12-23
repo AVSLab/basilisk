@@ -38,7 +38,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import ReactionWheelPower
 from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
-from Basilisk.simulation import bskLogging
+from Basilisk.architecture import bskLogging
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
