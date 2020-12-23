@@ -20,10 +20,10 @@
 #include <string.h>
 #include <math.h>
 #include "formationFlying/spacecraftPointing/spacecraftPointing.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"
-#include "simulation/utilities/astroConstants.h"
+#include "architecture/utilities/astroConstants.h"
 
 /*! This method initializes the configData for the spacecraft pointing module
  It checks to ensure that the inputs are sane and then creates the

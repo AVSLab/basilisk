@@ -28,8 +28,8 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/avsEigenSupport.h"
+#include "../architecture/utilities/avsEigenMRP.h"
+#include "../architecture/utilities/avsEigenSupport.h"
 
 #include "msgPayloadDefC/FuelTankMsgPayload.h"
 #include "messaging2/messaging2.h"

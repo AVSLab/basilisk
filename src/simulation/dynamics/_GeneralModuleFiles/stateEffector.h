@@ -21,7 +21,7 @@
 #define STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
-#include "../../utilities/avsEigenMRP.h"
+#include "../../../architecture/utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
 #include "utilities/bskLogging.h"
 

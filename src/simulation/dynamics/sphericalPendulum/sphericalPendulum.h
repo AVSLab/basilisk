@@ -23,7 +23,7 @@
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "../architecture/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 #include "utilities/bskLogging.h"
 

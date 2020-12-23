@@ -19,7 +19,7 @@
 
 #include "utilities/macroDefinitions.h"
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 
 /*! This method initializes the configData for the veh config algorithm.

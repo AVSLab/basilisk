@@ -22,7 +22,7 @@
  */
 
 #include "attControl/mrpPD/mrpPD.h"
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>
 

@@ -23,7 +23,7 @@
 
 #include "attControl/thrMomentumManagement/thrMomentumManagement.h"
 #include "utilities/macroDefinitions.h"
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 
 

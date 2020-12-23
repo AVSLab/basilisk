@@ -25,7 +25,7 @@
 #include "cMsgCInterface/AttRefMsg_C.h"
 
 #include <stdint.h>
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

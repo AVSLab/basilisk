@@ -22,11 +22,11 @@
 
 #include <stdint.h>
 
-#include "simulation/utilities/orbitalMotion.h"
+#include "architecture/utilities/orbitalMotion.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

@@ -24,7 +24,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "../architecture/utilities/avsEigenMRP.h"
 
 #include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 #include "msgPayloadDefC/SCPlusStatesMsgPayload.h"

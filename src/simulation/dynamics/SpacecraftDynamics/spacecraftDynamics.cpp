@@ -22,7 +22,7 @@
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
-#include "../../utilities/rigidBodyKinematics.h"
+#include "../../../architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 
 Spacecraft::Spacecraft()

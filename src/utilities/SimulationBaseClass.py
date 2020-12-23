@@ -40,7 +40,7 @@ except NameError:
 
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.simulation import simMessages
-from Basilisk.simulation import bskLogging
+from Basilisk.architecture import bskLogging
 from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 import warnings
 

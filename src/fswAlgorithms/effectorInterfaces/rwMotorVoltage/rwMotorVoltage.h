@@ -29,7 +29,7 @@
 #include "cMsgCInterface/RWSpeedMsg_C.h"
 #include "cMsgCInterface/RWArrayVoltageMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*!@brief module configuration message

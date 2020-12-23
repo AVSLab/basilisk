@@ -28,7 +28,7 @@
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 #include "utilities/macroDefinitions.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

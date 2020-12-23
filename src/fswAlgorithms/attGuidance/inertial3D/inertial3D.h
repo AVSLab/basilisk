@@ -21,7 +21,7 @@
 #define _INERTIAL3D_
 
 #include <stdint.h>
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
 
 

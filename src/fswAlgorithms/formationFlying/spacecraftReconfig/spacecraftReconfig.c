@@ -21,9 +21,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/astroConstants.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 /*! This method initializes the configData for this module.

@@ -23,7 +23,7 @@
 #include "cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4

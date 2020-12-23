@@ -23,7 +23,7 @@
 #include "cMsgCInterface/TAMSensorBodyMsg_C.h"
 #include "cMsgCInterface/TAMSensorMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! module configuration message definition */

@@ -24,7 +24,7 @@
 #include "utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 
 /*!

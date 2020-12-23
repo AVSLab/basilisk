@@ -93,7 +93,7 @@ The first step is to include the ``bskLogging`` support file with the module ``*
 
 .. code-block:: c
 
-    #include "simulation/utilities/bskLogging.h"
+    #include "architecture/utilities/bskLogging.h"
 
 The C-module configuration structure must contain a pointer to the ``BSKLogger`` type using:
 

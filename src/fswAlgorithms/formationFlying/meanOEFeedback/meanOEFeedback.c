@@ -24,10 +24,10 @@
 #include <string.h>
 
 #include "utilities/macroDefinitions.h"
-#include "simulation/utilities/astroConstants.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/orbitalMotion.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
                                   NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg);

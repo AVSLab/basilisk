@@ -23,7 +23,7 @@
 #include "cMsgCInterface/STSensorMsg_C.h"
 #include "cMsgCInterface/STAttMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Module configuration message.  */

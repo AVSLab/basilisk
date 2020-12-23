@@ -20,7 +20,7 @@
 #ifndef _MRP_FEEDBACK_CONTROL_H_
 #define _MRP_FEEDBACK_CONTROL_H_
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 #include "cMsgCInterface/RWSpeedMsg_C.h"

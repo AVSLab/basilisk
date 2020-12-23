@@ -27,7 +27,7 @@
 #include "cMsgCInterface/RWAvailabilityMsg_C.h"
 #include "cMsgCInterface/RWArrayConfigMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the sub-module routines. */

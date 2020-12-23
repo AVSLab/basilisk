@@ -30,7 +30,7 @@ import pytest
 import os, inspect
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import keplerianOrbit
+from Basilisk.architecture import keplerianOrbit
 from copy import copy
 import numpy as np
 

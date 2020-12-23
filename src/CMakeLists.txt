@@ -150,7 +150,7 @@ function(generate_package_libraries INIT_DIRECTORY)
         add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
         # Link all necessary libraries
-        target_link_libraries(${LIB_NAME} SimUtilities)
+        target_link_libraries(${LIB_NAME} ArchitectureUtilities)
         target_link_libraries(${LIB_NAME} SimMessaging)
         target_link_libraries(${LIB_NAME} cMsgCInterface)
         target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
@@ -477,12 +477,12 @@ else()
 	set(CMAKE_INSTALL_RPATH "\$ORIGIN/../../")
 endif()
 
-set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimUtilities;SimMessaging")
+set_property(GLOBAL PROPERTY BUILT_LIB_LIST "ArchitectureUtilities;SimMessaging")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 # Targets that must be built first
-add_subdirectory("simulation/utilities")
+add_subdirectory("architecture/utilities")
 add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("architecture/messaging")
 add_subdirectory("architecture/messaging2/cMsgCInterface")
@@ -493,7 +493,7 @@ add_subdirectory("architecture/messaging2/cMsgCInterface")
 # TODO: I'd like for all generated libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions --.dylib, .lib, .a, etc -- which gets messy in CMake).
 generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
 
-set(ARCHITECTURE_LIBS architectureLib SimUtilities SimMessaging cMsgCInterface)
+set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities SimMessaging cMsgCInterface)
 
 ##############
 # SIMULATION #
@@ -512,8 +512,6 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/power" POWER_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilities" UTILITIES_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilitiesSelfCheck" UTILITIES_SELF_CHECK_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
 
 
@@ -528,11 +526,7 @@ generate_package_targets("${POWER_TARGETS}" "powerLib;${ARCHITECTURE_LIBS};" "si
 generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${UTILITIES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${UTILITIES_SELF_CHECK_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-
-
 
 
 
@@ -588,6 +582,7 @@ generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" 
 # ARCHITECTURE #
 ##################
 find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
+Message(STATUS "This is the architecture "${ARCHITECTURE_TARGETS})
 generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
 
 

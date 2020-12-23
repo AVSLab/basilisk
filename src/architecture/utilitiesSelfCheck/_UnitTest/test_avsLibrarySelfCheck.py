@@ -26,7 +26,7 @@
 
 import pytest
 import os, inspect
-from Basilisk.simulation import avsLibrarySelfCheck
+from Basilisk.architecture import avsLibrarySelfCheck
 from Basilisk.utilities import unitTestSupport
 
 

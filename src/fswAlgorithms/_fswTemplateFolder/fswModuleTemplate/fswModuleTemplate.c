@@ -30,7 +30,7 @@
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 
 /*!

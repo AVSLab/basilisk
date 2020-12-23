@@ -21,7 +21,7 @@
 #define _FSW_MODULE_TEMPLATE_FSW_MSG_H_
 
 #include <stdint.h>
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/FswModuleTemplateMsg_C.h"
 
 

@@ -27,7 +27,7 @@
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

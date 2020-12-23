@@ -27,7 +27,7 @@
 #include "cMsgCInterface/THRArrayCmdForceMsg_C.h"
 #include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*!@brief Data structure for module to map a command torque onto thruster forces. */

@@ -23,7 +23,7 @@
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/AccDataMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the

@@ -28,7 +28,7 @@
 
 #include <string.h>
 #include "rateMsgConverter.h"
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the

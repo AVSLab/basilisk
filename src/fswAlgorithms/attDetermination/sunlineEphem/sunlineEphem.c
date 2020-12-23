@@ -20,8 +20,8 @@
 #include "sunlineEphem.h"
 #include <string.h>
 #include <math.h>
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*!
  \verbatim embed:rst

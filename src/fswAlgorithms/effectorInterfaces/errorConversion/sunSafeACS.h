@@ -28,7 +28,7 @@
 #include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief module configuration message */

@@ -24,7 +24,7 @@
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 #include "../_GeneralModuleFiles/thrustGroupData.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 #include <stdlib.h>
 

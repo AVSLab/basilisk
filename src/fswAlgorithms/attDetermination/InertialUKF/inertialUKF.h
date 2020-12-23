@@ -28,8 +28,8 @@
 #include "cMsgCInterface/RWArrayConfigMsg_C.h"
 #include "cMsgCInterface/AccDataMsg_C.h"
 
-#include "simulation/utilities/signalCondition.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/signalCondition.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 #include <string.h>
 

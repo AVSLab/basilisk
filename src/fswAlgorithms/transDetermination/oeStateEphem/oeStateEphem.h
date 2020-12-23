@@ -24,7 +24,7 @@
 #include "cMsgCInterface/EphemerisMsg_C.h"
 
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20

@@ -23,7 +23,7 @@
 
 #include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
 #include "utilities/macroDefinitions.h"
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdio.h>
 

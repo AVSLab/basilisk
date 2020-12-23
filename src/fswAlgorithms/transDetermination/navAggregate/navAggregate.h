@@ -23,7 +23,7 @@
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 #define MAX_AGG_NAV_MSG 10
 

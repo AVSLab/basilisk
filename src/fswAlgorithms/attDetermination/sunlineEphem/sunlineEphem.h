@@ -24,7 +24,7 @@
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 

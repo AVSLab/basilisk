@@ -20,8 +20,8 @@
 #include "attGuidance/attTrackingError/attTrackingError.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "utilities/macroDefinitions.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 /*! This method initializes the configData for this module.

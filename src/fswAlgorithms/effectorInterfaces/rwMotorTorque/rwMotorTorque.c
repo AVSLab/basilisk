@@ -24,7 +24,7 @@
 #include "effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>
-#include "simulation/utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! This method creates the module output message.
  @return void

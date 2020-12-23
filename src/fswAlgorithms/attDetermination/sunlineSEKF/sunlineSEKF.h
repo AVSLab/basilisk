@@ -27,7 +27,7 @@
 #include "cMsgCInterface/SunlineFilterMsg_C.h"
 #include "cMsgCInterface/CSSConfigMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <string.h>
 
 

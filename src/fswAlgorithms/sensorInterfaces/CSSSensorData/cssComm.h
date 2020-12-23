@@ -25,7 +25,7 @@
 
 #include "cMsgCInterface/CSSArraySensorMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

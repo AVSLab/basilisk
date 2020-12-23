@@ -26,7 +26,7 @@
 #include "cMsgCInterface/AttGuidMsg_C.h"
 #include "cMsgCInterface/OpNavMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 /*! @brief module configuration message definition

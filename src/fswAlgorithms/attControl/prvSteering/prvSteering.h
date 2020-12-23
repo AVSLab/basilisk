@@ -22,7 +22,7 @@
 
 #include "cMsgCInterface/AttGuidMsg_C.h"
 #include "cMsgCInterface/RateCmdMsg_C.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 

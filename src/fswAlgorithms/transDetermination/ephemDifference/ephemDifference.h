@@ -24,7 +24,7 @@
 
 #include "cMsgCInterface/EphemerisMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Container with paired input/output message names and IDs */

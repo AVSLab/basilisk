@@ -27,7 +27,7 @@
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 
 #include <stdint.h>
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the SuKF heading module data */

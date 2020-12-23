@@ -27,7 +27,7 @@
 
 import pytest
 import os
-from Basilisk.simulation import gaussMarkovCheck
+from Basilisk.architecture import gaussMarkovCheck
 from Basilisk.utilities import unitTestSupport
 
 

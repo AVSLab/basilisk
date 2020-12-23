@@ -30,7 +30,7 @@
 #include "msgPayloadDefC/AtmoPropsMsgPayload.h"
 #include "messaging2/messaging2.h"
 
-#include "../../utilities/rigidBodyKinematics.h"
+#include "../../../architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/bskLogging.h"
 
 

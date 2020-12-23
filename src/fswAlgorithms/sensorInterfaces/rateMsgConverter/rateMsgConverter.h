@@ -25,7 +25,7 @@
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/IMUSensorBodyMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

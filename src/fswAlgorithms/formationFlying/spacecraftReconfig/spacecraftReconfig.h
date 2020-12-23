@@ -27,8 +27,8 @@
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
-#include "simulation/utilities/orbitalMotion.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief Local module specific data structure */
 typedef struct {

@@ -25,7 +25,7 @@
 
 #include "cMsgCInterface/VehicleConfigMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/

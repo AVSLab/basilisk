@@ -22,7 +22,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "../architecture/utilities/avsEigenMRP.h"
 
 FacetDragDynamicEffector::FacetDragDynamicEffector()
 {

@@ -19,35 +19,35 @@
 '''
 
 #
-#   Unit Test for Saturate Utility
-#   Purpose:  Self-check on Saturate
+#   Unit Test for Discretize Utility
+#   Purpose:  Self-check on Discretize
 #   Author:  Scott Carnahan
 #   Creation Date:  Jan 18, 2018
 #   Note that all of this test is really in c++. This script is just a pytest access to those tests.
 
 import pytest
 import os
-from Basilisk.simulation import saturateCheck
+from Basilisk.architecture import discretizeCheck
 from Basilisk.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("testName"
-    , ["testSaturate"])
+    , ["testDiscretize"])
 # provide a unique test method name, starting with test_
-def test_unitSaturate(testName):
+def test_discretize(testName):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSaturateSelfCheck(testName)
+    [testResults, testMessage] = unitDiscretizeCheck(testName)
     assert testResults < 1, testMessage
 
 
-def unitSaturateSelfCheck(testName):
+def unitDiscretizeCheck(testName):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    testFailCount = saturateCheck.testSaturate()
+    testFailCount = discretizeCheck.testDiscretize()
     if testFailCount > 0:
-        testMessages.append("ERROR: GaussMarkov Test.\n")
+        testMessages.append("ERROR: Discretize Test.\n")
 
     if testFailCount == 0:
         print("PASSED ")
@@ -66,9 +66,9 @@ def unitSaturateSelfCheck(testName):
     fileName = os.path.basename(os.path.splitext(__file__)[0])
     path = os.path.dirname(os.path.abspath(__file__))
 
-    snippetPassFailName = "saturatePass"
+    snippetPassFailName = "discretizePass"
     snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
-    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/saturate/AutoTex/")
+    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/discretize/AutoTex/")
     print(path)
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -80,6 +80,6 @@ def unitSaturateSelfCheck(testName):
 # stand-along python script
 #
 if __name__ == "__main__":
-    unitSaturateSelfCheck(
-        "testSaturate"
+    unitDiscretizeCheck(
+        "testDiscretize"
     )

@@ -20,7 +20,7 @@
 #ifndef _EPHEM_NAV_CONVERTER_H_
 #define _EPHEM_NAV_CONVERTER_H_
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"

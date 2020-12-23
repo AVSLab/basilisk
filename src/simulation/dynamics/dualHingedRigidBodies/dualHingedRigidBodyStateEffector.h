@@ -25,8 +25,8 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/avsEigenSupport.h"
+#include "../architecture/utilities/avsEigenMRP.h"
+#include "../architecture/utilities/avsEigenSupport.h"
 #include "utilities/bskLogging.h"
 
 #include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"

@@ -23,7 +23,7 @@
 #include "cMsgCInterface/IMUSensorBodyMsg_C.h"
 #include "cMsgCInterface/IMUSensorMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

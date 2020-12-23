@@ -29,9 +29,9 @@
 #include "cMsgCInterface/PixelLineFilterMsg_C.h"
 
 #include "utilities/macroDefinitions.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/bskLogging.h"
 #include "utilities/astroConstants.h"
 
 

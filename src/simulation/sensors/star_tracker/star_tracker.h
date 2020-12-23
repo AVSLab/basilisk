@@ -27,7 +27,7 @@
 #include "simMessages/spiceTimeSimMsg.h"
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include <Eigen/Dense>
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "../architecture/utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
 
 

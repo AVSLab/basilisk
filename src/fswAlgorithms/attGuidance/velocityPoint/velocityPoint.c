@@ -30,10 +30,10 @@
 #include "utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/orbitalMotion.h"
-#include "simulation/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/utilities/astroConstants.h"
 
 
 /*!

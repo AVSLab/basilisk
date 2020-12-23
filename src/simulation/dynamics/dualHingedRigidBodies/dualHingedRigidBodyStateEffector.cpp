@@ -19,8 +19,8 @@
 
 
 #include "dualHingedRigidBodyStateEffector.h"
-#include "../../utilities/rigidBodyKinematics.h"
-#include "../../utilities/avsEigenSupport.h"
+#include "../../../architecture/utilities/rigidBodyKinematics.h"
+#include "../../../architecture/utilities/avsEigenSupport.h"
 #include "utilities/macroDefinitions.h"
 #include <iostream>
 

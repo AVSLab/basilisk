@@ -26,7 +26,7 @@
 #include "cMsgCInterface/CSSArraySensorMsg_C.h"
 #include "cMsgCInterface/SunlineFilterMsg_C.h"
 
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 

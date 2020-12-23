@@ -21,7 +21,7 @@
 
 #include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "../architecture/utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
 
 #include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"

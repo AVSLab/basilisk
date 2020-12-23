@@ -18,8 +18,8 @@
  */
 
 #include "sensorInterfaces/STSensorData/stComm.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>
 
