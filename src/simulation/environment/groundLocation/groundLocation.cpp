@@ -93,14 +93,20 @@ void GroundLocation::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpSc
     this->accessMsgBuffer.push_back(accMsg);
 }
 
+/*! Module self initialization
+*/
 void GroundLocation::SelfInit()
 {
 }
 
+/*! Module cross initialization
+*/
 void GroundLocation::CrossInit()
 {
 }
 
+/*! Read module messages
+*/
 bool GroundLocation::ReadMessages()
 {
     SCPlusStatesMsgPayload scMsg;
@@ -133,6 +139,8 @@ bool GroundLocation::ReadMessages()
     return(planetRead && scRead);
 }
 
+/*! write module messages
+*/
 void GroundLocation::WriteMessages(uint64_t CurrentClock)
 {
     //! - write access message for each spacecraft

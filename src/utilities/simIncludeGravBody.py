@@ -30,6 +30,7 @@ except ImportError:
 
 
 class gravBodyFactory(object):
+    """Factory cass to create gravitational bodies."""
     def __init__(self, bodyNames=None):
         self.spicePlanetNames = []
         self.spicePlanetFrames = []

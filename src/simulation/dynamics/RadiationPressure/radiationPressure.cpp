@@ -77,7 +77,7 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos)
 /*! This method retrieves pointers to parameters/data stored
  in the dynamic parameter manager
  @return void
- @param statesIn Dynamic parameter manager
+ @param states Dynamic parameter manager
  */
 void RadiationPressure::linkInStates(DynParamManager& states)
 {

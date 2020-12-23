@@ -72,7 +72,7 @@ AtmosphereBase::~AtmosphereBase()
 
 /*! Adds the spacecraft message to a vector of sc messages and automatically creates the corresponding output message.
  @return void
- @param tmpScMsgName A spacecraft state message name.
+ @param tmpScMsg A spacecraft state message name.
  */
 void AtmosphereBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg){
 

@@ -344,7 +344,8 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
     return;
 }
 
-//!< add a RW data object to the reactionWheelStateEffector
+/*! add a RW data object to the reactionWheelStateEffector @return void
+ */
 void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
 {
     /* store the RW information */

@@ -76,7 +76,7 @@ void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
 
 
 /*! Adds a simDataNodeMsg name to be iterated over. Called in Python.
- @param tmpNodeMsgName
+ @param tmpNodeMsg
  @return void
  */
 void DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg){

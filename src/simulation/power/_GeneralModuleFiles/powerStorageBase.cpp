@@ -48,7 +48,7 @@ PowerStorageBase::~PowerStorageBase()
 
 /*! Adds a PowerNodeUsageMsgPayload input message to iterate over
  @return void
- @param tmpNodeMsgName Message name corresponding to a PowerNodeUsageSimMsg.
+ @param tmpNodeMsg Message name corresponding to a PowerNodeUsageSimMsg.
  */
 void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tmpNodeMsg){
     this->nodePowerUseInMsgs.push_back(tmpNodeMsg->addSubscriber());

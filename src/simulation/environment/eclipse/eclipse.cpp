@@ -233,7 +233,7 @@ void Eclipse::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg)
 }
 
 /*! This method adds planet state data message names to a vector.
- @param planetName The planet name
+ @param tmpSpMsg The planet name
  @return void
  */
 void Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg)

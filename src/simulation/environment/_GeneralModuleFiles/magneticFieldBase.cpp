@@ -65,7 +65,7 @@ MagneticFieldBase::~MagneticFieldBase()
 
 /*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
  @return void
- @param tmpScMsgName A spacecraft state message name.
+ @param tmpScMsg A spacecraft state message name.
  */
 void MagneticFieldBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg){
 
