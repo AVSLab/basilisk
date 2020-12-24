@@ -23,9 +23,11 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/spiceTimeSimMsg.h"
-#include "simFswInterfaceMessages/stSensorIntMsg.h"
+
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/STSensorMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include <Eigen/Dense>
 #include "../architecture/utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
@@ -37,32 +39,32 @@ public:
     StarTracker();
     ~StarTracker();
     
-    bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
     void computeSensorErrors();
     void applySensorErrors();
     void computeTrueOutput();
-    void computeQuaternion(double *sigma, STSensorIntMsg *sensorValue);
+    void computeQuaternion(double *sigma, STSensorMsgPayload *sensorValue);
     
 public:
     
     uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
-    std::string inputStateMessage;    //!< [-] String for the input state message
-    std::string outputStateMessage;   //!< [-] String for the output state message
-    bool messagesLinked;              //!< [-] Indicator for whether inputs bound
+    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;    //!< [-] sc input state message
+    Message<STSensorMsgPayload> sensorOutMsg;   //!< [-] sensor output state message
+
     Eigen::Matrix3d PMatrix;      //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::Vector3d walkBounds;   //!< [-] "3-sigma" errors to permit for states
     Eigen::Vector3d navErrors;    //!< [-] Current navigation errors applied to truth
-    uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
+
     double dcm_CB[3][3];                 //!< [-] Transformation matrix from body to case
-    STSensorIntMsg trueValues;  //!< [-] total measurement without perturbations
-    STSensorIntMsg sensedValues;//!< [-] total measurement including perturbations
+    STSensorMsgPayload trueValues;  //!< [-] total measurement without perturbations
+    STSensorMsgPayload sensedValues;//!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
-    SCPlusStatesSimMsg scState;      //!< [-] Module variable where the input State Data message is stored
+    SCPlusStatesMsgPayload scState;      //!< [-] Module variable where the input State Data message is stored
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 
@@ -70,8 +72,6 @@ public:
 
 private:
     Eigen::Matrix3d AMatrix;      //!< [-] AMatrix that we use for error propagation
-    int64_t inputStateID;             //!< [-] Connection to input state message
-    int64_t outputStateID;            //!< [-] Connection to outgoing state message
     GaussMarkov errorModel;           //!< [-] Gauss-markov error states
 };
 

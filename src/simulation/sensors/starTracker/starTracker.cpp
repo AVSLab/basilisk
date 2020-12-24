@@ -16,8 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "sensors/star_tracker/star_tracker.h"
-#include "messaging/system_messaging.h"
+#include "sensors/starTracker/starTracker.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
@@ -28,12 +27,6 @@
 
 StarTracker::StarTracker()
 {
-    this->CallCounts = 0;
-    this->messagesLinked = false;
-    this->inputStateID = -1;
-    this->inputStateMessage = "inertial_state_output";
-    this->outputStateMessage = "star_tracker_state";
-    this->OutputBufferCount = 2;
     this->sensorTimeTag = 0;
     m33SetIdentity(RECAST3X3 this->dcm_CB);
     this->errorModel = GaussMarkov(3, this->RNGSeed);
@@ -49,27 +42,26 @@ StarTracker::~StarTracker()
 }
 
 /*!
-    link messages
- */
-bool StarTracker::LinkMessages()
-{
-    this->inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
-        this->inputStateMessage, sizeof(SCPlusStatesSimMsg), this->moduleID);
-    
-    
-    return(inputStateID >= 0);
-}
-
-/*!
     self initialization
  */
 void StarTracker::SelfInit()
 {
+}
+
+/*!
+    cross initialization
+ */
+void StarTracker::CrossInit()
+{
+}
+
+/*! This method is used to reset the module.
+ @param CurrentSimNanos The current simulation time from the architecture
+ @return void */
+void StarTracker::Reset(uint64_t CurrentSimNanos)
+{
     int numStates = 3;
-    this->outputStateID = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->outputStateMessage, sizeof(STSensorIntMsg),
-        OutputBufferCount, "STSensorIntMsg", this->moduleID);
-    
+
     this->AMatrix.setIdentity(numStates, numStates);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
@@ -88,32 +80,12 @@ void StarTracker::SelfInit()
 }
 
 /*!
-    cross initialization
- */
-void StarTracker::CrossInit()
-{
-    messagesLinked = this->LinkMessages();
-}
-
-/*!
     read input messages
  */
 void StarTracker::readInputMessages()
 {
-    SingleMessageHeader localHeader;
-    
-    if(!this->messagesLinked)
-    {
-        this->messagesLinked = LinkMessages();
-    }
-    
-    memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
-    if(this->inputStateID >= 0)
-    {
-        SystemMessaging::GetInstance()->ReadMessage(this->inputStateID, &localHeader,
-                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&scState), this->moduleID);
-        this->sensorTimeTag = localHeader.WriteClockNanos;
-    }
+    this->scState = this->scStateInMsg();
+    this->sensorTimeTag = this->scStateInMsg.timeWritten();
 }
 
 /*!
@@ -143,7 +115,7 @@ void StarTracker::applySensorErrors()
     @param sigma
     @param sensorValues
  */
-void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
+void StarTracker::computeQuaternion(double *sigma, STSensorMsgPayload *sensorValues)
 {
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
     double dcm_CN[3][3];            /* dcm, inertial to case frame */
@@ -166,8 +138,7 @@ void StarTracker::computeTrueOutput()
  */
 void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
-    SystemMessaging::GetInstance()->WriteMessage(this->outputStateID, CurrentSimNanos,
-                                                 sizeof(STSensorIntMsg), reinterpret_cast<uint8_t *>(&this->sensedValues), this->moduleID);
+    this->sensorOutMsg.write(&this->sensedValues, this->moduleID, CurrentSimNanos);
 }
 
 /*!

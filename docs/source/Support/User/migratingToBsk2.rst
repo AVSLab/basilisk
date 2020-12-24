@@ -281,6 +281,10 @@ This list makes it simple to see what naming will need to be changed.
     + ``spiceInterface``        +---------------------------------+-----------------------------------+
     |                           | ``planetNames``                 | ``planetStateOutMsgs``            |
     +---------------------------+---------------------------------+-----------------------------------+
+    | star_tracker →            | ``inputStateMessage``           | ``scStateInMsg``                  |
+    + ``starTracker``           +---------------------------------+-----------------------------------+
+    |                           | ``outputStateMessage``          | ``sensorOutMsg``                  |
+    +---------------------------+---------------------------------+-----------------------------------+
     | stComm                    | ``InputDataName``               | ``stSensorInMsg``                 |
     +                           +---------------------------------+-----------------------------------+
     |                           | ``OutputDataName``              | ``stAttOutMsg``                   |

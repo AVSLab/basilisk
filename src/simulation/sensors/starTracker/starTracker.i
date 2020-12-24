@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module star_tracker
+%module starTracker
 %{
-   #include "star_tracker.h"
+   #include "starTracker.h"
 %}
 
 %pythoncode %{
@@ -30,12 +30,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "stdint.i"
 %include "sys_model.h"
-%include "star_tracker.h"
-%include "simFswInterfaceMessages/stSensorIntMsg.h"
-%include "simMessages/scPlusStatesSimMsg.h"
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(STSensorIntMsg)
+%include "starTracker.h"
+
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/STSensorMsgPayload.h"
+struct STSensorMsgMsg_C;
 
 %pythoncode %{
 import sys
