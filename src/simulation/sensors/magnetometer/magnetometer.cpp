@@ -18,7 +18,6 @@
  */
 
 #include "sensors/magnetometer/magnetometer.h"
-#include "messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
@@ -33,11 +32,6 @@
 /*! This is the constructor, setting variables to default values. */
 Magnetometer::Magnetometer()
 {
-    this->magIntMsgID = -1;
-    this->stateIntMsgID = -1;
-    this->stateIntMsgName = "inertial_state_output";
-    this->magIntMsgName = "";
-    this->tamDataOutMsgName = "";
     this->numStates = 3;
     this->senBias.fill(0.0); // Tesla
     this->senNoiseStd.fill(-1.0); // Tesla
@@ -49,7 +43,6 @@ Magnetometer::Magnetometer()
     this->minOutput = -1e200; // Tesla
     this->saturateUtility = Saturate(this->numStates);
     this->dcm_SB.setIdentity(3, 3);
-    this->outputBufferCount = 2;
     return;
 }
 
@@ -72,16 +65,6 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
  the output message. */
 void Magnetometer::SelfInit()
 {
-    //! - Create the output message sized to the output message size
-    if (this->tamDataOutMsgName != "") {
-        this->tamDataOutMsgID = SystemMessaging::GetInstance()->
-            CreateNewMessage(this->tamDataOutMsgName, sizeof(TAMDataSimMsg),
-                this->outputBufferCount, "TAMDataSimMsg", this->moduleID);
-    }
-    else {
-        bskLogger.bskLog(BSK_ERROR, "Magnetometer message name (tamDataOutMsgName) is empty.");
-    }
-
     return;
 }
 
@@ -89,24 +72,6 @@ void Magnetometer::SelfInit()
  are matched correctly.*/
 void Magnetometer::CrossInit()
 {
-    //! - Subscribe to the magnetic field ephemeris message and the vehicle state ephemeris
-    if (this->magIntMsgName != "") {
-        this->magIntMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->magIntMsgName,
-            sizeof(MagneticFieldSimMsg),
-            this->moduleID);
-    }
-    else {
-        bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magIntMsgName) is empty.");
-    }
-
-    if (this->stateIntMsgName != "") {
-        this->stateIntMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->stateIntMsgName,
-            sizeof(SCPlusStatesSimMsg),
-            this->moduleID);
-    } else {
-        bskLogger.bskLog(BSK_ERROR, "Spacecraft state message name (stateIntMsgName) is empty.");
-    }
-
     return;
 }
 
@@ -115,6 +80,14 @@ void Magnetometer::CrossInit()
  @return void */
 void Magnetometer::Reset(uint64_t CurrentSimNanos)
 {
+    if (!this->magInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magInMsg) is empty.");
+    }
+
+    if (!this->stateInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Spacecraft state message name (stateInMsg) is empty.");
+    }
+
     this->noiseModel.setUpperBounds(this->walkBounds);
     auto nMatrix = (this->senNoiseStd * 1.5).asDiagonal();
     this->noiseModel.setNoiseMatrix(nMatrix);
@@ -133,19 +106,11 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos)
 /*! This method reads necessary input messages. */
 void Magnetometer::readInputMessages()
 {
-    SingleMessageHeader localHeader;
     //! - Read magnetic field model ephemeris message
-    memset(&this->magData, 0x0, sizeof(MagneticFieldSimMsg));
-    SystemMessaging::GetInstance()->ReadMessage(this->magIntMsgID, &localHeader,
-        sizeof(MagneticFieldSimMsg),
-        reinterpret_cast<uint8_t*> (&this->magData),
-        this->moduleID);
+    this->magData = this->magInMsg();
+
     //! - Read vehicle state ephemeris message
-    memset(&this->stateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
-    SystemMessaging::GetInstance()->ReadMessage(this->stateIntMsgID, &localHeader,
-        sizeof(SCPlusStatesSimMsg),
-        reinterpret_cast<uint8_t*> (&this->stateCurrent),
-        this->moduleID);
+    this->stateCurrent = this->stateInMsg();
 }
 
 /*! This method computes the magnetic field vector information in the sensor frame.*/
@@ -200,15 +165,12 @@ void Magnetometer::applySaturation()
 /*! This method writes the output messages. */
 void Magnetometer::writeOutputMessages(uint64_t Clock)
 {
-    TAMDataSimMsg localMessage;
+    TAMDataMsgPayload localMessage;
     //! - Zero the output message
-    memset(&localMessage, 0x0, sizeof(TAMDataSimMsg));
+    localMessage = this->tamDataOutMsg.zeroMsgPayload();
     eigenVector3d2CArray(this->sensedValue, localMessage.OutputData);
     //! - Write the outgoing message to the architecture
-    SystemMessaging::GetInstance()->WriteMessage(tamDataOutMsgID, Clock,
-        sizeof(TAMDataSimMsg),
-        reinterpret_cast<uint8_t*> (&localMessage),
-        this->moduleID);
+    this->tamDataOutMsg.write(&localMessage, this->moduleID, Clock);
 }
 
 /*! This method is called at a specified rate by the architecture.  It makes the

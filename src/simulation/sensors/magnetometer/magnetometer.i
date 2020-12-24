@@ -30,14 +30,13 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "sys_model.h"
 %include "magnetometer.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/magneticFieldSimMsg.h"
-%include "../../simMessages/tamDataSimMsg.h"
-%include "../../simFswInterfaceMessages/tamSensorIntMsg.h"
-GEN_SIZEOF(TAMDataSimMsg);
-GEN_SIZEOF(TAMSensorIntMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
-GEN_SIZEOF(MagneticFieldSimMsg);
+
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/MagneticFieldMsgPayload.h"
+struct MagneticFieldMsg_C;
+%include "msgPayloadDefC/TAMDataMsgPayload.h"
+struct TAMDataMsg_C;
 
 %pythoncode %{
 import sys

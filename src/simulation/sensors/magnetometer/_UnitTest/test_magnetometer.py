@@ -37,9 +37,10 @@ bskPath = path.split('src')[0]
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import magnetometer
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
+
 
 @pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 1e-2)])
 @pytest.mark.parametrize("useBias", [True, False])
@@ -89,9 +90,6 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate_s = 0.01
@@ -102,7 +100,6 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     # Construct algorithm and associated C++ container
     testModule = magnetometer.Magnetometer()
     testModule.ModelTag = "TAM_sensor"
-    testModule.tamDataOutMsgName = "TAM_output"
     NoiseStd = [3e-9, 3e-9, 3e-9]  # Tesla
     bias = [1e-6, 1e-6, 1e-5]  # Tesla
     minOut = -1e-4  # Tesla
@@ -122,25 +119,21 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # Set-up fake magnetic field
-    testModule.magIntMsgName = "True magnetic field"
-    magFieldMsg = simMessages.MagneticFieldSimMsg()
+    magFieldMsg = messaging2.MagneticFieldMsgPayload()
     trueMagField = [1e-5, 2e-5, 1.5e-5]  # [T] true magnetic field outputs in inertial frame
     magFieldMsg.magField_N = trueMagField
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               testModule.magIntMsgName,
-                               magFieldMsg)
+    magMsg = messaging2.MagneticFieldMsg().write(magFieldMsg)
+    testModule.magInMsg.subscribeTo(magMsg)
+
     # Set-up fake attitude
-    satelliteStateMsg = simMessages.SCPlusStatesSimMsg()
+    satelliteStateMsg = messaging2.SCPlusStatesMsgPayload()
     angles = np.linspace(0., 2 * np.pi, 59000)
     sigmas = np.zeros(len(angles))
     for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
         sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
         satelliteStateMsg.sigma_BN = [0.3, 0.2, sigmas[i]]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               testModule.stateIntMsgName,
-                               satelliteStateMsg)
+    scMsg = messaging2.SCPlusStatesMsg().write(satelliteStateMsg)
+    testModule.stateInMsg.subscribeTo(scMsg)
     dcm_BN = rbk.MRP2C(satelliteStateMsg.sigma_BN)
 
     # Sensor set-up
@@ -165,7 +158,8 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
                 trueTam_S[i] = maxOut
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(testModule.tamDataOutMsgName, testProcessRate)
+    dataLog = testModule.tamDataOutMsg.log()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -173,7 +167,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     unitTestSim.TotalSim.SingleStepProcesses()
 
     # This pulls the actual data log from the simulation run.
-    tamData = unitTestSim.pullMessageLogData(testModule.tamDataOutMsgName + ".OutputData", list(range(3)))
+    tamData = dataLog.OutputData
     print(tamData)
     print(trueTam_S)
 

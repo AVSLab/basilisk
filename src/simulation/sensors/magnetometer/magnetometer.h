@@ -22,10 +22,12 @@
 #include <vector>
 #include <random>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/magneticFieldSimMsg.h"
-#include "simFswInterfaceMessages/tamSensorIntMsg.h"
-#include "simMessages/tamDataSimMsg.h"
+
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/MagneticFieldMsgPayload.h"
+#include "msgPayloadDefC/TAMDataMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include "utilities/gauss_markov.h"
 #include "utilities/saturate.h"
 #include "utilities/bskLogging.h"
@@ -49,9 +51,9 @@ public:
     Eigen::Matrix3d setBodyToSensorDCM(double yaw, double pitch, double roll); //!< Utility method to configure the sensor DCM
 
 public:
-    std::string         stateIntMsgName;        //!< [-] Message name for spacecraft state
-    std::string         magIntMsgName;          //!< [-] Message name for magnetic field data
-    std::string         tamDataOutMsgName;      //!< [-] Message name for TAM output data
+    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;        //!< [-] input message name for spacecraft state
+    ReadFunctor<MagneticFieldMsgPayload> magInMsg;          //!< [-] input essage name for magnetic field data
+    Message<TAMDataMsgPayload> tamDataOutMsg;   //!< [-] Message name for TAM output data
     Eigen::Matrix3d     dcm_SB;                 //!< [-] DCM from body frame to sensor frame
     Eigen::Vector3d     tam_S;                  //!< [T] Magnetic field vector in sensor frame
     Eigen::Vector3d     sensedValue;            //!< [T] Measurement including perturbations
@@ -59,18 +61,15 @@ public:
     double              scaleFactor;            //!< [-] Scale factor applied to sensor
     Eigen::Vector3d     senBias;                //!< [T] Sensor bias vector
     Eigen::Vector3d     senNoiseStd;            //!< [T] Sensor noise standard deviation vector
-    uint64_t            outputBufferCount;      //!< [-] Number of output msgs stored
+
     Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states
     double              maxOutput;              //!< [T] Maximum output for saturation application
     double              minOutput;              //!< [T] Minimum output for saturation application
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
-    int64_t magIntMsgID;                         //!< [-] Connect to input magnetic field message
-    int64_t stateIntMsgID;                       //!< [-] Connect to input state message
-    int64_t tamDataOutMsgID;                     //!< [-] Connect to output magnetometer data
-    MagneticFieldSimMsg magData;                 //!< [-] Magnetic field model data
-    SCPlusStatesSimMsg stateCurrent;             //!< [-] Current spacecraft state
+    MagneticFieldMsgPayload magData;             //!< [-] Magnetic field model data
+    SCPlusStatesMsgPayload stateCurrent;         //!< [-] Current spacecraft state
     uint64_t numStates;                          //!< [-] Number of States for Gauss Markov Models
     GaussMarkov noiseModel;                      //!< [-] Gauss Markov noise generation model
     Saturate saturateUtility;                    //!< [-] Saturation utility
