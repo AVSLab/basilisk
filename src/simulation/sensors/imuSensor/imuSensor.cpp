@@ -16,8 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "sensors/imu/imu_sensor.h"
-#include "messaging/system_messaging.h"
+#include "sensors/imuSensor/imuSensor.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include <math.h>
@@ -33,16 +32,12 @@
 
 ImuSensor::ImuSensor()
 {
-    this->CallCounts = 0;
-    this->InputStateID = -1;
-    this->InputStateMsg = "inertial_state_output";
-    this->OutputDataMsg = "imu_meas_data";
     this->numStates = 3;
     this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
-    memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
-    
+    this->StatePrevious = this->scStateInMsg.zeroMsgPayload();
+    this->StateCurrent = this->scStateInMsg.zeroMsgPayload();
+
     this->errorModelGyro =  GaussMarkov(this->numStates, this->RNGSeed);
     this->errorModelAccel = GaussMarkov(this->numStates, this->RNGSeed);
     
@@ -56,8 +51,8 @@ ImuSensor::ImuSensor()
     this->NominalReady = false;
     this->senRotBias.fill(0.0);
     this->senTransBias.fill(0.0);
-    memset(&this->sensedValues, 0x0, sizeof(IMUSensorIntMsg));
-    memset(&this->trueValues, 0x0, sizeof(IMUSensorIntMsg));
+    this->sensedValues = this->sensorOutMsg.zeroMsgPayload();
+    this->trueValues = this->sensorOutMsg.zeroMsgPayload();
     this->senRotMax = 1e6;
     this->senTransMax = 1e6;
     this->PMatrixGyro.fill(0.0);
@@ -106,35 +101,47 @@ ImuSensor::~ImuSensor()
  */
 void ImuSensor::SelfInit()
 {
+    return;
+}
 
-    this->OutputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage( this->OutputDataMsg, sizeof(IMUSensorIntMsg),
-        this->OutputBufferCount, "IMUSensorIntMsg", this->moduleID);
+/*!
+ cross initialization
+ */
+void ImuSensor::CrossInit()
+{
+    return;
+}
 
+/*! Reset the module
+ @return void
+ @param CurrentSimNanos current time (ns)
+ */
+void ImuSensor::Reset(uint64_t CurrentSimNanos)
+{
     this->AMatrixAccel.setIdentity(this->numStates,this->numStates);
 
-	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates)
-	{
+    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
+    if(this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates)
+    {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrixAccel) is not 3*3. Quitting.");
         return;
-	}
-	this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
-	this->errorModelAccel.setRNGSeed(this->RNGSeed);
-	this->errorModelAccel.setUpperBounds(this->walkBoundsAccel);
+    }
+    this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
+    this->errorModelAccel.setRNGSeed(this->RNGSeed);
+    this->errorModelAccel.setUpperBounds(this->walkBoundsAccel);
 
     this->AMatrixGyro.setIdentity(this->numStates, this->numStates);
 
-	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
-	{
+    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
+    if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
+    {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
         return;
-	}
-	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
-	this->errorModelGyro.setRNGSeed(this->RNGSeed);
-	this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
-    
+    }
+    this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
+    this->errorModelGyro.setRNGSeed(this->RNGSeed);
+    this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
+
     Eigen::MatrixXd oSatBounds;
     oSatBounds.resize(this->numStates, 2);
     oSatBounds(0,0) = -this->senRotMax;
@@ -144,7 +151,7 @@ void ImuSensor::SelfInit()
     oSatBounds(2,0) = -this->senRotMax;
     oSatBounds(2,1) = this->senRotMax;
     this->oSat.setBounds(oSatBounds);
-    
+
     Eigen::MatrixXd aSatBounds;
     aSatBounds.resize(this->numStates, 2);
     aSatBounds(0,0) = -this->senTransMax;
@@ -154,37 +161,20 @@ void ImuSensor::SelfInit()
     aSatBounds(2,0) = -this->senTransMax;
     aSatBounds(2,1) = this->senTransMax;
     this->aSat.setBounds(aSatBounds);
-
+    
     return;
 }
 
-/*!
- cross initialization
- */
-void ImuSensor::CrossInit()
-{
-    this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
-        sizeof(SCPlusStatesSimMsg), this->moduleID);
-    if(this->InputStateID < 0 )
-    {
-        bskLogger.bskLog(BSK_WARNING, "Failed to link an imu input message. State: %" PRId64, this->InputStateID);
-    }
-
-    return;
-}
 
 /*!
     read input messages
  */
 void ImuSensor::readInputMessages()
 {
-    SingleMessageHeader LocalHeader;
-    
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
-    if(InputStateID >= 0)
+    this->StateCurrent = this->scStateInMsg.zeroMsgPayload();
+    if(this->scStateInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+        this->StateCurrent = this->scStateInMsg();
     }
     this->current_sigma_BN = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
     this->current_omega_BN_B = cArray2EigenVector3d(this->StateCurrent.omega_BN_B);
@@ -200,15 +190,14 @@ void ImuSensor::readInputMessages()
  */
 void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
-    IMUSensorIntMsg LocalOutput;
+    IMUSensorMsgPayload localOutput;
     
-    eigenVector3d2CArray(this->accel_SN_P_out, LocalOutput.AccelPlatform);
-    eigenVector3d2CArray(this->DV_SN_P_out, LocalOutput.DVFramePlatform);
-    eigenVector3d2CArray(this->omega_PN_P_out, LocalOutput.AngVelPlatform);
-    eigenVector3d2CArray(this->prv_PN_out, LocalOutput.DRFramePlatform);
+    eigenVector3d2CArray(this->accel_SN_P_out, localOutput.AccelPlatform);
+    eigenVector3d2CArray(this->DV_SN_P_out, localOutput.DVFramePlatform);
+    eigenVector3d2CArray(this->omega_PN_P_out, localOutput.AngVelPlatform);
+    eigenVector3d2CArray(this->prv_PN_out, localOutput.DRFramePlatform);
     
-    SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
-                                                 sizeof(IMUSensorIntMsg), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
+    this->sensorOutMsg.write(&localOutput, this->moduleID, Clock);
 
     return;
 }

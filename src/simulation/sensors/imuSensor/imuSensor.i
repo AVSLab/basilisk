@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module imu_sensor
+%module imuSensor
 %{
-   #include "imu_sensor.h"
+   #include "imuSensor.h"
 %}
 
 %pythoncode %{
@@ -29,11 +29,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "sys_model.h"
-%include "imu_sensor.h"
-%include "simMessages/scPlusStatesSimMsg.h"
-%include "../../simFswInterfaceMessages/imuSensorIntMsg.h"
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(IMUSensorIntMsg)
+%include "imuSensor.h"
+
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/IMUSensorMsgPayload.h"
+struct IMUSensorMsgMsg_C;
 
 %pythoncode %{
 import sys

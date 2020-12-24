@@ -26,8 +26,11 @@
 #include "utilities/gauss_markov.h"
 #include "utilities/discretize.h"
 #include "utilities/saturate.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simFswInterfaceMessages/imuSensorIntMsg.h"
+
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/IMUSensorMsgPayload.h"
+#include "messaging2/messaging2.h"
+
 #include <Eigen/Dense>
 #include "utilities/avsEigenMRP.h"
 #include "utilities/bskLogging.h"
@@ -39,8 +42,9 @@ public:
     ImuSensor();
     ~ImuSensor();
     
-    void CrossInit();
     void SelfInit();
+    void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
@@ -59,8 +63,8 @@ public:
     void set_aSatBounds(Eigen::MatrixXd aSatBounds);
 
 public:
-    std::string InputStateMsg;          /*!< Message name for spacecraft state */
-    std::string OutputDataMsg;          /*!< Message name for CSS output data */
+    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg; /*!< input essage name for spacecraft state */
+    Message<IMUSensorMsgPayload> sensorOutMsg;        /*!< output message name for IMU output data */
     Eigen::Vector3d sensorPos_B;              /*!< [m] IMU sensor location in body */
     Eigen::Matrix3d dcm_PB;                //!< -- Transform from body to platform
     Eigen::Vector3d senRotBias;               //!< [r/s] Rotational Sensor bias value
@@ -78,8 +82,8 @@ public:
 	Eigen::Vector3d walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
 	Eigen::Vector3d navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
-    IMUSensorIntMsg trueValues;         //!< [-] total measurement without perturbations
-    IMUSensorIntMsg sensedValues;       //!< [-] total measurement including perturbations
+    IMUSensorMsgPayload trueValues;         //!< [-] total measurement without perturbations
+    IMUSensorMsgPayload sensedValues;       //!< [-] total measurement including perturbations
     
     Eigen::Vector3d accelScale;         //!< (-) scale factor for acceleration axes
     Eigen::Vector3d gyroScale;          //!< (-) scale factors for acceleration axes
@@ -92,12 +96,10 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    int64_t InputStateID;               //!< -- Connect to input time message
-    int64_t OutputDataID;               //!< -- Connect to output CSS data
     uint64_t PreviousTime;              //!< -- Timestamp from previous frame
     int64_t numStates;                  //!< -- Number of States for Gauss Markov Models
-    SCPlusStatesSimMsg StatePrevious;   //!< -- Previous state to delta in IMU
-    SCPlusStatesSimMsg StateCurrent;    //!< -- Current SSBI-relative state
+    SCPlusStatesMsgPayload StatePrevious;   //!< -- Previous state to delta in IMU
+    SCPlusStatesMsgPayload StateCurrent;    //!< -- Current SSBI-relative state
     GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
     GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
     

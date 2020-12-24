@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   IMU Unit Test
 #   Purpose:  Test IMU functions
@@ -36,8 +35,12 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
-from Basilisk.simulation import imu_sensor
+from Basilisk.simulation import imuSensor
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.architecture import messaging2
+
+def addTimeColumn(time, data):
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 # methods
 def v3vTmult(v1,v2):
@@ -84,10 +87,10 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots,   testCase,       stopTime,       procRate,   gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
                         (False,         'clean',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8),
-                        # (False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1),
-                        # (False,         'bias',         1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-8),
-                        # (False,         'saturation',   1.0,            0.01,       0.0,            0.0,            1.0,            5.0,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-8),
-                        # (False,        'discretization',1.,             0.01,       0.05,           0.5,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8),
+                        (False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1),
+                        (False,         'bias',         1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-8),
+                        (False,         'saturation',   1.0,            0.01,       0.0,            0.0,            1.0,            5.0,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-8),
+                        (False,        'discretization',1.,             0.01,       0.05,           0.5,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8),
 
 ])
 
@@ -178,7 +181,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     r_SN_N[0][:] = r_SB_N + r_BN_N[0][:]
 
     #Sensor Setup
-    ImuSensor = imu_sensor.ImuSensor()
+    ImuSensor = imuSensor.ImuSensor()
     ImuSensor.ModelTag = "imusensor"
     ImuSensor.sensorPos_B = np.array(r_SB_B) #must be set by user - no default. check if this works by giving an array - SJKC
     yaw = 0.7854 #should be given as parameter [rad]
@@ -203,7 +206,6 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     accel_SN_P_disc = np.array([0., 0., 0.])
     omega_SN_P_disc = np.array([0., 0., 0.])
 
-
     # Set-up the sensor output truth vectors
     rDotDot_SN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor sensed acceleration in sensor platform frame coordinates
     rDotDot_SN_P[0][:] = np.dot(dcm_PN, rDotDot_SN_N[0][:])
@@ -213,7 +215,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     omega_PN_P[0][:] = np.dot(dcm_PN, omega_BN_N[0][:])
 
     # configure spacecraft dummy message - Need to convert to B frame here first
-    StateCurrent = imu_sensor.SCPlusStatesSimMsg()
+    StateCurrent = messaging2.SCPlusStatesMsgPayload()
     StateCurrent.sigma_BN = sigma_BN[0][:]
     StateCurrent.omega_BN_B = np.dot(dcm_BN, omega_BN_N[0][:]) #1 rpm around each axis
     StateCurrent.nonConservativeAccelpntB_B = np.dot(dcm_BN, rDotDot_BN_N[0][:])
@@ -224,11 +226,12 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     unitSim.AddModelToTask(unitTaskName, ImuSensor)
 
     # configure inertial_state_output message
-    unitSim.TotalSim.CreateNewMessage(unitProcName, "inertial_state_output", 8*3*11, 2)
-    unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, 0, StateCurrent)
+    scStateMsg = messaging2.SCPlusStatesMsg().write(StateCurrent)
+    ImuSensor.scStateInMsg.subscribeTo(scStateMsg)
 
     # log module output message
-    unitSim.TotalSim.logThisMessage(ImuSensor.OutputDataMsg, unitProcRate)
+    dataLog = ImuSensor.sensorOutMsg.log()
+    unitSim.AddModelToTask(unitTaskName, dataLog)
 
     unitSim.InitializeSimulation()
 
@@ -321,29 +324,30 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                 DVAccum_SN_P[i][k] = rDotDot_SN_P[i][k] * dt
 
         #Now update spacecraft states for the IMU:
-        StateCurrent = imu_sensor.SCPlusStatesSimMsg()
+        StateCurrent = messaging2.SCPlusStatesMsgPayload()
         StateCurrent.sigma_BN = sigma_BN[i][:]
         StateCurrent.omega_BN_B = np.dot(dcm_BN_2, omega_BN_N[i][:])
         StateCurrent.nonConservativeAccelpntB_B = np.dot(dcm_BN_2, rDotDot_BN_N[i][:])
         StateCurrent.omegaDot_BN_B = np.dot(dcm_BN_2, omegaDot_BN_N[i][:])
         StateCurrent.TotalAccumDV_BN_B = np.dot(dcm_BN_2, rDot_BN_N[i][:] - rDot_BN_N[0][:])
-        unitSim.TotalSim.WriteMessageData("inertial_state_output", 8 * 3 * 11, unitSim.TotalSim.CurrentNanos, StateCurrent)
+        scStateMsg.write(StateCurrent, unitSim.TotalSim.CurrentNanos)
 
     # Pull output time histories from messaging system
-    DRout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DRFramePlatform", list(range(3)))
-    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", list(range(3)))
-    rDotDotOut  = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AccelPlatform", list(range(3)))
-    DVout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DVFramePlatform", list(range(3)))
+    DRout = dataLog.DRFramePlatform
+    omegaOut = dataLog.AngVelPlatform
+    rDotDotOut = dataLog.AccelPlatform
+    DVout = dataLog.DVFramePlatform
 
     # truth/output comparison plots and AutoTex output
+    time = dataLog.times()/1e9
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0]/1e9, DRout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[1:,0]/1e9, stepPRV_PN[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
-    plt.plot(DRout[1:,0]/1e9, DRout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[1:,0]/1e9, stepPRV_PN[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
-    plt.plot(DRout[1:,0]/1e9, DRout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[1:,0]/1e9, stepPRV_PN[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
+    plt.plot(time, DRout[0:,0], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(time, stepPRV_PN[:,0], linestyle = '--', color = 'cyan', label = "truth1")
+    plt.plot(time, DRout[0:,1], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(time, stepPRV_PN[:,1], linestyle = '--', color = 'cyan', label = "truth2")
+    plt.plot(time, DRout[0:,2], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(time, stepPRV_PN[:,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Time Step PRV Component Magnitude [rad]")
     plt.title("PRV Comparison")
@@ -354,12 +358,12 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                      'height=0.7\\textwidth, keepaspectratio', path)
     plt.figure(4,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0]/1e9, omegaOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[1:,0]/1e9, omega_PN_P[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
-    plt.plot(DRout[1:,0]/1e9, omegaOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[1:,0]/1e9, omega_PN_P[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
-    plt.plot(DRout[1:,0]/1e9, omegaOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[1:,0]/1e9, omega_PN_P[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
+    plt.plot(time, omegaOut[:,0], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(time, omega_PN_P[:,0], linestyle = '--', color = 'cyan', label = "truth1")
+    plt.plot(time, omegaOut[:,1], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(time, omega_PN_P[:,1], linestyle = '--', color = 'cyan', label = "truth2")
+    plt.plot(time, omegaOut[:,2], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(time, omega_PN_P[:,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Angular Rate Component Magnitudes [rad/s]")
     plt.title("Angular Rate Comparison")
@@ -370,12 +374,12 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                      'height=0.7\\textwidth, keepaspectratio', path)
     plt.figure(7,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[1:,0]/1e9, rDotDot_SN_P[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
-    plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[1:,0]/1e9, rDotDot_SN_P[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
-    plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[1:,0]/1e9, rDotDot_SN_P[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
+    plt.plot(time, rDotDotOut[:,0], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(time, rDotDot_SN_P[:,0], linestyle = '--', color = 'cyan', label = "truth1")
+    plt.plot(time, rDotDotOut[:,1], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(time, rDotDot_SN_P[:,1], linestyle = '--', color = 'cyan', label = "truth2")
+    plt.plot(time, rDotDotOut[:,2], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(time, rDotDot_SN_P[:,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Linear Acceleration Component Magnitudes [m/s/s]")
     plt.title("Acceleration Comparison")
@@ -387,12 +391,12 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     plt.figure(10,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0]/1e9, DVout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[1:,0]/1e9, DVAccum_SN_P[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
-    plt.plot(DRout[1:,0]/1e9, DVout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[1:,0]/1e9, DVAccum_SN_P[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
-    plt.plot(DRout[1:,0]/1e9, DVout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[1:,0]/1e9, DVAccum_SN_P[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
+    plt.plot(time, DVout[:,0], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(time, DVAccum_SN_P[:,0], linestyle = '--', color = 'cyan', label = "truth1")
+    plt.plot(time, DVout[:,1], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(time, DVAccum_SN_P[:,1], linestyle = '--', color = 'cyan', label = "truth2")
+    plt.plot(time, DVout[:,2], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(time, DVAccum_SN_P[:,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Step DV Magnitudes [m/s]")
     plt.title("DV Comparison")
@@ -409,36 +413,42 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     # test outputs
     if testCase != 'noise':
         for i in range(2,len(stepPRV_PN)-1):
-            if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV_PN[i][:], 3, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(DRout[i+1][:], stepPRV_PN[i][:], 3, accuracy):
                 testMessages.append("FAILED DR @ i = "+ str(i) + ". \\\\& &")
                 testFailCount += 1
-            if not unitTestSupport.isArrayEqualRelative(omegaOut[i][:], omega_PN_P[i][:], 3, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(omegaOut[i+1][:], omega_PN_P[i][:], 3, accuracy):
                 testMessages.append("FAILED OMEGA @ i = "+ str(i) + ". \\\\& &")
                 testFailCount += 1
             if not (testCase == "discretization" and (i == 572 or i == 934)):
-                if not unitTestSupport.isArrayEqualRelative(DVout[i][:], DVAccum_SN_P[i][:], 3, accuracy):
+                if not unitTestSupport.isArrayEqualRelative(DVout[i+1][:], DVAccum_SN_P[i][:], 3, accuracy):
                     testMessages.append("FAILED DV @ i = " + str(i) + ". \\\\& &")
                     testFailCount += 1
-            if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i][:], rDotDot_SN_P[i][:], 3, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i+1][:], rDotDot_SN_P[i][:], 3, accuracy):
                 testMessages.append("FAILED ACCEL @ i = " + str(i) + ". \\\\& &")
                 testFailCount += 1
     else:
+        DRout = addTimeColumn(dataLog.times(), DRout)[1:,]
+        rDotDotOut = addTimeColumn(dataLog.times(), rDotDotOut)[1:,]
+        DVout = addTimeColumn(dataLog.times(), DVout)[1:,]
+        omegaOut = addTimeColumn(dataLog.times(), omegaOut)[1:,]
+
         DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
-        for i in range(2,len(stepPRV_PN)-1):
+        for i in range(3,len(stepPRV_PN)-1):
             for j in [0,1,2]:
                 DRoutNoise[i][j] = DRout[i][j+1] - stepPRV_PN[i+1][j]
         rDotDotOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(stepPRV_PN) - 1):
+        for i in range(3, len(stepPRV_PN) - 1):
             for j in [0, 1, 2]:
                 rDotDotOutNoise[i, j] = rDotDotOut[i, j+1] - rDotDot_SN_P[i+1, j]
         DVoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(stepPRV_PN) - 1):
+        for i in range(3, len(stepPRV_PN) - 1):
             for j in [0, 1, 2]:
                 DVoutNoise[i, j] = DVout[i, j + 1] - DVAccum_SN_P[i + 1, j]
         omegaOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(stepPRV_PN)-1):
+        for i in range(3, len(stepPRV_PN)-1):
             for j in [0, 1, 2]:
                 omegaOutNoise[i, j] = omegaOut[i, j + 1] - omega_PN_P[i + 1, j]
+
         if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,0]),senRotNoiseStd*dt/1.5,accuracy):
             testMessages.append(("FAILED DRnoise1. \\\\& &"))
             testFailCount += 1
@@ -564,10 +574,15 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     snippetContent = '{:1.1e}'.format(senTransBiasIn)
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
 
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("PASSED")
 
     return [testFailCount, ''.join(testMessages)]
 
 # This statement below ensures that the unit test script can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    unitSimIMU(True,        'clean',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8)
+    # unitSimIMU(True,        'noise',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8)
+    unitSimIMU(False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1)
