@@ -17,8 +17,7 @@
 
  */
 
-#include "sensors/sun_sensor/coarse_sun_sensor.h"
-#include "messaging/system_messaging.h"
+#include "sensors/coarseSunSensor/coarseSunSensor.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
@@ -35,13 +34,6 @@
 CoarseSunSensor::CoarseSunSensor()
 {
 //    this->CallCounts = 0;
-    this->sunInMsgID = -1;
-    this->stateInMsgID = -1;
-    this->albedoInMsgId = -1;
-    this->sunEclipseInMsgId = -1;
-    this->stateInMsgName = "inertial_state_output";
-    this->sunInMsgName = "sun_planet_data";
-    this->cssDataOutMsgName = "";
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
     this->walkBounds = 1E-15; //don't allow random walk by default
@@ -65,7 +57,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->r_PB_B.fill(0.0);
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
-    this->outputBufferCount = 2;
+    this->sunVisibilityFactor = this->sunEclipseInMsg.zeroMsgPayload();
     this->sunVisibilityFactor.shadowFactor = 1.0;
     this->sunDistanceFactor = 1.0;
     this->dcm_PB.setIdentity(3,3);
@@ -123,6 +115,29 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
  the output message*/
 void CoarseSunSensor::SelfInit()
 {
+    return;
+}
+
+/*! This method simply calls the LinkMessages method to ensure that input messages 
+ are matched correctly.*/
+void CoarseSunSensor::CrossInit()
+{
+    return;
+}
+
+/*! This method is used to reset the module.
+ @param CurrentSimNanos The current simulation time from the architecture
+ @return void */
+void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
+{
+    //! - If either messages is not valid, send a warning message
+    if(!this->sunInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Failed to link a sun sensor input message");
+    }
+    if(!this->stateInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Failed to link a spacecraft state input message");
+    }
+
     Eigen::VectorXd nMatrix;
     nMatrix.resize(1,1);
     nMatrix(0,0) = this->senNoiseStd*1.5;
@@ -136,97 +151,39 @@ void CoarseSunSensor::SelfInit()
     pMatrix.resize(1, 1);
     pMatrix(0,0) = 1.;
     this->noiseModel.setPropMatrix(pMatrix);
-    
+
     Eigen::MatrixXd satBounds;
     satBounds.resize(1, 2);
     satBounds(0,0) = this->minOutput;
     satBounds(0,1) = this->maxOutput;
     this->saturateUtility.setBounds(satBounds);
-    
-    //! - Create the output message sized to the output message size if the name is valid
-    if(this->cssDataOutMsgName != "")
-    {
-        this->cssDataOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->cssDataOutMsgName, sizeof(CSSRawDataSimMsg),
-                         this->outputBufferCount, "CSSRawDataSimMsg", this->moduleID);
-    }
-    if (this->cssConfigLogMsgName != "") {
-        this->cssConfigLogMsgId = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->cssConfigLogMsgName, sizeof(CSSConfigLogSimMsg),
-                         this->outputBufferCount, "CSSConfigLogSimMsg", this->moduleID);
-    }
 
-    return;
-}
-
-/*! This method simply calls the LinkMessages method to ensure that input messages 
- are matched correctly.*/
-void CoarseSunSensor::CrossInit()
-{
-    //! - Subscribe to the Sun ephemeris message and the vehicle state ephemeris
-    this->sunInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->sunInMsgName,
-                                                                          sizeof(SpicePlanetStateSimMsg),
-                                                                          this->moduleID);
-    this->stateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName,
-                                                                            sizeof(SCPlusStatesSimMsg),
-                                                                            this->moduleID);
-    
-    /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
-    if (this->sunEclipseInMsgName.length() > 0) {
-        this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
-                                                                                     sizeof(EclipseSimMsg),
-                                                                                     moduleID);
-    }
-
-    /* reading in the albedo message is optional.  It only gets used if this message is successfully suscribed.  */
-    if (this->albedoInMsgName.length() > 0) {
-        this->albedoInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->albedoInMsgName,
-                                                                                sizeof(AlbedoSimMsg),
-                                                                                moduleID);
-    }
-    
-    //! - If either messages is not valid, send a warning message
-    if(this->sunInMsgID < 0 || this->stateInMsgID < 0) {
-        bskLogger.bskLog(BSK_WARNING, "Failed to link a sun sensor input message: Sun: %" PRId64, this->sunInMsgID);
-    }
-    return;
 }
 
 void CoarseSunSensor::readInputMessages()
 {
-    SingleMessageHeader localHeader;
-    auto messagingSystem = SystemMessaging::GetInstance();
     //! - Zero ephemeris information
-    memset(&this->sunData, 0x0, sizeof(SpicePlanetStateSimMsg));
-    memset(&this->stateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
+    this->sunData = this->sunInMsg.zeroMsgPayload();
+    this->stateCurrent = this->stateInMsg.zeroMsgPayload();
+
     //! - If we have a valid sun ID, read Sun ephemeris message
-    if(this->sunInMsgID >= 0)
+    if(this->sunInMsg.isLinked())
     {
-        messagingSystem->ReadMessage(this->sunInMsgID, &localHeader,
-                                                    sizeof(SpicePlanetStateSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&this->sunData),
-                                                    this->moduleID);
+        this->sunData = this->sunInMsg();
     }
     //! - If we have a valid state ID, read vehicle state ephemeris message
-    if(this->stateInMsgID >= 0)
+    if(this->stateInMsg.isLinked())
     {
-        messagingSystem->ReadMessage(this->stateInMsgID, &localHeader,
-                                                    sizeof(SCPlusStatesSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&this->stateCurrent),
-                                                    this->moduleID);
+        this->stateCurrent = this->stateInMsg();
     }
     //! - If we have a valid eclipse ID, read eclipse message
-    if(this->sunEclipseInMsgId >= 0) {
-        messagingSystem->ReadMessage(this->sunEclipseInMsgId, &localHeader,
-                                                    sizeof(EclipseSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor),
-                                                    this->moduleID);
+    if(this->sunEclipseInMsg.isLinked()) {
+        this->sunVisibilityFactor = this->sunEclipseInMsg();
     }
     //! - If we have a valid albedo ID, read albedo message
-    if (this->albedoInMsgId >= 0) {
-        AlbedoSimMsg albMsgData;
-        messagingSystem->ReadMessage(this->albedoInMsgId, &localHeader, sizeof(AlbedoSimMsg),
-            reinterpret_cast<uint8_t*> (&albMsgData), this->moduleID);
+    if (this->albedoInMsg.isLinked()) {
+        AlbedoMsgPayload albMsgData;
+        albMsgData = this->albedoInMsg();
         this->albedoValue = albMsgData.albedoAtInstrument;
     }
 }
@@ -327,23 +284,20 @@ void CoarseSunSensor::applySaturation()
  @param Clock The current simulation time*/
 void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
-    if (this->cssDataOutMsgID >= 0) {
-        CSSRawDataSimMsg localMessage;
+    if (this->cssDataOutMsg.isLinked()) {
+        CSSRawDataMsgPayload localMessage;
         //! - Zero the output message
-        memset(&localMessage, 0x0, sizeof(CSSRawDataSimMsg));
+        localMessage = this->cssDataOutMsg.zeroMsgPayload();
         //! - Set the outgoing data to the scaled computation
         localMessage.OutputData = this->sensedValue;
         //! - Write the outgoing message to the architecture
-        SystemMessaging::GetInstance()->WriteMessage(this->cssDataOutMsgID, Clock,
-            sizeof(CSSRawDataSimMsg),
-            reinterpret_cast<uint8_t*> (&localMessage),
-            this->moduleID);
+        this->cssDataOutMsg.write(&localMessage, this->moduleID, Clock);
     }
 
     // create CSS configuration log message
-    if (this->cssConfigLogMsgId >= 0) {
-        CSSConfigLogSimMsg configMsg;
-        memset(&configMsg, 0x0, sizeof(CSSConfigLogSimMsg));
+    if (this->cssConfigLogOutMsg.isLinked()) {
+        CSSConfigLogMsgPayload configMsg;
+        configMsg = this->cssConfigLogOutMsg.zeroMsgPayload();
         configMsg.fov = this->fov;
         configMsg.signal = this->sensedValue;
         configMsg.minSignal = this->minOutput;
@@ -354,10 +308,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
         eigenVector3d2CArray(this->r_B, configMsg.r_B);
         eigenVector3d2CArray(this->nHat_B, configMsg.nHat_B);
 
-        SystemMessaging::GetInstance()->WriteMessage(this->cssConfigLogMsgId, Clock,
-            sizeof(CSSConfigLogSimMsg),
-            reinterpret_cast<uint8_t*> (&configMsg),
-            this->moduleID);
+        this->cssConfigLogOutMsg.write(&configMsg, this->moduleID, Clock);
     }
 }
 
@@ -388,7 +339,6 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
 CSSConstellation::CSSConstellation()
 {
     this->sensorList.clear();
-    this->outputBufferCount = 2;
 }
 
 /*! The default destructor for the constellation just clears the sensor list.*/
@@ -401,32 +351,28 @@ CSSConstellation::~CSSConstellation()
  all of them.*/
 void CSSConstellation::SelfInit()
 {
-    std::vector<CoarseSunSensor>::iterator it;
-
-    //! - Loop over the sensor list and initialize all children
-    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
-    {
-        it->SelfInit();
-    }
-    
-    memset(&this->outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    //! - Create the output message sized to the number of sensors
-    outputConstID = SystemMessaging::GetInstance()->CreateNewMessage(outputConstellationMessage,
-                     sizeof(CSSArraySensorIntMsg), this->outputBufferCount,
-                     "CSSArraySensorIntMsg", this->moduleID);
 }
 
 /*! This method loops through the sensor list and calls the CrossInit method for 
  all of those sensors.*/
 void CSSConstellation::CrossInit()
 {
-    std::vector<CoarseSunSensor>::iterator it;
+}
 
+/*! This method is used to reset the module.
+ @param CurrentSimNanos The current simulation time from the architecture
+ @return void */
+void CSSConstellation::Reset(uint64_t CurrentSimNanos)
+{
+    std::vector<CoarseSunSensor>::iterator it;
     //! - Loop over the sensor list and initialize all children
     for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
-        it->CrossInit();
+        it->Reset(CurrentSimNanos);
     }
+
+    this->outputBuffer = this->constellationOutMsg.zeroMsgPayload();
+
 }
 
 void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
@@ -446,12 +392,10 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
 
         this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
-    SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
-                                                 sizeof(CSSArraySensorIntMsg),
-                                                 reinterpret_cast<uint8_t *>(&outputBuffer));
+    this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, CurrentSimNanos);
 }
 
-void CSSConstellation::appendCSS(CoarseSunSensor newSensor) {
-    sensorList.push_back(newSensor);
+void CSSConstellation::appendCSS(CoarseSunSensor *newSensor) {
+    sensorList.push_back(*newSensor);
     return;
 }

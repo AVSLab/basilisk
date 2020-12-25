@@ -22,7 +22,7 @@
 #include "vizInterface.h"
 #include "utilities/macroDefinitions.h"
 #include "messaging/system_messaging.h"
-#include "sensors/sun_sensor/coarse_sun_sensor.h"
+//#include "sensors/coarseSunSensor/coarseSunSensor.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>

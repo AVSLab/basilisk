@@ -94,6 +94,9 @@ This list makes it simple to see what naming will need to be changed.
     | clock_synch  →            |  ``clockOutputName``            |  ``clockOutMsg``                  |
     | ``simSynch``              |                                 |                                   |
     +---------------------------+---------------------------------+-----------------------------------+
+    | ``coarse_sun_sensor`` →   | ``outputConstellationMessage``  | ``constellationOutMsg``           |
+    |  ``coarseSunSensor``      +---------------------------------+-----------------------------------+
+    |                           | ``cssConfigLogMsgName``         | ``cssConfigLogOutMsg``            |
     +---------------------------+---------------------------------+-----------------------------------+
     | cssComm                   | ``SensorListName``              | ``sensorListInMsg``               |
     +                           +---------------------------------+-----------------------------------+

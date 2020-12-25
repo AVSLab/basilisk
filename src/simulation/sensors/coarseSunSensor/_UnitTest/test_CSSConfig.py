@@ -17,10 +17,6 @@
 #
 
 
-
-import sys
-import os
-import numpy as np
 import pytest
 
 # import general simulation support files
@@ -28,8 +24,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 
 from Basilisk.utilities import macros
-from Basilisk.simulation import coarse_sun_sensor
-from Basilisk.simulation import simMessages
+from Basilisk.simulation import coarseSunSensor
+from Basilisk.architecture import messaging2
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
@@ -73,71 +69,64 @@ def run(show_plots, accuracy):
 
 
     # create the CSS modules
-    CSS1 = coarse_sun_sensor.CoarseSunSensor()
+    CSS1 = coarseSunSensor.CoarseSunSensor()
     CSS1.ModelTag = "CSS1"
     CSS1.fov = 80. * macros.D2R
     CSS1.maxOutput = 10.
-    CSS1.cssDataOutMsgName = "CSS1_output"
-    CSS1.sunInMsgName = "sun_message"
     # CSS1.cssConfigLogMsgName is not set to check default behavior
     CSS1.nHat_B = [1.0, 0.0, 0.0]
-    CSS1.cssConfigLogMsgName = "CSS1_config_log"
 
-    CSS2 = coarse_sun_sensor.CoarseSunSensor()
+    CSS2 = coarseSunSensor.CoarseSunSensor()
     CSS2.ModelTag = "CSS2"
     CSS2.r_B = [1., 2., 3.]
     CSS2.fov = 70. * macros.D2R
     CSS2.minOutput = 1.0
     CSS2.maxOutput = 20.
-    CSS2.cssDataOutMsgName = "CSS2_output"
-    CSS2.sunInMsgName = "sun_message"
-    CSS2.cssConfigLogMsgName = "CSS2_custom"
     CSS2.nHat_B = [0.0, -1.0, 0.0]
     CSS2.CSSGroupID = 1
 
     scSim.AddModelToTask(simTaskName, CSS1)
     scSim.AddModelToTask(simTaskName, CSS2)
 
-    scSim.TotalSim.logThisMessage(CSS1.cssConfigLogMsgName, simulationTimeStep)
-    scSim.TotalSim.logThisMessage(CSS2.cssConfigLogMsgName, simulationTimeStep)
-
+    dataLog1 = CSS1.cssConfigLogOutMsg.log()
+    dataLog2 = CSS2.cssConfigLogOutMsg.log()
+    scSim.AddModelToTask(simTaskName, dataLog1)
+    scSim.AddModelToTask(simTaskName, dataLog2)
 
     # create sun position input message
-    sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
+    sunPositionMsg = messaging2.SpicePlanetStateMsgPayload()
     sunPositionMsg.PositionVector = [0.0, 0.0, 0.0]
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               CSS1.sunInMsgName,
-                               sunPositionMsg)
+    sunMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsg)
+    CSS1.sunInMsg.subscribeTo(sunMsg)
+    CSS2.sunInMsg.subscribeTo(sunMsg)
 
     # create spacecraft state message
-    scStateMsg = simMessages.SCPlusStatesSimMsg()
+    scStateMsg = messaging2.SCPlusStatesMsgPayload()
     scStateMsg.r_BN_N = [-10.0, 0.0, 0.0]
     scStateMsg.sigma_BN = [0.0, 0.0, 0.0]
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               CSS1.stateInMsgName,
-                               scStateMsg)
+    scMsg = messaging2.SCPlusStatesMsg().write(scStateMsg)
+    CSS1.stateInMsg.subscribeTo(scMsg)
+    CSS2.stateInMsg.subscribeTo(scMsg)
 
     scSim.InitializeSimulationAndDiscover()
     scSim.TotalSim.SingleStepProcesses()
 
     # pull logged data
-    dataCSS1pos = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".r_B", list(range(3)))
-    dataCSS1nHat = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".nHat_B", list(range(3)))
-    dataCSS1fov = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".fov", list(range(1)))
-    dataCSS1signal = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".signal", list(range(1)))
-    dataCSS1maxSignal = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".maxSignal", list(range(1)))
-    dataCSS1minSignal = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".minSignal", list(range(1)))
-    dataCSS1CSSGroupID = scSim.pullMessageLogData(CSS1.cssConfigLogMsgName + ".CSSGroupID", list(range(1)))
+    dataCSS1pos = dataLog1.r_B
+    dataCSS1nHat = dataLog1.nHat_B
+    dataCSS1fov = dataLog1.fov
+    dataCSS1signal = dataLog1.signal
+    dataCSS1maxSignal = dataLog1.maxSignal
+    dataCSS1minSignal = dataLog1.minSignal
+    dataCSS1CSSGroupID = dataLog1.CSSGroupID
 
-    dataCSS2pos = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".r_B", list(range(3)))
-    dataCSS2nHat = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".nHat_B", list(range(3)))
-    dataCSS2fov = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".fov", list(range(1)))
-    dataCSS2signal = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".signal", list(range(1)))
-    dataCSS2minSignal = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".minSignal", list(range(1)))
-    dataCSS2maxSignal = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".maxSignal", list(range(1)))
-    dataCSS2CSSGroupID = scSim.pullMessageLogData(CSS2.cssConfigLogMsgName + ".CSSGroupID", list(range(1)))
+    dataCSS2pos = dataLog2.r_B
+    dataCSS2nHat = dataLog2.nHat_B
+    dataCSS2fov = dataLog2.fov
+    dataCSS2signal = dataLog2.signal
+    dataCSS2maxSignal = dataLog2.maxSignal
+    dataCSS2minSignal = dataLog2.minSignal
+    dataCSS2CSSGroupID = dataLog2.CSSGroupID
 
     # check CSS 1 output
     testFailCount, testMessages = unitTestSupport.compareArray([[0., 0., 0.]], dataCSS1pos,

@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module coarse_sun_sensor
+%module coarseSunSensor
 %{
-   #include "coarse_sun_sensor.h"
+   #include "coarseSunSensor.h"
 %}
 
 %include "swig_conly_data.i"
@@ -27,27 +27,27 @@
 %include "std_string.i"
 %feature("copyctor");
 
+%include "sys_model.h"
+%include "coarseSunSensor.h"
+
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/CSSRawDataMsgPayload.h"
+struct CSSRawDataMsg_C;
+%include "msgPayloadDefC/AlbedoMsgPayload.h"
+struct AlbedoMsg_C;
+%include "msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
+%include "msgPayloadDefC/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+
+%include "msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+
 namespace std {
     %template(CSSVector) vector<CoarseSunSensor>;
 }
-
-%include "sys_model.h"
-%include "coarse_sun_sensor.h"
-
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/cssRawDataSimMsg.h"
-%include "../../simMessages/cssConfigLogSimMsg.h"
-%include "../../simMessages/albedoSimMsg.h"
-%include "../../simMessages/eclipseSimMsg.h"
-%include "../../simFswInterfaceMessages/cssArraySensorIntMsg.h"
-GEN_SIZEOF(CSSRawDataSimMsg);
-GEN_SIZEOF(AlbedoSimMsg);
-GEN_SIZEOF(EclipseSimMsg);
-GEN_SIZEOF(CSSArraySensorIntMsg);
-GEN_SIZEOF(CSSConfigLogSimMsg);
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
 
 %pythoncode %{
 import sys

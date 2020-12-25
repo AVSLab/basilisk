@@ -86,15 +86,9 @@ $$
 are used. minOutput is  0 by default and maxOutput is 1,000,000 by default.
 
 \subsection{Connecting Messages}
-Of the three possible input messages to the CSS module, the following message inputs are required for the module to properly operate:
-$$
-	{\tt SpicePlanetStateSimMsg} \\
-	{\tt SCPlusStatesSimMsg}
-$$
-The first message is used to know the sun heading vector, while the second message provides the spacecraft inertial orientation,
+If the {\tt EclipseSimMsg} is connected, then the solar eclipse information is taking into account.  The eclipse info provides 0 if the spacecraft is fully in a planet's shadow, 1 if in free space fully exposed to the, and a value between (0,1) if in the penumbra region.  The cosine sensor value $\hat\gamma$ is scaled by this eclipse value.  If the message is not connected, then this value default to 1, thus simulating a spacecraft that is fully exposed to the sun.  
 
-The last message is optional.  If the {\tt EclipseSimMsg} is connected, then the solar eclipse information is taking into account.  The eclipse info provides 0 if the spacecraft is fully in a planet's shadow, 1 if in free space fully exposed to the, and a value between (0,1) if in the penumbra region.  The cosine sensor value $\hat\gamma$ is scaled by this eclipse value.  If the message is not connected, then this value default to 1, thus simulating a spacecraft that is fully exposed to the sun.  
-
+If the optional albedo message is connected, then its information is included in the CSS sensor data evaluation.
 
 \subsection{Auxiliary Parameters}
 The following module variables can be set, but they are not currently used by the CSS module itself.  These are used however in the Vizard visualization.  
