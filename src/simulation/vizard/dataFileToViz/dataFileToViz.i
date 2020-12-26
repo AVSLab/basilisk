@@ -33,6 +33,13 @@ from Basilisk.architecture.swig_common_model import *
 %include "dataFileToViz.h"
 %include "../_GeneralModuleFiles//vizStructures.h"
 
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
+%include "msgPayloadDefCpp/THROutputMsgPayload.h"
+
+
 // Instantiate templates used by example
 namespace std {
     %template(VizThrConfig) vector<ThrClusterMap>;

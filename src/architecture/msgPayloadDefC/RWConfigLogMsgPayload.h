@@ -17,8 +17,8 @@
 
  */
 
-#ifndef SIM_RW_CONFIG_LOG_MESSAGE_H
-#define SIM_RW_CONFIG_LOG_MESSAGE_H
+#ifndef SIM_RW_CONFIG_LOG_MESSAGE2_H
+#define SIM_RW_CONFIG_LOG_MESSAGE2_H
 
 #include "dynamics/reactionWheels/reactionWheelSupport.h"
 

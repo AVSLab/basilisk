@@ -146,6 +146,9 @@ typedef struct messageType;
 %template(AccessOutMsgsVector) std::vector<Message<AccessMsgPayload>>;
 %template(MagneticFieldOutMsgsVector) std::vector<Message<MagneticFieldMsgPayload>>;
 %template(AlbedoOutMsgsVector) std::vector<Message<AlbedoMsgPayload>>;
+%template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>>>;
+%template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>>>;
+
 
 %template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;

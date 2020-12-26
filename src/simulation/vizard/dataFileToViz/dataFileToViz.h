@@ -27,6 +27,12 @@
 #include "../_GeneralModuleFiles/vizStructures.h"
 #include <Eigen/Dense>
 
+#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "msgPayloadDefCpp/THROutputMsgPayload.h"
+#include "messaging2/messaging2.h"
+
+
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
 */
@@ -42,11 +48,12 @@ public:
     void appendThrDir(double dir_B[3]);
     void appendThrForceMax(double);
     void appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData);
-    void appendRwMsgNames(std::vector <std::string> rwMsgNameList);
     void appendRwPos(double pos_B[3]);
     void appendRwDir(double dir_B[3]);
     void appendOmegaMax(double);
     void appendUMax(double);
+    void setNumOfSatellites(int numSat);
+    void appendNumOfRWs(int numRW);
 
 
 private:
@@ -56,24 +63,21 @@ private:
 
 public:
     std::string dataFileName;                   //!< Name of the simulation data file
-    int numSatellites;                          //!< number of satellites being read in, default is 1
-    std::vector<std::string> scStateOutMsgNames;//!< vector of spacecraft state messages
+
+    std::vector<Message<SCPlusStatesMsgPayload>> scStateOutMsgs;//!< vector of spacecraft state messages
     std::string delimiter;                      //!< delimiter string that separates data on a line
     double convertPosToMeters;                  //!< conversion factor to meters
     bool headerLine;                            //!< [bool] flag to mark first line as a header
     int attitudeType;                           //!< 0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - (3-2-1) Euler angles
 
     std::vector <std::vector <ThrClusterMap>> thrMsgDataSC;  //!< (Optional) vector of sets of thruster cluster mapping info
-    std::vector <std::vector <std::string>> rwMsgOutNamesSC; //!< (Optional) vector of sets of RW msg names, each entry is per SC
+    std::vector <std::vector <Message<THROutputMsgPayload>>> thrScOutMsgs;  //!< vector of spacecraft thruster output message vectors
+    std::vector <std::vector <Message<RWConfigLogMsgPayload>>> rwScOutMsgs; //!< (Optional) vector of sets of RW msg names, each entry is per SC
 
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
-    uint64_t OutputBufferCount;                 //!< number of output buffers for messaging system
 
 
 private:
-    std::vector<int64_t>  scStateOutMsgIds;     //!< vector of spacecraft module output message IDs
-    std::vector<int64_t>  thrMsgIds;            //!< vector of thruster module output message IDs
-    std::vector<int64_t>  rwMsgIds;             //!< vector of RW output message IDs
     std::ifstream *fileHandle;                  //!< file handle to the simulation data input file
     std::vector <Eigen::Vector3d> thrPosList;   //!< [m] vector of thrust positions
     std::vector <Eigen::Vector3d> thrDirList;   //!< [-] vector of thrust unit direction vectors in B-frame components
@@ -82,6 +86,8 @@ private:
     std::vector <Eigen::Vector3d> rwDirList;    //!< [-] vector of RW sprin axis unit direction vectors in B-frame components
     std::vector <double> rwOmegaMaxList;        //!< [r/s] vector of RW maximum spin rate values
     std::vector <double> rwUMaxList;            //!< [N] vector of RW maximum motor torque values values
+    int numRW = 0;                              //!< -- number of RWs across all spacecraft
+    int numThr = 0;                             //!< -- number of Thrusters across all spacecraft
 };
 
 #endif /* VIZ_DATAFILETOVIZ_H */
