@@ -138,6 +138,8 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     singleCss.maxOutput = maxIn
     singleCss.nHat_B = np.array([1., 0., 0.])
     unitTestSim.AddModelToTask(testTaskName, singleCss)
+    # note that the CSS message connections must be made before adding them to vector of CSS units
+    # in the constellation class below
     singleCss.sunInMsg.subscribeTo(sunMsg)
     singleCss.stateInMsg.subscribeTo(scMsg)
     singleCss.sunEclipseInMsg.subscribeTo(ecMsg)
