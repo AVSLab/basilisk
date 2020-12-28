@@ -170,13 +170,12 @@ def run(show_plots, orbitCase, setEpoch):
         "ap_3_-57","f107_1944_0","f107_24_-24"
     ]
 
-    c = 0
-    for swName in sw_msg_names:
-        msgData = messaging2.SwDataMsgPayload()
-        msgData.dataValue = 0.
-        swMsg = messaging2.SwDataMsg().write(msgData)
-        newAtmo.swDataInMsgs[c].subscribeTo(swMsg)
-        c = c + 1
+    swMsgList = []
+    for c in range(len(sw_msg_names)):
+        swMsgData = messaging2.SwDataMsgPayload()
+        swMsgData.dataValue = 0
+        swMsgList.append(messaging2.SwDataMsg().write(swMsgData))
+        newAtmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
 
     numDataPoints = 2
     samplingTime = int(simulationTime / (numDataPoints-1))

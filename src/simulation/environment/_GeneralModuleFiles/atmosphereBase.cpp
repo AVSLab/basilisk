@@ -128,6 +128,9 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
         EpochMsgPayload epochMsg;
+        if (!this->epochInMsg.isWritten()) {
+            bskLogger.bskLog(BSK_ERROR, "An un-written epoch msg was linked in!");
+        }
         epochMsg = this->epochInMsg();
         this->epochDateTime.tm_year = epochMsg.year - 1900;
         this->epochDateTime.tm_mon = epochMsg.month - 1;
@@ -297,7 +300,7 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
         //! - check if radius is in permissible range
         if(this->orbitAltitude > this->envMinReach &&
            (this->orbitAltitude < this->envMaxReach || this->envMaxReach < 0)) {
-            //! - compute the local magnetic field.  The evaluateMageticFieldModel() method must be implement for each model
+            //! - compute the local atmosphere data.  The evaluateMageticFieldModel() method must be implement for each model
             evaluateAtmosphereModel(&(*envMsgIt), currentTime);
         }
     }
