@@ -23,7 +23,6 @@
 #include "cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
 
-#include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "architecture/utilities/bskLogging.h"
 
 #define MAX_OE_RECORDS 10

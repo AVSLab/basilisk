@@ -21,7 +21,7 @@
 #define _RW_AVAILABILITY_FSW_MSG_H
 
 #include <stdint.h>
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "utilities/macroDefinitions.h"
 
 

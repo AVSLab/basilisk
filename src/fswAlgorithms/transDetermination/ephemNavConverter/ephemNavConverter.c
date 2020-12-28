@@ -20,7 +20,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include "transDetermination/ephemNavConverter/ephemNavConverter.h"
+#include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverter.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 

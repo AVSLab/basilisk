@@ -17,7 +17,7 @@
 
  */
 
-#include "attDetermination/sunlineEKF/sunlineEKF.h"
+#include "fswAlgorithms/attDetermination/sunlineEKF/sunlineEKF.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

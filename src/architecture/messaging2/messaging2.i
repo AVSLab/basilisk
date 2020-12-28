@@ -28,8 +28,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "utilities/macroDefinitions.h"
-%include "fswUtilities/fswDefinitions.h"
-%include "dynamics/reactionWheels/reactionWheelSupport.h"
+%include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
 ARRAYASLIST(FSWdeviceAvailability)
 STRUCTASLIST(CSSUnitConfigMsgPayload)

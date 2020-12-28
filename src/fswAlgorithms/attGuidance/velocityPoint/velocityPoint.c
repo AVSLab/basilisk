@@ -23,10 +23,10 @@
  */
 
 
-#include "attGuidance/velocityPoint/velocityPoint.h"
+#include "fswAlgorithms/attGuidance/velocityPoint/velocityPoint.h"
 #include <string.h>
 #include <math.h>
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */

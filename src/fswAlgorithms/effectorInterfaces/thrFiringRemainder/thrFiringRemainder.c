@@ -21,8 +21,7 @@
  
  */
 
-#include "effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
 #include "utilities/macroDefinitions.h"
 #include <stdio.h>
 #include <string.h>

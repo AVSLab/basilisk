@@ -17,8 +17,8 @@
 
  */
 
-#include "attDetermination/sunlineSuKF/sunlineSuKF.h"
-#include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+#include "fswAlgorithms/attDetermination/sunlineSuKF/sunlineSuKF.h"
+#include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

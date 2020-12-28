@@ -17,7 +17,7 @@
 
  */
 
-#include "dvGuidance/dvExecuteGuidance/dvExecuteGuidance.h"
+#include "fswAlgorithms/dvGuidance/dvExecuteGuidance/dvExecuteGuidance.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

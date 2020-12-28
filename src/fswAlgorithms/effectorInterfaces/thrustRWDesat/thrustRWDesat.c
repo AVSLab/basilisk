@@ -17,7 +17,7 @@
 
  */
 
-#include "effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
+#include "fswAlgorithms/effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

@@ -22,9 +22,9 @@
  */
 
 
-#include "attGuidance/hillPoint/hillPoint.h"
+#include "fswAlgorithms/attGuidance/hillPoint/hillPoint.h"
 #include <string.h>
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */

@@ -17,7 +17,7 @@
 
  */
 
-#include "attDetermination/okeefeEKF/okeefeEKF.h"
+#include "fswAlgorithms/attDetermination/okeefeEKF/okeefeEKF.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

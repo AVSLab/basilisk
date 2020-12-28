@@ -17,7 +17,7 @@
 
  */
 
-#include "sensorInterfaces/CSSSensorData/cssComm.h"
+#include "fswAlgorithms/sensorInterfaces/CSSSensorData/cssComm.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdio.h> 

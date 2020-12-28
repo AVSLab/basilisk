@@ -21,7 +21,7 @@
  
  */
 
-#include "attControl/mrpPD/mrpPD.h"
+#include "fswAlgorithms/attControl/mrpPD/mrpPD.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>

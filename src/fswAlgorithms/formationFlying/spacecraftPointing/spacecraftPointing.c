@@ -19,7 +19,7 @@
 
 #include <string.h>
 #include <math.h>
-#include "formationFlying/spacecraftPointing/spacecraftPointing.h"
+#include "fswAlgorithms/formationFlying/spacecraftPointing/spacecraftPointing.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

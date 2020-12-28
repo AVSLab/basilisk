@@ -18,7 +18,7 @@
  */
 #include <string.h>
 #include <math.h>
-#include "attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
+#include "fswAlgorithms/attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

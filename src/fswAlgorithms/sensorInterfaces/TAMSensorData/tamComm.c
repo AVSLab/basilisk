@@ -17,7 +17,7 @@
 
  */
 
-#include "sensorInterfaces/TAMSensorData/tamComm.h"
+#include "fswAlgorithms/sensorInterfaces/TAMSensorData/tamComm.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"

@@ -17,7 +17,7 @@
 
  */
 
-#include "attDetermination/CSSEst/cssWlsEst.h"
+#include "fswAlgorithms/attDetermination/CSSEst/cssWlsEst.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>

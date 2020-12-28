@@ -21,7 +21,7 @@
  
  */
 
-#include "attControl/mrpSteering/mrpSteering.h"
+#include "fswAlgorithms/attControl/mrpSteering/mrpSteering.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/astroConstants.h"

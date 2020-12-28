@@ -21,8 +21,7 @@
  
  */
 
-#include "effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
 #include "utilities/macroDefinitions.h"
 #include <stdio.h>
 #include <string.h>

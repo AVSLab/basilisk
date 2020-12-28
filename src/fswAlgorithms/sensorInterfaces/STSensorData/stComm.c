@@ -17,7 +17,7 @@
 
  */
 
-#include "sensorInterfaces/STSensorData/stComm.h"
+#include "fswAlgorithms/sensorInterfaces/STSensorData/stComm.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

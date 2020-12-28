@@ -17,8 +17,8 @@
 
  */
 
-#include "transDetermination/chebyPosEphem/chebyPosEphem.h"
-#include "transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
+#include "fswAlgorithms/transDetermination/chebyPosEphem/chebyPosEphem.h"
+#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include <math.h>

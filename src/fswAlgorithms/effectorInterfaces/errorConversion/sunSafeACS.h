@@ -22,8 +22,8 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "effectorInterfaces/errorConversion/dvAttEffect.h"
-#include "../_GeneralModuleFiles/thrustGroupData.h"
+#include "fswAlgorithms/effectorInterfaces/errorConversion/dvAttEffect.h"
+#include "fswAlgorithms/effectorInterfaces/_GeneralModuleFiles/thrustGroupData.h"
 
 #include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"

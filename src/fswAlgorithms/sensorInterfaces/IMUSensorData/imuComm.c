@@ -17,7 +17,7 @@
 
  */
 
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
+#include "fswAlgorithms/sensorInterfaces/IMUSensorData/imuComm.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>

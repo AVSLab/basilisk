@@ -17,7 +17,7 @@
 
  */
 
-#include "effectorInterfaces/errorConversion/dvAttEffect.h"
+#include "fswAlgorithms/effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>

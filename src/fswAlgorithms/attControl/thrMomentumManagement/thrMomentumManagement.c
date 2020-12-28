@@ -21,7 +21,7 @@
  
  */
 
-#include "attControl/thrMomentumManagement/thrMomentumManagement.h"
+#include "fswAlgorithms/attControl/thrMomentumManagement/thrMomentumManagement.h"
 #include "utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>

@@ -19,7 +19,7 @@
 
 #include <string.h>
 #include <math.h>
-#include "attGuidance/sunSafePoint/sunSafePoint.h"
+#include "fswAlgorithms/attGuidance/sunSafePoint/sunSafePoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/astroConstants.h"

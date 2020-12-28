@@ -22,9 +22,9 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "attGuidance/inertial3D/inertial3D.h"
+#include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
 #include <string.h>
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "utilities/macroDefinitions.h"
 
 

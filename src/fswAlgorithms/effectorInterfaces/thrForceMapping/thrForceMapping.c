@@ -20,7 +20,7 @@
     Simple Thruster Force Evaluation from
  */
 
-#include "effectorInterfaces/thrForceMapping/thrForceMapping.h"
+#include "fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>

@@ -21,7 +21,7 @@
  
  */
 
-#include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
+#include "fswAlgorithms/effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
 #include "utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>

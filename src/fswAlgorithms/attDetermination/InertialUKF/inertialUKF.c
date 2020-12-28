@@ -19,8 +19,8 @@
 
 #include <string.h>
 #include <math.h>
-#include "attDetermination/InertialUKF/inertialUKF.h"
-#include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+#include "fswAlgorithms/attDetermination/InertialUKF/inertialUKF.h"
+#include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

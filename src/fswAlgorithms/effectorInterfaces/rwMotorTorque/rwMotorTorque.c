@@ -21,7 +21,7 @@
  
  */
 
-#include "effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
+#include "fswAlgorithms/effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 #include "utilities/macroDefinitions.h"
 #include <string.h>
 #include "architecture/utilities/linearAlgebra.h"

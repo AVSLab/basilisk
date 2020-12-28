@@ -17,9 +17,9 @@
 
  */
 
-#include "transDetermination/oeStateEphem/oeStateEphem.h"
-#include "transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
-#include "transDetermination/chebyPosEphem/chebyPosEphem.h"
+#include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
+#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
+#include "fswAlgorithms/transDetermination/chebyPosEphem/chebyPosEphem.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"

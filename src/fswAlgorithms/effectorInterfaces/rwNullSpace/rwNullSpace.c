@@ -17,7 +17,7 @@
 
  */
 
-#include "effectorInterfaces/rwNullSpace/rwNullSpace.h"
+#include "fswAlgorithms/effectorInterfaces/rwNullSpace/rwNullSpace.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

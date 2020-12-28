@@ -21,10 +21,10 @@
  
  */
 
-#include "attGuidance/mrpRotation/mrpRotation.h"
+#include "fswAlgorithms/attGuidance/mrpRotation/mrpRotation.h"
 #include <string.h>
 #include <math.h>
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */

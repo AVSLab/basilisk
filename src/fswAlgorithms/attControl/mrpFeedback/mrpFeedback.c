@@ -22,7 +22,7 @@
 
  */
 
-#include "attControl/mrpFeedback/mrpFeedback.h"
+#include "fswAlgorithms/attControl/mrpFeedback/mrpFeedback.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "utilities/macroDefinitions.h"

@@ -20,7 +20,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include "transDetermination/ephemDifference/ephemDifference.h"
+#include "fswAlgorithms/transDetermination/ephemDifference/ephemDifference.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 

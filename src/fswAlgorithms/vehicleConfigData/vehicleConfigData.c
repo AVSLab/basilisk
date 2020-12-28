@@ -18,7 +18,7 @@
  */
 
 #include "utilities/macroDefinitions.h"
-#include "vehicleConfigData/vehicleConfigData.h"
+#include "fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 

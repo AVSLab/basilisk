@@ -17,7 +17,7 @@
 
  */
 
-#include "effectorInterfaces/errorConversion/sunSafeACS.h"
+#include "fswAlgorithms/effectorInterfaces/errorConversion/sunSafeACS.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>

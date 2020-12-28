@@ -21,7 +21,7 @@
 #define _THR_FIRING_SCHMITT_H
 
 #include <stdint.h>
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
 #include "cMsgCInterface/THRArrayConfigMsg_C.h"
 #include "cMsgCInterface/THRArrayCmdForceMsg_C.h"

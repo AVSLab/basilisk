@@ -109,7 +109,7 @@ function(sub_dir_list result curdir)
 endfunction(sub_dir_list)
 
 # add header search directories
-include_directories("${CMAKE_SOURCE_DIR}/fswAlgorithms")
+#include_directories("${CMAKE_SOURCE_DIR}/fswAlgorithms")
 include_directories("${CMAKE_SOURCE_DIR}/simulation")
 include_directories("${CMAKE_SOURCE_DIR}/architecture")
 include_directories("${CMAKE_SOURCE_DIR}/../dist3/autoSource")

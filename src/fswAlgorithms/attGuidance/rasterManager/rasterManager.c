@@ -24,11 +24,11 @@
  
  */
 
-#include "attGuidance/rasterManager/rasterManager.h"
+#include "fswAlgorithms/attGuidance/rasterManager/rasterManager.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */

@@ -17,7 +17,7 @@
 
  */
 
-#include "transDetermination/dvAccumulation/dvAccumulation.h"
+#include "fswAlgorithms/transDetermination/dvAccumulation/dvAccumulation.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
