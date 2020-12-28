@@ -27,11 +27,6 @@
 #include "../_GeneralModuleFiles/vizStructures.h"
 #include <Eigen/Dense>
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "msgPayloadDefCpp/THROutputMsgPayload.h"
-#include "messaging2/messaging2.h"
-
 
 
 /*! Defines a data structure for the spacecraft state messages and ID's.

@@ -46,8 +46,27 @@ namespace std {
 
 %include "vizInterface.h"
 %include "../_GeneralModuleFiles/vizStructures.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-GEN_SIZEOF(ThrClusterMap);
+
+%include "msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
+%include "msgPayloadDefC/STSensorMsgPayload.h"
+struct STSensorMsg_C;
+%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+struct SCPlusStatesMsg_C;
+%include "msgPayloadDefC/CameraImageMsgPayload.h"
+struct CameraImageMsg_C;
+%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "msgPayloadDefC/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "msgPayloadDefC/EpochMsgPayload.h"
+struct EpochMsg_C;
+
+%include "msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+%include "msgPayloadDefCpp/THROutputMsgPayload.h"
+
 
 %pythoncode %{
 import sys

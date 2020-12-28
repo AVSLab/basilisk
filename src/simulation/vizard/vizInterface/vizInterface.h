@@ -26,20 +26,17 @@
 #include <zmq.h>
 
 #include "_GeneralModuleFiles/sys_model.h"
-#include "messaging/system_messaging.h"
-#include "simFswInterfaceMessages/stSensorIntMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simFswInterfaceMessages/cameraImageMsg.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/rwConfigLogSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/cssConfigLogSimMsg.h"
-#include "simMessages/thrOutputSimMsg.h"
-#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "utilities/bskLogging.h"
-#include "simMessages/epochSimMsg.h"
-#include "utilities/simDefinitions.h"
 #include "../_GeneralModuleFiles/vizStructures.h"
+
+#include "msgPayloadDefC/CameraConfigMsgPayload.h"
+#include "msgPayloadDefC/CameraImageMsgPayload.h"
+#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "msgPayloadDefC/RWSpeedMsgPayload.h"
+#include "msgPayloadDefC/EpochMsgPayload.h"
+#include "messaging2/messaging2.h"
+
+#include "utilities/bskLogging.h"
+#include "utilities/simDefinitions.h"
 
 #define VIZ_MAX_SIZE 100000
 
@@ -58,11 +55,14 @@ public:
     void ReadBSKMessages();
     void WriteProtobuffer(uint64_t CurrentSimNanos);
 
+    void setNumCSS(VizSpacecraftData *scData, int num);
+    void setNumRW(VizSpacecraftData *scData, int num);
+    void setNumTHR(VizSpacecraftData *scData, std::vector <ThrClusterMap> thrClusterList);
+
 public:
     std::vector<VizSpacecraftData> scData;      //!< [-] vector of spacecraft data containers
-    std::vector <std::string> spiceInMsgName;   //!< [-] Name of the incoming Spice data
-    std::vector<LocationPbMsg> locations;       //!< [] vector of ground or spacecraft locations
-    std::string opnavImageOutMsgName;           //!< The name of the Image output message
+    std::vector <ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;   //!< [-] vector of input messages of planet Spice data
+    Message<CameraImageMsgPayload> opnavImageOutMsg;  //!< Image output message
     int opNavMode;                              /*!< [int] Set non-zero positive value  if Unity/Viz couple in direct
                                                  communication. (1 - regular opNav, 2 - performance opNav) */
     bool saveFile;                              //!< [Bool] Set True if Vizard should save a file of the data.
@@ -70,14 +70,10 @@ public:
     void* bskImagePtr;                          /*!< [RUN] Permanent pointer for the image to be used in BSK
                                                      without relying on ZMQ because ZMQ will free it (whenever, who knows) */
 
-    std::string cameraConfInMsgName = "camera_config_data";     //!< [-] Name of the incoming camera data
-    MsgCurrStatus cameraConfMsgId;                              //!< [-] ID of the incoming camera  data
-    CameraConfigMsg cameraConfigMessage;                        //!< [-] Camera config
-    
-    std::vector <std::string> planetNames;      //!< Vector of planet names we want to track, read in from python
-
-    uint64_t numOutputBuffers;                  //!< [-] Number of buffers to request for the output messages
-    
+    ReadFunctor<CameraConfigMsgPayload> cameraConfInMsg;        //!< [-] msg of incoming camera data
+    MsgCurrStatus cameraConfMsgStatus;                          //!< [-] msg status of incoming camera data
+    CameraConfigMsgPayload cameraConfigBuffer;                 //!< [-] Camera config buffer
+        
     int64_t FrameNumber;                        //!< Number of frames that have been updated for TimeStamp message
     std::string protoFilename;                  //!< Filename for where to save the protobuff message
     VizSettings settings;                       //!< [-] container for the Viz settings that can be specified from BSK
@@ -86,9 +82,9 @@ public:
     std::string comAddress;                     //!< Communication address to use when connecting to Vizard
     std::string comPortNumber;                  //!< Communication port number to use when connecting to Vizard
     
-    std::string epochMsgName;                   //!< [-] name of the simulation epoch date/time msg
-    MsgCurrStatus epochMsgID;                   //!< [-] ID of the epoch msg
-    EpochSimMsg epochMsg;                       //!< [-] epoch msg data
+    ReadFunctor<EpochMsgPayload> epochInMsg;    //!< [-] simulation epoch date/time input msg
+    MsgCurrStatus epochMsgStatus;                   //!< [-] ID of the epoch msg
+    EpochMsgPayload epochMsgBuffer;                   //!< [-] epoch msg data
 
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
 
@@ -99,13 +95,9 @@ private:
     void* requester_socket;
     int firstPass;                                          //!< Flag to intialize the viz at first timestep
 
-    int32_t imageOutMsgID;                                  //!< ID for the outgoing Image message
-    std::vector<MsgCurrStatus>spiceInMsgID;                 //!< [-] IDs of the incoming planets' spice data
-    std::vector <SpicePlanetStateSimMsg> spiceMessage;      //!< [-] Spice messages
+    std::vector<MsgCurrStatus>spiceInMsgStatus;             //!< [-] status of the incoming planets' spice data messages
+    std::vector <SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
     std::ofstream *outputStream;                            //!< [-] Output file stream opened in reset
-    
-    std::map<uint32_t, SpicePlanetStateSimMsg> planetData;  //!< -- Internal vector of planets
-    
 };
 
 #endif /* VIZ_INTERFACE_H */
