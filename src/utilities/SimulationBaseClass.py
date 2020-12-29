@@ -366,8 +366,6 @@ class SimBaseClass:
             LogValue.clearItem()
         self.simulationInitialized = True
 
-    def InitializeSimulationAndDiscover(self):
-        self.InitializeSimulation()
 
     def ConfigureStopTime(self, TimeStop):
         self.StopTime = TimeStop
