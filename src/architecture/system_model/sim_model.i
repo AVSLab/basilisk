@@ -51,7 +51,6 @@ namespace std {
    %template(StringSet) set<string>;
    %template(intSet) set<unsigned long>;
    %template(ConstCharVector) vector<const char*>;
-   %template(messsageLogVector) vector<messageLogContainer>;
    %template() std::pair<long int, long int>;
    %template() std::pair<long long int, long long int>;
    %template() std::pair<int64_t, int64_t>;
@@ -83,7 +82,6 @@ namespace std {
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sys_interface.h"
-%include "architecture/utilities/message_logger.h"
 %include "../messaging/system_messaging.h"
 %include "architecture/utilities/linearAlgebra.h"
 %include "architecture/utilities/rigidBodyKinematics.h"

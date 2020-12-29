@@ -24,7 +24,6 @@
 #include <set>
 #include "architecture/system_model/sys_process.h"
 #include "architecture/messaging/system_messaging.h"
-#include "architecture/utilities/message_logger.h"
 #include "architecture/utilities/bskLogging.h"
 
 
@@ -47,16 +46,12 @@ public:
     void PrintSimulatedMessageData();  //!< Print out all messages that have been created
     void addNewProcess(SysProcess *newProc);
     uint64_t IsMsgCreated(std::string MessageName); //!< is message created 
-    uint64_t GetWriteData(std::string MessageName, uint64_t MaxSize,
-                          void *MessageData, VarAccessType logType = messageBuffer,
-                          uint64_t LatestOffset=0);  //!< Grab a particular MessageName with MaxSize limited
     void ResetSimulation();  //!< Reset simulation back to zero
     void WriteMessageData(std::string MessageName, uint64_t MessageSize,
                           uint64_t ClockTime, void *MessageData);  //!< Write in a single message
     void CreateNewMessage(std::string processName, std::string MessageName,
         uint64_t MessageSize, uint64_t NumBuffers=2,
         std::string messageStruct = "");  //!< Create a new message for use
-    void logThisMessage(std::string messageName, uint64_t messagePeriod=0);
     int64_t getNumMessages();  //!< Get number of messages in simulation
     std::string getMessageName(int64_t messageID);  //!< Get name for specified message ID
     MessageIdentData getMessageID(std::string messageName);  //!< Get the ID associated with message name
@@ -74,7 +69,6 @@ public:
     uint64_t CurrentNanos;  //!< [ns] Current sim time
     uint64_t NextTaskTime;  //!< [ns] time for the next Task
     int64_t nextProcPriority;  //!< [-] Priority level for the next process
-    messageLogger messageLogs;  //!< -- Message log data
 };
 
 #endif /* _SimModel_H_ */

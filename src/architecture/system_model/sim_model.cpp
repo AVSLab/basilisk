@@ -65,47 +65,7 @@ uint64_t SimModel::IsMsgCreated(std::string MessageName)
 
 }
 
-/*! This method exists to provide a hook into the messaging system for obtaining
- message data that was written in the simulation.
- @return uint64_t Message Write time that we got
- @param MessageName String name for the message we are querying
- @param MaxSize Maximum size of the message that we can pull
- @param MessageData A shapeshifting buffer that we can chunk data into
- @param logType log type variable
- @param LatestOffset An offset from the latest message to pull (default as zero)
- */
-uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
-                                void *MessageData, VarAccessType logType, uint64_t LatestOffset)
-{
-    MessageIdentData MessageID;
-    SingleMessageHeader DataHeader;
 
-    //! - Grab the message ID associated with name if it exists
-    MessageID = SystemMessaging::GetInstance()->messagePublishSearch(MessageName);
-    //! - If we got an invalid message ID back, alert the user and quit
-    if(!MessageID.itemFound)
-    {
-        bskLogger.bskLog(BSK_ERROR, "You requested a message name: %s that message does not exist.", MessageName.c_str());
-        return(0);
-    }
-    //! - For valid message names, get the data buffer associated with message
-    switch(logType)
-    {
-        case messageBuffer:
-            SystemMessaging::GetInstance()->
-                selectMessageBuffer(MessageID.processBuffer);
-            SystemMessaging::GetInstance()->ReadMessage(MessageID.itemID, &DataHeader, MaxSize, reinterpret_cast<uint8_t*> (MessageData), -1, LatestOffset);
-            break;
-        case logBuffer:
-            this->messageLogs.readLog(MessageID, &DataHeader,
-                                MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
-            break;
-        default:
-            bskLogger.bskLog(BSK_ERROR, "I don't know how to access the log type: %u", logType);
-            break;
-    }
-    return(DataHeader.WriteClockNanos);
-}
 
 /*! This method allows the user to attach a process to the simulation for
     execution.  Note that the priority level of the process determines what
@@ -226,11 +186,6 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
     }
     this->NextTaskTime = nextCallTime != ~((uint64_t) 0) ? nextCallTime : this->CurrentNanos;
     //! - If a message has been added to logger, link the message IDs
-    if(!this->messageLogs.messagesLinked())
-    {
-        this->messageLogs.linkMessages();
-    }
-    this->messageLogs.logAllMessages();
 }
 
 /*! This method steps the simulation until the specified stop time and
@@ -268,7 +223,6 @@ void SimModel::ResetSimulation()
     {
         (*it)->reInitProcess();
     }
-    this->messageLogs.clearLogs();
     this->CurrentNanos = 0;
     this->NextTaskTime = 0;
 }
@@ -327,18 +281,7 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
     SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, ClockTime,
                                                  MessageSize, reinterpret_cast<uint8_t*> (MessageData), -2);
 }
-/*! This method functions as a pass-through to the message logging structure
- when adding messages to log.  The main point is to serve as an API at the
- main simulation level without having to hook in the message logger
- somewhere else.
- @return void
- @param messageName The name of the message that we want to log
- @param messagePeriod The minimum time between messages to allow in ns
- */
-void SimModel::logThisMessage(std::string messageName, uint64_t messagePeriod)
-{
-    this->messageLogs.addMessageLog(messageName, messagePeriod);
-}
+
 
 /*! This method gets the current number of messages that have been created in
     the simulation.
