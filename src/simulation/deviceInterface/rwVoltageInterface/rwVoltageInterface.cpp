@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "deviceInterface/rwVoltageInterface/rwVoltageInterface.h"
+#include "simulation/deviceInterface/rwVoltageInterface/rwVoltageInterface.h"
 
 #include <iostream>
 #include <cstring>

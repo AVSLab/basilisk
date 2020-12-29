@@ -20,7 +20,7 @@
 #ifndef BASILISK_SIMPLEINSTRUMENT_H
 #define BASILISK_SIMPLEINSTRUMENT_H
 
-#include "onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
 
 /*! @brief simple instrument data handling class */
 class SimpleInstrument: public DataNodeBase {

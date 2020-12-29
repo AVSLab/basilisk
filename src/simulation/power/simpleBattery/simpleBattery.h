@@ -21,7 +21,7 @@
 #define BASILISK_SIMPLEBATTERY_H
 
 
-#include "power/_GeneralModuleFiles/powerStorageBase.h"
+#include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/bskLogging.h"
 

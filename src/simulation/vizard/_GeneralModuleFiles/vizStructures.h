@@ -10,14 +10,14 @@
 
 #include <vector>
 
-#include "msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "msgPayloadDefC/STSensorMsgPayload.h"
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 
-#include "msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
-#include "msgPayloadDefCpp/THROutputMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
-#include "messaging2/messaging2.h"
+#include "architecture/messaging2/messaging2.h"
 
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */

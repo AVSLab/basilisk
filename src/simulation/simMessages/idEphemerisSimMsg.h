@@ -20,7 +20,7 @@
 #ifndef ID_EPHEMERIS_OUTPUT_MESSAGE_H
 #define ID_EPHEMERIS_OUTPUT_MESSAGE_H
 
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simulation/simFswInterfaceMessages/ephemerisIntMsg.h"
 
 
 /*! @brief Message to store the converted Spice ephemeris data */

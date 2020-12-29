@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "environment/planetEphemeris/planetEphemeris.h"
+#include "simulation/environment/planetEphemeris/planetEphemeris.h"
 #include <iostream>
 #include <sstream>
 #include <string.h>

@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simSynch/simSynch.h"
+#include "simulation/simSynch/simSynch.h"
 #include <iostream>
 #include <cstring>
 #include <thread>

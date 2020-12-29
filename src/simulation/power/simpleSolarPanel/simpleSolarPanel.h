@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 #include <vector>
-#include "power/_GeneralModuleFiles/powerNodeBase.h"
+#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 #include "messaging2/messaging2.h"
 
 #include "msgPayloadDefC/SCPlusStatesMsgPayload.h"

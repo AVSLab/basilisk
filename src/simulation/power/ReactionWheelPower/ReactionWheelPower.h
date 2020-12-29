@@ -22,7 +22,7 @@
 #define BASILISK_POWERRW_H
 
 #include "messaging2/messaging2.h"
-#include "power/_GeneralModuleFiles/powerNodeBase.h"
+#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 
 #include "msgPayloadDefC/RWConfigLogMsgPayload.h"
 

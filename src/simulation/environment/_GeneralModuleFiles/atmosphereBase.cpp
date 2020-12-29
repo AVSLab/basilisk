@@ -24,7 +24,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/macroDefinitions.h"
 #include "utilities/simDefinitions.h"
-#include "simMessages/epochSimMsg.h"
+#include "simulation/simMessages/epochSimMsg.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void

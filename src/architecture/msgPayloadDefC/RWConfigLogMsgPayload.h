@@ -20,7 +20,7 @@
 #ifndef SIM_RW_CONFIG_LOG_MESSAGE2_H
 #define SIM_RW_CONFIG_LOG_MESSAGE2_H
 
-#include "dynamics/reactionWheels/reactionWheelSupport.h"
+#include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
 
 /*! @brief Structure used to define the individual RW configuration data message*/

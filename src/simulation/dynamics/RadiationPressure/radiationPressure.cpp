@@ -18,7 +18,7 @@
  */
 
 #include <iostream>
-#include "dynamics/RadiationPressure/radiationPressure.h"
+#include "simulation/dynamics/RadiationPressure/radiationPressure.h"
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"

@@ -18,7 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %module vizInterface
 %{
    #include "vizInterface.h"
-   #include "../_GeneralModuleFiles/vizStructures.h"
+   #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 %}
 
 %pythoncode %{
@@ -45,7 +45,7 @@ namespace std {
 }
 
 %include "vizInterface.h"
-%include "../_GeneralModuleFiles/vizStructures.h"
+%include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
 %include "msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
@@ -66,7 +66,6 @@ struct EpochMsg_C;
 
 %include "msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 %include "msgPayloadDefCpp/THROutputMsgPayload.h"
-
 
 %pythoncode %{
 import sys

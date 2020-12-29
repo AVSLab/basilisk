@@ -17,7 +17,7 @@
 
  */
 
-#include "dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
+#include "simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
 #include "messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"

@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
+#include "simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
 #include <iostream>
 #include "utilities/avsEigenSupport.h"
 #include "utilities/macroDefinitions.h"

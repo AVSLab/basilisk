@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "environment/ephemerisConverter/ephemerisConverter.h"
+#include "simulation/environment/ephemerisConverter/ephemerisConverter.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <iostream>

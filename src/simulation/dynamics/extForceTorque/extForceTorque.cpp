@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/extForceTorque/extForceTorque.h"
+#include "simulation/dynamics/extForceTorque/extForceTorque.h"
 #include "messaging/system_messaging.h"
 #include <iostream>
 #include "utilities/avsEigenSupport.h"

@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/DynOutput/orbElemConvert/orbElemConvert.h"
+#include "simulation/dynamics/DynOutput/orbElemConvert/orbElemConvert.h"
 #include <cstring>
 #include <iostream>
 #include "utilities/linearAlgebra.h"

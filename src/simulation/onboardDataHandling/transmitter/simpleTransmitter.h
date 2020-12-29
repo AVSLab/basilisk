@@ -20,7 +20,7 @@
 #ifndef BASILISK_SIMPLETRANSMITTER_H
 #define BASILISK_SIMPLETRANSMITTER_H
 
-#include "onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
 #include "utilities/bskLogging.h"
 
 /*! @brief simple data transmitter class */

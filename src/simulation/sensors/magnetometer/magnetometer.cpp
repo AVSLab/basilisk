@@ -17,7 +17,7 @@
 
  */
 
-#include "sensors/magnetometer/magnetometer.h"
+#include "simulation/sensors/magnetometer/magnetometer.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"

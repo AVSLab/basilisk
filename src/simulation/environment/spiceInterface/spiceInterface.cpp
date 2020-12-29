@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "environment/spiceInterface/spiceInterface.h"
+#include "simulation/environment/spiceInterface/spiceInterface.h"
 #include <iostream>
 #include <sstream>
 #include "../libs/cspice/include/SpiceUsr.h"

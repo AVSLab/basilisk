@@ -21,7 +21,7 @@
 #define SIM_RW_CONFIG_MESSAGE_H
 
 #include <Eigen/Dense>
-#include "dynamics/reactionWheels/reactionWheelSupport.h"
+#include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
 
 /*! @brief Structure used to define the individual RW configuration data message*/

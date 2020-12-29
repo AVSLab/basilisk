@@ -17,7 +17,7 @@
 
  */
 
-#include "sensors/coarseSunSensor/coarseSunSensor.h"
+#include "simulation/sensors/coarseSunSensor/coarseSunSensor.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
