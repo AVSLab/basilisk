@@ -18,7 +18,6 @@
  */
 
 #include "simplePowerSink.h"
-#include "../../simMessages/powerNodeUsageSimMsg.h"
 
 /*! Constructor, which sets the default nodePowerOut to zero.
 */
