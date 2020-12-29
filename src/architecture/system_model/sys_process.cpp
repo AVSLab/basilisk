@@ -39,9 +39,6 @@ SysProcess::SysProcess(std::string messageContainer)
     this->nextTaskTime = 0;
     this->processActive = true;
     this->processName = messageContainer;
-    this->messageBuffer = SystemMessaging::GetInstance()->
-        AttachStorageBucket(messageContainer);
-    SystemMessaging::GetInstance()->ClearMessageBuffer();
     this->prevRouteTime = 0xFF;
     this->disableProcess();
 }
@@ -60,7 +57,7 @@ SysProcess::~SysProcess()
 void SysProcess::selfInitProcess()
 {
     std::vector<ModelScheduleEntry>::iterator it;
-    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+
     this->nextTaskTime = 0;
     //! - Iterate through model list and call the Task model self-initializer
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
@@ -76,7 +73,7 @@ void SysProcess::selfInitProcess()
 void SysProcess::crossInitProcess()
 {
     std::vector<ModelScheduleEntry>::iterator it;
-    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
@@ -93,7 +90,7 @@ void SysProcess::crossInitProcess()
 void SysProcess::resetProcess(uint64_t currentTime)
 {
     std::vector<ModelScheduleEntry>::iterator it;
-    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
@@ -112,7 +109,7 @@ void SysProcess::reInitProcess()
     std::vector<ModelScheduleEntry>::iterator it;
     std::vector<ModelScheduleEntry> taskPtrs;
     std::vector<ModelScheduleEntry>::iterator taskIt;
-    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
@@ -155,7 +152,6 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
         routeInterfaces();
         this->prevRouteTime = currentNanos;
     }
-    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
     SysModelTask *localTask = it->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
     

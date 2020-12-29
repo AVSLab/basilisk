@@ -24,7 +24,6 @@
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
 #include "architecture/_GeneralModuleFiles/sys_interface.h"
-#include "architecture/messaging/system_messaging.h"
 #include "architecture/utilities/bskLogging.h"
 
 //! Structure that contains the information needed to call a Task
@@ -51,8 +50,6 @@ public:
     void enableProcess() {this->processActive = true;} //!< class method
     void disableProcess() {this->processActive = false;} //!< class method
     void scheduleTask(ModelScheduleEntry & taskCall); //!< class method
-    void selectProcess() //!< class method
-    {SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);} //!< class method
     void setProcessName(std::string newName){this->processName = newName;} //!< class method
     std::string getProcessName() { return(processName);} //!< class method
     uint64_t getNextTime() { return(this->nextTaskTime);} //!< class method
