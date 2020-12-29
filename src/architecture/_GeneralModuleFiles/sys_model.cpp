@@ -18,20 +18,20 @@
  */
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/system_messaging.h"
+#include "architecture/utilities/module_id_generator.h"
 
 SysModel::SysModel()
 {
     this->ModelTag = "";
     this->RNGSeed = 0x1badcad1;
-    this->moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
+    this->moduleID = ModuleIdGenerator::GetInstance()->checkoutModuleID();
 }
 
 SysModel::SysModel(const SysModel &obj)
 {
     this->ModelTag = obj.ModelTag;
     this->RNGSeed = obj.RNGSeed;
-    this->moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
+    this->moduleID = ModuleIdGenerator::GetInstance()->checkoutModuleID();
 }
 
 SysModel::~SysModel()
