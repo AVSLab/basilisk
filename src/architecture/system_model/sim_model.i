@@ -19,7 +19,6 @@
 %module sim_model
 %{
    #include "sim_model.h"
-   #include "architecture/_GeneralModuleFiles/sys_interface.h"
    #include "architecture/utilities/linearAlgebra.h"
    #include "architecture/utilities/rigidBodyKinematics.h"
    #include "architecture/utilities/orbitalMotion.h"
@@ -56,8 +55,6 @@ namespace std {
    %template() std::pair<int64_t, int64_t>;
    %template(exchangeSet) std::set<std::pair<long int, long int>>;
    %template(modelPriPair) std::vector<ModelPriorityPair>;
-   %template(interfaceVector) std::vector<SysInterface*>;
-   %template(interfaceSingVector) std::vector<InterfaceDataExchange *>;
    %template(procSchedList) std::vector<ModelScheduleEntry>;
    %template(simProcList) std::vector<SysProcess *>;
 }
@@ -81,7 +78,6 @@ namespace std {
 %include "sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"
-%include "sys_interface.h"
 %include "../messaging/system_messaging.h"
 %include "architecture/utilities/linearAlgebra.h"
 %include "architecture/utilities/rigidBodyKinematics.h"

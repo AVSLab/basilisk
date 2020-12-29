@@ -149,7 +149,6 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - Call the next scheduled model, and set the time to its start
     if(currentNanos != this->prevRouteTime)
     {
-        routeInterfaces();
         this->prevRouteTime = currentNanos;
     }
     SysModelTask *localTask = it->TaskPtr;
@@ -206,20 +205,6 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     }
     //! - Default case is to put the Task at the end of the schedule
     this->processTasks.push_back(taskCall);
-}
-
-/*! This method is used to ensure that all necessary input messages are routed 
-    from their source buffer to this process' message buffer.
-    It needs to be executed prior to dispatching the process' models
-    @return void
-*/
-void SysProcess::routeInterfaces()
-{
-    std::vector<SysInterface *>::iterator it;
-    for(it=this->intRefs.begin(); it!= this->intRefs.end(); it++)
-    {
-        (*it)->routeInputs(this->messageBuffer);
-    }
 }
 
 /*! The name kind of says it all right?  It is a shotgun used to disable all of 

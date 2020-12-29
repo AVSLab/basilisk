@@ -23,7 +23,6 @@
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
-#include "architecture/_GeneralModuleFiles/sys_interface.h"
 #include "architecture/utilities/bskLogging.h"
 
 //! Structure that contains the information needed to call a Task
@@ -55,15 +54,12 @@ public:
     uint64_t getNextTime() { return(this->nextTaskTime);} //!< class method
     void singleStepNextTask(uint64_t currentNanos); //!< class method
     bool processEnabled() {return this->processActive;} //!< class method
-    void addInterfaceRef(SysInterface *newInt) {this->intRefs.push_back(newInt);} //!< class method
 	void changeTaskPeriod(std::string taskName, uint64_t newPeriod); //!< class method
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
-    void routeInterfaces(); //!< class method
     void disableAllTasks(); //!< class method
     void enableAllTasks(); //!< class method
     
 public:
-    std::vector<SysInterface*> intRefs;  //!< -- Interface references to move data to process
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
     int64_t messageBuffer;  //!< -- Message buffer for this process
     uint64_t nextTaskTime;  //!< [ns] time for the next Task
