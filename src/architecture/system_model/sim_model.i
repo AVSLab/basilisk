@@ -78,7 +78,6 @@ namespace std {
 %include "sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"
-%include "../messaging/system_messaging.h"
 %include "architecture/utilities/linearAlgebra.h"
 %include "architecture/utilities/rigidBodyKinematics.h"
 %include "architecture/utilities/orbitalMotion.h"

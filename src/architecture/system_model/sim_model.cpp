@@ -35,38 +35,6 @@ SimModel::~SimModel()
 {
 }
 
-/*! This method exists to provide the python layer with a handle to call to
- print out the internal message stats.
- @return void*/
-void SimModel::PrintSimulatedMessageData()
-{
-    SystemMessaging::GetInstance()->PrintAllMessageData();
-}
-
-/*! This method exists to provide a hook into the messaging system for obtaining
- message data that was written in the simulation.
- @return uint64_t Message Write time that we got
- @param MessageName String name for the message we are querying
- */
-uint64_t SimModel::IsMsgCreated(std::string MessageName)
-{
-    MessageIdentData MessageID;
-
-    //! Begin Method steps
-    //! - Grab the message ID associated with name if it exists
-    MessageID = SystemMessaging::GetInstance()->messagePublishSearch(MessageName);
-    //! - If we got an invalid message ID back, alert the user and quit
-    if(!MessageID.itemFound)
-    {
-        return(0);      /* no message found */
-    } else {
-        return(1);      /* message has been created */
-    }
-
-}
-
-
-
 /*! This method allows the user to attach a process to the simulation for
     execution.  Note that the priority level of the process determines what
     order it gets called in: higher priorities are called before lower
@@ -100,10 +68,7 @@ void SimModel::selfInitSimulation()
     {
         (*it)->selfInitProcess();
     }
-    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
-    {
-        throw std::range_error("Message creation failed during self.  Please examine output.\n");
-    }
+
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
     it=this->processList.begin();
@@ -121,11 +86,6 @@ void SimModel::crossInitSimulation()
     {
         (*it)->crossInitProcess();
     }
-    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
-    {
-        throw std::range_error("Message creation failed during cross.  Please examine output.\n");
-    }
-
 }
 /*! This method goes through all of the processes in the simulation,
  *  all of the tasks within each process, and all of the models within
@@ -138,10 +98,6 @@ void SimModel::resetInitSimulation()
     for(it=this->processList.begin(); it!= this->processList.end(); it++)
     {
         (*it)->resetProcess(0);
-    }
-    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
-    {
-        throw std::range_error("Message creation failed during reset.  Please examine output.\n");
     }
 }
 
@@ -180,10 +136,7 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
         }
         it++;
     }
-    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
-    {
-        throw std::range_error("Message reads or writes failed.  Please examine output.\n");
-    }
+
     this->NextTaskTime = nextCallTime != ~((uint64_t) 0) ? nextCallTime : this->CurrentNanos;
     //! - If a message has been added to logger, link the message IDs
 }
@@ -227,122 +180,6 @@ void SimModel::ResetSimulation()
     this->NextTaskTime = 0;
 }
 
-/*! This method exists to provide a hook into the messaging system for creating
- messages for use by the simulation.
- @return void
- @param processName Name of process that we create the message in
- @param MessageName Name for the message we are creating
- @param MessageSize Size in bytes of the message we want to make
- @param NumBuffers The count of message buffers to create
- @param messageStruct A name for the message struct type */
-void SimModel::CreateNewMessage(std::string processName, std::string MessageName,
-    uint64_t MessageSize, uint64_t NumBuffers, std::string messageStruct)
-{
-    int64_t processID = SystemMessaging::GetInstance()->
-        findMessageBuffer(processName);
-
-    if(processID >= 0)
-    {
-        SystemMessaging::GetInstance()->selectMessageBuffer(processID);
-        SystemMessaging::GetInstance()->CreateNewMessage(MessageName, MessageSize,
-                                                     NumBuffers, messageStruct);
-    }
-    else
-    {
-        bskLogger.bskLog(BSK_ERROR, "You tried to create a message in a process that doesn't exist. No dice.");
-        throw std::range_error("Message creation failed.  Please examine output.\n");
-    }
-
-}
-
-/*! This method exists to provide a hook into the messaging system for writing
- message data into existing messages
- @return void
- @param MessageName Name for the message we are writing
- @param MessageSize Size in bytes of the message we're trying to write
- @param ClockTime The time that we are writing the message in nanoseconds
- @param MessageData A shapeshifting buffer that we can chunk data into*/
-void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
-                                uint64_t ClockTime, void *MessageData)
-{
-    MessageIdentData MessageID; // A class with all of the message identifying information, including the ID
-
-    //! - Grab the message ID associated with name if it exists
-    MessageID = SystemMessaging::GetInstance()->
-        messagePublishSearch(MessageName);
-    //! - If we got an invalid message ID back, alert the user and quit
-    if(!MessageID.itemFound)
-    {
-        bskLogger.bskLog(BSK_ERROR, "You tried to write to message name: %s that message does not exist.",
-                MessageName.c_str());
-        return;
-    }
-    SystemMessaging::GetInstance()->selectMessageBuffer(MessageID.processBuffer);
-    SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, ClockTime,
-                                                 MessageSize, reinterpret_cast<uint8_t*> (MessageData), -2);
-}
-
-
-/*! This method gets the current number of messages that have been created in
-    the simulation.
-    @return uint64_t The number of messages that have been created
-*/
-int64_t SimModel::getNumMessages() {
-    return(SystemMessaging::GetInstance()->GetMessageCount());
-}
-/*! This method finds the name associated with the message ID that is passed
-    in.
-    @return std::string messageName The message name for the ID
-    @param messageID The message id that we wish to find the name for
-*/
-std::string SimModel::getMessageName(int64_t messageID)
-{
-    return(SystemMessaging::GetInstance()->FindMessageName(messageID));
-}
-
-/*! This method obtains the header information associated with a given message.
-   Note the copy out to the incoming message.  The assumption is that this
-   method is called from the python level where the storage for headerOut is
-   created.  This way we don't connect a pointer to the internal message at the
-   python level
-   @return void
-   @param messageName The name of the message we want to pull header information for
-   @param headerOut The output header information we extract from the simulation
-*/
-void SimModel::populateMessageHeader(std::string messageName,
-                           MessageHeaderData* headerOut)
-{
-    MessageIdentData messageID = SystemMessaging::GetInstance()->
-        messagePublishSearch(messageName);
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);
-    MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
-        FindMsgHeader(messageID.itemID);
-    memcpy(headerOut, locHeader, sizeof(MessageHeaderData));
-}
-
-/*! This method finds the ID associated with the message name and returns it to
-    the caller.  Mostly used to make sure a message is valid. If it's not, you'll
-    just get -1, not a warning or failure.
-    @return int64_t messageID ID of the message associated with messageName
-    @param messageName The name of the message that you want the ID for
-*/
-MessageIdentData SimModel::getMessageID(std::string messageName)
-{
-    MessageIdentData messageID = SystemMessaging::GetInstance()->
-    messagePublishSearch(messageName);
-    return(messageID);
-}
-
-/*! This method gets the list of unique message names present in the simulation
-    so that the user can see what messages have been created with no duplicates
-    @return std::set<std::string> set of strings that constitute the unique names
-*/
-std::set<std::string> SimModel::getUniqueMessageNames()
-{
-    std::set<std::string> outputSet;
-    outputSet = SystemMessaging::GetInstance()->getUniqueMessageNames();
-    return(outputSet);
-}
 
 /*! This method clears all messages.  Note that once you do this, the simulation
     object itself is really dead.
@@ -350,47 +187,5 @@ std::set<std::string> SimModel::getUniqueMessageNames()
 */
 void SimModel::terminateSimulation()
 {
-    SystemMessaging::GetInstance()->clearMessaging();
 }
 
-/*! This method returns all of the read/write pairs for the entire simulation
-    for a given message.  That allows us to capture and analyze our data flow in
-    a very clean manner.
-    @return std::set<std::pair> returnPairs Write/Read pairs for the entire simulation run
-    @param messageName The name of the message to find pairs for
-    @param procList procs to check for read/write pairs
-*/
-std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::string messageName,
-     std::set<unsigned long> procList)
-{
-    std::set<std::pair<long int, long int>> returnPairs;
-    bool messageFound = false;
-    for(uint64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
-    {
-        if(procList.find((uint64_t)i) == procList.end() && procList.size() > 0)
-        {
-            continue;
-        }
-        SystemMessaging::GetInstance()->
-            selectMessageBuffer(i);
-        int64_t messageID = SystemMessaging::GetInstance()->
-            FindMessageID(messageName);
-        if(messageID >= 0)
-        {
-            std::set<std::pair<long int, long int>> localPairs;
-            localPairs = SystemMessaging::GetInstance()->
-                getMessageExchangeData(messageID);
-            returnPairs.insert(localPairs.begin(), localPairs.end());
-            messageFound = true;
-        }
-
-    }
-
-    if(!messageFound)
-    {
-        bskLogger.bskLog(BSK_WARNING, "I couldn't find a message with the name:"
-                                     " %s Can't give you exchange pairs for it.", messageName.c_str());
-    }
-    return(returnPairs);
-
-}

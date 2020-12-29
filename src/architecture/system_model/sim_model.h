@@ -23,7 +23,6 @@
 #include <stdint.h>
 #include <set>
 #include "architecture/system_model/sys_process.h"
-#include "architecture/messaging/system_messaging.h"
 #include "architecture/utilities/bskLogging.h"
 
 
@@ -38,29 +37,16 @@ class SimModel
 public:
     SimModel();  //!< The SimModel constructor
     ~SimModel();  //!< SimModel destructor
+    
     void selfInitSimulation();  //!< Method to initialize all added Tasks
     void crossInitSimulation();  //!< Method to initialize all added Tasks
     void resetInitSimulation();  //!< Method to reset all added tasks
     void StepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
-    void PrintSimulatedMessageData();  //!< Print out all messages that have been created
     void addNewProcess(SysProcess *newProc);
-    uint64_t IsMsgCreated(std::string MessageName); //!< is message created 
     void ResetSimulation();  //!< Reset simulation back to zero
-    void WriteMessageData(std::string MessageName, uint64_t MessageSize,
-                          uint64_t ClockTime, void *MessageData);  //!< Write in a single message
-    void CreateNewMessage(std::string processName, std::string MessageName,
-        uint64_t MessageSize, uint64_t NumBuffers=2,
-        std::string messageStruct = "");  //!< Create a new message for use
-    int64_t getNumMessages();  //!< Get number of messages in simulation
-    std::string getMessageName(int64_t messageID);  //!< Get name for specified message ID
-    MessageIdentData getMessageID(std::string messageName);  //!< Get the ID associated with message name
-    void populateMessageHeader(std::string messageName,
-        MessageHeaderData* headerOut);  //!< Get header data associated with msg
-    std::set<std::string> getUniqueMessageNames();
-    std::set<std::pair<long int, long int>> getMessageExchangeData(std::string messageName,
-        std::set<unsigned long> procList  = std::set<unsigned long>());
     void terminateSimulation();
+
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
