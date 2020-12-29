@@ -22,7 +22,6 @@
 #define BASILISK_SIMPLEPOWERMONITOR_H
 
 #include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
-#include "simulation/simMessages/powerStorageStatusSimMsg.h"
 
 /*! @brief simple power monitor class */
 class SimplePowerMonitor: public PowerStorageBase {

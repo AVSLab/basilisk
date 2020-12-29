@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "dynamics/reactionWheels/reactionWheelSupport.h"
+#include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
 
 /*! @brief Structure used to define the individual RW configuration data message*/

@@ -45,9 +45,9 @@ typedef struct {
     int    resetFlag;                               /*!< []     Flag indicating that a module reset occured */
 
     /* declare module IO interfaces */
-    RWArrayVoltageMsg_C voltageOutMsg;      /*!< The name of the voltage output message*/
-    ArrayMotorTorqueMsg_C torqueInMsg;      /*!< The name of the Input torque message*/
-    RWArrayConfigMsg_C rwParamsInMsg;       /*!< The name of the RWArrayConfigFswMsg input message*/
+    RWArrayVoltageMsg_C voltageOutMsg;      /*!< voltage output message*/
+    ArrayMotorTorqueMsg_C torqueInMsg;      /*!< Input torque message*/
+    RWArrayConfigMsg_C rwParamsInMsg;       /*!< RW array input message*/
     RWSpeedMsg_C rwSpeedInMsg;              /*!< [] The name for the reaction wheel speeds message. Must be provided to enable speed tracking loop */
     RWAvailabilityMsg_C rwAvailInMsg;       /*!< [-] The name of the RWs availability message*/
 

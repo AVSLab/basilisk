@@ -17,7 +17,6 @@
 
  */
 #include "simulation/navigation/simpleNav/simpleNav.h"
-#include "architecture/messaging/system_messaging.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>

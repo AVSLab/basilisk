@@ -44,7 +44,7 @@ typedef struct {
     ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;   //!< RW motor torque output message
     CmdTorqueBodyMsg_C vehControlInMsg;  //!<  vehicle control (Lr) Input message
 
-    RWArrayConfigMsg_C rwParamsInMsg;    //!<  RWArrayConfigFswMsg input message
+    RWArrayConfigMsg_C rwParamsInMsg;    //!<  RW Array input message
     RWAvailabilityMsg_C rwAvailInMsg;     //!< optional RWs availability input message
 
     BSKLogger *bskLogger;                             //!< BSK Logging

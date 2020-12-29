@@ -45,12 +45,7 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modul
     THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
 }
 
-/*!
- \verbatim embed:rst
-    This method performs the second stage of initialization for this module.
-    It links to 2 required input messages of type :ref:`THRArrayCmdForceFswMsg`
-    and :ref:`THRArrayConfigFswMsg`.
- \endverbatim
+/*! cross init method
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData

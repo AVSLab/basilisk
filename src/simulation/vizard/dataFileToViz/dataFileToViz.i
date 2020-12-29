@@ -33,11 +33,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "dataFileToViz.h"
 %include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/RWConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
-%include "msgPayloadDefCpp/THROutputMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
 
 // Instantiate templates used by example

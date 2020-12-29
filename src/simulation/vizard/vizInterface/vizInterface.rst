@@ -19,8 +19,8 @@ The following messages are set directly within ``vizInterface``.  Additional mes
 
 
 .. list-table:: Module I/O Messages
-   :widths: 25 25 50
-   :header-rows: 1
+    :widths: 25 25 50
+    :header-rows: 1
 
     * - Parameter
       - Default
@@ -38,11 +38,11 @@ The following messages are set directly within ``vizInterface``.  Additional mes
       - :ref:`SpicePlanetStateMsgPayload`
       - (optional) vector of input messages of planet Spice data
 
-The :ref:`VizSpacecraftData` structure contains a range of input messages for each spacecraft added.
+The ``VizSpacecraftData`` structure contains a range of input messages for each spacecraft added.
 
 .. list-table:: ``VizSpacecraftData`` input messages per spacecraft
-   :widths: 25 25 50
-   :header-rows: 1
+    :widths: 25 25 50
+    :header-rows: 1
 
     * - Parameter
       - Default

@@ -76,7 +76,7 @@ This section is to outline the steps needed to setup a SpacecraftPlus module in 
         unitTestSim.AddModelToTask(unitTaskName, scObject)
 
 #.  If you want to prescribe the spacecraft hub rotational motion, this can be specified through an optional
-    input message of type :ref:`attRefFswMsg`::
+    input message of type :ref:`attRefMsgPayload`::
 
         scObject.attRefInMsg.subscribeTo(someAttRefMsg)
 

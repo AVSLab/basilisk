@@ -33,10 +33,7 @@
 
 
 
-/*!
- \verbatim embed:rst
-    This method creates the module output message of type :ref:`AttRefFswMsg`.
- \endverbatim
+/*! self init method
  @return void
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData

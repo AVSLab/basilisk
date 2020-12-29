@@ -31,12 +31,7 @@
 #include <string.h>
 #include <math.h>
 
-/*!
- \verbatim embed:rst
-    This method initializes the configData for this module.
-    It creates the
-    output message :ref:`CmdTorqueBodyIntMsg`.
- \endverbatim
+/*! selfInit method
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
@@ -46,17 +41,7 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, i
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
 
-/*!
- \verbatim embed:rst
-    This method performs the second stage of initialization for this module.
-    Its primary function is to link the input messages that were created elsewhere. The required
-    input messages are the attitude tracking error message of type :ref:`AttGuidFswMsg`
-    the vehicle configuration message of type :ref:`VehicleConfigFswMsg`,
-    and the rate command message of type :ref:`RateCmdFswMsg`.
-    Optional messages are the RW configuration message of type :ref:`RWArrayConfigFswMsg`,
-    the RW speed message of type :ref:`RWSpeedIntMsg`
-    and the RW availability message of type :ref:`RWAvailabilityFswMsg`.
- \endverbatim
+/*! Cross init method
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier

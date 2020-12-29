@@ -28,11 +28,7 @@
 #include <string.h>
 #include <math.h>
 
-/*!
- \verbatim embed:rst
-    This method sets up the module output message of type :ref:`RateCmdFswMsg`.
- \endverbatim
-
+/*! self init method
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier

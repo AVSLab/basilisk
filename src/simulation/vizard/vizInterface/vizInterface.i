@@ -47,25 +47,25 @@ namespace std {
 %include "vizInterface.h"
 %include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
-%include "msgPayloadDefC/CameraConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
-%include "msgPayloadDefC/RWConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
-%include "msgPayloadDefC/STSensorMsgPayload.h"
+%include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 struct STSensorMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/CameraImageMsgPayload.h"
+%include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "msgPayloadDefC/EpochMsgPayload.h"
+%include "architecture/msgPayloadDefC/EpochMsgPayload.h"
 struct EpochMsg_C;
 
-%include "msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
-%include "msgPayloadDefCpp/THROutputMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
 %pythoncode %{
 import sys

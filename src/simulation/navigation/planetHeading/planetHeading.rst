@@ -25,8 +25,8 @@ The following table lists all the module input and output messages.  The module 
     * - spacecraftStateInMsg
       - :ref:`SCPlusStatesMsgPayload`
       - spacecraft state input message
-    * - BodyHeadingMsgPayload
-      - :ref:`planetHeadingOutMsg`
+    * - planetHeadingOutMsg
+      - :ref:`BodyHeadingMsgPayload`
       - body heading output message
 
 

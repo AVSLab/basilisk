@@ -17,7 +17,6 @@
 
  */
 #include "simulation/dynamics/extForceTorque/extForceTorque.h"
-#include "architecture/messaging/system_messaging.h"
 #include <iostream>
 #include "architecture/utilities/avsEigenSupport.h"
 
