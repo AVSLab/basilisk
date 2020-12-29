@@ -34,13 +34,6 @@ ModuleIdGenerator::ModuleIdGenerator()
 }
 
 /*!
- * This destructor for SystemMessaging sets the messageStorage spce to NULL.
- */
-ModuleIdGenerator::~ModuleIdGenerator()
-{
-}
-
-/*!
  * This gives a pointer to the messaging system to whoever asks for it.
  * @return ModuleIdGenerator* TheInstance
  */
