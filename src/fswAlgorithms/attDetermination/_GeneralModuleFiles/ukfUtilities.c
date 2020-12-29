@@ -19,7 +19,7 @@
 
 #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "utilities/bsk_Print.h"
+#include "architecture/utilities/bsk_Print.h"
 #include <math.h>
 
 void ukfQRDJustR(

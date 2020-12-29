@@ -25,13 +25,13 @@
 #include <vector>
 #include <string>
 #include<time.h>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "../_GeneralModuleFiles/atmosphereBase.h"
 
-#include "msgPayloadDefC/SwDataMsgPayload.h"
+#include "architecture/msgPayloadDefC/SwDataMsgPayload.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 extern "C" {
   #include "nrlmsise-00.h"

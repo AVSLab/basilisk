@@ -21,11 +21,11 @@
 #ifndef SPHERICAL_PENDULUM_H
 #define SPHERICAL_PENDULUM_H
 
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "../architecture/utilities/avsEigenMRP.h"
-#include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief spherical pendulum state effector model */
 class SphericalPendulum :

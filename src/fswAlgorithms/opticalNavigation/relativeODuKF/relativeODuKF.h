@@ -26,11 +26,11 @@
 #include "cMsgCInterface/OpNavMsg_C.h"
 #include "cMsgCInterface/OpNavFilterMsg_C.h"
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/astroConstants.h"
 
 
 

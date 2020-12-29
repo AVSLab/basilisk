@@ -22,7 +22,7 @@
  */
 
 #include "fswAlgorithms/effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 

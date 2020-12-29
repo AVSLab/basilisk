@@ -18,10 +18,10 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #ifndef MESSAGING2_H
 #define MESSAGING2_H
 #include <memory>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
-#include "messaging2/msg2Header.h"
-#include "utilities/bskLogging.h"
+#include "architecture/messaging2/msg2Header.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! forward-declare sim message for use by read functor */

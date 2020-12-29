@@ -23,16 +23,16 @@
 
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/THRTimePairMsgPayload.h"
-#include "msgPayloadDefCpp/THROperationMsgPayload.h"
-#include "msgPayloadDefCpp/THRSimConfigMsgPayload.h"
-#include "msgPayloadDefCpp/THROutputMsgPayload.h"
-#include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THRSimConfigMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
 

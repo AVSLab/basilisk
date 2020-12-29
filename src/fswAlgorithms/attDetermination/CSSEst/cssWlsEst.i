@@ -33,15 +33,15 @@
 
 %include "cssWlsEst.h"
 
-%include "msgPayloadDefC/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "msgPayloadDefC/CSSConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
 struct CSSConfigMsg_C;
-%include "msgPayloadDefC/CSSUnitConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/CSSUnitConfigMsgPayload.h"
 struct CSSUnitConfigMsg_C;
-%include "msgPayloadDefC/SunlineFilterMsgPayload.h"
+%include "architecture/msgPayloadDefC/SunlineFilterMsgPayload.h"
 struct SunlineFilterMsg_C;
-%include "msgPayloadDefC/CSSArraySensorMsgPayload.h"
+%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
 struct CSSArraySensorMsg_C;
 
 %pythoncode %{

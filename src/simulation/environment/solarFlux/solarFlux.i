@@ -30,13 +30,13 @@ from Basilisk.architecture.swig_common_model import *
 %include "solarFlux.h"
 %include "swig_conly_data.i"
 
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/SolarFluxMsgPayload.h"
+%include "architecture/msgPayloadDefC/SolarFluxMsgPayload.h"
 struct SolarFluxMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/EclipseMsgPayload.h"
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 struct EclipseMsg_C;
 
 %pythoncode %{

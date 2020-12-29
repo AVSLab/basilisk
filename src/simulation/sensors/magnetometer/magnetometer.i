@@ -31,11 +31,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "magnetometer.h"
 
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/MagneticFieldMsgPayload.h"
+%include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
 struct MagneticFieldMsg_C;
-%include "msgPayloadDefC/TAMDataMsgPayload.h"
+%include "architecture/msgPayloadDefC/TAMDataMsgPayload.h"
 struct TAMDataMsg_C;
 
 %pythoncode %{

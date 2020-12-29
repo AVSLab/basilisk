@@ -24,10 +24,10 @@
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 
-#include "utilities/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! @brief Module data structure */
 typedef struct {

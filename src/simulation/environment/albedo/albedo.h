@@ -28,21 +28,21 @@
 #include <inttypes.h>
 #include <vector>
 #include <string>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 // Utilities
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/geodeticConversion.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/geodeticConversion.h"
+#include "architecture/utilities/linearAlgebra.h"
 // Sim Messages
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "msgPayloadDefC/AlbedoMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*!< albedo instrument configuration class */
 typedef class Config {

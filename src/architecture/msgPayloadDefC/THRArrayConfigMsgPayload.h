@@ -20,7 +20,7 @@
 #ifndef THR_ARRAY_MESSAGE_H
 #define THR_ARRAY_MESSAGE_H
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "THRConfigMsgPayload.h"
 
 

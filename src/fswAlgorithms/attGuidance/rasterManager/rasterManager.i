@@ -34,7 +34,7 @@
 
 %include "rasterManager.h"
 
-%include "msgPayloadDefC/AttStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttStateMsgPayload.h"
 struct AttStateMsg_C;
 
 %pythoncode %{

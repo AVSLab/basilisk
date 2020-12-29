@@ -17,7 +17,7 @@
 
  */
 
-#include "utilities/signalCondition.h"
+#include "architecture/utilities/signalCondition.h"
 
 #include <math.h>
 #include <stdio.h>

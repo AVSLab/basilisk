@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"

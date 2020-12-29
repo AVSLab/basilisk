@@ -20,10 +20,10 @@
 #include <iostream>
 #include <sstream>
 #include <string.h>
-#include "utilities/macroDefinitions.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 /*! This constructor initializes the variables.

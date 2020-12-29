@@ -19,10 +19,10 @@
 %module sim_model
 %{
    #include "sim_model.h"
-   #include "_GeneralModuleFiles/sys_interface.h"
-   #include "utilities/linearAlgebra.h"
-   #include "utilities/rigidBodyKinematics.h"
-   #include "utilities/orbitalMotion.h"
+   #include "architecture/_GeneralModuleFiles/sys_interface.h"
+   #include "architecture/utilities/linearAlgebra.h"
+   #include "architecture/utilities/rigidBodyKinematics.h"
+   #include "architecture/utilities/orbitalMotion.h"
 %}
 
 %include "std_vector.i"
@@ -83,10 +83,10 @@ namespace std {
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sys_interface.h"
-%include "utilities/message_logger.h"
+%include "architecture/utilities/message_logger.h"
 %include "../messaging/system_messaging.h"
-%include "utilities/linearAlgebra.h"
-%include "utilities/rigidBodyKinematics.h"
-%include "utilities/orbitalMotion.h"
-%include "msgPayloadDefC/ClassicElementsMsgPayload.h"
+%include "architecture/utilities/linearAlgebra.h"
+%include "architecture/utilities/rigidBodyKinematics.h"
+%include "architecture/utilities/orbitalMotion.h"
+%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
 %include "sim_model.h"

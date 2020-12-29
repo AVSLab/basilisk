@@ -17,7 +17,7 @@
 
  */
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "dataNodeBase.h"
 #include "string.h"
 

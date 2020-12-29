@@ -25,7 +25,7 @@
 #include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
 #include <string.h>
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 

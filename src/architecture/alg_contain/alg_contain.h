@@ -21,8 +21,8 @@
 #ifndef ALG_CONTAIN_H
 #define ALG_CONTAIN_H
 
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 typedef void (*AlgPtr)(void*, uint64_t);

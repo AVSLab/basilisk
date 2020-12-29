@@ -23,7 +23,7 @@
 #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This method creates the two moduel output messages.
  @return void

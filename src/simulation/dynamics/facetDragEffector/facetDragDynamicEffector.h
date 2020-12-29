@@ -25,13 +25,13 @@
 #include <vector>
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/AtmoPropsMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 #include "../../../architecture/utilities/rigidBodyKinematics.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

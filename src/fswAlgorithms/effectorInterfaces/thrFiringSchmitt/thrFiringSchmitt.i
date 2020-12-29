@@ -33,11 +33,11 @@
 
 %include "thrFiringSchmitt.h"
 
-%include "msgPayloadDefC/THRArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 struct THRArrayConfigMsg_C;
-%include "msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 struct THRArrayCmdForceMsg_C;
-%include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
 
 %pythoncode %{

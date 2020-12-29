@@ -37,9 +37,9 @@ namespace std {
 %include "../_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "simpleStorageUnit.h"
 
-%include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
-%include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
+%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
 struct DataStorageStatusMsg_C;
 
 %pythoncode %{

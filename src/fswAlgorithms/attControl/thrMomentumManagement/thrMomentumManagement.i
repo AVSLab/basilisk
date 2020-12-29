@@ -33,11 +33,11 @@
 
 %include "thrMomentumManagement.h"
 
-%include "msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
-%include "msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
-%include "msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
 
 %pythoncode %{

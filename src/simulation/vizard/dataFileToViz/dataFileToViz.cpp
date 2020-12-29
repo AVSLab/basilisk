@@ -17,9 +17,9 @@
 
 
 #include "dataFileToViz.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <sstream>
 #include <string>
 #include <string.h>

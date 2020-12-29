@@ -21,8 +21,8 @@
 #include <sstream>
 #include "../libs/cspice/include/SpiceUsr.h"
 #include <string.h>
-#include "utilities/simDefinitions.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/simDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.

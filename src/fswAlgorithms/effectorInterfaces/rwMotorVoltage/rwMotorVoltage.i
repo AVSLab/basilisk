@@ -33,19 +33,19 @@
 
 %include "rwMotorVoltage.h"
 
-%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
-%include "msgPayloadDefC/RWAvailabilityMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
 struct RWAvailabilityMsg_C;
-%include "msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
-%include "msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "msgPayloadDefC/RWArrayVoltageMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
 struct RWArrayVoltageMsg_C;
 
-%include "../../fswUtilities/fswDefinitions.h"
-%include "utilities/macroDefinitions.h"
+%include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+%include "architecture/utilities/macroDefinitions.h"
 
 %pythoncode %{
 import sys

@@ -26,8 +26,8 @@
 #include "stateEffector.h"
 #include "dynamicEffector.h"
 #include "stateVecIntegrator.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief dynamic object class */
 class DynamicObject : public SysModel {

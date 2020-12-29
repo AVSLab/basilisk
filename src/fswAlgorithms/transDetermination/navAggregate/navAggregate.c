@@ -18,8 +18,8 @@
  */
 
 #include "navAggregate.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 
 /*! This method initializes the configData for the nav aggregation algorithm.

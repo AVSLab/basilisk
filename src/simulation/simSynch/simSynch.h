@@ -22,13 +22,13 @@
 
 #include <string>
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <chrono>
 
-#include "msgPayloadDefC/SynchClockMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SynchClockMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief clock sync model class */
 class ClockSynch: public SysModel {

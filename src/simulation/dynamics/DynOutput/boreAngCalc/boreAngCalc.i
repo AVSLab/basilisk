@@ -32,11 +32,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "boreAngCalc.h"
 
-%include "msgPayloadDefC/BoreAngleMsgPayload.h"
+%include "architecture/msgPayloadDefC/BoreAngleMsgPayload.h"
 struct BoreAngleMsg_C;
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
 
 

@@ -19,7 +19,7 @@
 
 #ifndef _RIGID_BODY_KINEMATICS_0_H_
 #define _RIGID_BODY_KINEMATICS_0_H_
-#include <utilities/bskLogging.h>
+#include <architecture/utilities/bskLogging.h>
 
 #ifdef __cplusplus
 extern "C" {

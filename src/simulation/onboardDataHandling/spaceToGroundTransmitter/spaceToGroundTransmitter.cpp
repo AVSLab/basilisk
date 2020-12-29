@@ -18,7 +18,7 @@
  */
 
 #include "spaceToGroundTransmitter.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <array>
 
 /*! Constructor, which sets the default nodeDataOut to zero.

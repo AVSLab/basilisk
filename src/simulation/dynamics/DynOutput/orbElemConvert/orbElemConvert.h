@@ -21,15 +21,15 @@
 #define ORB_ELEM_CONVERT_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "msgPayloadDefC/ClassicElementsMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/orbitalMotion.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

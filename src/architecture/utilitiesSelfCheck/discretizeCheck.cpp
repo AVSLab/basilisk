@@ -21,8 +21,8 @@
 #include <stdlib.h>
 #include "discretizeCheck.h"
 #include <Eigen/Dense>
-#include "utilities/avsEigenSupport.h"
-#include "utilities/discretize.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/discretize.h"
 
 
 uint64_t testDiscretize()

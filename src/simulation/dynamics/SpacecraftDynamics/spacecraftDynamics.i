@@ -46,11 +46,11 @@ namespace std {
 %include "spacecraftDynamics.h"
 %include "hubEffector.h"
 
-%include "msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
-%include "msgPayloadDefC/SCMassPropsMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 struct SCMassPropsMsg_C;
-%include "msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
 struct SCEnergyMomentumMsg_C;
 
 %pythoncode %{

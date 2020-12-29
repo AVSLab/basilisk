@@ -25,13 +25,13 @@
 #include <vector>
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
 
-#include "msgPayloadDefC/GravityGradientMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/GravityGradientMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 
 

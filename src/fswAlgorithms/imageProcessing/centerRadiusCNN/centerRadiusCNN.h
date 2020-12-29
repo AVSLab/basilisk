@@ -27,13 +27,13 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "msgPayloadDefC/CameraImageMsgPayload.h"
-#include "msgPayloadDefC/CirclesOpNavMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/avsEigenMRP.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
 
 /*! @brief The CNN based center radius visual tracking module. */
 class CenterRadiusCNN: public SysModel {

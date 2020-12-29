@@ -18,8 +18,8 @@
  */
 
 #include "keplerianOrbit.h"
-#include "utilities/astroConstants.h"
-#include <utilities/avsEigenSupport.h>
+#include "architecture/utilities/astroConstants.h"
+#include <architecture/utilities/avsEigenSupport.h>
 
 /*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()

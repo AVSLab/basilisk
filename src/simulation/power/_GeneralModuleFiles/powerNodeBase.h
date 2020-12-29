@@ -26,13 +26,13 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "_GeneralModuleFiles/sys_model.h"
-#include "messaging2/messaging2.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "msgPayloadDefC/PowerNodeUsageMsgPayload.h"
-#include "msgPayloadDefC/DeviceStatusMsgPayload.h"
+#include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief power node base class */
 class PowerNodeBase: public SysModel  {

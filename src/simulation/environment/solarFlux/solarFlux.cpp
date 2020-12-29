@@ -18,7 +18,7 @@
  */
 
 #include "solarFlux.h"
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/astroConstants.h"
 
 /*! This method is used to create messages
  @return void

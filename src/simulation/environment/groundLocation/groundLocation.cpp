@@ -18,8 +18,8 @@
  */
 
 #include "groundLocation.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,

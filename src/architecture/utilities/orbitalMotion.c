@@ -25,7 +25,7 @@
 
 #include "linearAlgebra.h"
 #include "astroConstants.h"
-#include "utilities/bsk_Print.h"
+#include "architecture/utilities/bsk_Print.h"
 #include "rigidBodyKinematics.h"
 
 

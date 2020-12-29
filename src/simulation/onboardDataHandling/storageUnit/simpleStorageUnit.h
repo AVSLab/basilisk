@@ -22,7 +22,7 @@
 
 
 #include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief simple storage unit class */
 class SimpleStorageUnit: public DataStorageUnitBase {

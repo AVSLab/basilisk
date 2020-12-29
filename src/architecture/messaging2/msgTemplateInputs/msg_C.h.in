@@ -2,8 +2,8 @@
 #define {type}_C_H
 
 #include <stdint.h>
-#include "{structHeader}"
-#include "messaging2/msg2Header.h"
+#include "architecture/{structHeader}"
+#include "architecture/messaging2/msg2Header.h"
 
 //! structure definition
 typedef struct {{

@@ -21,11 +21,11 @@
 #define RW_VOLTAGE_INTERFACE_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
-#include "messaging2/messaging2.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "msgPayloadDefC/RWArrayVoltageMsgPayload.h"
-#include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 
 #include "../../../architecture/utilities/macroDefinitions.h"
 #include "../../../architecture/utilities/bskLogging.h"

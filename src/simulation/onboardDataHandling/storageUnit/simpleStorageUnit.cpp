@@ -20,7 +20,7 @@
 
 
 #include "simpleStorageUnit.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! The constructor creates a SimpleStorageUnit instance with zero stored data

@@ -22,8 +22,8 @@
 
 #include <vector>
 #include <stdint.h>
-#include "utilities/bskLogging.h"
-#include "utilities/bsk_Print.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/bsk_Print.h"
 
 #ifdef _WIN32
 /*! @brief black message storage class */

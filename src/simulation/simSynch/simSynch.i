@@ -29,7 +29,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "simSynch.h"
 
-%include "msgPayloadDefC/SynchClockMsgPayload.h"
+%include "architecture/msgPayloadDefC/SynchClockMsgPayload.h"
 struct SyncClockMsg_C;
 
 %pythoncode %{

@@ -23,7 +23,7 @@
    #include "../_GeneralModuleFiles/svIntegratorRK4.h"
    #include "svIntegratorEuler.h"
    #include "svIntegratorRK2.h"
-   #include "_GeneralModuleFiles/sys_model.h"
+   #include "architecture/_GeneralModuleFiles/sys_model.h"
 %}
 
 %pythoncode %{

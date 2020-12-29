@@ -36,16 +36,16 @@ from Basilisk.architecture.swig_common_model import *
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 %include "reactionWheelStateEffector.h"
-%include "utilities/macroDefinitions.h"
+%include "architecture/utilities/macroDefinitions.h"
 
-%include "msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "msgPayloadDefC/RWCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
 struct RWCmdMsg_C;
-%include "msgPayloadDefCpp/RWConfigMsgPayload.h"
-%include "msgPayloadDefC/RWConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
-%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
 
 %include "std_vector.i"

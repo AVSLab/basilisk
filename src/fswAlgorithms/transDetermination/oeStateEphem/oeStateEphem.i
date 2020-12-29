@@ -34,9 +34,9 @@ STRUCTASLIST(ChebyOERecord)
 
 %include "oeStateEphem.h"
 
-%include "msgPayloadDefC/TDBVehicleClockCorrelationMsgPayload.h"
+%include "architecture/msgPayloadDefC/TDBVehicleClockCorrelationMsgPayload.h"
 struct TDBVehicleClockCorrelationMsg_C;
-%include "msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
 %pythoncode %{

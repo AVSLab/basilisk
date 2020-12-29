@@ -18,8 +18,8 @@
  */
 #include "simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
 #include <iostream>
-#include "utilities/avsEigenSupport.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/

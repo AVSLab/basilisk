@@ -34,11 +34,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "exponentialAtmosphere.h"
 
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/AtmoPropsMsgPayload.h"
+%include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 struct AtmoPropsMsg_C;
 
 %pythoncode %{

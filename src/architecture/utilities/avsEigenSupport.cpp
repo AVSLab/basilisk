@@ -21,7 +21,7 @@
 #include <math.h>
 #include "avsEigenSupport.h"
 #include "rigidBodyKinematics.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*
 

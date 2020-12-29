@@ -42,13 +42,13 @@ namespace std {
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "thrusterDynamicEffector.h"
 
-%include "msgPayloadDefC/THRTimePairMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
 struct THRTimePairMsg_C;
-%include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
-%include "msgPayloadDefCpp/THROperationMsgPayload.h"
-%include "msgPayloadDefCpp/THRSimConfigMsgPayload.h"
-%include "msgPayloadDefCpp/THROutputMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/THRSimConfigMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
 %pythoncode %{
 import sys

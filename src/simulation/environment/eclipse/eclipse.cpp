@@ -19,8 +19,8 @@
 
 #include "eclipse.h"
 #include <iostream>
-#include "utilities/astroConstants.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 Eclipse::Eclipse()

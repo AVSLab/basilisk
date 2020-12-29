@@ -22,7 +22,7 @@
  */
 
 #include "fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <stdio.h>
 #include <string.h>
 

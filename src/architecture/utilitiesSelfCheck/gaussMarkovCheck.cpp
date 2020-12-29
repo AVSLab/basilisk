@@ -21,8 +21,8 @@
 #include <stdlib.h>
 #include "gaussMarkovCheck.h"
 #include <Eigen/Dense>
-#include "utilities/avsEigenSupport.h"
-#include "utilities/gauss_markov.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/gauss_markov.h"
 #include <iostream>
 
 

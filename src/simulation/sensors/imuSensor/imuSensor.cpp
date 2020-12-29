@@ -17,16 +17,16 @@
 
  */
 #include "simulation/sensors/imuSensor/imuSensor.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <math.h>
 #include <iostream>
 #include <cstring>
 #include <random>
-#include "utilities/gauss_markov.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <inttypes.h>
 
 

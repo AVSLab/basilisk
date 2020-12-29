@@ -31,11 +31,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "std_vector.i"
 
-%include "msgPayloadDefC/EclipseMsgPayload.h"
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 struct EclipseMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 
 %pythoncode %{

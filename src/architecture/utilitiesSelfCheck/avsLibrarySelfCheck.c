@@ -20,10 +20,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "utilities/astroConstants.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/orbitalMotion.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include "avsLibrarySelfCheck.h"
 
 

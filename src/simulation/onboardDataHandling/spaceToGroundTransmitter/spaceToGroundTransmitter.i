@@ -28,13 +28,13 @@
 %include "../_GeneralModuleFiles/dataNodeBase.h"
 %include "spaceToGroundTransmitter.h"
 
-%include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
-%include "msgPayloadDefC/DeviceStatusMsgPayload.h"
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 struct DeviceStatusMsg_C;
-%include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
+%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
 struct DataStorageStatusMsg_C;
-%include "msgPayloadDefC/AccessMsgPayload.h"
+%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 struct AccessMsg_C;
 
 %pythoncode %{

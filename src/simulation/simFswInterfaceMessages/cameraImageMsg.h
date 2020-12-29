@@ -24,7 +24,7 @@
 
 /*! @brief Structure used to define the image */
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {

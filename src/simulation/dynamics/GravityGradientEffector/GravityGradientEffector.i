@@ -33,7 +33,7 @@
 
 %include "GravityGradientEffector.h"
 
-%include "msgPayloadDefC/GravityGradientMsgPayload.h"
+%include "architecture/msgPayloadDefC/GravityGradientMsgPayload.h"
 struct GravityGradientMsg_C;
 
 %pythoncode %{

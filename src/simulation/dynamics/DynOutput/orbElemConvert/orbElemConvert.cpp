@@ -19,7 +19,7 @@
 #include "simulation/dynamics/DynOutput/orbElemConvert/orbElemConvert.h"
 #include <cstring>
 #include <iostream>
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 //! The constructor.  Note that you may want to overwrite the message names.
 OrbElemConvert::OrbElemConvert()

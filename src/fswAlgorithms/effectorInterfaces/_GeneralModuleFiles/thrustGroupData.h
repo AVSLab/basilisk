@@ -20,7 +20,7 @@
 #ifndef _THRUST_GROUP_DATA_
 #define _THRUST_GROUP_DATA_
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 

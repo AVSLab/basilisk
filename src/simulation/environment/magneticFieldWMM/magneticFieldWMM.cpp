@@ -18,9 +18,9 @@
  */
 
 #include "magneticFieldWMM.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include "EGM9615.h"
 
 #define MAX_CHAR_LENGTH 100

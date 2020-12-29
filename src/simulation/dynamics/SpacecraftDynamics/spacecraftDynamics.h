@@ -31,12 +31,12 @@
 #include "../_GeneralModuleFiles/sys_model.h"
 #include "hubEffector.h"
 
-#include "msgPayloadDefC/SCStatesMsgPayload.h"
-#include "msgPayloadDefC/SCMassPropsMsgPayload.h"
-#include "msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief docking data structure */

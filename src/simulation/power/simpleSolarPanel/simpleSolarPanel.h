@@ -23,13 +23,13 @@
 #include <Eigen/Dense>
 #include <vector>
 #include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
-#include "messaging2/messaging2.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "msgPayloadDefC/EclipseMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

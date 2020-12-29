@@ -34,7 +34,7 @@ GEN_SIZEOF(inertial3DConfig);
 GEN_SIZEOF(AttRefMsgPayload);
 struct AttRefMsg_C;
 %include "inertial3D.h"
-%include "msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
 
 %pythoncode %{

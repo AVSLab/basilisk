@@ -17,9 +17,9 @@
 
  */
 #include "simulation/dynamics/extForceTorque/extForceTorque.h"
-#include "messaging/system_messaging.h"
+#include "architecture/messaging/system_messaging.h"
 #include <iostream>
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 /*! This is the constructor.  It sets some default initializers that can be

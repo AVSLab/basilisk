@@ -22,8 +22,8 @@
 
 
 #include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief simple battery class */

@@ -19,7 +19,7 @@
 %module inertialUKF
 %{
    #include "inertialUKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -40,22 +40,22 @@ STRUCTASLIST(STMessage)
 
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 
-%include "msgPayloadDefC/InertialFilterMsgPayload.h"
+%include "architecture/msgPayloadDefC/InertialFilterMsgPayload.h"
 struct InertialFilterMsg_C;
-%include "msgPayloadDefC/STAttMsgPayload.h"
+%include "architecture/msgPayloadDefC/STAttMsgPayload.h"
 struct STAttMsg_C;
-%include "msgPayloadDefC/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
-%include "msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
-%include "msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "msgPayloadDefC/AccDataMsgPayload.h"
+%include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
 struct AccDataMsg_C;
-%include "msgPayloadDefC/AccPktDataMsgPayload.h"
+%include "architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
 struct AccPktDataMsg_C;
 
-%include "utilities/signalCondition.h"
+%include "architecture/utilities/signalCondition.h"
 struct LowPassFilterData;
 
 

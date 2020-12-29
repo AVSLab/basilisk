@@ -31,12 +31,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "rwVoltageInterface.h"
 
-%include "msgPayloadDefC/RWArrayVoltageMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
 struct RWArrayVoltageMsg_C;
-%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
 
-%include "utilities/macroDefinitions.h"
+%include "architecture/utilities/macroDefinitions.h"
 
 %pythoncode %{
 import sys

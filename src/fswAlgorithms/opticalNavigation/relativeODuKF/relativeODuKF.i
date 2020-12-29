@@ -35,11 +35,11 @@
 %include "relativeODuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 
-%include "msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "msgPayloadDefC/OpNavMsgPayload.h"
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
-%include "msgPayloadDefC/OpNavFilterMsgPayload.h"
+%include "architecture/msgPayloadDefC/OpNavFilterMsgPayload.h"
 struct OpNavFilterMsg_C;
 
 %pythoncode %{

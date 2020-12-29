@@ -22,12 +22,12 @@
 #define GRAVITY_DYN_EFFECTOR_H
 
 #include "dynamicEffector.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <Eigen/Dense>
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "utilities/bskLogging.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/messaging2/messaging2.h"
 
 /*! @brief spherical harmonics class */
 class SphericalHarmonics

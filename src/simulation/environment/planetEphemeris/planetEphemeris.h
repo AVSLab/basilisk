@@ -21,14 +21,14 @@
 #define planetEphemeris_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/linearAlgebra.h"
-#include "utilities/orbitalMotion.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 

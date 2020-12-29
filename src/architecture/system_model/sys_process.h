@@ -22,10 +22,10 @@
 
 #include <vector>
 #include <stdint.h>
-#include "system_model/sys_model_task.h"
-#include "_GeneralModuleFiles/sys_interface.h"
-#include "messaging/system_messaging.h"
-#include "utilities/bskLogging.h"
+#include "architecture/system_model/sys_model_task.h"
+#include "architecture/_GeneralModuleFiles/sys_interface.h"
+#include "architecture/messaging/system_messaging.h"
+#include "architecture/utilities/bskLogging.h"
 
 //! Structure that contains the information needed to call a Task
 typedef struct {

@@ -33,9 +33,9 @@
 
 %include "mrpSteering.h"
 
-%include "msgPayloadDefC/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
-%include "msgPayloadDefC/RateCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/RateCmdMsgPayload.h"
 struct RateCmdMsg_C;
 
 %pythoncode %{

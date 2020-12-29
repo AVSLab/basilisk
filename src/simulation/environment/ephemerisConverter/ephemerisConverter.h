@@ -21,13 +21,13 @@
 #define EPHEMERIS_CONVERTER_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "msgPayloadDefC/EphemerisMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief ephemeric converter class */

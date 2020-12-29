@@ -18,7 +18,7 @@
  */
 
 #include "exponentialAtmosphere.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
  @return void

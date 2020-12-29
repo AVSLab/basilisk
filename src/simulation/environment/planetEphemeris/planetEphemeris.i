@@ -35,12 +35,12 @@ namespace std {
 
 %include "sys_model.h"
 %include "planetEphemeris.h"
-%include "utilities/orbitalMotion.h"
-%include "msgPayloadDefC/ClassicElementsMsgPayload.h"
-%include "utilities/astroConstants.h"
+%include "architecture/utilities/orbitalMotion.h"
+%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
+%include "architecture/utilities/astroConstants.h"
 
 
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 
 

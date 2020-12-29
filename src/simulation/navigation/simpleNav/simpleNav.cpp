@@ -17,12 +17,12 @@
 
  */
 #include "simulation/navigation/simpleNav/simpleNav.h"
-#include "messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/messaging/system_messaging.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 #include <cstring>
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 /*! This is the constructor for the simple nav model.  It sets default variable
     values and initializes the various parts of the model */

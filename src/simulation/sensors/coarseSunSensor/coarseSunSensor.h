@@ -21,7 +21,7 @@
 #define COARSE_SUN_SENSOR_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
@@ -32,9 +32,10 @@
 #include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
 #include "architecture/messaging2/messaging2.h"
 
-#include "utilities/gauss_markov.h"
-#include "utilities/saturate.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/saturate.h"
+#include "architecture/utilities/bskLogging.h"
+
 #include <Eigen/Dense>
 
 typedef enum {

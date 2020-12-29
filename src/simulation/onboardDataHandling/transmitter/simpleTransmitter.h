@@ -21,7 +21,7 @@
 #define BASILISK_SIMPLETRANSMITTER_H
 
 #include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief simple data transmitter class */
 class SimpleTransmitter: public DataNodeBase {

@@ -21,17 +21,17 @@
 #define RADIATION_PRESSURE_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "msgPayloadDefC/EclipseMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 

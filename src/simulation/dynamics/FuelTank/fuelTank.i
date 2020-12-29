@@ -35,7 +35,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "fuelTank.h"
 
-%include "msgPayloadDefC/FuelTankMsgPayload.h"
+%include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
 struct FuelTankMsg_C;
 
 %pythoncode %{

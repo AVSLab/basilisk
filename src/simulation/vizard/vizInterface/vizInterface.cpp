@@ -20,12 +20,12 @@
 #include <cstdio>
 
 #include "vizInterface.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/astroConstants.h"
 
 void message_buffer_deallocate(void *data, void *hint);
 

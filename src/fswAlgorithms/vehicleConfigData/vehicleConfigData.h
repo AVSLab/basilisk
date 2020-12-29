@@ -21,7 +21,7 @@
 #define _VEHICLE_CONFIG_DATA_H_
 
 #include <stdint.h>
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 #include "cMsgCInterface/VehicleConfigMsg_C.h"
 

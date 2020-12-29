@@ -21,8 +21,8 @@
 #include <stdlib.h>
 #include "saturateCheck.h"
 #include <Eigen/Dense>
-#include "utilities/avsEigenSupport.h"
-#include "utilities/saturate.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/saturate.h"
 
 
 uint64_t testSaturate()

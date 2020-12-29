@@ -26,20 +26,20 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
-#include "utilities/macroDefinitions.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/RWSpeedMsgPayload.h"
-#include "msgPayloadDefC/RWCmdMsgPayload.h"
-#include "msgPayloadDefCpp/RWConfigMsgPayload.h"
-#include "msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 
-#include "messaging2/messaging2.h"
-#include "utilities/bskLogging.h"
+#include "architecture/messaging2/messaging2.h"
+#include "architecture/utilities/bskLogging.h"
 
-#include "utilities/avsEigenMRP.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 

@@ -21,9 +21,9 @@
 #define STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
-#include "../../../architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! back substitution matrix structure*/

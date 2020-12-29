@@ -19,9 +19,9 @@
 
 
 #include "gravityEffector.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <iostream>
 
 SphericalHarmonics::SphericalHarmonics()

@@ -33,11 +33,11 @@
 
 %include "dvAccumulation.h"
 
-%include "msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "msgPayloadDefC/AccDataMsgPayload.h"
+%include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
 struct AccDataMsg_C;
-%include "msgPayloadDefC/AccPktDataMsgPayload.h"
+%include "architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
 struct AccPktDataMsg_C;
 
 %pythoncode %{

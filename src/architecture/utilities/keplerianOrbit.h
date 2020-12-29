@@ -21,7 +21,7 @@
 
 #include <Eigen/Dense>
 #include "../../simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
-#include <utilities/orbitalMotion.h>
+#include <architecture/utilities/orbitalMotion.h>
 
 
 //! @brief The KeplerianOrbit class represents an elliptical orbit and provides a coherent set of

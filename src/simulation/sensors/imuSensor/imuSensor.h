@@ -21,19 +21,19 @@
 #define IMU_SENSOR_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <random>
-#include "utilities/gauss_markov.h"
-#include "utilities/discretize.h"
-#include "utilities/saturate.h"
+#include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/discretize.h"
+#include "architecture/utilities/saturate.h"
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/IMUSensorMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 #include <Eigen/Dense>
-#include "utilities/avsEigenMRP.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief IMU sensor class */

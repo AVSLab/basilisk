@@ -25,7 +25,7 @@
 #include <map>
 #include <zmq.h>
 
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
 #include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"

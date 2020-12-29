@@ -21,13 +21,13 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
-#include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 #ifndef BASILISK_DATASTORAGEUNITBASE_H
 #define BASILISK_DATASTORAGEUNITBASE_H

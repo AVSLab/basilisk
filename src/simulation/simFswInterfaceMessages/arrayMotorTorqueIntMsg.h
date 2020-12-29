@@ -21,7 +21,7 @@
 #define ARRAY_MOTOR_TORQUE_H
 
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 

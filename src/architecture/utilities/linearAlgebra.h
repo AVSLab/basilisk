@@ -21,7 +21,7 @@
 #define _LINEARALGEBRA_H_
 
 #include <stdio.h>
-#include <utilities/bskLogging.h>
+#include <architecture/utilities/bskLogging.h>
 
 
 /* General vectors */

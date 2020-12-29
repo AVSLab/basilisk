@@ -18,10 +18,10 @@
  */
 
 #include "magneticFieldBase.h"
-#include "utilities/astroConstants.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/simDefinitions.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/simDefinitions.h"
 #include "simulation/simMessages/epochSimMsg.h"
 
 /*! This method initializes some basic parameters for the module.

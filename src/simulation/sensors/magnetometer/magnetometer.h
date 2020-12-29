@@ -21,16 +21,16 @@
 #define MAGNETOMETER_H
 #include <vector>
 #include <random>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/MagneticFieldMsgPayload.h"
-#include "msgPayloadDefC/TAMDataMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
+#include "architecture/msgPayloadDefC/TAMDataMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/gauss_markov.h"
-#include "utilities/saturate.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/saturate.h"
+#include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 /*! @brief magnetometer class */

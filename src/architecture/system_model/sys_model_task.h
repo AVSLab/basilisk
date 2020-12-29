@@ -22,8 +22,8 @@
 
 #include <vector>
 #include <stdint.h>
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
 
 //! Structure used to pair a model and its requested priority
 typedef struct {

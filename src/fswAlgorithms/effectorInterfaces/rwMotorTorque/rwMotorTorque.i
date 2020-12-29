@@ -33,16 +33,16 @@
 
 %include "rwMotorTorque.h"
 
-%include "msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
-%include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
-%include "msgPayloadDefC/RWAvailabilityMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
 struct RWAvailabilityMsg_C;
-%include "msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
 
-%include "../../fswUtilities/fswDefinitions.h"
+%include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
 %pythoncode %{
 import sys

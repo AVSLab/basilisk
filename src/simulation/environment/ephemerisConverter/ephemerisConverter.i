@@ -33,9 +33,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "ephemerisConverter.h"
 
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
 %pythoncode %{

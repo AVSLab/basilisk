@@ -33,7 +33,7 @@
 
 %include "inertial3DSpin.h"
 
-%include "msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
 
 %pythoncode %{

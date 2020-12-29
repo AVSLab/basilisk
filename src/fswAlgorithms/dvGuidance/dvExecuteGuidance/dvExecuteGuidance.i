@@ -31,13 +31,13 @@
 
 %include "dvExecuteGuidance.h"
 
-%include "msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
-%include "msgPayloadDefC/DvBurnCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
 struct DvBurnCmdMsg_C;
-%include "msgPayloadDefC/DvExecutionDataMsgPayload.h"
+%include "architecture/msgPayloadDefC/DvExecutionDataMsgPayload.h"
 struct DvExecutionDataMsg_C;
 
 %pythoncode %{

@@ -23,12 +23,12 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
-#include "msgPayloadDefC/DeviceStatusMsgPayload.h"
-#include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+#include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 
 /*! @brief data node base class */

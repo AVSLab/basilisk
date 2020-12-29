@@ -29,13 +29,13 @@
 %include "std_vector.i"
 
 
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/AccessMsgPayload.h"
+%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 struct AccessMsg_C;
-%include "msgPayloadDefC/GroundStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
 struct GroundStateMsg_C;
 
 %pythoncode %{

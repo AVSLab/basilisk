@@ -22,7 +22,7 @@
 
 /*! @brief Structure used to define circles processed from image*/
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 typedef struct {
     double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/

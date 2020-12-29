@@ -21,7 +21,7 @@
 #define SIM_RW_VOLTAGE_INPUT_H
 
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 

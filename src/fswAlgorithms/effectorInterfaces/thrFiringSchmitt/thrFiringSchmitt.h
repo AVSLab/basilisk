@@ -27,7 +27,7 @@
 #include "cMsgCInterface/THRArrayCmdForceMsg_C.h"
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"
 
 

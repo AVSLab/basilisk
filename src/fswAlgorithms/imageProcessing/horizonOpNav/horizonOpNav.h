@@ -25,10 +25,10 @@
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/OpNavMsg_C.h"
 
-#include "utilities/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
 
 

@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "std_vector.i"
 %include "std_string.i"
 %include "swig_eigen.i"
-%include "utilities/macroDefinitions.h"
+%include "architecture/utilities/macroDefinitions.h"
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
@@ -43,13 +43,13 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
     from Basilisk.architecture import cMsgCInterfacePy
 %};
 %{
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "messaging2.h"
 #include <vector>
 %}
 %template(TimeVector) std::vector<uint64_t>;
 %include "std_vector.i"
-%include "_GeneralModuleFiles/sys_model.h"
+%include "architecture/_GeneralModuleFiles/sys_model.h"
 %include "messaging2.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
@@ -57,9 +57,9 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %rename(__record_vector) record;
 %define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
 %{
-#include "folder/messageTypePayload.h"
+#include "architecture/folder/messageTypePayload.h"
 %}
-%include "folder/messageTypePayload.h"
+%include "architecture/folder/messageTypePayload.h"
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {

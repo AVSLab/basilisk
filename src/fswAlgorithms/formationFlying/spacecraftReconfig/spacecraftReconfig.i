@@ -33,13 +33,13 @@
 
 %include "spacecraftReconfig.h"
 
-%include "msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "msgPayloadDefC/THRArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 struct THRArrayConfigMsg_C;
-%include "msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
-%include "msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
 
 %pythoncode %{

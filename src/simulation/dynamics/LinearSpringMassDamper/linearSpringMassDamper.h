@@ -22,10 +22,10 @@
 #define LINEAR_SPRING_MASS_DAMPER_H
 
 #include "../_GeneralModuleFiles/stateEffector.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "../architecture/utilities/avsEigenMRP.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief linear spring mass damper state effector class */
 class LinearSpringMassDamper :

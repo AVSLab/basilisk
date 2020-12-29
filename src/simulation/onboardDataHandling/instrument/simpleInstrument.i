@@ -31,11 +31,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "simpleInstrument.h"
 %include "swig_conly_data.i"
 
-%include "msgPayloadDefC/DataNodeUsageMsgPayload.h"
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
-%include "msgPayloadDefC/DeviceStatusMsgPayload.h"
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 struct DeviceStatusMsg_C;
-%include "msgPayloadDefC/DataStorageStatusMsgPayload.h"
+%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
 struct DataStorageStatusMsg_C;
 
 %pythoncode %{

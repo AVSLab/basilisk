@@ -28,15 +28,15 @@
 #include "../_GeneralModuleFiles/gravityEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
-#include "msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
+#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
 #include "hubEffector.h"
-#include "utilities/bskLogging.h"
-#include "messaging2/messaging2.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/messaging2/messaging2.h"
 
 
 

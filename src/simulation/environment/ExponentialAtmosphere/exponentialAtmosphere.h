@@ -24,10 +24,10 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "../_GeneralModuleFiles/atmosphereBase.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief exponential atmosphere model */
 class ExponentialAtmosphere:  public AtmosphereBase {

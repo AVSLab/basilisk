@@ -32,13 +32,13 @@
 %ignore Update_pixelLineConverter;
 STRUCTASLIST(PixelLineConvertData)
 
-%include "msgPayloadDefC/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "msgPayloadDefC/CirclesOpNavMsgPayload.h"
+%include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
 struct CirclesOpNavMsg_C;
-%include "msgPayloadDefC/CameraConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
-%include "msgPayloadDefC/OpNavMsgPayload.h"
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
 
 %include "pixelLineConverter.h"

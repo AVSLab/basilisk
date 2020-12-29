@@ -34,9 +34,9 @@
 
 %include "spacecraftPointing.h"
 
-%include "msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
 
 %pythoncode %{

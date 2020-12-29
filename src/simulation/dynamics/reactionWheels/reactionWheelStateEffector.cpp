@@ -19,11 +19,11 @@
 
 
 #include "reactionWheelStateEffector.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {

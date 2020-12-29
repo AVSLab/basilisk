@@ -29,14 +29,14 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.h"
-%include "utilities/orbitalMotion.h"
+%include "architecture/utilities/orbitalMotion.h"
 %include "orbElemConvert.h"
 
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/ClassicElementsMsgPayload.h"
+%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
 struct ClassicElementsMsg_C;
 
 

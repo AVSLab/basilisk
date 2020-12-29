@@ -18,7 +18,7 @@
  */
 
 #include "dataStorageUnitBase.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void

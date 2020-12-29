@@ -19,8 +19,8 @@
 
 #include <iostream>
 #include "dragDynamicEffector.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
 
 DragDynamicEffector::DragDynamicEffector()
 {

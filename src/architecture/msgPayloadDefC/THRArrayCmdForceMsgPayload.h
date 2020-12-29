@@ -20,7 +20,7 @@
 #ifndef _THR_ARRAY_CMD_FORCE_MESSAGE_H_
 #define _THR_ARRAY_CMD_FORCE_MESSAGE_H_
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 

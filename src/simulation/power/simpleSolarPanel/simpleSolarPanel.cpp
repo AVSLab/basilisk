@@ -6,12 +6,12 @@
 #include <cstring>
 #include <algorithm>
 #include "simpleSolarPanel.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/avsEigenMRP.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/avsEigenMRP.h"
 
 SimpleSolarPanel::SimpleSolarPanel(){
 

@@ -21,16 +21,16 @@
 #define STAR_TRACKER_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/gauss_markov.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/gauss_markov.h"
 
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/STSensorMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 #include <Eigen/Dense>
-#include "../architecture/utilities/avsEigenMRP.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief star tracker class */

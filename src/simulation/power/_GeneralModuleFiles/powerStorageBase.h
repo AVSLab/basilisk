@@ -20,13 +20,13 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "msgPayloadDefC/PowerStorageStatusMsgPayload.h"
-#include "msgPayloadDefC/PowerNodeUsageMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.h"
+#include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 #ifndef BASILISK_SIMPOWERSTORAGEBASE_H
 #define BASILISK_SIMPOWERSTORAGEBASE_H

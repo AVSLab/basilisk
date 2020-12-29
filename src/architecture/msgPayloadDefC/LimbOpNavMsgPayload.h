@@ -20,7 +20,7 @@
 #ifndef LIMB_MSG_H
 #define LIMB_MSG_H
 
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 /*! @brief Structure used to define the message containing planet limb data for opNav*/

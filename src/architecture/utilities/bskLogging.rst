@@ -72,7 +72,7 @@ The first step is to include the ``bskLogging`` support file with the module `*.
 
 .. code-block:: cpp
 
-    #include "utilities/bskLogging.h"
+    #include "architecture/utilities/bskLogging.h"
 
 Next, the module class must contain the following public variable:
 

@@ -33,9 +33,9 @@
 
 %include "rwConfigData.h"
 
-%include "msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
-%include "msgPayloadDefC/RWConstellationMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
 struct RWConstellationMsg_C;
 
 %pythoncode %{

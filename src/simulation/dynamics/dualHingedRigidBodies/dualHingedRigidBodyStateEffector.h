@@ -23,16 +23,16 @@
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
-#include "../architecture/utilities/avsEigenMRP.h"
-#include "../architecture/utilities/avsEigenSupport.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
 
-#include "msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 
 

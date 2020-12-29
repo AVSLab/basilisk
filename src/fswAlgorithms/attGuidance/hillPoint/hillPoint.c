@@ -25,7 +25,7 @@
 #include "fswAlgorithms/attGuidance/hillPoint/hillPoint.h"
 #include <string.h>
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"

@@ -21,8 +21,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverter.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! This method creates the output navigation message (translation only) for
     the ephemeris model

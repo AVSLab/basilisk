@@ -18,7 +18,7 @@
  */
 
 #include "hubEffector.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 /*! This is the constructor, setting variables to default values */
 HubEffector::HubEffector()

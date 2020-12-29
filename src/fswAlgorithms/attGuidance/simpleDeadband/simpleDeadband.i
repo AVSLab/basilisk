@@ -33,7 +33,7 @@
 
 %include "simpleDeadband.h"
 
-%include "msgPayloadDefC/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
 
 %pythoncode %{

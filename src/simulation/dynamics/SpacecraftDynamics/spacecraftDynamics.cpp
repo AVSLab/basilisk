@@ -18,10 +18,10 @@
  */
 
 #include "spacecraftDynamics.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenMRP.h"
 #include "../../../architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 

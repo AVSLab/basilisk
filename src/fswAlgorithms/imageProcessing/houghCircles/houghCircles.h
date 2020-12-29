@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "messaging2/messaging2.h"
+#include "architecture/messaging2/messaging2.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
@@ -30,12 +30,12 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/dnn.hpp"
 
-#include "msgPayloadDefC/CameraImageMsgPayload.h"
-#include "msgPayloadDefC/CirclesOpNavMsgPayload.h"
+#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
 
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief visual planet tracking with Hough circles */

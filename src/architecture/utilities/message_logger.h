@@ -22,8 +22,8 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
-#include "messaging/system_messaging.h"
-#include "utilities/bskLogging.h"
+#include "architecture/messaging/system_messaging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! struct definition */
 typedef struct {

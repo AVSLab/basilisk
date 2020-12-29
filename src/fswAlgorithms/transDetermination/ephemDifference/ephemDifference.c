@@ -21,8 +21,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "fswAlgorithms/transDetermination/ephemDifference/ephemDifference.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! @brief This method creates the output ephemeris messages for each body.
  @return void

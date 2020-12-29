@@ -17,7 +17,7 @@
 
  */
 
-#include "utilities/message_logger.h"
+#include "architecture/utilities/message_logger.h"
 #include <cstring>
 #include <iostream>
 #include <map>

@@ -22,10 +22,10 @@
 #include <cmath>
 
 #include "thrusterDynamicEffector.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>

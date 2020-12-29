@@ -22,8 +22,8 @@
 
 #include <vector>
 #include <stdint.h>
-#include "system_model/sys_model_task.h"
-#include "utilities/bskLogging.h"
+#include "architecture/system_model/sys_model_task.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*!
  * This struct is dual purpose. The comments in-line describe the use as it is in

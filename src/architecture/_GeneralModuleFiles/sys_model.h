@@ -22,7 +22,7 @@
 
 #include <string>
 #include <stdint.h>
-
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Simulation System Model Class */
 class SysModel

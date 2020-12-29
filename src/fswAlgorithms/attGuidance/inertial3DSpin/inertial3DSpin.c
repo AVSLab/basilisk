@@ -28,7 +28,7 @@
 #include "fswAlgorithms/attGuidance/inertial3DSpin/inertial3DSpin.h"
 #include <string.h>
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "utilities/macroDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 

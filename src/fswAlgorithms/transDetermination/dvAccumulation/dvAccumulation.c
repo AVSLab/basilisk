@@ -18,11 +18,11 @@
  */
 
 #include "fswAlgorithms/transDetermination/dvAccumulation/dvAccumulation.h"
-#include "utilities/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdlib.h>
-#include "utilities/bsk_Print.h"
+#include "architecture/utilities/bsk_Print.h"
 
 
 /*! This method initializes the configData for the nav aggregation algorithm.

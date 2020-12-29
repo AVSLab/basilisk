@@ -22,15 +22,15 @@
 
 #include <vector>
 #include <map>
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/bskLogging.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
-#include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "msgPayloadDefC/SpiceTimeMsgPayload.h"
-#include "msgPayloadDefC/EpochMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
+#include "architecture/msgPayloadDefC/EpochMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
 /*! @brief spice interface class */
 class SpiceInterface: public SysModel {

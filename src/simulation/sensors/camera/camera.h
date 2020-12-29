@@ -28,13 +28,13 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "msgPayloadDefC/CameraImageMsgPayload.h"
-#include "msgPayloadDefC/CameraConfigMsgPayload.h"
-#include "messaging2/messaging2.h"
+#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+#include "architecture/messaging2/messaging2.h"
 
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief visual camera class */
 class Camera: public SysModel {
