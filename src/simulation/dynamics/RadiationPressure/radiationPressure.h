@@ -22,9 +22,9 @@
 
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

@@ -21,10 +21,10 @@
 #ifndef REACTIONWHEELSTATEEFFECTOR_H
 #define REACTIONWHEELSTATEEFFECTOR_H
 
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/dynamicObject.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"

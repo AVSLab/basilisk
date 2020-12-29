@@ -21,8 +21,8 @@
 #ifndef DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"

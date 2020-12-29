@@ -20,7 +20,7 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include "../../simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include <architecture/utilities/orbitalMotion.h>
 
 

@@ -19,7 +19,7 @@
 
 %module gravityEffector
 %{
-   #include "../_GeneralModuleFiles/gravityEffector.h"
+   #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 %}
 
 %pythoncode %{
@@ -29,11 +29,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "sys_model.h"
 #pragma SWIG nowarn=362
-%include "../_GeneralModuleFiles/gravityEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
 %include "std_vector.i"
 

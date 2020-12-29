@@ -27,23 +27,23 @@
 %include "std_string.i"
 %feature("copyctor");
 
-%include "sys_model.h"
+%include "architecture/_GeneralModuleFiles/sys_model.h"
 %include "coarseSunSensor.h"
 
-%include "msgPayloadDefC/SCPlusStatesMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "msgPayloadDefC/CSSRawDataMsgPayload.h"
+%include "architecture/msgPayloadDefC/CSSRawDataMsgPayload.h"
 struct CSSRawDataMsg_C;
-%include "msgPayloadDefC/AlbedoMsgPayload.h"
+%include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
 struct AlbedoMsg_C;
-%include "msgPayloadDefC/EclipseMsgPayload.h"
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 struct EclipseMsg_C;
-%include "msgPayloadDefC/CSSArraySensorMsgPayload.h"
+%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
 struct CSSArraySensorMsg_C;
 
-%include "msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 
 namespace std {
     %template(CSSVector) vector<CoarseSunSensor>;

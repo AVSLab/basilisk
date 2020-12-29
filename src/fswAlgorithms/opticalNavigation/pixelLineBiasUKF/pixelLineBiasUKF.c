@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "pixelLineBiasUKF.h"
-#include "../_GeneralModuleFiles/ukfUtilities.h"
+#include "fswAlgorithms/opticalNavigation/_GeneralModuleFiles/ukfUtilities.h"
 
 /*! This method creates the two moduel output messages.
  @return void

@@ -22,7 +22,7 @@
 
 #include "architecture/messaging2/messaging2.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"

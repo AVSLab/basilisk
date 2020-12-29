@@ -25,7 +25,7 @@
 
 %include "swig_common_model.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/powerNodeBase.h"
+%include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 %include "ReactionWheelPower.h"
 
 %include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"

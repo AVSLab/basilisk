@@ -19,7 +19,7 @@
 %module pixelLineBiasUKF
 %{
    #include "pixelLineBiasUKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/opticalNavigation/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -33,7 +33,7 @@
 %ignore Reset_pixelLineBiasUKF;
 
 %include "pixelLineBiasUKF.h"
-%include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "fswAlgorithms/opticalNavigation/_GeneralModuleFiles/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;

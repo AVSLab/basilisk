@@ -23,14 +23,14 @@
 
 #include <Eigen/Dense>
 #include <vector>
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 #include "architecture/messaging2/messaging2.h"
 
-#include "../../../architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
 
 

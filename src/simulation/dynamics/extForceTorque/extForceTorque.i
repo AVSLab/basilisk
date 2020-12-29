@@ -30,7 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 
 %include "extForceTorque.h"
 

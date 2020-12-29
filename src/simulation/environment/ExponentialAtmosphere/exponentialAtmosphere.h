@@ -26,7 +26,7 @@
 #include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "../_GeneralModuleFiles/atmosphereBase.h"
+#include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief exponential atmosphere model */

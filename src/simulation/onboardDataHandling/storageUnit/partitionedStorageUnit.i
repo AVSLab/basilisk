@@ -35,7 +35,7 @@ from Basilisk.architecture.swig_common_model import *
 namespace std {
     %template(storedDataVector) std::vector<dataInstance>;
 }
-%include "../_GeneralModuleFiles/dataStorageUnitBase.h"
+%include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 struct dataInstance;
 %include "partitionedStorageUnit.h"
 

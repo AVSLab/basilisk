@@ -31,7 +31,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 %include "std_string.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/magneticFieldBase.h"
+%include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
 %include "magneticFieldCenteredDipole.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

@@ -21,7 +21,7 @@
 #define EXT_PULSED_TORQUE_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "architecture/utilities/bskLogging.h"
 
 

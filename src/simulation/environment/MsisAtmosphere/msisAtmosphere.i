@@ -30,7 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "swig_eigen.i"
 %include "std_vector.i"
-%include "../_GeneralModuleFiles/atmosphereBase.h"
+%include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
 %include "msisAtmosphere.h"
 #include "nrlmsise-00.h"
 

@@ -19,7 +19,7 @@
 %module okeefeEKF
 %{
    #include "okeefeEKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -32,7 +32,7 @@
 %constant void Reset_okeefeEKF(void*, uint64_t, uint64_t);
 %ignore Reset_okeefeEKF;
 
-%include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;

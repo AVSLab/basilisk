@@ -28,8 +28,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "sys_model.h"
 %include "radiationPressure.h"
 

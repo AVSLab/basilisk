@@ -19,7 +19,7 @@
 %module headingSuKF
 %{
    #include "headingSuKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -33,7 +33,7 @@
 %ignore Reset_headingSuKF;
 
 %include "headingSuKF.h"
-%include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;

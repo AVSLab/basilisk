@@ -31,7 +31,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/atmosphereBase.h"
+%include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
 %include "exponentialAtmosphere.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

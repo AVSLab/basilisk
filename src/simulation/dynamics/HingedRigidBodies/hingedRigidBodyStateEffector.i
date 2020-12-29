@@ -32,9 +32,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/stateEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "hingedRigidBodyStateEffector.h"
 
 %include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"

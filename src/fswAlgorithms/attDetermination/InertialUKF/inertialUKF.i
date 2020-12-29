@@ -38,7 +38,7 @@ STRUCTASLIST(STMessage)
 %include "inertialUKF.h"
 
 
-%include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/InertialFilterMsgPayload.h"
 struct InertialFilterMsg_C;

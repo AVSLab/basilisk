@@ -27,7 +27,7 @@
 #include<time.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "../_GeneralModuleFiles/atmosphereBase.h"
+#include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
 
 #include "architecture/msgPayloadDefC/SwDataMsgPayload.h"
 

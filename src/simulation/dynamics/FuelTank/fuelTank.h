@@ -25,8 +25,8 @@
 #define FUEL_TANK_H
 
 #include <vector>
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -34,7 +34,7 @@
 #include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
 #include "architecture/messaging2/messaging2.h"
 
-#include "../_GeneralModuleFiles/fuelSlosh.h"
+#include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 #include "architecture/utilities/bskLogging.h"
 #include <math.h>
 

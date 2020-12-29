@@ -26,7 +26,7 @@
 #include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "../_GeneralModuleFiles/magneticFieldBase.h"
+#include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
 
 #include "architecture/utilities/bskLogging.h"
 

@@ -21,8 +21,8 @@
 #define HUB_EFFECTOR_H
 
 #include <Eigen/Dense>
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
