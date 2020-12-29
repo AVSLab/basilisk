@@ -24,7 +24,6 @@ endif()
 
 # Link all necessary libraries
 #target_link_libraries(${LIB_NAME} ArchitectureUtilities)
-target_link_libraries(${LIB_NAME} SimMessaging)
 target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
 #target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
 
