@@ -348,7 +348,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     #
     # Initialize Simulation
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
     #
     if multiplePlanet:
         velRef = scObject.dynManager.getStateObject("hubVelocity")

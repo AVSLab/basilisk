@@ -184,7 +184,7 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
 
 def runScenario(TheScenario):
     # Initialize simulation
-    TheScenario.InitializeSimulationAndDiscover()
+    TheScenario.InitializeSimulation()
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)

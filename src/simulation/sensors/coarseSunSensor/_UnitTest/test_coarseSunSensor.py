@@ -238,7 +238,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #
     #   Initialize and run simulation one step at a time
     #
-    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
     for i in range(len(sigmas)):

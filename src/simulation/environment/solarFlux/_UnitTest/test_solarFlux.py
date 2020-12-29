@@ -72,7 +72,7 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     dataLog = sf.solarFluxOutMsg.log()
     sim.AddModelToTask(task.Name, dataLog)
 
-    sim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulation()
     sim.TotalSim.SingleStepProcesses()
 
     fluxOutEarth = dataLog.flux

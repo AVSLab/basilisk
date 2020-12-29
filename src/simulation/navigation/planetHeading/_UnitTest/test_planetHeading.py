@@ -66,7 +66,7 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     dataLog = ph.planetHeadingOutMsg.log()
     sim.AddModelToTask(task.Name, dataLog)
 
-    sim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulation()
     sim.TotalSim.SingleStepProcesses()
     headingOut = dataLog.rHat_XB_B[-1]
 

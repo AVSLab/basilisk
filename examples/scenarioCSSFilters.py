@@ -572,7 +572,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     #
     #   configure a simulation stop time time and execute the simulation run

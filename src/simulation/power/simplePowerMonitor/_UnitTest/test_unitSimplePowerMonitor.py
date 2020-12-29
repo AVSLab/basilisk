@@ -82,7 +82,7 @@ def test_storage_limits(show_plots):
     dataLog = test_battery.batPowerOutMsg.log()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
 
     unitTestSim.ExecuteSimulation()

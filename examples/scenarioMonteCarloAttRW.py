@@ -728,7 +728,7 @@ def executeScenario(sim):
     #
     #   initialize Simulation
     #
-    sim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulation()
 
     #
     #   configure a simulation stop time time and execute the simulation run

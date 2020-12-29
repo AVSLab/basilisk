@@ -339,7 +339,7 @@ def run(show_plots, damping_parameter, timeStep):
     #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
     #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     scSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", simulationTimeStep, 0, 0, 'double')
     scSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", simulationTimeStep, 0, 2, 'double')

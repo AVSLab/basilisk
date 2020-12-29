@@ -204,7 +204,7 @@ def run(show_plots, maneuverCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     #
     #  get access to dynManager translational states for future access to the states

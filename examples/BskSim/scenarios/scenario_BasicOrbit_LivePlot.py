@@ -197,7 +197,7 @@ def runScenario(scenario, livePlots=False, showPlots=False):
         scenario.AddModelToTask(scenario.DynModels.taskName, clockSync)
 
     # Initialize simulation
-    scenario.InitializeSimulationAndDiscover()
+    scenario.InitializeSimulation()
 
     # Configure run time
     simulationTime = macros.min2nano(10.)

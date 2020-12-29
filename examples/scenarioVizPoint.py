@@ -355,7 +355,7 @@ def run(show_plots, missionType, saveVizardFile):
     if saveVizardFile:
         vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
                                             saveFile=fileNamePath, gravBodies=gravFactory)
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     #
     #   configure a simulation stop time time and execute the simulation run

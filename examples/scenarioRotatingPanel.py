@@ -264,7 +264,7 @@ def run(show_plots):
                                               gravBodies=gravFactory
                                               )
 
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 

@@ -332,7 +332,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         unitTestSim.AddModelToTask(unitTaskName, dataSc2RW1Log)
 
     # Need to call the self-init and cross-init methods
-    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.InitializeSimulation()
 
     unitTestSim.ConfigureStopTime(simulationTime) 
 

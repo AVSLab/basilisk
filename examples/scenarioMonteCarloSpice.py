@@ -176,7 +176,7 @@ def run():
 
 def executeScenario(sim):
     sim.ConfigureStopTime(macros.sec2nano(100.))
-    sim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulation()
 
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
     #

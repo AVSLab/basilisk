@@ -222,7 +222,7 @@ def run(show_plots, integratorCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     #
     #   configure a simulation stop time time and execute the simulation run

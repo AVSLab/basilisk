@@ -237,7 +237,7 @@ def run(show_plots):
     #   cross_init() and reset() routines on each module.
     #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
     #   then the all messages are auto-discovered that are shared across different BSK threads.
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

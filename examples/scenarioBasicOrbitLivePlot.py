@@ -216,7 +216,7 @@ def run(showPlots, livePlots, orbitCase, useSphericalHarmonics, planetCase):
     #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
     #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     #
     #   configure a simulation stop time

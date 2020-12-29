@@ -113,7 +113,7 @@ def myCreationFunction():
 
 def myExecutionFunction(sim):
     ''' function that executes a simulation '''
-    sim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulation()
     sim.ExecuteSimulation()
 
 

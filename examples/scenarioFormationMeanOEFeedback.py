@@ -241,7 +241,7 @@ def run(show_plots, useClassicElem, numOrbits):
                                               scName=[scObject.ModelTag, scObject2.ModelTag])
 
     # ----- execute sim ----- #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 

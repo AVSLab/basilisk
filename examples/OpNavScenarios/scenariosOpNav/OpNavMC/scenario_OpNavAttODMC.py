@@ -130,7 +130,7 @@ def run(TheScenario):
     # Configure FSW mode
     TheScenario.modeRequest = 'prepOpNav'
     # Initialize simulation
-    TheScenario.InitializeSimulationAndDiscover()
+    TheScenario.InitializeSimulation()
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(3.)
     TheScenario.ConfigureStopTime(simulationTime)

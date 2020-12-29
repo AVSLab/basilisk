@@ -189,7 +189,7 @@ def run(show_plots, attType):
             viz.scData.push_back(scData)
 
     #   initialize Simulation
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     #   configure a simulation stop time time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)

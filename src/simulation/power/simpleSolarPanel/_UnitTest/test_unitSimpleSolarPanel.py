@@ -123,7 +123,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   Execute the sim for 1 second.
-    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
     
     unitTestSim.ExecuteSimulation()

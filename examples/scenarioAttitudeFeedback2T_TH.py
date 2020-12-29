@@ -683,7 +683,7 @@ def run(show_plots, useDVThrusters):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     # this next call ensures that the FSW and Dynamics Message that have the same
     # name are copied over every time the simulation ticks forward.  This function

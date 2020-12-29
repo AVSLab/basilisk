@@ -108,7 +108,7 @@ def run(show_plots, accuracy):
     CSS1.stateInMsg.subscribeTo(scMsg)
     CSS2.stateInMsg.subscribeTo(scMsg)
 
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
     scSim.TotalSim.SingleStepProcesses()
 
     # pull logged data

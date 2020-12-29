@@ -250,7 +250,7 @@ def run(showPlots, simTime = None):
     # Configure FSW mode
     TheScenario.masterSim.modeRequest = 'pointOpNav'
     # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
+    TheBSKSim.InitializeSimulation()
     # Configure run time and execute simulation
     if simTime != None:
         simulationTime = macros.min2nano(simTime)

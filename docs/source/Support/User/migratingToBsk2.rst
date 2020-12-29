@@ -414,6 +414,14 @@ For example, to plot using the log data use::
 
 
 
+Running Basilisk Simulation
+---------------------------
+The method ``.InitializeSimulationAndDiscover()`` has been removed in favor of ``.InitializeSimulation()`` as
+it did the regular simulation initialization and setup cross-process messaging using the old messaging system.  This
+is no longer needed.  Thus, rather then having 2 methods to initialize a Basilisk simulation, only the regular
+initializaiton method is now used.
+
+
 Miscellaneous Changes
 ---------------------
 If from Python you access ``#define`` values of ``macroDefinitions.h``, such as::

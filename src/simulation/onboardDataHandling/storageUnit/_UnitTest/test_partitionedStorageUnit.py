@@ -81,7 +81,7 @@ def test_storage_limits(show_plots):
     dataLog = test_storage_unit.storageUnitDataOutMsg.log()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))
 
     unitTestSim.ExecuteSimulation()

@@ -409,7 +409,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
     #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
     # If there are messages that are shared across multiple BSK threads, as shown in
     # [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
     # auto-discovers these shared messages.

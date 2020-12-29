@@ -125,7 +125,7 @@ def runScenario(TheScenario):
     print('Starting Execution')
     simulationTime = macros.min2nano(10.)
 
-    TheScenario.InitializeSimulationAndDiscover()
+    TheScenario.InitializeSimulation()
     TheScenario.modeRequest = 'inertial3D'
     TheScenario.ConfigureStopTime(simulationTime)
     TheScenario.ExecuteSimulation()

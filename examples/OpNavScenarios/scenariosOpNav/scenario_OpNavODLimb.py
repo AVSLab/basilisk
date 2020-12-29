@@ -246,7 +246,7 @@ def run(showPlots, simTime = None):
     # Configure FSW mode
     TheScenario.masterSim.modeRequest = 'prepOpNav'
     # Initialize simulation
-    TheBSKSim.InitializeSimulationAndDiscover()
+    TheBSKSim.InitializeSimulation()
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(3.)
     TheBSKSim.ConfigureStopTime(simulationTime)

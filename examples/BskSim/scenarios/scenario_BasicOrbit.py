@@ -236,7 +236,7 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
 def runScenario(scenario):
 
     # Initialize simulation
-    scenario.InitializeSimulationAndDiscover()
+    scenario.InitializeSimulation()
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
