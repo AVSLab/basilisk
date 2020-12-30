@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "module_id_generator.h"
+#include "moduleIdGenerator.h"
 #include <cstring>
 #include <stdio.h>
 
@@ -26,13 +26,22 @@
 ModuleIdGenerator* ModuleIdGenerator::TheInstance = NULL;
 
 /*!
- * This constructor for SystemMessaging initializes things
+ * This constructor for ModuleIdGenerator initializes things
  */
 ModuleIdGenerator::ModuleIdGenerator()
 {
     this->nextModuleID = 0;
 }
 
+/*!
+ * This desturctor for ModuleIdGenerator free memory
+ */
+
+ModuleIdGenerator::~ModuleIdGenerator()
+{
+	delete TheInstance;
+	TheInstance = NULL;
+}
 /*!
  * This gives a pointer to the messaging system to whoever asks for it.
  * @return ModuleIdGenerator* TheInstance

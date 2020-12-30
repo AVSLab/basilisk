@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _MODULE_ID_GENERATOR_H_
-#define _MODULE_ID_GENERATOR_H_
+#ifndef _ModuleIdGenerator_HH_
+#define _ModuleIdGenerator_HH_
 
 #include <inttypes.h>
 
@@ -44,4 +44,4 @@ private:
     
 };
 
-#endif /* _MODULE_ID_GENERATOR_H_ */
+#endif /* _ModuleIdGenerator_HH_ */

@@ -18,7 +18,7 @@
  */
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/module_id_generator.h"
+#include "architecture/utilities/messageIdGenerator/moduleIdGenerator.h"
 
 SysModel::SysModel()
 {
