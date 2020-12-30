@@ -197,7 +197,9 @@ def run(show_plots, maneuverCase):
     scSim.AddModelToTask(recorderTaskName, dataRec)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, gravBodies=gravFactory
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation
