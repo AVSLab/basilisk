@@ -51,7 +51,6 @@ ModuleIdGenerator* ModuleIdGenerator::GetInstance()
     if(TheInstance == NULL)
     {
         TheInstance = new ModuleIdGenerator();
-        printf("HPS: created new module id generator\n");
     }
     return(TheInstance);
 }
@@ -62,6 +61,5 @@ ModuleIdGenerator* ModuleIdGenerator::GetInstance()
  */
 int64_t ModuleIdGenerator::checkoutModuleID()
 {
-    printf("HPS: created %llu\n", this->nextModuleID);
     return(this->nextModuleID++);
 }
