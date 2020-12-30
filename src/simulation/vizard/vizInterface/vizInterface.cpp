@@ -194,16 +194,17 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     /* Check Spice input message */
     {
         MsgCurrStatus spiceStatus;
-        spiceStatus.dataFresh = false;
+        spiceStatus.dataFresh = true;  // this ensures that default planet states are also used
         spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
         this->spiceInMsgStatus.clear();
         this->spiceMessage.clear();
-        for (int c = 0; c< (int) this->spiceInMsgs.size(); c++) {
-            if (!this->spiceInMsgs.at(c).isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "vizInterface: planet msg (%zu) not linked.", c);
-            }
-            this->spiceInMsgStatus.push_back(spiceStatus);
+        for (int c = 0; c< (int) this->planetNames.size(); c++) {
+            /* set default zero translation and rotation states */
             SpicePlanetStateMsgPayload logMsg = {};
+            m33SetIdentity(logMsg.J20002Pfix);
+            strcpy(logMsg.PlanetName, this->planetNames.at(c).c_str());
+
+            this->spiceInMsgStatus.push_back(spiceStatus);
             this->spiceMessage.push_back(logMsg);
         }
     }
@@ -338,6 +339,7 @@ void VizInterface::ReadBSKMessages()
     for(size_t i=0; i < this->spiceInMsgs.size(); i++)
     {
         if (this->spiceInMsgs.at(i).isLinked()){
+            // If the spice msg is not linked then the default zero planet emphemeris is used
             SpicePlanetStateMsgPayload localSpiceArray;
             localSpiceArray = this->spiceInMsgs.at(i)();
             if(this->spiceInMsgs.at(i).isWritten() &&
@@ -732,12 +734,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! Write spice output msgs */
-    for(size_t k=0; k<this->spiceInMsgs.size(); k++)
+    for(size_t k=0; k<this->planetNames.size(); k++)
     {
-        if (this->spiceInMsgs[k].isLinked() && this->spiceInMsgStatus[k].dataFresh){
+        if (this->spiceInMsgStatus[k].dataFresh){
             vizProtobufferMessage::VizMessage::CelestialBody* spice = message->add_celestialbodies();
-            std::string planetName(this->spiceMessage[k].PlanetName);
-            spice->set_bodyname(planetName);
+            spice->set_bodyname(this->planetNames.at(k));
             for (int i=0; i<3; i++){
                 spice->add_position(this->spiceMessage[k].PositionVector[i]);
                 spice->add_velocity(this->spiceMessage[k].VelocityVector[i]);

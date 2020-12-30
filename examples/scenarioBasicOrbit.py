@@ -205,6 +205,9 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
+# always import the Basilisk messaging support
+from Basilisk.architecture import messaging2
+
 def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """
     At the end of the python script you can specify the following example parameters.
@@ -232,6 +235,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
+
+    # (Optional) If you want to see a simulation progress bar in the terminal window, the
+    # use the following SetProgressBar(True) statement
     scSim.SetProgressBar(True)
 
     #  create the simulation process
@@ -261,7 +267,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # handler to this gravitational object as a convenience.  The celestial object position and velocity
     # vectors are all defaulted to zero values.  If non-zero values are required, this can be manually
     # overridden.  If multiple bodies are simulated, then their positions can be
-    # dynamically updated.  See [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
+    # dynamically updated.  See scenarioOrbitMultiBody.py to learn how this is
     # done via a SPICE object.
     if planetCase == 'Mars':
         planet = gravFactory.createMarsBarycenter()
@@ -290,8 +296,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # it is only one body like Earth or Mars, or a list of multiple bodies.
 
     # Note that the default planets position and velocity vectors in the gravitational body are set to zero.  If
-    # alternate position or velocity vectors are requried, this can be done by creating the planet ephemerise message
-    # that is connected to the gravity effector input message `bodyInMsgName`.
+    # alternate position or velocity vectors are required, this can be done by creating the planet ephemeris message
+    # that is connected to the gravity effector input message `planetBodyInMsg`.
     # If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages
     # the planet's default ephemeris would be replaced with the desired custom values.
 
@@ -351,12 +357,17 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         simulationTime = macros.sec2nano(0.75 * P)
 
     # Setup data logging before the simulation is initialized
+    dataLog = scObject.scStateOutMsg.log()  # create a logging task object of the spacecraft output message
     if useSphericalHarmonics:
         numDataPoints = 400
     else:
         numDataPoints = 100
     samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    logTaskName = "logTask"
+    # to log the message at a lower rate then the simulation rate, a separate process is created
+    # and the SC msg logging module is added to this task group
+    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    scSim.AddModelToTask(logTaskName, dataLog)
 
     # Vizard Visualization Option
     # -----
@@ -367,7 +378,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # Vizard and played back after running the BSK simulation.
     # To enable this, uncomment this line:
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
                                               # saveFile=__file__,
                                               # liveStream=True,
                                               gravBodies=gravFactory
@@ -388,10 +399,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # While Vizard has many visualization features that can be customized from within the application, many Vizard
     # settings can also be scripted from the Basilisk python script.  A complete discussion on these options and
     # features can be found the the Vizard documentation pages.
-
-
-
-
 
     # Before the simulation is ready to run, it must be initialized.  The following code uses a
     # convenient macro routine
@@ -423,9 +430,12 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # illustrate how to over-ride default values with desired simulation values.
 
 
-    #   retrieve the logged data
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    # retrieve the logged data
+    # the data is stored inside dataLog variable.  The time axis is stored separately from the data vector and
+    # can be access through dataLog.times().  The message data is access directly through the message
+    # variable names.
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
 
     np.set_printoptions(precision=16)
 
@@ -433,7 +443,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # the inertial position vector components, while the second plot either shows a planar
     # orbit view relative to the perfocal frame (no spherical harmonics), or the
     # semi-major axis time history plot (with spherical harmonics turned on).
-    figureList = plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet)
+    figureList = plotOrbits(dataLog.times(), posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet)
 
     if show_plots:
         plt.show()
@@ -444,16 +454,16 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     return posData, figureList
 
 
-
-def plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet):
+def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet):
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, posData[:, idx] / 1000.,
+
+    for idx in range(3):
+        plt.plot(timeAxis * macros.NANO2SEC / P, posData[:, idx] / 1000.,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -482,7 +492,7 @@ def plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, pl
         rData = []
         fData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - oe.omega)
         plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0
@@ -505,9 +515,9 @@ def plotOrbits(posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, pl
         ax.ticklabel_format(useOffset=False, style='plain')
         smaData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
             smaData.append(oeData.a / 1000.)
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, smaData, color='#aa0000',
+        plt.plot(timeAxis * macros.NANO2SEC / P, smaData, color='#aa0000',
                  )
         plt.xlabel('Time [orbits]')
         plt.ylabel('SMA [km]')

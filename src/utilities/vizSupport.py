@@ -739,7 +739,7 @@ def createCameraConfigMsg(viz, **kwargs):
     return
 
 
-def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
+def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     """
     This methods creates an instance of the vizInterface() modules and setups up associated Vizard
     configuration setting messages.
@@ -750,8 +750,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         variable with the simulationBaseClass copy
     simTaskName:
         task to which to add the vizInterface module
-    processName:
-        process to which to write a default zero planetary ephemeris message if this message does not exist
+    scList:
+        spacecraftPlus objects.  Can be a single object or list of objects
 
     Keyword Args
     ------------
@@ -803,6 +803,10 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
     # create spacecraft information container
     scData = vizInterface.VizSpacecraftData()
+
+    # ensure the spacecraft object list is a list
+    if not isinstance(scList, list):
+        scList = [scList]
 
     # set spacecraft name
     if 'scName' in kwargs:
@@ -880,14 +884,12 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     # create list of spacecraft data with incremented I/O msg names, unique numRW values but equal thrDevices info
     vizMessenger.scData.clear()
     i = 0
-    scPlusInMsgName = scData.scPlusInMsgName
     for name in scNames:
         scData.spacecraftName = name
-        scData.numRW = numRWList[i]
+        # scData.numRW = numRWList[i]
         if len(cssNameList) > 0:
             scData.cssInMsgNames = vizInterface.StringVector(cssNameList[i])
-        if i != 0:
-            scData.scPlusInMsgName = scPlusInMsgName + str(i+1)
+        scData.scPlusInMsg.subscribeTo(scList[i].scStateOutMsg)
         vizMessenger.scData.push_back(scData)
         i = i + 1
 
@@ -931,38 +933,17 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         if val > 0:
             vizMessenger.opnavImageOutMsgName = "opnav_circles"
 
-    vizMessenger.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
-                                                              "mars_planet_data",
-                                                              "mars barycenter_planet_data",
-                                                              "sun_planet_data",
-                                                              "jupiter barycenter_planet_data",
-                                                              "moon_planet_data",
-                                                              "venus_planet_data",
-                                                              "mercury_planet_data",
-                                                              "uranus barycenter_planet_data",
-                                                              "neptune barycenter_planet_data",
-                                                              "pluto barycenter_planet_data",
-                                                              "saturn barycenter_planet_data"])
-    vizMessenger.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-
-
     # see if celestial body planet ephemeris messages must be created
     if 'gravBodies' in kwargs:
         gravFactory = kwargs['gravBodies']
         gravBodies = gravFactory.gravBodies
+        planetNameList = []
         if (gravBodies):
+            if (gravFactory.spiceObject):
+                vizMessenger.spiceInMsgs = gravFactory.spiceObject.planetStateOutMsgs
+
             for key in gravBodies:
-                msgName = key + '_planet_data'
-                if (not scSim.TotalSim.IsMsgCreated(msgName)):
-                    ephemData = messaging2.SpicePlanetStateMsgPayload()
-                    ephemData.J2000Current = 0.0
-                    ephemData.PositionVector = [0.0, 0.0, 0.0]
-                    ephemData.VelocityVector = [0.0, 0.0, 0.0]
-                    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-                    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-                    ephemData.PlanetName = key
-                    # setting the msg structure name is required below to all the planet msg to be logged
-                    # unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
-                    #                            ephemData, "SpicePlanetStateSimMsg")
+                planetNameList.append(key)
+            vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
 
     return vizMessenger
