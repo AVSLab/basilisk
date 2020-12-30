@@ -212,8 +212,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    print("HPS: scObject.moduleID " + str(scObject.moduleID))
-
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -240,8 +238,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
-    print("HPS: extFTObject.moduleID " + str(extFTObject.moduleID))
-
     # use the input flag to determine which external torque should be applied
     # Note that all variables are initialized to zero.  Thus, not setting this
     # vector would leave it's components all zero for the simulation.
@@ -250,27 +246,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
-    # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap2 = scSim.setModelDataWrap(inertial3DConfig)
-    print("HPS: inertial3DWrap2.moduleID " + str(inertial3DWrap2.moduleID))
-
-
-    sNavObject2 = simpleNav.SimpleNav()
-    print("HPS: sNavObject2.moduleID " + str(sNavObject2.moduleID))
-
-    extFTObject2 = extForceTorque.ExtForceTorque()
-    print("HPS: extFTObject2.moduleID " + str(extFTObject2.moduleID))
-    extFTObject3 = extForceTorque.ExtForceTorque()
-    print("HPS: extFTObject3.moduleID " + str(extFTObject3.moduleID))
-    extFTObject4 = extForceTorque.ExtForceTorque()
-    print("HPS: extFTObject4.moduleID " + str(extFTObject4.moduleID))
-
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
-    print("HPS: sNavObject.moduleID " + str(sNavObject.moduleID))
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -283,14 +262,12 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
-    print("HPS: inertial3DWrap.moduleID " + str(inertial3DWrap.moduleID))
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    print("HPS: attErrorWrap.moduleID " + str(attErrorWrap.moduleID))
 
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
@@ -306,7 +283,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
     if useKnownTorque:
         mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
-    print("HPS: mrpControlWrap.moduleID " + str(mrpControlWrap.moduleID))
 
     #
     # create simulation messages
@@ -321,13 +297,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     # Setup data logging before the simulation is initialized
     #
-    print("HPS: log11")
     snLog = scObject.scStateOutMsg.log()
-    print("HPS: log12")
     attErrorLog = attErrorConfig.attGuidOutMsg.log()
-    print("HPS: log13")
     mrpLog = mrpControlConfig.cmdTorqueOutMsg.log()
-    print("HPS: log14")
 
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 50
