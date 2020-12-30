@@ -25,7 +25,7 @@ This script sets up a 6-DOF spacecraft orbiting a planet.  The purpose
 is to illustrate how to create a spacecraft, attach a gravity model and a fuel tank, and run
 a basic Basilisk simulation.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioFuelSlosh.py
 

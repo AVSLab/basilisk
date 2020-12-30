@@ -29,7 +29,7 @@ algorithm module is used to control these RWs. The scenario is run in a single c
 by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
 to the variables in between each MC run.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioMonteCarloAttRW.py
 

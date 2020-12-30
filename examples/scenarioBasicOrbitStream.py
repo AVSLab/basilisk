@@ -24,7 +24,7 @@ This script duplicates the basic orbit simulation in the scenario :ref:`scenario
 The difference is that this version allows for the Basilisk simulation data to be live streamed to the
 :ref:`vizard` visualization program.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioBasicOrbitStream.py
 

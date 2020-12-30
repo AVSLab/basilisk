@@ -22,7 +22,7 @@ Overview
 --------
 This script sets up a formation flying scenario with two spacecraft. 
 The deputy spacecraft reconfigures its relative orbit in one orbit from one initial orbital element difference to target orbital element difference.
-This script is found in the folder ``src/examples`` and executed by using::
+This script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioFormationReconfig.py
 

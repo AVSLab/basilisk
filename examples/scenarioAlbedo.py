@@ -20,7 +20,7 @@ r"""
 Overview
 --------
 
-Demonstrates how to add albedo module to coarse sun sensor. The script is found in the folder ``src/examples`` and
+Demonstrates how to add albedo module to coarse sun sensor. The script is found in the folder ``basilisk/examples`` and
 executed by using::
 
       python3 scenarioAlbedo.py

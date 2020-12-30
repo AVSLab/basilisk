@@ -27,7 +27,7 @@ magnetic field, as well as determine the
 magnetic field at a spacecraft location.  The orbit setup is similar to that used in
 :ref:`scenarioBasicOrbit`.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioMagneticFieldCenteredDipole.py
 

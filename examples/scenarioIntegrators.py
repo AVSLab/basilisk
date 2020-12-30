@@ -22,7 +22,7 @@ Overview
 
 This script illustrates how to setup different integration methods for a basic 3-DOF orbit scenario.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioIntegrators.py
 

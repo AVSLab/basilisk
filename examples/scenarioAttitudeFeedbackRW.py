@@ -29,7 +29,7 @@ The first setup runs the RW control to produce a desired set of RW motor torques
 which are then connected directly to the RW device input states.  The second setup illustrates
 how to setup voltage based I/O modules to the RW devices, both on the FSW and SIM side.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedbackRW.py
 

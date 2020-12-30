@@ -24,7 +24,7 @@ This script sets up a 6-DOF spacecraft in deep space without any gravitational
 bodies. Only rotational motion is simulated.  The script illustrates how to
 setup attitude filters that use measurements from the Coarse Sun Sensors (CSS).
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioCSSFilters.py
 

@@ -26,7 +26,7 @@ This script sets up a spacecraft with 3 RWs which is orbiting the Earth.  The go
 illustrate how to use the :ref:`MRP_Steering` module with a rate sub-servo system to control
 the attitude.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudeSteering.py
 

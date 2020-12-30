@@ -36,7 +36,7 @@ This scenario does not have multiple maneuver types, so nothing needs to
 be changed to run the scenario as was necessary
 in the orbit maneuvers tutorial
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioBasicOrbit.py
 

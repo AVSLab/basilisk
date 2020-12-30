@@ -30,7 +30,7 @@ in which the dynamics and the FSW algorithms are run at different time steps.  T
 as in :ref:`scenarioAttitudeFeedbackRW`, but here the RW actuation is replaced with
 thruster based control torque solution.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudeFeedback2T_TH.py
 

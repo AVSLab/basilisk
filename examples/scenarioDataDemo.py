@@ -29,7 +29,7 @@ This scenario is intended to provide both an overview and a concrete demonstrati
 #. Computation of data transmitted by onboard transmitters;
 #. Computation of the sum of data stored onboard the spacecraft.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioDataDemo.py
 

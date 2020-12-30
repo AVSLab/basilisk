@@ -31,7 +31,7 @@ simplePower modules are intended to provide three major features:
 #. Computation of power consumed by on-board spacecraft power sinks;
 #. Computation of the spacecraft power balance and total stored energy by the simpleBattery class.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioPowerDemo.py
 

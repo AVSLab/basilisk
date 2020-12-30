@@ -27,7 +27,7 @@ are taken from :ref:`scenarioAttitudeFeedbackRW`. The purpose of this script is 
 setup multiple satellites, and also show how to store the Basilisk simulation data to be able to visualize
 both satellite's motions within the :ref:`Vizard <vizard>` application.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioFormationBasic.py
 

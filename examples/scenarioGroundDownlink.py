@@ -26,7 +26,7 @@ This scenario is intended to provide both an overview and a concrete demonstrati
 and :ref:`spaceToGroundTransmitter`, which represents a spacecraft-based radio system that requires
 visibility to a ground station.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioDataDemo.py
 

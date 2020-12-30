@@ -27,7 +27,7 @@ This script sets up a 6-DOF spacecraft which is hovering in deep space.  The sce
 the scenario in :ref:`scenarioAttitudeFeedback` without adding
 Earth gravity body to the simulation.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedbackNoEarth.py
 

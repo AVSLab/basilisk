@@ -24,7 +24,7 @@ Illustrates how to add a :ref:`ReactionWheelPower` to the simulation to track th
 a the RW power modules are connected to a battery to illustrate the energy usage during this maneuver.
 This script expands on :ref:`scenarioAttitudeFeedbackRW`.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudeFeedbackRWPower.py
 

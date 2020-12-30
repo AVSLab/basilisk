@@ -24,7 +24,7 @@ Demonstrates how to use guidance modules to align the spacecraft frame to the ve
 This script sets up a 6-DOF spacecraft which is on a hyperbolic trajectory near Earth.
 It aligns the spacecraft to point along the velocity vector throughout the orbit.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudeGuidance.py
 

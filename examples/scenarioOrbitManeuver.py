@@ -25,7 +25,7 @@ is to illustrate how to start and stop the Basilisk simulation to apply
 some :math:`\Delta v`'s for simple orbit maneuvers.  Read :ref:`scenarioBasicOrbit`
 to learn how to setup an orbit simulation.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioOrbitManeuver.py
 

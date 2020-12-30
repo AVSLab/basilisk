@@ -23,7 +23,7 @@ Overview
 Discusses how to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudeGuidance.py
 

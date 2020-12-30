@@ -26,7 +26,7 @@ compatible data play for offline playback and analysis.  In this simulation a se
 position with respect to an uncontrolled satellite.  Custom spacecraft models are specified for Vizard
 in the folder :ref:`Folder_data`.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioDataToViz.py
 

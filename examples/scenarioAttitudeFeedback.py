@@ -24,7 +24,7 @@ Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 Earth that is initially tumbling.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedback.py
 

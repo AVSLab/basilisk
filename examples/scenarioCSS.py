@@ -25,7 +25,7 @@ Only rotational  motion is simulated.  The script illustrates how to setup CSS
 sensor units and log their data.  It is possible  to setup individual CSS sensors,
 or setup a constellation or array of CSS sensors.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioCSS.py
 

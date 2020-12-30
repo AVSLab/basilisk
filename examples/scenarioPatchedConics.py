@@ -54,7 +54,7 @@ while providing pseudo-SPICE messages is laid out in :ref:`scenarioCSS`.
 This simulation combines all those techniques as well as changing logging relative to multiple bodies for a single
 simulation.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioPatchedConics.py
 

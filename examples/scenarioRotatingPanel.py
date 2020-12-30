@@ -28,7 +28,7 @@ message is connected to :ref:`simpleSolarPanel`.
 .. image:: /_images/static/test_scenario_RotatingPanel.svg
    :align: center
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioRotatingPanel.py
 

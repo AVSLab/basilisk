@@ -24,7 +24,7 @@ This script sets up a 3-DOF spacecraft which is traveling in a multi-gravity env
 is to illustrate how to attach a multiple gravity model, and compare the output to SPICE generated
 trajectories.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioOrbitMultiBody.py
 

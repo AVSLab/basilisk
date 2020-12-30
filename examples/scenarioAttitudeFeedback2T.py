@@ -28,7 +28,7 @@ but here the dynamics
 simulation and the Flight Software (FSW) algorithms are run at different time steps
 using two separate task groups (also called processes).
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedback2T.py
 

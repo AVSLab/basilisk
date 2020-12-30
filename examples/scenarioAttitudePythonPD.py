@@ -30,7 +30,7 @@ The scenario runs two different cases.  The first is with the nominal MRP_PD (c-
 second is with the same module coded into a python process.  Identical results should be
 obtained.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudePythonPD.py
 

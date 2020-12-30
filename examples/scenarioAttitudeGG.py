@@ -25,7 +25,7 @@ control solution is active.  This script expands on :ref:`scenarioAttitudeGuidan
 up a 6-DOF spacecraft which is orbiting the Earth.  More illustrations on using the gravity gradient
 torque effector can be found in the modules :ref:`UnitTestGravityGradientEffector` folder.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudeGG.py
 

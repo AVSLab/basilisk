@@ -31,7 +31,7 @@ parameters and capture rates. This stems for an attitude detumble scenario, but 
 pointing towards a celestial body in order to display the visualization Vizard, and show
 the camera capabilities.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioVizPoint.py
 

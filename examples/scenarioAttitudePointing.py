@@ -25,7 +25,7 @@ This script sets up a 6-DOF spacecraft, but without specifying any orbital motio
 this scenario simulates the spacecraft translating in deep space.  The scenario is a simplified
 version of :ref:`scenarioAttitudeFeedback` with the orbital setup removed.
 
-The script is found in the folder ``src/examples`` and executed by using::
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioAttitudePointing.py
 

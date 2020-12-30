@@ -24,7 +24,7 @@ Overview
 This script sets up a formation flying scenario with two spacecraft. The deputy spacecraft keeps a given
 mean orbital element difference based on Lyapunov control theory.
 
-This script is found in the folder ``src/examples`` and executed by using::
+This script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioFormationMeanOEFeedback.py
 
