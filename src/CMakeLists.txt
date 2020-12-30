@@ -148,7 +148,7 @@ function(generate_package_libraries INIT_DIRECTORY)
 
         # Link all necessary libraries
         target_link_libraries(${LIB_NAME} ArchitectureUtilities)
-        target_link_libraries(${LIB_NAME} MessageIdGenerator)
+        target_link_libraries(${LIB_NAME} ModuleIdGenerator)
         target_link_libraries(${LIB_NAME} cMsgCInterface)
         target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
         target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
@@ -489,7 +489,7 @@ add_subdirectory("architecture/messaging2/cMsgCInterface")
 # TODO: I'd like for all generated libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions --.dylib, .lib, .a, etc -- which gets messy in CMake).
 generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
 
-set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities MessageIdGenerator cMsgCInterface)
+set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cMsgCInterface)
 
 ##############
 # SIMULATION #
