@@ -88,21 +88,19 @@ in textbooks such as `Analytical Mechanics of Space Systems
 # Creation Date:  Nov. 26, 2016
 #
 
-import sys
 import os
 import numpy as np
 import math
 
-# import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
-# import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -112,9 +110,6 @@ from Basilisk.utilities import vizSupport
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
-
-
 
 
 def run(show_plots, maneuverCase):
@@ -196,7 +191,10 @@ def run(show_plots, maneuverCase):
     #
     numDataPoints = 100
     samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    dataRec = scObject.scStateOutMsg.recorder()
+    recorderTaskName = "recorderTask"
+    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime))
+    scSim.AddModelToTask(recorderTaskName, dataRec)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
@@ -289,8 +287,8 @@ def run(show_plots, maneuverCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    posData = dataRec.r_BN_N
+    velData = dataRec.v_BN_N
 
     np.set_printoptions(precision=16)
 
@@ -303,8 +301,8 @@ def run(show_plots, maneuverCase):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, posData[:, idx] / 1000.,
+    for idx in range(3):
+        plt.plot(dataRec.times() * macros.NANO2HOUR, posData[:, idx] / 1000.,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -322,11 +320,11 @@ def run(show_plots, maneuverCase):
         ax.ticklabel_format(useOffset=False, style='plain')
         iData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(earth.mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem(earth.mu, posData[idx], velData[idx])
             iData.append(oeData.i * macros.R2D)
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, np.ones(len(posData[:, 0])) * 8.93845, '--', color='#444444'
+        plt.plot(dataRec.times() * macros.NANO2HOUR, np.ones(len(posData[:, 0])) * 8.93845, '--', color='#444444'
                  )
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, iData, color='#aa0000'
+        plt.plot(dataRec.times() * macros.NANO2HOUR, iData, color='#aa0000'
                  )
         plt.ylim([-1, 10])
         plt.xlabel('Time [h]')
@@ -340,9 +338,9 @@ def run(show_plots, maneuverCase):
         ax.ticklabel_format(useOffset=False, style='plain')
         rData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem_parab(earth.mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem_parab(earth.mu, posData[idx], velData[idx])
             rData.append(oeData.rmag / 1000.)
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, rData, color='#aa0000',
+        plt.plot(dataRec.times() * macros.NANO2HOUR, rData, color='#aa0000',
                  )
         plt.xlabel('Time [h]')
         plt.ylabel('Radius [km]')
@@ -360,7 +358,7 @@ def run(show_plots, maneuverCase):
     # this check below just makes sure no sub-test failures were found
     dataPos = posRef.getState()
     dataPos = [[0.0, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    return dataPos, figureList
+    return figureList
 
 
 #

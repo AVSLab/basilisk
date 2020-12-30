@@ -60,25 +60,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
     testMessages = []  # create empty array to store test log messages
 
     # each test method requires a single assert method to be called
-    dataPos, figureList = scenarioOrbitManeuver.run(show_plots, maneuverCase)
-
-
-
-    # setup truth data for unit test
-    if maneuverCase == 0:
-        truePos = [
-            [10298352.587758573, 40947481.244493686, 0.0]
-        ]
-    if maneuverCase == 1:
-        truePos = [
-            [5937590.072546725, 3675220.9560903916, 477503.77340122446]
-        ]
-
-    # compare the results to the truth values
-    accuracy = 1e-6
-    testFailCount, testMessages = unitTestSupport.compareArray(
-        truePos, dataPos, accuracy, "r_BN_N Vector",
-        testFailCount, testMessages)
+    figureList = scenarioOrbitManeuver.run(show_plots, maneuverCase)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):
