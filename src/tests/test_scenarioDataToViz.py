@@ -25,7 +25,7 @@ from Basilisk.simulation import bskLogging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples')
+sys.path.append(path + '/../../examples')
 import scenarioDataToViz as testScenario
 
 @pytest.mark.parametrize("attType", [0, 1])

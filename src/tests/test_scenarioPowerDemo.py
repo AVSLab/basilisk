@@ -26,7 +26,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples')
+sys.path.append(path + '/../../examples')
 import scenarioPowerDemo
 
 @pytest.mark.scenarioTest

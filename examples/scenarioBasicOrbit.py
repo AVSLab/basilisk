@@ -194,7 +194,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-# Copy the folder `{basiliskPath}/src/examples` into a new folder in a different directory.
+# Copy the folder `{basiliskPath}/examples` into a new folder in a different directory.
 # Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
 
 

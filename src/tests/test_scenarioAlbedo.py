@@ -35,7 +35,7 @@ from Basilisk.utilities import macros
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples')
+sys.path.append(path + '/../../examples')
 import scenarioAlbedo
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
