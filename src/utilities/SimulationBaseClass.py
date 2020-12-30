@@ -39,7 +39,6 @@ except NameError:
    from sets import Set as set
 
 from Basilisk.utilities import simulationArchTypes
-from Basilisk.simulation import simMessages
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 import warnings
@@ -375,14 +374,6 @@ class SimBaseClass:
         for process in self.pyProcList:
             for interface in process.intRefs:
                 interface.discoverAllMessages()
-
-        # Create a new set into which we add the SWIG'd simMessages definitions
-        # and union it with the simulation's modules set. We do this so that
-        # python modules can have message structs resolved
-        self.allModules = set()
-        self.allModules.add(simMessages)
-        self.allModules = self.allModules | self.simModules
-
 
     def ConfigureStopTime(self, TimeStop):
         self.StopTime = TimeStop
