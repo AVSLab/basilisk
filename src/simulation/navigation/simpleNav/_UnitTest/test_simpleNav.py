@@ -128,8 +128,8 @@ def unitSimpleNav(show_plots):
     sNavObject.crossAtt = False
 
     # setup logging
-    dataAttLog = sNavObject.attOutMsg.log()
-    dataTransLog = sNavObject.transOutMsg.log()
+    dataAttLog = sNavObject.attOutMsg.recorder()
+    dataTransLog = sNavObject.transOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataAttLog)
     unitTestSim.AddModelToTask(unitTaskName, dataTransLog)
 

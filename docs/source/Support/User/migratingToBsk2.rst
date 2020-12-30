@@ -11,7 +11,7 @@ and higher.  The string messaging system is replaced with a smarter message obje
 
 - prevents the user from connecting to the wrong message type in the C/C++ code
 - warns the user if the Python scripts connects messages of the wrong type
-- has much faster logging functionality
+- has much faster message recording functionality
 - requires explicit message connection setup, i.e. no hidden implicit message naming
 
 The overall goal is to create a new implementation is that is easier to use and understand, as well as faster
@@ -389,28 +389,30 @@ then you can use::
 It does not matter if these message interfaces are based in C or C++. The ``subscribeTo()`` method handles this
 automatically.
 
-Logged Data
------------
-The logging of messages is much simplified.  There are a few changes to note in the format of the logged data.
+Recorded Message Data
+---------------------
+The recording of messages is much simplified.  There are a few changes to note in the format of the recorded data.
 
-Here is some sample code.  The only line required to log the state output message use::
+Here is some sample code.  The only line required to create a message recorder module for the message is::
 
-    attErrorLog = attErrorConfig.attGuidOutMsg.log()
+    attErrorRec = attErrorConfig.attGuidOutMsg.recorder()
 
-This creates an object that can be added to a task list through::
+This creates an object that can be added to a Basilisk task list through::
 
-    scSim.AddModelToTask(logTaskName, attErrorLog)
+    scSim.AddModelToTask(recorderTaskName, attErrorRec)
 
-The update rate of ``logTaskName`` controls the frequency at which this message is logged.
+The update rate of ``recorderTaskName`` controls the frequency at which this message is recorded.  To record
+at the module simulation task rate just use that task name.  The above approach is handy if you want to record
+the messages at a custom rate.
 
-That is it.  The data is now logged into ``attErrorLog`` automatically during the simulation run.
+That is it.  The data is now recorded into ``attErrorRec`` automatically during the simulation run.
 In the new messaging system  the time information is no longer pre-pended in a first column, but rather provided as a
-separate array accessed through ``.times()``.  This means logging `N` time steps of a 3D vector no longer no longer
+separate array accessed through ``.times()``.  This means recording `N` time steps of a 3D vector no longer no longer
 yields a `Nx4` array, but rather a `Nx3` array.  Some plotting or value checking logic might have to be updated.
-For example, to plot using the log data use::
+For example, to plot using recorded data use::
 
     for idx in range(3):
-        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx])
+        plt.plot(attErrorRec.times() * macros.NANO2MIN, attErrorRec.sigma_BR[:, idx])
 
 
 

@@ -145,7 +145,7 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     op2InMsg = messaging2.OpNavMsg().write(inputSecondary)
     faults.navMeasSecondaryInMsg.subscribeTo(op2InMsg)
 
-    dataLog = faults.opNavOutMsg.log()
+    dataLog = faults.opNavOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

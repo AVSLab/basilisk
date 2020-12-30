@@ -117,7 +117,7 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigIn)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cmdTorqueOutMsg.log()
+    dataLog = moduleConfig.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

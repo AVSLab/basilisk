@@ -214,8 +214,8 @@ def cssWlsEstTestFunction(show_plots):
     residFailCriteria = 1.0E-12  # Essentially numerically "small"
 
     # Log the output message as well as the internal numACtiveCss variables
-    navData = CSSWlsEstFSWConfig.navStateOutMsg.log()
-    filterData = CSSWlsEstFSWConfig.cssWLSFiltResOutMsg.log()
+    navData = CSSWlsEstFSWConfig.navStateOutMsg.recorder()
+    filterData = CSSWlsEstFSWConfig.cssWLSFiltResOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, navData)
     unitTestSim.AddModelToTask(unitTaskName, filterData)
     unitTestSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
@@ -467,7 +467,7 @@ def cssRateTestFunction(show_plots):
     cssConfigDataInMsg = messaging2.CSSConfigMsg().write(cssConfigData)
 
     # Log the output message as well as the internal numACtiveCss variables
-    dataLog = moduleConfig.navStateOutMsg.log()
+    dataLog = moduleConfig.navStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Get observation data based on sun pointing and CSS orientation data

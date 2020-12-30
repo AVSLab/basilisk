@@ -181,8 +181,8 @@ def run(show_plots, orbitCase, setEpoch):
     samplingTime = int(simulationTime / (numDataPoints-1))
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog = scObject.scStateOutMsg.log()
-    denLog = newAtmo.envOutMsgs[0].log()
+    dataLog = scObject.scStateOutMsg.recorder()
+    denLog = newAtmo.envOutMsgs[0].recorder()
     scSim.AddModelToTask(logTaskName, dataLog)
     scSim.AddModelToTask(logTaskName, denLog)
 

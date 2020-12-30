@@ -858,7 +858,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
 
     unitTestSim.AddVariableForLogging('sunlineSEKF.x', testProcessRate , 0, 4, 'double')
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

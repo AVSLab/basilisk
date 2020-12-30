@@ -106,7 +106,7 @@ def rwMotorTorqueTest(show_plots):
     rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.rwMotorTorqueOutMsg.log()
+    dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

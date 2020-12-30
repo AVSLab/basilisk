@@ -158,7 +158,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
                 trueTam_S[i] = maxOut
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = testModule.tamDataOutMsg.log()
+    dataLog = testModule.tamDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

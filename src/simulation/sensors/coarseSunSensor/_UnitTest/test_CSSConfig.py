@@ -88,8 +88,8 @@ def run(show_plots, accuracy):
     scSim.AddModelToTask(simTaskName, CSS1)
     scSim.AddModelToTask(simTaskName, CSS2)
 
-    dataLog1 = CSS1.cssConfigLogOutMsg.log()
-    dataLog2 = CSS2.cssConfigLogOutMsg.log()
+    dataLog1 = CSS1.cssConfigLogOutMsg.recorder()
+    dataLog2 = CSS2.cssConfigLogOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, dataLog1)
     scSim.AddModelToTask(simTaskName, dataLog2)
 

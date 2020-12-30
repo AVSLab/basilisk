@@ -69,7 +69,7 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     sf.spacecraftStateInMsg.subscribeTo(scMsg)
     sf.eclipseInMsg.subscribeTo(eclMsg)
 
-    dataLog = sf.solarFluxOutMsg.log()
+    dataLog = sf.solarFluxOutMsg.recorder()
     sim.AddModelToTask(task.Name, dataLog)
 
     sim.InitializeSimulation()

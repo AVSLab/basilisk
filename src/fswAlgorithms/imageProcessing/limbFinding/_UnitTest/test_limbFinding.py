@@ -136,7 +136,7 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     moduleConfig.imageInMsg.subscribeTo(imageInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.opnavLimbOutMsg.log()
+    dataLog = moduleConfig.opnavLimbOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
 

@@ -87,7 +87,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.cmdTorqueInMsg.subscribeTo(inMsg)
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    outLog = moduleConfig.cmdTorqueOutMsg.log()
+    outLog = moduleConfig.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, outLog)
 
     #   Need to call the self-init and cross-init methods

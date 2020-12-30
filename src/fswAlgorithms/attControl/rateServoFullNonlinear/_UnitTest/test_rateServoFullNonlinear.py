@@ -164,7 +164,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     rateCmdInMsg = messaging2.RateCmdMsg().write(rateSteeringMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cmdTorqueOutMsg.log()
+    dataLog = moduleConfig.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the test module configuration data

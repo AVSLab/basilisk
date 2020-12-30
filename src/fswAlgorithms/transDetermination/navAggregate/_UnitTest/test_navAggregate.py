@@ -197,8 +197,8 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     unitTestSupport.writeTeXSnippet("navTrans2Msg.vehAccumDV", str(navTrans2Msg.vehAccumDV), path)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataAttLog = moduleConfig.navAttOutMsg.log()
-    dataTransLog = moduleConfig.navTransOutMsg.log()
+    dataAttLog = moduleConfig.navAttOutMsg.recorder()
+    dataTransLog = moduleConfig.navTransOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataAttLog)
     unitTestSim.AddModelToTask(unitTaskName, dataTransLog)
 

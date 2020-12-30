@@ -169,7 +169,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.log()
+    dataLog = moduleConfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
@@ -341,7 +341,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     cel2ndBodyMsg = messaging2.EphemerisMsg().write(SecBodyData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.log()
+    dataLog = moduleConfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

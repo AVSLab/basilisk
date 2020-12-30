@@ -79,7 +79,7 @@ def test_storage_limits(show_plots):
     test_battery.addPowerNodeToModel(pw2Msg)
     unitTestSim.AddModelToTask(unitTaskName, test_battery)
 
-    dataLog = test_battery.batPowerOutMsg.log()
+    dataLog = test_battery.batPowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

@@ -400,7 +400,7 @@ def testStateUpdateSunLine(show_plots):
     stateTarget.extend([0.0, 0.0, 0.0])
     moduleConfig.state = [0.7, 0.7, 0.0]
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
@@ -499,7 +499,7 @@ def testStatePropSunLine(show_plots):
 
     setupFilterData(moduleConfig)
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

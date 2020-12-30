@@ -230,7 +230,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     ImuSensor.scStateInMsg.subscribeTo(scStateMsg)
 
     # log module output message
-    dataLog = ImuSensor.sensorOutMsg.log()
+    dataLog = ImuSensor.sensorOutMsg.recorder()
     unitSim.AddModelToTask(unitTaskName, dataLog)
 
     unitSim.InitializeSimulation()

@@ -63,7 +63,7 @@ def dvGuidanceTestFunction(show_plots):
 
     # Log the output message
     # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
-    dataLog = moduleConfig.attRefOutMsg.log()
+    dataLog = moduleConfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

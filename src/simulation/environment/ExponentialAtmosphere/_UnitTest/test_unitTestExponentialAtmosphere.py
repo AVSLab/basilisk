@@ -143,8 +143,8 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     testModule.addSpacecraftToModel(sc1InMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog0 = testModule.envOutMsgs[0].log()
-    dataLog1 = testModule.envOutMsgs[1].log()
+    dataLog0 = testModule.envOutMsgs[0].recorder()
+    dataLog1 = testModule.envOutMsgs[1].recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog0)
     unitTestSim.AddModelToTask(unitTaskName, dataLog1)
 

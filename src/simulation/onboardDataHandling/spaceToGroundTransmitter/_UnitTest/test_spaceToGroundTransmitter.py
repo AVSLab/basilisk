@@ -111,7 +111,7 @@ def run(deviceStatus, accessStatus):
 
     testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
-    datLog = testModule.nodeDataOutMsg.log()
+    datLog = testModule.nodeDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     unitTestSim.InitializeSimulation()

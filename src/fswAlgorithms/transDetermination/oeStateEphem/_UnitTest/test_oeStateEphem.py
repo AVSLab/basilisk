@@ -174,7 +174,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     clockInMsg = messaging2.TDBVehicleClockCorrelationMsg().write(clockCorrData)
     oeStateModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
-    dataLog = oeStateModel.stateFitOutMsg.log()
+    dataLog = oeStateModel.stateFitOutMsg.recorder()
     sim.AddModelToTask(unitTaskName, dataLog)
 
 

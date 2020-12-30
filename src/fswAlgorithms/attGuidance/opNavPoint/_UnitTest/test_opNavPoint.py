@@ -120,7 +120,7 @@ def opNavPointTestFunction(show_plots, case):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attGuidanceOutMsg.log()
+    dataLog = moduleConfig.attGuidanceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

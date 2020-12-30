@@ -136,7 +136,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     # Configure simulation
     TotalSim.ConfigureStopTime(int(1.0 * 1E9))
 
-    dataLog = BACObject.angOutMsg.log()
+    dataLog = BACObject.angOutMsg.recorder()
     TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     # Execute simulation

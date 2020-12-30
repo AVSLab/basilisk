@@ -111,7 +111,7 @@ def rwNullSpaceTestFunction(numWheels):
     rwConfigMsg = messaging2.RWConstellationMsg().write(inputRWConstellationMsg)
     rwCmdMsg = messaging2.ArrayMotorTorqueMsg().write(inputRWCmdMsg)
 
-    dataLog = moduleConfig.rwMotorTorqueOutMsg.log()
+    dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

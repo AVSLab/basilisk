@@ -216,7 +216,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
 
-    dataLog = eclipseObject.eclipseOutMsgs[0].log()
+    dataLog = eclipseObject.eclipseOutMsgs[0].recorder()
     unitTestSim.AddModelToTask(testTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

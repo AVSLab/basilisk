@@ -84,7 +84,7 @@ def rateMsgConvertFunction(show_plots):
     moduleConfig.imuRateInMsg.subscribeTo(inMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.navRateOutMsg.log()
+    dataLog = moduleConfig.navRateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

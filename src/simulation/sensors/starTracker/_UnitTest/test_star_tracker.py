@@ -134,7 +134,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitSim.AddModelToTask(unitTaskName, StarTracker)
 
     # log module output message
-    dataLog = StarTracker.sensorOutMsg.log()
+    dataLog = StarTracker.sensorOutMsg.recorder()
     unitSim.AddModelToTask(unitTaskName, dataLog)
 
     # configure spacecraft state message

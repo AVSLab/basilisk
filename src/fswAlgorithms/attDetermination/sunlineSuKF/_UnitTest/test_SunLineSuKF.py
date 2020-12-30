@@ -272,7 +272,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     cssConstelation.cssVals = totalCSSList
     cssConstInMsg = messaging2.CSSConfigMsg().write(cssConstelation)
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Add the kelly curve coefficients
@@ -423,7 +423,7 @@ def StatePropSunLine(show_plots):
 
     setupFilterData(moduleConfig, True)
     numStates = 6
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     cssConstInMsg = messaging2.CSSConfigMsg()

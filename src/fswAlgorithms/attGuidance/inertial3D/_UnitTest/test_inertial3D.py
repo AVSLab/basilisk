@@ -84,7 +84,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.sigma_R0N = vector
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.log()
+    dataLog = moduleConfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
 

@@ -147,7 +147,7 @@ def test_hingedRigidBodyGravity(show_plots):
     scObject.primaryCentralSpacecraft.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     # Log the spacecraft state message
-    datLog = scObject.primaryCentralSpacecraft.scStateOutMsg.log()
+    datLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Initialize the simulation
@@ -365,7 +365,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.log()
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     
     unitTestSim.InitializeSimulation()
@@ -597,7 +597,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.log()
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -990,7 +990,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.log()
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -1285,11 +1285,11 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
         scStateMsg = scObject.primaryCentralSpacecraft.scStateOutMsg
     else:
         scStateMsg = scObject.scStateOutMsg
-    dataLog = scStateMsg.log()
-    dataPanel1 = unitTestSim.panel1.hingedRigidBodyOutMsg.log()
-    dataPanel2 = unitTestSim.panel2.hingedRigidBodyOutMsg.log()
-    dataPanel1Log = unitTestSim.panel1.hingedRigidBodyConfigLogOutMsg.log()
-    dataPanel2Log = unitTestSim.panel2.hingedRigidBodyConfigLogOutMsg.log()
+    dataLog = scStateMsg.recorder()
+    dataPanel1 = unitTestSim.panel1.hingedRigidBodyOutMsg.recorder()
+    dataPanel2 = unitTestSim.panel2.hingedRigidBodyOutMsg.recorder()
+    dataPanel1Log = unitTestSim.panel1.hingedRigidBodyConfigLogOutMsg.recorder()
+    dataPanel2Log = unitTestSim.panel2.hingedRigidBodyConfigLogOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddModelToTask(unitTaskName, dataPanel1)
     unitTestSim.AddModelToTask(unitTaskName, dataPanel2)
@@ -1525,7 +1525,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.log()
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

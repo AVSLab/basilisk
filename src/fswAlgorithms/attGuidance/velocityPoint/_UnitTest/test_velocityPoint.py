@@ -103,7 +103,7 @@ def velocityPointTestFunction(show_plots):
     celBodyInMsg = messaging2.EphemerisMsg().write(CelBodyData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.log()
+    dataLog = moduleConfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect Messages

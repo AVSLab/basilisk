@@ -106,7 +106,7 @@ def subModuleTestFunction(show_plots):
     refInMsg = messaging2.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attGuidOutMsg.log()
+    dataLog = moduleConfig.attGuidOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

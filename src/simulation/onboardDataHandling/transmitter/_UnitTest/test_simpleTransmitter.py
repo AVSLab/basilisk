@@ -94,7 +94,7 @@ def testDefault():
 
     testModule.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
-    dataLog = testModule.nodeDataOutMsg.log()
+    dataLog = testModule.nodeDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -168,7 +168,7 @@ def testStatus():
 
     # Setup logging on the test module output message so that we get all the writes to it
 
-    dataLog = testModule.nodeDataOutMsg.log()
+    dataLog = testModule.nodeDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

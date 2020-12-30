@@ -154,7 +154,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     moduleConfig.dataInMsg.subscribeTo(inputMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.dataOutMsg.log()
+    dataLog = moduleConfig.dataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     variableName = "dummy"                              # name the module variable to be logged

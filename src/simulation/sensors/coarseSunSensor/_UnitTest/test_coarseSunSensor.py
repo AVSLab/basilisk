@@ -206,13 +206,13 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             constellationP2.appendCSS(item)
         unitTestSim.AddModelToTask(testTaskName, constellationP2)
 
-        dataLogP1 = constellationP1.constellationOutMsg.log()
-        dataLogP2 = constellationP2.constellationOutMsg.log()
+        dataLogP1 = constellationP1.constellationOutMsg.recorder()
+        dataLogP2 = constellationP2.constellationOutMsg.recorder()
         unitTestSim.AddModelToTask(testTaskName, dataLogP1)
         unitTestSim.AddModelToTask(testTaskName, dataLogP2)
 
     # log single CSS
-    dataLogSingle = singleCss.cssDataOutMsg.log()
+    dataLogSingle = singleCss.cssDataOutMsg.recorder()
     unitTestSim.AddModelToTask(testTaskName, dataLogSingle)
 
     #

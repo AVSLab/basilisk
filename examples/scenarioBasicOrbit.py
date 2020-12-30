@@ -357,17 +357,17 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         simulationTime = macros.sec2nano(0.75 * P)
 
     # Setup data logging before the simulation is initialized
-    dataLog = scObject.scStateOutMsg.log()  # create a logging task object of the spacecraft output message
+    dataRec = scObject.scStateOutMsg.recorder()  # create a logging task object of the spacecraft output message
     if useSphericalHarmonics:
         numDataPoints = 400
     else:
         numDataPoints = 100
     samplingTime = simulationTime // (numDataPoints - 1)
-    logTaskName = "logTask"
+    recorderTaskName = "recorderTask"
     # to log the message at a lower rate then the simulation rate, a separate process is created
     # and the SC msg logging module is added to this task group
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    scSim.AddModelToTask(logTaskName, dataLog)
+    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime))
+    scSim.AddModelToTask(recorderTaskName, dataRec)
 
     # Vizard Visualization Option
     # -----
@@ -434,8 +434,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # the data is stored inside dataLog variable.  The time axis is stored separately from the data vector and
     # can be access through dataLog.times().  The message data is access directly through the message
     # variable names.
-    posData = dataLog.r_BN_N
-    velData = dataLog.v_BN_N
+    posData = dataRec.r_BN_N
+    velData = dataRec.v_BN_N
 
     np.set_printoptions(precision=16)
 
@@ -443,7 +443,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # the inertial position vector components, while the second plot either shows a planar
     # orbit view relative to the perfocal frame (no spherical harmonics), or the
     # semi-major axis time history plot (with spherical harmonics turned on).
-    figureList = plotOrbits(dataLog.times(), posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet)
+    figureList = plotOrbits(dataRec.times(), posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet)
 
     if show_plots:
         plt.show()

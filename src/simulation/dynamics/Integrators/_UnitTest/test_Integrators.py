@@ -145,7 +145,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     numDataPoints = 100
     samplingTime = simulationTime // numDataPoints
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     logTaskName = "loggingTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     scSim.AddModelToTask(logTaskName, dataLog)

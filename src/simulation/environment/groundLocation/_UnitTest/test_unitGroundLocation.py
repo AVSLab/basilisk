@@ -84,9 +84,9 @@ def test_range(show_plots):
     samplingTime = int(simulationTime / (numDataPoints - 1))
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog0 = groundTarget.accessOutMsgs[0].log()
-    dataLog1 = groundTarget.accessOutMsgs[1].log()
-    dataLog2 = groundTarget.accessOutMsgs[2].log()
+    dataLog0 = groundTarget.accessOutMsgs[0].recorder()
+    dataLog1 = groundTarget.accessOutMsgs[1].recorder()
+    dataLog2 = groundTarget.accessOutMsgs[2].recorder()
     scSim.AddModelToTask(logTaskName, dataLog0)
     scSim.AddModelToTask(logTaskName, dataLog1)
     scSim.AddModelToTask(logTaskName, dataLog2)
@@ -169,7 +169,7 @@ def test_rotation(show_plots):
     samplingTime = int(simulationTime / (numDataPoints - 1))
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog = groundTarget.accessOutMsgs[0].log()
+    dataLog = groundTarget.accessOutMsgs[0].recorder()
     scSim.AddModelToTask(logTaskName, dataLog)
 
     # Run the sim

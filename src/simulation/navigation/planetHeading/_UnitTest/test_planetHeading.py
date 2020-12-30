@@ -63,7 +63,7 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     ph.planetPositionInMsg.subscribeTo(plMsg)
     ph.spacecraftStateInMsg.subscribeTo(scMsg)
 
-    dataLog = ph.planetHeadingOutMsg.log()
+    dataLog = ph.planetHeadingOutMsg.recorder()
     sim.AddModelToTask(task.Name, dataLog)
 
     sim.InitializeSimulation()

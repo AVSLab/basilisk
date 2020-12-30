@@ -107,7 +107,7 @@ def pixelLineConverterTestFunction():
     # Set module for Mars
     pixelLine.planetTarget = 2
 
-    dataLog = pixelLine.opNavOutMsg.log()
+    dataLog = pixelLine.opNavOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

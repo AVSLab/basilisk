@@ -202,7 +202,7 @@ def StateUpdateRelOD(show_plots):
     setupFilterData(moduleConfig)
     moduleConfig.noiseSF = 1
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     time = np.linspace(0, int(multT1*t1), int(multT1*t1//dt)+1)
@@ -324,7 +324,7 @@ def StatePropRelOD(show_plots, dt):
     setupFilterData(moduleConfig)
     moduleConfig.noiseSF = 1
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     opnavInMsg = messaging2.OpNavMsg()

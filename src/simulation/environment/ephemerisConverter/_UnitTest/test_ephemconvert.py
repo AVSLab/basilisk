@@ -83,8 +83,8 @@ def unitephemeris_converter(show_plots):
     dataSpiceLog = []
     dataEphemLog = []
     for i in range(0, len(planets)):
-        dataSpiceLog.append(spiceObject.planetStateOutMsgs[i].log())
-        dataEphemLog.append(ephemObject.ephemOutMsgs[i].log())
+        dataSpiceLog.append(spiceObject.planetStateOutMsgs[i].recorder())
+        dataEphemLog.append(ephemObject.ephemOutMsgs[i].recorder())
         sim.AddModelToTask(unitTaskName, dataSpiceLog[-1])
         sim.AddModelToTask(unitTaskName, dataEphemLog[-1])
 

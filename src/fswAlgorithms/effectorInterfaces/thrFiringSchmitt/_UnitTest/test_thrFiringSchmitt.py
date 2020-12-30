@@ -135,7 +135,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     moduleConfig.thrForceInMsg.subscribeTo(thrCmdMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.onTimeOutMsg.log()
+    dataLog = moduleConfig.onTimeOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

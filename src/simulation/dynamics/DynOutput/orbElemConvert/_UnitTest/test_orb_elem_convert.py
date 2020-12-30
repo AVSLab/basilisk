@@ -206,7 +206,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     orb_elemObject.elemInMsg.subscribeTo(elemMsg)
 
     # Log Message to test WriteOutputMessage()
-    dataLog = orb_elemObject.spiceStateOutMsg.log()
+    dataLog = orb_elemObject.spiceStateOutMsg.recorder()
     TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     # Execute simulation
@@ -351,7 +351,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
             stateSpMsg = messaging2.SpicePlanetStateMsg().write(CartMessage)
             orb_elemObject.spiceStateInMsg.subscribeTo(stateSpMsg)
 
-        dataElemLog = orb_elemObject.elemOutMsg.log()
+        dataElemLog = orb_elemObject.elemOutMsg.recorder()
         TotalSim.AddModelToTask(unitTaskName, dataElemLog)
 
         # Execute simulation

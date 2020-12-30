@@ -115,7 +115,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.rateCmdOutMsg.log()
+    dataLog = moduleConfig.rateCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

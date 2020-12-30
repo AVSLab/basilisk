@@ -177,7 +177,7 @@ def test_SCConnected(show_plots):
     # Attach spacecraft3 to spacecraft2
     scSystem.attachSpacecraftToPrimary(sc3, dock1SC3.portName, dock2SC2.portName)
 
-    dataLog = scSystem.primaryCentralSpacecraft.scStateOutMsg.log()
+    dataLog = scSystem.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -503,12 +503,12 @@ def test_SCConnectedAndUnconnected(show_plots):
 
     scSystem.addSpacecraftUndocked(sc5)
 
-    dataLog = scSystem.primaryCentralSpacecraft.scStateOutMsg.log()
-    dataLog4 = sc4.scStateOutMsg.log()
-    dataLog5 = sc5.scStateOutMsg.log()
-    dataEngLog = scSystem.primaryCentralSpacecraft.scEnergyMomentumOutMsg.log()
-    dataEngLog4 = sc4.scEnergyMomentumOutMsg.log()
-    dataEngLog5 = sc5.scEnergyMomentumOutMsg.log()
+    dataLog = scSystem.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    dataLog4 = sc4.scStateOutMsg.recorder()
+    dataLog5 = sc5.scStateOutMsg.recorder()
+    dataEngLog = scSystem.primaryCentralSpacecraft.scEnergyMomentumOutMsg.recorder()
+    dataEngLog4 = sc4.scEnergyMomentumOutMsg.recorder()
+    dataEngLog5 = sc5.scEnergyMomentumOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddModelToTask(unitTaskName, dataLog4)
     unitTestSim.AddModelToTask(unitTaskName, dataLog5)

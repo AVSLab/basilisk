@@ -135,7 +135,7 @@ def sunlineEphemTestFunction(show_plots):
     sunlineEphemConfig.scPositionInMsg.subscribeTo(vehPosInMsg)
     sunlineEphemConfig.scAttitudeInMsg.subscribeTo(vehAttInMsg)
 
-    dataLog = sunlineEphemConfig.navStateOutMsg.log()
+    dataLog = sunlineEphemConfig.navStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     for i in range(len(TestVectors)):

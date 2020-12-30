@@ -84,7 +84,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
     # different location.
     dataLogList = list()
     for i in range(ephBdyCount):
-        dataLogList.append(ephemDiffConfig.changeBodies[i].ephOutMsg.log())
+        dataLogList.append(ephemDiffConfig.changeBodies[i].ephOutMsg.recorder())
         unitTestSim.AddModelToTask(unitTaskName, dataLogList[i])
 
     # Initialize the simulation

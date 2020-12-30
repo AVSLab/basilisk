@@ -102,7 +102,7 @@ def tamCommTestFunction(show_plots):
     moduleConfig.tamInMsg.subscribeTo(inMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.tamOutMsg.log()
+    dataLog = moduleConfig.tamOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

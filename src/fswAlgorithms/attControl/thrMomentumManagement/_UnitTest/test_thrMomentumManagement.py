@@ -113,7 +113,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.deltaHOutMsg.log()
+    dataLog = moduleConfig.deltaHOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # setup message connections

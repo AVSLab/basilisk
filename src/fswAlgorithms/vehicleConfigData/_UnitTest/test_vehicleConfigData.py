@@ -47,7 +47,7 @@ def vehicleConfigDataTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Log the output message
-    dataLog = moduleConfig.vecConfigOutMsg.log()
+    dataLog = moduleConfig.vecConfigOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

@@ -110,9 +110,9 @@ def test_massDepletionTest(show_plots):
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
-    dataLog = scObject.scStateOutMsg.log()
-    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.log()
-    thrLog = thrustersDynamicEffector.thrusterOutMsgs[0].log()
+    dataLog = scObject.scStateOutMsg.recorder()
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    thrLog = thrustersDynamicEffector.thrusterOutMsgs[0].recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddModelToTask(unitTaskName, fuelLog)
     unitTestSim.AddModelToTask(unitTaskName, thrLog)

@@ -29,7 +29,7 @@ template<typename messageType>
 class Message;
 
 template<typename messageType>
-class Log;
+class Recorder;
 
 /*! Read functors have read-only access to messages*/
 template<typename messageType>
@@ -120,8 +120,8 @@ public:
         this->initialized = true;
     };
 
-    //! Log method description
-    Log<messageType> log(){return Log<messageType>(this);}
+    //! Recorder method description
+    Recorder<messageType> recorder(){return Recorder<messageType>(this);}
 };
 
 /*! Write Functor */
@@ -146,7 +146,7 @@ public:
 };
 
 template<typename messageType>
-class Log;
+class Recorder;
 
 /*!
  * base class template for bsk messages
@@ -166,8 +166,8 @@ public:
     WriteFunctor<messageType> addAuthor();
     //! for plain ole c modules
     messageType* subscribeRaw(Msg2Header **msgPtr);
-    //! Log object
-    Log<messageType> log(){return Log<messageType>(this);}
+    //! Recorder object
+    Recorder<messageType> recorder(){return Recorder<messageType>(this);}
     //! - returned a zero'd copy of the messagy payload structure
     messageType zeroMsgPayload();
 
@@ -202,23 +202,23 @@ messageType* Message<messageType>::subscribeRaw(Msg2Header **msgPtr){
 
 /*! Keep a time history of messages accessible to users from python */
 template<typename messageType>
-class Log : public SysModel{
+class Recorder : public SysModel{
 public:
-    Log(){};
-    //! -- Use this to log cpp messages
-    Log(Message<messageType>* message){
+    Recorder(){};
+    //! -- Use this to record cpp messages
+    Recorder(Message<messageType>* message){
         this->readMessage = message->addSubscriber();
     }
-    //! -- Use this to log C messages
-    Log(void* message){
+    //! -- Use this to record C messages
+    Recorder(void* message){
         Msg2Header msgHeader;
         this->readMessage = ReadFunctor<messageType>((messageType*) message, &msgHeader);
     }
     //! -- Use this to keep track of what someone is reading
-    Log(ReadFunctor<messageType>* messageReader){
+    Recorder(ReadFunctor<messageType>* messageReader){
         this->readMessage = *messageReader;
     }
-    ~Log(){};
+    ~Recorder(){};
 
     //! -- self initialization
     void SelfInit(){};
@@ -228,19 +228,19 @@ public:
     void IntegratedInit(){};
     //! -- Read and record the message at the owning task's rate
     void UpdateState(uint64_t CurrentSimNanos){
-        this->logTimes.push_back(CurrentSimNanos);
-        this->log.push_back(this->readMessage());
+        this->msgRecordTimes.push_back(CurrentSimNanos);
+        this->msgRecord.push_back(this->readMessage());
     };
     //! Reset method
-    void Reset(uint64_t CurrentSimNanos){this->log.clear(); this->logTimes.clear();};  //!< -- Can only reset to 0 for now
+    void Reset(uint64_t CurrentSimNanos){this->msgRecord.clear(); this->msgRecordTimes.clear();};  //!< -- Can only reset to 0 for now
     //! time method
-    std::vector<uint64_t>& times(){return this->logTimes;}
+    std::vector<uint64_t>& times(){return this->msgRecordTimes;}
     //! record method
-    std::vector<messageType>& record(){return this->log;};
+    std::vector<messageType>& record(){return this->msgRecord;};
 
 private:
-    std::vector<messageType> log;           //!< vector of log messages
-    std::vector<uint64_t> logTimes;         //!< vector of log times
+    std::vector<messageType> msgRecord;           //!< vector of recorded messages
+    std::vector<uint64_t> msgRecordTimes;         //!< vector of times at which messages are recorded
 
 private:
     ReadFunctor<messageType> readMessage;   //!< method description

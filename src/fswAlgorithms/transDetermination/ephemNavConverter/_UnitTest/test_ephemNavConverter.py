@@ -56,7 +56,7 @@ def ephemNavConverterTestFunction():
     inMsg = messaging2.EphemerisMsg().write(inputEphem)
     ephemNavConfig.ephInMsg.subscribeTo(inMsg)
 
-    dataLog = ephemNavConfig.stateOutMsg.log()
+    dataLog = ephemNavConfig.stateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

@@ -390,7 +390,7 @@ def StateUpdateSunLine(show_plots):
 
     setupFilterData(moduleConfig)
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     testVector = np.array([0.9, 0.1, 0.02])
@@ -503,7 +503,7 @@ def StatePropSunLine(show_plots):
 
     setupFilterData(moduleConfig)
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     inData = messaging2.OpNavMsgPayload()

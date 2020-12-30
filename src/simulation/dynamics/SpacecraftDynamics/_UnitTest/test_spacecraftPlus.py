@@ -92,7 +92,7 @@ def test_SCTranslation(show_plots):
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
@@ -213,7 +213,7 @@ def test_SCTransAndRotation(show_plots):
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
@@ -387,7 +387,7 @@ def test_SCRotation(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
@@ -627,7 +627,7 @@ def test_SCTransBOE(show_plots):
     scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
@@ -771,7 +771,7 @@ def test_SCPointBVsPointC(show_plots):
     scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Define initial conditions of the spacecraft
@@ -824,7 +824,7 @@ def test_SCPointBVsPointC(show_plots):
     scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
-    dataLog2 = scObject.scStateOutMsg.log()
+    dataLog2 = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog2)
 
     # Define initial conditions of the spacecraft
@@ -923,7 +923,7 @@ def test_scAttRef(show_plots, accuracy):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # add Earth

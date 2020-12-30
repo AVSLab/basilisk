@@ -197,8 +197,8 @@ def run(show_plots, cmOffset, planetCase, simTime):
     samplingTime = simulationTime // (numDataPoints - 1)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog = scObject.scStateOutMsg.log()
-    dataLogGG = ggEff.gravityGradientOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
+    dataLogGG = ggEff.gravityGradientOutMsg.recorder()
     scSim.AddModelToTask(logTaskName, dataLog)
     scSim.AddModelToTask(logTaskName, dataLogGG)
 

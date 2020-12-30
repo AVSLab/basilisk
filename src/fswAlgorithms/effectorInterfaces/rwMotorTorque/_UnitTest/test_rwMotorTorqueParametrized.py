@@ -190,7 +190,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         avail = [rwMotorTorque.AVAILABLE] * numWheels  # this is used purely for the python level solution
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.rwMotorTorqueOutMsg.log()
+    dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

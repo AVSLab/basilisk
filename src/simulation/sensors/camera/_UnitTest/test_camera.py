@@ -167,7 +167,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     moduleConfig.blurParam = blurSize
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cameraOutMsg.log()
+    dataLog = moduleConfig.cameraOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

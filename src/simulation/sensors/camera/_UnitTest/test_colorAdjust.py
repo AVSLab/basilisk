@@ -158,7 +158,7 @@ def cameraColorTest(image, HSV, BGR):
     moduleConfig.hsv = camera.DoubleVector(HSV)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cameraOutMsg.log()
+    dataLog = moduleConfig.cameraOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

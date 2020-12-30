@@ -77,7 +77,7 @@ def testStorage_limits(show_plots):
 
     unitTestSim.AddModelToTask(unitTaskName, test_storage_unit)
 
-    dataLog = test_storage_unit.storageUnitDataOutMsg.log()
+    dataLog = test_storage_unit.storageUnitDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

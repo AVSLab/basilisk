@@ -285,7 +285,7 @@ def StatePropRelOD(show_plots, dt):
     circlesInMsg = messaging2.CirclesOpNavMsg()
     moduleConfig.circlesInMsg.subscribeTo(circlesInMsg)
 
-    dataLog = moduleConfig.filtDataOutMsg.log()
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     timeSim = 60

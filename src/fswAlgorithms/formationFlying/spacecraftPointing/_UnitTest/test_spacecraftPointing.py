@@ -117,7 +117,7 @@ def spacecraftPointingTestFunction(show_plots, case):
     deputyInMsg = messaging2.NavTransMsg().write(deputyInputData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attReferenceOutMsg.log()
+    dataLog = moduleConfig.attReferenceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

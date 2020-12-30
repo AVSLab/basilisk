@@ -126,7 +126,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     deltaHInMsg = messaging2.CmdTorqueBodyMsg()
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.thrusterOnTimeOutMsg.log()
+    dataLog = moduleConfig.thrusterOnTimeOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

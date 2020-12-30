@@ -153,7 +153,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     unitTestSim.AddModelToTask(testTaskName, albModule)
 
     # setup logging
-    dataLog = albModule.albOutMsgs[0].log()
+    dataLog = albModule.albOutMsgs[0].recorder()
     unitTestSim.AddModelToTask(testTaskName, dataLog)
 
     # Initialize and run simulation one step at a time

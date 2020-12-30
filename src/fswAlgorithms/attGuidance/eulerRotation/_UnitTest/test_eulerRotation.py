@@ -95,7 +95,7 @@ def test_run(show_plots):
     attRefInMsg = messaging2.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.log()
+    dataLog = moduleConfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
@@ -237,7 +237,7 @@ def test_run2(show_plots):
     desInMsg = messaging2.AttStateMsg().write(desiredAtt)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.log()
+    dataLog = moduleConfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

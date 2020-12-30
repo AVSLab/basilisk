@@ -194,7 +194,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
                              rwNum, GsMatrix_B, rwAvailabilityMessage)
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cmdTorqueOutMsg.log()
+    dataLog = moduleConfig.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

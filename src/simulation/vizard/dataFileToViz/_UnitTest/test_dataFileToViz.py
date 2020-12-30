@@ -309,24 +309,24 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = []
     for scCounter in range(2):
-        dataLog.append(testModule.scStateOutMsgs[scCounter].log())
+        dataLog.append(testModule.scStateOutMsgs[scCounter].recorder())
         unitTestSim.AddModelToTask(unitTaskName, dataLog[-1])
 
     if checkThruster:
         dataThrLog = []
         # SC1
         for i in range(numACS1 + numDV1):
-            dataThrLog.append(testModule.thrScOutMsgs[0][i].log())
+            dataThrLog.append(testModule.thrScOutMsgs[0][i].recorder())
             unitTestSim.AddModelToTask(unitTaskName, dataThrLog[-1])
         # SC2
         for i in range(numACS2 + numDV2):
-            dataThrLog.append(testModule.thrScOutMsgs[1][i].log())
+            dataThrLog.append(testModule.thrScOutMsgs[1][i].recorder())
             unitTestSim.AddModelToTask(unitTaskName, dataThrLog[-1])
 
     if checkRW:
-        dataSc1RW1Log = testModule.rwScOutMsgs[0][0].log()
-        dataSc1RW2Log = testModule.rwScOutMsgs[0][1].log()
-        dataSc2RW1Log = testModule.rwScOutMsgs[1][0].log()
+        dataSc1RW1Log = testModule.rwScOutMsgs[0][0].recorder()
+        dataSc1RW2Log = testModule.rwScOutMsgs[0][1].recorder()
+        dataSc2RW1Log = testModule.rwScOutMsgs[1][0].recorder()
         unitTestSim.AddModelToTask(unitTaskName, dataSc1RW1Log)
         unitTestSim.AddModelToTask(unitTaskName, dataSc1RW2Log)
         unitTestSim.AddModelToTask(unitTaskName, dataSc2RW1Log)

@@ -93,8 +93,8 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
     %}
 };
 
-%template(messageType ## Logger) Log<messageType ## Payload>;
-%extend Log<messageType ## Payload> {
+%template(messageType ## Recorder) Recorder<messageType ## Payload>;
+%extend Recorder<messageType ## Payload> {
     %pythoncode %{
         def times(self):
             return np.array(self.__time_vector())
@@ -103,10 +103,10 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data = self.__record_vector()
-            data_log = []
+            data_record = []
             for rec in data.iterator():
-                data_log.append(rec.__getattribute__(name))
-            return np.array(data_log)
+                data_record.append(rec.__getattribute__(name))
+            return np.array(data_record)
 
         def record(self):
             return self.__record_vector
@@ -121,10 +121,10 @@ typedef struct messageType;
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
-            data_log = []
+            data_record = []
             for rec in self.iterator():
-                data_log.append(rec.__getattribute__(name))
-            return np.array(data_log)
+                data_record.append(rec.__getattribute__(name))
+            return np.array(data_record)
     %}
 };
 %enddef

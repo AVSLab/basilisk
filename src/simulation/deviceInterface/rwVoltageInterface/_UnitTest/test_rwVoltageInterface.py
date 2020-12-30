@@ -103,7 +103,7 @@ def run(show_plots, voltage):
     testModule.rwVoltageInMsg.subscribeTo(voltageMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = testModule.rwMotorTorqueOutMsg.log()
+    dataLog = testModule.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

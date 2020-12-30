@@ -86,7 +86,7 @@ def dvAccumulationTestFunction():
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
-    dataLog = moduleConfig.dvAcumOutMsg.log()
+    dataLog = moduleConfig.dvAcumOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Create the input message.

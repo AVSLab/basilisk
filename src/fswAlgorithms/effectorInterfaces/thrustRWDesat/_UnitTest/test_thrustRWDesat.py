@@ -114,7 +114,7 @@ def thrustRWDesatTestFunction():
     rwConstInMsg = messaging2.RWConstellationMsg().write(inputRWConstellationMsg)
     vcConfigInMsg = messaging2.VehicleConfigMsg().write(inputVehicleMsg)
 
-    dataLog = moduleConfig.thrCmdOutMsg.log()
+    dataLog = moduleConfig.thrCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     moduleConfig.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)

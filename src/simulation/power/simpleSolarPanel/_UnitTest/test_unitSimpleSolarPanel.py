@@ -119,7 +119,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     unitTestSim.AddModelToTask(unitTaskName, panel)
     
-    dataLog = panel.nodePowerOutMsg.log()
+    dataLog = panel.nodePowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   Execute the sim for 1 second.

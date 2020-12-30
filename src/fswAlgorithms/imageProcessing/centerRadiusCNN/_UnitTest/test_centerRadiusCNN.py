@@ -116,7 +116,7 @@ def cnnTest(show_plots, image, saveImage):
         circles = [(269.21127319, 231.63162231, 144.85394287)]
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.opnavCirclesOutMsg.log()
+    dataLog = moduleConfig.opnavCirclesOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

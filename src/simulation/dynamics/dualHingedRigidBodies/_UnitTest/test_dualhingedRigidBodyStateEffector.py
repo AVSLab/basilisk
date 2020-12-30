@@ -151,7 +151,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
         scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -377,13 +377,13 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObjectPrimary.scStateOutMsg.log()
-    dataPanel10Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[0].log()
-    dataPanel11Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[1].log()
-    dataPanel20Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[0].log()
-    dataPanel21Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[1].log()
-    data10Log = unitTestSim.panel1.dualHingedRigidBodyConfigLogOutMsgs[0].log()
-    data21Log = unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgs[1].log()
+    dataLog = scObjectPrimary.scStateOutMsg.recorder()
+    dataPanel10Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[0].recorder()
+    dataPanel11Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[1].recorder()
+    dataPanel20Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[0].recorder()
+    dataPanel21Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[1].recorder()
+    data10Log = unitTestSim.panel1.dualHingedRigidBodyConfigLogOutMsgs[0].recorder()
+    data21Log = unitTestSim.panel2.dualHingedRigidBodyConfigLogOutMsgs[1].recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddModelToTask(unitTaskName, dataPanel10Log)
     unitTestSim.AddModelToTask(unitTaskName, dataPanel11Log)

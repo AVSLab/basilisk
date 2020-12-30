@@ -169,9 +169,9 @@ def TestDragCalculation():
     scSim.AddModelToTask(simTaskName, newDrag)
 
     # setup logging
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, dataLog)
-    atmoLog = newAtmo.envOutMsgs[0].log()
+    atmoLog = newAtmo.envOutMsgs[0].recorder()
     scSim.AddModelToTask(simTaskName, atmoLog)
 
     #
@@ -324,9 +324,9 @@ def TestShadowCalculation():
     scSim.AddModelToTask(simTaskName, newDrag)
 
     # setup logging
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, dataLog)
-    atmoLog = newAtmo.envOutMsgs[0].log()
+    atmoLog = newAtmo.envOutMsgs[0].recorder()
     scSim.AddModelToTask(simTaskName, atmoLog)
 
     #

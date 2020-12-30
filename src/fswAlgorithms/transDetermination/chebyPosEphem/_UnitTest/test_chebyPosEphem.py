@@ -114,7 +114,7 @@ def test_sineCosine(show_plots):
 
     xFitData = numpy.polynomial.chebyshev.chebval(fitTimes, chebCosCoeff)
 
-    dataLog = chebyFitModel.posFitOutMsg.log()
+    dataLog = chebyFitModel.posFitOutMsg.recorder()
     TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     TotalSim.InitializeSimulation()
@@ -217,7 +217,7 @@ def test_earthOrbitFit(show_plots):
     clockInMsg = messaging2.TDBVehicleClockCorrelationMsg().write(clockCorrData)
     chebyFitModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
-    dataLog = chebyFitModel.posFitOutMsg.log()
+    dataLog = chebyFitModel.posFitOutMsg.recorder()
     TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     TotalSim.InitializeSimulation()

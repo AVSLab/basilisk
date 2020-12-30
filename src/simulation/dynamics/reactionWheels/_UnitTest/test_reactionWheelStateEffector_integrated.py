@@ -194,8 +194,8 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     # log data
-    scDataLog = scObject.scStateOutMsg.log()
-    speedDataLog = rwStateEffector.rwSpeedOutMsg.log()
+    scDataLog = scObject.scStateOutMsg.recorder()
+    speedDataLog = rwStateEffector.rwSpeedOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, scDataLog)
     unitTestSim.AddModelToTask(unitTaskName, speedDataLog)
 
@@ -219,8 +219,8 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.35]]
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
             scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
-            rw0DataLog = rwStateEffector.rwOutMsgs[0].log()
-            rw1DataLog = rwStateEffector.rwOutMsgs[1].log()
+            rw0DataLog = rwStateEffector.rwOutMsgs[0].recorder()
+            rw1DataLog = rwStateEffector.rwOutMsgs[1].recorder()
             unitTestSim.AddModelToTask(unitTaskName, rw0DataLog)
             unitTestSim.AddModelToTask(unitTaskName, rw1DataLog)
         scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]

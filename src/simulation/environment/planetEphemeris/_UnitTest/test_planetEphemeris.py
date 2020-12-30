@@ -141,7 +141,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = []
     for c in range(0, len(planetNames)):
-        dataLog.append(moduleConfig.planetOutMsgs[c].log())
+        dataLog.append(moduleConfig.planetOutMsgs[c].recorder())
         unitTestSim.AddModelToTask(unitTaskName, dataLog[-1])
 
     # Need to call the self-init and cross-init methods

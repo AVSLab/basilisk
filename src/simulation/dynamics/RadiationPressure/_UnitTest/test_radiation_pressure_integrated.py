@@ -114,8 +114,8 @@ def radiationPressureIntegratedTest(show_plots):
     #   Setup data logging before the simulation is initialized
     numDataPoints = 100
     samplingTime = simulationTime // (numDataPoints - 1)
-    dataLog = scObject.scStateOutMsg.log()
-    earthLog = gravFactory.spiceObject.planetStateOutMsgs[0].log()
+    dataLog = scObject.scStateOutMsg.recorder()
+    earthLog = gravFactory.spiceObject.planetStateOutMsgs[0].recorder()
     logTaskName = "logTask"
     dynProcess.addTask(sim.CreateNewTask(logTaskName, samplingTime))
     sim.AddModelToTask(logTaskName, dataLog)

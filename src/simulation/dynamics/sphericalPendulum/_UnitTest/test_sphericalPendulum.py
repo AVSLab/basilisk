@@ -148,7 +148,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         scSim.AddModelToTask(simTaskName, scSim.fuelTankStateEffector)
         scSim.AddModelToTask(simTaskName, thrustersDynamicEffector)
 
-        fuelLog = scSim.fuelTankStateEffector.fuelTankOutMsg.log()
+        fuelLog = scSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
         scSim.AddModelToTask(simTaskName, fuelLog)
 
         # Add particles to tank to activate mass depletion
@@ -199,7 +199,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #
     numDataPoints = 100
     samplingTime = simulationTime // (numDataPoints-1)
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     scSim.AddModelToTask(simTaskName, dataLog)

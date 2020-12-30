@@ -80,7 +80,7 @@ def cssCommTestFunction(numSensors, sensorData):
     moduleConfig.sensorListInMsg.subscribeTo(cssInMsg)
 
     # Log the output message
-    dataLog = moduleConfig.cssArrayOutMsg.log()
+    dataLog = moduleConfig.cssArrayOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

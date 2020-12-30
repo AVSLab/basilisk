@@ -133,7 +133,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     moduleConfig.imageInMsg.subscribeTo(imgInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.opnavCirclesOutMsg.log()
+    dataLog = moduleConfig.opnavCirclesOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

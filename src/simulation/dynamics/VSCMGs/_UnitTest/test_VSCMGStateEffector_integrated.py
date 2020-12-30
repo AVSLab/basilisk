@@ -238,8 +238,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.InitializeSimulation()
 
     # log data
-    dataLog = scObject.scStateOutMsg.log()
-    speedLog = rwStateEffector.speedOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
+    speedLog = rwStateEffector.speedOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddModelToTask(unitTaskName, speedLog)
 

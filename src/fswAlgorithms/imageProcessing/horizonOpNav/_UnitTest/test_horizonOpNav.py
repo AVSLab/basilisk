@@ -273,7 +273,7 @@ def horizonOpNav_update():
 
     # Set module for Mars
     opNav.planetTarget = 2
-    dataLog = opNav.opNavOutMsg.log()
+    dataLog = opNav.opNavOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

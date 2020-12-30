@@ -297,18 +297,18 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     # Setup data logging before the simulation is initialized
     #
-    snLog = scObject.scStateOutMsg.log()
-    attErrorLog = attErrorConfig.attGuidOutMsg.log()
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.log()
+    snLog = scObject.scStateOutMsg.recorder()
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder()
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder()
 
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 50
     samplingTime = simulationTime // (numDataPoints - 1)
-    logTaskName = "logTask"
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    scSim.AddModelToTask(logTaskName, snLog)
-    scSim.AddModelToTask(logTaskName, attErrorLog)
-    scSim.AddModelToTask(logTaskName, mrpLog)
+    recorderTaskName = "recorderTask"
+    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime))
+    scSim.AddModelToTask(recorderTaskName, snLog)
+    scSim.AddModelToTask(recorderTaskName, attErrorLog)
+    scSim.AddModelToTask(recorderTaskName, mrpLog)
 
     #
     # connect the messages to the modules

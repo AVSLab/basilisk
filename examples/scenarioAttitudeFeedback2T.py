@@ -268,9 +268,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #
     #   Setup data logging before the simulation is initialized
     #
-    dataLog = scObject.scStateOutMsg.log()
-    attErrorLog = attErrorConfig.attGuidOutMsg.log()
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder()
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder()
 
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 100

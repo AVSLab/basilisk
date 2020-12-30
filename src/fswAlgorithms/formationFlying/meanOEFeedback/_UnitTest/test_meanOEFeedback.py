@@ -119,7 +119,7 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     deputyInMsg = messaging2.NavTransMsg().write(deputyNavStateOutData)
 
     # Setup logging on the test meanOEFeedback output message so that we get all the writes to it
-    dataLog = moduleConfig.forceOutMsg.log()
+    dataLog = moduleConfig.forceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages

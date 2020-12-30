@@ -151,7 +151,7 @@ def subModuleTestFunction(show_plots, simCase):
 
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    dataLog = servoConfig.cmdTorqueOutMsg.log()
+    dataLog = servoConfig.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   connect input and output messages

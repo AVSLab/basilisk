@@ -190,8 +190,8 @@ def TestExponentialAtmosphere():
     samplingTime = simulationTime // (numDataPoints-1)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog = scObject.scStateOutMsg.log()
-    denLog = newAtmo.envOutMsgs[0].log()
+    dataLog = scObject.scStateOutMsg.recorder()
+    denLog = newAtmo.envOutMsgs[0].recorder()
 
     # add BSK objects to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

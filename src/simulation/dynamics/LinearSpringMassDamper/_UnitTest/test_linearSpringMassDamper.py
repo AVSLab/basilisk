@@ -151,7 +151,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         # Add test module to runtime call list
         unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
         unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
-        dataTank = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.log()
+        dataTank = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
         unitTestSim.AddModelToTask(unitTaskName, dataTank)
 
         # Add particles to tank to activate mass depletion
@@ -190,7 +190,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
-    dataLog = scObject.scStateOutMsg.log()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

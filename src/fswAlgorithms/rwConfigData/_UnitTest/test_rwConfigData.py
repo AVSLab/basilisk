@@ -72,7 +72,7 @@ def rwConfigDataTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Log the output message
-    dataLog = moduleConfig.rwParamsOutMsg.log()
+    dataLog = moduleConfig.rwParamsOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

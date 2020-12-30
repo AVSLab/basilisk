@@ -149,7 +149,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
         statusMsg = messaging2.DeviceStatusMsg().write(deviceStatusMsg)
         testModule.nodeStatusInMsg.subscribeTo(statusMsg)
 
-    dataLog = testModule.nodePowerOutMsg.log()
+    dataLog = testModule.nodePowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()

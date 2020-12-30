@@ -72,7 +72,7 @@ def test_default():
     testModule.nodePowerOut = 10.  # Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
-    dataLog = testModule.nodePowerOutMsg.log()
+    dataLog = testModule.nodePowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -129,7 +129,7 @@ def test_status():
     testModule.nodeStatusInMsg.subscribeTo(powerMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = testModule.nodePowerOutMsg.log()
+    dataLog = testModule.nodePowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
