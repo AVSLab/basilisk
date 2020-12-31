@@ -21,9 +21,11 @@ ambient lighting the following code is used:
 
 .. code-block:: python
 
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName) 
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	viz.settings.ambient = 0.5
 
+Here ``scObject`` is a :ref:`SpacecraftPlus` instance.  This can also be a list of spacecraft objects
+for a multi-satellite simulation.
 If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
@@ -266,8 +268,9 @@ Basilisk as well using using a helper function ``createPointLine()``:
 
 .. code-block::
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-    vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
+    vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255])
+    vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
 
 The ``createPointLine`` support macro requires the parameters ``toBodyName`` and ``lineColor`` to be
 defined. The parameter ``fromBodyName`` is optional. If it is not
@@ -312,9 +315,12 @@ using the helper function ``createConeInOut``:
 
 .. code-block::
 	
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal', normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True, coneHeight=5.0, coneName=‘sensorCone’)
-	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0], incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
+	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal',
+                               normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True,
+                               coneHeight=5.0, coneName=‘sensorCone’)
+	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0],
+                               incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
 	
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
@@ -386,8 +392,7 @@ they can be attached to different spacecraft through the ``spacecraftName`` argu
 
 .. code-block:: python
 
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-	gravBodies=gravFactory, saveFile=fileName)
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	vizSupport.createStandardCamera(viz, setMode=0, bodyTarget='earth', setView=0)
 	vizSupport.createStandardCamera(viz, setMode=1, fieldOfView=60.*macros.D2R, pointingVector_B=[0.0, -1.0, 0.0])
 
@@ -536,8 +541,7 @@ This functionality can be controlled by using the ‘createCustomModel’ helper
 
 .. code-block::
 
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-	gravBodies=gravFactory, saveFile=fileName)
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	vizSupport.createCustomModel(viz,
 	                            modelPath="/Users/hp/Downloads/Topex-Posidon/Topex-Posidon-composite.obj",
 	                            scale=[2, 2, 10])
@@ -618,10 +622,10 @@ Specifying the Simulation Epoch Date and Time Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Vizard can show the both the simulation time that has elapsed, or the mission time.  If now epoch message has been
 set then Basilisk assumes a default January 1, 2019, 00:00:00 epoch time and date.  The simulation time elapsed is
-thus the time since epoch.  To specify a different simulation epoch data and time the :ref:`EpochSimMsg` can be
-setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell ref:`vizInterface` what epoch message to read use::
+thus the time since epoch.  To specify a different simulation epoch data and time the :ref:`EpochMsgPayload` can be
+setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell :ref:`vizInterface` what epoch message to read use::
 
-	viz.epochMsgName = "Epoch_Msg_Name_Used"
+	viz.epochInMsg.subscribe(epochMsg)
 
 An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.
 

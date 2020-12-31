@@ -758,9 +758,6 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     saveFile: str
         can be a single file name, or a full path + file name. In both cases a local results are stored in a local sub-folder.
         Default: empty string resulting in the data not being saved to a file
-    gravBodies:
-        gravity Factory object.
-        Default: no gravity bodies are included
     scName: str or list(str)
         can be a single spacecraft name string, or a list of strings.
         Default: assumes a single craft  with a default name.
@@ -794,7 +791,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'gravBodies', 'numRW', 'thrDevices', 'liveStream', 'scName', 'cssNames'],
+        ['saveFile', 'opNavMode', 'numRW', 'thrDevices', 'liveStream', 'scName', 'cssNames'],
         kwargs)
 
     # setup the Vizard interface module
@@ -933,17 +930,17 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if val > 0:
             vizMessenger.opnavImageOutMsgName = "opnav_circles"
 
-    # see if celestial body planet ephemeris messages must be created
-    if 'gravBodies' in kwargs:
-        gravFactory = kwargs['gravBodies']
-        gravBodies = gravFactory.gravBodies
-        planetNameList = []
-        if (gravBodies):
-            if (gravFactory.spiceObject):
-                vizMessenger.spiceInMsgs = gravFactory.spiceObject.planetStateOutMsgs
-
-            for key in gravBodies:
-                planetNameList.append(key)
-            vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
+    # loop over all spacecraft to pull:
+    # - gravity bodies
+    planetNameList = []
+    spiceMsgList = []
+    for sc in scList:
+        for gravBody in sc.gravField.gravBodies:
+            # check if the celestial object has already been added
+            if gravBody.planetName not in planetNameList:
+                planetNameList.append(gravBody.planetName)
+                spiceMsgList.append(gravBody.planetBodyInMsg)
+    vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
+    vizMessenger.spiceInMsgs = messaging2.SpicePlanetStateInMsgsVector(spiceMsgList)
 
     return vizMessenger

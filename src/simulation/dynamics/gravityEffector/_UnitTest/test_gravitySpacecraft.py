@@ -91,7 +91,7 @@ def test_singleGravityBody(show_plots):
     # Note: this following SPICE data only lives in the Python environment, and is
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
-    #       SPICE kernals in Python.
+    #       SPICE kernels in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
@@ -216,7 +216,7 @@ def test_multiBodyGravity(show_plots):
     # Note: this following SPICE data only lives in the Python environment, and is
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
-    #       SPICE kernals in Python.
+    #       SPICE kernels in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
