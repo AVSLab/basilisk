@@ -405,6 +405,16 @@ The update rate of ``recorderTaskName`` controls the frequency at which this mes
 at the module simulation task rate just use that task name.  The above approach is handy if you want to record
 the messages at a custom rate.
 
+.. caution::
+
+    Note the case where the recording update rate is not an integer multiple of the simulation task rate
+    that is creating
+    the message being recorded.  Here the latest message data is recorded, but the time stamp is not of when
+    the message was written, but when it was recorded.  If you are logging orbital positions, your recorded
+    position would thus be off slightly relative to the time stamp.
+    Recording the message when the module wrote the message ensures the
+    recording time tag is in sync with the data.
+
 That is it.  The data is now recorded into ``attErrorRec`` automatically during the simulation run.
 In the new messaging system  the time information is no longer pre-pended in a first column, but rather provided as a
 separate array accessed through ``.times()``.  This means recording `N` time steps of a 3D vector no longer no longer
