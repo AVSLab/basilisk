@@ -751,16 +751,14 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     simTaskName:
         task to which to add the vizInterface module
     scList:
-        spacecraftPlus objects.  Can be a single object or list of objects
+        :ref:`spacecraftPlus` objects.  Can be a single object or list of objects
 
     Keyword Args
     ------------
     saveFile: str
-        can be a single file name, or a full path + file name. In both cases a local results are stored in a local sub-folder.
+        can be a single file name, or a full path + file name. In both cases a local results are stored
+        in a local sub-folder.
         Default: empty string resulting in the data not being saved to a file
-    scName: str or list(str)
-        can be a single spacecraft name string, or a list of strings.
-        Default: assumes a single craft  with a default name.
     numRW: int or list(int)
         number of RWs on spacecraft.  If scName is a list and numRW is an integer, then the same number RW is added
         to each spacecraft.  If numRW is a list then it must be of the same dimension as scName.
@@ -791,104 +789,98 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'numRW', 'thrDevices', 'liveStream', 'scName', 'cssNames'],
+        ['saveFile', 'opNavMode', 'numRW', 'thrDevices', 'liveStream', 'cssNames'],
         kwargs)
 
     # setup the Vizard interface module
     vizMessenger = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessenger)
 
-    # create spacecraft information container
-    scData = vizInterface.VizSpacecraftData()
-
     # ensure the spacecraft object list is a list
     if not isinstance(scList, list):
         scList = [scList]
 
-    # set spacecraft name
-    if 'scName' in kwargs:
-        val = kwargs['scName']
-        if isinstance(val, str):
-            scNames = [val]
-        elif isinstance(val, list):
-            scNames = val
-            for name in scNames:
-                if not isinstance(name, str):
-                    print('ERROR: scName list must only contain spacecraft name strings')
-                    exit(1)
-        else:
-            print('ERROR: scName must be a string or list of strings')
-            exit(1)
-    else:
-        scNames = [scData.spacecraftName]
+    firstSpacecraftName = scList[0].ModelTag
 
-    firstSpacecraftName = scNames[0]
+    # loop over all spacecraft to associated states and msg information
+    planetNameList = []
+    spiceMsgList = []
+    vizMessenger.scData.clear()
+    for sc in scList:
+        # create spacecraft information container
+        scData = vizInterface.VizSpacecraftData()
+
+        # set spacecraft name
+        scData.spacecraftName = sc.ModelTag
+
+        # link to spacecraft state message
+        scData.scPlusInMsg.subscribeTo(sc.scStateOutMsg)
+
+        # link to celestial bodies information
+        for gravBody in sc.gravField.gravBodies:
+            # check if the celestial object has already been added
+            if gravBody.planetName not in planetNameList:
+                planetNameList.append(gravBody.planetName)
+                spiceMsgList.append(gravBody.planetBodyInMsg)
+
+        vizMessenger.scData.push_back(scData)
+
+    vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
+    vizMessenger.spiceInMsgs = messaging2.SpicePlanetStateInMsgsVector(spiceMsgList)
 
     # set number of RWs
-    if 'numRW' in kwargs:
-        val = kwargs['numRW']
-        if isinstance(val, int):
-            numRWList = [val] * len(scNames)
-        elif isinstance(val, list):
-            numRWList = val
-            if len(scNames) != len(numRWList):
-                print('ERROR: numRW and scName list lengths must be the same')
-                exit(1)
-            for val in numRWList:
-                if not isinstance(val, int):
-                    print('ERROR: numRW must be an integer or a list of integers')
-                    exit(1)
-    else:
-        numRWList = [0] * len(scNames)
+    # if 'numRW' in kwargs:
+    #     val = kwargs['numRW']
+    #     if isinstance(val, int):
+    #         numRWList = [val] * len(scNames)
+    #     elif isinstance(val, list):
+    #         numRWList = val
+    #         if len(scNames) != len(numRWList):
+    #             print('ERROR: numRW and scName list lengths must be the same')
+    #             exit(1)
+    #         for val in numRWList:
+    #             if not isinstance(val, int):
+    #                 print('ERROR: numRW must be an integer or a list of integers')
+    #                 exit(1)
+    # else:
+    #     numRWList = [0] * len(scNames)
 
     # set CSS information
-    cssNameList = []
-    if 'cssNames' in kwargs:
-        cssNameList = kwargs['cssNames']
-        if isinstance(cssNameList, list):
-            if isinstance(cssNameList[0], list):
-                if len(scNames) != len(cssNameList):
-                    print('ERROR: cssName and scName list lengths must be the same length')
-                    exit(1)
-                for scCSSList in cssNameList:
-                    for item in scCSSList:
-                        if not isinstance(item, basestring):
-                            print('ERROR: cssNames list must contain strings of config log message names')
-                            exit(1)
-            else:
-                for item in cssNameList:
-                    if not isinstance(item, basestring):
-                        print('ERROR: cssNames list must contain strings of config log message names')
-                        exit(1)
-                cssNameList = [cssNameList]
-        else:
-            print('ERROR: cssNames must be a list of CSS config log message names')
-            exit(1)
+    # cssNameList = []
+    # if 'cssNames' in kwargs:
+    #     cssNameList = kwargs['cssNames']
+    #     if isinstance(cssNameList, list):
+    #         if isinstance(cssNameList[0], list):
+    #             if len(scNames) != len(cssNameList):
+    #                 print('ERROR: cssName and scName list lengths must be the same length')
+    #                 exit(1)
+    #             for scCSSList in cssNameList:
+    #                 for item in scCSSList:
+    #                     if not isinstance(item, basestring):
+    #                         print('ERROR: cssNames list must contain strings of config log message names')
+    #                         exit(1)
+    #         else:
+    #             for item in cssNameList:
+    #                 if not isinstance(item, basestring):
+    #                     print('ERROR: cssNames list must contain strings of config log message names')
+    #                     exit(1)
+    #             cssNameList = [cssNameList]
+    #     else:
+    #         print('ERROR: cssNames must be a list of CSS config log message names')
+    #         exit(1)
 
     # set thruster device info
-    if 'thrDevices' in kwargs:
-        thrDevices = kwargs['thrDevices']
-        thList = []
-        for thClusterInfo in thrDevices:
-            thSet = vizInterface.ThrClusterMap()
-            thSet.thrCount = thClusterInfo[0]
-            thSet.thrTag = thClusterInfo[1]
-            if len(thClusterInfo) == 3:
-                thSet.color = toRGBA255(thClusterInfo[2])
-            thList.append(thSet)
-        scData.thrMsgData = vizInterface.VizThrConfig(thList)
-
-    # create list of spacecraft data with incremented I/O msg names, unique numRW values but equal thrDevices info
-    vizMessenger.scData.clear()
-    i = 0
-    for name in scNames:
-        scData.spacecraftName = name
-        # scData.numRW = numRWList[i]
-        if len(cssNameList) > 0:
-            scData.cssInMsgNames = vizInterface.StringVector(cssNameList[i])
-        scData.scPlusInMsg.subscribeTo(scList[i].scStateOutMsg)
-        vizMessenger.scData.push_back(scData)
-        i = i + 1
+    # if 'thrDevices' in kwargs:
+    #     thrDevices = kwargs['thrDevices']
+    #     thList = []
+    #     for thClusterInfo in thrDevices:
+    #         thSet = vizInterface.ThrClusterMap()
+    #         thSet.thrCount = thClusterInfo[0]
+    #         thSet.thrTag = thClusterInfo[1]
+    #         if len(thClusterInfo) == 3:
+    #             thSet.color = toRGBA255(thClusterInfo[2])
+    #         thList.append(thSet)
+    #     scData.thrMsgData = vizInterface.VizThrConfig(thList)
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
@@ -929,18 +921,5 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         vizMessenger.opNavMode = val
         if val > 0:
             vizMessenger.opnavImageOutMsgName = "opnav_circles"
-
-    # loop over all spacecraft to pull:
-    # - gravity bodies
-    planetNameList = []
-    spiceMsgList = []
-    for sc in scList:
-        for gravBody in sc.gravField.gravBodies:
-            # check if the celestial object has already been added
-            if gravBody.planetName not in planetNameList:
-                planetNameList.append(gravBody.planetName)
-                spiceMsgList.append(gravBody.planetBodyInMsg)
-    vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
-    vizMessenger.spiceInMsgs = messaging2.SpicePlanetStateInMsgsVector(spiceMsgList)
 
     return vizMessenger
