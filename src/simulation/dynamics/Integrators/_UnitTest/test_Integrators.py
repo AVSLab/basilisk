@@ -82,7 +82,7 @@ def run(doUnitTests, show_plots, integratorCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(120.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
@@ -144,7 +144,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // numDataPoints
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder()
     logTaskName = "loggingTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))

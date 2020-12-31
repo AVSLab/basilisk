@@ -115,7 +115,6 @@ void RadiationPressure::computeForceTorque(double integTime)
     this->torqueExternalPntB_B.setZero();
 
     Eigen::Vector3d r_N = (Eigen::Vector3d)this->hubR_N->getState();
-    std::cout << "HPS: \n" << r_N << std::endl;
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
     Eigen::Vector3d s_N = sun_r_N - r_N;
     

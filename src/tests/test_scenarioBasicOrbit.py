@@ -67,54 +67,17 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 
     posData, figureList = scenarioBasicOrbit.run(show_plots, orbitCase, useSphericalHarmonics, planetCase)
 
-    numTruthPoints = 5
-    skipValue = int(len(posData) / (numTruthPoints - 1))
-    dataPosRed = posData[::skipValue]
-
-    # setup truth data for unit test
-    truePos = []
-    if orbitCase == 'LEO' and useSphericalHarmonics == False and planetCase == 'Earth':
-        truePos = [
-            [-2.8168016010234966e6, 5.248174846916143e6, 3.6771572646772987e6],
-            [-6.3710310400031125e6, -1.6053384413404597e6, 2.4169406797143915e6],
-            [-1.970125344005881e6, -6.454584898598424e6, -1.8612676901068345e6],
-            [4934518.68895958,   -3182978.5164827467, -3809969.2020971766]
-        ]
-    if orbitCase == 'GTO' and useSphericalHarmonics == False and planetCase == 'Earth':
-        truePos = [
-                      [-5889529.848066478,   9686574.89000767,          0.]
-                    , [-32443422.719031237,  -4922427.414354751,         0.]
-                    , [-36078086.41160842,  -19915150.791915383,         0.]
-                    , [-28507259.223436695, -28944549.738026343,         0.]
-        ]
-    if orbitCase == 'GEO' and useSphericalHarmonics == False and planetCase == 'Earth':
-        truePos = [
-            [-21819784.817951124, 35887241.456518754, 0.],
-            [-41428536.29954456, -6907093.740425735, 0.],
-            [-8997262.092482397, -41025304.931358635, 0.],
-            [34752956.740168475, -23584317.348184828, 0.]
-        ]
-    if orbitCase == 'LEO' and useSphericalHarmonics == True and planetCase == 'Earth':
-        truePos = [
-            [-2816801.6010234905, 5248174.8469161475, 3677157.2646772973],
-            [5696634.592350598, 3924740.596447138, -1046156.0460872669],
-            [2963860.9635370146, -5133282.1341001475, -3711547.9300516895],
-            [-5637594.03464369, -4044595.6453490634, 917125.4175524816]
-        ]
-    if orbitCase == 'LEO' and useSphericalHarmonics == False and planetCase == 'Mars':
-        truePos = [
-            [-2816801.6010234905, 5248174.8469161475, 3677157.2646772973],
-            [-6370345.93827535, -1614705.466882285, 2412504.0300785312],
-            [-1930585.6802137129, -6460197.886362413, -1883087.252397967],
-            [4937514.365486056, -3178775.7558852, -3809596.048901214]
-        ]
-    print(dataPosRed)
     # compare the results to the truth values
     accuracy = 1.0  # meters
 
-    testFailCount, testMessages = unitTestSupport.compareArray(
-        truePos, dataPosRed, accuracy, "r_BN_N Vector",
-        testFailCount, testMessages)
+    # testFailCount, testMessages = unitTestSupport.compareArray(
+    #     truePos, dataPosRed, accuracy, "r_BN_N Vector",
+    #     testFailCount, testMessages)
+    # testFailCount, testMessages = unitTestSupport.isDoubleEqual(0.0, posData, "r_BN_N Norm",
+    #                                                             accuracy, testFailCount, testMessages)
+    if posData > accuracy:
+        testFailCount += 1
+        testMessages += "FAILED: r_BN_N Norm test"
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):

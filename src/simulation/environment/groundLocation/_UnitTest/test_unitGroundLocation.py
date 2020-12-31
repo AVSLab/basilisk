@@ -26,6 +26,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import orbitalMotion
 from Basilisk.architecture import messaging2
 from Basilisk.simulation import groundLocation
+from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -49,7 +50,7 @@ def test_range(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(10.)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
@@ -81,7 +82,7 @@ def test_range(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = int(simulationTime / (numDataPoints - 1))
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     dataLog0 = groundTarget.accessOutMsgs[0].recorder()
@@ -142,7 +143,7 @@ def test_rotation(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(simTime)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
@@ -166,7 +167,7 @@ def test_rotation(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = int(simulationTime / (numDataPoints - 1))
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     dataLog = groundTarget.accessOutMsgs[0].recorder()

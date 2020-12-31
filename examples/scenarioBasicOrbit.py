@@ -115,6 +115,9 @@ spherical harmonics.
 .. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg
    :align: center
 
+.. image:: /_images/Scenarios/scenarioBasicOrbit3LEO0Earth.svg
+   :align: center
+
 ::
 
     show_plots = True, orbitCase='GTO', useSphericalHarmonics=False, planetCase='Earth'
@@ -127,6 +130,9 @@ This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zer
 .. image:: /_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg
    :align: center
 
+.. image:: /_images/Scenarios/scenarioBasicOrbit3GTO0Earth.svg
+   :align: center
+
 ::
 
     show_plots = True, orbitCase='GEO', useSphericalHarmonics=False, planetCase='Earth'
@@ -137,6 +143,9 @@ This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit incl
    :align: center
 
 .. image:: /_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioBasicOrbit3GEO0Earth.svg
    :align: center
 
 ::
@@ -165,6 +174,9 @@ In this simulation setup the planet's spherical harmonics are turned on.
 .. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
    :align: center
 
+.. image:: /_images/Scenarios/scenarioBasicOrbit3LEO0Mars.svg
+   :align: center
+
 """
 
 
@@ -182,7 +194,7 @@ import os
 import numpy as np
 
 import matplotlib.pyplot as plt
-
+from copy import copy
 
 # To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.
@@ -245,7 +257,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    # Note that a priority of 100 is chosen to ensure this task runs before the logging task below
+    # which should come last.  Higher priority tasks are evaluated first.
 
     # setup the simulation tasks/objects
     # initialize spacecraftPlus object and set properties
@@ -362,11 +376,15 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         numDataPoints = 400
     else:
         numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
+    # the sampling time is set to be an integer number of the simulation time step.  Otherwise the logging
+    # data pulled will be of an earlier time, and thus have a slightly off time stamp.
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     recorderTaskName = "recorderTask"
-    # to log the message at a lower rate then the simulation rate, a separate process is created
-    # and the SC msg logging module is added to this task group
-    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime))
+    # to log the message at a lower rate then the simulation rate, a separate task is created
+    # and the SC msg logging module is added to this task group.  The task priority is left to the
+    # default (-1) value by not including it.  This ensure this logging tasks happens after the higher
+    # priority simulation tasks have completed.  Otherwise the logging data will be off in its time association.
+    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime),0)
     scSim.AddModelToTask(recorderTaskName, dataRec)
 
     # Vizard Visualization Option
@@ -390,9 +408,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # By using the gravFactory support class to create and add planetary bodies the vizInterface module will
     # automatically be able to find the correct celestial body ephemeris names.  If these names are changed, then the
     # vizSupport.py support library has to be customized.
-    # Currently Vizard supports playback of stored simulation data files. By default the Viz is running in
-    # realtime mode with a 1x speed up factor.  On the bottom right of the Vizard GUI this can be increased
-    # or decreased.  Further, some display elements such as thruster or reaction wheel panels are only visible if
+    # Currently Vizard supports playback of stored simulation data files as well as live streaming.
+    # Further, some display elements such as thruster or reaction wheel panels are only visible if
     # such devices are being simulated in BSK.
 
     # While Vizard has many visualization features that can be customized from within the application, many Vizard
@@ -403,15 +420,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # convenient macro routine
     # which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
 
-    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
+    #   initialize Simulation:  This function runs the self_init()
     #   cross_init() and reset() routines on each module.
-    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
-    #   then the all messages are auto-discovered that are shared across different BSK threads.
-    #
     scSim.InitializeSimulation()
-    # If there are messages that are shared across multiple BSK threads, as shown in
-    # [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
-    # auto-discovers these shared messages.
 
     #   configure a simulation stop time time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)
@@ -425,11 +436,10 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # Further, the default spacecraft parameters, such as the unit mass and the principle inertia values are
     # just fine for this orbit simulation as they don't impact the orbital dynamics in this case.
     # This is true for all gravity force only orbital simulations. Later
-    # tutorials, such as [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
+    # tutorials, such as scenarioAttitudeFeedback.py,
     # illustrate how to over-ride default values with desired simulation values.
 
-
-    # retrieve the logged data
+    #   retrieve the logged data
     # the data is stored inside dataLog variable.  The time axis is stored separately from the data vector and
     # can be access through dataLog.times().  The message data is access directly through the message
     # variable names.
@@ -440,9 +450,10 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     # When the simulation completes 2 plots are shown for each case.  One plot always shows
     # the inertial position vector components, while the second plot either shows a planar
-    # orbit view relative to the perfocal frame (no spherical harmonics), or the
+    # orbit view relative to the peri-focal frame (no spherical harmonics), or the
     # semi-major axis time history plot (with spherical harmonics turned on).
-    figureList = plotOrbits(dataRec.times(), posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet)
+    figureList, finalDiff = plotOrbits(dataRec.times(), posData, velData, oe, mu, P,
+                            orbitCase, useSphericalHarmonics, planetCase, planet)
 
     if show_plots:
         plt.show()
@@ -450,7 +461,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return posData, figureList
+    return finalDiff, figureList
 
 
 def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet):
@@ -460,6 +471,7 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
+    finalDiff = 0.0
 
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2SEC / P, posData[:, idx] / 1000.,
@@ -507,6 +519,34 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
 
+        plt.figure(3)
+        fig = plt.gcf()
+        ax = fig.gca()
+        ax.ticklabel_format(useOffset=False, style='plain')
+        Deltar = np.empty((0, 3))
+        E0 = orbitalMotion.f2E(oe.f, oe.e)
+        M0 = orbitalMotion.E2M(E0, oe.e)
+        n = np.sqrt(mu/(oe.a*oe.a*oe.a))
+        oe2 = copy(oe)
+        for idx in range(0, len(posData)):
+            M = M0 + n * timeAxis[idx] * macros.NANO2SEC
+            Et = orbitalMotion.M2E(M, oe.e)
+            oe2.f = orbitalMotion.E2f(Et, oe.e)
+            rv, vv = orbitalMotion.elem2rv(mu, oe2)
+            Deltar = np.append(Deltar, [posData[idx] - rv], axis=0)
+        for idx in range(3):
+            plt.plot(timeAxis * macros.NANO2SEC / P, Deltar[:, idx] ,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     label=r'$\Delta r_{BN,' + str(idx) + '}$')
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [orbits]')
+        plt.ylabel('Trajectory Differences [m]')
+        figureList = {}
+        pltName = fileName + "3" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
+        figureList[pltName] = plt.figure(3)
+
+        finalDiff = np.linalg.norm(Deltar[-1])
+
     else:
         plt.figure(2)
         fig = plt.gcf()
@@ -523,7 +563,7 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
 
     pltName = fileName + "2" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
     figureList[pltName] = plt.figure(2)
-    return figureList
+    return figureList, finalDiff
 
 if __name__ == "__main__":
     run(

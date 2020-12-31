@@ -113,7 +113,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
 
 
@@ -220,7 +220,7 @@ def run(show_plots, orbitCase, planetCase):
     #
 
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints-1)
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     dataLog = scObject.scStateOutMsg.recorder()

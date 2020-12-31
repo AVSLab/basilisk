@@ -119,7 +119,7 @@ def TestExponentialAtmosphere():
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
@@ -187,7 +187,7 @@ def TestExponentialAtmosphere():
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10
-    samplingTime = simulationTime // (numDataPoints-1)
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     dataLog = scObject.scStateOutMsg.recorder()

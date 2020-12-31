@@ -121,7 +121,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
     simulationTime = macros.sec2nano(simTime)
 
     # create Earth Gravity Body
@@ -194,7 +194,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = simulationTime // (numDataPoints - 1)
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     dataLog = scObject.scStateOutMsg.recorder()

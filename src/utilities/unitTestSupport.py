@@ -515,3 +515,19 @@ def checkMethodKeyword(karglist, kwargs):
 # pull out the time column out of a 4xN data list
 def removeTimeFromData(dataList):
     return (dataList.transpose()[1:len(dataList[0])]).transpose()
+
+def samplingTimeMatch(simTime, baseTimeStep, numDataPoints):
+    """
+    Given a simulation duration and a base sampling period, this routine returns
+    a sampling time that is the closest integer match to a desired number of sampling points
+    :param simTime: [ns] total simulation duration
+    :param baseTimeStep: [ns] baseline sampling period
+    :param numDataPoints: nominal desired number of data points over the simulation duration
+    :return:
+    """
+    samplingTime = round(simTime // (numDataPoints - 1)/baseTimeStep)*baseTimeStep
+    if samplingTime == 0:
+        samplingTime = 1
+    if samplingTime < baseTimeStep:
+        samplingTime = baseTimeStep
+    return samplingTime

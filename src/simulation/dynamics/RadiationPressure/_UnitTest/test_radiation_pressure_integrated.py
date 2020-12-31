@@ -58,7 +58,7 @@ def radiationPressureIntegratedTest(show_plots):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.0)
-    dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
@@ -151,8 +151,6 @@ def radiationPressureIntegratedTest(show_plots):
     numTruthPoints = 10
     skipValue = int(len(pos_rel_earth) / (numTruthPoints - 1))
     pos_rel_earth_parse = pos_rel_earth[::skipValue]
-    print("earth pos:")
-    print(pos_rel_earth_parse)
 
     # true position for un perturbed 2 body GEO orbit with cannonball SRP
     true_pos = np.array([[-2.18197848e+07,  3.58872415e+07,  0.00000000e+00]

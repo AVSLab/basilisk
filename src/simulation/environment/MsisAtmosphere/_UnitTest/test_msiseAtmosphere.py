@@ -92,7 +92,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = msisAtmosphere.MsisAtmosphere()
@@ -178,7 +178,7 @@ def run(show_plots, orbitCase, setEpoch):
         newAtmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
 
     numDataPoints = 2
-    samplingTime = int(simulationTime / (numDataPoints-1))
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
     logTaskName = "logTask"
     dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     dataLog = scObject.scStateOutMsg.recorder()

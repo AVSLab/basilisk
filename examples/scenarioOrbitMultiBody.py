@@ -89,7 +89,6 @@ resulting position coordinates and trajectories differences are shown below.
 # Creation Date:  Dec. 8, 2016
 #
 
-import sys
 import os
 import numpy as np
 from datetime import datetime
@@ -99,15 +98,15 @@ from datetime import timedelta
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
+import matplotlib
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import astroFunctions
-######
-from Basilisk.utilities import MessagingAccess
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus, spice_interface
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -119,6 +118,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def run(show_plots, scCase):
     """
@@ -151,7 +151,7 @@ def run(show_plots, scCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(5.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
 
     #
     #   setup the simulation tasks/objects
@@ -159,7 +159,7 @@ def run(show_plots, scCase):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
 
     # The spacecraftPlus() module is setup as before, except that we need to specify a priority to this task.
     # If BSK modules are added to the simulation task process, they are executed in the order that they are added
@@ -198,17 +198,13 @@ def run(show_plots, scCase):
     spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
-    # The following is a support macro that creates a `spiceObject` instance, and fills in typical
-    # default parameters.  By setting the epochInMsgName argument, this macro provides an epoch date/time
-    # message as well.  The spiceObject is set to read in this epoch message.  Using the epoch message
+    # The following is a support macro that creates a `gravFactory.spiceObject` instance, and fills in typical
+    # default parameters.  By setting the epochInMsg argument, this macro provides an epoch date/time
+    # message as well.  The spiceObject is set to subscribe to this epoch message.  Using the epoch message
     # makes it trivial to synchronize the epoch information across multiple modules.
-    spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                                             timeInitString,
-                                                             epochInMsgName = 'simEpoch')
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               spiceObject.epochInMsgName,
-                               epochMsg)
+    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
+                                     timeInitString,
+                                     epochInMsg=True)
 
     # By default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
@@ -245,7 +241,6 @@ def run(show_plots, scCase):
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
-
     #
     #   Setup spacecraft initial states
     #
@@ -275,12 +270,17 @@ def run(show_plots, scCase):
     #
     #   Setup data logging before the simulation is initialized
     #
-    numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    numDataPoints = 50
+    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
+    dataRec = scObject.scStateOutMsg.recorder()
+    recorderTaskName = "recorderTask"
+    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime))
+    scSim.AddModelToTask(recorderTaskName, dataRec)
 
     # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation
@@ -296,8 +296,9 @@ def run(show_plots, scCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    posData = dataRec.r_BN_N
+    velData = dataRec.v_BN_N
+    timeAxis = dataRec.times()
 
     np.set_printoptions(precision=16)
     #
@@ -309,6 +310,7 @@ def run(show_plots, scCase):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
+    ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
     if scCase == 'NewHorizons':
         axesScale = astroFunctions.AU * 1000.  # convert to AU
         axesLabel = '[AU]'
@@ -319,8 +321,8 @@ def run(show_plots, scCase):
         axesLabel = '[km]'
         timeScale = macros.NANO2MIN  # convert to minutes
         timeLabel = '[min]'
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * timeScale, posData[:, idx] / axesScale,
+    for idx in range(3):
+        plt.plot(timeAxis * timeScale, posData[:, idx] / axesScale,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -330,7 +332,7 @@ def run(show_plots, scCase):
     pltName = fileName + "1" + scCase
     figureList[pltName] = plt.figure(1)
 
-    rBSK = posData[-1, 1:4]  # store the last position to compare to the SPICE position
+    rBSK = posData[-1]  # store the last position to compare to the SPICE position
     if scCase == 'Hubble':
         #
         # draw orbit in perifocal frame
@@ -353,7 +355,7 @@ def run(show_plots, scCase):
         rData = []
         fData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(gravBodies['earth'].mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem(gravBodies['earth'].mu, posData[idx], velData[idx])
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - omega0)
         plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
@@ -364,13 +366,14 @@ def run(show_plots, scCase):
         plt.legend(loc='lower right')
 
         # draw the full SPICE orbit
-        time = timeInit
         rData = []
         fData = []
-        sec = int(macros.NANO2SEC * simulationTime / numDataPoints)
-        usec = (macros.NANO2SEC * simulationTime / numDataPoints - sec) * 1000000
-        for idx in range(0, numDataPoints):
-            time += timedelta(seconds=sec, microseconds=usec)
+
+        for idx in range(len(timeAxis)):
+            simTime = timeAxis[idx] * macros.NANO2SEC
+            sec = int(simTime)
+            usec = (simTime - sec) * 1000000
+            time = timeInit + timedelta(seconds=sec, microseconds=usec)
             timeString = time.strftime(spiceTimeStringFormat)
             scState = 1000.0 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
             rN = scState[0:3]  # meters
@@ -393,11 +396,10 @@ def run(show_plots, scCase):
         figureList[pltName] = plt.figure(2)
 
     else:
-        time = gravFactory.spiceObject.getCurrentTimeString()
         scState = 1000.0 * spkRead(scSpiceName,
-                                           gravFactory.spiceObject.getCurrentTimeString(),
-                                           'J2000',
-                                           'EARTH')
+                                   gravFactory.spiceObject.getCurrentTimeString(),
+                                   'J2000',
+                                   'EARTH')
         rTrue = scState[0:3]
 
     # plot the differences between BSK and SPICE position data
@@ -405,17 +407,18 @@ def run(show_plots, scCase):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
+    ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
     posError = []
-    numDataPoints = len(posData)
-    for idx in range(0, numDataPoints):
-        sec = int(macros.NANO2SEC * posData[idx, 0])
-        usec = (macros.NANO2SEC * posData[idx, 0] - sec) * 1000000
+    for idx in range(len(timeAxis)):
+        simTime = timeAxis[idx] * macros.NANO2SEC
+        sec = int(simTime)
+        usec = (simTime - sec) * 1000000
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
         scState = 1000 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
-        posError.append(posData[idx, 1:4] - np.array(scState[0:3]))  # meters
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2MIN, np.array(posError)[:, idx - 1],
+        posError.append(posData[idx] - np.array(scState[0:3]))  # meters
+    for idx in range(3):
+        plt.plot(dataRec.times() * macros.NANO2MIN, np.array(posError)[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\Delta r_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
