@@ -399,21 +399,31 @@ Here is some sample code.  The only line required to create a message recorder m
 
 This creates an object that can be added to a Basilisk task list through::
 
-    scSim.AddModelToTask(recorderTaskName, attErrorRec)
+    scSim.AddModelToTask(simTaskName, attErrorRec)
 
-The update rate of ``recorderTaskName`` controls the frequency at which this message is recorded.  To record
-at the module simulation task rate just use that task name.  The above approach is handy if you want to record
-the messages at a custom rate.
+The update rate of ``simTaskName`` controls the frequency at which this message is recorded.
+If you want the message to be logged at a lower rate, but still keep the recorder module in the `simTaskName` task
+queue, then you can set this with `.recorder(value)`.  Here ``value`` is the minimum time period (ns) before
+a message is recorded. If you want to set a desired number of data points to be recorded, then
+you can use the ``samplingRatio()`` helper function to determine a minimum recording time::
+
+    numDataPoints = 50
+    samplingTime = unitTestSupport.samplingRatio(simulationTime, simulationTimeStep, numDataPoints)
+    dataRec = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataRec)
 
 .. caution::
 
-    Note the case where the recording update rate is not an integer multiple of the simulation task rate
-    that is creating
-    the message being recorded.  Here the latest message data is recorded, but the time stamp is not of when
+    If you add the recorder module to another task running at a different frequency, be aware that the message
+    time information is that of when the message was recorded, not when it is written.  Thus, in a
+    case where the recording update rate is not an integer multiple of the simulation task rate
+    the latest message data is recorded, but the time stamp is not when
     the message was written, but when it was recorded.  If you are logging orbital positions, your recorded
-    position would thus be off slightly relative to the time stamp.
+    position would thus be off relative to the time stamp.
     Recording the message when the module wrote the message ensures the
-    recording time tag is in sync with the data.
+    recording time tag is in sync with the data.  The easiest way to get down-sampled data is to add the
+    message recorder module to the same task that contains the module writing the message.  Ensure the
+    recorder is called after the module such that the recorded module message is current for this time step.
 
 That is it.  The data is now recorded into ``attErrorRec`` automatically during the simulation run.
 In the new messaging system  the time information is no longer pre-pended in a first column, but rather provided as a

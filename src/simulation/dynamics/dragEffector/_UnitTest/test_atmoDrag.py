@@ -113,7 +113,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
 
 
@@ -220,13 +220,11 @@ def run(show_plots, orbitCase, planetCase):
     #
 
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
-    logTaskName = "logTask"
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog = scObject.scStateOutMsg.recorder()
-    dataNewAtmoLog = newAtmo.envOutMsgs[0].recorder()
-    scSim.AddModelToTask(logTaskName, dataLog)
-    scSim.AddModelToTask(logTaskName, dataNewAtmoLog)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    dataNewAtmoLog = newAtmo.envOutMsgs[0].recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, dataNewAtmoLog)
 
     scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
     #

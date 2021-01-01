@@ -271,11 +271,9 @@ def run(show_plots, scCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
-    dataRec = scObject.scStateOutMsg.recorder()
-    recorderTaskName = "recorderTask"
-    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime))
-    scSim.AddModelToTask(recorderTaskName, dataRec)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataRec = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataRec)
 
     # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject

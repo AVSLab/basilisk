@@ -235,8 +235,6 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.08], [0.01], [0.0]]
 
-    unitTestSim.InitializeSimulation()
-
     # log data
     dataLog = scObject.scStateOutMsg.recorder()
     speedLog = rwStateEffector.speedOutMsg.recorder()
@@ -248,10 +246,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
 
+    unitTestSim.ConfigureStopTime(macros.sec2nano(duration))
+
+    unitTestSim.InitializeSimulation()
+
     posRef = scObject.dynManager.getStateObject("hubPosition")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-
-    unitTestSim.ConfigureStopTime(macros.sec2nano(duration))
 
     unitTestSim.ExecuteSimulation()
 
@@ -450,7 +450,6 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         plt.show()
         plt.close('all')
 
-
     accuracy = 1e-7
     for i in range(0,len(truePos)):
         # check a vector values
@@ -498,8 +497,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 testFailCount += 1
                 testMessages.append("FAILED: VSCMG Integrated Test failed rot energy unit test")
 
-
-       # print out success message if no errors were found
+    # print out success message if no errors were found
     if  testFailCount == 0:
         print("PASSED ")
         colorText = 'ForestGreen'

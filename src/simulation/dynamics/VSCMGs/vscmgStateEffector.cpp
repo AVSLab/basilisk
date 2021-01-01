@@ -555,23 +555,25 @@ void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos)
  */
 void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    this->outputStates = this->speedOutMsg.zeroMsgPayload();
 	VSCMGConfigMsgPayload tmpVSCMG;
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
+        tmpVSCMG = this->vscmgOutMsgs[0].zeroMsgPayload();
         if (numVSCMGJitter > 0) {
             double thetaCurrent = this->thetasState->getState()(it - VSCMGData.begin(), 0);
             it->theta = thetaCurrent;
         }
         double omegaCurrent = this->OmegasState->getState()(it - VSCMGData.begin(), 0);
         it->Omega = omegaCurrent;
-		outputStates.wheelSpeeds[it - VSCMGData.begin()] = it->Omega;
+		this->outputStates.wheelSpeeds[it - VSCMGData.begin()] = it->Omega;
 		double gammaCurrent = this->gammasState->getState()(it - VSCMGData.begin(), 0);
 		it->gamma = gammaCurrent;
-		outputStates.gimbalAngles[it - VSCMGData.begin()] = it->gamma;
+		this->outputStates.gimbalAngles[it - VSCMGData.begin()] = it->gamma;
 		double gammaDotCurrent = this->gammaDotsState->getState()(it - VSCMGData.begin(), 0);
 		it->gammaDot = gammaDotCurrent;
-		outputStates.gimbalRates[it - VSCMGData.begin()] = it->gammaDot;
+		this->outputStates.gimbalRates[it - VSCMGData.begin()] = it->gammaDot;
 
 		tmpVSCMG.u_s_current = it->u_s_current;
 		tmpVSCMG.u_s_max = it->u_s_max;
@@ -596,7 +598,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 	}
 
 	// Write this message once for all VSCMGs
-    this->speedOutMsg.write(&outputStates, this->moduleID, CurrentClock);
+    this->speedOutMsg.write(&this->outputStates, this->moduleID, CurrentClock);
 }
 
 /*! This method is used to read the incoming command message and set the

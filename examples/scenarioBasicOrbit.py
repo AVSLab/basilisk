@@ -257,7 +257,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
     # Note that a priority of 100 is chosen to ensure this task runs before the logging task below
     # which should come last.  Higher priority tasks are evaluated first.
 
@@ -371,24 +371,23 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         simulationTime = macros.sec2nano(0.75 * P)
 
     # Setup data logging before the simulation is initialized
-    dataRec = scObject.scStateOutMsg.recorder()  # create a logging task object of the spacecraft output message
     if useSphericalHarmonics:
         numDataPoints = 400
     else:
         numDataPoints = 100
-    # the sampling time is set to be an integer number of the simulation time step.  Otherwise the logging
-    # data pulled will be of an earlier time, and thus have a slightly off time stamp.
-    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
-    recorderTaskName = "recorderTask"
-    # to log the message at a lower rate then the simulation rate, a separate task is created
-    # and the SC msg logging module is added to this task group.  The task priority is left to the
-    # default (-1) value by not including it.  This ensure this logging tasks happens after the higher
-    # priority simulation tasks have completed.  Otherwise the logging data will be off in its time association.
-    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime),0)
-    scSim.AddModelToTask(recorderTaskName, dataRec)
+    # The msg recorder can be told to sample at an with a minimum hold period in nano-seconds.
+    # If no argument is provided, i.e. msg.recorder(), then a default 0ns minimum time period is used
+    # which causes the msg to be recorded on every task update rate.
+    # The recorder can be put onto a separate task with its own update rate.  However, this can be
+    # trickier to do as the recording timing must be carefully balanced with the module msg writing
+    # to avoid recording an older message.
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    # create a logging task object of the spacecraft output message at the desired down sampling ratio
+    dataRec = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataRec)
 
     # Vizard Visualization Option
-    # -----
+    # ---------------------------
     # If you wish to transmit the simulation data to the United based Vizard Visualization application,
     # then uncomment the following
     # line from the python scenario script.  This will cause the BSK simulation data to

@@ -43,7 +43,7 @@ import matplotlib.colors as colors
 import matplotlib.cm as cmx
 
 from . import macros
-
+import math
 
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -512,22 +512,22 @@ def checkMethodKeyword(karglist, kwargs):
             print(karglist)
             exit(1)
 
+
 # pull out the time column out of a 4xN data list
 def removeTimeFromData(dataList):
     return (dataList.transpose()[1:len(dataList[0])]).transpose()
 
-def samplingTimeMatch(simTime, baseTimeStep, numDataPoints):
+
+def samplingTime(simTime, baseTimeStep, numDataPoints):
     """
-    Given a simulation duration and a base sampling period, this routine returns
-    a sampling time that is the closest integer match to a desired number of sampling points
+    Given a simulation duration, this routine returns
+    a sampling time that yields the closest integer match to a desired number of sampling points
     :param simTime: [ns] total simulation duration
     :param baseTimeStep: [ns] baseline sampling period
     :param numDataPoints: nominal desired number of data points over the simulation duration
     :return:
     """
-    samplingTime = round(simTime // (numDataPoints - 1)/baseTimeStep)*baseTimeStep
-    if samplingTime == 0:
-        samplingTime = 1
-    if samplingTime < baseTimeStep:
-        samplingTime = baseTimeStep
-    return samplingTime
+    deltaTime = math.floor(simTime / baseTimeStep / (numDataPoints-1)) * baseTimeStep
+    if deltaTime < 1:
+        deltaTime = 1
+    return deltaTime

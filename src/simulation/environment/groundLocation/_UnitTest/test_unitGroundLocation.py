@@ -50,7 +50,7 @@ def test_range(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(10.)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
@@ -82,15 +82,13 @@ def test_range(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
-    logTaskName = "logTask"
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog0 = groundTarget.accessOutMsgs[0].recorder()
-    dataLog1 = groundTarget.accessOutMsgs[1].recorder()
-    dataLog2 = groundTarget.accessOutMsgs[2].recorder()
-    scSim.AddModelToTask(logTaskName, dataLog0)
-    scSim.AddModelToTask(logTaskName, dataLog1)
-    scSim.AddModelToTask(logTaskName, dataLog2)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog0 = groundTarget.accessOutMsgs[0].recorder(samplingTime)
+    dataLog1 = groundTarget.accessOutMsgs[1].recorder(samplingTime)
+    dataLog2 = groundTarget.accessOutMsgs[2].recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog0)
+    scSim.AddModelToTask(simTaskName, dataLog1)
+    scSim.AddModelToTask(simTaskName, dataLog2)
 
     # Run the sim
     scSim.InitializeSimulation()
@@ -143,7 +141,7 @@ def test_rotation(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(simTime)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
@@ -167,11 +165,9 @@ def test_rotation(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
-    logTaskName = "logTask"
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    dataLog = groundTarget.accessOutMsgs[0].recorder()
-    scSim.AddModelToTask(logTaskName, dataLog)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = groundTarget.accessOutMsgs[0].recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
 
     # Run the sim
     scSim.InitializeSimulation()

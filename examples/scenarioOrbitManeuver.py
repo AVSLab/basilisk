@@ -190,14 +190,12 @@ def run(show_plots, maneuverCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    dataRec = scObject.scStateOutMsg.recorder()
-    recorderTaskName = "recorderTask"
-    dynProcess.addTask(scSim.CreateNewTask(recorderTaskName, samplingTime))
-    scSim.AddModelToTask(recorderTaskName, dataRec)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataRec = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataRec)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, gravBodies=gravFactory
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                         # , saveFile=fileName
                                         )
 

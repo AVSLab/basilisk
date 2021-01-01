@@ -58,7 +58,7 @@ def radiationPressureIntegratedTest(show_plots):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.0)
-    dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()

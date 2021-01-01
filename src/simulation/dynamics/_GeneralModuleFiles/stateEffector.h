@@ -50,7 +50,7 @@ typedef struct {
 /*! @brief state effector class */
 class StateEffector {
 public:
-    std::string nameOfSpacecraftAttachedTo;//!< class variable
+    std::string nameOfSpacecraftAttachedTo="";//!< class variable
     EffectorMassProps effProps;            //!< -- stateEffectors instantiation of effector mass props
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
     Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B

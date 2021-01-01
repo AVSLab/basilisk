@@ -16,10 +16,10 @@ typedef struct {type};
         else:
             raise Exception('tried to subscribe {type} to another message type')
 
-    def recorder(self):
+    def recorder(self, timeDiff=0):
         from Basilisk.architecture.messaging2 import {type}Recorder
         self.header.isLinked = 1
-        return {type}Recorder(self)
+        return {type}Recorder(self, timeDiff)
 
     def write(self, payload, time=0):
         """write the message payload.  The second argument is time in nanoseconds.  It is optional and defaults to 0."""

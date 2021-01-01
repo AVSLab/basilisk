@@ -69,7 +69,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(timeStep)
     # add task to the dynamical process
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #  create spacecraft object
     scObject = spacecraftPlus.SpacecraftPlus()
@@ -198,10 +198,8 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
-    dataLog = scObject.scStateOutMsg.recorder()
-    logTaskName = "logTask"
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()

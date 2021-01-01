@@ -121,7 +121,7 @@ public:
     };
 
     //! Recorder method description
-    Recorder<messageType> recorder(){return Recorder<messageType>(this);}
+    Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
 };
 
 /*! Write Functor */
@@ -167,8 +167,8 @@ public:
     //! for plain ole c modules
     messageType* subscribeRaw(Msg2Header **msgPtr);
     //! Recorder object
-    Recorder<messageType> recorder(){return Recorder<messageType>(this);}
-    //! - returned a zero'd copy of the messagy payload structure
+    Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
+    //! - returns a zero'd copy of the message payload structure
     messageType zeroMsgPayload();
 
     //! check if this msg has been connected to
@@ -206,16 +206,19 @@ class Recorder : public SysModel{
 public:
     Recorder(){};
     //! -- Use this to record cpp messages
-    Recorder(Message<messageType>* message){
+    Recorder(Message<messageType>* message, uint64_t timeDiff = 0){
+        this->timeInterval = timeDiff;
         this->readMessage = message->addSubscriber();
     }
     //! -- Use this to record C messages
-    Recorder(void* message){
+    Recorder(void* message, uint64_t timeDiff = 0){
+        this->timeInterval = timeDiff;
         Msg2Header msgHeader;
         this->readMessage = ReadFunctor<messageType>((messageType*) message, &msgHeader);
     }
     //! -- Use this to keep track of what someone is reading
-    Recorder(ReadFunctor<messageType>* messageReader){
+    Recorder(ReadFunctor<messageType>* messageReader, uint64_t timeDiff = 0){
+        this->timeInterval = timeDiff;
         this->readMessage = *messageReader;
     }
     ~Recorder(){};
@@ -226,13 +229,20 @@ public:
     void CrossInit(){};
     //! Method description
     void IntegratedInit(){};
-    //! -- Read and record the message at the owning task's rate
+    //! -- Read and record the message
     void UpdateState(uint64_t CurrentSimNanos){
-        this->msgRecordTimes.push_back(CurrentSimNanos);
-        this->msgRecord.push_back(this->readMessage());
+        if (CurrentSimNanos >= this->nextUpdateTime) {
+            this->msgRecordTimes.push_back(CurrentSimNanos);
+            this->msgRecord.push_back(this->readMessage());
+            this->nextUpdateTime += this->timeInterval;
+        }
     };
     //! Reset method
-    void Reset(uint64_t CurrentSimNanos){this->msgRecord.clear(); this->msgRecordTimes.clear();};  //!< -- Can only reset to 0 for now
+    void Reset(uint64_t CurrentSimNanos){
+        this->msgRecord.clear();    //!< -- Can only reset to 0 for now
+        this->msgRecordTimes.clear();
+        this->nextUpdateTime = CurrentSimNanos;
+    };
     //! time method
     std::vector<uint64_t>& times(){return this->msgRecordTimes;}
     //! record method
@@ -241,6 +251,8 @@ public:
 private:
     std::vector<messageType> msgRecord;           //!< vector of recorded messages
     std::vector<uint64_t> msgRecordTimes;         //!< vector of times at which messages are recorded
+    uint64_t nextUpdateTime = 0;                  //!< [ns] earliest time at which the msg is recorded again
+    uint64_t timeInterval;                        //!< [ns] recording time intervale
 
 private:
     ReadFunctor<messageType> readMessage;   //!< method description

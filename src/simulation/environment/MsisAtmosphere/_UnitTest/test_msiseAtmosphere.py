@@ -92,7 +92,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = msisAtmosphere.MsisAtmosphere()
@@ -157,7 +157,7 @@ def run(show_plots, orbitCase, setEpoch):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    simulationTime = macros.sec2nano(0.001*P)
+    simulationTime = macros.sec2nano(0.002*P)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -177,14 +177,10 @@ def run(show_plots, orbitCase, setEpoch):
         swMsgList.append(messaging2.SwDataMsg().write(swMsgData))
         newAtmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
 
-    numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTimeMatch(simulationTime, simulationTimeStep, numDataPoints)
-    logTaskName = "logTask"
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
     dataLog = scObject.scStateOutMsg.recorder()
     denLog = newAtmo.envOutMsgs[0].recorder()
-    scSim.AddModelToTask(logTaskName, dataLog)
-    scSim.AddModelToTask(logTaskName, denLog)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, denLog)
 
     #
     #   initialize Spacecraft States with the initialization variables
@@ -223,12 +219,12 @@ def run(show_plots, orbitCase, setEpoch):
 
     #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3,
     #   and must be adjusted by a factor of 1e-3 to match kg/m^3
-    if not unitTestSupport.isDoubleEqualRelative(densData[0], refAtmoData[5]*1000., accuracy):
+    if not unitTestSupport.isDoubleEqualRelative(densData[-1], refAtmoData[5]*1000., accuracy):
             testFailCount += 1
             testMessages.append(
                 "FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]))
 
-    if not unitTestSupport.isDoubleEqualRelative(tempData[0], refAtmoData[-1], accuracy):
+    if not unitTestSupport.isDoubleEqualRelative(tempData[-1], refAtmoData[-1], accuracy):
         testFailCount += 1
         testMessages.append(
         "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "+str(tempData[0]-refAtmoData[-1]))
