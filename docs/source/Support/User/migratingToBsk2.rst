@@ -402,8 +402,8 @@ This creates an object that can be added to a Basilisk task list through::
     scSim.AddModelToTask(simTaskName, attErrorRec)
 
 The update rate of ``simTaskName`` controls the frequency at which this message is recorded.
-If you want the message to be logged at a lower rate, but still keep the recorder module in the `simTaskName` task
-queue, then you can set this with `.recorder(value)`.  Here ``value`` is the minimum time period (ns) before
+If you want the message to be logged at a lower rate, but still keep the recorder module in the ``simTaskName`` task
+queue, then you can set this with ``.recorder(value)``.  Here ``value`` is the minimum time period (ns) before
 a message is recorded. If you want to set a desired number of data points to be recorded, then
 you can use the ``samplingRatio()`` helper function to determine a minimum recording time::
 
@@ -426,15 +426,18 @@ you can use the ``samplingRatio()`` helper function to determine a minimum recor
     recorder is called after the module such that the recorded module message is current for this time step.
 
 That is it.  The data is now recorded into ``attErrorRec`` automatically during the simulation run.
-In the new messaging system  the time information is no longer pre-pended in a first column, but rather provided as a
-separate array accessed through ``.times()``.  This means recording `N` time steps of a 3D vector no longer no longer
+In the new messaging system  the time information when the message is recorded
+is no longer pre-pended in a first column, but rather provided as a
+separate array accessed through ``datRec.times()``.  This means recording `N` time steps of a 3D vector no longer no longer
 yields a `Nx4` array, but rather a `Nx3` array.  Some plotting or value checking logic might have to be updated.
 For example, to plot using recorded data use::
 
     for idx in range(3):
         plt.plot(attErrorRec.times() * macros.NANO2MIN, attErrorRec.sigma_BR[:, idx])
 
-
+If you want to retrieve a vector of times when the message was written (i.e. recorded the ``.timeWritten()`` message
+information), then you can do this through ``dataRec.timesWritten()``.  Depending on how ofter a message is
+written by a module, and how often a message is recorded, these times can be different.
 
 Running Basilisk Simulation
 ---------------------------

@@ -54,6 +54,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
 %rename(__time_vector) times;  // It's not really useful to give the user back a time vector
+%rename(__timeWritten_vector) timesWritten;
 %rename(__record_vector) record;
 %define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
 %{
@@ -98,6 +99,9 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
     %pythoncode %{
         def times(self):
             return np.array(self.__time_vector())
+
+        def timesWritten(self):
+            return np.array(self.__timeWritten_vector())
 
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.

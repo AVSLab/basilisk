@@ -233,6 +233,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos){
         if (CurrentSimNanos >= this->nextUpdateTime) {
             this->msgRecordTimes.push_back(CurrentSimNanos);
+            this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
             this->msgRecord.push_back(this->readMessage());
             this->nextUpdateTime += this->timeInterval;
         }
@@ -241,16 +242,20 @@ public:
     void Reset(uint64_t CurrentSimNanos){
         this->msgRecord.clear();    //!< -- Can only reset to 0 for now
         this->msgRecordTimes.clear();
+        this->msgWrittenTimes.clear();
         this->nextUpdateTime = CurrentSimNanos;
     };
-    //! time method
+    //! time recorded method
     std::vector<uint64_t>& times(){return this->msgRecordTimes;}
+    //! time written method
+    std::vector<uint64_t>& timesWritten(){return this->msgWrittenTimes;}
     //! record method
     std::vector<messageType>& record(){return this->msgRecord;};
 
 private:
     std::vector<messageType> msgRecord;           //!< vector of recorded messages
     std::vector<uint64_t> msgRecordTimes;         //!< vector of times at which messages are recorded
+    std::vector<uint64_t> msgWrittenTimes;        //!< vector of times at which messages are written
     uint64_t nextUpdateTime = 0;                  //!< [ns] earliest time at which the msg is recorded again
     uint64_t timeInterval;                        //!< [ns] recording time intervale
 
