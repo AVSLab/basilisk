@@ -92,6 +92,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 from Basilisk.utilities import planetStates
 from numpy import array
 from numpy.linalg import norm
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -107,7 +108,6 @@ def run(show_plots, useCentral):
             show_plots (bool): Determines if the script should display plots
             useCentral (bool): Specifies if the planet is the center of the coordinate system
         """
-
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -147,14 +147,10 @@ def run(show_plots, useCentral):
 
     #Set up spice with spice time
     UTCInit = "2012 MAY 1 00:28:30.0"
-    spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                                   UTCInit,
-                                                   epochInMsgName='simEpoch')
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               spiceObject.epochInMsgName,
-                               epochMsg)
-    scSim.AddModelToTask(simTaskName, spiceObject)
+    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
+                                     UTCInit,
+                                     epochInMsg=True)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
@@ -219,13 +215,16 @@ def run(show_plots, useCentral):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage("earth_planet_data", samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    plLog = gravFactory.spiceObject.planetStateOutMsgs[0].recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, plLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -244,11 +243,11 @@ def run(show_plots, useCentral):
     #
     #   retrieve the logged data
     #
-    #Note: position and velocity are returned relative to the zerobase (SSB by default)
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    earthPositionHistory = scSim.pullMessageLogData("earth_planet_data.PositionVector", list(range(3)))
-    earthVelocityHistory = scSim.pullMessageLogData("earth_planet_data.VelocityVector", list(range(3)))
+    # Note: position and velocity are returned relative to the zerobase (SSB by default)
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
+    earthPositionHistory = plLog.PositionVector
+    earthVelocityHistory = plLog.VelocityVector
 
     # Finally, note that the output position and velocity (when reading message logs) will be relative to the spice zero
     # base, even when a central body is being used. So, to plot planet-relative orbits, the outputs are adjusted by the
@@ -258,11 +257,11 @@ def run(show_plots, useCentral):
     # roughly the same regardless of the use of a central body.
 
     #bring the s/c pos, vel back to earth relative coordinates to plot
-    posData[:, 1:4] -= earthPositionHistory[:, 1:4]
-    velData[:, 1:4] -= earthVelocityHistory[:, 1:4]
+    posData[:] -= earthPositionHistory[:]
+    velData[:] -= earthVelocityHistory[:]
 
-    out_r = norm(posData[-1, 1:4])
-    out_v = norm(velData[-1, 1:4])
+    out_r = norm(posData[-1])
+    out_v = norm(velData[-1])
 
     np.set_printoptions(precision=16)
 
@@ -275,8 +274,8 @@ def run(show_plots, useCentral):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, posData[:, idx] / 1000.,
+    for idx in range(3):
+        plt.plot(dataLog.times() * macros.NANO2SEC / P, posData[:, idx] / 1000.,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -301,10 +300,10 @@ def run(show_plots, useCentral):
     rData = []
     fData = []
     for idx in range(0, len(posData)):
-        oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+        oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(posData[:,1] / 1000, posData[:,2] / 1000, color='#aa0000', linewidth=3.0)
+    plt.plot(posData[:,0] / 1000, posData[:,1] / 1000, color='#aa0000', linewidth=3.0)
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
