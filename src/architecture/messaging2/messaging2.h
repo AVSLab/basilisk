@@ -252,6 +252,11 @@ public:
     //! record method
     std::vector<messageType>& record(){return this->msgRecord;};
 
+    //! method to update the minimum time interval before recording the next message
+    void updateTimeInterval(uint64_t timeDiff) {
+        this->timeInterval = timeDiff;
+    };
+
 private:
     std::vector<messageType> msgRecord;           //!< vector of recorded messages
     std::vector<uint64_t> msgRecordTimes;         //!< vector of times at which messages are recorded

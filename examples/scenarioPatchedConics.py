@@ -104,9 +104,10 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 
 bskPath = __path__[0]
-from Basilisk.simulation import spacecraftPlus, simMessages, gravityEffector
+from Basilisk.simulation import spacecraftPlus, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
-
+from Basilisk.architecture import messaging2
+from Basilisk.utilities import vizSupport
 
 def run(show_plots):
     """
@@ -120,6 +121,7 @@ def run(show_plots):
     simProcessName = "simProcess"
 
     scSim = SimulationBaseClass.SimBaseClass()
+    scSim.SetProgressBar(True)
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
@@ -157,29 +159,23 @@ def run(show_plots):
     # and to discount Jupiter's velocity upon
     # entering Jupiter's Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative
     # positions and velocities even when the planets are not moving.
-    sunStateMsg = simMessages.SpicePlanetStateSimMsg()
-    sunStateMsg.PositionVector = [0.0, 0.0, 0.0]
-    sunStateMsg.VelocityVector = [0.0, 0.0, 0.0]
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               sun.bodyInMsgName,
-                               sunStateMsg)
-
-    earthStateMsg = simMessages.SpicePlanetStateSimMsg()
+    earthStateMsg = messaging2.SpicePlanetStateMsgPayload()
     earthStateMsg.PositionVector = [0.0, -149598023 * 1000, 0.0]
     earthStateMsg.VelocityVector = [0.0, 0.0, 0.0]
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               earth.bodyInMsgName,
-                               earthStateMsg)
+    earthMsg = messaging2.SpicePlanetStateMsg().write(earthStateMsg)
+    gravFactory.gravBodies['earth'].planetBodyInMsg.subscribeTo(earthMsg)
 
-    jupiterStateMsg = simMessages.SpicePlanetStateSimMsg()
+    jupiterStateMsg = messaging2.SpicePlanetStateMsgPayload()
     jupiterStateMsg.PositionVector = [0.0, 778298361 * 1000, 0.0]
     jupiterStateMsg.VelocityVector = [0.0, 0.0, 0.0]
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               jupiter.bodyInMsgName,
-                               jupiterStateMsg)
+    jupiterMsg = messaging2.SpicePlanetStateMsg().write(jupiterStateMsg)
+    gravFactory.gravBodies['jupiter barycenter'].planetBodyInMsg.subscribeTo(jupiterMsg)
+
+    sunStateMsg = messaging2.SpicePlanetStateMsgPayload()
+    sunStateMsg.PositionVector = [0.0, 0.0, 0.0]
+    sunStateMsg.VelocityVector = [0.0, 0.0, 0.0]
+    sunMsg = messaging2.SpicePlanetStateMsg().write(sunStateMsg)
+    gravFactory.gravBodies['sun'].planetBodyInMsg.subscribeTo(sunMsg)
 
     #  Earth Centered Circular orbit and hyperbolic departure
     # initialize spacecraftPlus object and set properties
@@ -230,9 +226,13 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
 
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              # , saveFile=__file__
+                                              )
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
     #   cross_init() and reset() routines on each module.
     #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
@@ -260,8 +260,8 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000))
     scSim.ExecuteSimulation()
 
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
 
     endEarthTime = len(posData)
 
@@ -274,10 +274,8 @@ def run(show_plots):
 
     # The simulation is stopped when the spacecraft reaches the edge of Earth's Sphere of Influence, and a new time step of
     # 1 week is specified by the following:
-    simulationTimeStep = macros.sec2nano(1 * 7 * 24 * 60 * 60)  # Changing timestep to 1 week
-
-    # The logging is then updated to match the new new simulationTimeStep via the following:
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
+    oneWeek = macros.sec2nano(1 * 7 * 24 * 60 * 60)  # Changing timestep to 1 week
+    simulationTimeStep = oneWeek
     # And the task period is updated in the simulation using:
     dynProcess.updateTaskPeriod(simTaskName, simulationTimeStep)
 
@@ -300,8 +298,8 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - macros.sec2nano(6058000))
     scSim.ExecuteSimulation()
 
-    hohmann_PosData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    hohmann_VelData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    hohmann_PosData = dataLog.r_BN_N
+    hohmann_VelData = dataLog.v_BN_N
 
     endSunTime = len(hohmann_PosData)
 
@@ -315,13 +313,12 @@ def run(show_plots):
     # Interplanetary section, the position and
     # velocity states are pulled and manipulated to be Jupiter-centric and then fed back to the simulation.
     simulationTimeStep = macros.sec2nano(100.)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
     dynProcess.updateTaskPeriod(simTaskName, simulationTimeStep)
-
+    dataLog.updateTimeInterval(macros.sec2nano(20*60))
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2)
     scSim.ExecuteSimulation()
 
-    timeSwitch_posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    timeSwitch_posData = dataLog.r_BN_N
     endTimeStepSwitchTime = len(timeSwitch_posData)
 
     #
@@ -362,8 +359,8 @@ def run(show_plots):
 
     scSim.ExecuteSimulation()
     #   retrieve the logged data
-    dataPos = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    dataVel = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    dataPos = dataLog.r_BN_N
+    dataVel = dataLog.v_BN_N
 
     posJup = dataPos[endTimeStepSwitchTime:-1]
     velJup = dataVel[endTimeStepSwitchTime:-1]
@@ -371,27 +368,28 @@ def run(show_plots):
     # Earth Centered Departure
     pos_S_EC = []
     vel_S_EC = []
-    for idx in range (0,endEarthTime):
-        r_S_E = posData[idx, 1:4] - pos_N_Earth
-        v_S_E = velData[idx, 1:4] - vel_N_Earth
+    for idx in range (0, endEarthTime):
+        r_S_E = posData[idx] - pos_N_Earth
+        v_S_E = velData[idx] - vel_N_Earth
+
         pos_S_EC.append(r_S_E)
         vel_S_EC.append(v_S_E)
 
     # Jupiter Centered Arrival
     pos_S_JC = []
 
-    for idx in range(10450,len(posJup)):
-        r_S_J = posJup[idx, 1:4] - pos_N_Jup
+    for idx in range(250, len(posJup)):
+        r_S_J = posJup[idx] - pos_N_Jup
         pos_S_JC.append(r_S_J)
 
     pos_S_JC = np.array(pos_S_JC)
-
 
     # Plots
     np.set_printoptions(precision=16)
     # plot the results
 
     fileName = os.path.basename(os.path.splitext(__file__)[0])
+    timeAxis = dataLog.times()
 
     plt.close("all")  # clears out plots from earlier test runs
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
@@ -430,7 +428,6 @@ def run(show_plots):
     plt.ylabel('Sunward direction [km]')
     plt.legend(loc='upper right')
     plt.grid()
-    pltName = "Earth Circular Orbit"
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
@@ -446,7 +443,7 @@ def run(show_plots):
     for idx in range(0, len(posData[0:300])):
         oeData = orbitalMotion.rv2elem_parab(earth.mu, pos_S_EC[idx], vel_S_EC[idx])
         rData.append(oeData.rmag / 1000.)
-    plt.plot(posData[0:300, 0] * macros.NANO2MIN, rData, color='#aa0000',
+    plt.plot(timeAxis[0:300] * macros.NANO2MIN, rData, color='#aa0000',
              )
     plt.xlabel('Time [min]')
     plt.ylabel('Earth Relative Radius [km]')
@@ -465,7 +462,7 @@ def run(show_plots):
     rData = []
     fData = []
     for idx in range(0, len(hohmann_PosData)):
-        oeData = orbitalMotion.rv2elem_parab(sun.mu, hohmann_PosData[idx, 1:4], hohmann_VelData[idx, 1:4])
+        oeData = orbitalMotion.rv2elem_parab(sun.mu, hohmann_PosData[idx], hohmann_VelData[idx])
         rData.append(oeData.rmag / 1000.)
         fData.append(oeData.f + oeData.omega - oeData.omega)
     rData = np.array(rData) / 149598000
@@ -476,7 +473,6 @@ def run(show_plots):
     plt.grid()
     plt.xlabel('Y axis - Sunward Direction [AU]')
     plt.ylabel('X axis - Velocity Direction [AU]')
-    pltName = "Sun Transfer Orbit"
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
@@ -520,28 +516,28 @@ def run(show_plots):
     for idx in range(0, len(dataPos)):
 
         if idx <= endEarthTime:
-            dataTime_EC.append(dataPos[idx, 0])
-            oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx, 1:4], dataVel[idx, 1:4])
+            dataTime_EC.append(timeAxis[idx])
+            oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx], dataVel[idx])
             rData_EC.append(oeData.rmag / 1000.)
 
         elif (endEarthTime < idx <= endSunTime):
             if idx % 2 == 0: # Records every 2nd data point
-                dataTime_HC.append(dataPos[idx, 0])
-                oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx, 1:4], dataVel[idx, 1:4])
+                dataTime_HC.append(timeAxis[idx])
+                oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx], dataVel[idx])
                 rData_HC.append(oeData.rmag / 1000.)
 
 
         elif(endSunTime < idx <= endTimeStepSwitchTime):
             if idx % 20 == 0: # Records every 20th data point
-                dataTime_TS.append(dataPos[idx, 0])
-                oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx, 1:4], dataVel[idx, 1:4])
+                dataTime_TS.append(timeAxis[idx])
+                oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx], dataVel[idx])
                 rData_TS.append(oeData.rmag / 1000.)
 
         else:
-            if idx % 5 == 0: # Records every 5th data point
-                dataTime_JC.append(dataPos[idx, 0])
-                oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx, 1:4], dataVel[idx, 1:4])
-                rData_JC.append(oeData.rmag / 1000.)
+            # if idx % 5 == 0: # Records every 5th data point
+            dataTime_JC.append(timeAxis[idx])
+            oeData = orbitalMotion.rv2elem_parab(sun.mu, dataPos[idx], dataVel[idx])
+            rData_JC.append(oeData.rmag / 1000.)
 
     dataTime_EC = np.array(dataTime_EC)
     dataTime_HC = np.array(dataTime_HC)
@@ -553,7 +549,7 @@ def run(show_plots):
     plt.plot(dataTime_TS * macros.NANO2HOUR, rData_TS, color='#555555', label='Time Switch')
     plt.plot(dataTime_JC * macros.NANO2HOUR, rData_JC, color='orangered', label='Jupiter Centered')
     plt.yscale('log')
-    plt.legend(loc='upper right')
+    plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Heliocentric Radius [km]')
     pltName = fileName + "5"
@@ -568,7 +564,7 @@ def run(show_plots):
 
     hubPos_N = scObject.dynManager.getStateObject("hubPosition")
     dataPos = hubPos_N.getState()
-    dataPos = [[0.0, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
 
 
     return dataPos, figureList

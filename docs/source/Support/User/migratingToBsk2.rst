@@ -425,6 +425,11 @@ you can use the ``samplingRatio()`` helper function to determine a minimum recor
     message recorder module to the same task that contains the module writing the message.  Ensure the
     recorder is called after the module such that the recorded module message is current for this time step.
 
+If you are starting and stopping the simulation and need to update the minimum time interval before
+messages are recorded, you can do this with::
+
+    dataRec.updateTimeInterval(newSamplingTime)
+
 That is it.  The data is now recorded into ``attErrorRec`` automatically during the simulation run.
 In the new messaging system  the time information when the message is recorded
 is no longer pre-pended in a first column, but rather provided as a
