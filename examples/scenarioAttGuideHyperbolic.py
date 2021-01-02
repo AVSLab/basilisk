@@ -51,10 +51,10 @@ Where the Attitude Guidance Tutorial pointed the spacecraft relative to the Hill
 points it relative to the velocity vector.  Note that in contrast to Hill pointing mode used in
 :ref:`scenarioAttitudeGuidance`, the orbit velocity frame pointing
 requires the attracting celestial body gravitational constant ``mu`` to be set.
-Note that while the celestial body ephemeris input message must be set, it can be a non-existing message.
-In that case a zero message is created which corresponds to the planet having a zero position and velocity vector.
+Note that if the celestial body ephemeris input message is not connected then
+a zero message is created which corresponds to the planet having a zero position and velocity vector.
 If non-zero ephemeris information is required then the input name must point
-to a message of type :ref:`EphemerisIntMsg`.
+to a message of type :ref:`EphemerisMsgPayload`.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -120,9 +120,11 @@ import os
 import numpy as np
 
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import MRP_Feedback, attTrackingError, fswMessages, velocityPoint
-from Basilisk.simulation import extForceTorque, simple_nav, spacecraftPlus
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport, vizSupport
+from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
+from Basilisk.simulation import extForceTorque, simpleNav, spacecraftPlus
+from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import vizSupport
+from Basilisk.architecture import messaging2
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -135,7 +137,7 @@ def plot_track_error_norm(timeLineSet, dataSigmaBR):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
+    vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
              color=unitTestSupport.getLineColor(1, 3),
@@ -147,7 +149,7 @@ def plot_track_error_norm(timeLineSet, dataSigmaBR):
 def plot_control_torque(timeLineSet, dataLr):
     """Plot the attiude control torque effort."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeLineSet, dataLr[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
@@ -158,7 +160,7 @@ def plot_control_torque(timeLineSet, dataLr):
 def plot_rate_error(timeLineSet, dataOmegaBR):
     """Plot the body angular velocity tracking errors."""
     plt.figure(3)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
@@ -183,7 +185,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
     rData = []
     fData = []
     for idx in range(0, len(dataPos)):
-        oeData = orbitalMotion.rv2elem(mu, dataPos[idx, 1:4], dataVel[idx, 1:4])
+        oeData = orbitalMotion.rv2elem(mu, dataPos[idx], dataVel[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000,
@@ -239,7 +241,7 @@ def run(show_plots, useAltBodyFrame):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -291,9 +293,10 @@ def run(show_plots, useAltBodyFrame):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     #
     #   setup the FSW algorithm tasks
@@ -303,12 +306,9 @@ def run(show_plots, useAltBodyFrame):
     attGuidanceConfig = velocityPoint.velocityPointConfig()
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "velocityPoint"
-    attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    # if you want to set attGuidanceConfig.inputCelMessName, then you need a planet ephemeris message of
-    # type EphemerisIntMsg.  In the line below a non-existing message name is used to create an empty planet
+    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    # No celestial body input message is connect.  Thus, the default behavior is to create an empty planet
     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
-    attGuidanceConfig.inputCelMessName = "empty_earth_msg"
-    attGuidanceConfig.outputDataName = "guidanceOut"
     # Note that mu must be assigned to attGuidanceConfig.mu when using the velocityPoint() module:
     attGuidanceConfig.mu = mu
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
@@ -318,49 +318,52 @@ def run(show_plots, useAltBodyFrame):
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorMsg"
     if useAltBodyFrame:
         attErrorConfig.sigma_R0R = [0, 0, -1]
-    attErrorConfig.inputRefName = attGuidanceConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
+    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+
+    # create the FSW vehicle configuration message
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
 
+    # connect torque command to external torque effector
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputAttName, samplingTime)
-
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
+    snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, mrpLog)
+    scSim.AddModelToTask(simTaskName, attErrLog)
+    scSim.AddModelToTask(simTaskName, snAttLog)
+    scSim.AddModelToTask(simTaskName, snTransLog)
     #
     # create simulation messages
     #
 
-    # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
-
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, saveFile=fileName, gravBodies=gravFactory)
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              # , saveFile=fileName
+                                              )
 
     #
     #   initialize Simulation
@@ -376,18 +379,18 @@ def run(show_plots, useAltBodyFrame):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
-    dataVel = scSim.pullMessageLogData(sNavObject.outputTransName + ".v_BN_N", list(range(3)))
-    dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName + ".sigma_BN", list(range(3)))
+    dataLr = mrpLog.torqueRequestBody
+    dataSigmaBR = attErrLog.sigma_BR
+    dataOmegaBR = attErrLog.omega_BR_B
+    dataPos = snTransLog.r_BN_N
+    dataVel = snTransLog.v_BN_N
+    dataSigmaBN = snAttLog.sigma_BN
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    timeLineSet = dataSigmaBR[:, 0] * macros.NANO2MIN
+    timeLineSet = attErrLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     figureList = {}
@@ -413,7 +416,7 @@ def run(show_plots, useAltBodyFrame):
     # close the plots to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBN, numDataPoints, figureList
+    return figureList
 
 
 #

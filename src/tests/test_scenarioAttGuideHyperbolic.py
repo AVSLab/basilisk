@@ -56,58 +56,14 @@ import scenarioAttGuideHyperbolic
 
 # provide a unique test method name, starting with test_
 def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    dataPos, dataSigmaBN, numDataPoints, figureList = \
+    figureList = \
         scenarioAttGuideHyperbolic.run(show_plots, useAltBodyFrame)
-
-
-
-    numTruthPoints = 5
-    skipValue = int(numDataPoints / numTruthPoints)
-    dataSigmaBNRed = dataSigmaBN[::skipValue]
-    dataPosRed = dataPos[::skipValue]
-
-    # setup truth data for unit test
-    truePos = [
-        [3.6223376821150966e+07, 7.1776505575846523e+07, 1.3687819378018096e+07],
-        [3.5873290076594226e+07, 7.2092075260881290e+07, 1.3997417901516432e+07],
-        [3.5522532862572916e+07, 7.2406297570323750e+07, 1.4306754823209373e+07],
-        [3.5171116051793166e+07, 7.2719175431216419e+07, 1.4615826100429773e+07],
-        [3.4819050453380756e+07, 7.3030711891436249e+07, 1.4924627774549646e+07]
-    ]
-
-    trueLr = trueSigmaBR = []
-    if useAltBodyFrame is True:
-        trueSigmaBN = [
-            [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-            [-9.2494162977495867e-02, 1.9471395865807911e-01, -6.3717384535805643e-01],
-            [-8.4160284482831221e-02, 1.8751522022305400e-01, -6.2862018070118753e-01],
-            [-8.3717220192117484e-02, 1.8793830908990347e-01, -6.2761281563466287e-01],
-            [-8.3427503754355453e-02, 1.8790862092331320e-01, -6.2675005457853550e-01]
-        ]
-    if useAltBodyFrame is False:
-        trueSigmaBN = [
-            [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-            [1.3870159058177514e-01, 6.5242458655457275e-02, 2.1071408452248369e-01],
-            [1.3927887967605357e-01, 6.2240967986042707e-02, 2.0898043796751192e-01],
-            [1.3967975559519039e-01, 6.2219318146119917e-02, 2.0946440039329009e-01],
-            [1.3978125300497049e-01, 6.2060435748053963e-02, 2.1011602986235331e-01]
-        ]
-    # compare the results to the truth values
-    accuracy = 1e-6
-
-    testFailCount, testMessages = unitTestSupport.compareArray(
-        truePos, dataPosRed, accuracy, "r_BN_N Vector",
-        testFailCount, testMessages)
-
-    testFailCount, testMessages = unitTestSupport.compareArray(
-        trueSigmaBN, dataSigmaBNRed, accuracy, "sigma_BN Set",
-        testFailCount, testMessages)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):
