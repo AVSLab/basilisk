@@ -113,21 +113,19 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging2
 
 
 # attempt to import vizard
@@ -178,7 +176,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -189,7 +187,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
-
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system
@@ -205,7 +202,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
@@ -219,25 +216,18 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
-    inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
     mrpControlConfig.K = 3.5
     if useIntGain:
         mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback
@@ -251,23 +241,21 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     #   Setup data logging before the simulation is initialized
     #
-    numDataPoints = 50
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
+    numDataPoints = 100
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, attErrorLog)
+    scSim.AddModelToTask(simTaskName, mrpLog)
 
     #
     # create simulation messages
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
+    configDataMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # The primary difference is that the gravity body is not included.
     # When initializing the spacecraft states, only the attitude states must be set.  The position and velocity
@@ -276,7 +264,18 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, saveFile=fileName)
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              # , saveFile=fileName
+                                              )
+    #
+    # connect the messages to the modules
+    #
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
     #
     #   initialize Simulation
@@ -292,10 +291,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
+    dataLr = mrpLog.torqueRequestBody
+    dataSigmaBR = attErrorLog.sigma_BR
+    dataOmegaBR = attErrorLog.omega_BR_B
+    timeAxis = attErrorLog.times()
     np.set_printoptions(precision=16)
 
     #
@@ -303,8 +302,8 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    for idx in range(1, 4):
-        plt.plot(dataSigmaBR[:, 0] * macros.NANO2MIN, dataSigmaBR[:, idx],
+    for idx in range(3):
+        plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
@@ -315,8 +314,8 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
-    for idx in range(1, 4):
-        plt.plot(dataLr[:, 0] * macros.NANO2MIN, dataLr[:, idx],
+    for idx in range(3):
+        plt.plot(timeAxis * macros.NANO2MIN, dataLr[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -326,8 +325,8 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
-    for idx in range(1, 4):
-        plt.plot(dataOmegaBR[:, 0] * macros.NANO2MIN, dataOmegaBR[:, idx],
+    for idx in range(3):
+        plt.plot(timeAxis * macros.NANO2MIN, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -340,8 +339,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-
-    return dataPos, dataSigmaBR, dataLr, numDataPoints, figureList
+    return figureList
 
 
 #

@@ -316,7 +316,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
-
     #
     #   set initial Spacecraft States
     #
@@ -335,10 +334,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName
-    #                                     , gravBodies=gravFactory
-    #                                     # , saveFile=fileName
-    #                                     )
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation
@@ -354,10 +352,11 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     #   plot the results
     #
+    timeAxis = attErrorLog.times()
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(3):
-        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx],
+        plt.plot(timeAxis * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
@@ -369,7 +368,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(mrpLog.times() * macros.NANO2MIN, mrpLog.torqueRequestBody[:, idx],
+        plt.plot(timeAxis * macros.NANO2MIN, mrpLog.torqueRequestBody[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -380,7 +379,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     plt.figure(3)
     for idx in range(3):
-        plt.plot(attErrorLog.times() * macros.NANO2MIN, attErrorLog.omega_BR_B[:, idx],
+        plt.plot(timeAxis * macros.NANO2MIN, attErrorLog.omega_BR_B[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -393,7 +392,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return snLog.r_BN_N, attErrorLog.sigma_BR, mrpLog.torqueRequestBody, numDataPoints, figureList
+    return figureList
 
 
 #

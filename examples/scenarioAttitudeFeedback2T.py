@@ -119,7 +119,6 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.architecture import sim_model
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
@@ -147,10 +146,6 @@ from Basilisk.utilities import vizSupport
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
-
-
-
 
 
 def run(show_plots, useUnmodeledTorque, useIntGain):
@@ -268,18 +263,17 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #
     #   Setup data logging before the simulation is initialized
     #
-    dataLog = scObject.scStateOutMsg.recorder()
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder()
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder()
-
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    logTaskName = "logTask"
-    dynProcess.addTask(scSim.CreateNewTask(logTaskName, samplingTime))
-    scSim.AddModelToTask(logTaskName, dataLog)
-    scSim.AddModelToTask(logTaskName, attErrorLog)
-    scSim.AddModelToTask(logTaskName, mrpLog)
+    dataLog = scObject.scStateOutMsg.recorder(unitTestSupport.samplingTime(simulationTime, simTimeStep, numDataPoints))
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
+                                                                                     fswTimeStep, numDataPoints))
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
+                                                                                    fswTimeStep, numDataPoints))
+
+    scSim.AddModelToTask(dynTaskName, dataLog)
+    scSim.AddModelToTask(fswTaskName, attErrorLog)
+    scSim.AddModelToTask(fswTaskName, mrpLog)
 
     #
     # create FSW simulation messages
@@ -317,9 +311,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
-
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, dynTaskName, dynProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, dynTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation
@@ -328,13 +323,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     # a discover process must be called that links messages that have the same name.  This is
     # achieved through the combined initialization and message discovery macro.
     scSim.InitializeSimulation()
-
-    # this next call ensures that the FSW and Dynamics Message that have the same
-    # name are copied over every time the simulation ticks forward.  This function
-    # has to be called after the simulation is initialized to ensure that all modules
-    # have created their own output/input messages declarations.
-    # dyn2FSWInterface.discoverAllMessages()
-    # fsw2DynInterface.discoverAllMessages()
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -413,7 +401,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBR, dataLr, numDataPoints, figureList
+    return figureList
 
 
 #
