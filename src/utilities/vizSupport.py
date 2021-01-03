@@ -758,10 +758,15 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         in a local sub-folder.
         Default: empty string resulting in the data not being saved to a file
     rwEffectorList: single or list of ``ReactionWheelStateEffector``
-        The list must have the same length scList.  Each entry is the ReactionWheelStateEffector instance
+        The list must have the same length ``scList``.  Each entry is the :ref:`ReactionWheelStateEffector` instance
         for the spacecraft, or ``None`` if the spacecraft has no RW devices.
-    thrDevices:
-        list of thruster devices states for the first spacecraft
+    thrEffectorList: single or double-list of :ref:`ThrusterDynamicEffector`
+        The list must have the same length ``scList``.  Each entry is a list of :ref:`ReactionWheelStateEffector`
+        instances
+        for the spacecraft denoting a thruster cluster, or ``None`` if the spacecraft has no thruster devices.
+    thrColors: single or vector of int(4)
+        array of RGBA color values for each thruster set.  The list must have the same length as ``scList``.
+        Each list entry is a list of RGBA array values for each cluster set.
     cssNames:
         list of CSS configuration log message names lists
     opNavMode: bool
@@ -786,7 +791,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrDevices', 'liveStream', 'cssNames'],
+        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssNames'],
         kwargs)
 
     # setup the Vizard interface module
@@ -806,7 +811,24 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(rwEffectorScList, list):
             rwEffectorScList = [rwEffectorScList]
         if len(rwEffectorScList) != len(scList):
-            print('ERROR: rwEffectorScList should have the same length as the number of spacecraft')
+            print('ERROR: rwEffectorList should have the same length as the number of spacecraft')
+            exit(1)
+
+    thrEffectorScList = False
+    if 'thrEffectorList' in kwargs:
+        thrEffectorScList = kwargs['thrEffectorList']
+        if not isinstance(thrEffectorScList, list):
+            thrEffectorScList = [[thrEffectorScList]]
+        if len(thrEffectorScList) != len(scList):
+            print('ERROR: thrEffectorList should have the same length as the number of spacecraft')
+            exit(1)
+    thrColorsScList = False
+    if 'thrColors' in kwargs:
+        thrColorsScList = kwargs['thrColors']
+        if not isinstance(thrColorsScList, list):
+            thrColorsScList = [[thrColorsScList]]
+        if len(thrColorsScList) != len(scList):
+            print('ERROR: thrColors should have the same length as the number of spacecraft')
             exit(1)
 
     # loop over all spacecraft to associated states and msg information
@@ -831,14 +853,33 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 planetNameList.append(gravBody.planetName)
                 spiceMsgList.append(gravBody.planetBodyInMsg)
 
-        # process RW devices
+        # process RW effectors
         if rwEffectorScList:
             rwList = []
-            if rwEffectorScList[c] != None:
+            if rwEffectorScList[c] is not None:
                 # RWs have been added to this spacecraft
                 for rwLogMsg in rwEffectorScList[c].rwOutMsgs:
                     rwList.append(rwLogMsg.addSubscriber())
-            scData.rwInMsgs = messaging2.RWConfigLogMsgInMsgsVector(rwList)
+            scData.rwInMsgs = messaging2.RWConfigLogInMsgsVector(rwList)
+
+        # process THR effectors
+        if thrEffectorScList:
+            thrList = []
+            thrInfo = []
+            if thrEffectorScList[c] is not None:  # THR clusters have been added to this spacecraft
+                clusterCounter = 0
+                for thrEff in thrEffectorScList[c]:  # loop over the THR effectors attached to this spacecraft
+                    thSet = vizInterface.ThrClusterMap()
+                    thSet.thrTag = thrEff.ModelTag  # set the label for this cluster of THR devices
+                    if thrColorsScList:
+                        if thrColorsScList[c] is not None:
+                            thSet.color = thrColorsScList[c][clusterCounter]
+                    for thrLogMsg in thrEff.thrusterOutMsgs:  # loop over the THR cluster log message
+                        thrList.append(thrLogMsg.addSubscriber())
+                        thrInfo.append(thSet)
+                    clusterCounter += 1
+            scData.thrInMsgs = messaging2.THROutputInMsgsVector(thrList)
+            scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
 
         vizMessenger.scData.push_back(scData)
         c += 1
@@ -869,19 +910,6 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     #     else:
     #         print('ERROR: cssNames must be a list of CSS config log message names')
     #         exit(1)
-
-    # set thruster device info
-    # if 'thrDevices' in kwargs:
-    #     thrDevices = kwargs['thrDevices']
-    #     thList = []
-    #     for thClusterInfo in thrDevices:
-    #         thSet = vizInterface.ThrClusterMap()
-    #         thSet.thrCount = thClusterInfo[0]
-    #         thSet.thrTag = thClusterInfo[1]
-    #         if len(thClusterInfo) == 3:
-    #             thSet.color = toRGBA255(thClusterInfo[2])
-    #         thList.append(thSet)
-    #     scData.thrMsgData = vizInterface.VizThrConfig(thList)
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.

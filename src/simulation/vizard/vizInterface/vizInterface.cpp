@@ -157,30 +157,20 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             MsgCurrStatus thrStatus;
             thrStatus.dataFresh = false;
             thrStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-            std::vector<ThrClusterMap>::iterator thrIt;
             int thrCounter = 0;
-            /* loop over THR clusters */
-            for (thrIt= scIt->thrMsgData.begin(); thrIt != scIt->thrMsgData.end(); thrIt++)
-            {
-                // loop over THR within a cluster
-                for(uint32_t idx=0; idx < thrIt->thrCount; idx++) {
-                    if (scIt->thrInMsgs.at(thrCounter).isLinked()) {
-                        scIt->thrMsgStatus.push_back(thrStatus);
 
-                        ThrClusterMap thrInfo;
-                        thrInfo.thrTag = thrIt->thrTag;
-                        for (int k=0; k<4; k++){
-                            thrInfo.color[k] = thrIt->color[k];
-                        }
-                        scIt->thrInfo.push_back(thrInfo);
-
-                        THROutputMsgPayload logMsg;
-                        scIt->thrOutputMessage.push_back(logMsg);
-                    } else {
-                        bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%d) msg of tag %s requested but not found.", idx, thrIt->thrTag.c_str());
-                    }
-                    thrCounter++;
+            for (thrCounter = 0; thrCounter < (int) scIt->thrInMsgs.size(); thrCounter++) {
+                if (scIt->thrInMsgs.at(thrCounter).isLinked()) {
+                    scIt->thrMsgStatus.push_back(thrStatus);
+                    THROutputMsgPayload logMsg;
+                    scIt->thrOutputMessage.push_back(logMsg);
+                } else {
+                    bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%d) msg requested but not found.", thrCounter);
                 }
+            }
+            if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
+                bskLogger.bskLog(BSK_ERROR, "vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)"
+                                 , (int) scIt->thrInfo.size(), (int) scIt->thrInMsgs.size());
             }
         }
     }
@@ -899,37 +889,6 @@ void VizInterface::setNumCSS(VizSpacecraftData *scData, int num) {
         ReadFunctor<CSSConfigLogMsgPayload> *msg;
         msg = new ReadFunctor<CSSConfigLogMsgPayload>;
         scData->cssInMsgs.push_back(*msg);
-    }
-}
-
-/*! Setup the RW input messages for the spacecraft data object
- @param scData Spacecraft data structure pointer
- @param num number of RW sensors on this spacecraft
- */
-void VizInterface::setNumRW(VizSpacecraftData *scData, int num) {
-    scData->rwInMsgs.clear();
-    for (int i=0; i<num; i++) {
-        /* create input message */
-        ReadFunctor<RWConfigLogMsgPayload> *msg;
-        msg = new ReadFunctor<RWConfigLogMsgPayload>;
-        scData->rwInMsgs.push_back(*msg);
-    }
-}
-
-/*! Setup the THR input messages for the spacecraft data object
- @param scData Spacecraft data structure pointer
- @param num number of THR sensors on this spacecraft
- */
-void VizInterface::setNumTHR(VizSpacecraftData *scData, std::vector<ThrClusterMap> thrClusterList) {
-    scData->thrInMsgs.clear();
-    scData->thrMsgData = thrClusterList;
-    for (int c=0; c < (int) thrClusterList.size(); c++) {
-        for (int i=0; i<scData->thrMsgData.at(c).thrCount; i++) {
-            /* create input message */
-            ReadFunctor<THROutputMsgPayload> *msg;
-            msg = new ReadFunctor<THROutputMsgPayload>;
-            scData->thrInMsgs.push_back(*msg);
-        }
     }
 }
 

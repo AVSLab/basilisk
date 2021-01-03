@@ -33,7 +33,6 @@ from Basilisk.architecture.swig_common_model import *
 
 // Instantiate templates used by example
 namespace std {
-    %template(VizThrConfig) vector<ThrClusterMap>;
     %template(PointLineConfig) vector<PointLine>;
     %template(LocationConfig) vector<LocationPbMsg>;
     %template(CustomModelConfig) vector<CustomModel>;
@@ -42,6 +41,7 @@ namespace std {
     %template(KeepOutInConeConfig) vector<KeepOutInCone>;
     %template(StdCameraConfig) vector<StdCameraSettings>;
     %template(VizSCVector) vector<VizSpacecraftData>;
+    %template(ThrClusterVector) vector<ThrClusterMap>;
 }
 
 %include "vizInterface.h"

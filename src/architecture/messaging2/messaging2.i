@@ -156,11 +156,12 @@ typedef struct messageType;
 
 %template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;
-%template(RWConfigLogMsgInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
 %template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
 %template(DataNodeUsageInMsgsVector) std::vector<ReadFunctor<DataNodeUsageMsgPayload>>;
 %template(DataStorageStatusInMsgsVector) std::vector<ReadFunctor<DataStorageStatusMsgPayload>>;
 %template(AccessInMsgsVector) std::vector<ReadFunctor<AccessMsgPayload>>;
+%template(RWConfigLogInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
+%template(THROutputInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
 
 %include "messaging2.h"
 

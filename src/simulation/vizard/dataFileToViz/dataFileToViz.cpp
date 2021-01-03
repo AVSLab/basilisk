@@ -179,22 +179,23 @@ void DataFileToViz::appendThrForceMax(double forceMax)
 /*!
  Add a thruster cluster map for each spacecraft
 */
-void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData)
+void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster)
 {
     this->thrMsgDataSC.push_back(thrMsgData);
 
     std::vector <Message<THROutputMsgPayload>> vecMsgs;
     // loop over the number of thruster clusters for this spacecraft
     if (thrMsgData.size()>0) {
+        this->numThrPerCluster.push_back(numThrPerCluster);
         for (int thrClusterCount=0; thrClusterCount<thrMsgData.size(); thrClusterCount++) {
             // loop over the number of thrusters in this cluster and create an output message
-            for (int i=0; i<thrMsgData[thrClusterCount].thrCount; i++) {
+            for (int i=0; i<numThrPerCluster[thrClusterCount]; i++) {
                 /* create output message */
                 Message<THROutputMsgPayload> *msg;
                 msg = new Message<THROutputMsgPayload>;
                 vecMsgs.push_back(*msg);
             }
-            this->numThr += thrMsgData[thrClusterCount].thrCount;
+            this->numThr += numThrPerCluster[thrClusterCount];
         }
     }
 
@@ -326,8 +327,9 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                     if (this->thrMsgDataSC[scCounter].size() > 0) {
                         int thrCounter = 0;
                         std::vector<ThrClusterMap>::iterator thrSet;
+                        int thrClusterCounter = 0;
                         for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
-                            for (uint32_t idx = 0; idx<thrSet->thrCount; idx++) {
+                            for (uint32_t idx = 0; idx< (uint32_t)this->numThrPerCluster[scCounter][thrClusterCounter]; idx++) {
                                 THROutputMsgPayload thrMsg;
                                 thrMsg = this->thrScOutMsgs[scCounter].at(thrCounter).zeroMsgPayload();
 
@@ -340,6 +342,7 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                                 this->thrScOutMsgs[scCounter].at(thrCounter).write(&thrMsg, this->moduleID, CurrentSimNanos);
                                 thrCounter++;
                             }
+                            thrClusterCounter++;
                         }
                     }
                 }

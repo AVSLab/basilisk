@@ -43,8 +43,8 @@ struct RWConfigLogMsg_C;
 // Instantiate templates used by example
 namespace std {
     %template(VizThrConfig) vector<ThrClusterMap>;
+    %template(ThrClusterMapVectorVector) std::vector <std::vector <ThrClusterMap>>;
 }
-
 
 %pythoncode %{
 import sys

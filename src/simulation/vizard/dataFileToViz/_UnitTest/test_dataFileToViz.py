@@ -38,6 +38,7 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import vizSupport
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.architecture import messaging2
 
 try:
@@ -198,17 +199,16 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     if checkThruster:
         # sc1
         thSetAdcs1 = dataFileToViz.ThrClusterMap()
-        thSetAdcs1.thrCount = numACS1
-        thSetAdcs1.thrTag = scNames[0] + "_adcs"
+        thSetAdcs1.thrTag = "adcs"
         thSetAdcs1.color = vizSupport.toRGBA255("red")
 
         thSetDV1 = dataFileToViz.ThrClusterMap()
-        thSetDV1.thrCount = numDV1
-        thSetDV1.thrTag = scNames[0] + "_dv"
+        thSetDV1.thrTag = "dv"
         thSetDV1.color = vizSupport.toRGBA255("blue")
 
         thList1 = [thSetAdcs1, thSetDV1]
-        testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList1))
+        numTh1 = [1, 1]
+        testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList1), dataFileToViz.IntVector(numTh1))
 
         # set ACS thruster position and direction states
         testModule.appendThrPos([0, 0, 3.])  # thr location in B frame, meters
@@ -222,15 +222,14 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
 
         # sc2
         thSetAdcs2 = dataFileToViz.ThrClusterMap()
-        thSetAdcs2.thrCount = numACS2
-        thSetAdcs2.thrTag = scNames[1] + "_adcs"
+        thSetAdcs2.thrTag = "adcs"
 
         thSetDV2 = dataFileToViz.ThrClusterMap()
-        thSetDV2.thrCount = numDV2
-        thSetDV2.thrTag = scNames[1] + "_dv"
+        thSetDV2.thrTag = "dv"
 
         thList2 = [thSetAdcs2, thSetDV2]
-        testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList2))
+        numTh2 = [1, 2]
+        testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList2), dataFileToViz.IntVector(numTh2))
 
         # set ACS thruster position and direction states
         testModule.appendThrPos([0, 0, 3.])
@@ -244,6 +243,8 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         testModule.appendThrPos([0., 2., -3.])
         testModule.appendThrDir([0, 0, 1])
         testModule.appendThrForceMax(th2DV)
+
+        thrNumList = [numTh1, numTh2]
 
     if checkRW:
         # set number of RW for SC1
@@ -277,34 +278,47 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
-    # viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, unitProcessName, gravBodies=gravFactory,
-    #                                           # saveFile=__file__,
-    #                                           scName=scNames)
-    # if vizFound:
-    #     # delete any existing list of vizInterface spacecraft data
-    #     viz.scData.clear()
-    #     scCounter = 0
-    #     if checkThruster:
-    #         viz.settings.defaultThrusterColor = vizSupport.toRGBA255("yellow")
-    #     for item in scNames:
-    #         # create a chief spacecraft info container
-    #         scData = vizInterface.VizSpacecraftData()
-    #         scData.spacecraftName = item
-    #         scData.scPlusInMsgName = item
-    #         if checkThruster:
-    #             if scCounter == 0:
-    #                 scData.thrMsgData = vizInterface.VizThrConfig(thList1)
-    #             else:
-    #                 scData.thrMsgData = vizInterface.VizThrConfig(thList2)
-    #         if checkRW:
-    #             if scCounter == 0:
-    #                 scData.numRW = len(rwSc1MsgList)
-    #                 scData.rwInMsgName = vizInterface.StringVector(rwSc1MsgList)
-    #             else:
-    #                 scData.numRW = len(rwSc2MsgList)
-    #                 scData.rwInMsgName = vizInterface.StringVector(rwSc2MsgList)
-    #         viz.scData.push_back(scData)
-    #         scCounter += 1
+    # create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached
+    # to show up in Vizard
+    scObject1 = spacecraftPlus.SpacecraftPlus()
+    scObject1.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject2 = spacecraftPlus.SpacecraftPlus()
+
+    viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, [scObject1, scObject2]
+                                              # , saveFile=__file__
+                                              )
+    if vizFound:
+        # over-ride the default to not read the SC states from scObjects, but set them directly
+        # to read from the dataFileToFiz output message
+        viz.scData.clear()
+        for c in range(len(scNames)):
+            scData = vizInterface.VizSpacecraftData()
+            scData.spacecraftName = scNames[c]
+            scData.scPlusInMsg.subscribeTo(testModule.scStateOutMsgs[c])
+
+            if checkThruster:
+                thrList = []
+                thrInfo = []
+                for thrLogMsg in testModule.thrScOutMsgs[c]:  # loop over the THR cluster log message
+                    thrList.append(thrLogMsg.addSubscriber())
+                k = 0
+                for info in testModule.thrMsgDataSC[c]:
+                    for i in range(thrNumList[c][k]):
+                        thrInfo.append(info)
+                    k += 1
+                scData.thrInMsgs = messaging2.THROutputInMsgsVector(thrList)
+                scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
+
+            if checkRW:
+                rwList = []
+                for rwLogMsg in testModule.rwScOutMsgs[c]:
+                    rwList.append(rwLogMsg.addSubscriber())
+                scData.rwInMsgs = messaging2.RWConfigLogInMsgsVector(rwList)
+
+            viz.scData.push_back(scData)
+
+        if checkThruster:
+            viz.settings.defaultThrusterColor = vizSupport.toRGBA255("yellow")
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = []

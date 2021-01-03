@@ -59,7 +59,7 @@ def test_bskAttitudeFeedback2T_TH(show_plots, useDVThrusters):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    numDataPoints, figureList = \
+    figureList = \
         scenarioAttitudeFeedback2T_TH.run(show_plots, useDVThrusters)
 
     # save the figures to the Doxygen scenario images folder

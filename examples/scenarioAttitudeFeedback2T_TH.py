@@ -81,7 +81,7 @@ command.  This table list the arguments, default values, as well as expected uni
 +---------------------+-------+----------+----------------------------------------+--------------------+
 |  Argument           | Units | Type     | Description                            | Default            |
 +=====================+=======+==========+========================================+====================+
-| useMinPulseTime     |       | Bool     | flag if the thruster model should      | ``BalancedWheels`` |
+| useMinPulseTime     |       | Bool     | flag if the thruster model should      | False              |
 |                     |       |          | use a minimum impulse time             |                    |
 +---------------------+-------+----------+----------------------------------------+--------------------+
 | areaNozzle          | m^2   | Float    | thruster nozzle exhaust cone exit area | 0.1                |
@@ -124,13 +124,13 @@ value of -1 if off-pulsing DV thrusters are employed, and +1 with the on-pulsing
 The last needed FSW module is :ref:`thrFiringSchmitt`. A Schmitt trigger logic is implemented to map a desired
 thruster force value into a thruster on command time. The module reads in the attitude control thruster
 force values for both on- and off-pulsing scenarios, and then maps this into a time which specifies how
-long a thruster should be on. Four values are specified: `thrMinFireTime`` (minimum thruster on-time in seconds),
+long a thruster should be on. Four values are specified: ``thrMinFireTime`` (minimum thruster on-time in seconds),
 ``level_on`` (Upper duty cycle percentage threshold relative to t min to turn on thrusters), ``level_off``
-(upper duty cycle percentage threshold relative to t min to turn on thrusters), and `baseThrustState` (0 by default
+(upper duty cycle percentage threshold relative to t min to turn on thrusters), and ``baseThrustState`` (0 by default
 and set to 1 for DV thrusters). As expected, the thrusters force
-input is directly the output of `thrForceMapping`, and also in this case we will need the thrusters configuration
+input is directly the output of ``thrForceMapping``, and also in this case we will need the thrusters configuration
 message. It can be noted how the output of this module ends up to be the input commands for the
-:ref:`thrusterDynamicEffector`, by using the default message name "acs_thruster_cmds".
+:ref:`thrusterDynamicEffector`.
 
 The flight algorithm needs to know how many thruster devices are on the spacecraft and what their
 location and direction are.  This is set through a flight software message that is read
@@ -204,7 +204,6 @@ is 'on', the requested thruster force is always negative, as it can be seen in t
 # Creation Date:  June 26, 2019
 #
 
-import sys
 import os
 import numpy as np
 
@@ -222,18 +221,18 @@ from Basilisk.utilities import simIncludeThruster
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.simulation import thrusterDynamicEffector
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.fswAlgorithms import thrFiringSchmitt
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -248,7 +247,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 def plot_attitude_error(timeDataFSW, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeDataFSW, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
@@ -259,7 +258,7 @@ def plot_attitude_error(timeDataFSW, dataSigmaBR):
 def plot_rate_error(timeDataFSW, dataOmegaBR):
     """Plot the body angular velocity tracking errors."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeDataFSW, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
@@ -270,7 +269,7 @@ def plot_rate_error(timeDataFSW, dataOmegaBR):
 def plot_requested_torque(timeDataFSW, dataLr):
     """Plot the commanded attitude control torque."""
     plt.figure(3)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeDataFSW, dataLr[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
@@ -281,7 +280,7 @@ def plot_requested_torque(timeDataFSW, dataLr):
 def plot_thrForce(timeDataFSW, dataMap, numTh):
     """Plot the Thruster force values."""
     plt.figure(4)
-    for idx in range(1, numTh + 1):
+    for idx in range(numTh):
         plt.plot(timeDataFSW, dataMap[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
                  label='$thrForce,' + str(idx) + '}$')
@@ -292,7 +291,7 @@ def plot_thrForce(timeDataFSW, dataMap, numTh):
 def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
     """Plot the thruster on time requests."""
     plt.figure(5)
-    for idx in range(1, numTh + 1):
+    for idx in range(numTh):
         plt.plot(timeDataFSW, dataSchm[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
                  label='$OnTimeRequest,' + str(idx) + '}$')
@@ -330,18 +329,6 @@ def run(show_plots, useDVThrusters):
     dynProcess = scSim.CreateNewProcess(dynProcessName)
     fswProcess = scSim.CreateNewProcess(fswProcessName)
 
-    # Process message interfaces.
-    # this step is used to copy messages between the dyn and fsw processes
-    # as long as the message has the same name, it will get copied over automatically
-    dyn2FSWInterface = sim_model.SysInterface()
-    fsw2DynInterface = sim_model.SysInterface()
-
-    dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
-    fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
-
-    fswProcess.addInterfaceRef(dyn2FSWInterface)
-    dynProcess.addInterfaceRef(fsw2DynInterface)
-
     # create the dynamics task and specify the integration update time
     simTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
@@ -354,7 +341,7 @@ def run(show_plots, useDVThrusters):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -387,10 +374,9 @@ def run(show_plots, useDVThrusters):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTaskName, sNavObject)
-    sNavObject.outputAttName = "SpacecraftAttitude"
 
     # create arrays for thrusters' locations and directions
     if useDVThrusters:
@@ -554,25 +540,18 @@ def run(show_plots, useDVThrusters):
     inertial3DWrap.ModelTag = "inertial3D"
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
     scSim.AddModelToTask(fswTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(fswTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = "Lr_requested"
     mrpControlConfig.K = 3.5*10.0
     mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0*10.0
@@ -583,10 +562,7 @@ def run(show_plots, useDVThrusters):
     thrForceMappingWrap = scSim.setModelDataWrap(thrForceMappingConfig)
     thrForceMappingWrap.ModelTag = "thrForceMapping"
     scSim.AddModelToTask(fswTaskName, thrForceMappingWrap, thrForceMappingConfig)
-    thrForceMappingConfig.inputVehControlName = mrpControlConfig.outputDataName
-    thrForceMappingConfig.inputThrusterConfName = "ThrustersConfig"
-    thrForceMappingConfig.outputDataName = "Lr_command"
-    thrForceMappingConfig.inputVehicleConfigDataName = mrpControlConfig.vehConfigInMsgName
+
     if useDVThrusters:
         controlAxes_B = [1, 0, 0,
                          0, 1, 0]
@@ -608,23 +584,25 @@ def run(show_plots, useDVThrusters):
     thrFiringSchmittConfig.level_off = .25
     if useDVThrusters:
         thrFiringSchmittConfig.baseThrustState = 1
-    thrFiringSchmittConfig.thrConfInMsgName = "ThrustersConfig"
-    thrFiringSchmittConfig.thrForceInMsgName = thrForceMappingConfig.outputDataName
-    thrFiringSchmittConfig.onTimeOutMsgName = "acs_thruster_cmds"
 
     #
     #   Setup data logging before the simulation is initialized
     #
 
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputAttName, samplingTime)
-    scSim.TotalSim.logThisMessage(thrForceMappingConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(thrFiringSchmittConfig.onTimeOutMsgName, samplingTime)
-
+    samplingTime = unitTestSupport.samplingTime(simulationTime, fswTimeStep, numDataPoints)
+    mrpTorqueLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
+    snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
+    thrMapLog = thrForceMappingConfig.thrForceCmdOutMsg.recorder(samplingTime)
+    thrTrigLog = thrFiringSchmittConfig.onTimeOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(fswTaskName, mrpTorqueLog)
+    scSim.AddModelToTask(fswTaskName, attErrorLog)
+    scSim.AddModelToTask(fswTaskName, snTransLog)
+    scSim.AddModelToTask(fswTaskName, snAttLog)
+    scSim.AddModelToTask(fswTaskName, thrMapLog)
+    scSim.AddModelToTask(fswTaskName, thrTrigLog)
 
     #
     # create FSW simulation messages
@@ -632,12 +610,9 @@ def run(show_plots, useDVThrusters):
 
     # create the FSW vehicle configuration message
 
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               fswProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # create the FSW Thruster configuration message
     if useDVThrusters:
@@ -652,7 +627,7 @@ def run(show_plots, useDVThrusters):
     fswSetupThrusters.clearSetup()
     for pos_B, dir_B in zip(location, direction):
         fswSetupThrusters.create(pos_B, dir_B, maxThrust)
-    fswSetupThrusters.writeConfigMessage("ThrustersConfig", scSim.TotalSim, fswProcessName)
+    fswThrConfigMsg = fswSetupThrusters.writeConfigMessage()
 
     #   set initial Spacecraft States
     #
@@ -670,27 +645,31 @@ def run(show_plots, useDVThrusters):
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
+    # connect messages
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    thrForceMappingConfig.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    thrForceMappingConfig.thrConfigInMsg.subscribeTo(fswThrConfigMsg)
+    thrForceMappingConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    thrFiringSchmittConfig.thrConfInMsg.subscribeTo(fswThrConfigMsg)
+    thrFiringSchmittConfig.thrForceInMsg.subscribeTo(thrForceMappingConfig.thrForceCmdOutMsg)
+    thrusterSet.cmdsInMsg.subscribeTo(thrFiringSchmittConfig.onTimeOutMsg)
+
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName,  dynProcessName,
-                                              gravBodies=gravFactory,
-                                              # saveFile=fileName,
-                                              thrDevices=[(thFactory.getNumOfDevices(), thrModelTag)],
-                                              scName=[scObject.ModelTag]
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName,  scObject
+                                              # , saveFile=fileName
+                                              , thrEffectorList=thrusterSet
+                                              , thrColors=vizSupport.toRGBA255("red")
                                               )
     vizSupport.setActuatorGuiSetting(viz, showThrusterLabels=True)
-
 
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
-    # this next call ensures that the FSW and Dynamics Message that have the same
-    # name are copied over every time the simulation ticks forward.  This function
-    # has to be called after the simulation is initialized to ensure that all modules
-    # have created their own output/input messages declarations.
-    # dyn2FSWInterface.discoverAllMessages()
-    # fsw2DynInterface.discoverAllMessages()
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -701,17 +680,17 @@ def run(show_plots, useDVThrusters):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataMap = scSim.pullMessageLogData(thrForceMappingConfig.outputDataName + ".thrForce", list(range(numTh)))
-    dataSchm = scSim.pullMessageLogData(thrFiringSchmittConfig.onTimeOutMsgName + ".OnTimeRequest", list(range(numTh)))
+    dataLr = mrpTorqueLog.torqueRequestBody
+    dataSigmaBR = attErrorLog.sigma_BR
+    dataOmegaBR = attErrorLog.omega_BR_B
+    dataMap = thrMapLog.thrForce
+    dataSchm = thrTrigLog.OnTimeRequest
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    timeDataFSW = dataLr[:, 0] * macros.NANO2MIN
+    timeDataFSW = attErrorLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_requested_torque(timeDataFSW, dataLr)
@@ -741,7 +720,7 @@ def run(show_plots, useDVThrusters):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return numDataPoints, figureList
+    return figureList
 
 #
 # This statement below ensures that the unit test scrip can be run as a

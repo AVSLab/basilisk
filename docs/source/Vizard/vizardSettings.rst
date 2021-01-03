@@ -634,31 +634,55 @@ An example of the use of this epoch message is shown in :ref:`scenarioMagneticFi
 Specifying Reaction Wheel (RW) Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The simplest method to include the RW states of a one more spacecraft in the Vizard data file is to
-call ``vizSupport.enableUnityVisualization``
-with the ``numRW`` specified to be the number of RW being modeled.  This can be a single integer if each spacecraft
-contains the same number of RW devices, or a list of integers with the number of RW specified for each spacecraft.
-:ref:`vizInterface` will seek the RW messages
-assuming default RW state message naming.  This method is illustrated in the :ref:`scenarioAttitudeFeedbackRW` script.
+call ``vizSupport.enableUnityVisualization()`` with the additional argument::
 
-If custom RW state output messages are used, then the ``scData.rwInMsgName`` can be specified directly.  This case
+    rwEffectorList=rwStateEffector
+
+Here ``rwStateEffector`` is an instance of a single :ref:`ReactionWheelStateEffector` which already has all
+the spacecraft's RW devices added to it.  If you have multiple spacecraft, then use a list of RW effectors,
+one effector per spacecraft::
+
+    rwEffectorList=[rwStateEffector1, rwStateEffector2]
+
+This method is illustrated in the :ref:`scenarioAttitudeFeedbackRW` script.  Note that this list must contain
+one entry per spacecraft.  If a spacecraft has no RW devices, then add ``None`` instead of an effector instance.
+
+If custom RW state output messages are used, then the ``scData.rwInMsgs`` can be specified directly.  This case
 is employed in the test script :ref:`test_dataFileToViz`.
 
 Specifying Thruster Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Using default names the thruster states can be included in the Vizard data by calling
-``vizSupport.enableUnityVisualization`` with the ``thrDevices`` argument.  This is a list of ``ThrClusterMap`` states
-needed by :ref:`vizInterface`.  Each list entry should contain:
+The simplest method to include the clusters of thrusters of a one more spacecraft in the Vizard data file is to
+call ``vizSupport.enableUnityVisualization()`` with the additional argument::
 
-- number of thrusters in a group
-- thruster group tag string
-- (optional) color value to be used by the thruster plume illustration
+    thrEffectorList=thrusterSet
 
+Here ``thrusterSet`` is an instance of a single :ref:`ThrusterDynamicEffector` which already has all
+the spacecraft's THR devices added to this one THR cluster.  If you have multiple spacecraft, or a spacecraft
+has multiple clusters of THR devices such as ACS and DV thrusters, then use a double list of THR effectors.
+The outer list has one entry per spacecraft, and the inner list has one entry per spacecraft THR cluster::
+
+    thrEffectorList=[[thrusterSet1Sc1, thrusterSet2Sc1], [thrusterSet1Sc2]]
+
+The outer list must have one THR cluster list per spacecraft.  If a spacecraft has no THR devices, then
+add ``None`` instead of this cluster list.
 The illustration of thrusters is shown in the example script :ref:`scenarioAttitudeFeedback2T_TH`.
 
-Note that if the maximum force of a thruster is less than 0.01N (i.e. a micro-thruster), then the plume length is held the same as with a 0.01N thruster.  Otherwise the micro-thruster plumes would not be visible.
+Note that if the maximum force of a thruster is less than 0.01N (i.e. a micro-thruster),
+then the plume length is held the same as with a 0.01N thruster.
+Otherwise the micro-thruster plumes would not be visible.
 
-The thruster information for each spacecraft can also be set directly by specifying the ``sc.thrMsgData``
-as demonstrated in :ref:`test_dataFileToViz`.
+If you want to change the thruster plume illustration color, then you can use the optional argument::
+
+    thrColors=vizSupport.toRGBA255("red")
+
+This example is for a single spacecraft.  If you have multiple spacecraft this must again be wrapped in a list
+of lists as above.  The inner list is the color you want to for each cluster.  Thus, its dimension must match the
+``thrEffectorList`` double list dimension.  If you want to keep the default color for a spacecraft then
+add ``None`` as the cluster color.
+
+The thruster information for each spacecraft can also be set directly by specifying ``sc.thrInMsgs`` and
+``sc.thrInfo`` directly as demonstrated in :ref:`test_dataFileToViz`.
 
 Adding Location or Communication Stations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

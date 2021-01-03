@@ -56,8 +56,6 @@ public:
     void WriteProtobuffer(uint64_t CurrentSimNanos);
 
     void setNumCSS(VizSpacecraftData *scData, int num);
-    void setNumRW(VizSpacecraftData *scData, int num);
-    void setNumTHR(VizSpacecraftData *scData, std::vector <ThrClusterMap> thrClusterList);
 
 public:
     std::vector<VizSpacecraftData> scData;      //!< [-] vector of spacecraft data containers

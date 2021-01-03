@@ -21,7 +21,7 @@
 #   Simulation Setup Utilities for Thruster devices
 #
 
-import sys, os, inspect
+import sys
 import numpy
 
 from Basilisk.architecture import messaging2
@@ -129,7 +129,7 @@ class thrusterFactory(object):
         if 'useMinPulseTime' in kwargs:
             varUseMinPulseTime = kwargs['useMinPulseTime']
             if not isinstance(varUseMinPulseTime, (bool)):
-                print('ERROR: useMinTorque must be a BOOL argument')
+                print('ERROR: useMinPulseTime must be a BOOL argument')
                 exit(1)
         else:
             varUseMinPulseTime = False  # default value

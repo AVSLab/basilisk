@@ -278,7 +278,7 @@ This list makes it simple to see what naming will need to be changed.
     +                           +---------------------------------+-----------------------------------+
     |                           |``groundLocationAccessMsgNames`` | ``stAttOutMsg``                   |
     +---------------------------+---------------------------------+-----------------------------------+
-    | simpleTransmitter        | ``storageUnitMsgNames``          | ``storageUnitInMsgs``             |
+    | simpleTransmitter         | ``storageUnitMsgNames``         | ``storageUnitInMsgs``             |
     +---------------------------+---------------------------------+-----------------------------------+
     | spice_interface →         | ``outputTimePort``              | ``spiceTimeOutMsg``               |
     + ``spiceInterface``        +---------------------------------+-----------------------------------+

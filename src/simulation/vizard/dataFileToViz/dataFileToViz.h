@@ -42,7 +42,7 @@ public:
     void appendThrPos(double pos_B[3]);
     void appendThrDir(double dir_B[3]);
     void appendThrForceMax(double);
-    void appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData);
+    void appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster);
     void appendRwPos(double pos_B[3]);
     void appendRwDir(double dir_B[3]);
     void appendOmegaMax(double);
@@ -73,6 +73,7 @@ public:
 
 
 private:
+    std::vector<std::vector<int>> numThrPerCluster;  //!< vector containing list of numbers of thruster per cluster per spacecraft
     std::ifstream *fileHandle;                  //!< file handle to the simulation data input file
     std::vector <Eigen::Vector3d> thrPosList;   //!< [m] vector of thrust positions
     std::vector <Eigen::Vector3d> thrDirList;   //!< [-] vector of thrust unit direction vectors in B-frame components
