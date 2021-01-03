@@ -46,8 +46,8 @@ tracking errors, as well as the RW motor torque components, as well as the RW wh
 The fundamental simulation setup is the same as the one used in
 :ref:`scenarioAttitudeFeedback`.
 The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which an Earth gravity
-effector is attached.  The simple navigation module is still used to output the inertial attitude
-, angular rate, as well as position and velocity message. The simulation is setup to run in a single
+effector is attached.  The simple navigation module is still used to output the inertial attitude,
+angular rate, as well as position and velocity message. The simulation is setup to run in a single
 process again.  If the flight algorithms and simulation tasks are to run at different rates, then see
 :ref:`scenarioAttitudeFeedback2T` on how to setup a 2 thread simulation.
 
@@ -117,7 +117,7 @@ command.  This table list the arguments, default values, as well as expected uni
 The command ``addToSpacecraft()`` adds all the created RWs to the :ref:`spacecraftPlus` module.  The final step
 is as always to add the vector of RW effectors (called ``rwStateEffector`` above) to the list of simulation
 tasks.  However, note that the dynamic effector should be evaluated before the :ref:`spacecraftPlus` module,
-which is why it is being added with a higher priority than the `scObject` task.  Generally speaking
+which is why it is being added with a higher priority than the ``scObject`` task.  Generally speaking
 we should have the execution order::
 
     effectors -> dynamics -> sensors
@@ -144,8 +144,8 @@ tracking error states, and the :ref:`MRP_Feedback` module to provide the desired
 control torque vector.  In this simulation we want the MRP attitude control module to take
 advantage of the RW spin information.  This is achieved by adding the 2 extra lines::
 
-    mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
+    mrpControlConfig.rwParamsInMsg.subscribeTo(rwParamMsg)
+    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwSpeedsMsg)
 
 The first line specifies the RW configuration flight message name, and the second name
 connects the RW speed output message as an input message to this control module.  This simulates
@@ -178,7 +178,7 @@ simulation states.  The support macro ``writeConfigMessage()`` creates the requi
 message.
 
 Second, the ``rwFactory`` class method ``getConfigMessage()`` can be used to extract the desired
-:ref:`RWArrayConfigFswMsg` message.  Using this approach an exact copy is ensured between the FSW and
+:ref:`RWArrayConfigMsgPayload` message.  Using this approach an exact copy is ensured between the FSW and
 simulation RW configuration states, but it is less convenient in introduce differences.
 
 Setting up an Analog RW Interface Module
@@ -274,12 +274,13 @@ import sys
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
+from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)
-from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simpleNav, spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.architecture import messaging2
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -292,7 +293,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
@@ -303,7 +304,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """Plot the RW command torques."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
@@ -315,12 +316,12 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
-        plt.plot(timeData, dataRW[idx - 1][:, 1],
+        plt.plot(timeData, dataRW[idx],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -330,7 +331,7 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
 def plot_rate_error(timeData, dataOmegaBR):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(3)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
@@ -341,7 +342,7 @@ def plot_rate_error(timeData, dataOmegaBR):
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW spin rates."""
     plt.figure(4)
-    for idx in range(1, numRW + 1):
+    for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
@@ -353,7 +354,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 def plot_rw_voltages(timeData, dataVolt, numRW):
     """Plot the RW voltage inputs."""
     plt.figure(5)
-    for idx in range(1, numRW + 1):
+    for idx in range(numRW):
         plt.plot(timeData, dataVolt[:, idx],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$V_{' + str(idx) + '}$')
@@ -391,15 +392,13 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-
-
     #
     #   setup the simulation tasks/objects
     #
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -429,9 +428,9 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     rwFactory = simIncludeRW.rwFactory()
 
     # store the RW dynamical model type
-    varRWModel = rwFactory.BalancedWheels
+    varRWModel = messaging2.BalancedWheels
     if useJitterSimple:
-        varRWModel = rwFactory.JitterSimple
+        varRWModel = messaging2.JitterSimple
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
@@ -444,15 +443,19 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel
                            )
+    # In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride
+    # any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the
+    # maximum wheel speed.
 
     numRW = rwFactory.getNumOfDevices()
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.InputCmds = "reactionwheel_cmds"
+    rwStateEffector.ModelTag = "RW_cluster"
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
-    # add RW object array to the simulation process
+    # add RW object array to the simulation process.  This is required for the UpdateState() method
+    # to be called which logs the RW states
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
     if useRWVoltageIO:
@@ -467,7 +470,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
@@ -481,27 +484,18 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
-    inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = "LrRequested"
-    mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
@@ -512,13 +506,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
-    # Initialize the test module msg names
-    if useRWVoltageIO:
-        rwMotorTorqueConfig.outputDataName = "rw_torque_Lr"
-    else:
-        rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
-    rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
-    rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0, 0, 1, 0, 0, 0, 1
@@ -533,11 +521,6 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
 
-        # Initialize the test module configuration data
-        fswRWVoltageConfig.torqueInMsgName = rwMotorTorqueConfig.outputDataName
-        fswRWVoltageConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
-        fswRWVoltageConfig.voltageOutMsgName = rwVoltageIO.rwVoltageInMsgName
-
         # set module parameters
         fswRWVoltageConfig.VMin = 0.0  # Volts
         fswRWVoltageConfig.VMax = 10.0  # Volts
@@ -546,56 +529,56 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, rwMotorLog)
+    scSim.AddModelToTask(simTaskName, attErrorLog)
+    scSim.AddModelToTask(simTaskName, snTransLog)
+
     # To log the RW information, the following code is used:
-    scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-    rwOutName = [scObject.ModelTag + "_rw_config_0_data",
-                 scObject.ModelTag + "_rw_config_1_data",
-                 scObject.ModelTag + "_rw_config_2_data"]
+    mrpLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, mrpLog)
+
     # A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
     # here to be plotted later on.  However, RW specific messages are also being created which
     # contain a wealth of information.  Their default naming is automated and shown above.  This
     # allows us to log RW specific information such as the actual RW motor torque being applied.
-    for item in rwOutName:
-        scSim.TotalSim.logThisMessage(item, samplingTime)
+    rwLogs = []
+    for item in range(numRW):
+        rwLogs.append(rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
+        scSim.AddModelToTask(simTaskName, rwLogs[item])
     if useRWVoltageIO:
-        scSim.TotalSim.logThisMessage(fswRWVoltageConfig.voltageOutMsgName, samplingTime)
+        rwVoltLog = fswRWVoltageConfig.voltageOutMsg.recorder(samplingTime)
+        scSim.AddModelToTask(simTaskName, rwVoltLog)
 
     #
     # create simulation messages
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Two options are shown to setup the FSW RW configuration message.
-    # First caseL: The FSW RW configuration message
+    # First case: The FSW RW configuration message
     # uses the same RW states in the FSW algorithm as in the simulation.  In the following code
     # the fswSetupRW helper functions are used to individually add the RW states.  The benefit of this
     # method of the second method below is that it is easy to vary the FSW parameters slightly from the
     # simulation parameters.  In this script the second method is used, while the fist method is included
-    # in a commented form to both options.
-    # fswSetupRW.clearSetup()
-    # for key, rw in rwFactory.rwList.items():
-    #     fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    # fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
+    # to show both options.
+    fswSetupRW.clearSetup()
+    for key, rw in rwFactory.rwList.items():
+        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+    fswRwParamMsg1 = fswSetupRW.writeConfigMessage()
 
     # Second case: If the exact same RW configuration states are to be used by the simulation and fsw, then the
     # following helper function is convenient to extract the fsw RW configuration message from the
     # rwFactory setup earlier.
-    fswRwMsg = rwFactory.getConfigMessage()
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.rwParamsInMsgName,
-                               fswRwMsg)
+    fswRwParamMsg2 = rwFactory.getConfigMessage()
+    fswRwParamMsg = fswRwParamMsg2
 
     #
     #   set initial Spacecraft States
@@ -615,11 +598,27 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                        # saveFile=fileName,
-                                        numRW=numRW,
-                                        scName=[scObject.ModelTag]  # sc name must be set to pull RW info
-                                        )
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              # , saveFile=fileName
+                                              , rwEffectorList=rwStateEffector
+                                              )
+    # link messages
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    if useRWVoltageIO:
+        fswRWVoltageConfig.torqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+        fswRWVoltageConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+        rwVoltageIO.rwVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
+        rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.rwMotorTorqueOutMsg)
+    else:
+        rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
 
     #
     #   initialize Simulation
@@ -635,22 +634,23 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
-    dataOmegaRW = scSim.pullMessageLogData(mrpControlConfig.inputRWSpeedsName + ".wheelSpeeds", list(range(numRW)))
+    dataUsReq = rwMotorLog.motorTorque
+    dataSigmaBR = attErrorLog.sigma_BR
+    dataOmegaBR = attErrorLog.omega_BR_B
+    dataPos = snTransLog.r_BN_N
+    dataOmegaRW = mrpLog.wheelSpeeds
+
     dataRW = []
-    for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
+    for i in range(numRW):
+        dataRW.append(rwLogs[i].u_current)
     if useRWVoltageIO:
-        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName + ".voltage", list(range(numRW)))
+        dataVolt = rwVoltLog.voltage
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    timeData = rwMotorLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeData, dataSigmaBR)
@@ -678,7 +678,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBR, dataUsReq, numDataPoints, figureList
+    return figureList
 
 
 #
@@ -689,5 +689,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         False,  # useJitterSimple
-        False  # useRWVoltageIO
+        True  # useRWVoltageIO
     )

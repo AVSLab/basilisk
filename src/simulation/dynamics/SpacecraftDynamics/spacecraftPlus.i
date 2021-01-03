@@ -36,12 +36,12 @@ namespace std {
 }
 
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/stateEffector.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
-%include "../_GeneralModuleFiles/dynamicObject.h"
-%include "../_GeneralModuleFiles/gravityEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
+%include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftPlus.h"
 
 %include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"

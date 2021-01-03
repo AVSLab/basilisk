@@ -442,6 +442,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         eigenVector3d2CArray(it->rWB_B, tmpRW.rWB_B);
 		// Write out config data for eachreaction wheel
         this->rwOutMsgs[c].write(&tmpRW, this->moduleID, CurrentClock);
+        c++;
 	}
 
     return;

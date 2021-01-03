@@ -757,10 +757,9 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         can be a single file name, or a full path + file name. In both cases a local results are stored
         in a local sub-folder.
         Default: empty string resulting in the data not being saved to a file
-    numRW: int or list(int)
-        number of RWs on spacecraft.  If scName is a list and numRW is an integer, then the same number RW is added
-        to each spacecraft.  If numRW is a list then it must be of the same dimension as scName.
-        Default value is zero RWs for each spacecraft.
+    rwEffectorList: single or list of ``ReactionWheelStateEffector``
+        The list must have the same length scList.  Each entry is the ReactionWheelStateEffector instance
+        for the spacecraft, or ``None`` if the spacecraft has no RW devices.
     thrDevices:
         list of thruster devices states for the first spacecraft
     cssNames:
@@ -787,7 +786,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'numRW', 'thrDevices', 'liveStream', 'cssNames'],
+        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrDevices', 'liveStream', 'cssNames'],
         kwargs)
 
     # setup the Vizard interface module
@@ -800,10 +799,21 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     firstSpacecraftName = scList[0].ModelTag
 
+    # process the RW effector argument
+    rwEffectorScList = False
+    if 'rwEffectorList' in kwargs:
+        rwEffectorScList = kwargs['rwEffectorList']
+        if not isinstance(rwEffectorScList, list):
+            rwEffectorScList = [rwEffectorScList]
+        if len(rwEffectorScList) != len(scList):
+            print('ERROR: rwEffectorScList should have the same length as the number of spacecraft')
+            exit(1)
+
     # loop over all spacecraft to associated states and msg information
     planetNameList = []
     spiceMsgList = []
     vizMessenger.scData.clear()
+    c = 0
     for sc in scList:
         # create spacecraft information container
         scData = vizInterface.VizSpacecraftData()
@@ -821,27 +831,20 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 planetNameList.append(gravBody.planetName)
                 spiceMsgList.append(gravBody.planetBodyInMsg)
 
+        # process RW devices
+        if rwEffectorScList:
+            rwList = []
+            if rwEffectorScList[c] != None:
+                # RWs have been added to this spacecraft
+                for rwLogMsg in rwEffectorScList[c].rwOutMsgs:
+                    rwList.append(rwLogMsg.addSubscriber())
+            scData.rwInMsgs = messaging2.RWConfigLogMsgInMsgsVector(rwList)
+
         vizMessenger.scData.push_back(scData)
+        c += 1
 
     vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
     vizMessenger.spiceInMsgs = messaging2.SpicePlanetStateInMsgsVector(spiceMsgList)
-
-    # set number of RWs
-    # if 'numRW' in kwargs:
-    #     val = kwargs['numRW']
-    #     if isinstance(val, int):
-    #         numRWList = [val] * len(scNames)
-    #     elif isinstance(val, list):
-    #         numRWList = val
-    #         if len(scNames) != len(numRWList):
-    #             print('ERROR: numRW and scName list lengths must be the same')
-    #             exit(1)
-    #         for val in numRWList:
-    #             if not isinstance(val, int):
-    #                 print('ERROR: numRW must be an integer or a list of integers')
-    #                 exit(1)
-    # else:
-    #     numRWList = [0] * len(scNames)
 
     # set CSS information
     # cssNameList = []
