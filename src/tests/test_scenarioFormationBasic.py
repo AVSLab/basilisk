@@ -51,7 +51,7 @@ import scenarioFormationBasic
 
 # provide a unique test method name, starting with test_
 def test_scenarioFormationBasic(show_plots, useMsgNameDefaults):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0  # zero unit test result counter

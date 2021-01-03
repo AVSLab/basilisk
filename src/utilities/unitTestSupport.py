@@ -402,31 +402,6 @@ def foundNAN(array):
     return 0
 
 #
-#   macro to create and write a general message
-#
-def setMessage(simObject, processName, msgName, inputMessageData, msgStrName = ""):
-    """
-    Creates a message defined by msgName that appears in the process defined by processName.
-    :param simObject: the TotalSim attribute of a simulationBaseClass instance.
-    :param processName: str : the name of a process in which to write the message.
-    :param msgName: str : the name of the message, used for publish/subscribe
-    :param inputMessageData: the structure containing the message information
-    :param msgStrName: string : Message type as a string.
-    :return:
-    """
-    inputMessageSize = inputMessageData.getStructSize()
-    simObject.CreateNewMessage(processName,
-                               msgName,
-                               inputMessageSize,
-                               2,
-                               msgStrName)
-    simObject.WriteMessageData(msgName,
-                               inputMessageSize,
-                               0,
-                               inputMessageData)
-
-
-#
 #   pick a nicer color pattern to plot 3 vector components
 #
 

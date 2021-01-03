@@ -270,8 +270,6 @@ class rwFactory(object):
 
         return
 
-
-
     def getNumOfDevices(self):
         """
             Returns the number of RW devices setup.
@@ -284,9 +282,9 @@ class rwFactory(object):
 
     def getConfigMessage(self):
         """
-        Returns a RWArrayConfigFswMsg instance based on the current setup.
+        Returns a FSW reaction wheel configuration message based on the current setup.
 
-        :return: rwConfigParams
+        :return: RWArrayConfigMsg
         """
 
         GsMatrix_B = []
@@ -300,13 +298,15 @@ class rwFactory(object):
             JsList.extend([rw.Js])
             uMaxList.extend([rw.u_max])
 
-        rwConfigParams = fswMessages.RWArrayConfigFswMsg()
+        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = GsMatrix_B
         rwConfigParams.JsList = JsList
         rwConfigParams.uMax = uMaxList
         rwConfigParams.numRW = len(self.rwList)
 
-        return rwConfigParams
+        rwConfigMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+
+        return rwConfigMsg
 
     #
     #   Honeywell HR16 (100Nm, 75Nm, 50Nm)

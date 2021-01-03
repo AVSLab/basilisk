@@ -42,7 +42,7 @@ import scenarioFormationMeanOEFeedback
 
 # provide a unique test method name, starting with test_
 def test_bskFormationMeanOEFeedback(show_plots, useClassicElem):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0  # zero unit test result counter

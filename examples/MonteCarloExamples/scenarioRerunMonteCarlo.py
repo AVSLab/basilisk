@@ -44,7 +44,7 @@ bskPath = __path__[0]
 sys.path.append(path+"/../BskSim/scenarios/")
 
 def run(time=None):
-    '''
+    """
     Instructions:
 
     1) Change the scenario name
@@ -55,7 +55,7 @@ def run(time=None):
 
     4) Add any new retention policies to the bottom
 
-    '''
+    """
 
     # Step 1-3: Change to the relevant scenario
     scenarioName = "scenario_AttFeedback"

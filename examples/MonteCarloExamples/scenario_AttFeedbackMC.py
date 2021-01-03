@@ -50,7 +50,7 @@ sys.path.append(path+"/../BskSim/scenarios/")
 import scenario_AttFeedback
 
 def run(show_plots):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access

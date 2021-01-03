@@ -50,7 +50,7 @@ import scenarioCSSFilters
 
 # provide a unique test method name, starting with test_
 def test_Filters(show_plots, FilterType, simTime):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0                       # zero unit test result counter

@@ -28,11 +28,11 @@ class mcAnalysisBaseClass:
         return df
 
     def getNominalRunIndices(self, maxNumber=50):
-        '''
+        """
         Find the specific MC run indices of the most nominal cases (by iteratively widdling away runs which have the largest std)
         :param maxNumber: the number of nominal runs to widdle down to.
         :return: list of run indices
-        '''
+        """
         if self.data is None:
             self.data = pd.read_pickle(self.dataDir + "/" + self.variableName + ".data")
 
@@ -47,12 +47,12 @@ class mcAnalysisBaseClass:
         return dataBar.columns.codes[0]
 
     def getExtremaRunIndices(self, numExtrema, window):
-        '''
+        """
         Determine the MC run indices of the most deviant values within a particular time window
         :param numExtrema: number of extreme runs to collect
         :param window: window of time to search for the extremes in
         :return: list of run indices
-        '''
+        """
         if self.data is None:
             self.data = pd.read_pickle(self.dataDir + "/" + self.variableName + ".data")
         times = self.data.index.tolist()
@@ -72,10 +72,10 @@ class mcAnalysisBaseClass:
         return self.extremaRuns
 
     def generateStatCurves(self):
-        '''
+        """
         Generate curves that represent the mean, median, and standard deviation of a particular variable.
         Not Tested.
-        '''
+        """
         if self.data is None:
             self.data = pd.read_pickle(self.dataDir + "/" + self.variableName + ".data")
 
@@ -101,11 +101,11 @@ class mcAnalysisBaseClass:
         return [meanRun, medianRun, stdRun]
 
     def generateStatPlots(self):
-        '''
+        """
         Generate plots for the mean, median, and mode.
         Not Tested.
         :return: list of stats plots
-        '''
+        """
         if self.data is None:
             self.data = self.pull_and_format_df(self.dataDir + "/" + self.variableName + ".data", self.variableDim)
 
@@ -143,12 +143,12 @@ class mcAnalysisBaseClass:
         return statRun_plots
 
     def extractSubsetOfRuns(self, runIdx):
-        '''
+        """
         Create a seperate folder in the data directory that contains the subset of data the user is looking to plot.
         If the /subset/ directory already exists, check if it contains the data for the runs requested, if so skip.
         :param runIdx: list of run indices to extract
         :return: nothing
-        '''
+        """
         idx = pd.IndexSlice
         baseDir = self.dataDir
 
@@ -188,11 +188,11 @@ class mcAnalysisBaseClass:
         print("Finished Populating Subset Directory")
 
     def renderPlots(self, plotList):
-        '''
+        """
         Render all plots in plotList and print information about time taken, percent complete, which plot, etc.
         :param plotList: List of plots to render
         :return: nothing.
-        '''
+        """
         hv.extension('bokeh')
         renderer = hv.renderer('bokeh').instance(mode='server')
 

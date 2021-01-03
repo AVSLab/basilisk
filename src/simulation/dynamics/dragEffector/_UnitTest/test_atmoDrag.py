@@ -56,7 +56,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # provide a unique test method name, starting with test_
 def test_scenarioDragOrbit():
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     earthCase = "Earth"
     marsCase = "Mars"
@@ -96,7 +96,7 @@ def cannonballDragComp(dragCoeff, dens, area, vel, att):
 
 
 def run(show_plots, orbitCase, planetCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """Call this routine directly to run the tutorial scenario."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 

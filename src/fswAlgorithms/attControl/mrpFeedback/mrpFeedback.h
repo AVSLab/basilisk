@@ -49,7 +49,7 @@ typedef struct {
     RWSpeedMsg_C rwSpeedsInMsg;                         //!< RW speed input message (Optional)
     RWAvailabilityMsg_C rwAvailInMsg;                   //!< RW availability input message (Optional)
     RWArrayConfigMsg_C rwParamsInMsg;                   //!< RW parameter input message.  (Optional)
-    CmdTorqueBodyMsg_C cmdTorqueOutMsg;                 //!< output message
+    CmdTorqueBodyMsg_C cmdTorqueOutMsg;                 //!< commanded spacecraft external control torque output message
     AttGuidMsg_C guidInMsg;                             //!< attitude guidance input message
     VehicleConfigMsg_C vehConfigInMsg;                  //!< vehicle configuration input message
 

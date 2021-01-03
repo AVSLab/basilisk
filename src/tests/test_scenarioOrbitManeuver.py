@@ -52,7 +52,7 @@ import scenarioOrbitManeuver
 
 # provide a unique test method name, starting with test_
 def test_scenarioOrbitManeuver(show_plots, maneuverCase):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages

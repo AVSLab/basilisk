@@ -55,7 +55,7 @@ path = os.path.dirname(os.path.abspath(filename))
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("integratorCase", ["rk4", "euler", "rk2"])
 def test_scenarioIntegrators(show_plots, integratorCase):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
             show_plots, integratorCase)
@@ -64,7 +64,7 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 
 
 def run(doUnitTests, show_plots, integratorCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """Call this routine directly to run the tutorial scenario."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 

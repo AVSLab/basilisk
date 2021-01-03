@@ -50,7 +50,7 @@ import scenarioHingedRigidBody
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("doUnitTests, show_plots,", [(1, 0)])
 def test_scenarioOrbitManeuver(doUnitTests, show_plots):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 

@@ -20,11 +20,11 @@ def pull_and_format_df(path, varIdxLen):
     return df
 
 def curve_per_df_component(df):
-    '''
+    """
     Make a curve per component in the message dataframe (i.e. omega_BR_B[2] across all runs as a single curve)
     :param df:
     :return:
-    '''
+    """
     idx = pd.IndexSlice
     df = df.interpolate(method = "linear")
     df_list = []
@@ -46,10 +46,10 @@ def curve_per_df_component(df):
     return df_list
 
 def curve_per_df_column(df):
-    '''
+    """
     Divides the dataframe by column into format friendly for datashaders
     :return: List of single column dataframes
-    '''
+    """
     idx = pd.IndexSlice
     df_list = []
     for index in range(len(df.columns)):

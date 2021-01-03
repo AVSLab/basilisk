@@ -38,7 +38,7 @@ import scenarioFuelSlosh
 @pytest.mark.scenarioTest
 
 def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
     testFailCount = 0  # zero unit test result counter

@@ -45,13 +45,13 @@ from Basilisk.architecture import messaging2
 ])
 # provide a unique test method name, starting with test_
 def test_scenarioSphericalPendulum(show_plots, useFlag, testCase):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = sphericalPendulumTest(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
 
 def sphericalPendulumTest(show_plots, useFlag,testCase):
-    '''Call this routine directly to run the test scenario.'''
+    """Call this routine directly to run the test scenario."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 

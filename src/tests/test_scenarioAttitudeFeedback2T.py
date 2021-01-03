@@ -56,7 +56,7 @@ import scenarioAttitudeFeedback2T
 
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0  # zero unit test result counter

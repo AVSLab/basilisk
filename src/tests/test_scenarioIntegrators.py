@@ -49,7 +49,7 @@ import scenarioIntegrators
 @pytest.mark.scenarioTest
 
 def test_scenarioIntegrators(show_plots):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

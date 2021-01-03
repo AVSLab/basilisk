@@ -52,7 +52,7 @@ import scenarioAttitudeSteering
 @pytest.mark.scenarioTest
 
 def test_bskAttitudeFeedbackRW(show_plots, simCase):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 

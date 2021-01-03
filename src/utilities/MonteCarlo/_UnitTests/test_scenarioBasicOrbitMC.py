@@ -49,7 +49,7 @@ PROCESSES = 2
 
 
 def myCreationFunction():
-    ''' function that returns a simulation '''
+    """ function that returns a simulation """
     #  Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
 
@@ -110,7 +110,7 @@ def myCreationFunction():
 
 
 def myExecutionFunction(sim):
-    ''' function that executes a simulation '''
+    """ function that executes a simulation """
     sim.InitializeSimulation()
     sim.ExecuteSimulation()
 

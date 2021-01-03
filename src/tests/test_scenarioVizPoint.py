@@ -58,7 +58,7 @@ import scenarioVizPoint
 @pytest.mark.scenarioTest
 
 def test_scenarioViz(show_plots, missionType):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0                       # zero unit test result counter

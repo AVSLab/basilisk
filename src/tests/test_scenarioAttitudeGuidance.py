@@ -54,7 +54,7 @@ import scenarioAttitudeGuidance
 @pytest.mark.scenarioTest
 
 def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
 
     # provide a unique test method name, starting with test_
     # each test method requires a single assert method to be called
