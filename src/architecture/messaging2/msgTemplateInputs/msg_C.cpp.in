@@ -12,9 +12,9 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
 }};
 
 //! C interface to claim authorship to a message
-void {type}_C_addAuthor({type}_C *coowner, {type}_C *data) {{
-    coowner->payloadPointer = &(data->payload);
-    coowner->headerPointer = &(data->header);
+void {type}_C_addAuthor({type}_C *coownerMsg, {type}_C *targetMsg) {{
+    coownerMsg->payloadPointer = &(targetMsg->payload);
+    coownerMsg->headerPointer = &(targetMsg->header);
 }};
 
 //! C interface to initialize the module output message

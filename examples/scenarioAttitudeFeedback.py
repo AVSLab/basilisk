@@ -70,6 +70,13 @@ The control torque output vector message of this
 module is connected back to the input message of the :ref:`extForceTorque` module to close
 the control loop.
 
+While the nominal simulation has set ``useCMsg`` flag to False, with it set to ``True`` it illustrates two things.
+First it shows how to create a C-wrapped C-message in Python and write to it.  This is done with the
+``VehicleConfigMsg`` message.  Second, it illustrates how instead of writing to a module internal
+output message (see ``mrpControlConfig.cmdTorqueOutMsg``) we can re-direct the module to write to a
+stand-alone message ``cmdTorqueMsg`` instead.  This is useful if we need to have multiple module be writing
+to a single output message such as if several flight software stacks are being setup.
+
 When the simulation completes 3 plots are shown for the MRP attitude history, the rate
 tracking errors, as well as the control torque vector.
 
@@ -78,7 +85,7 @@ Illustration of Simulation Results
 
 ::
 
-    show_plots = True, useUnmodeledTorque = False, useIntGain = False, useKnownTorque = False
+    show_plots = True, useUnmodeledTorque = False, useIntGain = False, useKnownTorque = False, useCMsg = False
 
 .. image:: /_images/Scenarios/scenarioAttitudeFeedback1000.svg
    :align: center
@@ -88,7 +95,7 @@ Illustration of Simulation Results
 
 ::
 
-    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = False
+    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = False, useCMsg = False
 
 Note that, as expected,
 the orientation error doesn't settle to zero, but rather converges to a non-zero offset
@@ -103,7 +110,7 @@ non-zero steady-state values.
 
 ::
 
-    show_plots = True, useUnmodeledTorque = True, useIntGain = True, useKnownTorque = False
+    show_plots = True, useUnmodeledTorque = True, useIntGain = True, useKnownTorque = False, useCMsg = False
 
 In this case the orientation error does settle to zero.  The integral term changes the control torque
 to settle on a value that matches the un-modeled external torque.
@@ -116,7 +123,7 @@ to settle on a value that matches the un-modeled external torque.
 
 ::
 
-    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = True
+    show_plots = True, useUnmodeledTorque = True, useIntGain = False, useKnownTorque = True, useCMsg = False
 
 In this case the orientation error does settle to zero as the feed-forward term compensates for
 the external torque.  The control torque is now caused
@@ -167,6 +174,8 @@ from Basilisk.architecture import messaging2
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
+import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -174,7 +183,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
+def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -183,6 +192,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
         useUnmodeledTorque (bool): Specify if an external torque should be included
         useIntGain (bool): Specify if the feedback control uses an integral feedback term
         useKnownTorque (bool): Specify if the external torque is feed forward in the control
+        useCMsg (bool): Specify if the C-based stand-alone messages should be used
 
     """
 
@@ -289,10 +299,20 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     # The MRP Feedback algorithm requires the vehicle configuration structure. This defines various spacecraft
     # related states such as the inertia tensor and the position vector between the primary Body-fixed frame
-    # B origin and the center of mass (defaulted to zero).  This message is set through
+    # B origin and the center of mass (defaulted to zero).  The message payload is created through
     configData = messaging2.VehicleConfigMsgPayload()
     configData.ISCPntB_B = I
-    configDataMsg = messaging2.VehicleConfigMsg().write(configData)
+    # Two methods are shown to create either a C++ or C wrapped msg object in python.  The
+    # preferred method is to just create C++ wrapped messages.
+    if not useCMsg:
+        # create standard C++ wrapped C-msg copy
+        configDataMsg = messaging2.VehicleConfigMsg()
+    else:
+        # example of how to create a C-wrapped C-msg in Python, have it init and write the data
+        configDataMsg = cMsgPy.VehicleConfigMsg_C().init(configData)
+        # example of how to create a C-wrapped C-msg in Python that is initialized
+        configDataMsg = cMsgPy.VehicleConfigMsg_C().init()
+    configDataMsg.write(configData)
 
     #
     # Setup data logging before the simulation is initialized
@@ -301,7 +321,12 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     snLog = scObject.scStateOutMsg.recorder(samplingTime)
     attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    if useCMsg:
+        # create stand-along commanded torque msg and setup recorder()
+        cmdTorqueMsg = cMsgPy.CmdTorqueBodyMsg_C()
+        mrpLog = cmdTorqueMsg.recorder(samplingTime)
+    else:
+        mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, snLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)
     scSim.AddModelToTask(simTaskName, mrpLog)
@@ -313,8 +338,13 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
     attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
     mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    if useCMsg:
+        # connect to external commanded torque msg
+        extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
+    else:
+        # connect to module-internal commanded torque msg
+        extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
 
     #
     #   set initial Spacecraft States
@@ -342,6 +372,11 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
+
+    if useCMsg:
+        # re-direct the mrpControlConfig output message to write to the external msg copy
+        # this must occur after InitializeSimulation() which connects C-wrapped message to themselves
+        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(mrpControlConfig.cmdTorqueOutMsg, cmdTorqueMsg)
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -404,5 +439,6 @@ if __name__ == "__main__":
         True,  # show_plots
         False,  # useUnmodeledTorque
         False,  # useIntGain
-        False  # useKnownTorque
+        False,  # useKnownTorque
+        False
     )

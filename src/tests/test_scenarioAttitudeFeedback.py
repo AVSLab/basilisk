@@ -45,15 +45,16 @@ import scenarioAttitudeFeedback
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useUnmodeledTorque, useIntGain, useKnownTorque", [
-    (False, False, False)
-    , (True, False, False)
-    , (True, True, False)
-    , (True, False, True)
+@pytest.mark.parametrize("useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg", [
+    (False, False, False, False)
+    , (True, False, False, False)
+    , (True, True, False, False)
+    , (True, False, True, False)
+    , (False, False, False, True)
 ])
 @pytest.mark.scenarioTest
 
-def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
+def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     """This function is called by the py.test environment."""
     # provide a unique test method name, starting with test_
 
@@ -61,7 +62,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
     testMessages = []  # create empty array to store test log messages
 
     # each test method requires a single assert method to be called
-    figureList = scenarioAttitudeFeedback.run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
+    figureList = scenarioAttitudeFeedback.run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):

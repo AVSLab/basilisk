@@ -334,8 +334,8 @@ This list makes it simple to see what naming will need to be changed.
     +---------------------------+---------------------------------+-----------------------------------+
 
 
-Setting a Basilisk Message from Python
---------------------------------------
+Setting a Basilisk Message from Python using the default C++ wrapper
+--------------------------------------------------------------------
 Import ``messages2`` to have access to all message definitions::
 
     from Basilisk.simulation import messaging2
@@ -361,6 +361,44 @@ to it at a later time you simply use::
     msg.write(msgData, time)
 
 Note that stand-alone messages written in Python don't have a module ID.  The message module ID is thus set to -1.
+
+Setting a C-Wrapped Basilisk Message from Python
+------------------------------------------------
+In rare cases you might want to create a C-wrapped msg copy in Python.  The default should be to use the
+C++ wrapped method shown above.  One scenario where a C-wrapped message might be needed is if you have
+multiple C-modules that should write to the same output message.  In this case it is possible to create a
+stand-alone C-wrapped message copy in Python and re-direct the module output message to write to this stand-alone
+message instead.  As the C-module only calls C-code, in this situation the stand-alone message must have
+a C-wrapped interface.  An example of this is shown in :ref:`scenarioAttitudeFeedback`.
+
+Creating a C-Wrapped Message
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The C-wrapped message interface is imported using::
+
+    import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
+
+The message payload is still created as before, using for example::
+
+    msgData = messaging2.ParticularMsgPayload()
+
+To create a C-wrapped message copy use::
+
+    msg = cMsgPy.ParticularMsg_C().init()
+
+This step creates an instance of ``ParticularMsg_C`` and adds itself as an author so you can write to it.
+Now you can write to the C-wrapped message as you with with C++ wrapped messages::
+
+    msg.write(msgData)
+
+If you want to create a C-wrapped message and write to it in one step, you can use::
+
+    msg = cMsgPy.ParticularMsg_C().init(msgData)
+
+Redirecting Module Output to Stand-Alone C-Wrapped Message
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Next consider the scenario where you don't want to have a C module to write to it's own output message
+``module.SomeOutMsg`` of type ``ParticularMsg``, but rather you want the module to write to a stand-alone
+module-external message of the same type.
 
 Reading a Basilisk Message from Python
 --------------------------------------
