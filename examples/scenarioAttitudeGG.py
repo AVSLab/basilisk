@@ -80,16 +80,16 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.simulation import GravityGradientEffector
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import hillPoint
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -128,8 +128,6 @@ def run(show_plots):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-
-
 
     #
     #   setup the simulation tasks/objects
@@ -180,7 +178,7 @@ def run(show_plots):
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()
     ggEff.ModelTag = scObject.ModelTag
-    ggEff.addPlanetName(earth.bodyInMsgName)
+    ggEff.addPlanetName(earth.planetName)
     scObject.addDynamicEffector(ggEff)
     scSim.AddModelToTask(simTaskName, ggEff)
 
@@ -196,7 +194,7 @@ def run(show_plots):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
@@ -208,12 +206,6 @@ def run(show_plots):
     attGuidanceConfig = hillPoint.hillPointConfig()
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    # if you want to set attGuidanceConfig.inputCelMessName, then you need a planet ephemeris message of
-    # type EphemerisIntMsg.  In the line below a non-existing message name is used to create an empty planet
-    # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
-    attGuidanceConfig.inputCelMessName = "empty_earth_msg"
-    attGuidanceConfig.outputDataName = "guidanceOut"
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
     # setup the attitude tracking error evaluation module
@@ -221,19 +213,14 @@ def run(show_plots):
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorMsg"
-    attErrorConfig.inputRefName = attGuidanceConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
+
     attErrorConfig.sigma_R0R = [0, 0.2, 0]
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
@@ -243,25 +230,37 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(ggEff.ModelTag + "_gravityGradient", samplingTime)    # using default msg name
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    ggLog = ggEff.gravityGradientOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, mrpLog)
+    scSim.AddModelToTask(simTaskName, attErrLog)
+    scSim.AddModelToTask(simTaskName, ggLog)
 
     #
     # create simulation messages
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+
+    # connect messages
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation
@@ -277,22 +276,22 @@ def run(show_plots):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    ggData = scSim.pullMessageLogData(ggEff.ModelTag + "_gravityGradient.gravityGradientTorque_B", list(range(3)))
+    dataLr = mrpLog.torqueRequestBody
+    dataSigmaBR = attErrLog.sigma_BR
+    ggData = ggLog.gravityGradientTorque_B
 
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    timeLineSet = dataSigmaBR[:, 0] * macros.NANO2MIN
+    timeLineSet = mrpLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
+    vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
              color=unitTestSupport.getLineColor(1, 3),
@@ -308,20 +307,20 @@ def run(show_plots):
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    vectorData = unitTestSupport.pullVectorSetFromData(dataLr)
+    vectorData = dataLr
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
              color=unitTestSupport.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
-    plt.ylabel(r'Control Torque $L_r$ [Nm]$')
+    plt.ylabel(r'Control Torque $L_r$ [Nm]')
     ax.set_yscale('log')
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
-    for idx in range(1, 4):
-        plt.plot(ggData[:, 0] * macros.NANO2MIN, ggData[:, idx],
+    for idx in range(3):
+        plt.plot(timeLineSet, ggData[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$r_' + str(idx) + '$')
     plt.legend(loc='lower right')
