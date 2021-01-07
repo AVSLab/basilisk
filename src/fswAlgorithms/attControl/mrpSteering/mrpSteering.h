@@ -41,18 +41,18 @@ typedef struct {
     AttGuidMsg_C guidInMsg;                             //!< attitude guidance input message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
-}MrpSteeringConfig;
+}mrpSteeringConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_mrpSteering(MrpSteeringConfig *configData, int64_t moduleID);
-    void CrossInit_mrpSteering(MrpSteeringConfig *configData, int64_t moduleID);
-    void Update_mrpSteering(MrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_mrpSteering(MrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID);
+    void CrossInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID);
+    void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    void MRPSteeringLaw(MrpSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+    void MRPSteeringLaw(mrpSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
     
 #ifdef __cplusplus

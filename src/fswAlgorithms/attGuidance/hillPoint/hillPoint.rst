@@ -30,4 +30,4 @@ provides information on what this message is used for.
       - incoming spacecraft translational state message
     * - celBodyInMsg
       - :ref:`EphemerisMsgPayload`
-      - (optional )primary celestial body information input message
+      - (optional) primary celestial body information input message

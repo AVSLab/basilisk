@@ -89,7 +89,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = mrpSteering.MrpSteeringConfig()
+    moduleConfig = mrpSteering.mrpSteeringConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "mrpSteering"
 

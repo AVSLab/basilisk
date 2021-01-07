@@ -543,7 +543,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
     # here to be plotted later on.  However, RW specific messages are also being created which
-    # contain a wealth of information.  Their default naming is automated and shown above.  This
+    # contain a wealth of information.  The vector of messages is ordered as they were added.  This
     # allows us to log RW specific information such as the actual RW motor torque being applied.
     rwLogs = []
     for item in range(numRW):

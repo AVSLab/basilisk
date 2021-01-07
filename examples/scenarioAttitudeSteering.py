@@ -147,7 +147,7 @@ from Basilisk.utilities import macros
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
@@ -155,7 +155,7 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rb
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Steering
+from Basilisk.fswAlgorithms import mrpSteering
 from Basilisk.fswAlgorithms import rateServoFullNonlinear
 from Basilisk.fswAlgorithms import hillPoint
 from Basilisk.fswAlgorithms import attTrackingError
@@ -163,7 +163,7 @@ from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import fswSetupRW
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -178,7 +178,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude error."""
     plt.figure(1)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
                      color=unitTestSupport.getLineColor(idx, 3),
                      label=r'$|\sigma_' + str(idx) + '|$')
@@ -189,7 +189,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """plot the commanded RW torque."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
@@ -201,8 +201,8 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
 def plot_rw_motor_torque(timeData, dataRW, numRW):
     """Plot the actual RW motor torque."""
     plt.figure(2)
-    for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataRW[idx - 1][:, 1]),
+    for idx in range(3):
+        plt.semilogy(timeData, np.abs(dataRW[idx]),
                      color=unitTestSupport.getLineColor(idx, numRW),
                      label='$|u_{s,' + str(idx) + '}|$')
     plt.legend(loc='lower right')
@@ -212,11 +212,11 @@ def plot_rw_motor_torque(timeData, dataRW, numRW):
 def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
     """Plot the body angular velocity tracking errors"""
     plt.figure(3)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
                      color=unitTestSupport.getLineColor(idx, 3),
                      label=r'$|\omega_{BR,' + str(idx) + '}|$')
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
                      '--',
                      color=unitTestSupport.getLineColor(idx, 3)
@@ -229,7 +229,7 @@ def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW speeds."""
     plt.figure(4)
-    for idx in range(1, numRW + 1):
+    for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
@@ -289,8 +289,6 @@ def run(show_plots, simCase):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-
-
 
     #
     #   setup the simulation tasks/objects
@@ -352,7 +350,7 @@ def run(show_plots, simCase):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
@@ -371,9 +369,6 @@ def run(show_plots, simCase):
     attGuidanceConfig = hillPoint.hillPointConfig()
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    attGuidanceConfig.inputCelMessName = earth.bodyInMsgName
-    attGuidanceConfig.outputDataName = "guidanceOut"
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
     # setup the attitude tracking error evaluation module
@@ -381,19 +376,14 @@ def run(show_plots, simCase):
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = attGuidanceConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
 
     # setup the MRP steering control module
-    mrpControlConfig = MRP_Steering.MRP_SteeringConfig()
+    mrpControlConfig = mrpSteering.mrpSteeringConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Steering"
 
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
 
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.outputDataName = "rate_steering"
     if simCase < 2:
         mrpControlConfig.K1 = 0.05
         mrpControlConfig.ignoreOuterLoopFeedforward = False
@@ -411,13 +401,6 @@ def run(show_plots, simCase):
     servoWrap = scSim.setModelDataWrap(servoConfig)
     servoWrap.ModelTag = "rate_servo"
 
-    servoConfig.inputGuidName = attErrorConfig.outputDataName
-    servoConfig.vehConfigInMsgName = "vehicleConfigName"
-    servoConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    servoConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
-    servoConfig.inputRateSteeringName = mrpControlConfig.outputDataName
-    servoConfig.outputDataName = "torque_command"
-
     if simCase == 1:
         servoConfig.Ki = -1
     else:
@@ -433,10 +416,7 @@ def run(show_plots, simCase):
     rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
-    # Initialize the test module msg names
-    rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
-    rwMotorTorqueConfig.inputVehControlName = servoConfig.outputDataName
-    rwMotorTorqueConfig.rwParamsInMsgName = servoConfig.rwParamsInMsgName
+
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0,
@@ -445,39 +425,52 @@ def run(show_plots, simCase):
     ]
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 
-    #
-    #   Setup data logging before the simulation is initialized
-    #
-    numDataPoints = 200
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
-    scSim.TotalSim.logThisMessage(rwStateEffector.OutputDataString, samplingTime)
-    scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    rwOutName = [scObject.ModelTag + "_rw_config_0_data", scObject.ModelTag + "_rw_config_1_data",
-                 scObject.ModelTag + "_rw_config_2_data"]
-    for item in rwOutName:
-        scSim.TotalSim.logThisMessage(item, samplingTime)
-
-    #
-    # create simulation messages
-    #
-
     # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               servoConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
     for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswSetupRW.writeConfigMessage(servoConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
+    fswRwParamMsg = fswSetupRW.writeConfigMessage()
+
+    # setup message connections
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    servoConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    servoConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    servoConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    servoConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    servoConfig.rateSteeringInMsg.subscribeTo(mrpControlConfig.rateCmdOutMsg)
+    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(servoConfig.cmdTorqueOutMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+
+    #
+    #   Setup data logging before the simulation is initialized
+    #
+    numDataPoints = 200
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
+    rwStateLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    mrpLog = mrpControlConfig.rateCmdOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, rwMotorLog)
+    scSim.AddModelToTask(simTaskName, attErrorLog)
+    scSim.AddModelToTask(simTaskName, snTransLog)
+    scSim.AddModelToTask(simTaskName, rwStateLog)
+    scSim.AddModelToTask(simTaskName, mrpLog)
+    rwLogs = []
+    for item in range(numRW):
+        rwLogs.append(rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
+        scSim.AddModelToTask(simTaskName, rwLogs[item])
 
     #
     #   set initial Spacecraft States
@@ -506,7 +499,10 @@ def run(show_plots, simCase):
         scObject.hub.omega_BN_BInit = [[n * HN[2, 0]], [n * HN[2, 1]], [n * HN[2, 2]]]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName, numRW=numRW)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        , rwEffectorList=rwStateEffector
+                                        )
 
     #
     #   initialize Simulation
@@ -522,21 +518,21 @@ def run(show_plots, simCase):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataOmegaBRAst = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".omega_BastR_B", list(range(3)))
-    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", list(range(numRW)))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
+    dataUsReq = rwMotorLog.motorTorque[:, :numRW]
+    dataSigmaBR = attErrorLog.sigma_BR
+    dataOmegaBR = attErrorLog.omega_BR_B
+    dataPos = snTransLog.r_BN_N
+    dataOmegaRW = rwStateLog.wheelSpeeds[:, :numRW]
+    dataOmegaBRAst = mrpLog.omega_BastR_B
     dataRW = []
-    for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
+    for i in range(numRW):
+        dataRW.append(rwLogs[i].u_current)
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    timeData = attErrorLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeData, dataSigmaBR)
@@ -549,12 +545,10 @@ def run(show_plots, simCase):
     figureList[pltName] = plt.figure(2)
 
     plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst)
-    plot_rw_motor_torque(timeData, dataRW, numRW)
     pltName = fileName + "omegaBR" + str(int(simCase))
     figureList[pltName] = plt.figure(3)
 
     plot_rw_speeds(timeData, dataOmegaRW, numRW)
-    plot_rw_motor_torque(timeData, dataRW, numRW)
     pltName = fileName + "Omega" + str(int(simCase))
     figureList[pltName] = plt.figure(4)
 
@@ -566,7 +560,7 @@ def run(show_plots, simCase):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return dataPos, dataUsReq, dataSigmaBR, numDataPoints, figureList
+    return figureList
 
 
 #
