@@ -73,7 +73,7 @@ single spacecraft.  Let ``scObject`` be an instance of :ref:`SpacecraftPlus`,
 then the spacecraft state output message
 is added to the magnetic field module through::
 
-    magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
+    magModule.addSpacecraftToModel(scObject.scStateOutMsg)
 
 Note that this command can be repeated if the magnetic field should be
 evaluated for different spacecraft.
@@ -164,6 +164,7 @@ from Basilisk.simulation import magneticFieldCenteredDipole
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import simSetPlanetEnvironment
+from Basilisk.architecture import messaging2
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -204,7 +205,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -227,7 +228,7 @@ def run(show_plots, orbitCase, planetCase):
     # create the magnetic field
     magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
     magModule.ModelTag = "CenteredDipole"
-    magModule.addSpacecraftToModel(scObject.scStateOutMsgName)  # this command can be repeated if multiple
+    magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
 
     if planetCase == 'Jupiter':
         # The following command is a support function that sets up the centered dipole parameters.
@@ -246,7 +247,7 @@ def run(show_plots, orbitCase, planetCase):
 
         magModule2 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
         magModule2.ModelTag = "CenteredDipole2"
-        magModule2.addSpacecraftToModel(scObject.scStateOutMsgName)
+        magModule2.addSpacecraftToModel(scObject.scStateOutMsg)
         # set the 2nd magnetic field through custom dipole settings
         magModule2.g10 = -30926.00 / 1e9 * 0.5  # Tesla
         magModule2.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
@@ -254,11 +255,8 @@ def run(show_plots, orbitCase, planetCase):
         magModule2.planetRadius = 6371.2 * 1000  # meters
         # set the reach variables such that the fields
         magModule2.envMaxReach = req*1.3
-        # give this magnetic field a unique output name to not conflict with the first Earth mag field output
-        magModule2.envOutMsgNames[0] = 'second_earth_mag_field'
         magModule.envMinReach = magModule2.envMaxReach
         scSim.AddModelToTask(simTaskName, magModule2)
-
 
     #
     #   setup orbit and simulation time
@@ -299,21 +297,20 @@ def run(show_plots, orbitCase, planetCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(magModule.envOutMsgNames[0], samplingTime)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    magLog = magModule.envOutMsgs[0].recorder(samplingTime)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, magLog)
+    scSim.AddModelToTask(simTaskName, dataLog)
     if planetCase == 'Earth' and orbitCase == 'elliptical':
-        scSim.TotalSim.logThisMessage(magModule2.envOutMsgNames[0], samplingTime)
+        mag2Log = magModule2.envOutMsgs[0].recorder(samplingTime)
+        scSim.AddModelToTask(simTaskName, mag2Log)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
-    #
-    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
-    #   cross_init() and reset() routines on each module.
-    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
-    #   then the all messages are auto-discovered that are shared across different BSK threads.
-    #
     scSim.InitializeSimulation()
 
     #
@@ -325,10 +322,10 @@ def run(show_plots, orbitCase, planetCase):
     #
     #   retrieve the logged data
     #
-    magData = scSim.pullMessageLogData(magModule.envOutMsgNames[0] + '.magField_N', list(range(3)))
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    magData = magLog.magField_N
+    posData = dataLog.r_BN_N
     if planetCase == 'Earth' and orbitCase == 'elliptical':
-        magData2 = scSim.pullMessageLogData(magModule2.envOutMsgNames[0] + '.magField_N', list(range(3)))
+        magData2 = mag2Log.magField_N
 
     np.set_printoptions(precision=16)
 
@@ -343,8 +340,9 @@ def run(show_plots, orbitCase, planetCase):
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='sci')
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, posData[:, idx] / 1000.,
+    timeAxis = dataLog.times() * macros.NANO2SEC
+    for idx in range(3):
+        plt.plot(timeAxis / P, posData[:, idx] / 1000.,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -359,16 +357,16 @@ def run(show_plots, orbitCase, planetCase):
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='sci')
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    for idx in range(1, 4):
-        plt.plot(magData[:, 0] * macros.NANO2SEC / P, magData[:, idx] *1e9,
+    for idx in range(3):
+        plt.plot(timeAxis / P, magData[:, idx] *1e9,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$B\_N_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Magnetic Field [nT]')
     if planetCase == 'Earth' and orbitCase == 'elliptical':
-        for idx in range(1, 4):
-            plt.plot(magData2[:, 0] * macros.NANO2SEC / P, magData2[:, idx] * 1e9, '--',
+        for idx in range(3):
+            plt.plot(timeAxis / P, magData2[:, idx] * 1e9, '--',
                      color=unitTestSupport.getLineColor(idx, 3),
                      label=r'$B\_N_{' + str(idx) + '}$')
     pltName = fileName + "2" + orbitCase + planetCase
@@ -381,7 +379,7 @@ def run(show_plots, orbitCase, planetCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return magData, figureList
+    return figureList
 
 
 

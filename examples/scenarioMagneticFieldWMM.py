@@ -141,7 +141,7 @@ from Basilisk.simulation import magneticFieldWMM
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-
+from Basilisk.architecture import messaging2
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -180,7 +180,7 @@ def run(show_plots, orbitCase):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -195,7 +195,6 @@ def run(show_plots, orbitCase):
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-
     # create the magnetic field
     magModule = magneticFieldWMM.MagneticFieldWMM()
     magModule.ModelTag = "WMM"
@@ -207,15 +206,10 @@ def run(show_plots, orbitCase):
         magModule.envMaxReach = 20000*1000.
 
     # set epoch date/time message
-    magModule.epochInMsgName = "simEpoch"
     epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               magModule.epochInMsgName,
-                               epochMsg)
 
     # add spacecraft to the magnetic field module so it can read the sc position messages
-    magModule.addSpacecraftToModel(scObject.scStateOutMsgName)  # this command can be repeated if multiple
+    magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
 
     # add the magnetic field module to the simulation task stack
     scSim.AddModelToTask(simTaskName, magModule)
@@ -256,29 +250,29 @@ def run(show_plots, orbitCase):
     P = 2. * np.pi / n
     simulationTime = macros.sec2nano(1. * P)
 
+    # connect messages
+    magModule.epochInMsg.subscribeTo(epochMsg)
+
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(magModule.envOutMsgNames[0], samplingTime)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    magLog = magModule.envOutMsgs[0].recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, magLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
                                                   # saveFile=fileName,
-                                                  gravBodies=gravFactory)
-        viz.epochMsgName = magModule.epochInMsgName
+                                                  )
+        viz.epochInMsg.subscribeTo(epochMsg)
+
         viz.settings.show24hrClock = 1
         viz.settings.showDataRateDisplay = 1
 
-    #
-    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
-    #   cross_init() and reset() routines on each module.
-    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
-    #   then the all messages are auto-discovered that are shared across different BSK threads.
-    #
     scSim.InitializeSimulation()
 
     #
@@ -290,8 +284,8 @@ def run(show_plots, orbitCase):
     #
     #   retrieve the logged data
     #
-    magData = scSim.pullMessageLogData(magModule.envOutMsgNames[0] + '.magField_N', list(range(3)))
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    magData = magLog.magField_N
+    posData = dataLog.r_BN_N
 
     np.set_printoptions(precision=16)
 
@@ -301,6 +295,7 @@ def run(show_plots, orbitCase):
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
 
+    timeAxis = dataLog.times() * macros.NANO2SEC
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
@@ -308,12 +303,12 @@ def run(show_plots, orbitCase):
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     rData = []
     for idx in range(0, len(posData)):
-        rMag = np.linalg.norm(posData[idx, 1:4])
+        rMag = np.linalg.norm(posData[idx])
         rData.append(rMag / 1000.)
-    plt.plot(posData[:, 0] * macros.NANO2SEC / P, rData, color='#aa0000')
+    plt.plot(timeAxis / P, rData, color='#aa0000')
     if orbitCase == 'elliptical':
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, [magModule.envMinReach/1000.]*len(rData), color='#007700', dashes=[5, 5, 5, 5])
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, [magModule.envMaxReach / 1000.] * len(rData),
+        plt.plot(timeAxis / P, [magModule.envMinReach/1000.]*len(rData), color='#007700', dashes=[5, 5, 5, 5])
+        plt.plot(timeAxis / P, [magModule.envMaxReach / 1000.] * len(rData),
                  color='#007700', dashes=[5, 5, 5, 5])
 
     plt.xlabel('Time [orbits]')
@@ -328,8 +323,8 @@ def run(show_plots, orbitCase):
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='sci')
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    for idx in range(1, 4):
-        plt.plot(magData[:, 0] * macros.NANO2SEC / P, magData[:, idx] *1e9,
+    for idx in range(3):
+        plt.plot(timeAxis / P, magData[:, idx] *1e9,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$B\_N_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -345,7 +340,7 @@ def run(show_plots, orbitCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return magData, figureList
+    return figureList
 
 
 

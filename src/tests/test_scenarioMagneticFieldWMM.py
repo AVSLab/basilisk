@@ -57,39 +57,7 @@ def test_scenarioMagneticField(show_plots, orbitCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    magData, figureList = scenarioMagneticFieldWMM.run(show_plots, orbitCase)
-
-    numTruthPoints = 5
-    skipValue = int(len(magData) / (numTruthPoints - 1))
-    dataMagRed = magData[::skipValue]
-    print(dataMagRed)
-
-    # setup truth data for unit test
-    trueMag = []
-    if orbitCase == 'circular':
-        trueMag = [
-            [-9.8909713313380078e-06, -1.5750679233723167e-05, -3.9770938505865843e-05],
-            [ 1.8137791136402835e-05,  1.3753603596811574e-05,  1.4627084437715579e-05],
-            [-1.2437785307274045e-06, -2.3225641671126602e-05, -3.1154775849546575e-05],
-            [ 2.0220096405005604e-05,  1.4951989103712117e-05,  7.0919234777338577e-06],
-            [-1.3773821010930255e-05, -1.9420906806230346e-05, -3.6313624937603541e-05]
-        ]
-    if orbitCase == 'elliptical':
-        trueMag = [
-            [-2.9321026012579349e-06, -5.8651116571908833e-06, -1.2646241736266489e-05],
-            [ 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00],
-            [ 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00],
-            [-1.3642620207349210e-06, -2.5553830162719547e-06, -3.6740465177531499e-07],
-            [ 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00]
-        ]
-
-
-    # compare the results to the truth values
-    accuracy = 1e-8  # Tesla
-
-    testFailCount, testMessages = unitTestSupport.compareArray(
-        trueMag, dataMagRed, accuracy, "magField_N Vector",
-        testFailCount, testMessages)
+    figureList = scenarioMagneticFieldWMM.run(show_plots, orbitCase)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):

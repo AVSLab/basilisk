@@ -61,45 +61,7 @@ def test_scenarioMagneticField(show_plots, orbitCase, planetCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    magData, figureList = scenarioMagneticFieldCenteredDipole.run(show_plots, orbitCase, planetCase)
-
-    numTruthPoints = 5
-    skipValue = int(len(magData) / (numTruthPoints - 1))
-    dataMagRed = magData[::skipValue]
-
-    # setup truth data for unit test
-    trueMag = []
-    if orbitCase == 'circular' and planetCase == 'Earth':
-        trueMag = [
-            [-6.6009426825634923e-06, -2.1606480803755902e-05, -3.7225617022490532e-05],
-            [ 1.9571283124234556e-05,  1.4473114863968404e-05,  1.4637740465762316e-05],
-            [-8.3563153727853268e-06, -2.3286702947772914e-05, -3.5069159314356784e-05],
-            [ 2.1263624019782942e-05,  1.6068114169971413e-05,  1.2369095766805633e-05],
-            [-9.9818049625740595e-06, -2.4792879600959000e-05, -3.2693447813550890e-05]
-        ]
-    if orbitCase == 'elliptical' and planetCase == 'Earth':
-        trueMag = [
-            [-2.1238634434031201e-06, -6.9519183738567534e-06, -1.1977399434331797e-05],
-            [ 1.1391253004872550e-06,  8.7261808677234548e-07, -1.5194103813516944e-07],
-            [ 2.5647444618706193e-07,  8.0307959125810588e-08,  7.4056345246373448e-07],
-            [-1.5745250158167339e-06, -2.6860047342812571e-06, -3.4974650298810283e-07],
-            [-7.0918520482901710e-06, -1.3705347575700211e-05, -1.0177610509651923e-05]
-        ]
-    if orbitCase == 'elliptical' and planetCase == 'Jupiter':
-        trueMag = [
-            [-5.4118082036659928e-05, -7.3309064488523109e-05, -1.7481547130195684e-04],
-            [ 1.2443851358473244e-05,  1.4960617668135156e-05, -1.8639105517436840e-06],
-            [ 4.9056456907319786e-07,  2.9201251508677655e-06,  1.0222789452821492e-05],
-            [-3.0771050824857697e-05, -3.2476159775524712e-05, -8.3194247838254659e-06],
-            [-1.2553066020901807e-04, -1.4753925529969713e-04, -1.6322348568320887e-04]
-        ]
-
-    # compare the results to the truth values
-    accuracy = 1e-8  # Tesla
-
-    testFailCount, testMessages = unitTestSupport.compareArray(
-        trueMag, dataMagRed, accuracy, "magField_N Vector",
-        testFailCount, testMessages)
+    figureList = scenarioMagneticFieldCenteredDipole.run(show_plots, orbitCase, planetCase)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):
