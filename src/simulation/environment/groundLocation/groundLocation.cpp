@@ -31,9 +31,7 @@ GroundLocation::GroundLocation()
     this->minimumElevation = 10.*D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
     this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
 
-    v3SetZero(this->currentGroundStateBuffer.r_LN_N);
-    v3SetZero(this->currentGroundStateBuffer.r_LP_N);
-
+    this->currentGroundStateBuffer = this->currentGroundStateOutMsg.zeroMsgPayload();
 
     this->planetRadius = REQ_EARTH*1e3;
 
@@ -161,6 +159,7 @@ void GroundLocation::updateInertialPositions()
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
     //  Stash updated position in the groundState message
     eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateBuffer.r_LN_N);
+    eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);
 }
 
 void GroundLocation::computeAccess()

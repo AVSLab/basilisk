@@ -146,6 +146,9 @@ bool DataStorageUnitBase::readMessages()
  */
 void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
 
+    //! zero output message to begin with
+    this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload();
+
     //! - Set first three message parameters
     this->storageStatusMsg.currentNetBaud = this->netBaud;
     this->storageStatusMsg.storageCapacity = this->storageCapacity;
