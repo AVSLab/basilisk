@@ -93,7 +93,6 @@ function(add_message_headers)
 	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
 	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
 	        )
-	Message(STATUS "This is messages header " ${MESSAGE_HEADER_FILES})
 	add_custom_target(MessageHeader SOURCES ${MESSAGE_HEADER_FILES})
 
 endfunction(add_message_headers)

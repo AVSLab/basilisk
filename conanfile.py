@@ -1,11 +1,17 @@
 import os, sys
 import platform
 from datetime import datetime
-from conans import ConanFile, CMake, tools
+
 import shutil
 import argparse
 import pkg_resources
 import subprocess
+
+try:
+	from conans import ConanFile, CMake, tools
+except ModuleNotFoundError:
+	print("Please make sure you install python conan package\nRun command `pip install conan` for Windows\nRun command `pip3 install conan` for Linux/MacOS")
+	sys.exit(1)
 
 # define BSK module option list (option name and default value)
 bskModuleOptionsBool = {
