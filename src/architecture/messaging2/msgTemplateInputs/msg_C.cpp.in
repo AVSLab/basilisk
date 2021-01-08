@@ -19,7 +19,10 @@ void {type}_C_addAuthor({type}_C *coownerMsg, {type}_C *targetMsg) {{
 
 //! C interface to initialize the module output message
 void {type}_C_init({type}_C *owner) {{
-    {type}_C_addAuthor(owner, owner);
+    //! check if the msg pointer is not assigned already.  If not, then connect message to itself.
+    if (owner->payloadPointer == 0) {{
+        {type}_C_addAuthor(owner, owner);
+    }}
 }};
 
 //! C interface to write to a message

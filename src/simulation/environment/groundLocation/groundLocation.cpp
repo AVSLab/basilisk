@@ -171,7 +171,6 @@ void GroundLocation::computeAccess()
     std::vector<AccessMsgPayload>::iterator accessMsgIt;
     std::vector<SCPlusStatesMsgPayload>::iterator scStatesMsgIt;
     for(scStatesMsgIt = this->scStatesBuffer.begin(), accessMsgIt = accessMsgBuffer.begin(); scStatesMsgIt != scStatesBuffer.end(); scStatesMsgIt++, accessMsgIt++){
-//    for (c=0; c < this->scStateInMsgs.size(); c++) {
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
         Eigen::Vector3d r_BP_N = cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N;
         Eigen::Vector3d r_BL_N = r_BP_N - this->r_LP_N;

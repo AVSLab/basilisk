@@ -398,7 +398,14 @@ Redirecting Module Output to Stand-Alone C-Wrapped Message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Next consider the scenario where you don't want to have a C module to write to it's own output message
 ``module.SomeOutMsg`` of type ``ParticularMsg``, but rather you want the module to write to a stand-alone
-module-external message of the same type.
+module message ``standAloneMsg`` of the same type.  This can be done with::
+
+    cMsgPy.ParticularMsg_C_addAuthor(module.SomeOutMsg, standAloneMsg)
+
+Any module ``nextModule.SomeInMsg`` that needs to read the output of ``module.SomeOutMsg`` can be setup to
+read the output of the stand-alone message ``standAloneMsg`` instead using:
+
+    nextModule.SomeInMsg.subscribeTo(standAloneMsg)
 
 Reading a Basilisk Message from Python
 --------------------------------------

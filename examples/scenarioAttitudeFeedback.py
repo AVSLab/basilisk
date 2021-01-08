@@ -341,6 +341,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
     if useCMsg:
         # connect to external commanded torque msg
+        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(mrpControlConfig.cmdTorqueOutMsg, cmdTorqueMsg)
         extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
     else:
         # connect to module-internal commanded torque msg
@@ -372,11 +373,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
-    if useCMsg:
-        # re-direct the mrpControlConfig output message to write to the external msg copy
-        # this must occur after InitializeSimulation() which connects C-wrapped message to themselves
-        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(mrpControlConfig.cmdTorqueOutMsg, cmdTorqueMsg)
 
     #
     #   configure a simulation stop time time and execute the simulation run
