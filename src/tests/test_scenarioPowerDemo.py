@@ -30,7 +30,7 @@ import scenarioPowerDemo
 @pytest.mark.scenarioTest
 
 def test_simplePowerDemo(show_plots):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -43,7 +43,7 @@ def test_simplePowerDemo(show_plots):
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
-    except  OSError as err:
+    except OSError as err:
         testFailCount += 1
         testMessages.append("Power tutorial failed.")
 

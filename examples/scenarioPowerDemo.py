@@ -47,9 +47,9 @@ and the rest of Basilisk is shown in the figure below.
 In general, this system can be configured using the following process:
 
 #. Create and configure a set of powerNodeBase modules to represent power system sources and sinks,
-   including their ``nodePowerOutMsgName`` attributes;
+   including their ``nodePowerOutMsg`` attributes;
 #. Create and configure a :ref:`powerStorageBase` instance;
-#. Use the ``addPowerNodeToModel()`` method from the :ref:`powerStorageBase` on the ``nodePowerOutMsgNames``
+#. Use the ``addPowerNodeToModel()`` method from the :ref:`powerStorageBase` on the ``nodePowerOutMsg``
    you configured in step 1 to link the power nodes to the :ref:`powerStorageBase` instance
 #. Run the simulation.
 
@@ -83,9 +83,8 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
-from Basilisk.simulation import simplePowerMonitor, simpleBattery
+from Basilisk.simulation import simpleBattery
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.simulation import eclipse
 from Basilisk.simulation import spacecraftPlus
@@ -93,6 +92,8 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import astroFunctions
+from Basilisk.architecture import messaging2
+
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -111,8 +112,6 @@ def run(show_plots):
 
     # Create a sim module as an empty container
     scenarioSim = SimulationBaseClass.SimBaseClass()
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(1.0)     # update process rate update time
@@ -122,7 +121,7 @@ def run(show_plots):
     # Create a spacecraft around Earth
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -130,8 +129,19 @@ def run(show_plots):
     planet = gravFactory.createEarth()
     planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
+    sun = gravFactory.createSun()
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+    # setup Spice interface for some solar system bodies
+    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
+    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
+                                     timeInitString)
+    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
+
+    # store planet and sun msgs
+    plMsg = gravFactory.spiceObject.planetStateOutMsgs[0]
+    sunMsg = gravFactory.spiceObject.planetStateOutMsgs[1]
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
@@ -154,58 +164,45 @@ def run(show_plots):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.001], [0.001]]
     scenarioSim.AddModelToTask(taskName, scObject)
 
-
     #   Create an eclipse object so the panels don't always work
     eclipseObject = eclipse.Eclipse()
-    eclipseObject.addPositionMsgName(scObject.scStateOutMsgName)
-    eclipseObject.addPlanetName('earth')
-
+    eclipseObject.addSpacecraftToModel(scObject.scStateOutMsg)
+    eclipseObject.addPlanetToModel(plMsg)
+    eclipseObject.sunInMsg.subscribeTo(sunMsg)
     scenarioSim.AddModelToTask(taskName, eclipseObject)
-
-
-    # setup Spice interface for some solar system bodies
-    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , timeInitString
-                                     , spicePlanetNames = ["sun", "earth"]
-                                     )
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
 
     # Create a solar panel
     solarPanel = simpleSolarPanel.SimpleSolarPanel()
     solarPanel.ModelTag = "solarPanel"
-    solarPanel.stateInMsgName = scObject.scStateOutMsgName
-    solarPanel.sunEclipseInMsgName = "eclipse_data_0"
-    solarPanel.sunInMsgName = 'sun'
+    solarPanel.stateInMsg.subscribeTo(scObject.scStateOutMsg)
+    solarPanel.sunEclipseInMsg.subscribeTo(eclipseObject.eclipseOutMsgs[0])
+    solarPanel.sunInMsg.subscribeTo(sunMsg)
     solarPanel.setPanelParameters([1,0,0], 0.2*0.3, 0.20) # Set the panel normal vector in the body frame, the area,
-    solarPanel.nodePowerOutMsgName = "panelPowerMsg"
     scenarioSim.AddModelToTask(taskName, solarPanel)
 
     #   Create a simple power sink
     powerSink = simplePowerSink.SimplePowerSink()
     powerSink.ModelTag = "powerSink2"
-    powerSink.nodePowerOut = -3. # Watts
-    powerSink.nodePowerOutMsgName = "powerSinkMsg"
+    powerSink.nodePowerOut = -3.  # Watts
     scenarioSim.AddModelToTask(taskName, powerSink)
 
     # Create a simpleBattery and attach the sources/sinks to it
     powerMonitor = simpleBattery.SimpleBattery()
     powerMonitor.ModelTag = "powerMonitor"
-    powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
-    powerMonitor.storageCapacity = 10.0 * 3600.0# Convert from W-hr to Joules
-    powerMonitor.storedCharge_Init = 10.0 * 3600.0 # Convert from W-Hr to Joules
-    powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
-    powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
+    powerMonitor.storageCapacity = 10.0 * 3600.0  # Convert from W-hr to Joules
+    powerMonitor.storedCharge_Init = 10.0 * 3600.0  # Convert from W-Hr to Joules
+    powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsg)
+    powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsg)
     scenarioSim.AddModelToTask(taskName, powerMonitor)
 
     # Setup logging on the power system
-    scenarioSim.TotalSim.logThisMessage(solarPanel.nodePowerOutMsgName, testProcessRate)
-    scenarioSim.TotalSim.logThisMessage(powerSink.nodePowerOutMsgName, testProcessRate)
-    scenarioSim.TotalSim.logThisMessage(powerMonitor.batPowerOutMsgName, testProcessRate)
+    spLog = solarPanel.nodePowerOutMsg.recorder()
+    psLog = powerSink.nodePowerOutMsg.recorder()
+    pmLog = powerMonitor.batPowerOutMsg.recorder()
+    scenarioSim.AddModelToTask(taskName, spLog)
+    scenarioSim.AddModelToTask(taskName, psLog)
+    scenarioSim.AddModelToTask(taskName, pmLog)
 
-    # Also log attitude/orbit parameters
-    scenarioSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-    scenarioSim.TotalSim.logThisMessage(planet.bodyInMsgName, testProcessRate)
     # Need to call the self-init and cross-init methods
     scenarioSim.InitializeSimulation()
 
@@ -220,27 +217,22 @@ def run(show_plots):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower")
-    sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower")
-    storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
-    netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
+    supplyData = spLog.netPower
+    sinkData = psLog.netPower
+    storageData = pmLog.storageLevel
+    netData = pmLog.currentNetPower
 
-    scOrbit = scenarioSim.pullMessageLogData(scObject.scStateOutMsgName + ".r_BN_N", list(range(3)))
-    scAtt = scenarioSim.pullMessageLogData(scObject.scStateOutMsgName+".sigma_BN", list(range(3)))
-
-    planetOrbit = scenarioSim.pullMessageLogData(planet.bodyInMsgName+".PositionVector", list(range(3)))
-
-    tvec = supplyData[:,0]
+    tvec = spLog.times()
     tvec = tvec * macros.NANO2HOUR
 
     #   Plot the power states
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    plt.plot(tvec,storageData[:,1]/3600.,label='Stored Power (W-Hr)')
-    plt.plot(tvec,netData[:,1],label='Net Power (W)')
-    plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
-    plt.plot(tvec,sinkData[:,1],label='Power Draw (W)')
+    plt.plot(tvec, storageData/3600., label='Stored Power (W-Hr)')
+    plt.plot(tvec, netData, label='Net Power (W)')
+    plt.plot(tvec, supplyData, label='Panel Power (W)')
+    plt.plot(tvec, sinkData, label='Power Draw (W)')
     plt.xlabel('Time (Hr)')
     plt.ylabel('Power (W)')
     plt.grid(True)
