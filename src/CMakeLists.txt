@@ -88,6 +88,15 @@ function(create_symlinks destinationPath)
 endfunction(create_symlinks)
 
 
+function(add_message_headers)
+	file(GLOB MESSAGE_HEADER_FILES
+	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
+	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
+	        )
+	Message(STATUS "This is messages header " ${MESSAGE_HEADER_FILES})
+	add_custom_target(MessageHeader SOURCES ${MESSAGE_HEADER_FILES})
+
+endfunction(add_message_headers)
 
 
 
@@ -570,8 +579,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simFswInterfaceMessages" SI
 
 generate_package_targets("${SIM_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-
-
+add_message_headers()
 
 
 ##################
