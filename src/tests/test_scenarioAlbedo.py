@@ -27,7 +27,6 @@
 import sys, os, inspect
 import pytest
 from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import macros
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -53,7 +52,7 @@ import scenarioAlbedo
 @pytest.mark.scenarioTest
 
 def test_scenarioAlbedo(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
@@ -61,7 +60,7 @@ def test_scenarioAlbedo(show_plots, albedoData, multipleInstrument, multiplePlan
     testMessages = []  # create empty array to store test log messages
 
     try:
-        dataAlb, simulationTime, simulationTimeStep, figureList = scenarioAlbedo.run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 100)
+        figureList = scenarioAlbedo.run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 25)
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)

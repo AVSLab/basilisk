@@ -38,8 +38,8 @@ Simulation Scenario Setup Details
 A simulation process is created which contains both the spacecraft simulation module,
 as well as one albedo module from :ref:`albedo` module using CSS configuration.
 The dynamics simulation is setup using :ref:`SpacecraftPlus`.
-The CSS module is created using :ref:`coarse_sun_sensor`.
-The input message name sunPositionInMsgName specifies an input message that contains the sun's position.
+The CSS module is created using :ref:`coarseSunSensor`.
+The input message ``sunPositionInMsg`` specifies an input message that contains the sun's position.
 
 Albedo module calculates the albedo value for any instrument location. The instrument configuration can be set
 through the variables::
@@ -57,15 +57,15 @@ The instrument configuration is added to the albedo module through::
 Both method can be used for the same purpose. Note that this commands can be repeated if the albedo should be computed
 for different instruments.
 
-Every time an instrument is added to the albedo module, an automated output message name is created.
-For `albModule` is "AlbedoModule_0_data" as the ModelTag string is ``AlbedoModule`` and the instrument number is 0.
-This output name is created in the  ``addInstrumentConfig()`` function.
+Every time an instrument is added to the albedo module, an automated output message is created.
+For ``albModule`` is "AlbedoModule_0_data" as the ModelTag string is ``AlbedoModule`` and the instrument number is 0.
+This output is added to the ``albOutMsgs`` module vector within the  ``addInstrumentConfig()`` function.
 
 Multiple planets can be added to the albedo module through::
 
-    albModule.addPlanetandAlbedoAverageModel(planetSpiceName)
-    albModule.addPlanetandAlbedoAverageModel(planetSpiceName, ALB_avg, numLat, numLon)
-    albModule.addPlanetandAlbedoDataModel(planetSpiceName, dataPath, fileName)
+    albModule.addPlanetandAlbedoAverageModel(SpicePlanetStateMsg)
+    albModule.addPlanetandAlbedoAverageModel(SpicePlanetStateMsg, ALB_avg, numLat, numLon)
+    albModule.addPlanetandAlbedoDataModel(SpicePlanetStateMsg, dataPath, fileName)
 
 based on the albedo model to be used for the planet. Note that this commands should be repeated for adding multiple
 planets. However, the albedo module gives a summed albedo value at the instrument not a vector of values corresponding
@@ -141,7 +141,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros, simIncludeGravBody
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.simulation import coarseSunSensor
 from Basilisk.simulation import albedo
 from Basilisk.simulation import eclipse
 from Basilisk.utilities import orbitalMotion as om
@@ -150,13 +150,14 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import spacecraftPlus
 
 # import message declarations
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, simTimeStep):
     """
@@ -186,13 +187,10 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         simulationTimeStep = macros.sec2nano(simTimeStep)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
     # Create sun message
-    sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
+    sunPositionMsg = messaging2.SpicePlanetStateMsgPayload()
     sunPositionMsg.PositionVector = [-om.AU * 1000., 0.0, 0.0]
-    sunMessage = "sun_message"
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               sunMessage,
-                               sunPositionMsg)
+    sunMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsg)
+
     # Create planet message (earth)
     gravFactory = simIncludeGravBody.gravBodyFactory()
     # Create planet message (earth)
@@ -200,32 +198,27 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     planet1 = gravFactory.createEarth()
     planet1.isCentralBody = True  # ensure this is the central gravitational body
     req1 = planet1.radEquator
-    planetPositionMsg1 = simMessages.SpicePlanetStateSimMsg()
+
+    planetPositionMsg1 = messaging2.SpicePlanetStateMsgPayload()
     planetPositionMsg1.PositionVector = [0., 0., 0.]
     planetPositionMsg1.PlanetName = planetCase1
     planetPositionMsg1.J20002Pfix = np.identity(3)
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               'earth_planet_data',
-                               planetPositionMsg1)
+    pl1Msg = messaging2.SpicePlanetStateMsg().write(planetPositionMsg1)
     if multiplePlanet:
         # Create planet message (moon)
         planetCase2 = 'moon'
-        planetPositionMsg2 = simMessages.SpicePlanetStateSimMsg()
+        planetPositionMsg2 = messaging2.SpicePlanetStateMsgPayload()
         planetPositionMsg2.PositionVector = [0., 384400. * 1000, 0.]
         planetPositionMsg2.PlanetName = planetCase2
         planetPositionMsg2.J20002Pfix = np.identity(3)
-        unitTestSupport.setMessage(scSim.TotalSim,
-                                   simProcessName,
-                                   'moon_planet_data',
-                                   planetPositionMsg2)
+        pl2Msg = messaging2.SpicePlanetStateMsg().write(planetPositionMsg2)
+
     #
     # Initialize spacecraftPlus object and set properties
     #
     oe = om.ClassicElements()
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "SpacecraftBody1"
-    scObject.scStateOutMsgName = "Spacecraft1"
+    scObject.ModelTag = "bsk-Sat"
     rLEO = req1 + 500 * 1000  # m
     # Define the simulation inertia
     I = [900., 0., 0.,
@@ -263,47 +256,51 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
 
     # Add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
+
     #
     # Albedo Module
     #
     albModule = albedo.Albedo()
     albModule.ModelTag = "AlbedoModule"
-    albModule.spacecraftStateInMsgName = scObject.scStateOutMsgName
-    albModule.sunPositionInMsgName = sunMessage
-    #
-    # CSS-1
-    #
-    CSS1 = coarse_sun_sensor.CoarseSunSensor()
-    CSS1.ModelTag = "CSS1"
-    CSS1.cssDataOutMsgName = "CSS1_output"
-    CSS1.stateInMsgName = albModule.spacecraftStateInMsgName
-    CSS1.sunInMsgName = albModule.sunPositionInMsgName
-    CSS1.fov = 80.*macros.D2R
-    CSS1.maxOutput = 1.0
-    CSS1.nHat_B = np.array([1., 0., 0.])
-    #
+    albModule.spacecraftStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    albModule.sunPositionInMsg.subscribeTo(sunMsg)
+
     if useEclipse:
         albModule.eclipseCase = True
         eclipseObject = eclipse.Eclipse()
-        eclipseObject.sunInMsgName = sunMessage
-        eclipseObject.addPositionMsgName(scObject.scStateOutMsgName)
-        eclipseObject.addPlanetName(planetCase1)
+        eclipseObject.sunInMsg.subscribeTo(sunMsg)
+        eclipseObject.addSpacecraftToModel(scObject.scStateOutMsg)
+        eclipseObject.addPlanetToModel(pl1Msg)
         scSim.AddModelToTask(simTaskName, eclipseObject)
-        CSS1.sunEclipseInMsgName = "eclipse_data_0"
+
+    def setupCSS(CSS):
+        CSS.stateInMsg.subscribeTo(scObject.scStateOutMsg)
+        CSS.sunInMsg.subscribeTo(sunMsg)
+        CSS.fov = 80. * macros.D2R
+        CSS.maxOutput = 1.0
+        CSS.nHat_B = np.array([1., 0., 0.])
+        if useEclipse:
+            CSS.sunEclipseInMsg.subscribeTo(eclipseObject.eclipseOutMsgs[0])
+
     #
+    # CSS-1
+    #
+    CSS1 = coarseSunSensor.CoarseSunSensor()
+    CSS1.ModelTag = "CSS1"
+    setupCSS(CSS1)
+
     if albedoData:
         dataPath = os.path.abspath(bskPath + "/supportData/AlbedoData/")
         fileName = "Earth_ALB_2018_CERES_All_5x5.csv"
-        albModule.addPlanetandAlbedoDataModel(planetCase1, dataPath, fileName)
+        albModule.addPlanetandAlbedoDataModel(pl1Msg, dataPath, fileName)
     else:
         ALB_avg = 0.5
         numLat = 200
         numLon = 200
-        albModule.addPlanetandAlbedoAverageModel(planetCase1, ALB_avg, numLat, numLon)
+        albModule.addPlanetandAlbedoAverageModel(pl1Msg, ALB_avg, numLat, numLon)
     #
     if multiplePlanet:
-        albModule.addPlanetandAlbedoAverageModel(planetCase2)
+        albModule.addPlanetandAlbedoAverageModel(pl2Msg)
     #
     # Add instrument to albedo module
     #
@@ -311,40 +308,51 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     config1.fov = CSS1.fov
     config1.nHat_B = CSS1.nHat_B
     config1.r_IB_B = CSS1.r_PB_B
-    albModule.addInstrumentConfig(CSS1.ModelTag, config1)
+    albModule.addInstrumentConfig(config1)
     # CSS albedo input message names should be defined after adding instrument to module
-    CSS1.albedoInMsgName = albModule.albOutMsgNames[0]
+    CSS1.albedoInMsg.subscribeTo(albModule.albOutMsgs[0])
     if multipleInstrument:
         # CSS-2
-        CSS2 = coarse_sun_sensor.CoarseSunSensor(CSS1)
+        CSS2 = coarseSunSensor.CoarseSunSensor()
         CSS2.ModelTag = "CSS2"
-        CSS2.cssDataOutMsgName = "CSS2_output"
+        setupCSS(CSS2)
         CSS2.nHat_B = np.array([-1., 0., 0.])
-        albModule.addInstrumentConfig(CSS2.ModelTag, CSS2.fov, CSS2.nHat_B, CSS2.r_PB_B)
-        scSim.TotalSim.logThisMessage(albModule.albOutMsgNames[1], simulationTimeStep)
-        CSS2.albedoInMsgName = albModule.albOutMsgNames[1]
+        albModule.addInstrumentConfig(CSS2.fov, CSS2.nHat_B, CSS2.r_PB_B)
+        CSS2.albedoInMsg.subscribeTo(albModule.albOutMsgs[1])
         # CSS-3
-        CSS3 = coarse_sun_sensor.CoarseSunSensor(CSS1)
+        CSS3 = coarseSunSensor.CoarseSunSensor()
         CSS3.ModelTag = "CSS3"
-        CSS3.cssDataOutMsgName = "CSS3_output"
+        setupCSS(CSS3)
         CSS3.nHat_B = np.array([0., -1., 0.])
-        albModule.addInstrumentConfig(CSS3.ModelTag, CSS3.fov, CSS3.nHat_B, CSS3.r_PB_B)
-        scSim.TotalSim.logThisMessage(albModule.albOutMsgNames[2], simulationTimeStep)
-        CSS3.albedoInMsgName = albModule.albOutMsgNames[2]
+        albModule.addInstrumentConfig(CSS3.fov, CSS3.nHat_B, CSS3.r_PB_B)
+        CSS3.albedoInMsg.subscribeTo(albModule.albOutMsgs[2])
     #
     # Add albedo and CSS to task and setup logging before the simulation is initialized
     #
     scSim.AddModelToTask(simTaskName, albModule)
-    scSim.TotalSim.logThisMessage(albModule.albOutMsgNames[0], simulationTimeStep)
+
     scSim.AddModelToTask(simTaskName, CSS1)
-    scSim.TotalSim.logThisMessage(CSS1.cssDataOutMsgName, simulationTimeStep)
+    css1Log = CSS1.cssDataOutMsg.recorder()
+    scSim.AddModelToTask(simTaskName, css1Log)
     if multipleInstrument:
-        scSim.TotalSim.logThisMessage(albModule.albOutMsgNames[1], simulationTimeStep)
-        scSim.TotalSim.logThisMessage(albModule.albOutMsgNames[2], simulationTimeStep)
         scSim.AddModelToTask(simTaskName, CSS2)
-        scSim.TotalSim.logThisMessage(CSS2.cssDataOutMsgName, simulationTimeStep)
         scSim.AddModelToTask(simTaskName, CSS3)
-        scSim.TotalSim.logThisMessage(CSS3.cssDataOutMsgName, simulationTimeStep)
+
+    # setup logging
+    dataLog = scObject.scStateOutMsg.recorder()
+    scSim.AddModelToTask(simTaskName, dataLog)
+    alb0Log = albModule.albOutMsgs[0].recorder()
+    scSim.AddModelToTask(simTaskName, alb0Log)
+    if multipleInstrument:
+        alb1Log = albModule.albOutMsgs[1].recorder()
+        scSim.AddModelToTask(simTaskName, alb1Log)
+        alb2Log = albModule.albOutMsgs[2].recorder()
+        scSim.AddModelToTask(simTaskName, alb2Log)
+        css2Log = CSS2.cssDataOutMsg.recorder()
+        scSim.AddModelToTask(simTaskName, css2Log)
+        css3Log = CSS3.cssDataOutMsg.recorder()
+        scSim.AddModelToTask(simTaskName, css3Log)
+
     #
     # Initialize Simulation
     #
@@ -381,45 +389,43 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     #
     n = int(simulationTime/simulationTimeStep + 1)
     if multipleInstrument:
-        dataCSS = np.zeros(shape=(n, 4))
-        dataAlb = np.zeros(shape=(n, 4))
+        dataCSS = np.zeros(shape=(n, 3))
+        dataAlb = np.zeros(shape=(n, 3))
     else:
         dataCSS = np.zeros(shape=(n, 2))
         dataAlb = np.zeros(shape=(n, 2))
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    dataCSS[:, 0:2] = scSim.pullMessageLogData(CSS1.cssDataOutMsgName + ".OutputData", list(range(1)))
-    dataAlb[:, 0:2] = scSim.pullMessageLogData(albModule.albOutMsgNames[0] + ".albedoAtInstrument", list(range(1)))
+    posData = dataLog.r_BN_N
+    dataCSS[:, 0] = css1Log.OutputData
+    dataAlb[:, 0] = alb0Log.albedoAtInstrument
     if multipleInstrument:
-        dataCSS2 = scSim.pullMessageLogData(CSS2.cssDataOutMsgName + ".OutputData", list(range(1)))
-        dataCSS3 = scSim.pullMessageLogData(CSS3.cssDataOutMsgName + ".OutputData", list(range(1)))
-        dataAlbA2 = scSim.pullMessageLogData(albModule.albOutMsgNames[1] + ".albedoAtInstrument", list(range(1)))
-        dataAlbA3 = scSim.pullMessageLogData(albModule.albOutMsgNames[2] + ".albedoAtInstrument", list(range(1)))
-        dataCSS[:, 2] = dataCSS2[:, 1]
-        dataCSS[:, 3] = dataCSS3[:, 1]
-        dataAlb[:, 2] = dataAlbA2[:, 1]
-        dataAlb[:, 3] = dataAlbA3[:, 1]
+        dataCSS[:, 1] = css2Log.OutputData
+        dataCSS[:, 2] = css3Log.OutputData
+        dataAlb[:, 1] = alb1Log.albedoAtInstrument
+        dataAlb[:, 2] = alb2Log.albedoAtInstrument
     np.set_printoptions(precision=16)
+
     #
     # Plot the results
     #
     plt.close("all")        # clears out plots from earlier test runs
     plt.figure(1)
+    timeAxis = dataLog.times()
     if multipleInstrument:
-        for idx in range(1, 4):
-            plt.plot(dataAlb[:, 0] * macros.NANO2SEC, dataAlb[:, idx],
-                     linewidth=2, alpha=0.7, color=unitTestSupport.getLineColor(2 * idx, 6),
+        for idx in range(3):
+            plt.plot(timeAxis * macros.NANO2SEC, dataAlb[:, idx],
+                     linewidth=2, alpha=0.7, color=unitTestSupport.getLineColor(idx, 3),
                      label='Albedo$_{'+str(idx)+'}$')
             if not multiplePlanet:
-                plt.plot(dataCSS[:, 0]*macros.NANO2SEC, dataCSS[:, idx],
-                         '--', linewidth=1.5, color=unitTestSupport.getLineColor(2 * idx - 1, 6),
+                plt.plot(timeAxis*macros.NANO2SEC, dataCSS[:, idx],
+                         '--', linewidth=1.5, color=unitTestSupport.getLineColor(idx, 3),
                          label='CSS$_{'+str(idx)+'}$')
     else:
-        plt.plot(dataAlb[:, 0] * macros.NANO2SEC, dataAlb[:, 1],
-                 linewidth=2, alpha=0.7, color=unitTestSupport.getLineColor(1, 2),
+        plt.plot(timeAxis * macros.NANO2SEC, dataAlb,
+                 linewidth=2, alpha=0.7, color=unitTestSupport.getLineColor(0, 2),
                  label='Alb$_{1}$')
         if not multiplePlanet:
-            plt.plot(dataCSS[:, 0] * macros.NANO2SEC, dataCSS[:, 1],
-                     '--', linewidth=1.5, color=unitTestSupport.getLineColor(2, 2),
+            plt.plot(timeAxis * macros.NANO2SEC, dataCSS,
+                     '--', linewidth=1.5, color=unitTestSupport.getLineColor(1, 2),
                      label='CSS$_{1}$')
     if multiplePlanet:
         plt.legend(loc='upper center')
@@ -437,8 +443,8 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         fig = plt.gcf()
         ax = fig.gca()
         ax.ticklabel_format(useOffset=False, style='plain')
-        rData = np.linalg.norm(posData[:, 1:4], axis=1) / 1000.
-        plt.plot(posData[:, 0] * macros.NANO2SEC, rData, color='#aa0000')
+        rData = np.linalg.norm(posData, axis=1) / 1000.
+        plt.plot(timeAxis * macros.NANO2SEC, rData, color='#aa0000')
         plt.xlabel('Time [s]')
         plt.ylabel('Radius [km]')
         pltName = fileNameString + str(2) + str(int(albedoData)) + str(int(multipleInstrument)) + str(int(multiplePlanet)) + str(
@@ -464,7 +470,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         plt.show()
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-    return dataAlb, simulationTime, simulationTimeStep, figureList
+    return figureList
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
