@@ -125,6 +125,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
+from Basilisk.architecture import messaging2
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -165,7 +166,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -195,18 +196,14 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
         magModule.ModelTag = "WMM"
         magModule.dataPath = bskPath + '/supportData/MagneticField/'
         # set epoch date/time message
-        magModule.epochInMsgName = "simEpoch"
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
-        unitTestSupport.setMessage(scSim.TotalSim,
-                                   simProcessName,
-                                   magModule.epochInMsgName,
-                                   epochMsg)
+        magModule.epochInMsg.subscribeTo(epochMsg)
         if orbitCase == 'elliptical':
             magModule.envMinReach = 10000 * 1000.
             magModule.envMaxReach = 20000 * 1000.
 
     # add spacecraft to the magnetic field module so it can read the sc position messages
-    magModule.addSpacecraftToModel(scObject.scStateOutMsgName)  # this command can be repeated if multiple
+    magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
 
     # add the magnetic field module to the simulation task stack
     scSim.AddModelToTask(simTaskName, magModule)
@@ -216,14 +213,13 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     TAM.ModelTag = "TAM_sensor"
     # specify the optional TAM variables
     TAM.scaleFactor = 1.0
-    TAM.tamDataOutMsgName = "TAM_output"
     TAM.senNoiseStd = [100e-9,  100e-9, 100e-9]
     if useBias:
         TAM.senBias = [0, 0, -1e-6]  # Tesla
     if useBounds:
         TAM.maxOutput = 3.5e-4  # Tesla
         TAM.minOutput = -3.5e-4  # Tesla
-
+    TAM.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, TAM)
 
     #
@@ -266,21 +262,20 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(magModule.envOutMsgNames[0], samplingTime)
-    scSim.TotalSim.logThisMessage(TAM.tamDataOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    TAM.magIntMsgName = magModule.envOutMsgNames[0]  # get mag field model output message as an input message to TAM
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    magLog = magModule.envOutMsgs[0].recorder(samplingTime)
+    tamLog = TAM.tamDataOutMsg.recorder(samplingTime)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, magLog)
+    scSim.AddModelToTask(simTaskName, tamLog)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    TAM.magInMsg.subscribeTo(magModule.envOutMsgs[0])
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
-    #
-    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
-    #   cross_init() and reset() routines on each module.
-    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
-    #   then the all messages are auto-discovered that are shared across different BSK threads.
-    #
     scSim.InitializeSimulation()
 
     #
@@ -292,9 +287,9 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     #
     #   retrieve the logged data
     #
-    magData = scSim.pullMessageLogData(magModule.envOutMsgNames[0] + '.magField_N', list(range(3)))
-    tamData = scSim.pullMessageLogData(TAM.tamDataOutMsgName + '.OutputData', list(range(3)))
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    magData = magLog.magField_N
+    tamData = tamLog.OutputData
+    posData = dataLog.r_BN_N
 
     np.set_printoptions(precision=16)
 
@@ -310,14 +305,15 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     ax.ticklabel_format(useOffset=False, style='sci')
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     rData = []
-    for idx in range(0, len(posData)):
-        rMag = np.linalg.norm(posData[idx, 1:4])
+    timeAxis = dataLog.times()
+    for idx in range(len(posData)):
+        rMag = np.linalg.norm(posData[idx])
         rData.append(rMag / 1000.)
-    plt.plot(posData[:, 0] * macros.NANO2SEC / P, rData, color='#aa0000')
+    plt.plot(timeAxis * macros.NANO2SEC / P, rData, color='#aa0000')
     if orbitCase == 'elliptical':
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, [magModule.envMinReach / 1000.] * len(rData), color='#007700',
+        plt.plot(timeAxis * macros.NANO2SEC / P, [magModule.envMinReach / 1000.] * len(rData), color='#007700',
                  dashes=[5, 5, 5, 5])
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, [magModule.envMaxReach / 1000.] * len(rData),
+        plt.plot(timeAxis * macros.NANO2SEC / P, [magModule.envMaxReach / 1000.] * len(rData),
                  color='#007700', dashes=[5, 5, 5, 5])
     plt.xlabel('Time [orbits]')
     plt.ylabel('Radius [km]')
@@ -331,8 +327,8 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='sci')
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    for idx in range(1, 4):
-        plt.plot(tamData[:, 0] * macros.NANO2SEC / P, tamData[:, idx] * 1e9,
+    for idx in range(3):
+        plt.plot(timeAxis * macros.NANO2SEC / P, tamData[:, idx] * 1e9,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$TAM_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -356,8 +352,8 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 if __name__ == "__main__":
     run(
         True,          # show_plots (True, False)
-        'circular',  # orbit Case (circular, elliptical)
-        'Earth',    # planet Case (Earth, Jupiter)
+        'elliptical',  # orbit Case (circular, elliptical)
+        'Jupiter',    # planet Case (Earth, Jupiter)
         False,        # useBias
         False        # useBounds
     )
