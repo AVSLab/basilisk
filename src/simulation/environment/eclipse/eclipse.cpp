@@ -45,6 +45,26 @@ void Eclipse::CrossInit()
 {
 }
 
+
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void Eclipse::Reset(uint64_t CurrenSimNanos)
+{
+    if (!this->sunInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to a spacecraft state output message.");
+    }
+
+    if (this->positionInMsgs.size() == 0) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft.");
+    }
+
+    if (this->planetInMsgs.size() == 0) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet.");
+    }
+
+}
+
 /*! This method reads the spacecraft state, spice planet states and the sun position from the messaging system.
  @return void
  */
