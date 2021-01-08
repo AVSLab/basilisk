@@ -51,7 +51,8 @@ public:
     //! constructor
     const messageType& operator()(){
         if (!this->initialized) {
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are trying to read an un-connected message.");
+            messageType var;
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are trying to read an un-connected message of type %s\nThis program is about to self destruct.",  typeid(var).name());
         }
         return *this->payloadPointer;
 
