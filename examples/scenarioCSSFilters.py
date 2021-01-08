@@ -30,7 +30,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
 When the simulation completes several plots are written summarizing the filter performances.
 
-The simulation reads the Sun's position from `SpiceInterface`. By creating this
+The simulation reads the Sun's position from :ref:`SpiceInterface`. By creating this
 spice object and adding it to the task, the spice object automatically writes out
 the ephemeris messages.
 
@@ -43,7 +43,7 @@ orientation rotates constantly about the 3rd body axis.
 
 The CSS modules must first be individual created and configured. This simulation
 uses 8 sun sensors, in 2 pyramids of 4 units. The code that sets up a constellation
-displays another method than used in :ref:`scenarioCSS`.  In this
+displays another method that is used in :ref:`scenarioCSS`.  In this
 case instead of creating a list of CSS and adding the list to the constellation,
 the ``appendCSS`` command is used.
 
@@ -73,7 +73,7 @@ construction process.
 The filters can now be initialized.  These are configured very similarly, but
 the nature of the filters lead to slight differences. All of the filters output
 a Navigation message which outputs the sun heading for other modules to use,
-but they also output a filtering message (:ref:`sunlineFilterFswMsg`), containing
+but they also output a filtering message (:ref:`sunlineFilterMsgPayload`), containing
 observations, post-fit residuals, covariances, and full states. This allows users
 to check in on filter performances efficiently, and is used in this tutorial.
 This first allows us to see when observations occur throughout the scenario
@@ -130,7 +130,7 @@ to the true state are plotted. Further documentation can be found in :ref:`sunli
 These plots show good state estimation throughout the simulation.
 The mean stays close to the truth, the states do appear slightly noisy at times.
 
-The post fit residuals, show a fully functional filter, with no issues of observabilty:
+The post fit residuals, show a fully functional filter, with no issues of observability:
 
 .. image:: /_images/Scenarios/scenario_Filters_PostFituKF.svg
    :align: center
@@ -157,7 +157,8 @@ The CKF switch is the number of measurements that are processed using a classica
 linear Kalman filter when the filter is first run. This allows for the covariance
 to shrink before employing the EKF, increasing the robustness.
 
-The states vs expected states are plotted, as well as the state error plots along with the covariance envelopes. Further documentation can be found in :ref:`sunlineEKF`
+The states vs expected states are plotted, as well as the state error plots along with the covariance
+envelopes. Further documentation can be found in :ref:`sunlineEKF`
 
 .. image:: /_images/Scenarios/scenario_Filters_StatesPlotEKF.svg
    :align: center
@@ -165,7 +166,8 @@ The states vs expected states are plotted, as well as the state error plots alon
 .. image:: /_images/Scenarios/scenario_Filters_StatesExpectedEKF.svg
    :align: center
 
-These plots show good state estimation throughout the simulation and despite the patches of time with fewer measurements. The covariance stays close to the mean, without exesive noise.
+These plots show good state estimation throughout the simulation and despite the patches of time with
+fewer measurements. The covariance stays close to the mean, without exesive noise.
 
 The post fit residuals, give further confirmation of a working filter:
 
@@ -177,12 +179,13 @@ Setup 3 - OEKF
 --------------
 
 The 3rd scenario uses a second type of Extended Kalman Filter (:ref:`okeefeEKF`).
-This filter takes in fewer states as it only estimates the sunheading. In order to
+This filter takes in fewer states as it only estimates the sun heading. In order to
 propagate it, it estimates the omega vector from the two last measurements.
 
 The set up is nearly identical to the EKF, with the exception of the size of the
 vectors and matrices (only 3 states are estimated now). Furthermore, the
-rotation rate of the spacecraft, omega, is initialized. More in-depth documentation on the filter specifics are found in :ref:`okeefeEKF`.
+rotation rate of the spacecraft, omega, is initialized. More in-depth documentation on the filter
+specifics are found in :ref:`okeefeEKF`.
 
 .. image:: /_images/Scenarios/scenario_Filters_StatesPlotOEKF.svg
    :align: center
@@ -268,19 +271,15 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-from Basilisk.simulation import spacecraftPlus, spice_interface, coarse_sun_sensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF, fswMessages
+from Basilisk.simulation import spacecraftPlus, spiceInterface, coarseSunSensor
+from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
+from Basilisk.architecture import messaging2
 
 import SunLineKF_test_utilities as Fplot
 
 
 def setupUKFData(filterObject):
     """Setup UKF Filter Data"""
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
-
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
@@ -302,11 +301,6 @@ def setupUKFData(filterObject):
 
 def setupEKFData(filterObject):
     """Setup EKF Filter Data"""
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
-
     filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -324,11 +318,6 @@ def setupEKFData(filterObject):
 
 def setupOEKFData(filterObject):
     """Setup OEKF Filter Data"""
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
-
     filterObject.omega = [0., 0., 0.]
     filterObject.state = [1.0, 0.1, 0.0]
     filterObject.x = [0.0, 0.0, 0.0]
@@ -344,11 +333,6 @@ def setupOEKFData(filterObject):
 
 def setupSEKFData(filterObject):
     """Setup SEKF Filter Data"""
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
-
     filterObject.state = [1.0, 0.1, 0., 0., 0.]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
@@ -366,11 +350,6 @@ def setupSEKFData(filterObject):
 
 def setupSuKFData(filterObject):
     """Setup SuKF Filter Data"""
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
-
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
@@ -382,7 +361,6 @@ def setupSuKFData(filterObject):
                           0.0, 0.0, 0.0, 0.01, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.01, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
-
 
     qNoiseIn = np.identity(6)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001**2
@@ -398,6 +376,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     At the end of the python script you can specify the following example parameters.
 
     Args:
+        saveFigures (bool): flag to save off the figures
         show_plots (bool): Determines if the script should display plots
         FilterType (str): {'uKF', 'EKF', 'OEKF', 'SEKF', 'SuKF'}
         simTime (float): The length of the simulation time
@@ -426,27 +405,15 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
     #   setup the simulation tasks/objects
     #
-    # The date used is of no importance for this scenario.  The epoch information
-    # is set through the epoch input message.
-    spiceObject = spice_interface.SpiceInterface()
-    spiceObject.planetNames = spice_interface.StringVector(["sun"])
-    spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    spiceObject.outputBufferCount = 100000
-    spiceObject.epochInMsgName = "simEpoch"
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2021 MAY 04 07:47:49.965 (UTC)')
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               spiceObject.epochInMsgName,
-                               epochMsg)
-
-    scSim.TotalSim.logThisMessage('sun_planet_data', simulationTimeStep)
-    scSim.AddModelToTask(simTaskName, spiceObject)
-
+    # create sun position message at origin
+    sunMsgData = messaging2.SpicePlanetStateMsgPayload()
+    sunMsg = messaging2.SpicePlanetStateMsg().write(sunMsgData)
+    sunLog = sunMsg.recorder()
+    scSim.AddModelToTask(simTaskName, sunLog)
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -463,12 +430,14 @@ def run(saveFigures, show_plots, FilterType, simTime):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[-0.1*macros.D2R], [0.5*macros.D2R], [0.5*macros.D2R]]   # rad/s - omega_BN_B
 
-    scSim.TotalSim.logThisMessage('inertial_state_output', simulationTimeStep)
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
+    dataLog = scObject.scStateOutMsg.recorder()
+    scSim.AddModelToTask(simTaskName, dataLog)
+
 
     # Make a CSS constelation
-    cssConstelation = coarse_sun_sensor.CSSConstellation()
+    cssConstelation = coarseSunSensor.CSSConstellation()
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
         [0.70710678118654746, -0.5, -0.5],
@@ -480,34 +449,39 @@ def run(saveFigures, show_plots, FilterType, simTime):
         [-0.70710678118654746, -0.70710678118654757, 0.0]
     ]
     counter = 0
+    def setupCSS(CSS):
+        CSS.minOutput = 0.
+        CSS.senNoiseStd = 0.017
+        CSS.sunInMsg.subscribeTo(sunMsg)
+        CSS.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     for CSSHat in CSSOrientationList:
-        newCSS = coarse_sun_sensor.CoarseSunSensor()
+        newCSS = coarseSunSensor.CoarseSunSensor()
         newCSS.ModelTag = "CSS" + str(counter)
         counter += 1
-        newCSS.minOutput = 0.
-        newCSS.senNoiseStd = 0.017
+        setupCSS(newCSS)
         newCSS.nHat_B = CSSHat
         cssConstelation.appendCSS(newCSS)
-    cssConstelation.outputConstellationMessage = 'css_sensors_data'
     scSim.AddModelToTask(simTaskName, cssConstelation)
 
     #
-    #   Add the normals to the vehicle Config data struct
+    #   add the FSW CSS information
     #
-    cssConstVehicle = fswMessages.CSSConfigFswMsg()
+    cssConstVehicle = messaging2.CSSConfigMsgPayload()
 
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS = messaging2.CSSUnitConfigMsgPayload()
         newCSS.nHat_B = CSSHat
         newCSS.CBias = 1.0
         totalCSSList.append(newCSS)
     cssConstVehicle.nCSS = len(CSSOrientationList)
     cssConstVehicle.cssVals = totalCSSList
+
+    cssConstMsg = messaging2.CSSConfigMsg().write(cssConstVehicle)
+
     #
     # Setup filter
     #
-
     numStates = 6
     if FilterType == 'EKF':
         moduleConfig = sunlineEKF.sunlineEKFConfig()
@@ -528,7 +502,6 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
-
 
     if FilterType == 'uKF':
         moduleConfig = sunlineUKF.SunlineUKFConfig()
@@ -551,7 +524,6 @@ def run(saveFigures, show_plots, FilterType, simTime):
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
         scSim.AddVariableForLogging('SunlineSEKF.bVec_B', simulationTimeStep, 0, 2)
 
-
     if FilterType == 'SuKF':
         numStates = 6
         moduleConfig = sunlineSuKF.SunlineSuKFConfig()
@@ -563,11 +535,13 @@ def run(saveFigures, show_plots, FilterType, simTime):
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
         scSim.AddVariableForLogging('SunlineSuKF.bVec_B', simulationTimeStep, 0, 2)
 
+    moduleConfig.cssDataInMsg.subscribeTo(cssConstelation.constellationOutMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConstMsg)
 
-    scSim.TotalSim.logThisMessage('sunline_state_estimate', simulationTimeStep)
-    scSim.TotalSim.logThisMessage('sunline_filter_data', simulationTimeStep)
-
-    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, "css_config_data", cssConstVehicle)
+    navLog = moduleConfig.navStateOutMsg.recorder()
+    filtLog = moduleConfig.filtDataOutMsg.recorder()
+    scSim.AddModelToTask(simTaskName, navLog)
+    scSim.AddModelToTask(simTaskName, filtLog)
 
     #
     #   initialize Simulation
@@ -580,26 +554,27 @@ def run(saveFigures, show_plots, FilterType, simTime):
     scSim.ConfigureStopTime(simulationTime)
 
     # Time the runs for performance comparisons
-    timeStart = time.time()
     scSim.ExecuteSimulation()
-    timeEnd = time.time()
-
 
     #
     #   retrieve the logged data
     #
+    def addTimeColumn(time, data):
+        return np.transpose(np.vstack([[time], np.transpose(data)]))
 
     # Get messages that will make true data
-    OutSunPos = scSim.pullMessageLogData('sun_planet_data' + ".PositionVector", list(range(3)))
-    Outr_BN_N = scSim.pullMessageLogData('inertial_state_output' + ".r_BN_N", list(range(3)))
-    OutSigma_BN = scSim.pullMessageLogData('inertial_state_output' + ".sigma_BN", list(range(3)))
-    Outomega_BN = scSim.pullMessageLogData('inertial_state_output' + ".omega_BN_B", list(range(3)))
+    timeAxis = dataLog.times()
+    OutSunPos = addTimeColumn(timeAxis, sunLog.PositionVector)
+    Outr_BN_N = addTimeColumn(timeAxis, dataLog.r_BN_N)
+    OutSigma_BN = addTimeColumn(timeAxis, dataLog.sigma_BN)
+    Outomega_BN = addTimeColumn(timeAxis, dataLog.omega_BN_B)
 
     # Get the filter outputs through the messages
-    stateLog = scSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(numStates)))
-    postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = scSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(numStates*numStates)))
-    obsLog = scSim.pullMessageLogData('sunline_filter_data' + ".numObs", list(range(1)))
+    stateLog = addTimeColumn(timeAxis, filtLog.state[:, range(numStates)])
+    postFitLog = addTimeColumn(timeAxis, filtLog.postFitRes[:, :8])
+    covarLog = addTimeColumn(timeAxis, filtLog.covar[:, range(numStates*numStates)])
+    obsLog = addTimeColumn(timeAxis, filtLog.numObs)
+
     dcmLog = np.zeros([len(stateLog[:,0]),3,3])
     omegaExp = np.zeros([len(stateLog[:,0]),3])
     if FilterType == 'SEKF':
