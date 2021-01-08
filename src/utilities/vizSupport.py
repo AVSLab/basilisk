@@ -767,8 +767,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     thrColors: single or vector of int(4)
         array of RGBA color values for each thruster set.  The list must have the same length as ``scList``.
         Each list entry is a list of RGBA array values for each cluster set.
-    cssNames:
-        list of CSS configuration log message names lists
+    cssList:
+        list of lists of :ref:`CoarseSunSensor` objects.  The outer list length must match ``scList``.
     opNavMode: bool
         flag if opNaveMode should be used
     liveStream: bool
@@ -791,7 +791,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssNames'],
+        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -829,6 +829,15 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             thrColorsScList = [[thrColorsScList]]
         if len(thrColorsScList) != len(scList):
             print('ERROR: thrColors should have the same length as the number of spacecraft')
+            exit(1)
+
+    cssScList = False
+    if 'cssList' in kwargs:
+        cssScList = kwargs['cssList']
+        if not isinstance(cssScList, list):
+            cssScList = [[cssScList]]
+        if len(cssScList) != len(scList):
+            print('ERROR: cssList should have the same length as the number of spacecraft and contain lists of CSSs')
             exit(1)
 
     # loop over all spacecraft to associated states and msg information
@@ -881,35 +890,19 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             scData.thrInMsgs = messaging2.THROutputInMsgsVector(thrList)
             scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
 
+        # process CSS information
+        if cssScList:
+            cssDeviceList = []
+            if cssScList[c] is not None:  # CSS list has been added to this spacecraft
+                for css in cssScList[c]:
+                    cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
+                scData.cssInMsgs = messaging2.CSSConfigLogInMsgsVector(cssDeviceList)
+
         vizMessenger.scData.push_back(scData)
         c += 1
 
     vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
     vizMessenger.spiceInMsgs = messaging2.SpicePlanetStateInMsgsVector(spiceMsgList)
-
-    # set CSS information
-    # cssNameList = []
-    # if 'cssNames' in kwargs:
-    #     cssNameList = kwargs['cssNames']
-    #     if isinstance(cssNameList, list):
-    #         if isinstance(cssNameList[0], list):
-    #             if len(scNames) != len(cssNameList):
-    #                 print('ERROR: cssName and scName list lengths must be the same length')
-    #                 exit(1)
-    #             for scCSSList in cssNameList:
-    #                 for item in scCSSList:
-    #                     if not isinstance(item, basestring):
-    #                         print('ERROR: cssNames list must contain strings of config log message names')
-    #                         exit(1)
-    #         else:
-    #             for item in cssNameList:
-    #                 if not isinstance(item, basestring):
-    #                     print('ERROR: cssNames list must contain strings of config log message names')
-    #                     exit(1)
-    #             cssNameList = [cssNameList]
-    #     else:
-    #         print('ERROR: cssNames must be a list of CSS config log message names')
-    #         exit(1)
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.

@@ -25,7 +25,6 @@
 %include "swig_eigen.i"
 %include "std_vector.i"
 %include "std_string.i"
-%feature("copyctor");
 
 %include "architecture/_GeneralModuleFiles/sys_model.h"
 %include "coarseSunSensor.h"

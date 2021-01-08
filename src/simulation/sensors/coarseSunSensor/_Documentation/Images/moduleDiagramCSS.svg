@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="-42 83 436 127" width="436" height="127">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="-42 83 436 127" width="436" height="127">
   <defs>
     <font-face font-family="Helvetica" font-size="10" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="400">
       <font-face-src>
@@ -33,8 +33,8 @@
       </font-face-src>
     </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.18.1\n2020-12-24 22:28:25 +0000</metadata>
-  <g id="Canvas_1" stroke-dasharray="none" fill-opacity="1" fill="none" stroke-opacity="1" stroke="none">
+  <metadata> Produced by OmniGraffle 7.18.1\n2021-01-08 16:18:29 +0000</metadata>
+  <g id="Canvas_1" fill="none" fill-opacity="1" stroke-dasharray="none" stroke-opacity="1" stroke="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
       <title>Layer 1</title>
@@ -98,7 +98,7 @@
       </g>
       <g id="Graphic_41">
         <text transform="translate(244.0625 155)" fill="black">
-          <tspan font-family="Helvetica" font-size="9" font-weight="400" fill="black" x="0" y="9">cssConfigLogMsg</tspan>
+          <tspan font-family="Helvetica" font-size="9" font-weight="400" fill="black" x="0" y="9">cssConfigLogOutMsg</tspan>
         </text>
       </g>
       <g id="Line_49">

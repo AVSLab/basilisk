@@ -67,7 +67,6 @@ def run(show_plots, accuracy):
     simulationTimeStep = macros.sec2nano(1.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-
     # create the CSS modules
     CSS1 = coarseSunSensor.CoarseSunSensor()
     CSS1.ModelTag = "CSS1"

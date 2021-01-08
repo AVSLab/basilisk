@@ -41,7 +41,7 @@ provides information on what this message is used for.
     * - cssDataOutMsg
       - :ref:`CSSRawDataMsgPayload`
       - output message for CSS output data
-    * - cssConfigLogMsg
+    * - cssConfigLogOutMsg
       - :ref:`CSSConfigLogMsgPayload`
       - output message for CSS configuration log data
     * - sunEclipseInMsg

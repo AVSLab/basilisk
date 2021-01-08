@@ -85,7 +85,7 @@ through the azimuth and elevation angles (:math:`\phi`, :math:`\theta`).  These 
 If no platform orientation is specified, then naturally these azimuth and elevation angles are
 measured relative to the body frame :math:`\cal B`.
 
-An optional input message is the solar eclipse message ``sunEclipseInMsgName``.
+An optional input message is the solar eclipse message ``sunEclipseInMsg``.
 If this message input name is specified for a CSS unit, then the eclipse
 information is taken into account.  If this message name is not set, then
 the CSS defaults to the spacecraft always being in the sun.
@@ -168,7 +168,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.simulation import coarseSunSensor
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import vizSupport
 
@@ -176,7 +176,8 @@ from Basilisk.utilities import vizSupport
 from Basilisk.simulation import spacecraftPlus
 
 # import message declarations
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
+import copy
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -242,36 +243,49 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
+    #
+    # create simulation messages
+    #
+    sunPositionMsgData = messaging2.SpicePlanetStateMsgPayload()
+    sunPositionMsgData.PositionVector = [0.0, om.AU*1000.0, 0.0]
+    sunPositionMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsgData)
+
+    if useEclipse:
+        eclipseMsgData = messaging2.EclipseMsgPayload()
+        eclipseMsgData.shadowFactor = 0.5
+        eclipseMsg = messaging2.EclipseMsg().write(eclipseMsgData)
+
+    def setupCSS(CSS):
+        CSS.fov = 80. * macros.D2R
+        CSS.scaleFactor = 2.0
+        CSS.maxOutput = 2.0
+        CSS.minOutput = 0.5
+        CSS.r_B = [2.00131, 2.36638, 1.]
+        CSS.sunInMsg.subscribeTo(sunPositionMsg)
+        CSS.stateInMsg.subscribeTo(scObject.scStateOutMsg)
+        if useKelly:
+            CSS.kellyFactor = 0.2
+        if useEclipse:
+            CSS.sunEclipseInMsg.subscribeTo(eclipseMsg)
+        if usePlatform:
+            CSS.setBodyToPlatformDCM(90. * macros.D2R, 0., 0.)
+            CSS.theta = -90. * macros.D2R
+            CSS.phi = 0 * macros.D2R
+            CSS.setUnitDirectionVectorWithPerturbation(0., 0.)
+        else:
+            CSS.nHat_B = np.array([1.0, 0.0, 0.0])
+
     # In both CSS simulation scenarios (A) and (B) the CSS modules must
     # first be individually created and configured.
     # In this simulation each case uses two CSS sensors.  The minimum
     # variables that must be set for each CSS includes
-    CSS1 = coarse_sun_sensor.CoarseSunSensor()
+    CSS1 = coarseSunSensor.CoarseSunSensor()
     CSS1.ModelTag = "CSS1_sensor"
-    CSS1.fov = 80.*macros.D2R
-    CSS1.scaleFactor = 2.0
-    CSS1.maxOutput = 2.0
-    CSS1.minOutput = 0.5
-    CSS1.cssDataOutMsgName = "CSS1_output"
-    CSS1.cssConfigLogMsgName = "CSS1_config_log"
-    CSS1.sunInMsgName = "sun_message"
-    CSS1.r_B = [2.00131, 2.36638, 1.]
-    if useKelly:
-        CSS1.kellyFactor = 0.2
-    if useEclipse:
-        CSS1.sunEclipseInMsgName = "eclipse_message"
-    if usePlatform:
-        CSS1.setBodyToPlatformDCM(90.*macros.D2R, 0., 0.)
-        CSS1.theta = -90.*macros.D2R
-        CSS1.phi = 0*macros.D2R
-        CSS1.setUnitDirectionVectorWithPerturbation(0., 0.)
-    else:
-        CSS1.nHat_B = np.array([1.0, 0.0, 0.0])
+    setupCSS(CSS1)
 
-    CSS2 = coarse_sun_sensor.CoarseSunSensor(CSS1)      # make copy of first CSS unit
+    CSS2 = coarseSunSensor.CoarseSunSensor()
     CSS2.ModelTag = "CSS2_sensor"
-    CSS2.cssDataOutMsgName = "CSS2_output"
-    CSS2.cssConfigLogMsgName = "CSS2_config_log"
+    setupCSS(CSS2)
     CSS2.CSSGroupID = 0
     CSS2.r_B = [-3.05, 0.55, 1.0]
     if usePlatform:
@@ -280,10 +294,9 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     else:
         CSS2.nHat_B = np.array([0.0, 1.0, 0.0])
 
-    CSS3 = coarse_sun_sensor.CoarseSunSensor(CSS1)  # make copy of first CSS unit
+    CSS3 = coarseSunSensor.CoarseSunSensor()
     CSS3.ModelTag = "CSS3_sensor"
-    CSS3.cssDataOutMsgName = "CSS3_output"
-    CSS3.cssConfigLogMsgName = "CSS3_config_log"
+    setupCSS(CSS3)
     CSS3.CSSGroupID = 1
     CSS3.fov = 45.0*macros.D2R
     CSS3.r_B = [-3.05, 0.55, 1.0]
@@ -293,15 +306,14 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     else:
         CSS3.nHat_B = np.array([-1.0, 0.0, 0.0])
 
+    cssList = [CSS1, CSS2, CSS3]
     if useCSSConstellation:
         # If instead of individual CSS a cluster of CSS units is to be evaluated as one,
         # then they can be grouped into a list, and added to the Basilisk execution
         # stack as a single entity.  This is done with
-        cssList = [CSS1, CSS2, CSS3]
-        cssArray = coarse_sun_sensor.CSSConstellation()
+        cssArray = coarseSunSensor.CSSConstellation()
         cssArray.ModelTag = "css_array"
-        cssArray.sensorList = coarse_sun_sensor.CSSVector(cssList)
-        cssArray.outputConstellationMessage = "CSS_Array_output"
+        cssArray.sensorList = coarseSunSensor.CSSVector(cssList)
         scSim.AddModelToTask(simTaskName, cssArray)
         # Here the CSSConstellation() module will call the individual CSS
         # update functions, collect all the sensor
@@ -318,36 +330,21 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #   Setup data logging before the simulation is initialized
     #
     if useCSSConstellation:
-        scSim.TotalSim.logThisMessage(cssArray.outputConstellationMessage, simulationTimeStep)
+        cssConstLog = cssArray.constellationOutMsg.recorder()
+        scSim.AddModelToTask(simTaskName, cssConstLog)
     else:
-        scSim.TotalSim.logThisMessage(CSS1.cssDataOutMsgName, simulationTimeStep)
-        scSim.TotalSim.logThisMessage(CSS2.cssDataOutMsgName, simulationTimeStep)
-        scSim.TotalSim.logThisMessage(CSS3.cssDataOutMsgName, simulationTimeStep)
+        css1Log = CSS1.cssDataOutMsg.recorder()
+        css2Log = CSS2.cssDataOutMsg.recorder()
+        css3Log = CSS3.cssDataOutMsg.recorder()
+        scSim.AddModelToTask(simTaskName, css1Log)
+        scSim.AddModelToTask(simTaskName, css2Log)
+        scSim.AddModelToTask(simTaskName, css3Log)
 
-    #
-    # create simulation messages
-    #
-    sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
-    sunPositionMsg.PositionVector = [0.0, om.AU*1000.0, 0.0]
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               CSS1.sunInMsgName,
-                               sunPositionMsg)
-
-    if useEclipse:
-        eclipseMsg = simMessages.EclipseSimMsg()
-        eclipseMsg.shadowFactor = 0.5
-        unitTestSupport.setMessage(scSim.TotalSim,
-                                   simProcessName,
-                                   CSS1.sunEclipseInMsgName,
-                                   eclipseMsg)
-
-    # optional saving off of Vizard compatible file
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+    # optional saving off to Vizard compatible file
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
                                               # saveFile=__file__,
                                               # liveStream=True,
-                                              cssNames=[CSS1.cssConfigLogMsgName, CSS2.cssConfigLogMsgName,
-                                                        CSS3.cssConfigLogMsgName]
+                                              cssList=[cssList]
                                               )
     vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True,
                                        viewCSSBoresight=True, showCSSLabels=True)
@@ -371,11 +368,11 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     dataCSS2 = []
     dataCSS3 = []
     if useCSSConstellation:
-        dataCSSArray = scSim.pullMessageLogData(cssArray.outputConstellationMessage+".CosValue", list(range(len(cssList))))
+        dataCSSArray = cssConstLog.CosValue[:, :len(cssList)]
     else:
-        dataCSS1 = scSim.pullMessageLogData(CSS1.cssDataOutMsgName + ".OutputData", list(range(1)))
-        dataCSS2 = scSim.pullMessageLogData(CSS2.cssDataOutMsgName + ".OutputData", list(range(1)))
-        dataCSS3 = scSim.pullMessageLogData(CSS3.cssDataOutMsgName + ".OutputData", list(range(1)))
+        dataCSS1 = css1Log.OutputData
+        dataCSS2 = css2Log.OutputData
+        dataCSS3 = css3Log.OutputData
     np.set_printoptions(precision=16)
 
     #
@@ -385,19 +382,20 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     plt.close("all")        # clears out plots from earlier test runs
     plt.figure(1)
     if useCSSConstellation:
-        for idx in range(1, len(cssList)+1):
-            plt.plot(dataCSSArray[:, 0]*macros.NANO2SEC, dataCSSArray[:, idx],
+        for idx in range(len(cssList)):
+            plt.plot(cssConstLog.times()*macros.NANO2SEC, dataCSSArray[:, idx],
                          color=unitTestSupport.getLineColor(idx,3),
                          label='CSS$_{'+str(idx)+'}$')
     else:
-        plt.plot(dataCSS1[:, 0]*macros.NANO2SEC, dataCSS1[:, 1],
-                 color=unitTestSupport.getLineColor(1,3),
+        timeAxis = css1Log.times()
+        plt.plot(timeAxis * macros.NANO2SEC, dataCSS1,
+                 color=unitTestSupport.getLineColor(0, 3),
                  label='CSS$_{1}$')
-        plt.plot(dataCSS2[:, 0] * macros.NANO2SEC, dataCSS2[:, 1],
-                 color=unitTestSupport.getLineColor(2, 3),
+        plt.plot(timeAxis * macros.NANO2SEC, dataCSS2,
+                 color=unitTestSupport.getLineColor(1, 3),
                  label='CSS$_{2}$')
-        plt.plot(dataCSS3[:, 0] * macros.NANO2SEC, dataCSS3[:, 1],
-                 color=unitTestSupport.getLineColor(3, 3),
+        plt.plot(timeAxis * macros.NANO2SEC, dataCSS3,
+                 color=unitTestSupport.getLineColor(2, 3),
                  label='CSS$_{3}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [sec]')
@@ -413,7 +411,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataCSSArray, dataCSS1, dataCSS2, simulationTime, figureList
+    return figureList
 
 
 #

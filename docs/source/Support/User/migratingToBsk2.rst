@@ -403,7 +403,7 @@ module message ``standAloneMsg`` of the same type.  This can be done with::
     cMsgPy.ParticularMsg_C_addAuthor(module.SomeOutMsg, standAloneMsg)
 
 Any module ``nextModule.SomeInMsg`` that needs to read the output of ``module.SomeOutMsg`` can be setup to
-read the output of the stand-alone message ``standAloneMsg`` instead using:
+read the output of the stand-alone message ``standAloneMsg`` instead using::
 
     nextModule.SomeInMsg.subscribeTo(standAloneMsg)
 

@@ -878,19 +878,6 @@ void VizInterface::UpdateState(uint64_t CurrentSimNanos)
 
 }
 
-/*! Setup the CSS input messages for the spacecraft data object
- @param scData Spacecraft data structure pointer
- @param num number of CSS sensors on this spacecraft
- */
-void VizInterface::setNumCSS(VizSpacecraftData *scData, int num) {
-    scData->cssInMsgs.clear();
-    for (int i=0; i<num; i++) {
-        /* create input message */
-        ReadFunctor<CSSConfigLogMsgPayload> *msg;
-        msg = new ReadFunctor<CSSConfigLogMsgPayload>;
-        scData->cssInMsgs.push_back(*msg);
-    }
-}
 
 /*! A cleaning method to ensure the message buffers are wiped clean.
  @param data The current sim time in nanoseconds

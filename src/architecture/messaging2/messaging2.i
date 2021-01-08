@@ -162,6 +162,7 @@ typedef struct messageType;
 %template(AccessInMsgsVector) std::vector<ReadFunctor<AccessMsgPayload>>;
 %template(RWConfigLogInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
 %template(THROutputInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
+%template(CSSConfigLogInMsgsVector) std::vector<ReadFunctor<CSSConfigLogMsgPayload>>;
 
 %include "messaging2.h"
 

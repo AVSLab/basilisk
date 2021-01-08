@@ -55,8 +55,6 @@ public:
     void ReadBSKMessages();
     void WriteProtobuffer(uint64_t CurrentSimNanos);
 
-    void setNumCSS(VizSpacecraftData *scData, int num);
-
 public:
     std::vector<VizSpacecraftData> scData;      //!< [-] vector of spacecraft data containers
     std::vector <ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;   //!< [-] vector of input messages of planet Spice data

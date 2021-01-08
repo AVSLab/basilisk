@@ -122,47 +122,56 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     eclipseMsg.shadowFactor = visibilityFactor
     ecMsg = messaging2.EclipseMsg().write(eclipseMsg)
 
+    def setupCSS(CSS):
+        CSS.fov = fov
+        CSS.kellyFactor = kelly
+        CSS.scaleFactor = scaleFactor
+        CSS.senBias = bias
+        CSS.senNoiseStd = noiseStd
+        CSS.albedoValue = albedoValue
+        CSS.minOutput = minIn
+        CSS.maxOutput = maxIn
+        CSS.nHat_B = np.array([1., 0., 0.])
+        CSS.sunInMsg.subscribeTo(sunMsg)
+        CSS.stateInMsg.subscribeTo(scMsg)
+        CSS.sunEclipseInMsg.subscribeTo(ecMsg)
 
     #
     #   Single CSS Setup
     #   Sets up a single CSS with inputs from the pytest parameterization
     singleCss = coarseSunSensor.CoarseSunSensor()
     singleCss.ModelTag = "singleCss"
-    singleCss.fov = fov
-    singleCss.kellyFactor = kelly
-    singleCss.scaleFactor = scaleFactor
-    singleCss.senBias = bias
-    singleCss.senNoiseStd = noiseStd
-    singleCss.albedoValue = albedoValue
-    singleCss.minOutput = minIn
-    singleCss.maxOutput = maxIn
-    singleCss.nHat_B = np.array([1., 0., 0.])
+    setupCSS(singleCss)
     unitTestSim.AddModelToTask(testTaskName, singleCss)
-    # note that the CSS message connections must be made before adding them to vector of CSS units
-    # in the constellation class below
-    singleCss.sunInMsg.subscribeTo(sunMsg)
-    singleCss.stateInMsg.subscribeTo(scMsg)
-    singleCss.sunEclipseInMsg.subscribeTo(ecMsg)
+
     #
     #   CSS Constellation Setup
     #   Sets up two identical constellations (P1 and P2) but uses different methods to establish nHat_B for the sensors.
     if useConstellation:
-        cssP11 = coarseSunSensor.CoarseSunSensor(singleCss)
+        cssP11 = coarseSunSensor.CoarseSunSensor()
         cssP11.ModelTag = "cssP11"
-        cssP12 = coarseSunSensor.CoarseSunSensor(singleCss)
+        setupCSS(cssP11)
+        cssP12 = coarseSunSensor.CoarseSunSensor()
         cssP12.ModelTag = "cssP12"
-        cssP13 = coarseSunSensor.CoarseSunSensor(singleCss)
+        setupCSS(cssP12)
+        cssP13 = coarseSunSensor.CoarseSunSensor()
         cssP13.ModelTag = "cssP13"
-        cssP14 = coarseSunSensor.CoarseSunSensor(singleCss)
+        setupCSS(cssP13)
+        cssP14 = coarseSunSensor.CoarseSunSensor()
         cssP14.ModelTag = "cssP14"
-        cssP21 = coarseSunSensor.CoarseSunSensor(singleCss)
+        setupCSS(cssP14)
+        cssP21 = coarseSunSensor.CoarseSunSensor()
         cssP21.ModelTag = "cssP21"
-        cssP22 = coarseSunSensor.CoarseSunSensor(singleCss)
+        setupCSS(cssP21)
+        cssP22 = coarseSunSensor.CoarseSunSensor()
         cssP22.ModelTag = "cssP22"
-        cssP23 = coarseSunSensor.CoarseSunSensor(singleCss)
+        setupCSS(cssP22)
+        cssP23 = coarseSunSensor.CoarseSunSensor()
         cssP23.ModelTag = "cssP23"
-        cssP24 = coarseSunSensor.CoarseSunSensor(singleCss)
+        setupCSS(cssP23)
+        cssP24 = coarseSunSensor.CoarseSunSensor()
         cssP24.ModelTag = "cssP24"
+        setupCSS(cssP24)
 
         # all sensors on a 45 degree, four sided pyramid mount
         cssP11.nHat_B = [1. / np.sqrt(2.), 0., -1. / np.sqrt(2.)]
