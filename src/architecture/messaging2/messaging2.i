@@ -119,7 +119,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 
 typedef struct messageType;
 
-%template(messageType ## Vector) std::vector<messageType ## Payload>;
+%template(messageType ## PayloadVector) std::vector<messageType ## Payload>;
 %extend std::vector<messageType ## Payload>{
     %pythoncode %{
         # This __getattr__ is written in message.i.
