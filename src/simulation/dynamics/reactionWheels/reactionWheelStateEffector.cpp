@@ -480,7 +480,7 @@ void ReactionWheelStateEffector::ReadInputs()
 	std::vector<double>::iterator CmdIt;
 	uint64_t i;
 
-    //! - If the input message ID is invalid, return without touching states
+    //! - If the input message is not linked, return without touching states
 	if(!this->rwMotorCmdInMsg.isLinked())
 	{
 		return;

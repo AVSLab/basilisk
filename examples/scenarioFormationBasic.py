@@ -48,16 +48,7 @@ in a 2:1 centered ellipse and a lead-follower configuration with the servicer re
 has a camera instrument attached that is pointing in the 3rd body axis direction.
 
 This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
-that it can be viewed in the Vizard visualization.  Two methods of setting up the :ref:`vizInterface` module are shown.
-If ``useMsgNameDefaults`` is set to true, then a default naming scheme is used to label the spacecraft state messages.
-The first spacecraft, i.e. the servicer in this script, uses the default spacecraft state output message.
-The following spacecraft have a number 2, 3, etc. attached to the default names. The script also illustrates
-how to specify that each space object has a different number of RW devices.
-
-If ``useMsgNameDefaults`` is set to false, then the simulation script illustrates how to manually configure
-the spacecraft Data list of :ref:`vizInterface`.  This method is more verbose, but also allows to alternate
-spacecraft state message naming schemes.
-
+that it can be viewed in the Vizard visualization.
 
 
 Illustration of Simulation Results
@@ -65,7 +56,7 @@ Illustration of Simulation Results
 
 ::
 
-    show_plots = True, useMsgNameDefaults = True
+    show_plots = True
 
 Note that in the RW motor torque plot both the required control torque :math:`\hat u_B` and the true
 motor torque :math:`u_B` are shown.  This illustrates that with this maneuver the RW devices are being
@@ -94,12 +85,14 @@ saturated, and the attitude still eventually stabilizes.
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
+from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
-from Basilisk.simulation import reactionWheelStateEffector, simple_nav, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.architecture import messaging2
+
 import copy
 try:
     from Basilisk.simulation import vizInterface
@@ -118,7 +111,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
@@ -126,10 +119,11 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
+
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """Plot the RW command torques."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
@@ -138,25 +132,27 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
 
+
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
-        plt.plot(timeData, dataRW[idx - 1][:, 1],
+        plt.plot(timeData, dataRW[idx],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
 
+
 def plot_rate_error(timeData, dataOmegaBR):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(3)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
@@ -164,10 +160,11 @@ def plot_rate_error(timeData, dataOmegaBR):
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
 
+
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW spin rates."""
     plt.figure(4)
-    for idx in range(1, numRW + 1):
+    for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
@@ -176,7 +173,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.ylabel('RW Speed (RPM) ')
 
 
-def run(show_plots, useMsgNameDefaults):
+def run(show_plots):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -204,8 +201,6 @@ def run(show_plots, useMsgNameDefaults):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-
-
 
     #
     #   setup the simulation tasks/objects
@@ -239,21 +234,6 @@ def run(show_plots, useMsgNameDefaults):
     scObject3.hub.mHub = 350.0  # kg
     scObject3.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I3)
 
-    # the debris object must have distinct output msg names from the servicer object
-    # here the default names are augmented to make them unique
-    if useMsgNameDefaults:
-        scObject2.scStateOutMsgName = scObject.scStateOutMsgName + "2"
-        scObject2.scMassStateOutMsgName = scObject.scMassStateOutMsgName + "2"
-        scObject3.scStateOutMsgName = scObject.scStateOutMsgName + "3"
-        scObject3.scMassStateOutMsgName = scObject.scMassStateOutMsgName + "3"
-    else:
-        scObject2.scStateOutMsgName = scObject.scStateOutMsgName + "Deputy"
-        scObject2.scMassStateOutMsgName = scObject.scMassStateOutMsgName + "Deputy"
-        scObject3.scStateOutMsgName = scObject.scStateOutMsgName + "Deputy2"
-        scObject3.scMassStateOutMsgName = scObject.scMassStateOutMsgName + "Deputy2"
-
-
-
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
     scSim.AddModelToTask(simTaskName, scObject2, None, 2)
@@ -279,7 +259,7 @@ def run(show_plots, useMsgNameDefaults):
     rwFactory = simIncludeRW.rwFactory()
 
     # store the RW dynamical model type
-    varRWModel = rwFactory.BalancedWheels
+    varRWModel = messaging2.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
@@ -292,46 +272,32 @@ def run(show_plots, useMsgNameDefaults):
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel
                            )
-
+    rwSc1List = [RW1, RW2, RW3]
     numRW = rwFactory.getNumOfDevices()
 
     # create RW object container and tie to spacecraft object
     # make sure the input and output names are unique to this spacecraft
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.InputCmds = scObject.ModelTag + "reactionwheel_cmds"
-    rwStateEffector.OutputDataString = scObject.ModelTag + "_reactionwheel_output_states"
-
-    if useMsgNameDefaults:
-        rwPrefix = scObject.ModelTag
-    else:
-        rwPrefix = "chiefRW"
-    rwFactory.addToSpacecraft(rwPrefix, rwStateEffector, scObject)
+    rwFactory.addToSpacecraft("chiefRW", rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 4)
 
-
     # add free-spinning RWs to the debris object
     rwFactory2 = simIncludeRW.rwFactory()
-    rwFactory2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=1000.0)
-    rwFactory2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=-1000.0)
+    RW1sc2 = rwFactory2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=1000.0)
+    RW2sc2 = rwFactory2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=-1000.0)
     numRW2 = rwFactory2.getNumOfDevices()
+    rwSc2List = [RW1sc2, RW2sc2]
     rwStateEffector2 = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector2.InputCmds = ""  # empty string means there is no input command msg
-    if useMsgNameDefaults:
-        # use the sc name as default
-        rw2Prefix = scObject2.ModelTag
-    else:
-        # provide a custom RW cluster name
-        rw2Prefix = "debrisRW"
-    rwFactory2.addToSpacecraft(rw2Prefix, rwStateEffector2, scObject2)
+    rwFactory2.addToSpacecraft("debrisRW", rwStateEffector2, scObject2)
     scSim.AddModelToTask(simTaskName, rwStateEffector2, None, 5)
-
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -342,12 +308,7 @@ def run(show_plots, useMsgNameDefaults):
     attGuidanceConfig = hillPoint.hillPointConfig()
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    # if you want to set attGuidanceConfig.inputCelMessName, then you need a planet ephemeris message of
-    # type EphemerisIntMsg.  In the line below a non-existing message name is used to create an empty planet
-    # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
-    attGuidanceConfig.inputCelMessName = "empty_earth_msg"
-    attGuidanceConfig.outputDataName = "guidanceOut"
+    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
     # setup the attitude tracking error evaluation module
@@ -356,20 +317,26 @@ def run(show_plots, useMsgNameDefaults):
     attErrorWrap.ModelTag = "attErrorInertial3D"
     attErrorConfig.sigma_R0R = [0.414214, 0.0, 0.0]     # point the 3rd body axis in the along-track direction
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = attGuidanceConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
+    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+
+    # create the FSW vehicle configuration message
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+
+    # create FSW RW parameter msg
+    fswRwMsg = rwFactory.getConfigMessage()
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = "LrRequested"
-    mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
+    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
@@ -381,9 +348,9 @@ def run(show_plots, useMsgNameDefaults):
     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
     # Initialize the test module msg names
-    rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
-    rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
-    rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0, 0, 1, 0, 0, 0, 1
@@ -394,60 +361,24 @@ def run(show_plots, useMsgNameDefaults):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
-    # To log the RW information, the following code is used:
-    scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-    rwOutName = [rwPrefix + "_rw_config_0_data",
-                 rwPrefix + "_rw_config_1_data",
-                 rwPrefix + "_rw_config_2_data"]
-    rw2OutName = [rw2Prefix + "_rw_config_0_data",
-                  rw2Prefix + "_rw_config_1_data"]
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    rwCmdLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    sNavLog = sNavObject.transOutMsg.recorder(samplingTime)
+    rwSpeedLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, rwCmdLog)
+    scSim.AddModelToTask(simTaskName, attErrLog)
+    scSim.AddModelToTask(simTaskName, sNavLog)
+    scSim.AddModelToTask(simTaskName, rwSpeedLog)
 
-    # A message is created that stores an array of the \Omega wheel speeds.  This is logged
-    # here to be plotted later on.  However, RW specific messages are also being created which
-    # contain a wealth of information.  Their default naming is automated and shown above.  This
-    # allows us to log RW specific information such as the actual RW motor torque being applied.
-    for item in rwOutName:
-        scSim.TotalSim.logThisMessage(item, samplingTime)
-    for item in rw2OutName:
-        scSim.TotalSim.logThisMessage(item, samplingTime)
-
-
-    #
-    # create simulation messages
-    #
-
-    # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
-
-    # Two options are shown to setup the FSW RW configuration message.
-    # First caseL: The FSW RW configuration message
-    # uses the same RW states in the FSW algorithm as in the simulation.  In the following code
-    # the fswSetupRW helper functions are used to individually add the RW states.  The benefit of this
-    # method of the second method below is that it is easy to vary the FSW parameters slightly from the
-    # simulation parameters.  In this script the second method is used, while the fist method is included
-    # in a commented form to both options.
-    # fswSetupRW.clearSetup()
-    # for key, rw in rwFactory.rwList.items():
-    #     fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    # fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
-
-    # Second case: If the exact same RW configuration states are to be used by the simulation and fsw, then the
-    # following helper function is convenient to extract the fsw RW configuration message from the
-    # rwFactory setup earlier.
-    fswRwMsg = rwFactory.getConfigMessage()
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.rwParamsInMsgName,
-                               fswRwMsg)
+    rwSc1Log = []
+    for rw in rwStateEffector.rwOutMsgs:
+        rwSc1Log.append(rw.recorder(samplingTime))
+        scSim.AddModelToTask(simTaskName, rwSc1Log[-1])
+    rwSc2Log = []
+    for rw in rwStateEffector2.rwOutMsgs:
+        rwSc2Log.append(rw.recorder(samplingTime))
+        scSim.AddModelToTask(simTaskName, rwSc2Log[-1])
 
     #
     #   set initial Spacecraft States
@@ -484,52 +415,18 @@ def run(show_plots, useMsgNameDefaults):
     scObject3.hub.sigma_BNInit = [[0.0], [-0.1], [0.2]]  # sigma_CN_B
     scObject3.hub.omega_BN_BInit = [[0.01], [-0.03], [-0.03]]  # rad/s - omega_CN_B
 
-
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                                  numRW=[numRW, numRW2, 0],
-                                                  # saveFile=fileName,
-                                                  scName=[scObject.ModelTag, scObject2.ModelTag, scObject3.ModelTag])
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2, scObject3]
+                                                  , rwEffectorList=[rwStateEffector, rwStateEffector2, None]
+                                                  , saveFile=fileName,
+                                                  )
         vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
                                          resolution=[1024, 1024], renderRate=0.,
                                          cameraPos_B=[0., 0., 2.0], sigma_CB=[0., 0., 0.]
                                          )
-
-    # here the message are manually being set.  This allows for more customization
-    if vizFound and not useMsgNameDefaults:
-        # delete any existing list of vizInterface spacecraft data
-        viz.scData.clear()
-
-        # create a chief spacecraft info container
-        scData = vizInterface.VizSpacecraftData()
-        scData.spacecraftName = scObject.ModelTag
-        scData.numRW = numRW
-        scData.scPlusInMsgName = "inertial_state_output"
-        # the following command is required as we are deviating from the default naming of using the Model.Tag
-        scData.rwInMsgName = vizInterface.StringVector([rwPrefix + "_rw_config_0_data",
-                                                        rwPrefix + "_rw_config_1_data",
-                                                        rwPrefix + "_rw_config_2_data"])
-        viz.scData.push_back(scData)
-
-        # create debris object info container
-        scData = vizInterface.VizSpacecraftData()
-        scData.spacecraftName = scObject2.ModelTag
-        scData.numRW = numRW2
-        scData.scPlusInMsgName = "inertial_state_outputDeputy"
-        # the following command is required as we are deviating from the default naming of using the Model.Tag
-        scData.rwInMsgName = vizInterface.StringVector([rw2Prefix + "_rw_config_0_data",
-                                                        rw2Prefix + "_rw_config_1_data"])
-        viz.scData.push_back(scData)
-
-        # create next debris object info container
-        scData = vizInterface.VizSpacecraftData()
-        scData.spacecraftName = scObject3.ModelTag
-        scData.numRW = 0
-        scData.scPlusInMsgName = "inertial_state_outputDeputy2"
-        viz.scData.push_back(scData)
 
     #
     #   initialize Simulation
@@ -545,22 +442,22 @@ def run(show_plots, useMsgNameDefaults):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataOmegaRW = scSim.pullMessageLogData(mrpControlConfig.inputRWSpeedsName + ".wheelSpeeds", list(range(numRW)))
+    dataUsReq = rwCmdLog.motorTorque[:, range(numRW)]
+    dataSigmaBR = attErrLog.sigma_BR
+    dataOmegaBR = attErrLog.omega_BR_B
+    dataOmegaRW = rwSpeedLog.wheelSpeeds[:, range(numRW)]
     dataRW = []
-    for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
+    for i in range(numRW):
+        dataRW.append(rwSc1Log[i].u_current)
     np.set_printoptions(precision=16)
     omegaRW2 = []
-    for i in range(0, numRW2):
-        omegaRW2.append(scSim.pullMessageLogData(rw2OutName[i] + ".Omega", list(range(1))))
+    for i in range(numRW2):
+        omegaRW2.append(rwSc2Log[i].Omega)
 
     #
     #   plot the results
     #
-    timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    timeData = attErrLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeData, dataSigmaBR)
@@ -578,13 +475,12 @@ def run(show_plots, useMsgNameDefaults):
     figureList[pltName] = plt.figure(4)
 
     plt.figure(5)
-    for idx in range(1, 3):
-        plt.plot(timeData, omegaRW2[idx - 1][:, 1]*60/(2*3.14159),
+    for idx in range(numRW2):
+        plt.plot(timeData, omegaRW2[idx]*60/(2*3.14159),
                  color=unitTestSupport.getLineColor(idx, numRW2),
                  label=r'$\Omega_{s,' + str(idx) + '}$')
     plt.xlabel('Time [min]')
     plt.ylabel('RW2 Omega (rpm)')
-
 
     if show_plots:
         plt.show()
@@ -601,6 +497,5 @@ def run(show_plots, useMsgNameDefaults):
 #
 if __name__ == "__main__":
     run(
-        True,  # show_plots
-        False  # useMsgNameDefaults
+        True   # show_plots
     )

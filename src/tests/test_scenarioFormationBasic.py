@@ -46,11 +46,10 @@ import scenarioFormationBasic
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useMsgNameDefaults", [True, False])
 @pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_
-def test_scenarioFormationBasic(show_plots, useMsgNameDefaults):
+def test_scenarioFormationBasic(show_plots):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
@@ -58,13 +57,13 @@ def test_scenarioFormationBasic(show_plots, useMsgNameDefaults):
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioFormationBasic.run(False, useMsgNameDefaults)
+        figureList = scenarioFormationBasic.run(False)
 
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
-    except  OSError as err:
+    except OSError as err:
         testFailCount += 1
         testMessages.append("Basic Formation Flying tutorial failed.")
 
