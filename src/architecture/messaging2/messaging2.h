@@ -120,8 +120,8 @@ public:
     };
 
     //! Subscribe to a C++ message
-    void subscribeTo(Message<messageType> source){
-        *this = source.addSubscriber();
+    void subscribeTo(Message<messageType> *source){
+        *this = source->addSubscriber();
         this->initialized = true;
     };
 
