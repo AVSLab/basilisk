@@ -54,10 +54,10 @@ def toRGBA255(color):
             exit(1)
     else:
         if not isinstance(color, list):
-            print('ERROR: color must be a 4D array of integers')
+            print('ERROR: vizSupport: color must be a 4D array of integers')
             exit(1)
         if max(color) > 255 or min(color) < 0:
-            print('ERROR: color values must be between [0,255]')
+            print('ERROR: vizSupport: color values must be between [0,255]')
             exit(1)
         answer = color
     return answer
@@ -112,7 +112,7 @@ def createPointLine(viz, **kwargs):
     if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
         if not isinstance(fromName, basestring):
-            print('ERROR: fromBodyName must be a string')
+            print('ERROR: vizSupport: fromBodyName must be a string')
             exit(1)
         vizElement.fromBodyName = fromName
     else:
@@ -121,17 +121,17 @@ def createPointLine(viz, **kwargs):
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
         if not isinstance(toName, basestring):
-            print('ERROR: toBodyName must be a string')
+            print('ERROR: vizSupport: toBodyName must be a string')
             exit(1)
         vizElement.toBodyName = toName
     else:
-        print('ERROR: toBodyName must be a specified')
+        print('ERROR: vizSupport: toBodyName must be a specified')
         exit(1)
 
     if 'lineColor' in kwargs:
         vizElement.lineColor = toRGBA255(kwargs['lineColor'])
     else:
-        print('ERROR: lineColor must be a specified')
+        print('ERROR: vizSupport: lineColor must be a specified')
         exit(1)
 
     pointLineList.append(vizElement)
@@ -155,27 +155,27 @@ def createCustomModel(viz, **kwargs):
     if 'modelPath' in kwargs:
         modelPathName = kwargs['modelPath']
         if not isinstance(modelPathName, basestring):
-            print('ERROR: modelPath must be a string')
+            print('ERROR: vizSupport: modelPath must be a string')
             exit(1)
         if len(modelPathName) == 0:
-            print('ERROR: modelPath is required and must be specified.')
+            print('ERROR: vizSupport: modelPath is required and must be specified.')
             exit(1)
         vizElement.modelPath = modelPathName
     else:
-        print('ERROR: modelPath is required and must be specified.')
+        print('ERROR: vizSupport: modelPath is required and must be specified.')
         exit(1)
 
     if 'simBodiesToModify' in kwargs:
         simBodiesList = kwargs['simBodiesToModify']
         if not isinstance(simBodiesList, list):
-            print('ERROR: simBodiesToModify must be a list of strings')
+            print('ERROR: vizSupport: simBodiesToModify must be a list of strings')
             exit(1)
         if len(simBodiesList) == 0:
-            print('ERROR: simBodiesToModify must be a non-empty list of strings')
+            print('ERROR: vizSupport: simBodiesToModify must be a non-empty list of strings')
             exit(1)
         for item in simBodiesList:
             if not isinstance(item, basestring):
-                print('ERROR: the simBody name must be a string, not ' + str(item))
+                print('ERROR: vizSupport: the simBody name must be a string, not ' + str(item))
                 exit(1)
         vizElement.simBodiesToModify = vizInterface.StringVector(simBodiesList)
     else:
@@ -184,10 +184,10 @@ def createCustomModel(viz, **kwargs):
     if 'offset' in kwargs:
         offsetVariable = kwargs['offset']
         if not isinstance(offsetVariable, list):
-            print('ERROR: offset must be a list of three floats')
+            print('ERROR: vizSupport: offset must be a list of three floats')
             exit(1)
         if len(offsetVariable) != 3:
-            print('ERROR: offset must be list of three floats')
+            print('ERROR: vizSupport: offset must be list of three floats')
             exit(1)
         vizElement.offset = offsetVariable
     else:
@@ -196,10 +196,10 @@ def createCustomModel(viz, **kwargs):
     if 'rotation' in kwargs:
         rotationVariable = kwargs['rotation']
         if not isinstance(rotationVariable, list):
-            print('ERROR: rotation must be a list of three floats')
+            print('ERROR: vizSupport: rotation must be a list of three floats')
             exit(1)
         if len(rotationVariable) != 3:
-            print('ERROR: rotation must be list of three floats')
+            print('ERROR: vizSupport: rotation must be list of three floats')
             exit(1)
         vizElement.rotation = rotationVariable
     else:
@@ -208,10 +208,10 @@ def createCustomModel(viz, **kwargs):
     if 'scale' in kwargs:
         scaleVariable = kwargs['scale']
         if not isinstance(scaleVariable, list):
-            print('ERROR: scale must be a list of three floats')
+            print('ERROR: vizSupport: scale must be a list of three floats')
             exit(1)
         if len(scaleVariable) != 3:
-            print('ERROR: scale must be list of three floats')
+            print('ERROR: vizSupport: scale must be list of three floats')
             exit(1)
         vizElement.scale = scaleVariable
     else:
@@ -220,7 +220,7 @@ def createCustomModel(viz, **kwargs):
     if 'customTexturePath' in kwargs:
         customTexturePathName = kwargs['customTexturePath']
         if not isinstance(customTexturePathName, basestring):
-            print('ERROR: customTexturePath must be a string')
+            print('ERROR: vizSupport: customTexturePath must be a string')
             exit(1)
         vizElement.customTexturePath = customTexturePathName
     else:
@@ -229,7 +229,7 @@ def createCustomModel(viz, **kwargs):
     if 'normalMapPath' in kwargs:
         normalMapPathName = kwargs['normalMapPath']
         if not isinstance(normalMapPathName, basestring):
-            print('ERROR: normalMapPath must be a string')
+            print('ERROR: vizSupport: normalMapPath must be a string')
             exit(1)
         vizElement.normalMapPath = normalMapPathName
     else:
@@ -238,10 +238,10 @@ def createCustomModel(viz, **kwargs):
     if 'shader' in kwargs:
         shaderVariable = kwargs['shader']
         if not isinstance(shaderVariable, int):
-            print('ERROR: shader must be a an integer.')
+            print('ERROR: vizSupport: shader must be a an integer.')
             exit(1)
         if abs(shaderVariable) > 1:
-            print('ERROR: shader must have a value of -1, 0 or +1.')
+            print('ERROR: vizSupport: shader must have a value of -1, 0 or +1.')
             exit(1)
 
         vizElement.shader = shaderVariable
@@ -301,7 +301,7 @@ def setActuatorGuiSetting(viz, **kwargs):
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
         if not isinstance(scName, basestring):
-            print('ERROR: spacecraftName must be a string')
+            print('ERROR: vizSupport: spacecraftName must be a string')
             exit(1)
         vizElement.spacecraftName = scName
     else:
@@ -310,42 +310,42 @@ def setActuatorGuiSetting(viz, **kwargs):
     if 'viewThrusterPanel' in kwargs:
         setting = kwargs['viewThrusterPanel']
         if not isinstance(setting, bool):
-            print('ERROR: viewThrusterPanel must be True or False')
+            print('ERROR: vizSupport: viewThrusterPanel must be True or False')
             exit(1)
         vizElement.viewThrusterPanel = setting
 
     if 'viewThrusterHUD' in kwargs:
         setting = kwargs['viewThrusterHUD']
         if not isinstance(setting, bool):
-            print('ERROR: viewThrusterHUD must be True or False')
+            print('ERROR: vizSupport: viewThrusterHUD must be True or False')
             exit(1)
         vizElement.viewThrusterHUD = setting
 
     if 'viewRWPanel' in kwargs:
         setting = kwargs['viewRWPanel']
         if not isinstance(setting, bool):
-            print('ERROR: viewRWPanel must be True or False')
+            print('ERROR: vizSupport: viewRWPanel must be True or False')
             exit(1)
         vizElement.viewRWPanel = setting
 
     if 'viewRWHUD' in kwargs:
         setting = kwargs['viewRWHUD']
         if not isinstance(setting, bool):
-            print('ERROR: viewRWHUD must be an integer value')
+            print('ERROR: vizSupport: viewRWHUD must be an integer value')
             exit(1)
         vizElement.viewRWHUD = setting
 
     if 'showThrusterLabels' in kwargs:
         setting = kwargs['showThrusterLabels']
         if not isinstance(setting, bool):
-            print('ERROR: showThrusterLabels must be an integer value')
+            print('ERROR: vizSupport: showThrusterLabels must be an integer value')
             exit(1)
         vizElement.showThrusterLabels = setting
 
     if 'showRWLabels' in kwargs:
         setting = kwargs['showRWLabels']
         if not isinstance(setting, bool):
-            print('ERROR: showRWLabels must be an integer value')
+            print('ERROR: vizSupport: showRWLabels must be an integer value')
             exit(1)
         vizElement.showRWLabels = setting
 
@@ -397,7 +397,7 @@ def setInstrumentGuiSetting(viz, **kwargs):
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
         if not isinstance(scName, basestring):
-            print('ERROR: spacecraftName must be a string')
+            print('ERROR: vizSupport: spacecraftName must be a string')
             exit(1)
         vizElement.spacecraftName = scName
     else:
@@ -406,28 +406,28 @@ def setInstrumentGuiSetting(viz, **kwargs):
     if 'viewCSSPanel' in kwargs:
         setting = kwargs['viewCSSPanel']
         if not isinstance(setting, bool):
-            print('ERROR: viewCSSPanel must be True or False')
+            print('ERROR: vizSupport: viewCSSPanel must be True or False')
             exit(1)
         vizElement.viewCSSPanel = setting
 
     if 'viewCSSCoverage' in kwargs:
         setting = kwargs['viewCSSCoverage']
         if not isinstance(setting, bool):
-            print('ERROR: viewCSSCoverage must be True or False')
+            print('ERROR: vizSupport: viewCSSCoverage must be True or False')
             exit(1)
         vizElement.viewCSSCoverage = setting
 
     if 'viewCSSBoresight' in kwargs:
         setting = kwargs['viewCSSBoresight']
         if not isinstance(setting, bool):
-            print('ERROR: viewCSSBoresight must be True or False')
+            print('ERROR: vizSupport: viewCSSBoresight must be True or False')
             exit(1)
         vizElement.viewCSSBoresight = setting
 
     if 'showCSSLabels' in kwargs:
         setting = kwargs['showCSSLabels']
         if not isinstance(setting, bool):
-            print('ERROR: showCSSLabels must be an integer value')
+            print('ERROR: vizSupport: showCSSLabels must be an integer value')
             exit(1)
         vizElement.showCSSLabels = setting
 
@@ -452,7 +452,7 @@ def createConeInOut(viz, **kwargs):
     if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
         if not isinstance(fromName, basestring):
-            print('ERROR: fromBodyName must be a string')
+            print('ERROR: vizSupport: fromBodyName must be a string')
             exit(1)
         vizElement.fromBodyName = fromName
     else:
@@ -461,33 +461,33 @@ def createConeInOut(viz, **kwargs):
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
         if not isinstance(toName, basestring):
-            print('ERROR: toBodyName must be a string')
+            print('ERROR: vizSupport: toBodyName must be a string')
             exit(1)
         vizElement.toBodyName = toName
     else:
-        print('ERROR: toBodyName must be a specified')
+        print('ERROR: vizSupport: toBodyName must be a specified')
         exit(1)
 
     if 'coneColor' in kwargs:
         vizElement.coneColor = toRGBA255(kwargs['coneColor'])
     else:
-        print('ERROR: coneColor must be a specified')
+        print('ERROR: vizSupport: coneColor must be a specified')
         exit(1)
 
     if 'isKeepIn' in kwargs:
         keepInFlag = kwargs['isKeepIn']
         if not isinstance(keepInFlag, bool):
-            print('ERROR: isKeepIn must be a BOOL')
+            print('ERROR: vizSupport: isKeepIn must be a BOOL')
             exit(1)
         vizElement.isKeepIn = keepInFlag
     else:
-        print('ERROR: isKeepIn must be a specified')
+        print('ERROR: vizSupport: isKeepIn must be a specified')
         exit(1)
 
     if 'position_B' in kwargs:
         pos_B = kwargs['position_B']
         if not isinstance(pos_B, list):
-            print('ERROR: position_B must be a 3D array of doubles')
+            print('ERROR: vizSupport: position_B must be a 3D array of doubles')
             exit(1)
         vizElement.position_B = pos_B
     else:
@@ -496,37 +496,37 @@ def createConeInOut(viz, **kwargs):
     if 'normalVector_B' in kwargs:
         n_B = kwargs['normalVector_B']
         if not isinstance(n_B, list):
-            print('ERROR: normalVector_B must be a 3D array of doubles')
+            print('ERROR: vizSupport: normalVector_B must be a 3D array of doubles')
             exit(1)
         vizElement.normalVector_B = n_B
     else:
-        print('ERROR: normalVector_B must be a specified')
+        print('ERROR: vizSupport: normalVector_B must be a specified')
         exit(1)
 
     if 'incidenceAngle' in kwargs:
         angle = kwargs['incidenceAngle']
         if not isinstance(angle, float):
-            print('ERROR: incidenceAngle must be a float value in radians')
+            print('ERROR: vizSupport: incidenceAngle must be a float value in radians')
             exit(1)
         vizElement.incidenceAngle = angle
     else:
-        print('ERROR: incidenceAngle must be a specified')
+        print('ERROR: vizSupport: incidenceAngle must be a specified')
         exit(1)
 
     if 'coneHeight' in kwargs:
         height = kwargs['coneHeight']
         if not isinstance(height, float):
-            print('ERROR: coneHeight must be a float value')
+            print('ERROR: vizSupport: coneHeight must be a float value')
             exit(1)
         vizElement.coneHeight = height
     else:
-        print('ERROR: coneHeight must be a specified')
+        print('ERROR: vizSupport: coneHeight must be a specified')
         exit(1)
 
     if 'coneName' in kwargs:
         coneName = kwargs['coneName']
         if not isinstance(coneName, basestring):
-            print('ERROR: coneName must be a string')
+            print('ERROR: vizSupport: coneName must be a string')
             exit(1)
         vizElement.coneName = coneName
     else:
@@ -552,7 +552,7 @@ def createStandardCamera(viz, **kwargs):
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
         if not isinstance(scName, basestring):
-            print('ERROR: spacecraftName must be a string, you provided ' + str(scName))
+            print('ERROR: vizSupport: spacecraftName must be a string, you provided ' + str(scName))
             exit(1)
         cam.spacecraftName = scName
     else:
@@ -561,23 +561,23 @@ def createStandardCamera(viz, **kwargs):
     if 'setMode' in kwargs:
         setMode = kwargs['setMode']
         if not isinstance(setMode, int):
-            print('ERROR: setMode must be an integer')
+            print('ERROR: vizSupport: setMode must be an integer')
             exit(1)
         if setMode < 0 or setMode > 2:
-            print('ERROR: setMode must be a 0 (body targeting) or 1 (pointing vector)')
+            print('ERROR: vizSupport: setMode must be a 0 (body targeting) or 1 (pointing vector)')
             exit(1)
         cam.setMode = setMode
 
     if 'setView' in kwargs:
         setView = kwargs['setView']
         if cam.setMode == 1:
-            print('ERROR: setView does not apply to pointing vector mode.')
+            print('ERROR: vizSupport: setView does not apply to pointing vector mode.')
             exit(1)
         if not isinstance(setView, int):
-            print('ERROR: setView must be an integer')
+            print('ERROR: vizSupport: setView must be an integer')
             exit(1)
         if setView < 0 or setView > 5:
-            print('ERROR: setView must be a number of [0,2]')
+            print('ERROR: vizSupport: setView must be a number of [0,2]')
             print('0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). '
                   'This is a setting for body targeting mode.')
             exit(1)
@@ -586,17 +586,17 @@ def createStandardCamera(viz, **kwargs):
     if 'fieldOfView' in kwargs:
         fieldOfView = kwargs['fieldOfView']
         if not isinstance(fieldOfView, float):
-            print('ERROR: spacecraftVisible must be a float in radians')
+            print('ERROR: vizSupport: spacecraftVisible must be a float in radians')
             exit(1)
         cam.fieldOfView = fieldOfView
 
     if 'bodyTarget' in kwargs:
         if cam.setMode == 1:
-            print('ERROR: bodyTarget does not apply in pointing vector mode')
+            print('ERROR: vizSupport: bodyTarget does not apply in pointing vector mode')
             exit(1)
         bodyTargetName = kwargs['bodyTarget']
         if not isinstance(bodyTargetName, basestring):
-            print('ERROR: targetBodyName must be a string')
+            print('ERROR: vizSupport: targetBodyName must be a string')
             exit(1)
         cam.bodyTarget = bodyTargetName
     else:
@@ -604,14 +604,14 @@ def createStandardCamera(viz, **kwargs):
 
     if 'pointingVector_B' in kwargs:
         if cam.setMode == 0:
-            print('ERROR: pointingVector_B does not apply in body pointing mode')
+            print('ERROR: vizSupport: pointingVector_B does not apply in body pointing mode')
             exit(1)
         pointingVector_B = kwargs['pointingVector_B']
         if not isinstance(pointingVector_B, list):
-            print('ERROR: pointingVector_B must be a 3D array of doubles')
+            print('ERROR: vizSupport: pointingVector_B must be a 3D array of doubles')
             exit(1)
         if len(pointingVector_B) != 3:
-            print('ERROR: pointingVector_B must be 3D list')
+            print('ERROR: vizSupport: pointingVector_B must be 3D list')
             exit(1)
         cam.pointingVector_B = pointingVector_B
     else:
@@ -620,7 +620,7 @@ def createStandardCamera(viz, **kwargs):
     if 'position_B' in kwargs:
         position_B = kwargs['position_B']
         if len(position_B) != 3:
-            print('ERROR: position_B must be 3D list of float values')
+            print('ERROR: vizSupport: position_B must be 3D list of float values')
             exit(1)
         cam.position_B = position_B
     else:
@@ -644,17 +644,17 @@ def createCameraConfigMsg(viz, **kwargs):
     if 'cameraID' in kwargs:
         val = kwargs['cameraID']
         if not isinstance(val, int) or val < 0:
-            print('ERROR: cameraID must be non-negative integer value.')
+            print('ERROR: vizSupport: cameraID must be non-negative integer value.')
             exit(1)
         viz.cameraConfigMessage.cameraID = val
     else:
-        print('ERROR: cameraID must be defined in createCameraConfigMsg()')
+        print('ERROR: vizSupport: cameraID must be defined in createCameraConfigMsg()')
         exit(1)
 
     if 'parentName' in kwargs:
         val = kwargs['parentName']
         if not isinstance(val, basestring):
-            print('ERROR: parentName must be a string')
+            print('ERROR: vizSupport: parentName must be a string')
             exit(1)
         viz.cameraConfigMessage.parentName = val
     else:
@@ -663,72 +663,72 @@ def createCameraConfigMsg(viz, **kwargs):
     if 'fieldOfView' in kwargs:
         val = kwargs['fieldOfView']
         if not isinstance(val, float):
-            print('ERROR: fieldOfView must be a float in radians')
+            print('ERROR: vizSupport: fieldOfView must be a float in radians')
             exit(1)
         viz.cameraConfigMessage.fieldOfView = val
     else:
-        print('ERROR: fieldOfView must be defined in createCameraConfigMsg()')
+        print('ERROR: vizSupport: fieldOfView must be defined in createCameraConfigMsg()')
         exit(1)
 
     if 'resolution' in kwargs:
         val = kwargs['resolution']
         if not isinstance(val, list):
-            print('ERROR: resolution must be a list')
+            print('ERROR: vizSupport: resolution must be a list')
             exit(1)
         if len(val) != 2:
-            print('ERROR: resolution list ' + str(val) + 'must be of length 2')
+            print('ERROR: vizSupport: resolution list ' + str(val) + 'must be of length 2')
             exit(1)
         if not isinstance(val[0], int) or not isinstance(val[1], int):
-            print('ERROR: resolution list ' + str(val) + ' must contain integers')
+            print('ERROR: vizSupport: resolution list ' + str(val) + ' must contain integers')
             exit(1)
         viz.cameraConfigMessage.resolution = val
     else:
-        print('ERROR: resolution must be defined in createCameraConfigMsg()')
+        print('ERROR: vizSupport: resolution must be defined in createCameraConfigMsg()')
         exit(1)
 
     if 'renderRate' in kwargs:
         val = kwargs['renderRate']
         if not isinstance(val, float) or val < 0:
-            print('ERROR: renderRate ' + str(val) + ' must be positive float value in units of seconds.')
+            print('ERROR: vizSupport: renderRate ' + str(val) + ' must be positive float value in units of seconds.')
             exit(1)
         viz.cameraConfigMessage.renderRate = int(val * 1e9)     # convert to nano-seconds
 
     if 'cameraPos_B' in kwargs:
         val = kwargs['cameraPos_B']
         if not isinstance(val, list):
-            print('ERROR: cameraPos_B must be a list')
+            print('ERROR: vizSupport: cameraPos_B must be a list')
             exit(1)
         if len(val) != 3:
-            print('ERROR: cameraPos_B list ' + str(val) + 'must be of length 3')
+            print('ERROR: vizSupport: cameraPos_B list ' + str(val) + 'must be of length 3')
             exit(1)
         if not isinstance(val[0], float) or not isinstance(val[1], float) or not isinstance(val[2], float):
-            print('ERROR: cameraPos_B list ' + str(val) + ' must contain floats')
+            print('ERROR: vizSupport: cameraPos_B list ' + str(val) + ' must contain floats')
             exit(1)
         viz.cameraConfigMessage.cameraPos_B = val
     else:
-        print('ERROR: cameraPos_B must be defined in createCameraConfigMsg()')
+        print('ERROR: vizSupport: cameraPos_B must be defined in createCameraConfigMsg()')
         exit(1)
 
     if 'sigma_CB' in kwargs:
         val = kwargs['sigma_CB']
         if not isinstance(val, list):
-            print('ERROR: sigma_CB must be a list')
+            print('ERROR: vizSupport: sigma_CB must be a list')
             exit(1)
         if len(val) != 3:
-            print('ERROR: camersigma_CBaPos_B list ' + str(val) + 'must be of length 3')
+            print('ERROR: vizSupport: camersigma_CBaPos_B list ' + str(val) + 'must be of length 3')
             exit(1)
         if not isinstance(val[0], float) or not isinstance(val[1], float) or not isinstance(val[2], float):
-            print('ERROR: sigma_CB list ' + str(val) + ' must contain floats')
+            print('ERROR: vizSupport: sigma_CB list ' + str(val) + ' must contain floats')
             exit(1)
         viz.cameraConfigMessage.sigma_CB = val
     else:
-        print('ERROR: sigma_CB must be defined in createCameraConfigMsg()')
+        print('ERROR: vizSupport: sigma_CB must be defined in createCameraConfigMsg()')
         exit(1)
 
     if 'skyBox' in kwargs:
         val = kwargs['skyBox']
         if not isinstance(val, basestring):
-            print('ERROR: skyBox must be a string')
+            print('ERROR: vizSupport: skyBox must be a string')
             exit(1)
         viz.cameraConfigMessage.skyBox = val
     else:
@@ -811,7 +811,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(rwEffectorScList, list):
             rwEffectorScList = [rwEffectorScList]
         if len(rwEffectorScList) != len(scList):
-            print('ERROR: rwEffectorList should have the same length as the number of spacecraft')
+            print('ERROR: vizSupport: rwEffectorList should have the same length as the number of spacecraft')
             exit(1)
 
     thrEffectorScList = False
@@ -820,7 +820,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(thrEffectorScList, list):
             thrEffectorScList = [[thrEffectorScList]]
         if len(thrEffectorScList) != len(scList):
-            print('ERROR: thrEffectorList should have the same length as the number of spacecraft')
+            print('ERROR: vizSupport: thrEffectorList should have the same length as the number of spacecraft')
             exit(1)
     thrColorsScList = False
     if 'thrColors' in kwargs:
@@ -828,7 +828,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(thrColorsScList, list):
             thrColorsScList = [[thrColorsScList]]
         if len(thrColorsScList) != len(scList):
-            print('ERROR: thrColors should have the same length as the number of spacecraft')
+            print('ERROR: vizSupport: thrColors should have the same length as the number of spacecraft')
             exit(1)
 
     cssScList = False
@@ -837,7 +837,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(cssScList, list):
             cssScList = [[cssScList]]
         if len(cssScList) != len(scList):
-            print('ERROR: cssList should have the same length as the number of spacecraft and contain lists of CSSs')
+            print('ERROR: vizSupport: cssList should have the same length as the number of spacecraft and contain lists of CSSs')
             exit(1)
 
     # loop over all spacecraft to associated states and msg information
@@ -923,22 +923,22 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     if 'liveStream' in kwargs:
         val = kwargs['liveStream']
         if not isinstance(val, bool):
-            print('ERROR: liveStream must True or False')
+            print('ERROR: vizSupport: liveStream must True or False')
             exit(1)
         vizMessenger.liveStream = True
         if 'opNavMode' in kwargs:
             if kwargs['opNavMode'] > 0:
-                print('ERROR: do not use liveStream and opNavMode flags at the same time.')
+                print('ERROR: vizSupport: do not use liveStream and opNavMode flags at the same time.')
                 exit(1)
 
     vizMessenger.opNavMode = 0
     if 'opNavMode' in kwargs:
         val = kwargs['opNavMode']
         if not isinstance(val, int):
-            print('ERROR: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
+            print('ERROR: vizSupport: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
             exit(1)
         if val < 0 or val > 2:
-            print('ERROR: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
+            print('ERROR: vizSupport: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
             exit(1)
         vizMessenger.opNavMode = val
         if val > 0:
