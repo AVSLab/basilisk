@@ -91,9 +91,6 @@ The following images illustrate the expected simulation run returns for a range 
 
     show_plots = True, damping_parameter = 0.0, timeStep = 0.75
 
-.. image:: /_images/Scenarios/scenarioFuelSloshParticleMotion.svg
-   :align: center
-
 .. image:: /_images/Scenarios/scenarioFuelSloshOAM1.svg
    :align: center
 
@@ -124,8 +121,6 @@ the solution is close to machine precision.
 This highlights the conservative nature of the forces used so far,
 confirming that the simulation is running correctly.
 
-.. image:: /_images/Scenarios/scenarioFuelSloshParticleMotion.svg
-   :align: center
 
 .. image:: /_images/Scenarios/scenarioFuelSloshOAM2.svg
    :align: center
@@ -178,7 +173,6 @@ import os
 import inspect
 import numpy as np
 
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import fuelTank
 
@@ -187,10 +181,12 @@ from Basilisk.utilities import SimulationBaseClass
 import matplotlib.pyplot as plt
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import messaging2
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -220,7 +216,7 @@ def run(show_plots, damping_parameter, timeStep):
 
     #  create spacecraft object
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bskSat"
 
     scSim.AddModelToTask(simTaskName, scObject)
 
@@ -331,14 +327,10 @@ def run(show_plots, damping_parameter, timeStep):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
 
-    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
-    #   cross_init() and reset() routines on each module.
-    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
-    #   then the all messages are auto-discovered that are shared across different BSK threads.
-    #
     scSim.InitializeSimulation()
 
     scSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", simulationTimeStep, 0, 0, 'double')
@@ -347,11 +339,14 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", simulationTimeStep, 0, 0, 'double')
     if damping_parameter != 0.0:
         scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho1').getState()", simulationTimeStep, 0, 0, 'double')
+            scObject.ModelTag +
+            ".dynManager.getStateObject('linearSpringMassDamperRho1').getState()", simulationTimeStep, 0, 0, 'double')
         scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho2').getState()", simulationTimeStep, 0, 0, 'double')
+            scObject.ModelTag +
+            ".dynManager.getStateObject('linearSpringMassDamperRho2').getState()", simulationTimeStep, 0, 0, 'double')
         scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho3').getState()", simulationTimeStep, 0, 0, 'double')
+            scObject.ModelTag +
+            ".dynManager.getStateObject('linearSpringMassDamperRho3').getState()", simulationTimeStep, 0, 0, 'double')
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -360,8 +355,8 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.ExecuteSimulation()
 
     # request states to the simulation
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_CN_N', list(range(3)))
+    posData = dataLog.r_CN_N
+    velData = dataLog.v_CN_N
 
     orbEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
     orbAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
@@ -371,11 +366,11 @@ def run(show_plots, damping_parameter, timeStep):
     rhoj1Out = rhoj2Out = rhoj3Out = []
     if damping_parameter != 0.0:
         rhoj1Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho1').getState()")
+            scObject.ModelTag + ".dynManager.getStateObject('linearSpringMassDamperRho1').getState()")
         rhoj2Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho2').getState()")
+            scObject.ModelTag + ".dynManager.getStateObject('linearSpringMassDamperRho2').getState()")
         rhoj3Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho3').getState()")
+            scObject.ModelTag + ".dynManager.getStateObject('linearSpringMassDamperRho3').getState()")
 
     fileName = os.path.basename(os.path.splitext(__file__)[0])
     if damping_parameter == 0.0 and timeStep == 0.75:
@@ -394,8 +389,8 @@ def run(show_plots, damping_parameter, timeStep):
 
     rData = []
     fData = []
-    for idx in range(0, len(posData)):
-        oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+    for idx in range(len(posData)):
+        oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
 
