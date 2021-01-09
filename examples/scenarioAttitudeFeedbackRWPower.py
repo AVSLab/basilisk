@@ -83,14 +83,15 @@ how this will reduce the overall maneuver energy requirements.
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
+from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque)
-from Basilisk.simulation import reactionWheelStateEffector, simple_nav, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
 from Basilisk.simulation import ReactionWheelPower
 from Basilisk.simulation import simpleBattery
+from Basilisk.architecture import messaging2
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -103,7 +104,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
@@ -114,12 +115,12 @@ def plot_attitude_error(timeData, dataSigmaBR):
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(2)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
-        plt.plot(timeData, dataRW[idx - 1][:, 1],
+        plt.plot(timeData, dataRW[idx],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -129,8 +130,8 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
 def plot_rw_power(timeData, dataRwPower, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(3)
-    for idx in range(1, 4):
-        plt.plot(timeData, dataRwPower[idx - 1][:, 1],
+    for idx in range(3):
+        plt.plot(timeData, dataRwPower[idx],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$p_{rw,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -167,15 +168,13 @@ def run(show_plots, useRwPowerGeneration):
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-
-
     #
     #   setup the simulation tasks/objects
     #
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -205,7 +204,7 @@ def run(show_plots, useRwPowerGeneration):
     rwFactory = simIncludeRW.rwFactory()
 
     # store the RW dynamical model type
-    varRWModel = rwFactory.BalancedWheels
+    varRWModel = messaging2.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
@@ -218,12 +217,12 @@ def run(show_plots, useRwPowerGeneration):
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel
                            )
+    rwList = [RW1, RW2, RW3]
 
     numRW = rwFactory.getNumOfDevices()
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.InputCmds = "reactionwheel_cmds"
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
@@ -231,38 +230,44 @@ def run(show_plots, useRwPowerGeneration):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # add RW power modules
     rwPowerList = []
-    for c in range(0, numRW):
+    for c in range(numRW):
         powerRW = ReactionWheelPower.ReactionWheelPower()
-        powerRW.ModelTag = scObject.ModelTag
+        powerRW.ModelTag = scObject.ModelTag + "RWPower" + str(c)
         powerRW.basePowerNeed = 5.   # baseline power draw, Watts
-        powerRW.rwStateInMsgName = powerRW.ModelTag + "_rw_config_" + str(c) + "_data"
-        powerRW.nodePowerOutMsgName = "rwPower_" + str(c)
+        powerRW.rwStateInMsg.subscribeTo(rwStateEffector.rwOutMsgs[c])
         if useRwPowerGeneration:
             powerRW.mechToElecEfficiency = 0.5
         scSim.AddModelToTask(simTaskName, powerRW)
         rwPowerList.append(powerRW)
 
-
     # create battery module
     battery = simpleBattery.SimpleBattery()
     battery.ModelTag = scObject.ModelTag
-    battery.batPowerOutMsgName = 'battery_status'
     battery.storageCapacity = 300000  # W-s
     battery.storedCharge_Init = battery.storageCapacity * 0.8  # 20% depletion
     scSim.AddModelToTask(simTaskName, battery)
     # connect RW power to the battery module
-    for c in range(0, numRW):
-        battery.addPowerNodeToModel(rwPowerList[c].nodePowerOutMsgName)
+    for c in range(numRW):
+        battery.addPowerNodeToModel(rwPowerList[c].nodePowerOutMsg)
 
     #
     #   setup the FSW algorithm tasks
     #
+
+    # create the FSW vehicle configuration message
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+
+    # make the FSW RW configuration message
+    fswRwMsg = rwFactory.getConfigMessage()
 
     # setup inertial3D guidance module
     inertial3DConfig = inertial3D.inertial3DConfig()
@@ -270,27 +275,24 @@ def run(show_plots, useRwPowerGeneration):
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
-    inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
+    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = "LrRequested"
-    mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
+    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
@@ -302,9 +304,10 @@ def run(show_plots, useRwPowerGeneration):
     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
     # Initialize the test module msg names
-    rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
-    rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
-    rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0, 0, 1, 0, 0, 0, 1
@@ -315,39 +318,25 @@ def run(show_plots, useRwPowerGeneration):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    rwCmdLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, rwCmdLog)
+    scSim.AddModelToTask(simTaskName, attErrLog)
+
     # To log the RW information, the following code is used:
-    scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-    rwOutName = [scObject.ModelTag + "_rw_config_0_data",
-                 scObject.ModelTag + "_rw_config_1_data",
-                 scObject.ModelTag + "_rw_config_2_data"]
-    for item in rwOutName:
-        scSim.TotalSim.logThisMessage(item, samplingTime)
-    for c in range(0,numRW):
-        scSim.TotalSim.logThisMessage(rwPowerList[c].nodePowerOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(battery.batPowerOutMsgName, samplingTime)
+    rwSpeedLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, rwSpeedLog)
+    rwOutLog = []
+    rwPowLog = []
+    for c in range(numRW):
+        rwOutLog.append(rwStateEffector.rwOutMsgs[c].recorder(samplingTime))
+        rwPowLog.append(rwPowerList[c].nodePowerOutMsg.recorder(samplingTime))
+        scSim.AddModelToTask(simTaskName, rwOutLog[-1])
+        scSim.AddModelToTask(simTaskName, rwPowLog[-1])
 
-    #
-    # create simulation messages
-    #
-
-    # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
-
-    # make the FSW RW configuration message
-    fswRwMsg = rwFactory.getConfigMessage()
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.rwParamsInMsgName,
-                               fswRwMsg)
+    batPowLog = battery.batPowerOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, batPowLog)
 
     #
     #   set initial Spacecraft States
@@ -367,7 +356,10 @@ def run(show_plots, useRwPowerGeneration):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName, numRW=numRW)
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              # , saveFile=fileName
+                                              , rwEffectorList=rwStateEffector
+                                              )
 
     #
     #   initialize Simulation
@@ -383,24 +375,22 @@ def run(show_plots, useRwPowerGeneration):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
-    dataOmegaRW = scSim.pullMessageLogData(mrpControlConfig.inputRWSpeedsName + ".wheelSpeeds", list(range(numRW)))
+    dataUsReq = rwCmdLog.motorTorque[:, range(numRW)]
+    dataSigmaBR = attErrLog.sigma_BR
+
     dataRW = []
     dataRwPower = []
-    for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
-        dataRwPower.append(scSim.pullMessageLogData(rwPowerList[i].nodePowerOutMsgName + ".netPower"))
-    batteryStorageLog = scSim.pullMessageLogData(battery.batPowerOutMsgName+".storageLevel")
+    for c in range(0, numRW):
+        dataRW.append(rwOutLog[c].u_current)
+        dataRwPower.append(rwPowLog[c].netPower)
+    batteryStorageLog = batPowLog.storageLevel
 
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    timeData = rwCmdLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     figureList = {}
@@ -413,7 +403,7 @@ def run(show_plots, useRwPowerGeneration):
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
-    plt.plot(timeData, batteryStorageLog[:, 1])
+    plt.plot(timeData, batteryStorageLog)
     plt.xlabel('Time [min]')
     plt.ylabel('Battery Storage (Ws)')
     pltName = fileName + "4" + str(useRwPowerGeneration)
