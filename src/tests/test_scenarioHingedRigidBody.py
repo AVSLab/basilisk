@@ -59,7 +59,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 
     velData, figureList = scenarioHingedRigidBody.run(show_plots)
 
-    spaceCraftMomentum = np.sqrt(velData[-1, 1] ** 2 + velData[-1, 2] ** 2 + velData[-1, 3] ** 2)
+    spaceCraftMomentum = np.sqrt(velData[-1, 0] ** 2 + velData[-1, 1] ** 2 + velData[-1, 2] ** 2)
 
     # setup truth data for unit test
     InstMomentum = 8470.84340921

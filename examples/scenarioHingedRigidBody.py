@@ -100,7 +100,7 @@ The following images illustrate the expected simulation run returns for a range 
 
 ::
 
-    show_plots = True, orbitCase='LEO', useSphericalHarmonics=False, planetCase='Earth'
+    show_plots = True
 
 In this scenario something similar to a classical Hohmann transfer is being
 simulated to go from LEO to reach and stay at GEO, but with a finite thrusting time.
@@ -158,6 +158,7 @@ from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.simulation import extForceTorque
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -175,7 +176,6 @@ def run(show_plots):
     Args:
         show_plots (bool): Determines if the script should display plots
     """
-
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -199,7 +199,7 @@ def run(show_plots):
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bskSat"
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -229,7 +229,6 @@ def run(show_plots):
     scSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     scSim.panel1.thetaInit = 5 * np.pi / 180.0
     scSim.panel1.thetaDotInit = 0.0
-    scSim.panel1.hingedRigidBodyOutMsgName = "panel1Msg"
 
     # Define Variables for panel 2
     scSim.panel2.mass = 100.0
@@ -243,7 +242,6 @@ def run(show_plots):
     scSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     scSim.panel2.thetaInit = 5 * np.pi / 180.0
     scSim.panel2.thetaDotInit = 0.0
-    scSim.panel2.hingedRigidBodyOutMsgName = "panel2Msg"
 
     # Add panels to spaceCraft
     scObject.addStateEffector(scSim.panel1)  # in order to affect dynamics
@@ -294,13 +292,18 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scSim.panel1.hingedRigidBodyOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scSim.panel2.hingedRigidBodyOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    pl1Log = scSim.panel1.hingedRigidBodyOutMsg.recorder(samplingTime)
+    pl2Log = scSim.panel2.hingedRigidBodyOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, pl1Log)
+    scSim.AddModelToTask(simTaskName, pl2Log)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              # , saveFile=fileName
+                                              )
 
     #
     #   initialize Simulation
@@ -324,18 +327,15 @@ def run(show_plots):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    # The panel theta logs are queried with "range(1)" rather than "range(3)"
-    # because theta is a scalar rather than a 3-D
-    # vector like the position and velocities which are retrieved in the lines
-    # just before the panel theta logs. The
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
+
     # Hinged Rigid Body module is also set up with a message for "thetaDot" which
-    # can be retrieved by replacing ".theta"
-    # with ".thetaDot".
-    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.hingedRigidBodyOutMsgName + '.theta', list(range(1)))
-    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.hingedRigidBodyOutMsgName + '.theta', list(range(1)))
+    # can be retrieved by replacing ".theta" with ".thetaDot".
+    panel1thetaLog = pl1Log.theta
+    panel2thetaLog = pl2Log.theta
     np.set_printoptions(precision=16)
+    timeAxis = dataLog.times()
 
     #
     #   plot the results
@@ -346,8 +346,8 @@ def run(show_plots):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, posData[:, idx] / 1000.,
+    for idx in range(3):
+        plt.plot(timeAxis * macros.NANO2MIN, posData[:, idx] / 1000.,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -364,9 +364,9 @@ def run(show_plots):
     ax.ticklabel_format(useOffset=False, style='plain')
     rData = []
     for idx in range(0, len(posData)):
-        oeData = orbitalMotion.rv2elem_parab(mu, posData[idx, 1:4], velData[idx, 1:4])
+        oeData = orbitalMotion.rv2elem_parab(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag / 1000.)
-    plt.plot(posData[:, 0] * macros.NANO2MIN, rData, color='#aa0000',
+    plt.plot(timeAxis * macros.NANO2MIN, rData, color='#aa0000',
              )
     plt.xlabel('Time [min]')
     plt.ylabel('Radius [km]')
@@ -377,7 +377,7 @@ def run(show_plots):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    plt.plot(panel1thetaLog[:, 0] * macros.NANO2MIN, panel1thetaLog[:, 1])
+    plt.plot(timeAxis * macros.NANO2MIN, panel1thetaLog)
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 1 Angular Displacement [r]')
     pltName = fileName + "panel1theta" + str(int(0.))
@@ -387,7 +387,7 @@ def run(show_plots):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    plt.plot(panel2thetaLog[:, 0] * macros.NANO2MIN, panel2thetaLog[:, 1])
+    plt.plot(timeAxis * macros.NANO2MIN, panel2thetaLog)
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 2 Angular Displacement [r]')
     pltName = fileName + "panel2theta" + str(int(0.))
