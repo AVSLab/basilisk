@@ -22,7 +22,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <vector>
 #include "architecture/messaging2/msg2Header.h"
 #include "architecture/utilities/bskLogging.h"
-
+#include <typeinfo>
 
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
@@ -73,7 +73,8 @@ public:
         if (this->initialized) {
             return this->headerPointer->isWritten;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are checking if an unconnected msg is written.");
+            messageType var;
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are checking if an unconnected msg of type %s is written.", typeid(var).name());
             return false;
         }
     };
@@ -81,7 +82,8 @@ public:
     //! return the time at which the message was written
     uint64_t timeWritten(){
         if (!this->initialized) {
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting the write time of an unconnected msg.");
+            messageType var;
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting the write time of an unconnected msg of type %s.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->timeWritten;
@@ -90,11 +92,13 @@ public:
     //! return the moduleID of who wrote wrote the message
     int64_t moduleID(){
         if (!this->initialized) {
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unconnected msg.");
+            messageType var;
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unconnected msg of type %s.", typeid(var).name());
             return 0;
         }
         if (!this->headerPointer->timeWritten) {
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unwritten msg.");
+            messageType var;
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unwritten msg of type %s.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->moduleID;
