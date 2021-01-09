@@ -107,9 +107,9 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging2
 from Basilisk.simulation import simpleSolarPanel
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.simulation import coarseSunSensor
 import math
 
 def run(show_plots):
@@ -138,7 +138,7 @@ def run(show_plots):
 
     # create the spacecraft hub
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bskSat"
     scObject.hub.mHub = 750.0
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
@@ -150,11 +150,10 @@ def run(show_plots):
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # create sun position message
-    sunMessage = simMessages.SpicePlanetStateSimMsg()
+    sunMessage = messaging2.SpicePlanetStateMsgPayload()
     sunMessage.PlanetName = "Sun"
     sunMessage.PositionVector = [0, orbitalMotion.AU*1000, 0]
-    sunStateMsg = "SunMsg"
-    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, sunStateMsg, sunMessage)
+    sunStateMsg = messaging2.SpicePlanetStateMsg().write(sunMessage)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -194,11 +193,6 @@ def run(show_plots):
     panel1.thetaInit = 0.0
     panel1.thetaDotInit = 1.0 * macros.D2R  # rad/sec panel rotation rate
 
-    # message containing panel angular states
-    panel1.hingedRigidBodyOutMsgName = "panel1Msg"
-    # message containing panel inertial position and attitude states
-    panel1.hingedRigidBodyConfigLogOutMsgName = "panel1Log"
-
     # add panel to spacecraft hub
     scObject.addStateEffector(panel1)  # in order to affect dynamics
 
@@ -209,30 +203,26 @@ def run(show_plots):
     solarPanel.nHat_B = [0, 0, 1]  # direction is now in the rotating panel S frame!
     solarPanel.panelArea = 2.0  # m^2
     solarPanel.panelEfficiency = 0.9  # 90% efficiency in power generation
-    solarPanel.stateInMsgName = panel1.hingedRigidBodyConfigLogOutMsgName # states relative to panel states
-    solarPanel.sunInMsgName = sunStateMsg
-    solarPanel.nodePowerOutMsgName = "solarPanelPowerMsg"
+    solarPanel.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)
+    solarPanel.sunInMsg.subscribeTo(sunStateMsg)
 
     #
     # setup CSS sensors attached to rotating solar panel
     #
-    CSS1 = coarse_sun_sensor.CoarseSunSensor()
+    CSS1 = coarseSunSensor.CoarseSunSensor()
     CSS1.ModelTag = "CSS1_sensor"
     CSS1.fov = 45. * macros.D2R
     CSS1.scaleFactor = 1.0
-    CSS1.cssDataOutMsgName = "CSS1_output"
-    CSS1.sunInMsgName = sunStateMsg
+    CSS1.sunInMsg.subscribeTo(sunStateMsg)
     CSS1.nHat_B = [1, 0, 0]
-    CSS1.stateInMsgName = panel1.hingedRigidBodyConfigLogOutMsgName  # states relative to panel states
-
-    CSS2 = coarse_sun_sensor.CoarseSunSensor()
+    CSS1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)  # states relative to panel states
+    CSS2 = coarseSunSensor.CoarseSunSensor()
     CSS2.ModelTag = "CSS2_sensor"
     CSS2.fov = 45. * macros.D2R
     CSS2.scaleFactor = 1.0
-    CSS2.cssDataOutMsgName = "CSS2_output"
-    CSS2.sunInMsgName = sunStateMsg
+    CSS2.sunInMsg.subscribeTo(sunStateMsg)
     CSS2.nHat_B = [0, 0, 1]
-    CSS2.stateInMsgName = panel1.hingedRigidBodyConfigLogOutMsgName  # states relative to panel states
+    CSS2.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)  # states relative to panel states
 
     #
     # add modules to simulation task list
@@ -250,18 +240,23 @@ def run(show_plots):
 
     # Setup data logging before the simulation is initialized
     numDataPoints = 200
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(panel1.hingedRigidBodyOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(solarPanel.nodePowerOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(CSS1.cssDataOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(CSS2.cssDataOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    pl1Log = panel1.hingedRigidBodyOutMsg.recorder(samplingTime)
+    spLog = solarPanel.nodePowerOutMsg.recorder(samplingTime)
+    css1Log = CSS1.cssDataOutMsg.recorder(samplingTime)
+    css2Log = CSS2.cssDataOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, pl1Log)
+    scSim.AddModelToTask(simTaskName, spLog)
+    scSim.AddModelToTask(simTaskName, css1Log)
+    scSim.AddModelToTask(simTaskName, css2Log)
 
     # Vizard Visualization Option
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
                                               # saveFile=__file__,
                                               # liveStream=True,
-                                              gravBodies=gravFactory
+                                              cssList=[[CSS1, CSS2]]
                                               )
 
     scSim.InitializeSimulation()
@@ -269,15 +264,15 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     #   retrieve the logged data
-    dataSigmaBN = scSim.pullMessageLogData(scObject.scStateOutMsgName + ".sigma_BN", list(range(3)))
-    panel1thetaLog = scSim.pullMessageLogData(panel1.hingedRigidBodyOutMsgName + '.theta', list(range(1)))
-    solarPowerLog = scSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower", list(range(1)))
-    css1Log = scSim.pullMessageLogData(CSS1.cssDataOutMsgName + ".OutputData", list(range(1)))
-    css2Log = scSim.pullMessageLogData(CSS2.cssDataOutMsgName + ".OutputData", list(range(1)))
+    dataSigmaBN = dataLog.sigma_BN
+    panel1thetaLog = pl1Log.theta
+    solarPowerLog = spLog.netPower
+    css1Log = css1Log.OutputData
+    css2Log = css2Log.OutputData
 
     np.set_printoptions(precision=16)
 
-    figureList = plotOrbits(dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log)
+    figureList = plotOrbits(dataLog.times(), dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log)
 
     if show_plots:
         plt.show()
@@ -288,7 +283,7 @@ def run(show_plots):
     return figureList
 
 
-def plotOrbits(dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log):
+def plotOrbits(timeAxis, dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log):
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     figCounter = 1
@@ -296,8 +291,8 @@ def plotOrbits(dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    timeData = dataSigmaBN[:, 0] * macros.NANO2MIN
-    for idx in range(1, 4):
+    timeData = timeAxis * macros.NANO2MIN
+    for idx in range(3):
         plt.plot(timeData, dataSigmaBN[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
@@ -312,14 +307,14 @@ def plotOrbits(dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log):
     figCounter += 1
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
-    ax1.plot(timeData, panel1thetaLog[:, 1]*macros.R2D % 360, '--', color='royalblue')
+    ax1.plot(timeData, panel1thetaLog*macros.R2D % 360, '--', color='royalblue')
     ax1.fill_between(timeData, 0, 90, facecolor='gold')
     ax1.fill_between(timeData, 270, 360, facecolor='gold')
     ax1.set_yticks([0, 90, 180, 270, 360])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel Angle [deg]', color='royalblue')
     ax2 = plt.figure(figCounter).add_subplot(111, sharex=ax1, frameon=False)
-    ax2.plot(timeData, solarPowerLog[:, 1], color='goldenrod')
+    ax2.plot(timeData, solarPowerLog, color='goldenrod')
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position("right")
     plt.ylabel('Solar Panel Power [W]', color='goldenrod')
@@ -330,15 +325,15 @@ def plotOrbits(dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log):
     figCounter += 1
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
-    ax1.plot(timeData, panel1thetaLog[:, 1]*macros.R2D % 360, '--', color='royalblue')
+    ax1.plot(timeData, panel1thetaLog*macros.R2D % 360, '--', color='royalblue')
     ax1.set_yticks([0, 90, 180, 270, 360])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel Angle [deg]', color='royalblue')
     ax2 = plt.figure(figCounter).add_subplot(111, sharex=ax1, frameon=False)
-    ax2.plot(timeData, css1Log[:, 1],
+    ax2.plot(timeData, css1Log,
              color='tab:pink',
              label=r'CSS$_1$')
-    ax2.plot(timeData, css2Log[:, 1],
+    ax2.plot(timeData, css2Log,
              color='tab:olive',
              label=r'CSS$_2$')
     ax1.fill_between(timeData, 225, 315, facecolor='pink')
