@@ -23,6 +23,7 @@ from Basilisk.architecture import sys_model_task
 
 
 def CreateNewMessage(messageName, messageType, moduleID):
+    """Create new BSK1 message"""
     messageStructName = messageType.__class__.__name__
     messageID = sim_model.SystemMessaging_GetInstance().CreateNewMessage(
         messageName, messageType.getStructSize(), 2, messageStructName, moduleID)
@@ -51,6 +52,7 @@ def WriteMessage(messageID, currentTime, messageStruct, moduleID, msgSize=-1):
 
 
 class ProcessBaseClass(object):
+    """Class for a BSK process"""
     def __init__(self, procName, procPriority=-1):
         self.Name = procName
         self.processData = sim_model.SysProcess(procName)

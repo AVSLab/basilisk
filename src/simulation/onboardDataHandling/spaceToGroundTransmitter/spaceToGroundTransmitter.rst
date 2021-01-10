@@ -2,7 +2,7 @@ Executive Summary
 -----------------
 This module provides a model of access-dependent data downlink from a simple transmitter at a fixed baud rate. Specifically, the transmitter reads a :ref:`DataStorageStatusMsgPayload` from the storage unit it is subscribed to, searches for the data buffer with the maximum amount of data, and downlinks a packet of data at a fixed baud rate. The transmitter writes out a :ref:`DataNodeUsageMsgPayload` describing the data name and baud rate of the data it wants to downlink.
 
-In comparison to :ref:`SimpleTransmitter`, downlink is only enabled when a :ref:`AccessSimMsg` indicates that the spacecraft for which the transmitter is associated has access to an object that can provide it (such as a :ref:`GroundLocation`.)
+In comparison to :ref:`SimpleTransmitter`, downlink is only enabled when a :ref:`AccessMsgPayload` indicates that the spacecraft for which the transmitter is associated has access to an object that can provide it (such as a :ref:`GroundLocation`.)
 
 For more information on how to set up and use this module, see the simple data system example: :ref:`scenarioDataDemo`
 
@@ -50,11 +50,11 @@ Set the `nodeBaudRate`, `packetSize`, and numBuffers variables::
    transmitter.packetSize = -1E6 # bits
    transmitter.numBuffers = 2
 
-The next step is to attach one or more :ref:`DataStorageStatusSimMsg` instances to it using the ``addStorageUnitToTransmitter()`` method::
+The next step is to attach one or more :ref:`DataStorageStatusMsgPayload` instances to it using the ``addStorageUnitToTransmitter()`` method::
 
    transmitter.addStorageUnitToTransmitter(storageMsg)
 
-Next, attach available :ref:`AccessSimMsg` instances using the ``addAccessMsgToTransmitter()`` method::
+Next, attach available :ref:`AccessMsgPayload` instances using the ``addAccessMsgToTransmitter()`` method::
 
     transmitter.addAccessMsgToTransmitter(accessMsg)
 

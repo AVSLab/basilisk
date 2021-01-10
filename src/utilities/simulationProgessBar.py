@@ -3,6 +3,9 @@ from colorama import Fore
 
 
 class SimulationProgressBar:
+    """
+    Class to generate a BSK progress bar in the terminal window
+    """
     def __init__(self, max_value, enable=False):
         self.max_value = max_value
         self.last_update = 0

@@ -151,7 +151,7 @@ def run(show_plots, scCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(5.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 100)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
     #   setup the simulation tasks/objects

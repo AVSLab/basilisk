@@ -29,7 +29,7 @@ This script is found in the folder ``basilisk/examples`` and executed by using::
       python3 scenarioFormationMeanOEFeedback.py
 
 The simulation layout is shown in the following illustration. Two spacecraft are orbiting the earth at
-close distance. Only :math:`J_2` gravity perturbation is included. Each spacecraft sends a :ref:`simple_nav` 
+close distance. Only :math:`J_2` gravity perturbation is included. Each spacecraft sends a :ref:`simpleNav`
 output message of type :ref:`NavAttIntMsg` message at a certain period
 to :ref:`meanOEFeedback`, where mean orbital element difference is calculated and necessary control force is output to
 extForceTorque module.

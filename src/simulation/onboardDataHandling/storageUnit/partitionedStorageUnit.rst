@@ -31,7 +31,7 @@ In addition to the variables that must be set for the :ref:`DataStorageUnitBase`
 
    storageUnit.storageCapacity = 1E5 # Given in bits
 
-The next step is to attach one or more :ref:`DataNodeUsageSimMsg` instances to it using the ``addDataNodeToModel()`` method::
+The next step is to attach one or more :ref:`DataNodeUsageMsgPayload` instances to it using the ``addDataNodeToModel()`` method::
 
    storageUnit.addDataNodeToModel(dataMsg)
 

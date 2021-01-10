@@ -218,7 +218,7 @@ The following table includes the keyword options for this method.
         the ``viz.spacecraftName`` is used.
 
 Setting Instrument GUI Options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To specify the instrument GUI settings use the ``setInstrumentGuiSetting``
 helper method in Python. An example is::

@@ -31,7 +31,7 @@
 /*!
  \verbatim embed:rst
     This method initializes the configData for this module.  It creates a single output message of type
-    :ref:`THRArrayOnTimeCmdIntMsg`.
+    :ref:`THRArrayOnTimeCmdMsgPayload`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module

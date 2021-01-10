@@ -28,7 +28,7 @@ To set up this module users must create a SimplePowerMonitor instance.
     battery.ModelTag = "powerMonitorModel"
 
 
-The next step is to attach one or more :ref:`PowerNodeUsageSimMsg` instances to it using the ``addNodeToStorage()`` method.
+The next step is to attach one or more :ref:`PowerNodeUsageMsgPayload` instances to it using the ``addNodeToStorage()`` method.
 
 .. code-block:: python
     :linenos:

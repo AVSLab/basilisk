@@ -7,9 +7,9 @@ that accounts for the electrical power required for the RW device just to be on.
 
 This module is a sub-class of :ref:`PowerNodeBase` class.  As such it has the common properties:
 
-1. Writes out a :ref:`PowerNodeUsageSimMsg` describing its power consumption at each sim update based on its power
+1. Writes out a :ref:`PowerNodeUsageMsgPayload` describing its power consumption at each sim update based on its power
    consumption attribute
-2. Can be switched on or off using an optional message of type :ref:`DeviceStatusIntMsg`
+2. Can be switched on or off using an optional message of type :ref:`DeviceStatusMsgPayload`
 
 
 Message Connection Descriptions

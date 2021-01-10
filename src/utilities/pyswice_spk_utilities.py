@@ -45,6 +45,7 @@ from Basilisk.topLevelModules import pyswice
 import numpy
 
 def spkRead(target, time, ref, observer):
+    """Spice spk read method"""
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(time, et)
     state = pyswice.new_doubleArray(6)

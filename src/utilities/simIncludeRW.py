@@ -32,6 +32,9 @@ except ImportError:
     from collections import OrderedDict
 
 class rwFactory(object):
+    """
+    Reaction Wheel Factory Class
+    """
     def __init__(self):
         self.rwList = OrderedDict()
         self.maxMomentum = 0.0

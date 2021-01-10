@@ -50,7 +50,7 @@ public:
     std::string filename;                //!< Filename for module to read an image directly
     Message<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
     
-    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the ImageFswMsg output message
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
     
     std::string pathToNetwork;                  //!< Path to the trained CNN
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out

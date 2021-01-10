@@ -23,18 +23,22 @@ import math
 
 #   function to convert seconds to an integer nanoseconds value
 def sec2nano(time):
+    """convert seconds to nano-seconds"""
     return int(time*1E9+0.5)
 
 #   function to convert minutes to an integer nanoseconds value
 def min2nano(time):
+    "convert minutes to nano-seconds"
     return int((time*1E9+0.5)*60)
 
 #   function to convert hours to an integer nanoseconds value
 def hour2nano(time):
+    """convert hours to nano-seconds"""
     return int((time*1E9+0.5)*60*60)
 
 #   function to convert days to an integer nanoseconds value
 def day2nano(time):
+    """convert days to nano-seconds"""
     return int((time*1E9+0.5)*60*60*24)
 
 #   variable to convert nano-seconds to seconds

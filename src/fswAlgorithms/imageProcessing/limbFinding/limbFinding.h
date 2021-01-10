@@ -51,7 +51,7 @@ public:
 public:
     std::string filename;                //!< Filename for module to read an image directly
     Message<LimbOpNavMsgPayload> opnavLimbOutMsg;  //!< The name of the Limb output message
-    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the ImageFswMsg output message
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
     std::string saveDir;                //!< Directory to save images to
 
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out

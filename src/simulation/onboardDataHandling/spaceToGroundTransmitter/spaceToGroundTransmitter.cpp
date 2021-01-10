@@ -37,7 +37,7 @@ SpaceToGroundTransmitter::~SpaceToGroundTransmitter(){
     return;
 }
 
-/*! Adds a dataStorageStatusSimMsg name to be accessed by transmitter.
+/*! Adds a dataStorageStatusMsgPayload name to be accessed by transmitter.
  @return void
  @param tmpStorageUnitMsg A spacecraft state message name.
  */

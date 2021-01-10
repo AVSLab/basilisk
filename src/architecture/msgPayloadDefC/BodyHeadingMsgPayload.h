@@ -24,7 +24,7 @@
 //!@brief Planet heading message definition.
 /*! Many modules in Basilisk utilize the spacecraft body frame heading to something.
   For instance, a spacecraft may want to point at a point on earth, the sun, another planet
-  or another spacecraft. This message is unique from the interface message NavAttIntMsg
+  or another spacecraft. This message is unique from the interface message NavAttMsgPayload
   in being agnostic of the thing being pointed to while not including separate information
   about attitude and rates that are not necessarily desired
  */

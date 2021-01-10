@@ -119,6 +119,7 @@ an empty thruster cluster vector must be added for that spacecraft.
 See :ref:`test_dataFileToViz` for an example on how to configure for thruster information.
 
 .. code-block:: python
+
     testModule.appendThrClusterMap([])
 
 To add RW devices to the list, for each spacecraft you must specify the number of RW that it contains through::

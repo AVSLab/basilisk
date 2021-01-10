@@ -26,7 +26,7 @@
 
 /*!
  \verbatim embed:rst
-    This method creates the module output message of type :ref:`ArrayMotorTorqueIntMsg`.
+    This method creates the module output message of type :ref:`ArrayMotorTorqueMsgPayload`.
  \endverbatim
  @return void
  @param configData The configuration data associated with RW null space model

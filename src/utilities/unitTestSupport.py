@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -16,13 +15,11 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
-
 #
 #   Unit Test Support Script
 #
 import math
-import os,errno
+import os, errno
 import numpy as np
 import matplotlib as mpl
 from datetime import datetime, timedelta
@@ -32,7 +29,7 @@ from Basilisk.topLevelModules import pyswice
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
 mpl.rc('ytick', labelsize=9)
-mpl.rc("figure", figsize=(5.75,2.5))
+mpl.rc("figure", figsize=(5.75, 2.5))
 mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
@@ -42,13 +39,14 @@ mpl.rc('legend', loc='lower right')
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 
-from . import macros
-import math
+from Basilisk.utilities import macros
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
-from . import tabulate as T
+from Basilisk.utilities import tabulate as T
+
 '''
 del(T.LATEX_ESCAPE_RULES['$'])
 del(T.LATEX_ESCAPE_RULES['\\'])
@@ -57,123 +55,114 @@ del(T.LATEX_ESCAPE_RULES['{'])
 del(T.LATEX_ESCAPE_RULES['}'])
 '''
 
-del(T.LATEX_ESCAPE_RULES[u'$'])
-del(T.LATEX_ESCAPE_RULES[u'\\'])
-del(T.LATEX_ESCAPE_RULES[u'_'])
-del(T.LATEX_ESCAPE_RULES[u'{'])
-del(T.LATEX_ESCAPE_RULES[u'}'])
-from .tabulate import *
+del (T.LATEX_ESCAPE_RULES[u'$'])
+del (T.LATEX_ESCAPE_RULES[u'\\'])
+del (T.LATEX_ESCAPE_RULES[u'_'])
+del (T.LATEX_ESCAPE_RULES[u'{'])
+del (T.LATEX_ESCAPE_RULES[u'}'])
+from Basilisk.utilities.tabulate import *
 
 
-
-#
-#   function to check if a 3D vector is the same as the truth values
-#
 def isVectorEqual(result, truth, accuracy):
-
+    """function to check if a 3D vector is the same as the truth values"""
     if foundNAN(result): return 0
 
     if np.linalg.norm(result - truth) > accuracy:
-        return 0        # return 0 to indicate the array's are not equal
-    return 1            # return 1 to indicate the two array's are equal
+        return 0  # return 0 to indicate the array's are not equal
+    return 1  # return 1 to indicate the two array's are equal
 
 
-
-#
-#   function to check if an array of values is the same as the truth values
-#
 def isArrayEqual(result, truth, dim, accuracy):
+    """function to check if an array of values is the same as the truth values"""
     # the result array is of dimension dim, no time stamp
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
         print("Incorrect array dimension " + dim + " sent to isArrayEqual")
         return 0
 
-    if len(result)==0:
+    if len(result) == 0:
         print("Result array was empty")
         return 0
 
-    if len(truth)==0:
+    if len(truth) == 0:
         print("Truth array was empty")
         return 0
 
     if foundNAN(result): return 0
 
-    for i in range(0,dim):
+    for i in range(0, dim):
         if math.fabs(result[i] - truth[i]) > accuracy:
-            return 0    # return 0 to indicate the array's are not equal
-    return 1            # return 1 to indicate the two array's are equal
+            return 0  # return 0 to indicate the array's are not equal
+    return 1  # return 1 to indicate the two array's are equal
+
 
 def isArrayEqualRelative(result, truth, dim, accuracy):
+    """Compare relative accuracy of two arracy"""
     # the result array is of dimension dim, no time stamp
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
         print("Incorrect array dimension " + dim + " sent to isArrayEqual")
         return 0
 
-    if len(result)==0:
+    if len(result) == 0:
         print("Result array was empty")
         return 0
 
-    if len(truth)==0:
+    if len(truth) == 0:
         print("Truth array was empty")
         return 0
 
     if foundNAN(result): return 0
 
-    for i in range(0,dim):
+    for i in range(0, dim):
         if truth[i] == 0:
             if result[i] == 0:
                 continue
             else:
                 print("Truth array contains zero")
                 return 0
-        if math.fabs((result[i] - truth[i])/truth[i]) > accuracy:
-            return 0    # return 0 to indicate the array's are not equal
-    return 1            # return 1 to indicate the two array's are equal
-#
-#   function to check if an array of values are zero
-#
+        if math.fabs((result[i] - truth[i]) / truth[i]) > accuracy:
+            return 0  # return 0 to indicate the array's are not equal
+    return 1  # return 1 to indicate the two array's are equal
+
+
 def isArrayZero(result, dim, accuracy):
+    """function to check if an array of values are zero"""
     # the result array is of dimension dim
     if dim < 1:
         print("Incorrect array dimension " + dim + " sent to isArrayEqual")
         return 0
 
-    if len(result)==0:
+    if len(result) == 0:
         print("Result array was empty")
         return 0
 
     if foundNAN(result): return 0
 
-    for i in range(0,dim):
+    for i in range(0, dim):
         if (math.fabs(result[i]) > accuracy):
-            return 0    # return 0 to indicate the array's are not equal
+            return 0  # return 0 to indicate the array's are not equal
 
-    return 1            # return 1 to indicate the two array's are equal
+    return 1  # return 1 to indicate the two array's are equal
 
 
-#
-#   Compare two vector size and values and check absolute accuracy
-#
 def compareVector(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    """Compare two vector size and values and check absolute accuracy"""
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+ r" unequal data array sizes\n")
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
     else:
         if not isVectorEqual(dataStates, trueStates, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: "+msg+ r"\n")
+            testMessages.append("FAILED: " + msg + r"\n")
     return testFailCount, testMessages
 
 
-#
-#   Compare two arrays size and values and check absolute accuracy
-#
 def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    """Compare two arrays size and values and check absolute accuracy"""
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+ r" unequal data array sizes\n")
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
     elif (len(trueStates) == 0 or len(dataStates) == 0):
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
@@ -182,17 +171,16 @@ def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessa
             # check a vector values
             if not isArrayEqual(dataStates[i], trueStates[i], 3, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+"\n")
+                testMessages.append("FAILED: " + msg + "\n")
     return testFailCount, testMessages
 
-#
-#   Compare two arrays of size N for size and values and check absolute accuracy
-#
+
 def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, testMessages):
-    if (len(trueStates) != len(dataStates)):
+    """Compare two arrays of size N for size and values and check absolute accuracy"""
+    if len(trueStates) != len(dataStates):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
-    elif (len(trueStates) == 0 or len(dataStates) == 0):
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
+    elif len(trueStates) == 0 or len(dataStates) == 0:
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
@@ -212,13 +200,10 @@ def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, t
     return testFailCount, testMessages
 
 
-#
-#   Compare two arrays size and values and check relative accuracy
-#
 def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     """
-    Checks whether the relative distance between elements of a pullMessageLogData-derived array and a truth array is below a provided
-    accuracy, and return an error if not.
+    Checks whether the relative distance between elements of a pullMessageLogData-derived array and a
+    truth array is below a provided accuracy, and return an error if not.
     :param trueStates: iterable of size (m,n);
     :param dataStates: iterable of size (m,n)
     :param accuracy: Relative accuracy boundary
@@ -229,7 +214,7 @@ def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, t
     """
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
     elif (len(trueStates) == 0 or len(dataStates) == 0):
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
@@ -238,24 +223,22 @@ def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, t
             # check a vector values
             if not isArrayEqualRelative(dataStates[i], trueStates[i], 3, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
+                testMessages.append("FAILED: " + msg + " at t=" + str(dataStates[i, 0] * macros.NANO2SEC) + r"sec\n")
     return testFailCount, testMessages
 
-#
-#   function to check if a double equals a truth value
-#
+
 def isDoubleEqual(result, truth, accuracy):
+    """function to check if a double equals a truth value"""
     if foundNAN(result): return 0
 
     if (math.fabs(result - truth) > accuracy):
-        return 0    # return 0 to indicate the doubles are not equal
+        return 0  # return 0 to indicate the doubles are not equal
 
-    return 1        # return 1 to indicate the doubles are equal
+    return 1  # return 1 to indicate the doubles are equal
 
-#
-#   function to check if a double equals a truth value with relative tolerance
-#
+
 def isDoubleEqualRelative(result, truth, accuracy):
+    """function to check if a double equals a truth value with relative tolerance"""
     if foundNAN(result): return 0
     if foundNAN(truth): return 0
     if foundNAN(accuracy): return 0
@@ -263,19 +246,18 @@ def isDoubleEqualRelative(result, truth, accuracy):
         print("truth is zero, cannot compare")
         return 0
 
-    if (math.fabs((truth - result)/truth) > accuracy):
-        return 0    # return 0 to indicate the doubles are not equal
+    if (math.fabs((truth - result) / truth) > accuracy):
+        return 0  # return 0 to indicate the doubles are not equal
 
-    return 1        # return 1 to indicate the doubles are equal
+    return 1  # return 1 to indicate the doubles are equal
 
-#
-#   Compare two arrays of doubles for size and values and check relative accuracy
-#
+
 def compareDoubleArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
-    if (len(trueStates) != len(dataStates)):
+    """Compare two arrays of doubles for size and values and check relative accuracy"""
+    if len(trueStates) != len(dataStates):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
-    elif (len(trueStates) == 0 or len(dataStates) == 0):
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
+    elif len(trueStates) == 0 or len(dataStates) == 0:
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
@@ -283,17 +265,16 @@ def compareDoubleArrayRelative(trueStates, dataStates, accuracy, msg, testFailCo
             # check a vector values
             if not isDoubleEqualRelative(dataStates[i], trueStates[i], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+"\n")
+                testMessages.append("FAILED: " + msg + "\n")
     return testFailCount, testMessages
 
-#
-#   Compare two arrays of doubles for size and values and check absolute accuracy
-#
+
 def compareDoubleArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
-    if (len(trueStates) != len(dataStates)):
+    """Compare two arrays of doubles for size and values and check absolute accuracy"""
+    if len(trueStates) != len(dataStates):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
-    elif (len(trueStates) == 0 or len(dataStates) == 0):
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
+    elif len(trueStates) == 0 or len(dataStates) == 0:
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
@@ -306,8 +287,9 @@ def compareDoubleArray(trueStates, dataStates, accuracy, msg, testFailCount, tes
 
 
 def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
+    """Take a list and return equivalent LaTeX table code"""
 
-    texFileName = path+"/../_Documentation/AutoTeX/"+tableName+".tex"
+    texFileName = path + "/../_Documentation/AutoTeX/" + tableName + ".tex"
 
     if not os.path.exists(os.path.dirname(texFileName)):
         try:
@@ -332,9 +314,11 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 
     return
 
-def writeTeXSnippet(snippetName, texSnippet, path):
 
-    texFileName = path+"/../_Documentation/AutoTeX/"+snippetName+".tex"
+def writeTeXSnippet(snippetName, texSnippet, path):
+    """Write a LaTeX snippet to a file"""
+
+    texFileName = path + "/../_Documentation/AutoTeX/" + snippetName + ".tex"
 
     if not os.path.exists(os.path.dirname(texFileName)):
         try:
@@ -348,11 +332,10 @@ def writeTeXSnippet(snippetName, texSnippet, path):
 
     return
 
-#
-#   save a python scenario result into the Doxygen image folder
-#
-def saveScenarioFigure(figureName, plt, path, extension = ".svg"):
-    imgFileName = path + "/../../docs/source/_images/Scenarios/"+figureName+extension
+
+def saveScenarioFigure(figureName, plt, path, extension=".svg"):
+    """save a python scenario result into the documentation image folder"""
+    imgFileName = path + "/../../docs/source/_images/Scenarios/" + figureName + extension
     if not os.path.exists(os.path.dirname(imgFileName)):
         try:
             os.makedirs(os.path.dirname(imgFileName))
@@ -361,8 +344,10 @@ def saveScenarioFigure(figureName, plt, path, extension = ".svg"):
                 raise
     plt.savefig(imgFileName, transparent=True)
 
+
 def saveFigurePDF(figureName, plt, path):
-    figFileName = path+figureName+".pdf"
+    """Save a Figure as a PDF"""
+    figFileName = path + figureName + ".pdf"
     if not os.path.exists(os.path.dirname(figFileName)):
         try:
             os.makedirs(os.path.dirname(figFileName))
@@ -373,7 +358,7 @@ def saveFigurePDF(figureName, plt, path):
 
 
 def writeFigureLaTeX(figureName, caption, plt, format, path):
-
+    """Save a figure and associated TeX code snippet"""
     texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".tex"
     if not os.path.exists(os.path.dirname(texFileName)):
         try:
@@ -384,7 +369,7 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
     with open(texFileName, "w") as texFigure:
         texFigure.write(r'\begin{figure}[htbp]')
         texFigure.write(r'\centerline{')
-        texFigure.write(r'\includegraphics[' + format +']{AutoTeX/' + figureName + r'}}')
+        texFigure.write(r'\includegraphics[' + format + ']{AutoTeX/' + figureName + r'}}')
         texFigure.write(r'\caption{' + caption + r'}')
         texFigure.write(r'\label{fig:' + figureName + r'}')
         texFigure.write(r'\end{figure}')
@@ -395,47 +380,55 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
 
     return
 
+
 def foundNAN(array):
+    """check if an array contains NAN values"""
     if (np.isnan(np.sum(array))):
         print("Warning: found NaN value.")
-        return 1        # return 1 to indicate a NaN value was found
+        return 1  # return 1 to indicate a NaN value was found
     return 0
 
-#
-#   pick a nicer color pattern to plot 3 vector components
-#
 
-def getLineColor(idx,maxNum):
-    values = list(range(0, maxNum+2))
+def getLineColor(idx, maxNum):
+    """pick a nicer color pattern to plot 3 vector components"""
+    values = list(range(0, maxNum + 2))
     colorMap = mpl.pyplot.get_cmap('gist_earth')
     cNorm = colors.Normalize(vmin=0, vmax=values[-1])
     scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=colorMap)
-    return scalarMap.to_rgba(values[idx+1])
+    return scalarMap.to_rgba(values[idx + 1])
+
 
 def np2EigenMatrix3d(mat):
+    """convert 3D numpy matrix to Eigen matrix"""
     return [
         [mat[0], mat[1], mat[2]]
-        ,[mat[3], mat[4], mat[5]]
-        ,[mat[6], mat[7], mat[8]]
+        , [mat[3], mat[4], mat[5]]
+        , [mat[6], mat[7], mat[8]]
     ]
 
+
 def np2EigenVectorXd(vec):
+    """Convert numpty to Eigen vector"""
     npVec = []
     for item in vec:
         npVec.extend([[item]])
 
     return npVec
 
+
 def EigenVector3d2np(eig):
+    """convert Eigen vector3d to numpy"""
     return np.array([eig[0][0], eig[1][0], eig[2][0]])
 
+
 def pullVectorSetFromData(inpMat):
+    """extract the vector data set from a data matrix where the 1st column is the time information"""
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
 
-
 def decimalYearToDateTime(start):
+    """convert a decimal Year format to a regular dataTime object"""
     year = int(start)
     rem = start - year
 
@@ -444,7 +437,7 @@ def decimalYearToDateTime(start):
 
 
 def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
-
+    """convert a general time/date string to a gregoarian UTC msg object"""
     # set the data path
     if 'dataPath' in kwargs:
         dataPath = kwargs['dataPath']
@@ -477,10 +470,8 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     return messaging2.EpochMsg().write(epochMsgStructure)
 
 
-#
-#   loop through list of method keyword arguments and make sure that an approved keyword is used.
-#
 def checkMethodKeyword(karglist, kwargs):
+    """loop through list of method keyword arguments and make sure that an approved keyword is used."""
     for key in kwargs:
         if key not in karglist:
             print('ERROR: you tried to use an incorrect keyword ' + key + '. Options include:')
@@ -488,8 +479,8 @@ def checkMethodKeyword(karglist, kwargs):
             exit(1)
 
 
-# pull out the time column out of a 4xN data list
 def removeTimeFromData(dataList):
+    """pull out the time column out of a 4xN data list"""
     return (dataList.transpose()[1:len(dataList[0])]).transpose()
 
 
@@ -502,7 +493,7 @@ def samplingTime(simTime, baseTimeStep, numDataPoints):
     :param numDataPoints: nominal desired number of data points over the simulation duration
     :return:
     """
-    deltaTime = math.floor(simTime / baseTimeStep / (numDataPoints-1)) * baseTimeStep
+    deltaTime = math.floor(simTime / baseTimeStep / (numDataPoints - 1)) * baseTimeStep
     if deltaTime < 1:
         deltaTime = 1
     return deltaTime

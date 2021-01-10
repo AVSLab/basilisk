@@ -48,14 +48,14 @@ PowerStorageBase::~PowerStorageBase()
 
 /*! Adds a PowerNodeUsageMsgPayload input message to iterate over
  @return void
- @param tmpNodeMsg Message name corresponding to a PowerNodeUsageSimMsg.
+ @param tmpNodeMsg Message name corresponding to a PowerNodeUsageMsgPayload.
  */
 void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tmpNodeMsg){
     this->nodePowerUseInMsgs.push_back(tmpNodeMsg->addSubscriber());
     return;
 }
 
-/*! SelfInit creates one PowerStorageSimMsg for the simPowerStorageBase instance.
+/*! SelfInit creates one PowerStorageMsgPayload for the simPowerStorageBase instance.
   @return void
 */
 void PowerStorageBase::SelfInit()
@@ -95,7 +95,7 @@ void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! Writes out one PowerStorageStatusSimMsg
+/*! Writes out one PowerStorageStatusMsgPayload
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */

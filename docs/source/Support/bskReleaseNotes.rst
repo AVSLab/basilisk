@@ -60,7 +60,7 @@ Version 1.8.6
 - Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
 - Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
   on macOS with Xcode 12 installed
-- renamed ``RWArraytorqueIntMsg`` to :ref:`arrayMotorTorqueIntMsg`
+- renamed ``RWArraytorqueIntMsg`` to ``arrayMotorTorqueIntMsg``
 - updated :ref:`hingedRigidBodyStateEffector` to
 
     - write the panel angle and angle rate output message

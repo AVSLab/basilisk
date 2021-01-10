@@ -48,7 +48,7 @@ Overall, this module was created because many other modules need this informatio
 
 Equations
 ^^^^^^^^^
-The flux is calculated by scaling the flux at 1 AU and applying the :ref:`EclipseSimMsg` ``shadowFactor``:
+The flux is calculated by scaling the flux at 1 AU and applying the :ref:`EclipseMsgPayload` ``shadowFactor``:
 
 .. math::
 

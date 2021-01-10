@@ -17,16 +17,20 @@
 #
 
 
-from . import macros as mc
+from Basilisk.utilities import macros as mc
 
-#   Honeywell HR16 (100Nm, 75Nm, 50Nm)
-#
-#   RW Information Source:
-#   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
-#
-#   There are 3 momentum capacity options for this RW type.  The maximum momentum
-#   capacity must be set prior to creating the HR16 RW type using maxMomentum = [100, 75 or 50]
 def Honeywell_HR16(maxMomentum_level):
+    """
+    Honeywell HR16 (100Nm, 75Nm, 50Nm)
+
+    RW Information Source:
+    http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
+
+    There are 3 momentum capacity options for this RW type.  The maximum momentum
+    capacity must be set prior to creating the HR16 RW type using maxMomentum = [100, 75 or 50]
+    :param maxMomentum_level:
+    :return:
+    """
     Omega_max = 6000.0 * mc.rpm2radsec  # maximum speed
     u_max = 0.200  # maximum RW torque [Nm]
     u_min = 0.00001  # minimum RW torque [Nm]
@@ -58,15 +62,21 @@ def Honeywell_HR16(maxMomentum_level):
     return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d, maxMomentum)
 
 
-#   Honeywell HR14 (25Nm, 50Nm, 75Nm)
-#
-#   RW Information Source:
-#   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
-#
-#   There are 3 momentum capacity options for this RW type.  The maximum momentum
-#   capacity must be set prior to creating the HR14 RW type using
-#       options.maxMomentum = 75, 50 or 25
+
 def Honeywell_HR14(maxMomentum):
+    """
+    Honeywell HR14 (25Nm, 50Nm, 75Nm)
+
+    RW Information Source:
+    http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
+
+    There are 3 momentum capacity options for this RW type.  The maximum momentum
+    capacity must be set prior to creating the HR14 RW type using
+    options.maxMomentum = 75, 50 or 25
+
+    :param maxMomentum:
+    :return:
+    """
     Omega_max = 6000.0 * mc.rpm2radsec  # maximum speed
     u_max = 0.200  # maximum RW torque [Nm]
     u_min = 0.00001  # minimum RW torque [Nm]
@@ -96,15 +106,21 @@ def Honeywell_HR14(maxMomentum):
     return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d)
 
 
-#   Honeywell HR12 (12Nm, 25Nm, 50Nm)
-#
-#   RW Information Source:
-#   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
-#
-#   There are 3 momentum capacity options for this RW type.  The maximum momentum
-#   capacity must be set prior to creating the HR12 RW type using
-#       options.maxMomentum = 12, 25 or 50
+
 def Honeywell_HR12(maxMomentum):
+    """
+    Honeywell HR12 (12Nm, 25Nm, 50Nm)
+
+    RW Information Source:
+    http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
+
+    There are 3 momentum capacity options for this RW type.  The maximum momentum
+    capacity must be set prior to creating the HR12 RW type using
+        options.maxMomentum = 12, 25 or 50
+
+    :param maxMomentum:
+    :return:
+    """
     Omega_max = 6000.0 * mc.rpm2radsec  # maximum speed
     u_max = 0.200  # maximum RW torque [Nm]
     u_min = 0.00001  # minimum RW torque [Nm]

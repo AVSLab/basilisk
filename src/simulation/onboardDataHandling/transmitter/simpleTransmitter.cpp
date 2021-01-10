@@ -37,7 +37,7 @@ SimpleTransmitter::~SimpleTransmitter(){
     return;
 }
 
-/*! Adds a dataStorageStatusSimMsg name to be accessed by transmitter.
+/*! Adds a dataStorageStatusMsgPayload to be accessed by transmitter.
  @return void
  @param tmpStorageUnitMsg A spacecraft state message name.
  */

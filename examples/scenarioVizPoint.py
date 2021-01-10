@@ -87,7 +87,7 @@ The second control scenario points the spacecraft towards Mars on a Mars orbit.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the vizInterface, spacecraftPlus, simple_nav, MRP_Feedback. and inertial3D modules.
+# Purpose:  Integrated test of the vizInterface, spacecraftPlus, simpleNav, mrpFeedback. and inertial3D modules.
 # Illustrates a spacecraft pointing with visualization.
 # Author:   Thibaud Teil
 # Creation Date:  Nov. 01, 2018
@@ -112,10 +112,10 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav, simFswInterfaceMessages
+from Basilisk.simulation import simpleNav, simFswInterfaceMessages
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
@@ -242,7 +242,7 @@ def run(show_plots, missionType, saveVizardFile):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 

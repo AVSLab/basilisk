@@ -41,7 +41,7 @@ PowerNodeBase::~PowerNodeBase()
     return;
 }
 
-/*! SelfInit creates a PowerNodeUsageSimMsg using the provided message output name.
+/*! SelfInit creates a PowerNodeUsageMsgPayload using the provided message output name.
  @return void
 */
 void PowerNodeBase::SelfInit()

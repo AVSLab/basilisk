@@ -31,6 +31,7 @@ except ImportError:
     from collections import OrderedDict
 
 class thrusterFactory(object):
+    """Simulation Thruster Factory Class"""
     def __init__(self):
         self.useMinPulseTime = True
         self.thrusterList = OrderedDict()

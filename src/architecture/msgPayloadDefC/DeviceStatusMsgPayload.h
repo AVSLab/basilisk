@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_DEVICESTATUSINTMSG_H
-#define BASILISK_DEVICESTATUSINTMSG_H
+#ifndef BASILISK_DEVICESTATUSMSGPAYLOAD_H
+#define BASILISK_DEVICESTATUSMSGPAYLOAD_H
 
 
 enum deviceState {On = 1, Off = 0};
@@ -27,7 +27,5 @@ enum deviceState {On = 1, Off = 0};
 typedef struct{
     enum deviceState deviceStatus;      //!< device status indicator; 0 is off, 1 is on
 }DeviceStatusMsgPayload;
-//dataNodeStatusIntMsg
-//uint64_t dataStatus
 
-#endif //BASILISK_DEVICESTATUSINTMSG_H
+#endif //BASILISK_DEVICESTATUSMSGPAYLOAD_H

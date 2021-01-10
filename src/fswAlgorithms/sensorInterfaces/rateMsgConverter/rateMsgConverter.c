@@ -19,8 +19,8 @@
 /*
     Rate Converter message
 
-    Note:   this module reads in a message of type ImuSensorBodyFswMsg, extracts the body rate vector information,
-            and adds this info to a msg of type NavAttIntMsg.
+    Note:   this module reads in a message of type ImuSensorBodyMsgPayload, extracts the body rate vector information,
+            and adds this info to a msg of type NavAttMsgPayload.
     Author: Hanspeter Schaub
     Date:   June 30, 2018
  
@@ -75,10 +75,10 @@ void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTi
     IMUSensorBodyMsgPayload inMsg;
     NavAttMsgPayload outMsg;
     
-    /*! - read in the message of type IMUSensorBodyFswMsg */
+    /*! - read in the message of type IMUSensorBodyMsgPayload */
     inMsg = IMUSensorBodyMsg_C_read(&configData->imuRateInMsg);
     
-    /*! - create a zero message of type NavAttIntMsg which has the rate vector from the input message */
+    /*! - create a zero message of type NavAttMsgPayload which has the rate vector from the input message */
     outMsg = NavAttMsg_C_zeroMsgPayload();
     v3Copy(inMsg.AngVelBody, outMsg.omega_BN_B);
     

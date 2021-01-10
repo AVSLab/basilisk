@@ -45,6 +45,7 @@ import warnings
 
 
 class LogBaseClass:
+    """Logging Base class"""
     def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols=1):
         self.Period = LogPeriod
         self.Name = ReplaceName
@@ -61,6 +62,7 @@ class LogBaseClass:
 
 
 class EventHandlerClass:
+    """Event Handler Class"""
     def __init__(self, eventName, eventRate=int(1E9), eventActive=False,
                  conditionList=[], actionList=[]):
         self.eventName = eventName
@@ -111,6 +113,7 @@ class EventHandlerClass:
 
 
 class StructDocData:
+    """Structure data documentation class"""
     class StructElementDef:
         def __init__(self, type, name, argstring, desc=''):
             self.type = type
@@ -174,6 +177,7 @@ class DataPairClass:
         self.outputDict = {}
 
 class SimBaseClass:
+    """Simulation Base Class"""
     def __init__(self):
         self.TotalSim = sim_model.SimModel()
         self.TotalSim.terminateSimulation()

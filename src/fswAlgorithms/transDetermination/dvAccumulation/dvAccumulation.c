@@ -102,7 +102,7 @@ int dvAccumulation_partition(AccPktDataMsgPayload *A, int start, int end){
     return partitionIndex;
 }
 
-/*! Sort the AccPktDataFswMsg by the measTime with an iterative quickSort.
+/*! Sort the AccPktDataMsgPaylaod by the measTime with an iterative quickSort.
   @return void
   @param A --> Array to be sorted,
   @param start  --> Starting index,

@@ -272,7 +272,7 @@ def run(show_plots):
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel
                            )
-    rwSc1List = [RW1, RW2, RW3]
+
     numRW = rwFactory.getNumOfDevices()
 
     # create RW object container and tie to spacecraft object
@@ -285,10 +285,9 @@ def run(show_plots):
 
     # add free-spinning RWs to the debris object
     rwFactory2 = simIncludeRW.rwFactory()
-    RW1sc2 = rwFactory2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=1000.0)
-    RW2sc2 = rwFactory2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=-1000.0)
+    rwFactory2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=1000.0)
+    rwFactory2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=-1000.0)
     numRW2 = rwFactory2.getNumOfDevices()
-    rwSc2List = [RW1sc2, RW2sc2]
     rwStateEffector2 = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwFactory2.addToSpacecraft("debrisRW", rwStateEffector2, scObject2)
     scSim.AddModelToTask(simTaskName, rwStateEffector2, None, 5)
@@ -420,7 +419,7 @@ def run(show_plots):
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2, scObject3]
                                                   , rwEffectorList=[rwStateEffector, rwStateEffector2, None]
-                                                  , saveFile=fileName,
+                                                  # , saveFile=fileName,
                                                   )
         vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
