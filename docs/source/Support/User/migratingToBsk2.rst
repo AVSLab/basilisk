@@ -338,7 +338,7 @@ Setting a Basilisk Message from Python using the default C++ wrapper
 --------------------------------------------------------------------
 Import ``messages2`` to have access to all message definitions::
 
-    from Basilisk.simulation import messaging2
+    from Basilisk.architecture import messaging2
 
 To create the message content of type ``ParticularMsgPayload``, first get a copy of the message structure using::
 
