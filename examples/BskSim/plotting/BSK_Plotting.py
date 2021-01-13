@@ -45,34 +45,34 @@ def save_all_plots(fileName, figureNames):
     return figureList
 
 
-def plot3components(vec, id=None):
+def plot3components(timeAxis, vec, id=None):
     plt.figure(id)
-    time = vec[:, 0] * mc.NANO2MIN
+    time = timeAxis * mc.NANO2MIN
     plt.xlabel('Time, min')
-    plt.plot(time, vec[:, 1], color_x)
-    plt.plot(time, vec[:, 2], color_y)
-    plt.plot(time, vec[:, 3], color_z)
+    plt.plot(time, vec[:, 0], color_x)
+    plt.plot(time, vec[:, 1], color_y)
+    plt.plot(time, vec[:, 2], color_z)
 
 
-def plot_sigma(sigma, id=None):
-    plot3components(sigma, id)
+def plot_sigma(timeAxis, sigma, id=None):
+    plot3components(timeAxis, sigma, id)
     plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
     plt.ylabel('MRP')
 
 
-def plot_omega(omega, id=None):
-    plot3components(omega, id)
+def plot_omega(timeAxis, omega, id=None):
+    plot3components(timeAxis, omega, id)
     plt.ylabel('Angular Rate, rad/s')
     plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'])
 
-def subplot_sigma(subplot, sigma, id=None):
-    plot3components(sigma, id)
+def subplot_sigma(subplot, timeAxis, sigma, id=None):
+    plot3components(timeAxis, sigma, id)
     plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
     plt.ylabel('MRP')
 
 
-def subplot_omega(subplot, omega, id=None):
-    plot3components(omega, id)
+def subplot_omega(subplot, timeAxis, omega, id=None):
+    plot3components(timeAxis, omega, id)
     plt.ylabel('Angular Rate, rad/s')
     plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'])
 
@@ -87,76 +87,78 @@ def subplot_omega(subplot, omega, id=None):
 #     plt.legend(['$L_{b,1}$', '$L_{b,2}$', '$L_{b,3}$'])
 
 
-def plot_controlTorque(Lr, id=None):
-    plot3components(Lr, id)
+def plot_controlTorque(timeAxis, Lr, id=None):
+    plot3components(timeAxis, Lr, id)
     plt.ylabel(r'Control Torque, $N \cdot m$')
     plt.legend(['$L_{r,1}$', '$L_{r,2}$', '$L_{r,3}$'])
     plt.title('Control Torque $L_r$')
     return
 
 
-def plot_trackingError(sigma_BR, omega_BR_B, id=None):
+def plot_trackingError(timeAxis, sigma_BR, omega_BR_B, id=None):
     # plt.figure(id)
     plt.subplot(211)
-    plot_sigma(sigma_BR, id)
+    plot_sigma(timeAxis, sigma_BR, id)
     plt.title(r'Att Error: $\sigma_{BR}$')
 
     plt.subplot(212)
     #plt.figure(id)
-    plot_omega(omega_BR_B, id)
+    plot_omega(timeAxis, omega_BR_B, id)
     plt.title(r'Rate Error: $^B{\omega_{BR}}$')
     return
 
 
-def plot_attitudeGuidance(sigma_RN, omega_RN_N, id=None):
+def plot_attitudeGuidance(timeAxis, sigma_RN, omega_RN_N, id=None):
     plt.figure(id)
     plt.subplot(211)
-    plot_sigma(sigma_RN, id)
+    plot_sigma(timeAxis, sigma_RN, id)
     plt.ylim([-1.0, 1.0])
     plt.title(r'Ref Att: $\sigma_{RN}$')
 
     plt.subplot(212)
     #plt.figure()
-    plot_omega(omega_RN_N, id)
+    plot_omega(timeAxis, omega_RN_N, id)
     plt.title(r'Ref Rate: $^N{\omega_{RN}}$')
     return
 
 
-def plot_rotationalNav(sigma_BN, omega_BN_B, id=None):
+def plot_rotationalNav(timeAxis, sigma_BN, omega_BN_B, id=None):
     plt.figure()
     plt.subplot(211)
-    plot_sigma(sigma_BN, id)
+    plot_sigma(timeAxis, sigma_BN, id)
     plt.title(r'Sc Att: $\sigma_{BN}$')
 
     plt.subplot(212)
     #plt.figure(id)
-    plot_omega(omega_BN_B, id)
+    plot_omega(timeAxis, omega_BN_B, id)
     plt.title(r'Sc Rate: $^B{\omega_{BN}}$')
     return
 
-def plot_shadow_fraction(time, shadow_factor, id=None):
+
+def plot_shadow_fraction(timeAxis, shadow_factor, id=None):
     plt.figure(id)
-    outMat = np.array(shadow_factor).transpose()
-    vector = outMat[1:].transpose()
-    plt.plot(time, vector)
+    plt.plot(timeAxis, shadow_factor)
     plt.xlabel('Time min')
     plt.ylabel('Shadow Fraction')
     return
 
-def plot_sun_point(time, sunPoint, id=None):
-    plot3components(sunPoint, id)
+
+def plot_sun_point(timeAxis, sunPoint, id=None):
+    plot3components(timeAxis, sunPoint, id)
     plt.xlabel('Time')
     plt.ylabel('Sun Point Vec')
     return
+
 
 def plot_orbit(r_BN, id=None):
     plt.figure(id)
     plt.xlabel('$R_x$, km')
     plt.ylabel('$R_y$, km')
-    plt.plot(r_BN[:, 1] * m2km, r_BN[:, 2] * m2km, color_x)
+    plt.plot(r_BN[:, 0] * m2km, r_BN[:, 1] * m2km, color_x)
     plt.scatter(0, 0, c=color_x)
     plt.title('Spacecraft Orbit')
     return
+
 
 def plot_attitude_error(timeLineSet, dataSigmaBR, id=None):
     plt.figure(id)
@@ -171,9 +173,10 @@ def plot_attitude_error(timeLineSet, dataSigmaBR, id=None):
     plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
     ax.set_yscale('log')
 
+
 def plot_control_torque(timeLineSet, dataLr, id=None, livePlot=False):
     plt.figure(id)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeLineSet, dataLr[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
@@ -182,9 +185,10 @@ def plot_control_torque(timeLineSet, dataLr, id=None, livePlot=False):
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
 
+
 def plot_rate_error(timeLineSet, dataOmegaBR, id=None, livePlot=False):
     plt.figure(id)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
@@ -194,10 +198,8 @@ def plot_rate_error(timeLineSet, dataOmegaBR, id=None, livePlot=False):
     plt.ylabel('Rate Tracking Error [rad/s] ')
     return
 
-def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN, id=None, livePlot=False):
-    vectorPosData = unitTestSupport.pullVectorSetFromData(dataPos)
-    vectorVelData = unitTestSupport.pullVectorSetFromData(dataVel)
-    vectorMRPData = unitTestSupport.pullVectorSetFromData(dataSigmaBN)
+
+def plot_orientation(timeLineSet, vectorPosData, vectorVelData, vectorMRPData, id=None, livePlot=False):
     data = np.empty([len(vectorPosData), 3])
     for idx in range(0, len(vectorPosData)):
         ir = vectorPosData[idx] / np.linalg.norm(vectorPosData[idx])
@@ -212,16 +214,17 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN, id=None, livePl
                     , r'$\hat\imath_h\cdot \hat b_3$')
     for idx in range(0, 3):
         plt.plot(timeLineSet, data[:, idx],
-                 color=unitTestSupport.getLineColor(idx + 1, 3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label=labelStrings[idx])
     if not livePlot:
         plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Orientation Illustration')
 
+
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW, id=None, livePlot=False):
     plt.figure(id)
-    for idx in range(1, 4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
@@ -231,9 +234,26 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW, id=None, livePlot=False):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
 
+
+def plot_rw_cmd_actual_torque(timeData, dataUsReq, dataRW, numRW, id=None, livePlot=False):
+    """compare commanded and actual RW motor torques"""
+    plt.figure(id)
+    for idx in range(numRW):
+        plt.plot(timeData, dataUsReq[:, idx],
+                 '--',
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
+        plt.plot(timeData, dataRW[idx],
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$u_{s,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Motor Torque (Nm)')
+
+
 def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None, livePlot=False):
     plt.figure(id)
-    for idx in range(1, numRW + 1):
+    for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / mc.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
@@ -241,6 +261,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None, livePlot=False):
         plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
+
 
 def plot_planet(oe, planet):
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
@@ -255,6 +276,7 @@ def plot_planet(oe, planet):
     plt.xlabel('$i_e$ Cord. [km]')
     plt.ylabel('$i_p$ Cord. [km]')
     plt.grid()
+
 
 def plot_peri_and_orbit(oe, mu, r_BN_N, v_BN_N, id=None):
     # draw the actual orbit
@@ -274,11 +296,12 @@ def plot_peri_and_orbit(oe, mu, r_BN_N, v_BN_N, id=None):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555')
 
+
 def plot_rel_orbit(timeData, r_chief, r_deputy, id=None, livePlot=False):
     plt.figure(id)
-    x = np.array(r_chief[:, 1]) - np.array(r_deputy[:, 1])
-    y = np.array(r_chief[:, 2]) - np.array(r_deputy[:, 2])
-    z = np.array(r_chief[:, 3]) - np.array(r_deputy[:, 3])
+    x = np.array(r_chief[:, 0]) - np.array(r_deputy[:, 0])
+    y = np.array(r_chief[:, 1]) - np.array(r_deputy[:, 1])
+    z = np.array(r_chief[:, 2]) - np.array(r_deputy[:, 2])
     plt.plot(timeData, x, label="x")
     plt.plot(timeData, y, label="y")
     plt.plot(timeData, z, label="z")

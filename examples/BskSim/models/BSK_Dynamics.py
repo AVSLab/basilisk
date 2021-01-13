@@ -19,17 +19,18 @@
 import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
-from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
-                                 reactionWheelStateEffector, coarse_sun_sensor, eclipse, imu_sensor)
+from Basilisk.simulation import (spacecraftPlus, extForceTorque, simpleNav,
+                                 reactionWheelStateEffector, coarseSunSensor, eclipse)
 from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import ephemerisConverter
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.topLevelModules import pyswice
+from Basilisk.architecture import messaging2
+
 from Basilisk import __path__
 bskPath = __path__[0]
-
 
 
 class BSKDynamicModels():
@@ -38,6 +39,12 @@ class BSKDynamicModels():
 
     """
     def __init__(self, SimBase, dynRate):
+        # define empty class variables
+        self.sun = None
+        self.earth = None
+        self.moon = None
+        self.epochMsg = None
+
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName
         self.taskName = "DynamicsTask"
@@ -49,26 +56,27 @@ class BSKDynamicModels():
         # Instantiate Dyn modules as objects
         self.scObject = spacecraftPlus.SpacecraftPlus()
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
+        self.rwFactory = simIncludeRW.rwFactory()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
-        self.simpleNavObject = simple_nav.SimpleNav()
+        self.simpleNavObject = simpleNav.SimpleNav()
         self.eclipseObject = eclipse.Eclipse()
-        self.CSSConstellationObject = coarse_sun_sensor.CSSConstellation()
+        self.CSSConstellationObject = coarseSunSensor.CSSConstellation()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        self.EarthEphemObject = ephemerisConverter.EphemerisConverter()
 
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects()
-        self.WriteInitDynMessages(SimBase)
 
         # Assign initialized modules to tasks
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
+        SimBase.AddModelToTask(self.taskName, self.EarthEphemObject, 199)
         SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 108)
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
-
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -85,37 +93,43 @@ class BSKDynamicModels():
         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
         self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
-        self.scObject.scStateOutMsgName = "inertial_state_output"
-
 
     def SetGravityBodies(self):
         """
         Specify what gravitational bodies to include in the simulation
         """
         timeInitString = "2012 MAY 1 00:28:30.0"
-        gravBodies = self.gravFactory.createBodies(['earth', 'sun', 'moon'])
+        gravBodies = self.gravFactory.createBodies(['sun', 'earth', 'moon'])
         gravBodies['earth'].isCentralBody = True
+        self.sun = 0
+        self.earth = 1
+        self.moon = 2
 
         self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
-        spiceObject, epochMsg = self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                                                      timeInitString,
-                                                                      epochInMsgName = 'simEpoch')
-        self.epochMsg = epochMsg
+        self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                              timeInitString,
+                                              epochInMsg=True)
+        self.epochMsg = self.gravFactory.epochMsg
 
         self.gravFactory.spiceObject.zeroBase = 'Earth'
+
+        self.EarthEphemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.earth])
 
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
 
     def SetEclipseObject(self):
         """
         Specify what celestial object is causing an eclipse message.
         """
-        self.eclipseObject.sunInMsgName = 'sun_planet_data'
-        self.eclipseObject.addPlanetName('earth')
-        self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
+        self.eclipseObject.ModelTag = "eclipseObject"
+        self.eclipseObject.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
+        # add all celestial objects in spiceObjects except for the sun (0th object)
+        for c in range(1, len(self.gravFactory.spiceObject.planetStateOutMsgs)):
+            self.eclipseObject.addPlanetToModel(self.gravFactory.spiceObject.planetStateOutMsgs[c])
+        self.eclipseObject.addSpacecraftToModel(self.scObject.scStateOutMsg)
 
     def SetExternalForceTorqueObject(self):
         """Set the external force and torque object."""
@@ -125,14 +139,12 @@ class BSKDynamicModels():
     def SetSimpleNavObject(self):
         """Set the navigation sensor object."""
         self.simpleNavObject.ModelTag = "SimpleNavigation"
+        self.simpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
 
     def SetReactionWheelDynEffector(self):
         """Set the 4 reaction wheel devices."""
-        # Make a fresh RW factory instance, this is critical to run multiple times
-        self.rwFactory = simIncludeRW.rwFactory()
-        
         # specify RW momentum capacity
-        maxRWMomentum = 50. # Nms
+        maxRWMomentum = 50.  # Nms
 
         # Define orthogonal RW pyramid
         # -- Pointing directions
@@ -147,11 +159,11 @@ class BSKDynamicModels():
         for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
             gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
             self.rwFactory.create('Honeywell_HR16',
-                             gsHat,
-                             maxMomentum=maxRWMomentum,
-                             rWB_B=posVector)
+                                  gsHat,
+                                  maxMomentum=maxRWMomentum,
+                                  rWB_B=posVector)
 
-        self.rwFactory.addToSpacecraft(self.scObject.ModelTag, self.rwStateEffector, self.scObject)
+        self.rwFactory.addToSpacecraft("RWA", self.rwStateEffector, self.scObject)
 
     def SetThrusterStateEffector(self):
         """Set the 8 ACS thrusters."""
@@ -186,19 +198,20 @@ class BSKDynamicModels():
                 , dir_B
             )
         # create thruster object container and tie to spacecraft object
-        thFactory.addToSpacecraft("Thrusters",
+        thFactory.addToSpacecraft("ACS Thrusters",
                                   self.thrustersDynamicEffector,
                                   self.scObject)
 
     def SetCSSConstellation(self):
         """Set the 8 CSS sensors"""
         self.CSSConstellationObject.ModelTag = "cssConstellation"
-        self.CSSConstellationObject.outputConstellationMessage = "CSSConstellation_output"
 
-        # define single CSS element
-        CSS_default = coarse_sun_sensor.CoarseSunSensor()
-        CSS_default.fov = 80. * mc.D2R         # half-angle field of view value
-        CSS_default.scaleFactor = 2.0
+        def setupCSS(cssDevice):
+            cssDevice.fov = 80. * mc.D2R         # half-angle field of view value
+            cssDevice.scaleFactor = 2.0
+            cssDevice.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
+            cssDevice.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
+            cssDevice.sunEclipseInMsg.subscribeTo(self.eclipseObject.eclipseOutMsgs[0])
 
         # setup CSS sensor normal vectors in body frame components
         nHat_B_List = [
@@ -215,18 +228,15 @@ class BSKDynamicModels():
 
         # store all
         cssList = []
-        for nHat_B, i in zip(nHat_B_List,list(range(1,numCSS+1))):
-            CSS = coarse_sun_sensor.CoarseSunSensor(CSS_default)
-            CSS.ModelTag = "CSS" + str(i) + "_sensor"
-            CSS.cssDataOutMsgName = "CSS" + str(i) + "_output"
+        for nHat_B, i in zip(nHat_B_List, list(range(1,numCSS+1))):
+            CSS = coarseSunSensor.CoarseSunSensor()
+            setupCSS(CSS)
+            CSS.ModelTag = "CSS" + str(i)
             CSS.nHat_B = np.array(nHat_B)
-            CSS.sunEclipseInMsgName = "eclipse_data_0"
             cssList.append(CSS)
 
         # assign the list of CSS devices to the CSS array class
-        self.CSSConstellationObject.sensorList = coarse_sun_sensor.CSSVector(cssList)
-
-
+        self.CSSConstellationObject.sensorList = coarseSunSensor.CSSVector(cssList)
 
     # Global call to initialize every module
     def InitAllDynObjects(self):
@@ -243,13 +253,3 @@ class BSKDynamicModels():
         self.SetReactionWheelDynEffector()
         self.SetThrusterStateEffector()
 
-    # Global call to create every required one-time message
-    def WriteInitDynMessages(self, SimBase):
-        """Write out the required dynamics configuration messages."""
-
-        unitTestSupport.setMessage(SimBase.TotalSim,
-                                   SimBase.DynamicsProcessName,
-                                   self.gravFactory.spiceObject.epochInMsgName,
-                                   self.epochMsg)
-
-        return

@@ -209,7 +209,7 @@ class SimBaseClass:
         the order/priority that the model gets updated within the task.
         :param TaskName (str): Name of the task
         :param NewModel (obj): Model to add to the task
-        :param ModelData: None or struct containing
+        :param ModelData: None or struct containing, only used for C BSK modules
         :param ModelPriority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return:
         """

@@ -689,5 +689,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         False,  # useJitterSimple
-        True  # useRWVoltageIO
+        False  # useRWVoltageIO
     )

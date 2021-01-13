@@ -132,10 +132,10 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
 {
     //! - If either messages is not valid, send a warning message
     if(!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Failed to link a sun sensor input message");
+        bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a sun sensor input message");
     }
     if(!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Failed to link a spacecraft state input message");
+        bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a spacecraft state input message");
     }
 
     Eigen::VectorXd nMatrix;

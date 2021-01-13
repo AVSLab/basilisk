@@ -479,7 +479,17 @@ That is it.  The data is now recorded into ``attErrorRec`` automatically during 
 In the new messaging system  the time information when the message is recorded
 is no longer pre-pended in a first column, but rather provided as a
 separate array accessed through ``datRec.times()``.  This means recording `N` time steps of a 3D vector no longer no longer
-yields a `Nx4` array, but rather a `Nx3` array.  Some plotting or value checking logic might have to be updated.
+yields a `Nx4` array, but rather a `Nx3` array.
+
+To record a particular variable `variableName` within the message you can use::
+
+    varLog = dataRec.variableName
+
+If ``variableName`` is a `N` dimensional vector of values, the ``varLog`` will be an `MxN` matrix of data
+values where `M` is the number of recorded time steps.  You can use the typical python commands to select a subset
+of this matrix.
+
+Some plotting or value checking logic might have to be updated.
 For example, to plot using recorded data use::
 
     for idx in range(3):

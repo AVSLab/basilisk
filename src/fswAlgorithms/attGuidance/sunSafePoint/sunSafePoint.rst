@@ -20,13 +20,13 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - attGuidanceOutMsgName
+    * - attGuidanceOutMsg
       - :ref:`AttGuidMsgPayload`
       - attitude guidance output message
-    * - sunDirectionInMsgName
+    * - sunDirectionInMsg
       - :ref:`NavAttMsgPayload`
       - sun direction input message
-    * - imuInMsgName
+    * - imuInMsg
       - :ref:`NavAttMsgPayload`
       - IMU input message
 

@@ -262,7 +262,6 @@ void Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg)
 
     SpicePlanetStateMsgPayload tmpMsg;
     this->planetBuffer.push_back(tmpMsg);
-
     return;
 }
 

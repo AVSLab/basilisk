@@ -24,7 +24,7 @@ This script sets up a 3-DOF spacecraft which is orbiting the Earth. The goal of 
 
 #. highlight the structure of the BSK_Sim architecture,
 #. demonstrate how to create a custom BSK_scenario, and
-#. how to customize the BSK_Dynamics.py and BSK_FSW.py files.
+#. how to customize the ``BSK_Dynamics.py`` and ``BSK_FSW.py`` files.
 
 The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
 
@@ -42,14 +42,15 @@ The simulation layout is shown in the following illustration.
 
 Two simulation processes are created: one
 which contains dynamics modules, and one that contains the Flight Software (FSW)
-modules. The benefit of the new BSK_Sim architecture is how it allows the user to have a pre-written spacecraft
-configurations and FSW modes neatly organized within three modular files: a BSK_scenario file, a FSW file, and
+modules. The benefit of the new ``BSK_Sim`` architecture is how it allows the user to have a pre-written spacecraft
+configurations and FSW modes neatly organized within three modular files: a ``BSK_scenario`` file, a FSW file, and
 a Dynamics file.
 
 More explicitly, the purpose of the scenario file (in this case :ref:`scenario_BasicOrbit`)
-within the BSK_Simulation architecture is to provide the user a
+within the ``BSK_Simulation`` architecture is to provide the user a
 simple, front-end interface to configure a scenario without having to individually initialize and integrate each
-dynamics and FSW module into their simulation. Instead the Dynamics file (for instance :ref:`BSK_Dynamics` or :ref:`BSK_FormationDynamics`)
+dynamics and FSW module into their simulation. Instead the Dynamics file
+(for instance :ref:`BSK_Dynamics` or :ref:`BSK_FormationDynamics`)
 has preconfigured many dynamics modules, attached them to the spacecraft,
 and linked their messages to the appropriate FSW modules.
 Similarly, the FSW file (in this case :ref:`BSK_FSW`) creates preconfigured FSW modes such as hill pointing, sun safe
@@ -104,7 +105,7 @@ future dynamics modules will be added.
 Following the task generation, all desired dynamics module objects are generated:
 These objects are then configured through ``InitAllDynObjects(SimBase)`` which iterates through a number of setter
 functions that configure all of the dynamics objects properties and messages.
-These setter functions are examples of how the BSK_Sim architecture has preconfigured
+These setter functions are examples of how the ``BSK_Sim`` architecture has preconfigured
 dynamics modules within the :ref:`BSK_Dynamics`.
 Now, for every future scenario file, a spacecraft object, gravity effector, and simple
 navigation sensor will be available for use.
@@ -153,15 +154,15 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + '/../')
+sys.path.append(path + '/../models')
+sys.path.append(path + '/../plotting')
 from BSK_masters import BSKSim, BSKScenario
-import BSK_Dynamics, BSK_Fsw
+import BSK_Dynamics
+import BSK_Fsw
 
 # Import plotting files for your scenario
-sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
-
-sys.path.append(path + '/../../scenarios')
 
 
 # Create your own scenario child class
@@ -170,22 +171,24 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         super(scenario_BasicOrbit, self).__init__()
         self.name = 'scenario_BasicOrbit'
 
+        # declare empty class variables
+        self.sNavAttRec = None
+        self.sNavTransRed = None
+
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-        #                                     gravBodies=self.DynModels.gravFactory,
-        #                                     saveFile=__file__)
+        vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.get_DynModel().scObject
+                                            # , saveFile=__file__
+                                            , rwEffectorList=self.DynModels.rwStateEffector
+                                            )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
-        self.modeRequest = 'standby'
+        DynModels = self.get_DynModel()
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
@@ -195,31 +198,32 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-        self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+        DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
+        DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
         # Dynamics process outputs
-        samplingTime = self.get_DynModel().processTasksTimeStep
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputAttName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
+        DynModels = self.get_DynModel()
+        self.sNavAttRec = DynModels.simpleNavObject.attOutMsg.recorder()
+        self.sNavTransRed = DynModels.simpleNavObject.transOutMsg.recorder()
+        self.AddModelToTask(DynModels.taskName, self.sNavAttRec)
+        self.AddModelToTask(DynModels.taskName, self.sNavTransRed)
+
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        sigma_BN = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
-        r_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
-        v_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
+        sigma_BN = self.sNavAttRec.sigma_BN
+        r_BN_N = self.sNavTransRed.r_BN_N
+        v_BN_N = self.sNavTransRed.v_BN_N
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeLineSet = r_BN_N[:, 0] * macros.NANO2MIN
+        timeLineSet = self.sNavAttRec.times() * macros.NANO2MIN
         BSK_plt.plot_orbit(r_BN_N)
         BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
 
@@ -237,6 +241,9 @@ def runScenario(scenario):
 
     # Initialize simulation
     scenario.InitializeSimulation()
+
+    # Configure FSW mode
+    scenario.modeRequest = 'standby'
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)

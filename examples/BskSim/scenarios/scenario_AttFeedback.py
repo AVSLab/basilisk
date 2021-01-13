@@ -24,7 +24,7 @@ This script is base BSK Sim script used for the MC examples.
 """
 
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
-
+import numpy as np
 
 # Get current file path
 import sys, os, inspect
@@ -32,13 +32,13 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + '/../')
+sys.path.append(path + '/../models')
+sys.path.append(path + '/../plotting')
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics, BSK_Fsw
-
-# Import plotting file for your scenario
-sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
+
 
 # Create your own scenario child class
 class scenario_AttFeedback(BSKSim, BSKScenario):
@@ -46,22 +46,25 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
         super(scenario_AttFeedback, self).__init__()
         self.name = 'scenario_AttFeedbackMC'
 
+        # declare additional class variables
+        self.rwSpeedRec = None
+        self.rwMotorRec = None
+        self.attErrRec = None
+
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-        #                                     gravBodies=self.DynModels.gravFactory,
-        #                                     saveFile=__file__,
-        #                                     numRW=self.DynModels.rwFactory.getNumOfDevices())
+        DynModels = self.get_DynModel()
+        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
+                                            # , saveFile=__file__
+                                            , rwEffectorList=DynModels.rwStateEffector
+                                            )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 10000000.0  # meters
@@ -71,43 +74,36 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
 
-        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
+        DynModels = self.get_DynModel()
+        mu = DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-        self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+        DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
+        DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
+        FswModel = self.get_FswModel()
+        DynModel = self.get_DynModel()
+        samplingTime = FswModel.processTasksTimeStep
+        self.rwSpeedRec = DynModel.rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+        self.rwMotorRec = FswModel.cmdRwMotorMsg.recorder(samplingTime)
+        self.attErrRec = FswModel.attGuidMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.rwSpeedRec)
+        self.AddModelToTask(DynModel.taskName, self.rwMotorRec)
+        self.AddModelToTask(DynModel.taskName, self.attErrRec)
 
-        # Dynamics process outputs: log messages below if desired.
-
-        # FSW process outputs
-        samplingTime = self.get_FswModel().processTasksTimeStep
-        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
         return
 
-
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
-        num_RW = 4 # number of wheels used in the scenario
-
-        # Dynamics process outputs: pull log messages below if any
-
-        # FSW process outputs
-        sigma_BR = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-
+        # FSW process outputs, remove first data point as it is before FSW is called
+        sigma_BR = np.delete(self.attErrRec.sigma_BR, 0, 0)
+        omega_BR_B = np.delete(self.attErrRec.omega_BR_B, 0, 0)
 
         # Plot results
-        #BSK_plt.clear_all_plots()
-        timeData = sigma_BR[:, 0] * macros.NANO2MIN
+        BSK_plt.clear_all_plots()
+        timeData = np.delete(self.attErrRec.times(), 0, 0) * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
         figureList = {}
@@ -115,25 +111,24 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed"]
+            figureNames = ["attitudeErrorNorm", "rateError"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
 
 
-def runScenario(TheScenario):
-    print('Starting Execution')
+def runScenario(scenario):
+    """method to initialize and execute the scenario"""
     simulationTime = macros.min2nano(10.)
 
-    TheScenario.InitializeSimulation()
-    TheScenario.modeRequest = 'inertial3D'
-    TheScenario.ConfigureStopTime(simulationTime)
-    TheScenario.ExecuteSimulation()
+    scenario.InitializeSimulation()
+    scenario.modeRequest = 'inertial3D'
+    scenario.ConfigureStopTime(simulationTime)
+    scenario.ExecuteSimulation()
     return
 
 
-
-def run():
+def run(showPlots):
     """
         The scenarios can be run with the followings setups parameters:
 
@@ -143,9 +138,9 @@ def run():
     """
     scenario = scenario_AttFeedback()
     runScenario(scenario)
-    scenario.pull_outputs(True)
+    scenario.pull_outputs(showPlots)
 
     return
 
 if __name__ == "__main__":
-    run()
+    run(True)

@@ -74,6 +74,7 @@ Illustration of Simulation Results
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
+import numpy as np
 
 # Get current file path
 import sys, os, inspect
@@ -96,24 +97,25 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
         super(scenario_AttitudeSteeringRW, self).__init__()
         self.name = 'scenario_AttitudeSteeringRW'
 
+        self.rwSpeedRec = None
+        self.attErrRec = None
+        self.rateCmdRec = None
+        self.rwMotorRec = None
+
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-        #                                     gravBodies=self.DynModels.gravFactory,
-        #                                     saveFile=__file__,
-        #                                     numRW=self.DynModels.rwFactory.getNumOfDevices())
+        DynModels = self.get_DynModel()
+        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
+                                            # , saveFile=__file__
+                                            , rwEffectorList=DynModels.rwStateEffector
+                                            )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
-        self.modeRequest = 'steeringRW'
-
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 10000000.0  # [m]
@@ -131,38 +133,36 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
         self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-        samplingTime = self.get_DynModel().processTasksTimeStep
-        # Dynamics process outputs:
-        self.TotalSim.logThisMessage(self.get_DynModel().rwStateEffector.OutputDataString, samplingTime)
-        # FSW process outputs
         samplingTime = self.get_FswModel().processTasksTimeStep
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().mrpSteeringData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
+        # Dynamics process outputs:
+        self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+        # FSW process outputs
+        self.attErrRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
+        self.rateCmdRec = self.get_FswModel().mrpSteeringData.rateCmdOutMsg.recorder(samplingTime)
+        self.rwMotorRec = self.get_FswModel().cmdRwMotorMsg.recorder(samplingTime)
+
+        self.AddModelToTask(self.get_DynModel().taskName, self.rwSpeedRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.rwMotorRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.attErrRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.rateCmdRec)
+
         return
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
-        num_RW = 4 # number of wheels used in the scenario
+        num_RW = 4  # number of wheels used in the scenario
 
         # Dynamics process outputs: pull log messages below if any
-        RW_speeds = self.pullMessageLogData( # dataOmegaRW
-            self.get_DynModel().rwStateEffector.OutputDataString + ".wheelSpeeds", list(range(num_RW)))
+        RW_speeds = np.delete(self.rwSpeedRec.wheelSpeeds[:, range(num_RW)], 0, 0)
 
         # FSW process outputs
-        dataUsReq = self.pullMessageLogData(
-            self.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
-        sigma_BR = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        omega_BR_ast = self.pullMessageLogData(
-            self.get_FswModel().mrpSteeringData.outputDataName + ".omega_BastR_B", list(range(3)))
+        dataUsReq = np.delete(self.rwMotorRec.motorTorque[:, range(num_RW)], 0, 0)
+        omega_BR_ast = np.delete(self.rateCmdRec.omega_BastR_B, 0, 0)
+        sigma_BR = np.delete(self.attErrRec.sigma_BR, 0, 0)
+        omega_BR_B = np.delete(self.attErrRec.omega_BR_B, 0, 0)
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeData = dataUsReq[:, 0] * macros.NANO2MIN
+        timeData = np.delete(self.rwSpeedRec.times(), 0, 0) * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
@@ -181,13 +181,13 @@ def runScenario(scenario):
 
     # Initialize simulation
     scenario.InitializeSimulation()
+    # Configure FSW mode
+    scenario.modeRequest = 'steeringRW'
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
     scenario.ConfigureStopTime(simulationTime)
-    print('Starting Execution')
     scenario.ExecuteSimulation()
-    print('Finished Execution. Post-processing results')
 
 def run(showPlots):
     """

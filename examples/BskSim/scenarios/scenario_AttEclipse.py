@@ -66,8 +66,7 @@ The new element is adding the eclipse module ``self.eclipseObject`` to the simul
 
 The module requires spice data regarding the location of the sun, the planets, and the spacecraft
 to simulate shadow-casting effects. In combination these inputs can produce an output that is attached to the
-CSS constellation which simulates a shadow. The eclipse object output is called using ``eclipse_data_0``
-which gets sent to the individual CSS sensors.
+CSS constellation which simulates a shadow. The eclipse object output is sent to the individual CSS sensors.
 
 Custom FSW Configurations Instructions
 --------------------------------------
@@ -127,6 +126,7 @@ exiting the eclipse, the spacecraft corrects and realigns with the sun direction
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
+import numpy as np
 
 # Get current file path
 import sys, os, inspect
@@ -155,23 +155,26 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         super(scenario_AttitudeEclipse, self).__init__(fswRate=1.0, dynRate=1.0)
         self.name = 'scenario_AttitudeEclipse'
 
+        self.shadowRec = None
+        self.rwSpeedRec = None
+        self.rwMotorRec = None
+        self.sunSafeRec = None
+        self.cssEstRec = None
+
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-        #                                     gravBodies=self.DynModels.gravFactory,
-        #                                     saveFile=__file__)
+        DynModels = self.get_DynModel()
+        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
+                                            # , saveFile=__file__
+                                            , rwEffectorList=DynModels.rwStateEffector
+                                            )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
-        self.modeRequest = 'sunSafePoint'
-
         # Configure Dynamics initial conditions
 
         oe = orbitalMotion.ClassicElements()
@@ -189,45 +192,43 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
         self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
-
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-        samplingTime = self.get_DynModel().processTasksTimeStep
+        samplingTime = self.get_FswModel().processTasksTimeStep
 
         # Dynamics process outputs: log messages below if desired.
-        self.TotalSim.logThisMessage(self.get_DynModel().scObject.scStateOutMsgName, samplingTime)
-        self.TotalSim.logThisMessage("eclipse_data_0", samplingTime)
+        self.shadowRec = self.get_DynModel().eclipseObject.eclipseOutMsgs[0].recorder(samplingTime)
+        self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
 
         # FSW process outputs
-        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().sunSafePointData.sunDirectionInMsgName, samplingTime)
+        self.rwMotorRec = self.get_FswModel().cmdRwMotorMsg.recorder(samplingTime)
+        self.sunSafeRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
+        self.cssEstRec = self.get_FswModel().cssWlsEstData.navStateOutMsg.recorder(samplingTime)
+
+        self.AddModelToTask(self.get_DynModel().taskName, self.shadowRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.rwSpeedRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.rwMotorRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.sunSafeRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.cssEstRec)
+
         return
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
-        num_RW = 4 # number of wheels used in the scenario
+        num_RW = 4  # number of wheels used in the scenario
 
         # Dynamics process outputs: pull log messages below if any
-        r_BN_N = self.pullMessageLogData(self.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", list(range(3)))
-        shadowFactor = self.pullMessageLogData("eclipse_data_0.shadowFactor")
+        shadowFactor = np.delete(self.shadowRec.shadowFactor, 0, 0)
 
         # FSW process outputs
-        dataUsReq = self.pullMessageLogData(
-            self.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
-        sigma_BR = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        RW_speeds = self.pullMessageLogData(
-            self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
-        sunPoint = self.pullMessageLogData(
-            self.get_FswModel().sunSafePointData.sunDirectionInMsgName + ".vehSunPntBdy", list(range(3)))
+        dataUsReq = np.delete(self.rwMotorRec.motorTorque[:, range(num_RW)], 0, 0)
+        sigma_BR = np.delete(self.sunSafeRec.sigma_BR, 0, 0)
+        omega_BR_B = np.delete(self.sunSafeRec.omega_BR_B, 0, 0)
+
+        RW_speeds = np.delete(self.rwSpeedRec.wheelSpeeds[:, range(num_RW)], 0, 0)
+        sunPoint = np.delete(self.cssEstRec.vehSunPntBdy, 0, 0)
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeData = dataUsReq[:, 0] * macros.NANO2MIN
+        timeData = np.delete(self.cssEstRec.times(), 0, 0) * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
@@ -250,13 +251,13 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
 def runScenario(TheScenario):
     # Initialize simulation
     TheScenario.InitializeSimulation()
+    # Configure FSW mode
+    TheScenario.modeRequest = 'sunSafePoint'
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(60.0)
     TheScenario.ConfigureStopTime(simulationTime)
-    print('Starting Execution')
     TheScenario.ExecuteSimulation()
-    print('Finished Execution. Post-processing results')
 
 
 def run(showPlots):

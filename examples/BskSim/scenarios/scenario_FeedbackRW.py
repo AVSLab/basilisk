@@ -78,18 +78,30 @@ Note how the tasks are divided between the pointing model and control loop. Thes
 for simple FSW reconfigurations should the user want to use a different pointing model, but to use the same feedback
 control loop. This will be seen and discussed in later scenarios.
 
+Because the FSW guidance and control are broken up into separate tasks to be enabled, they must share a common
+stand-along (gateway) message to connect these tasks.  These are setup with the method ``setupGatewayMsgs()``.
+Note that if a C FSW module re-directs its message writing to such a stand-alone message, when recording
+the message this stand-alone message should be recorded.  The output message payload within the module itself
+remain zero in such a case.
 
 Finally, the :ref:`inertial3D` mode call in :ref:`scenario_FeedbackRW` needs to be triggered by::
 
      SimBase.createNewEvent("initiateInertial3D", self.processTasksTimeStep, True,
                    ["self.modeRequest == 'inertial3D'"],
                    ["self.fswProc.disableAllTasks()",
+                    "self.FSWModels.zeroGateWayMsgs()",
                     "self.enableTask('inertial3DPointTask')",
                     "self.enableTask('mrpFeedbackRWsTask')"])
 
-which disables any existing tasks and enables the inertial pointing task and RW feedback task.
+which disables any existing tasks, zero's all the stand-alone gateway messages
+and enables the inertial pointing task and RW feedback task.
 This concludes how to construct a preconfigured FSW mode that will be available for any future scenario
 that uses the BSK_Sim architecture.
+
+This simulation runs for 10 minutes and then switches the FSW mode to ``directInertial3D``.  The difference here
+is that the requested command torque from the ``mrpFeedback`` module in this mode is directly sent to the
+spacecraft object as an external torque.  Also, not that while in ``inertial3D`` mode the ``mrpFeedback`` module
+receives the RW speeds to feed-forward compensate for them, in the ``directInertial3D`` mode this is not the case.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -115,7 +127,7 @@ Illustration of Simulation Results
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
-
+import numpy as np
 
 # Get current file path
 import sys, os, inspect
@@ -123,13 +135,13 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + '/../')
+sys.path.append(path + '/../models')
+sys.path.append(path + '/../plotting')
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics, BSK_Fsw
-
-# Import plotting file for your scenario
-sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
+
 
 # Create your own scenario child class
 class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
@@ -137,28 +149,26 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
         super(scenario_AttitudeFeedbackRW, self).__init__()
         self.name = 'scenario_AttitudeFeedbackRW'
 
+        # declare additional class variables
+        self.rwSpeedRec = None
+        self.rwMotorRec = None
+        self.attErrRec = None
+        self.rwLogs = []
 
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
-
-
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-        #                                     gravBodies=self.DynModels.gravFactory,
-        #                                     saveFile=__file__,
-        #                                     numRW=self.DynModels.rwFactory.getNumOfDevices())
-
+        DynModels = self.get_DynModel()
+        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
+                                            # , saveFile=__file__
+                                            , rwEffectorList=DynModels.rwStateEffector
+                                            )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
-        self.modeRequest = 'inertial3D'
-
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 10000000.0  # meters
@@ -168,47 +178,51 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
 
-        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
+        DynModels = self.get_DynModel()
+        mu = DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-        self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+        DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
+        DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [[0.1], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
+        FswModel = self.get_FswModel()
+        DynModel = self.get_DynModel()
+        samplingTime = FswModel.processTasksTimeStep
+        self.rwSpeedRec = DynModel.rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+        self.rwMotorRec = FswModel.cmdRwMotorMsg.recorder(samplingTime)
+        self.attErrRec = FswModel.attGuidMsg.recorder(samplingTime)
 
-        # Dynamics process outputs: log messages below if desired.
+        self.AddModelToTask(DynModel.taskName, self.rwSpeedRec)
+        self.AddModelToTask(DynModel.taskName, self.rwMotorRec)
+        self.AddModelToTask(DynModel.taskName, self.attErrRec)
 
-        # FSW process outputs
-        samplingTime = self.get_FswModel().processTasksTimeStep
-        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+        self.rwLogs = []
+        for item in range(4):
+            self.rwLogs.append(DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
+            self.AddModelToTask(DynModel.taskName, self.rwLogs[item])
+
         return
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
-        num_RW = 4 # number of wheels used in the scenario
+        num_RW = 4  # number of wheels used in the scenario
 
-        # Dynamics process outputs: pull log messages below if any
-
-        # FSW process outputs
-        dataUsReq = self.pullMessageLogData(
-            self.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
-        sigma_BR = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.pullMessageLogData(
-            self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        RW_speeds = self.pullMessageLogData(
-            self.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
+        # FSW process outputs, remove first data point as it is before FSW is called
+        dataUsReq = np.delete(self.rwMotorRec.motorTorque[:, range(num_RW)], 0, 0)
+        sigma_BR = np.delete(self.attErrRec.sigma_BR, 0, 0)
+        omega_BR_B = np.delete(self.attErrRec.omega_BR_B, 0, 0)
+        RW_speeds = np.delete(self.rwSpeedRec.wheelSpeeds[:, range(num_RW)], 0, 0)
+        dataRW = []
+        for i in range(num_RW):
+            dataRW.append(np.delete(self.rwLogs[i].u_current, 0, 0))
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeData = dataUsReq[:, 0] * macros.NANO2MIN
+        timeData = np.delete(self.rwMotorRec.times(), 0, 0) * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
-        BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
+        BSK_plt.plot_rw_cmd_actual_torque(timeData, dataUsReq, dataRW, num_RW)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
         BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
         figureList = {}
@@ -228,12 +242,15 @@ def runScenario(scenario):
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
+    scenario.modeRequest = 'inertial3D'
     scenario.ConfigureStopTime(simulationTime)
-    print('Starting Execution')
     scenario.ExecuteSimulation()
-    print('Finished Execution. Post-processing results')
 
-    # Pull the results of the base simulation running the chosen scenario
+    simulationTime = macros.min2nano(30.)
+    scenario.modeRequest = 'directInertial3D'
+    scenario.ConfigureStopTime(simulationTime)
+    scenario.ExecuteSimulation()
+
 
 def run(showPlots):
     """

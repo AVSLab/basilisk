@@ -77,6 +77,7 @@ Illustration of Simulation Results
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
+import numpy as np
 
 # Get current file path
 import sys, os, inspect
@@ -102,23 +103,25 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
         super(scenario_VelocityPointing, self).__init__()
         self.name = 'scenario_VelocityPointing'
 
+        self.attNavRec = None
+        self.transNavRec = None
+        self.attErrRec = None
+        self.LrRec = None
+
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-        #                                     gravBodies=self.DynModels.gravFactory,
-        #                                     saveFile=__file__)
+        DynModels = self.get_DynModel()
+        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
+                                            # , saveFile=__file__
+                                            , rwEffectorList=DynModels.rwStateEffector
+                                            )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
-        self.modeRequest = 'velocityPoint'
-
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = -150000.0 * 1000  # meters
@@ -139,31 +142,33 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
 
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
         # Dynamics process outputs
-        samplingTime = self.get_DynModel().processTasksTimeStep
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputAttName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
+        samplingTime = self.get_FswModel().processTasksTimeStep
+        self.attNavRec = self.get_DynModel().simpleNavObject.attOutMsg.recorder(samplingTime)
+        self.transNavRec = self.get_DynModel().simpleNavObject.transOutMsg.recorder(samplingTime)
 
         # FSW process outputs
-        samplingTime = self.get_FswModel().processTasksTimeStep
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackRWsData.outputDataName, samplingTime)
+        self.attErrRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
+        self.LrRec = self.get_FswModel().cmdTorqueMsg.recorder(samplingTime)
+
+        self.AddModelToTask(self.get_DynModel().taskName, self.attNavRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.transNavRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.attErrRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.LrRec)
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        r_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
-        v_BN_N = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
+        r_BN_N = np.delete(self.transNavRec.r_BN_N, 0, 0)
+        v_BN_N = np.delete(self.transNavRec.v_BN_N, 0, 0)
 
         # FSW process outputs
-        sigma_BR = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        Lr = self.pullMessageLogData(self.get_FswModel().mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", list(range(3)))
+        sigma_BR = np.delete(self.attErrRec.sigma_BR, 0, 0)
+        omega_BR_B = np.delete(self.attErrRec.omega_BR_B, 0, 0)
+        Lr = np.delete(self.LrRec.torqueRequestBody, 0, 0)
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeLineSet = sigma_BR[:, 0] * macros.NANO2MIN
+        timeLineSet = np.delete(self.transNavRec.times(), 0, 0) * macros.NANO2MIN
         scene_plt.plot_track_error_norm(timeLineSet, sigma_BR)
         scene_plt.plot_control_torque(timeLineSet, Lr)
         scene_plt.plot_rate_error(timeLineSet, omega_BR_B)
@@ -185,13 +190,13 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
 def runScenario(TheScenario):
     # Initialize simulation
     TheScenario.InitializeSimulation()
+    # Configure FSW mode
+    TheScenario.modeRequest = 'velocityPoint'
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
     TheScenario.ConfigureStopTime(simulationTime)
-    print('BSKSim: Starting Execution')
     TheScenario.ExecuteSimulation()
-    print('BSKSim: Finished Execution. Post-processing results')
 
 def run(showPlots):
     """
