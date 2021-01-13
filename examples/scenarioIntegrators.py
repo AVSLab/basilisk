@@ -110,6 +110,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
+from Basilisk.architecture import messaging2
 
 
 #attempt to import vizard
@@ -161,7 +162,7 @@ def run(show_plots, integratorCase):
     #
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bskSat"
 
     # default case, RK4 is automatically setup, no extra code is needed
     if integratorCase == "euler":
@@ -213,11 +214,14 @@ def run(show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // numDataPoints
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
 
     #
     #   initialize Simulation
@@ -233,8 +237,8 @@ def run(show_plots, integratorCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N', list(range(3)))
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
 
     #
     #   plot the results
@@ -260,11 +264,11 @@ def run(show_plots, integratorCase):
     fData = []
     labelStrings = ("rk4", "euler", "rk2")
     for idx in range(0, len(posData)):
-        oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+        oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase)+1, 3)
+             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), 3)
              , label=integratorCase
              , linewidth=3.0
              )
@@ -306,5 +310,5 @@ def run(show_plots, integratorCase):
 #
 if __name__ == "__main__":
     run(
-        False,        # show_plots
+        True,        # show_plots
         'rk2')       # integrator case(0 - rk4, 1 - euler, 2 - rk2)
