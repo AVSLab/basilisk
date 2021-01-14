@@ -19,7 +19,7 @@
 import sys, os, inspect
 from Basilisk.utilities import unitTestSupport
 import pytest
-from Basilisk.simulation import bskLogging
+from Basilisk.architecture import bskLogging
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename

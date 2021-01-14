@@ -75,6 +75,7 @@ import numpy as np
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import dataFileToViz
+from Basilisk.simulation import spacecraftPlus
 
 try:
     from Basilisk.simulation import vizInterface
@@ -131,61 +132,71 @@ def run(show_plots, attType):
     simulationTime = macros.sec2nano(simulationTimeSeconds)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    #   setup the module to read in the simulation data
-    dataModule = dataFileToViz.DataFileToViz()
-    dataModule.ModelTag = "testModule"
-    dataModule.numSatellites = 2
-    # load the data path from the same folder where this python script is
-    dataModule.attitudeType = attType
-    dataModule.dataFileName = dataFileName
-
-    scNames = ["servicer", "target"]
-    dataModule.scStateOutMsgNames = dataFileToViz.StringVector(scNames)
-    dataModule.delimiter = delimiter
-    scSim.AddModelToTask(simTaskName, dataModule)
-
     # setup Earth Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
+    # create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached
+    # to show up in Vizard
+    scObject1 = spacecraftPlus.SpacecraftPlus()
+    scObject1.ModelTag = "servicer"
+    scObject1.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject2 = spacecraftPlus.SpacecraftPlus()
+    scObject2.ModelTag = "target"
+    scList = [scObject1, scObject2]
+
+    #   setup the module to read in the simulation data
+    dataModule = dataFileToViz.DataFileToViz()
+    dataModule.ModelTag = "testModule"
+    dataModule.setNumOfSatellites(2)
+    # load the data path from the same folder where this python script is
+    dataModule.attitudeType = attType
+    dataModule.dataFileName = dataFileName
+
+    dataModule.delimiter = delimiter
+    scSim.AddModelToTask(simTaskName, dataModule)
+
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    for scStateMsg in scNames:
-        scSim.TotalSim.logThisMessage(scStateMsg, samplingTime)
-
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = []
+    for scCounter in range(2):
+        dataLog.append(dataModule.scStateOutMsgs[scCounter].recorder(samplingTime))
+        scSim.AddModelToTask(simTaskName, dataLog[-1])
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                                  # saveFile=fileName,
-                                                  scName=scNames)
+    if vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scList
+                                                  # , saveFile=fileName
+                                                  )
         viz.settings.showSpacecraftLabels = 1
+        viz.settings.spacecraftShadowBrightness = 0.2
         # load CAD for target spacecraft
         vizSupport.createCustomModel(viz,
                                      modelPath=os.path.join(path, "data", "Aura_27.obj"),
                                      shader=1,
-                                     simBodiesToModify=[scNames[1]],
-                                     rotation=[180.*macros.D2R, 0.0*macros.D2R, -90.*macros.D2R],
+                                     simBodiesToModify=[scList[1].ModelTag],
+                                     rotation=[180. * macros.D2R, 0.0 * macros.D2R, -90. * macros.D2R],
                                      scale=[1, 1, 1])
         # load CAD for servicer spacecraft
         vizSupport.createCustomModel(viz,
                                      modelPath=os.path.join(path, "data", "Loral-1300Com-main.obj"),
-                                     simBodiesToModify=[scNames[0]],
-                                     rotation=[0.*macros.D2R, -90.0*macros.D2R, 0.*macros.D2R],
+                                     simBodiesToModify=[scList[0].ModelTag],
+                                     rotation=[0. * macros.D2R, -90.0 * macros.D2R, 0. * macros.D2R],
                                      scale=[0.09, 0.09, 0.09])
 
-        # delete any existing list of vizInterface spacecraft data
+        # over-ride the default to not read the SC states from scObjects, but set them directly
+        # to read from the dataFileToFiz output message
         viz.scData.clear()
-        for item in scNames:
-            # create a chief spacecraft info container
+        for c in range(len(scList)):
             scData = vizInterface.VizSpacecraftData()
-            scData.spacecraftName = item
-            scData.scPlusInMsgName = item
+            scData.spacecraftName = scList[c].ModelTag
+            scData.scPlusInMsg.subscribeTo(dataModule.scStateOutMsgs[c])
+
             viz.scData.push_back(scData)
 
     #   initialize Simulation
@@ -196,27 +207,25 @@ def run(show_plots, attType):
     scSim.ExecuteSimulation()
 
     # retrieve logged data
-    posB1N = scSim.pullMessageLogData(scNames[0] + ".r_BN_N", list(range(3)))
-    posB2N = scSim.pullMessageLogData(scNames[1] + ".r_BN_N", list(range(3)))
-    sigmaB1N = scSim.pullMessageLogData(scNames[0] + ".sigma_BN", list(range(3)))
-    sigmaB2N = scSim.pullMessageLogData(scNames[1] + ".sigma_BN", list(range(3)))
+    posB1N = dataLog[0].r_BN_N
+    posB2N = dataLog[1].r_BN_N
+    sigmaB1N = dataLog[0].sigma_BN
+    sigmaB2N = dataLog[1].sigma_BN
 
     #
     #   plot the results
     #
-    timeData = sigmaB1N[:, 0] * macros.NANO2HOUR
+    timeData = dataLog[0].times() * macros.NANO2HOUR
     plt.close("all")  # clears out plots from earlier test runs
     figureList = {}
 
     plt.figure(1)
     s1Data = []
-    sigmaB1N = unitTestSupport.removeTimeFromData(sigmaB1N)
     for idx in sigmaB1N:
         sNorm = np.linalg.norm(idx)
         s1Data.append(sNorm)
     plt.plot(timeData, s1Data, color=unitTestSupport.getLineColor(1, 3), label=r'$|\sigma_{B1/N}|$')
     s2Data = []
-    sigmaB2N = unitTestSupport.removeTimeFromData(sigmaB2N)
     for idx in sigmaB2N:
         sNorm = np.linalg.norm(idx)
         s2Data.append(sNorm)
@@ -228,15 +237,13 @@ def run(show_plots, attType):
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
-    posB1N = unitTestSupport.removeTimeFromData(posB1N)
-    posB2N = unitTestSupport.removeTimeFromData(posB2N)
     rhoData = []
     for r1, r2 in zip(posB1N, posB2N):
         rhoData.append(r2 - r1)
     rhoData = np.array(rhoData)
-    for idx in range(0, 3):
+    for idx in range(3):
         plt.plot(timeData, rhoData[:, idx],
-                 color=unitTestSupport.getLineColor(idx+1, 3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\rho_{' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')

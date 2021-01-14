@@ -139,6 +139,7 @@ def createPointLine(viz, **kwargs):
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
 
+
 customModelList = []
 def createCustomModel(viz, **kwargs):
     if not vizFound:
@@ -247,7 +248,7 @@ def createCustomModel(viz, **kwargs):
         vizElement.shader = shaderVariable
 
     customModelList.append(vizElement)
-    del viz.settings.customModelList[:] # clear settings list to replace it with updated list
+    del viz.settings.customModelList[:]  # clear settings list to replace it with updated list
     viz.settings.customModelList = vizInterface.CustomModelConfig(customModelList)
     return
 
