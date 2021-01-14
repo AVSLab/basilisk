@@ -30,7 +30,7 @@ This script is found in the folder ``basilisk/examples`` and executed by using::
 
 The simulation layout is shown in the following illustration. Two spacecraft are orbiting the earth at
 close distance. Only :math:`J_2` gravity perturbation is included. Each spacecraft sends a :ref:`simpleNav`
-output message of type :ref:`NavAttIntMsg` message at a certain period
+output message of type :ref:`NavAttMsgPayload` message at a certain period
 to :ref:`meanOEFeedback`, where mean orbital element difference is calculated and necessary control force is output to
 extForceTorque module.
 
@@ -80,8 +80,10 @@ from Basilisk.utilities import vizSupport
 from Basilisk.architecture import sim_model
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.fswAlgorithms import meanOEFeedback
+from Basilisk.architecture import messaging2
+
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -109,11 +111,8 @@ def run(show_plots, useClassicElem, numOrbits):
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "scObject"
-    # scObject.scStateOutMsgName = "scStateOut"
-    scObject.scMassStateOutMsgName = "scMassStateOut"
     scObject2.ModelTag = "scObject2"
-    scObject2.scStateOutMsgName = scObject.scStateOutMsgName + "2"
-    scObject2.scMassStateOutMsgName = "scMassStateOut2"
+
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
@@ -142,19 +141,14 @@ def run(show_plots, useClassicElem, numOrbits):
     # extObj
     extFTObject2 = extForceTorque.ExtForceTorque()
     extFTObject2.ModelTag = "externalDisturbance2"
-    extFTObject2.cmdForceInertialInMsgName = "Force_N2"
     scObject2.addDynamicEffector(extFTObject2)
     scSim.AddModelToTask(dynTaskName, extFTObject2, None, 3)
 
     # simple nav
-    simpleNavObject = simple_nav.SimpleNav()
-    simpleNavObject2 = simple_nav.SimpleNav()
-    simpleNavObject.inputStateName = scObject.scStateOutMsgName
-    simpleNavObject.outputTransName = "simple_trans_nav_output"
-    simpleNavObject.outputAttName = "simple_att_nav_output"
-    simpleNavObject2.inputStateName = scObject2.scStateOutMsgName
-    simpleNavObject2.outputTransName = "simple_trans_nav_output2"
-    simpleNavObject2.outputAttName = "simple_att_nav_output2"
+    simpleNavObject = simpleNav.SimpleNav()
+    simpleNavObject2 = simpleNav.SimpleNav()
+    simpleNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    simpleNavObject2.scStateInMsg.subscribeTo(scObject2.scStateOutMsg)
     scSim.AddModelToTask(dynTaskName, simpleNavObject, None, 1)
     scSim.AddModelToTask(dynTaskName, simpleNavObject2, None, 1)
 
@@ -169,9 +163,9 @@ def run(show_plots, useClassicElem, numOrbits):
     meanOEFeedbackData = meanOEFeedback.meanOEFeedbackConfig()
     meanOEFeedbackWrap = scSim.setModelDataWrap(meanOEFeedbackData)
     meanOEFeedbackWrap.ModelTag = "meanOEFeedback"
-    meanOEFeedbackData.chiefTransInMsgName = simpleNavObject.outputTransName
-    meanOEFeedbackData.deputyTransInMsgName = simpleNavObject2.outputTransName
-    meanOEFeedbackData.forceOutMsgName = extFTObject2.cmdForceInertialInMsgName
+    meanOEFeedbackData.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
+    meanOEFeedbackData.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
+    extFTObject2.cmdForceInertialInMsg.subscribeTo(meanOEFeedbackData.forceOutMsg)
     meanOEFeedbackData.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
                             0.0, 1e7, 0.0, 0.0, 0.0, 0.0,
                             0.0, 0.0, 1e7, 0.0, 0.0, 0.0,
@@ -187,14 +181,6 @@ def run(show_plots, useClassicElem, numOrbits):
     meanOEFeedbackData.req = orbitalMotion.REQ_EARTH*1e3  # [m]
     meanOEFeedbackData.J2 = orbitalMotion.J2_EARTH      # []
     scSim.AddModelToTask(fswTaskName, meanOEFeedbackWrap, meanOEFeedbackData, 1)
-
-    # ----- interface ----- #
-    dyn2FSWInterface = sim_model.SysInterface()
-    fsw2DynInterface = sim_model.SysInterface()
-    dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
-    fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
-    dynProcess.addInterfaceRef(fsw2DynInterface)
-    fswProcess.addInterfaceRef(dyn2FSWInterface)
 
     # ----- Setup spacecraft initial states ----- #
     mu = gravFactory.gravBodies['earth'].mu
@@ -230,15 +216,17 @@ def run(show_plots, useClassicElem, numOrbits):
     simulationTime = orbit_period*numOrbits
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scObject2.scStateOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, dynTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    dataLog2 = scObject2.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTaskName, dataLog)
+    scSim.AddModelToTask(dynTaskName, dataLog2)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, dynProcessName, gravBodies=gravFactory,
-                                              # saveFile=fileName,
-                                              scName=[scObject.ModelTag, scObject2.ModelTag])
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObject, scObject2]
+                                              # , saveFile=fileName
+                                              )
 
     # ----- execute sim ----- #
     scSim.InitializeSimulation()
@@ -246,11 +234,11 @@ def run(show_plots, useClassicElem, numOrbits):
     scSim.ExecuteSimulation()
 
     # ----- pull ----- #
-    pos = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    pos2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    timeData = pos[:, 0]*macros.NANO2SEC/orbit_period
+    pos = dataLog.r_BN_N
+    vel = dataLog.v_BN_N
+    pos2 = dataLog2.r_BN_N
+    vel2 = dataLog2.v_BN_N
+    timeData = dataLog.times()*macros.NANO2SEC/orbit_period
 
     # ----- plot ----- #
     # classical oe (figure1)
@@ -258,11 +246,11 @@ def run(show_plots, useClassicElem, numOrbits):
     oed_cl = np.empty((len(pos[:, 0]), 6))
     for i in range(0, len(pos[:, 0])):
         # spacecraft 1 (chief)
-        oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i, 1:4], vel[i, 1:4])
+        oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i], vel[i])
         oe_cl_mean = orbitalMotion.ClassicElements()
         orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe_cl_osc, oe_cl_mean, -1)
         # spacecraft 2 (deputy)
-        oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i, 1:4], vel2[i, 1:4])
+        oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i], vel2[i])
         oe2_cl_mean = orbitalMotion.ClassicElements()
         orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe2_cl_osc, oe2_cl_mean, -1)
         # calculate oed
@@ -297,13 +285,13 @@ def run(show_plots, useClassicElem, numOrbits):
     oed_eq = np.empty((len(pos[:, 0]), 6))
     for i in range(0, len(pos[:, 0])):
         # spacecraft 1 (chief)
-        oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i, 1:4], vel[i, 1:4])
+        oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i], vel[i])
         oe_cl_mean = orbitalMotion.ClassicElements()
         orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe_cl_osc, oe_cl_mean, -1)
         oe_eq_mean = orbitalMotion.EquinoctialElements()
         orbitalMotion.clElem2eqElem(oe_cl_mean, oe_eq_mean)
         # spacecraft 2 (deputy)
-        oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i, 1:4], vel2[i, 1:4])
+        oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i], vel2[i])
         oe2_cl_mean = orbitalMotion.ClassicElements()
         orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe2_cl_osc, oe2_cl_mean, -1)
         oe2_eq_mean = orbitalMotion.EquinoctialElements()
