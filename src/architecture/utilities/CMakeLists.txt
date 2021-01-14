@@ -10,6 +10,7 @@ file(GLOB basilisk_src
 file(GLOB moduleId
 	"moduleIdGenerator/*.h"
 	"moduleIdGenerator/*.cpp"
+    "moduleIdGenerator/*.i"
 )
 
 add_library(ArchitectureUtilities STATIC ${basilisk_src})
