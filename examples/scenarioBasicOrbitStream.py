@@ -31,8 +31,8 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 To enable live data streaming, the ``enableUnityVisualization()`` method is provided with ``liveStream``
 argument using::
 
-    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                        liveStream=True)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        , liveStream=True)
 
 When starting Basilisk simulation it prints now to the terminal that it is trying to connect to Vizard::
 
@@ -86,7 +86,9 @@ from Basilisk.simulation import spacecraftPlus
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.simulation import clock_synch
+from Basilisk.simulation import simSynch
+from Basilisk.architecture import messaging2
+
 
 def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
     """
@@ -131,10 +133,9 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     #   setup the simulation tasks/objects
     #
 
-
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bskSat"
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -207,17 +208,19 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         numDataPoints = 400
     else:
         numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
 
     if liveStream:
-        clockSync = clock_synch.ClockSynch()
+        clockSync = simSynch.ClockSynch()
         clockSync.accelFactor = 50.0
         scSim.AddModelToTask(simTaskName, clockSync)
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory,
-                                                  liveStream=True)
+        vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                            , liveStream=True
+                                            )
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -236,8 +239,8 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
 
     np.set_printoptions(precision=16)
 
@@ -250,8 +253,8 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, posData[:, idx] / 1000.,
+    for idx in range(3):
+        plt.plot(dataLog.times() * macros.NANO2SEC / P, posData[:, idx] / 1000.,
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -280,7 +283,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         rData = []
         fData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - oe.omega)
         plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0
@@ -303,7 +306,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         ax.ticklabel_format(useOffset=False, style='plain')
         smaData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
             smaData.append(oeData.a / 1000.)
         plt.plot(posData[:, 0] * macros.NANO2SEC / P, smaData, color='#aa0000',
                  )
