@@ -40,18 +40,13 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import fswModuleTemplate
 from Basilisk.utilities import macros
-from Basilisk.simulation import bskLogging
+from Basilisk.architecture import bskLogging
+from Basilisk.architecture import messaging2
 
 def run(case):
     """
@@ -86,6 +81,12 @@ def run(case):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
+    # Create input message and size it because the regular creator of that message
+    # is not part of the test.
+    inputMessageData = messaging2.FswModuleTemplateMsgPayload()  # Create a structure for the input message
+    inputMessageData.outputVector = [1.0, 1.0, 0.7]  # Set up a list as a 3-vector
+    dataMsg = messaging2.FswModuleTemplateMsg().write(inputMessageData)
+
     # Construct algorithm and associated C++ container
     moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
@@ -95,18 +96,8 @@ def run(case):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.dataInMsgName = "sampleInput"          # update with current values
-    moduleConfig.dataOutMsgName = "sampleOutput"        # update with current values
-    moduleConfig.dummy = 1                              # update module parameter with required values
-
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    inputMessageData = fswModuleTemplate.FswModuleTemplateFswMsg()  # Create a structure for the input message
-    inputMessageData.outputVector = [1.0, 1.0, 0.7]       # Set up a list as a 3-vector
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.dataInMsgName,
-                               inputMessageData)
+    moduleConfig.dataInMsg.subscribeTo(dataMsg)
+    moduleConfig.dummy = 1
 
     # setup the bskLog verbosity
     if case == 0:
@@ -146,5 +137,5 @@ def run(case):
 #
 if __name__ == "__main__":
     run(
-         0,       # case 1 uses global default, case 2 use module specific default, case 0 uses compiler default
+         2,       # case 1 uses global default, case 2 use module specific default, case 0 uses compiler default
        )
