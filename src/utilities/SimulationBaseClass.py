@@ -528,65 +528,6 @@ class SimBaseClass:
                     headerData.messageStruct].printElem()
         return searchComplete
 
-    def pullMessageLogData(self, varName, indices=[], numRecords=-1, varType='double'):
-        """
-        Retrieves logged message data from TotalSim by querying over message and variable names.
-
-        :param varName: string: A message name with the variable specified (i.e., 'scMessage.r_BN_N')
-        :param indices: list: For multidimensional message attributes, this specifies how many columns to pull from (ex. a 3 vector should be called with list(range(3)))
-        :param numRecords: The number of messages to pull from the history. Defaults to -1, which pulls all logged message values.
-        """
-        splitName = varName.split('.')
-        messageID = self.TotalSim.getMessageID(splitName[0])
-        if not (messageID.itemFound):
-            print("Failed to pull log due to invalid ID for this message: " + splitName[0])
-            return []
-        headerData = sim_model.MessageHeaderData()
-        self.TotalSim.populateMessageHeader(splitName[0], headerData)
-        moduleFound = ''
-
-        if len(self.allModules) == 0:
-            # Create a new set into which we add the SWIG'd simMessages definitions
-            # and union it with the simulation's modules set. We do this so that
-            # python modules can have message structs resolved
-            self.allModules = set()
-            self.allModules.add(simMessages)
-            self.allModules = self.allModules | self.simModules
-
-        #   Search for the specific module
-        for moduleData in self.allModules:
-            if moduleFound != '':
-                break
-            for name, obj in inspect.getmembers(moduleData):
-                if inspect.isclass(obj):
-                    if obj.__name__ == headerData.messageStruct:
-                        moduleFound = moduleData.__name__
-                        break
-        if moduleFound == '':
-            print("Failed to find valid message structure for: " + headerData.messageStruct)
-            return []
-        messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
-        resplit = varName.split(splitName[0] + '.')
-        bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
-        maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
-        messageCount = messageCount if messageCount > 0 else maxCountMessager
-        messageCount = messageCount if numRecords < 0 else numRecords
-        if (len(indices) <= 0):
-            indices_use = [0]
-        else:
-            indices_use = indices
-
-        dataUse = MessagingAccess.obtainMessageVector(splitName[0], moduleFound,
-                                                      headerData.messageStruct, messageCount, self.TotalSim, resplit[1],
-                                                      varType,
-                                                      indices_use[0], indices_use[-1], bufferUse)
-
-        indicesLocal = [0]
-        if (len(dataUse) == 0):
-            return dataUse
-        for indexUse in indices_use:
-            indicesLocal.append(indexUse + 1)
-        return (dataUse[:, indicesLocal])
 
     def pullMultiMessageLogData(self, varNames, indices, types, numRecords = -1):
         """
