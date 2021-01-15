@@ -21,14 +21,16 @@ r"""
 Overview
 --------
 This script sets up a formation flying scenario with two spacecraft. 
-The deputy spacecraft reconfigures its relative orbit in one orbit from one initial orbital element difference to target orbital element difference.
+The deputy spacecraft reconfigures its relative orbit in one orbit from one initial orbital element difference to
+target orbital element difference.
 This script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioFormationReconfig.py
 
 The simulation layout is shown in the following illustration. 
 Two spacecraft are orbiting the earth at close distance. No perturbation in assumed. 
-Each spacecraft sends a :ref:`simpleNav` output message of type :ref:`NavAttIntMsg` message at a certain period to :ref:`spacecraftReconfig`,
+Each spacecraft sends a :ref:`simpleNav` output message of type :ref:`NavAttIntMsg` message at a certain period
+to :ref:`spacecraftReconfig`,
 where burn scheduling is executed to achieve reconfiguration.
 
 .. image:: /_images/static/test_scenarioFormationReconfig.svg
@@ -83,13 +85,13 @@ from Basilisk.utilities import vizSupport
 from Basilisk.architecture import sim_model
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import spacecraftReconfig
 from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.architecture import messaging2
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -117,10 +119,8 @@ def run(show_plots, useRefAttitude):
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "scObject"
-    scObject.scMassStateOutMsgName = "scMassStateOut"
     scObject2.ModelTag = "scObject2"
-    scObject2.scStateOutMsgName = scObject.scStateOutMsgName + "2"
-    scObject2.scMassStateOutMsgName = "scMassStateOut2"
+
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
@@ -152,24 +152,18 @@ def run(show_plots, useRefAttitude):
     for pos_B, dir_B in zip(location, direction):
         thFactory2.create('MOOG_Monarc_22_6', pos_B, dir_B, useMinPulseTime=False)
     thFactory2.addToSpacecraft(scObject2.ModelTag, thrusterEffector2, scObject2)
-    thrusterEffector2.InputCmds = "thrust_cmd2"
 
     # extObj
     extFTObject2 = extForceTorque.ExtForceTorque()
     extFTObject2.ModelTag = "externalDisturbance2"
-    extFTObject2.cmdTorqueInMsgName = "AttControlTorque2"
     scObject2.addDynamicEffector(extFTObject2)
     scSim.AddModelToTask(dynTaskName, extFTObject2, None, 3)
 
     # simple nav
-    simpleNavObject = simple_nav.SimpleNav()
-    simpleNavObject2 = simple_nav.SimpleNav()
-    simpleNavObject.inputStateName = scObject.scStateOutMsgName
-    simpleNavObject.outputTransName = "simple_trans_nav_output"
-    simpleNavObject.outputAttName = "simple_att_nav_output"
-    simpleNavObject2.inputStateName = scObject2.scStateOutMsgName
-    simpleNavObject2.outputTransName = "simple_trans_nav_output2"
-    simpleNavObject2.outputAttName = "simple_att_nav_output2"
+    simpleNavObject = simpleNav.SimpleNav()
+    simpleNavObject2 = simpleNav.SimpleNav()
+    simpleNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    simpleNavObject2.scStateInMsg.subscribeTo(scObject2.scStateOutMsg)
     scSim.AddModelToTask(dynTaskName, simpleNavObject, None, 1)
     scSim.AddModelToTask(dynTaskName, simpleNavObject2, None, 1)
 
@@ -185,7 +179,6 @@ def run(show_plots, useRefAttitude):
     inertial3DWrap = scSim.setModelDataWrap(inertial3DData)
     inertial3DWrap.ModelTag = "inertial_3D2"
     inertial3DData.sigma_R0N = [1.0, 0.0, 0.0]
-    inertial3DData.outputDataName = "target_attitude2"
     scSim.AddModelToTask(fswTaskName, inertial3DWrap, inertial3DData, 11)
 
     # thrusterConfigMsg
@@ -194,19 +187,18 @@ def run(show_plots, useRefAttitude):
         loc_B_tmp = list(itertools.chain.from_iterable(th.thrLoc_B))
         dir_B_tmp = list(itertools.chain.from_iterable(th.thrDir_B))
         fswSetupThrusters.create(loc_B_tmp, dir_B_tmp, th.MaxThrust)
-    fswSetupThrusters.writeConfigMessage("thrusters_config_data2", scSim.TotalSim, fswProcessName)
+    fswThrConfMsg = fswSetupThrusters.writeConfigMessage()
 
     # spacecraftReconfig
     spacecraftReconfigData = spacecraftReconfig.spacecraftReconfigConfig()
     spacecraftReconfigWrap = scSim.setModelDataWrap(spacecraftReconfigData)
     spacecraftReconfigWrap.ModelTag = "spacecraftReconfig"
-    spacecraftReconfigData.chiefTransInMsgName = simpleNavObject.outputTransName
-    spacecraftReconfigData.deputyTransInMsgName = simpleNavObject2.outputTransName
-    if(useRefAttitude):
-        spacecraftReconfigData.attRefInMsgName = inertial3DData.outputDataName
-    spacecraftReconfigData.thrustConfigInMsgName = "thrusters_config_data2"
-    spacecraftReconfigData.attRefOutMsgName = "AttRef_for_deptuty"
-    spacecraftReconfigData.onTimeOutMsgName = thrusterEffector2.InputCmds
+    spacecraftReconfigData.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
+    spacecraftReconfigData.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
+    if useRefAttitude:
+        spacecraftReconfigData.attRefInMsg.subscribeTo(inertial3DData.attRefOutMsg)
+    spacecraftReconfigData.thrustConfigInMsg.subscribeTo(fswThrConfMsg)
+    thrusterEffector2.cmdsInMsg.subscribeTo(spacecraftReconfigData.onTimeOutMsg)
     spacecraftReconfigData.scMassDeputy = scObject2.hub.mHub  # [kg]
     spacecraftReconfigData.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
     spacecraftReconfigData.attControlTime = 400  # [s]
@@ -218,36 +210,26 @@ def run(show_plots, useRefAttitude):
     attErrorWrap = scSim.setModelDataWrap(attErrorData)
     attErrorWrap.ModelTag = "attError"
     scSim.AddModelToTask(fswTaskName, attErrorWrap, attErrorData, 9)
-    attErrorData.inputRefName = spacecraftReconfigData.attRefOutMsgName
-    attErrorData.inputNavName = simpleNavObject2.outputAttName
-    attErrorData.outputDataName = "attErrorInertial3DMsg"
+    attErrorData.attRefInMsg.subscribeTo(spacecraftReconfigData.attRefOutMsg)
+    attErrorData.attNavInMsg.subscribeTo(simpleNavObject2.attOutMsg)
 
     # VehicleConfigFswMsg
-    vehicleConfigOut2 = fswMessages.VehicleConfigFswMsg()
+    vehicleConfigOut2 = messaging2.VehicleConfigMsgPayload()
     vehicleConfigOut2.ISCPntB_B = I
-    unitTestSupport.setMessage(scSim.TotalSim, fswProcessName,
-                               "ADCSConfigData2", vehicleConfigOut2)
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut2)
 
     # MRP_FeedBack
-    mrpControlData = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlData = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlData)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlData, 8)
-    mrpControlData.inputGuidName = attErrorData.outputDataName
-    mrpControlData.vehConfigInMsgName = "ADCSConfigData2"
-    mrpControlData.outputDataName = extFTObject2.cmdTorqueInMsgName
+    mrpControlData.guidInMsg.subscribeTo(attErrorData.attGuidOutMsg)
+    mrpControlData.vehConfigInMsg.subscribeTo(vcMsg)
+    extFTObject2.cmdTorqueInMsg.subscribeTo(mrpControlData.cmdTorqueOutMsg)
     mrpControlData.K = 10
     mrpControlData.Ki = 0.0002
     mrpControlData.P = 50.0
     mrpControlData.integralLimit = 2. / mrpControlData.Ki * 0.1
-
-    # ----- interface ----- #
-    dyn2FSWInterface = sim_model.SysInterface()
-    fsw2DynInterface = sim_model.SysInterface()
-    dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
-    fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
-    dynProcess.addInterfaceRef(fsw2DynInterface)
-    fswProcess.addInterfaceRef(dyn2FSWInterface)
 
     # ----- Setup spacecraft initial states ----- #
     mu = gravFactory.gravBodies['earth'].mu
@@ -257,7 +239,7 @@ def run(show_plots, useRefAttitude):
     oe.i = 60.0 * macros.D2R
     oe.Omega = 90 * macros.D2R
     oe.omega = 60 * macros.D2R
-    M = (40) * macros.D2R
+    M = 40 * macros.D2R
     E = orbitalMotion.M2E(M, oe.e)
     oe.f = orbitalMotion.E2f(E, oe.e)
     rN, vN = orbitalMotion.elem2rv(mu, oe)
@@ -287,18 +269,23 @@ def run(show_plots, useRefAttitude):
     simulationTime = orbit_period*1.1
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(scObject2.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(spacecraftReconfigData.attRefOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(spacecraftReconfigData.onTimeOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorData.outputDataName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, dynTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    dataLog2 = scObject2.scStateOutMsg.recorder(samplingTime)
+    attRefLog = spacecraftReconfigData.attRefOutMsg.recorder(samplingTime)
+    thrCmdLog = spacecraftReconfigData.onTimeOutMsg.recorder(samplingTime)
+    attErrLog = attErrorData.attGuidOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTaskName, dataLog)
+    scSim.AddModelToTask(dynTaskName, dataLog2)
+    scSim.AddModelToTask(dynTaskName, attRefLog)
+    scSim.AddModelToTask(dynTaskName, thrCmdLog)
+    scSim.AddModelToTask(dynTaskName, attErrLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, dynProcessName, gravBodies=gravFactory,
-                                              # saveFile=fileName,
-                                              scName=[scObject.ModelTag, scObject2.ModelTag])
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObject, scObject2]
+                                              # , saveFile=fileName
+                                             )
 
     # ----- execute sim ----- #
     scSim.InitializeSimulation()
@@ -306,20 +293,20 @@ def run(show_plots, useRefAttitude):
     scSim.ExecuteSimulation()
 
     # ----- pull ----- #
-    pos = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    pos2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.r_BN_N', list(range(3)))
-    vel2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.v_BN_N', list(range(3)))
-    attErr = scSim.pullMessageLogData(attErrorData.outputDataName + '.sigma_BR', list(range(3)))
-    timeData = pos[:, 0]*macros.NANO2SEC/orbit_period
+    pos = dataLog.r_BN_N
+    vel = dataLog.v_BN_N
+    pos2 = dataLog2.r_BN_N
+    vel2 = dataLog2.v_BN_N
+    attErr = attErrLog.sigma_BR
+    timeData = dataLog.times()*macros.NANO2SEC/orbit_period
 
     # ----- plot ----- #
     # classic orbital element difference (figure1)
     plt.figure(1)
     oed = np.empty((len(pos[:, 0]), 6))
     for i in range(0, len(pos[:, 0])):
-        oe_tmp = orbitalMotion.rv2elem(mu, pos[i, 1:4], vel[i, 1:4])
-        oe2_tmp = orbitalMotion.rv2elem(mu, pos2[i, 1:4], vel2[i, 1:4])
+        oe_tmp = orbitalMotion.rv2elem(mu, pos[i], vel[i])
+        oe2_tmp = orbitalMotion.rv2elem(mu, pos2[i], vel2[i])
         oed[i, 0] = (oe2_tmp.a - oe_tmp.a)/oe_tmp.a
         oed[i, 1] = oe2_tmp.e - oe_tmp.e
         oed[i, 2] = oe2_tmp.i - oe_tmp.i
@@ -347,9 +334,9 @@ def run(show_plots, useRefAttitude):
     figureList[pltName] = plt.figure(1)
     # attitude control error (figure2)
     plt.figure(2)
+    plt.plot(timeData, attErr[:, 0])
     plt.plot(timeData, attErr[:, 1])
     plt.plot(timeData, attErr[:, 2])
-    plt.plot(timeData, attErr[:, 3])
     plt.xlabel("time [orbit]")
     plt.ylabel("MRP Error")
     pltName = fileName + "2" + str(int(useRefAttitude))
