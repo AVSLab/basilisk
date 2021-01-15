@@ -29,12 +29,11 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/')
+sys.path.append(path + '/../../examples/')
 import scenarioMonteCarloSpice
 
-@pytest.mark.scenarioTest
 @pytest.mark.skip(reason="This test is having issues right now passing with the new Controller class.")
-
+@pytest.mark.scenarioTest
 def test_MonteCarloSimulationDatashader(show_plots):
     """This function is called by the py.test environment."""
 
@@ -44,10 +43,9 @@ def test_MonteCarloSimulationDatashader(show_plots):
     # each test method requires a single assert method to be called
     try:
         scenarioMonteCarloSpice.run()
-    except  OSError as err:
+    except OSError as err:
         testFailCount += 1
         testMessages.append("MC Spice tutorial failed.")
-
 
     assert testFailCount < 1, testMessages
 
