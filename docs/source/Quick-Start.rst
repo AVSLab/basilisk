@@ -5,14 +5,14 @@
 
 Quick-Start
 ===========
+This Basilisk guide explains how to make use of the Basilisk framework.  If you are looking for examples
+to run, jump directly to :ref:`examples` section.
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   Quick-Start/bskPrinciples
    examples/index
-   Quick-Start/index
-
-
-Coming soon! For now, please refer to the ``src/examples`` directory discussed in :ref:`examples`.
 

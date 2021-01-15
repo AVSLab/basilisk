@@ -1,0 +1,11 @@
+Fundamentals of Basilisk Simulations
+====================================
+This chapter covers the fundamental principles of setting up and running a spacecaft simulation
+by writing a python script.
+
+.. toctree::
+   :maxdepth: 2
+
+   bskPrinciples/bskPrinciples0
+
+
