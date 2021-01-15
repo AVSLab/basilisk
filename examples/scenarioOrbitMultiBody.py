@@ -218,7 +218,7 @@ def run(show_plots, scCase):
     gravFactory.spiceObject.zeroBase = 'Earth'
 
     # Finally, the SPICE object is added to the simulation task list.
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, 2)
 
     # Next we would like to import spacecraft specific SPICE ephemeris data into the python environment.  This is done
     # such that the BSK computed trajectories can be compared in python with the equivalent SPICE directories.
