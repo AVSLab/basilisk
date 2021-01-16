@@ -225,6 +225,10 @@ public:
     Recorder(ReadFunctor<messageType>* messageReader, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         this->readMessage = *messageReader;
+        if (!messageReader->isLinked()) {
+            messageType var;
+            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting to record an un-connected input message of type %s.", typeid(var).name());
+        }
     }
     ~Recorder(){};
 
@@ -256,6 +260,8 @@ public:
     std::vector<uint64_t>& timesWritten(){return this->msgWrittenTimes;}
     //! record method
     std::vector<messageType>& record(){return this->msgRecord;};
+
+    BSKLogger bskLogger;                          //!< -- BSK Logging
 
     //! method to update the minimum time interval before recording the next message
     void updateTimeInterval(uint64_t timeDiff) {
