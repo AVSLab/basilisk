@@ -59,12 +59,12 @@ where they are pointing.
 .. image:: /_images/Scenarios/scenarioVizPoint3.svg
    :align: center
 
-In each case a spacecraft fixed camera is simulated.  This is done by creating a camera
-configuration message called ``camera_config_data``.  The :ref:`vizInterface` module
-searches for a message with this name by default.  If it exists, the camera information
-is read in and sent across to Vizard to render out that camera view point image.  If the
-camera message should be written to another message name, then the :ref:`vizInterface` parameter
-``cameraConfInMsgName`` can be set to this new name.
+In each case a spacecraft fixed camera is simulated.
+This is done by connecting to the :ref:`vizInterface` input message
+``cameraConfInMsg``  The :ref:`vizInterface` module
+checks this input message by default.  If it is linked, then the camera information
+is read in and sent across to Vizard to render out that camera view point image.
+Open Vizard and play back the resulting simulation binary file to see the camera window.
 
 DSCOVR Mission Setup
 --------------------
@@ -112,7 +112,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simpleNav, simFswInterfaceMessages
+from Basilisk.simulation import simpleNav
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
@@ -120,7 +120,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging2
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -176,26 +176,20 @@ def run(show_plots, missionType, saveVizardFile):
         gravFactory = simIncludeGravBody.gravBodyFactory()
         bodies = gravFactory.createBodies(['earth', 'sun'])
         bodies['earth'].isCentralBody = True  # ensure this is the central gravitational body
-        spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                                       '2018 OCT 23 04:35:25.000 (UTC)',
-                                                        epochInMsgName = 'simEpoch')
-        unitTestSupport.setMessage(scSim.TotalSim,
-                                   simProcessName,
-                                   spiceObject.epochInMsgName,
-                                   epochMsg)
+        gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                         '2018 OCT 23 04:35:25.000 (UTC)',
+                                         epochInMsg=True)
 
         gravFactory.spiceObject.zeroBase = 'earth'
-        scSim.AddModelToTask(simTaskName, spiceObject)
+        scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
         # Setup Camera.
-        cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
+        cameraConfig = messaging2.CameraConfigMsgPayload()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = 0
         cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 0.62*macros.D2R  # in degrees
         cameraConfig.resolution = [2048, 2048]  # in pixels
-        cameraMsgName = 'camera_config_data'
-        unitTestSupport.setMessage(scSim.TotalSim, simProcessName, cameraMsgName, cameraConfig)
     else:
         simulationTime = macros.min2nano(6.25)
         gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -203,15 +197,14 @@ def run(show_plots, missionType, saveVizardFile):
         mars = gravFactory.createMarsBarycenter()
         mars.isCentralBody = True  # ensure this is the central gravitational body
         mu = mars.mu
-        cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
+        cameraConfig = messaging2.CameraConfigMsgPayload()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = 0
         cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 50.*macros.D2R
         cameraConfig.resolution = [512, 512]  # in pixels
-        cameraMsgName = 'camera_config_data'
-        unitTestSupport.setMessage(scSim.TotalSim, simProcessName, cameraMsgName, cameraConfig)
+    camMsg = messaging2.CameraConfigMsg().write(cameraConfig)
 
     #
     #   setup the simulation tasks/objects
@@ -245,6 +238,7 @@ def run(show_plots, missionType, saveVizardFile):
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     #
     #   setup the FSW algorithm tasks
@@ -267,7 +261,7 @@ def run(show_plots, missionType, saveVizardFile):
         assert np.abs(np.dot(b1_n, b3_n)) < 1E-10, 'Wrong dcm'
         b2_n = np.cross(b3_n, b1_n)/np.linalg.norm( np.cross(b3_n, b1_n))
         NB = np.zeros([3,3])
-        NB[:,0] = b1_n
+        NB[:, 0] = b1_n
         NB[:, 1] = b2_n
         NB[:, 2] = b3_n
 
@@ -275,57 +269,50 @@ def run(show_plots, missionType, saveVizardFile):
     else:
         earthPoint = np.array([0.,0.,0.1])
 
+    # create the FSW vehicle configuration message
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+
     # setup inertial3D guidance module
     inertial3DConfig = inertial3D.inertial3DConfig()
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = earthPoint.tolist()  # set the desired inertial orientation
-    inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = "attErrorInertial3DMsg"
-    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
+    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
-    mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-#    mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-    scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
-
-    #
-    # create simulation messages
-    #
-
-    # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    cmdRec = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrRec = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    dataLog = sNavObject.transOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, cmdRec)
+    scSim.AddModelToTask(simTaskName, attErrRec)
+    scSim.AddModelToTask(simTaskName, dataLog)
 
     #
     #   set initial Spacecraft States
@@ -353,8 +340,10 @@ def run(show_plots, missionType, saveVizardFile):
     #   initialize Simulation
     #
     if saveVizardFile:
-        vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-                                            saveFile=fileNamePath, gravBodies=gravFactory)
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
+                                                  saveFile=fileNamePath)
+        viz.cameraConfInMsg.subscribeTo(camMsg)
+        viz.settings.viewCameraConeHUD = 1
     scSim.InitializeSimulation()
 
     #
@@ -366,10 +355,10 @@ def run(show_plots, missionType, saveVizardFile):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
+    dataLr = cmdRec.torqueRequestBody
+    dataSigmaBR = attErrRec.sigma_BR
+    dataOmegaBR = attErrRec.omega_BR_B
+    dataPos = dataLog.r_BN_N
     np.set_printoptions(precision=16)
 
 
@@ -377,9 +366,10 @@ def run(show_plots, missionType, saveVizardFile):
     #   plot the results
     #
     plt.close("all")  # clears out plots from earlier test runs
+    timeAxis = cmdRec.times() * macros.NANO2MIN
     plt.figure(1)
-    for idx in range(1, 4):
-        plt.plot(dataSigmaBR[:, 0] * macros.NANO2MIN, dataSigmaBR[:, idx],
+    for idx in range(3):
+        plt.plot(timeAxis, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
@@ -390,8 +380,8 @@ def run(show_plots, missionType, saveVizardFile):
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
-    for idx in range(1, 4):
-        plt.plot(dataLr[:, 0] * macros.NANO2MIN, dataLr[:, idx],
+    for idx in range(3):
+        plt.plot(timeAxis, dataLr[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -401,8 +391,8 @@ def run(show_plots, missionType, saveVizardFile):
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
-    for idx in range(1, 4):
-        plt.plot(dataOmegaBR[:, 0] * macros.NANO2MIN, dataOmegaBR[:, idx],
+    for idx in range(3):
+        plt.plot(timeAxis, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -427,6 +417,6 @@ def run(show_plots, missionType, saveVizardFile):
 if __name__ == "__main__":
     run(
         True,               # show_plots
-        'dscovr',           # missionType: dscovr or marsOrbit
+        'marsOrbit',           # missionType: dscovr or marsOrbit
         True                # saveVizardFile: flag to save the Vizard data file
     )
