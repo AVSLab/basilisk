@@ -251,12 +251,12 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation import simpleNav
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import rwVoltageInterface
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import rwMotorTorque
@@ -264,7 +264,7 @@ from Basilisk.utilities import fswSetupRW
 from Basilisk.fswAlgorithms import rwMotorVoltage
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging2
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
@@ -275,29 +275,25 @@ NUMBER_OF_RUNS = 4
 VERBOSE = True
 
 
-
 # Here are the name of some messages that we want to retain or otherwise use
-inertial3DConfigOutputDataName = "guidanceInertial3D"
-attErrorConfigOutputDataName = "attErrorInertial3DMsg"
-mrpControlConfigOutputDataName = "LrRequested"
-rwMotorTorqueConfigOutputDataName = "rw_torque_Lr"
-mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
-sNavObjectOutputTransName = "simple_trans_nav_output"
-fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
+rwMotorTorqueMsgName = "rwMotorTorqueMsg"
+guidMsgName = "guidMsg"
+transMsgName = "transMsg"
+rwSpeedMsgName = "rwSpeedMsg"
+voltMsgName = "voltMsg"
+rwOutName = ["rw1Msg", "rw2Msg", "rw3Msg"]
+
 
 # If using datashader, set this to 1 to graph
 # from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
 # method at the bottom of the file
 ONLY_GRAPH_DATA = 0
 
-rwOutName = ["spacecraftBody_rw_config_0_data", "spacecraftBody_rw_config_1_data", "spacecraftBody_rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 500
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime // (numDataPoints-1)
-
-
 
 
 def run(saveFigures, case, show_plots, useDatashader):
@@ -325,7 +321,8 @@ def run(saveFigures, case, show_plots, useDatashader):
     # First, the `Controller` class is used in order to define the simulation
     monteCarlo = Controller()
 
-    # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to execute and returns it. Within this function, the simulation is created and configured
+    # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to
+    # execute and returns it. Within this function, the simulation is created and configured
     monteCarlo.setSimulationFunction(createScenarioAttitudeFeedbackRW)
 
     # Also, every MonteCarlo simulation must define a function which executes the simulation that was created.
@@ -386,14 +383,13 @@ def run(saveFigures, case, show_plots, useDatashader):
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
-    retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", list(range(5)))], samplingTime)
-    retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", list(range(3))), ("omega_BR_B", list(range(3)))], samplingTime)
-    retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", list(range(3)))], samplingTime)
-    retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", list(range(3)))], samplingTime)
-    retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", list(range(3)))], samplingTime)
-
-    for message in rwOutName:
-        retentionPolicy.addMessageLog(message, [("u_current", list(range(1)))], samplingTime)
+    retentionPolicy.addMessageLog(rwMotorTorqueMsgName, ["motorTorque"])
+    retentionPolicy.addMessageLog(guidMsgName, ["sigma_BR", "omega_BR_B"])
+    retentionPolicy.addMessageLog(transMsgName, ["r_BN_N"])
+    retentionPolicy.addMessageLog(rwSpeedMsgName, ["wheelSpeeds"])
+    retentionPolicy.addMessageLog(voltMsgName, ["voltage"])
+    for msgName in rwOutName:
+        retentionPolicy.addMessageLog(msgName, ["u_current"])
     if show_plots:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
@@ -416,16 +412,17 @@ def run(saveFigures, case, show_plots, useDatashader):
         # This demonstrates loading it from disk
         monteCarloLoaded = Controller.load(dirName)
 
-        # Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
+        # Then retained data from any run can then be accessed in the form of a dictionary
+        # with two sub-dictionaries for messages and variables:
         retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
         assert retainedData is not None, "Retained data should be available after execution"
         assert "messages" in retainedData, "Retained data should retain messages"
-        assert "attErrorInertial3DMsg.sigma_BR" in retainedData["messages"], "Retained messages should exist"
+        assert guidMsgName + ".sigma_BR" in retainedData["messages"], "Retained messages should exist"
 
         # We also can rerun a case using the same parameters and random seeds
         # If we rerun a properly set-up run, it should output the same data.
         # Here we test that if we rerun the case the data doesn't change
-        oldOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+        oldOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
 
         # Rerunning the case shouldn't fail
         failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
@@ -433,7 +430,7 @@ def run(saveFigures, case, show_plots, useDatashader):
 
         # Now access the newly retained data to see if it changed
         retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-        newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+        newOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
         for k1, v1 in enumerate(oldOutput):
             for k2, v2 in enumerate(v1):
                 assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
@@ -536,8 +533,8 @@ def createScenarioAttitudeFeedbackRW():
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scSim.hubref = scObject.hub
 
@@ -550,7 +547,7 @@ def createScenarioAttitudeFeedbackRW():
     # set module parameters(s)
     rwVoltageIO.setGains(np.array([0.2/10.]*3))  # [Nm/V] conversion gain
 
-    #Add RW Voltage to sim for dispersion
+    # Add RW Voltage to sim for dispersion
     scSim.rwVoltageIO = rwVoltageIO
     # Add test module to runtime call list
     scSim.AddModelToTask(simTaskName, rwVoltageIO)
@@ -572,8 +569,7 @@ def createScenarioAttitudeFeedbackRW():
     rwFactory = simIncludeRW.rwFactory()
 
     # store the RW dynamical model type
-    varRWModel = rwFactory.BalancedWheels
-
+    varRWModel = messaging2.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     RW1 = rwFactory.create('Honeywell_HR16'
@@ -599,8 +595,9 @@ def createScenarioAttitudeFeedbackRW():
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.rwMotorTorqueOutMsg)
 
-    #Add RWs to sim for dispersion
+    # Add RWs to sim for dispersion
     scSim.RW1 = RW1
     scSim.RW2 = RW2
     scSim.RW3 = RW3
@@ -609,13 +606,26 @@ def createScenarioAttitudeFeedbackRW():
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
+    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     #
     #   setup the FSW algorithm tasks
     #
+
+    # create the FSW vehicle configuration message
+    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+
+    # FSW RW configuration message
+    # use the same RW states in the FSW algorithm as in the simulation
+    fswSetupRW.clearSetup()
+    for key, rw in rwFactory.rwList.items():
+        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+    fswRwConfMsg = fswSetupRW.writeConfigMessage()
 
     # setup inertial3D guidance module
     inertial3DConfig = inertial3D.inertial3DConfig()
@@ -623,27 +633,24 @@ def createScenarioAttitudeFeedbackRW():
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
-    inertial3DConfig.outputDataName = inertial3DConfigOutputDataName
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
     attErrorWrap.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.outputDataName = attErrorConfigOutputDataName
-    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
-    attErrorConfig.inputNavName = sNavObject.outputAttName
+    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
-    mrpControlConfig.outputDataName = mrpControlConfigOutputDataName
-    mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
+    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
     mrpControlConfig.K  =   3.5
     mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
     mrpControlConfig.P  = 30.0
@@ -655,9 +662,8 @@ def createScenarioAttitudeFeedbackRW():
     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
     # Initialize the test module msg names
-    rwMotorTorqueConfig.outputDataName = rwMotorTorqueConfigOutputDataName
-    rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
-    rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwConfMsg)
     # Make the RW control all three body axes
     controlAxes_B = [
              1,0,0
@@ -674,32 +680,12 @@ def createScenarioAttitudeFeedbackRW():
     scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
 
     # Initialize the test module configuration data
-    fswRWVoltageConfig.torqueInMsgName = rwMotorTorqueConfig.outputDataName
-    fswRWVoltageConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
-    fswRWVoltageConfig.voltageOutMsgName = rwVoltageIO.rwVoltageInMsgName
-
+    fswRWVoltageConfig.torqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+    fswRWVoltageConfig.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    rwVoltageIO.rwVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
     # set module parameters
     fswRWVoltageConfig.VMin = 0.0  # Volts
     fswRWVoltageConfig.VMax = 10.0  # Volts
-
-    #
-    # create simulation messages
-    #
-
-    # create the FSW vehicle configuration message
-    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    unitTestSupport.setMessage(scSim.TotalSim,
-                               simProcessName,
-                               mrpControlConfig.vehConfigInMsgName,
-                               vehicleConfigOut)
-
-    # FSW RW configuration message
-    # use the same RW states in the FSW algorithm as in the simulation
-    fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.items():
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
     #
     #   set initial Spacecraft States
@@ -718,54 +704,72 @@ def createScenarioAttitudeFeedbackRW():
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_CN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_CN_B
 
+    # store the msg recorder modules in a dictionary list so the retention policy class can pull the data
+    # when the simulation ends
+    scSim.msgRecList = {}
+
+    scSim.msgRecList[rwMotorTorqueMsgName] = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwMotorTorqueMsgName])
+
+    scSim.msgRecList[guidMsgName] = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, scSim.msgRecList[guidMsgName])
+
+    scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, scSim.msgRecList[transMsgName])
+
+    scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwSpeedMsgName])
+
+    scSim.msgRecList[voltMsgName] = fswRWVoltageConfig.voltageOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, scSim.msgRecList[voltMsgName])
+
+    c = 0
+    for msgName in rwOutName:
+        scSim.msgRecList[msgName] = rwStateEffector.rwOutMsgs[c].recorder(samplingTime)
+        scSim.AddModelToTask(simTaskName, scSim.msgRecList[msgName])
+        c += 1
+
     # This is a hack because of a bug in Basilisk... leave this line it keeps
     # variables from going out of scope after this function returns
     scSim.additionalReferences = [rwVoltageIO, fswRWVoltageWrap, scObject, earth, rwMotorTorqueWrap, mrpControlWrap, attErrorWrap, inertial3DWrap]
 
     return scSim
 
+
 def executeScenario(sim):
-    #
     #   initialize Simulation
-    #
     sim.InitializeSimulation()
 
-    #
     #   configure a simulation stop time time and execute the simulation run
-    #
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
+
 
 # This method is used to plot the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
-    #
     #   retrieve the logged data
-    #
-
-
-    dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName+".motorTorque"]
-    dataSigmaBR = data["messages"][attErrorConfigOutputDataName+".sigma_BR"]
-    dataOmegaBR = data["messages"][attErrorConfigOutputDataName+".omega_BR_B"]
-    dataPos = data["messages"][sNavObjectOutputTransName+".r_BN_N"]
-    dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName+".wheelSpeeds"]
-    dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
+    dataUsReq = data["messages"][rwMotorTorqueMsgName + ".motorTorque"]
+    dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"]
+    dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"]
+    dataPos = data["messages"][transMsgName + ".r_BN_N"]
+    dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"]
+    dataVolt = data["messages"][voltMsgName + ".voltage"]
     dataRW = []
-
-    for message in rwOutName:
-        dataRW.append(data["messages"][message+".u_current"])
+    for msgName in rwOutName:
+        dataRW.append(data["messages"][msgName+".u_current"])
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
 
-    timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    timeData = data["messages"][rwMotorTorqueMsgName + ".times"] * macros.NANO2MIN
 
     figureList = {}
     plt.figure(1)
     pltName = 'AttitudeError'
-    for idx in range(1,4):
+    for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  label='Run ' + str(data["index"]) + r' $\sigma_'+str(idx)+'$')
     # plt.legend(loc='lower right')
@@ -775,11 +779,11 @@ def plotSim(data, retentionPolicy):
 
     plt.figure(2)
     pltName = 'RWMotorTorque'
-    for idx in range(1,4):
+    for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  label='Run ' + str(data["index"]) + r' $\hat u_{s,'+str(idx)+'}$')
-        plt.plot(timeData, dataRW[idx-1][:, 1],
+        plt.plot(timeData, dataRW[idx],
                  label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
     # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -788,7 +792,7 @@ def plotSim(data, retentionPolicy):
 
     plt.figure(3)
     pltName = 'RateTrackingError'
-    for idx in range(1,4):
+    for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  label='Run ' + str(data["index"]) + r' $\omega_{BR,'+str(idx)+'}$')
     # plt.legend(loc='lower right')
@@ -798,7 +802,7 @@ def plotSim(data, retentionPolicy):
 
     plt.figure(4)
     pltName = 'RWSpeed'
-    for idx in range(1,len(rwOutName)+1):
+    for idx in range(len(rwOutName)):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
                  label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
     # plt.legend(loc='lower right')
@@ -808,7 +812,7 @@ def plotSim(data, retentionPolicy):
 
     plt.figure(5)
     pltName = 'RWVoltage'
-    for idx in range(1, len(rwOutName) + 1):
+    for idx in range(len(rwOutName)):
         plt.plot(timeData, dataVolt[:, idx],
                  label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
     # plt.legend(loc='lower right')
@@ -817,6 +821,7 @@ def plotSim(data, retentionPolicy):
     figureList[pltName] = plt.figure(5)
 
     return figureList
+
 
 def plotSimAndSave(data, retentionPolicy):
     figureList = plotSim(data, retentionPolicy)
@@ -895,7 +900,7 @@ def configureDatashader():
     # This is set to false by default in the library
     datashaderLibrary.saveData = True
 
-    # Configure the lbirary to use the list of graphs, and any other settings
+    # Configure the library to use the list of graphs, and any other settings
     # that may have been set.
     datashaderLibrary.configure(dataConfiguration=datashaderDataList
                                 # ,directories=datashaderDirectories
@@ -917,7 +922,15 @@ def configureDatashader():
 if __name__ == "__main__":
     run(  saveFigures=False        # save figures to file
         , case=1            # Case 1 is normal MC, case 2 is initial condition run
-        , show_plots=False         # show_plots.
+        , show_plots=True         # show_plots.
           # THIS MUST BE FALSE BY DEFAULT
         , useDatashader=False         # use datashading library - matplotlib will not be used
        )
+
+    # code to just run the scenario for debugging and development purposes
+    # simInstance = createScenarioAttitudeFeedbackRW()
+    # executeScenario(simInstance)
+    # data = simInstance.msgRecList[rwMotorTorqueMsgName].motorTorque
+    # time = simInstance.msgRecList[rwMotorTorqueMsgName].times()
+    #
+    # print(data)

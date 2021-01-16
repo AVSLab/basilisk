@@ -775,11 +775,13 @@ class SimulationExecutor:
             # we may want to disperse random seeds
             if simParams.shouldDisperseSeeds:
                 # generate the random seeds for the model (but don't apply them yet)
-                randomSeedDispersions = cls.disperseSeeds(simInstance) #Note: This sets the RNGSeeds before all other modifications
+                # Note: This sets the RNGSeeds before all other modifications
+                randomSeedDispersions = cls.disperseSeeds(simInstance)
                 for name, value in randomSeedDispersions.items():
                     modifications[name] = value
 
-            # used if rerunning ICs from a .json file, modifications will contain the RNGSeeds that need to be set before selfInit()
+            # used if rerunning ICs from a .json file, modifications will contain the
+            # RNGSeeds that need to be set before selfInit()
             cls.populateSeeds(simInstance, modifications)
 
             # we may want to disperse parameters
@@ -839,7 +841,6 @@ class SimulationExecutor:
                 simParams.executionFunction(simInstance)
             except TypeError:
                 simParams.executionFunction(simInstance, simParams.filename)
-
 
             if len(simParams.retentionPolicies) > 0:
                 if simParams.icfilename != "":
