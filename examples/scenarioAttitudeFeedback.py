@@ -315,23 +315,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     configDataMsg.write(configData)
 
     #
-    # Setup data logging before the simulation is initialized
-    #
-    numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    snLog = scObject.scStateOutMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
-    if useCMsg:
-        # create stand-along commanded torque msg and setup recorder()
-        cmdTorqueMsg = cMsgPy.CmdTorqueBodyMsg_C()
-        mrpLog = cmdTorqueMsg.recorder(samplingTime)
-    else:
-        mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(simTaskName, snLog)
-    scSim.AddModelToTask(simTaskName, attErrorLog)
-    scSim.AddModelToTask(simTaskName, mrpLog)
-
-    #
     # connect the messages to the modules
     #
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -340,12 +323,34 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
     if useCMsg:
+        cmdTorqueMsg = cMsgPy.CmdTorqueBodyMsg_C()
         # connect to external commanded torque msg
         cMsgPy.CmdTorqueBodyMsg_C_addAuthor(mrpControlConfig.cmdTorqueOutMsg, cmdTorqueMsg)
         extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
     else:
         # connect to module-internal commanded torque msg
         extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+
+    #
+    # Setup data logging before the simulation is initialized
+    #
+    numDataPoints = 100
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    snLog = scObject.scStateOutMsg.recorder(samplingTime)
+    # instead of recording the contents of a C++ output message, you can also recording
+    # the incoming contents of a C++ input message.  However, note that you must setup the
+    # input message recorder after this input message has been subscribed to another message.
+    # Otherwise, you are reading an uninitialized msg which leads to lovely segmentation faults.
+    snLog = sNavObject.scStateInMsg.recorder(samplingTime)
+    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    if useCMsg:
+        # create stand-along commanded torque msg and setup recorder()
+        mrpLog = cmdTorqueMsg.recorder(samplingTime)
+    else:
+        mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, snLog)
+    scSim.AddModelToTask(simTaskName, attErrorLog)
+    scSim.AddModelToTask(simTaskName, mrpLog)
 
     #
     #   set initial Spacecraft States
@@ -416,6 +421,15 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
+
+    plt.figure(4)
+    for idx in range(3):
+        plt.plot(timeAxis * macros.NANO2MIN, snLog.r_BN_N[:, idx] / 1000.,
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$r_{BN,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [orbits]')
+    plt.ylabel('Inertial Position [km]')
 
     if show_plots:
         plt.show()
