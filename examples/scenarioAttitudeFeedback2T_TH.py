@@ -628,6 +628,9 @@ def run(show_plots, useDVThrusters):
     for pos_B, dir_B in zip(location, direction):
         fswSetupThrusters.create(pos_B, dir_B, maxThrust)
     fswThrConfigMsg = fswSetupThrusters.writeConfigMessage()
+    # an alternate method to pull un-modifed SIM Thruster configuration and create the corresponding FSW
+    # configuration message is:
+    fswThrConfigMsg = thFactory.getConfigMessage()
 
     #   set initial Spacecraft States
     #

@@ -308,6 +308,7 @@ class rwFactory(object):
         rwConfigParams.numRW = len(self.rwList)
 
         rwConfigMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+        rwConfigMsg.this.disown()
 
         return rwConfigMsg
 

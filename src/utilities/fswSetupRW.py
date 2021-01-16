@@ -84,6 +84,7 @@ def writeConfigMessage():
     rwConfigParams.uMax = uMaxList
     rwConfigParams.numRW = len(rwList)
     rwConfigMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+    rwConfigMsg.this.disown()
 
     return rwConfigMsg
 

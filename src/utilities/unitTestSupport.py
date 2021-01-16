@@ -467,7 +467,10 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     epochMsgStructure.minutes = datetime_object.minute
     epochMsgStructure.seconds = datetime_object.second + datetime_object.microsecond / 1e6
 
-    return messaging2.EpochMsg().write(epochMsgStructure)
+    epochMsg = messaging2.EpochMsg().write(epochMsgStructure)
+    epochMsg.this.disown()
+
+    return epochMsg
 
 
 def checkMethodKeyword(karglist, kwargs):

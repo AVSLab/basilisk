@@ -199,8 +199,8 @@ class thrusterFactory(object):
 
     def getConfigMessage(self):
         """
-            Returns a THRArrayConfigFswMsg reflecting the current thruster setup.
-        :return: thrMessage: THRArrayConfigFswMsg instance
+            Returns a FSW THRArrayConfigMsg reflecting the current thruster setup.
+        :return: thrMessage: THRArrayConfigMsg instance
         """
 
         thrMessage = messaging2.THRArrayConfigMsgPayload()
@@ -212,12 +212,15 @@ class thrusterFactory(object):
             fswThruster.maxThrust = simThruster.MaxThrust
             fswThruster.rThrust_B = [val for sublist in simThruster.thrLoc_B for val in sublist]
             fswThruster.tHatThrust_B = [val for sublist in simThruster.thrDir_B for val in sublist]
-            fswMessages.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
+            messaging2.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
             i += 1
 
         thrMessage.numThrusters = len(self.thrusterList.values())
 
-        return thrMessage
+        thrConfigMsg = messaging2.THRArrayConfigMsg().write(thrMessage)
+        thrConfigMsg.this.disown()
+
+        return thrConfigMsg
 
     #
     #   MOOG Monarc-1

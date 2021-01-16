@@ -79,6 +79,7 @@ def writeConfigMessage():
 
     thrClass.numThrusters = len(thrList)
     thrConfigInMsg = messaging2.THRArrayConfigMsg().write(thrClass)
+    thrConfigInMsg.this.disown()
 
     return thrConfigInMsg
 
