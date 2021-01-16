@@ -22,53 +22,60 @@ Overview
 
 Demonstrates how to stabilize the attitude tumble without translational motion.
 This script sets up a 6-DOF spacecraft, but without specifying any orbital motion.  Thus,
-this scenario simulates the spacecraft translating in deep space.  The scenario is a simplified
-version of :ref:`scenarioAttitudeFeedback` with the orbital setup removed.
+this scenario simulates the spacecraft translating in deep space.  The scenario is a
+version of :ref:`scenarioAttitudePointing` where the :ref:`mrpPD` feedback control
+module is replaced with an equivalent python based BSK MRP PD control module.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-    python3 scenarioAttitudePointing.py
+    python3 scenarioAttitudePointingPY.py
 
-As with :ref:`scenarioAttitudeFeedback`, when
+As with :ref:`scenarioAttitudePointing`, when
 the simulation completes 3 plots are shown for the MRP attitude history, the rate
 tracking errors, as well as the control torque vector.
 
-The simulation layout is shown in the following illustration.  A single simulation process is created
-which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-modules.
+The MRP PD control module in this script is a class called ``PythonMRPPD``.  Note that it has the
+same setup and update routines as are found with a C/C++ Basilisk module.
 
-.. image:: /_images/static/test_scenarioAttitudePointing.svg
-   :align: center
+To use a Python module in a simulation script, not that the python modules must be added to a special python specific
+process and task list.  This is done with the commands::
+
+    pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
+    pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
+
+Note that the regular dynamics process has a priority of ``10``, thus the python module process with priority of ``9``
+will be evaluated after the dynamics process.  If additional C or C++ modules needed to be evaluated,
+then these would be added in a 3rd process with a lower priority to execute after the python modules.
+
+Creating an instance of the Python module is done with the code::
+
+    pyMRPPD = PythonMRPPD("pyMRP_PD", True, 100)
+    pyMRPPD.K = 3.5
+    pyMRPPD.P = 30.0
+    pyModulesProcess.addModelToTask(pyTaskName, pyMRPPD)
+
+The first argument is the module tag string, the second is a bool argument specifying if the module is active
+or note, and the last is the priority value for this module.  The next step is to configure the module
+variables as you do with any other Basilisk module.  Finally, the module is added to the special task
+list specifically for executing python modules.
+
+
 
 Illustration of Simulation Results
 ----------------------------------
 
 ::
 
-    show_plots = True, useLargeTumble = False
+    show_plots = True
 
 Here a small initial tumble is simulated.  The
 resulting attitude and control torque histories are shown below.  The spacecraft quickly
 regains a stable orientation without tumbling past 180 degrees.
 
-.. image:: /_images/Scenarios/scenarioAttitudePointing10.svg
+.. image:: /_images/Scenarios/scenarioAttitudePointing1.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudePointing20.svg
-   :align: center
-
-::
-
-    show_plots = True, useLargeTumble = True
-
-Note that, as expected,
-the orientation error tumbles past 180 degrees before stabilizing to zero.  The control
-torque effort is also much larger in this case.
-
-.. image:: /_images/Scenarios/scenarioAttitudePointing11.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioAttitudePointing21.svg
+.. image:: /_images/Scenarios/scenarioAttitudePointing2.svg
    :align: center
 
 """
@@ -76,10 +83,9 @@ torque effort is also much larger in this case.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
-#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in deep space.
+# Purpose:  Integrated test showing how to setup and run a Python BSK module with C/C++ modules
 # Author:   Hanspeter Schaub
-# Creation Date:  Nov. 19, 2016
+# Creation Date:  Jan. 16, 2021
 #
 
 import os
@@ -115,13 +121,12 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, useLargeTumble):
+def run(show_plots):
     """
     The scenarios can be run with the followings setups parameters:
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        useLargeTumble (bool): Specify if a large initial tumble rate should be used
 
     """
 
@@ -145,16 +150,15 @@ def run(show_plots, useLargeTumble):
     #
     #  create the simulation process
     #
-    dynProcess = scSim.CreateNewProcess(simProcessName, 2)
+    dynProcess = scSim.CreateNewProcess(simProcessName, 10)
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # create the process and task that contains the Python modules
-    pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 1)
+    pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
     pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
-    print("HPS: past python task setup")
 
     #
     #   setup the simulation tasks/objects
@@ -171,10 +175,7 @@ def run(show_plots, useLargeTumble):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-    if useLargeTumble:
-        scObject.hub.omega_BN_BInit = [[0.8], [-0.6], [0.5]]  # rad/s - omega_BN_B
-    else:
-        scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -242,7 +243,6 @@ def run(show_plots, useLargeTumble):
     #
     #   initialize Simulation
     #
-    print("HPS: before init")
     scSim.InitializeSimulation()
 
     #
@@ -273,7 +273,7 @@ def run(show_plots, useLargeTumble):
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList = {}
-    pltName = fileName + "1" + str(int(useLargeTumble))
+    pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
@@ -284,7 +284,7 @@ def run(show_plots, useLargeTumble):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    pltName = fileName + "2" + str(int(useLargeTumble))
+    pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
@@ -302,9 +302,7 @@ def run(show_plots, useLargeTumble):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-
     return figureList
-
 
 
 class PythonMRPPD(simulationArchTypes.PythonModelClass):
@@ -314,10 +312,8 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
     The class uses the following
     virtual functions:
 
-    #. ``selfInit``: The method that creates all of the messages that will be written by the
-       python model that is implemented in your class.
-    #. ``crossInit``: The method that will subscribe to all of the input messages that your class
-       needs in order to perform its function.
+    #. ``selfInit``: initializes the module.
+    #. ``crossInit``: no current need for this,
     #. ``reset``: The method that will initialize any persistent data in your model to a common
        "ready to run" state (e.g. filter states, integral control sums, etc).
     #. ``updateState``: The method that will be called at the rate specified
@@ -347,37 +343,50 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         # Output body torque message name
         self.cmdTorqueOutMsg = messaging2.CmdTorqueBodyMsg()
 
-    # The selfInit method is used to initialize all of the output messages of a class.
-    # It is important that ALL outputs are initialized here so that other models can
-    # subscribe to these messages in their crossInit method.
     def selfInit(self):
+        """used to initialize a module"""
         return
 
-    # The crossInit method is used to initialize all of the input messages of a class.
-    #  This subscription assumes that all of the other models present in a given simulation
-    #  instance have initialized their messages during the selfInit step.
     def crossInit(self):
+        """depreciated method, should be removed"""
         return
 
-    # The reset method is used to clear out any persistent variables that need to get changed
-    #  when a task is restarted.  This method is typically only called once after selfInit/crossInit,
-    #  but it should be written to allow the user to call it multiple times if necessary.
     def reset(self, currentTime):
+        """
+        The reset method is used to clear out any persistent variables that need to get changed
+        when a task is restarted.  This method is typically only called once after selfInit/crossInit,
+        but it should be written to allow the user to call it multiple times if necessary.
+        :param currentTime: current simulation time in nano-seconds
+        :return: none
+        """
         return
 
-    # The updateState method is the cyclical worker method for a given Basilisk class.  It
-    # will get called periodically at the rate specified in the Python task that the model is
-    # attached to.  It persists and anything can be done inside of it.  If you have realtime
-    # requirements though, be careful about how much processing you put into a Python updateState
-    # method.  You could easily detonate your sim's ability to run in realtime.
+
     def updateState(self, currentTime):
-        guidMsgBuffer = self.guidInMsg.read()
+        """
+        The updateState method is the cyclical worker method for a given Basilisk class.  It
+        will get called periodically at the rate specified in the Python task that the model is
+        attached to.  It persists and anything can be done inside of it.  If you have realtime
+        requirements though, be careful about how much processing you put into a Python updateState
+        method.  You could easily detonate your sim's ability to run in realtime.
+
+        :param currentTime: current simulation time in nano-seconds
+        :return: none
+        """
+        # read input message
+        guidMsgBuffer = self.guidInMsg()
+
+        # create output message buffer
         torqueOutMsgBuffer = messaging2.CmdTorqueBodyMsgPayload()
+
+        # compute control solution
         lrCmd = np.array(guidMsgBuffer.sigma_BR) * self.K + np.array(guidMsgBuffer.omega_BR_B) * self.P
         torqueOutMsgBuffer.torqueRequestBody = (-lrCmd).tolist()
-        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, self.moduleID, currentTime)
+
+        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, currentTime, self.moduleID)
 
         def print_output():
+            """Sample Python module method"""
             print(currentTime * 1.0E-9)
             print(torqueOutMsgBuffer.torqueRequestBody)
             print(guidMsgBuffer.sigma_BR)
@@ -392,6 +401,5 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
 #
 if __name__ == "__main__":
     run(
-        True,  # show_plots
-        False,  # useLargeTumble
+        True  # show_plots
     )

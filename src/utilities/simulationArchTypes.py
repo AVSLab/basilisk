@@ -45,7 +45,7 @@ class ProcessBaseClass(object):
         self.processData.enableAllTasks()
 
     def selectProcess(self):
-        self.processData.selectProcess()
+        pass
 
     def updateTaskPeriod(self, TaskName, newPeriod):
         self.processData.changeTaskPeriod(TaskName, newPeriod)
@@ -187,7 +187,6 @@ class PythonProcessClass(ProcessBaseClass):
         print("to non-existent task: " + taskName)
 
     def selfInitProcess(self):
-        self.processData.selectProcess()
 
         if not self.taskList:
             return
@@ -198,24 +197,21 @@ class PythonProcessClass(ProcessBaseClass):
         self.scheduleTask(self.taskList[-1])
 
     def crossInitProcess(self):
-        self.processData.selectProcess()
         for task in self.taskList:
             task.crossInitTask()
 
     def resetProcess(self, currentTime):
         self.executionOrder = []
-        self.processData.selectProcess()
         for task in self.taskList:
             task.resetTask(currentTime)
             self.scheduleTask(task)
 
     def executeTaskList(self, currentTime):
-        if (len(self.executionOrder) == 0):
+        if len(self.executionOrder) == 0:
             return
         taskNext = self.executionOrder[0]
         for intCurr in self.intRefs:
             intCurr.routeInputs(self.processData.messageBuffer)
-        self.processData.selectProcess()
         while taskNext.nextTaskTime <= currentTime:
             taskNext.executeModelList(currentTime)
             self.executionOrder.pop(0)
