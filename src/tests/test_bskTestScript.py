@@ -35,7 +35,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/BskSim/scenarios')
+sys.path.append(path + '/../../examples/BskSim/scenarios')
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -47,18 +47,17 @@ sys.path.append(path + '/../examples/BskSim/scenarios')
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("bskSimCase", [
-    ('scenario_BasicOrbit')
-    , ('scenario_BasicOrbit_LivePlot')
-    , ('scenario_AttEclipse')
-    , ('scenario_AttGuidance')
-    , ('scenario_AttGuidHyperbolic')
-    , ('scenario_AttSteering')
-    , ('scenario_FeedbackRW')
-    , ('scenario_BasicOrbitFormation')
-    , ('scenario_RelativePointingFormation')
+                                        'scenario_BasicOrbit'
+                                        , 'scenario_BasicOrbit_LivePlot'
+                                        , 'scenario_AttEclipse'
+                                        , 'scenario_AttGuidance'
+                                        , 'scenario_AttGuidHyperbolic'
+                                        , 'scenario_AttSteering'
+                                        , 'scenario_FeedbackRW'
+                                        , 'scenario_BasicOrbitFormation'
+                                        , 'scenario_RelativePointingFormation'
                                         ])
 @pytest.mark.scenarioTest
-
 def test_scenarioBskScenarios(show_plots, bskSimCase):
 
     testFailCount = 0                       # zero unit test result counter

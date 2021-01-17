@@ -18,21 +18,35 @@
 
 import math
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, MRP_Feedback,
-                                    rwMotorTorque, fswMessages,
-                                    velocityPoint, MRP_Steering, rateServoFullNonlinear,
-                                    sunSafePoint, cssWlsEst, spacecraftPointing)
+from Basilisk.fswAlgorithms import (inertial3D, attTrackingError, mrpFeedback,
+                                    rwMotorTorque,
+                                    spacecraftPointing)
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import unitTestSupport
-
+from Basilisk.architecture import messaging2
+import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 class BSKFswModels():
     def __init__(self, SimBase, fswRate):
+        # define empty class variables
+        self.vcMsg = None
+        self.fswRwConfigMsg = None
+
+        self.cmdTorqueMsg = None
+        self.cmdTorque2Msg = None
+        self.cmdTorqueDirectMsg = None
+        self.attRefMsg = None
+        self.attRef2Msg = None
+        self.attGuidMsg = None
+        self.attGuid2Msg = None
+        self.cmdRwMotorMsg = None
+        self.cmdRwMotor2Msg = None
+
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
-        self.processTasksTimeStep = mc.sec2nano(fswRate)  # 0.5
+        self.processTasksTimeStep = mc.sec2nano(fswRate)
 
         # Create tasks
         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
@@ -53,14 +67,13 @@ class BSKFswModels():
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
         self.trackingErrorWrap.ModelTag = "trackingError"
 
-        self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
+        self.mrpFeedbackRWsData = mrpFeedback.mrpFeedbackConfig()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
 
         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-
 
         self.inertial3DData2 = inertial3D.inertial3DConfig()
         self.inertial3DWrap2 = SimBase.setModelDataWrap(self.inertial3DData2)
@@ -70,7 +83,7 @@ class BSKFswModels():
         self.trackingErrorWrap2 = SimBase.setModelDataWrap(self.trackingErrorData2)
         self.trackingErrorWrap2.ModelTag = "trackingError2"
 
-        self.mrpFeedbackRWsData2 = MRP_Feedback.MRP_FeedbackConfig()
+        self.mrpFeedbackRWsData2 = mrpFeedback.mrpFeedbackConfig()
         self.mrpFeedbackRWsWrap2 = SimBase.setModelDataWrap(self.mrpFeedbackRWsData2)
         self.mrpFeedbackRWsWrap2.ModelTag = "mrpFeedbackRWs2"
 
@@ -82,9 +95,12 @@ class BSKFswModels():
         self.spacecraftPointingWrap = SimBase.setModelDataWrap(self.spacecraftPointing)
         self.spacecraftPointingWrap.ModelTag = "spacecraftPointing"
 
-        self.mrpFeedbackControlData = MRP_Feedback.MRP_FeedbackConfig()
+        self.mrpFeedbackControlData = mrpFeedback.mrpFeedbackConfig()
         self.mrpFeedbackControlWrap = SimBase.setModelDataWrap(self.mrpFeedbackControlData)
         self.mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
+
+        # create the FSW module gateway messages
+        self.setupGatewayMsgs(SimBase)
 
         # Initialize all modules
         self.InitAllFSWObjects(SimBase)
@@ -103,7 +119,7 @@ class BSKFswModels():
         SimBase.AddModelToTask("mrpFeedbackRWsTask2", self.mrpFeedbackRWsWrap2, self.mrpFeedbackRWsData2, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask2", self.rwMotorTorqueWrap2, self.rwMotorTorqueData2, 8)
 
-        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10) #used for external torque
+        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10)
 
         SimBase.AddModelToTask("spacecraftPointingTask", self.spacecraftPointingWrap, self.spacecraftPointing, 8)
         SimBase.AddModelToTask("spacecraftPointingTask", self.trackingErrorWrap2, self.trackingErrorData2, 7)
@@ -113,11 +129,14 @@ class BSKFswModels():
 
         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'standby'"],
-                               ["self.fswProc.disableAllTasks()"])
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()"
+                                ])
 
         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'inertial3D'"],
                                ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('inertial3DPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
                                 "self.enableTask('inertial3DPointTask2')",
@@ -126,6 +145,7 @@ class BSKFswModels():
         SimBase.createNewEvent("initiateSpacecraftPointing", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'spacecraftPointing'"],
                                ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('spacecraftPointingTask')",
                                 "self.enableTask('mrpFeedbackTask')"])
 
@@ -133,45 +153,44 @@ class BSKFswModels():
     # These are module-initialization methods
     def SetInertial3DPointGuidance(self):
         self.inertial3DData.sigma_R0N = [0.2, 0.4, 0.6]
-        self.inertial3DData.outputDataName = "att_reference"
+        cMsgPy.AttRefMsg_C_addAuthor(self.inertial3DData.attRefOutMsg, self.attRefMsg)
 
         self.inertial3DData2.sigma_R0N = [0.2, 0.4, 0.6]
-        self.inertial3DData2.outputDataName = "att_reference2"
+        cMsgPy.AttRefMsg_C_addAuthor(self.inertial3DData2.attRefOutMsg, self.attRef2Msg)
 
     def SetAttitudeTrackingError(self, SimBase):
-        self.trackingErrorData.inputNavName = SimBase.DynModels.simpleNavObject.outputAttName
-        # Note: SimBase.DynModels.simpleNavObject.outputAttName = "simple_att_nav_output"
-        self.trackingErrorData.inputRefName = "att_reference"
-        self.trackingErrorData.outputDataName = "att_guidance"
+        self.trackingErrorData.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.attOutMsg)
+        self.trackingErrorData.attRefInMsg.subscribeTo(self.attRefMsg)
+        cMsgPy.AttGuidMsg_C_addAuthor(self.trackingErrorData.attGuidOutMsg, self.attGuidMsg)
 
-        self.trackingErrorData2.inputNavName = SimBase.DynModels.simpleNavObject2.outputAttName
-        # Note: SimBase.DynModels.simpleNavObject.outputAttName = "simple_att_nav_output"
-        self.trackingErrorData2.inputRefName = "att_reference2"
-        self.trackingErrorData2.outputDataName = "att_guidance2"
+        self.trackingErrorData2.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject2.attOutMsg)
+        self.trackingErrorData2.attRefInMsg.subscribeTo(self.attRef2Msg)
+        cMsgPy.AttGuidMsg_C_addAuthor(self.trackingErrorData2.attGuidOutMsg, self.attGuid2Msg)
 
-    def SetMRPFeedbackRWA(self):
+    def SetMRPFeedbackRWA(self, SimBase):
         self.mrpFeedbackRWsData.K = 3.5
-        self.mrpFeedbackRWsData.Ki = -1  # TURN OFF IN CASE OF RUNNING Inertial3D!!!
+        self.mrpFeedbackRWsData.Ki = -1
         self.mrpFeedbackRWsData.P = 30.0
         self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
-        self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
-        self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states"
-        self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data"
-        self.mrpFeedbackRWsData.inputGuidName = "att_guidance"
-        self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
+        self.mrpFeedbackRWsData.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackRWsData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
+        self.mrpFeedbackRWsData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.mrpFeedbackRWsData.guidInMsg.subscribeTo(self.attGuidMsg)
+        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWsData.cmdTorqueOutMsg, self.cmdTorqueMsg)
 
         self.mrpFeedbackRWsData2.K = 3.5
         self.mrpFeedbackRWsData2.Ki = -1  # TURN OFF IN CASE OF RUNNING Inertial3D!!!
         self.mrpFeedbackRWsData2.P = 30.0
         self.mrpFeedbackRWsData2.integralLimit = 2. / self.mrpFeedbackRWsData2.Ki * 0.1
-        self.mrpFeedbackRWsData2.vehConfigInMsgName = "adcs_config_data2"
-        self.mrpFeedbackRWsData2.inputRWSpeedsName = "reactionwheel_output_states2"
-        self.mrpFeedbackRWsData2.rwParamsInMsgName = "rwa_config_data2"
-        self.mrpFeedbackRWsData2.inputGuidName = "att_guidance2"
-        self.mrpFeedbackRWsData2.outputDataName = "controlTorqueRaw2"
+        self.mrpFeedbackRWsData2.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackRWsData2.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector2.rwSpeedOutMsg)
+        self.mrpFeedbackRWsData2.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.mrpFeedbackRWsData2.guidInMsg.subscribeTo(self.attGuid2Msg)
+        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWsData2.cmdTorqueOutMsg, self.cmdTorque2Msg)
 
-    def SetRWConfigMsg(self, SimBase):
+    def SetRWConfigMsg(self):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
+        # the same msg is used here for both spacecraft
         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
         wheelJs = 50.0 / (6000.0 * math.pi * 2.0 / 60)
@@ -182,49 +201,43 @@ class BSKFswModels():
             fswSetupRW.create(gsHat,  # spin axis
                               wheelJs,  # kg*m^2
                               0.2)  # Nm        uMax
+        self.fswRwConfigMsg = fswSetupRW.writeConfigMessage()
 
-        fswSetupRW.writeConfigMessage("rwa_config_data", SimBase.TotalSim, SimBase.FSWProcessName)
-        fswSetupRW.writeConfigMessage("rwa_config_data2", SimBase.TotalSim, SimBase.FSWProcessName)
-
-    def SetRWMotorTorque(self, SimBase):
+    def SetRWMotorTorque(self):
         controlAxes_B = [
           1.0, 0.0, 0.0,
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]
 
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
-        self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"
-        self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
+        self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.cmdTorqueMsg)
+        cMsgPy.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorqueData.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
+        self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
         self.rwMotorTorqueData2.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData2.inputVehControlName = "controlTorqueRaw2"
-        self.rwMotorTorqueData2.outputDataName = "reactionwheel_cmds2"
-        self.rwMotorTorqueData2.rwParamsInMsgName = "rwa_config_data2"
+        self.rwMotorTorqueData2.vehControlInMsg.subscribeTo(self.cmdTorque2Msg)
+        cMsgPy.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorqueData2.rwMotorTorqueOutMsg, self.cmdRwMotor2Msg)
+        self.rwMotorTorqueData2.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
-    def SetSpacecraftPointing(self):
-        self.spacecraftPointing.chiefPositionInMsgName = "simple_trans_nav_output_chief"
-        self.spacecraftPointing.deputyPositionInMsgName = "simple_trans_nav_output_deputy"
-        self.spacecraftPointing.attReferenceOutMsgName = "att_reference2"
+    def SetSpacecraftPointing(self, SimBase):
+        self.spacecraftPointing.chiefPositionInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
+        self.spacecraftPointing.deputyPositionInMsg.subscribeTo(SimBase.DynModels.simpleNavObject2.transOutMsg)
+        cMsgPy.AttRefMsg_C_addAuthor(self.spacecraftPointing.attReferenceOutMsg, self.attRef2Msg)
         self.spacecraftPointing.alignmentVector_B = [1.0, 2.0, 3.0]
 
-    def SetVehicleConfiguration(self, SimBase):
-        vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    def SetVehicleConfiguration(self):
         # use the same inertia in the FSW algorithm as in the simulation
-        vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
-        unitTestSupport.setMessage(SimBase.TotalSim,
-                                   SimBase.FSWProcessName,
-                                    "adcs_config_data2",
-                                    vehicleConfigOut)
+        vcData = messaging2.VehicleConfigMsgPayload()
+        vcData.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+        self.vcMsg = messaging2.VehicleConfigMsg().write(vcData)
 
-    def SetMRPFeedbackControl(self, SimBase):
-        self.mrpFeedbackControlData.inputGuidName = "att_guidance2"
-        self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data2"
-        self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject2.cmdTorqueInMsgName
-        # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
+    def SetMRPFeedbackControl(self):
+        self.mrpFeedbackControlData.guidInMsg.subscribeTo(self.attGuid2Msg)
+        self.mrpFeedbackControlData.vehConfigInMsg.subscribeTo(self.vcMsg)
+        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackControlData.cmdTorqueOutMsg, self.cmdTorqueDirectMsg)
 
         self.mrpFeedbackControlData.K = 10.0
-        self.mrpFeedbackControlData.Ki = 0.0001 # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackControlData.Ki = 0.0001  # Note: make value negative to turn off integral feedback
         self.mrpFeedbackControlData.P = 30.0
         self.mrpFeedbackControlData.integralLimit = 2. / self.mrpFeedbackControlData.Ki * 0.1
 
@@ -232,9 +245,43 @@ class BSKFswModels():
     def InitAllFSWObjects(self, SimBase):
         self.SetInertial3DPointGuidance()
         self.SetAttitudeTrackingError(SimBase)
-        self.SetRWConfigMsg(SimBase)
-        self.SetMRPFeedbackRWA()
-        self.SetRWMotorTorque(SimBase)
-        self.SetSpacecraftPointing()
-        self.SetVehicleConfiguration(SimBase)
-        self.SetMRPFeedbackControl(SimBase)
+        self.SetVehicleConfiguration()
+        self.SetRWConfigMsg()
+        self.SetMRPFeedbackRWA(SimBase)
+        self.SetRWMotorTorque()
+        self.SetSpacecraftPointing(SimBase)
+        self.SetMRPFeedbackControl()
+
+    def setupGatewayMsgs(self, SimBase):
+        """create C-wrapped gateway messages such that different modules can write to this message
+        and provide a common input msg for down-stream modules"""
+        self.cmdTorqueMsg = cMsgPy.CmdTorqueBodyMsg_C()
+        self.cmdTorque2Msg = cMsgPy.CmdTorqueBodyMsg_C()
+        self.cmdTorqueDirectMsg = cMsgPy.CmdTorqueBodyMsg_C()
+        self.attRefMsg = cMsgPy.AttRefMsg_C()
+        self.attRef2Msg = cMsgPy.AttRefMsg_C()
+        self.attGuidMsg = cMsgPy.AttGuidMsg_C()
+        self.attGuid2Msg = cMsgPy.AttGuidMsg_C()
+        self.cmdRwMotorMsg = cMsgPy.ArrayMotorTorqueMsg_C()
+        self.cmdRwMotor2Msg = cMsgPy.ArrayMotorTorqueMsg_C()
+
+        self.zeroGateWayMsgs()
+
+        # connect gateway FSW effector command msgs with the dynamics
+        SimBase.DynModels.extForceTorqueObject2.cmdTorqueInMsg.subscribeTo(self.cmdTorqueDirectMsg)
+        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.cmdRwMotorMsg)
+        SimBase.DynModels.rwStateEffector2.rwMotorCmdInMsg.subscribeTo(self.cmdRwMotor2Msg)
+
+    def zeroGateWayMsgs(self):
+        """Zero all the FSW gateway message payloads"""
+        self.cmdTorqueMsg.write(messaging2.CmdTorqueBodyMsgPayload())
+        self.cmdTorque2Msg.write(messaging2.CmdTorqueBodyMsgPayload())
+        self.cmdTorqueDirectMsg.write(messaging2.CmdTorqueBodyMsgPayload())
+        self.attRefMsg.write(messaging2.AttRefMsgPayload())
+        self.attRef2Msg.write(messaging2.AttRefMsgPayload())
+        self.attGuidMsg.write(messaging2.AttGuidMsgPayload())
+        self.attGuid2Msg.write(messaging2.AttGuidMsgPayload())
+        self.cmdRwMotorMsg.write(messaging2.ArrayMotorTorqueMsgPayload())
+        self.cmdRwMotor2Msg.write(messaging2.ArrayMotorTorqueMsgPayload())
+
+

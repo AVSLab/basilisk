@@ -284,7 +284,7 @@ def plot_peri_and_orbit(oe, mu, r_BN_N, v_BN_N, id=None):
     fData = []
     p = oe.a * (1 - oe.e * oe.e)
     for idx in range(0, len(r_BN_N)):
-        oeData = orbitalMotion.rv2elem(mu, r_BN_N[idx, 1:4], v_BN_N[idx, 1:4])
+        oeData = orbitalMotion.rv2elem(mu, r_BN_N[idx], v_BN_N[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.figure(id)

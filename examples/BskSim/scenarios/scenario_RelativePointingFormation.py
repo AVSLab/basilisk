@@ -143,7 +143,6 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
 import BSK_FormationDynamics, BSK_FormationFsw
-import matplotlib.pyplot as plt
 
 # Import plotting files for your scenario
 sys.path.append(path + '/../plotting')
@@ -157,35 +156,33 @@ class scenario_RelativePointingFormation(BSKSim, BSKScenario):
         super(scenario_RelativePointingFormation, self).__init__()
         self.name = 'scenario_RelativePointingFormation'
 
+        # declare empty class variables
+        self.sNavTransRec = None
+        self.sNavTrans2Rec = None
+        self.attErrRec = None
+        self.attErr2Rec = None
+        self.scStateRec = None
+        self.scState2Rec = None
+        self.cmdTor2Msg = None
+        self.attRef2Msg = None
+        self.sNavAttRec = None
+        self.sNavAtt2Rec = None
+
         self.set_DynModel(BSK_FormationDynamics)
         self.set_FswModel(BSK_FormationFsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         if vizFound:
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-                                                gravBodies=self.DynModels.gravFactory,
-                                                saveFile=filename)
-            scData = vizInterface.VizSpacecraftData()
-            viz.scData.clear()
-            # first spacecraft uses all the default msg names
-            scData.spacecraftName = "chief"
-            viz.scData.push_back(scData)
-            # must provide unique message name to second spacecraft
-            scData.spacecraftName = "deputy"
-            scData.scPlusInMsgName = "inertial_state_output2"
-            viz.scData.push_back(scData)
-
-
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName
+                                                      , [self.get_DynModel().scObject, self.get_DynModel().scObject2]
+                                                      , rwEffectorList=[self.DynModels.rwStateEffector, self.DynModels.rwStateEffector2]
+                                                      , saveFile=__file__
+                                                      )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
-        self.modeRequest = 'spacecraftPointing'
-
         mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
 
         # Configure Dynamics initial conditions
@@ -214,55 +211,60 @@ class scenario_RelativePointingFormation(BSKSim, BSKScenario):
         self.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-
         samplingTime = self.get_DynModel().processTasksTimeStep
+        DynModels = self.get_DynModel()
+        FswModel = self.get_FswModel()
 
-        # Dynamics process outputs
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject2.outputTransName, samplingTime)
+        self.sNavTransRec = DynModels.simpleNavObject.transOutMsg.recorder(samplingTime)
+        self.sNavTrans2Rec = DynModels.simpleNavObject2.transOutMsg.recorder(samplingTime)
+        self.sNavAttRec = DynModels.simpleNavObject.attOutMsg.recorder(samplingTime)
+        self.sNavAtt2Rec = DynModels.simpleNavObject2.attOutMsg.recorder(samplingTime)
+        self.attErrRec = FswModel.attGuidMsg.recorder(samplingTime)
+        self.attErr2Rec = FswModel.attGuid2Msg.recorder(samplingTime)
+        self.scStateRec = DynModels.scObject.scStateOutMsg.recorder(samplingTime)
+        self.scState2Rec = DynModels.scObject2.scStateOutMsg.recorder(samplingTime)
+        self.attRef2Msg = FswModel.spacecraftPointing.attReferenceOutMsg.recorder(samplingTime)
+        self.cmdTor2Msg = FswModel.cmdTorqueDirectMsg.recorder(samplingTime)
 
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputAttName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject2.outputAttName, samplingTime)
-
-        # # FSW process outputs
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData2.outputDataName, samplingTime)
-
-        self.TotalSim.logThisMessage(self.get_FswModel().spacecraftPointing.attReferenceOutMsgName, samplingTime)
-
-        self.TotalSim.logThisMessage(self.get_FswModel().mrpFeedbackControlData.outputDataName, samplingTime)
+        self.AddModelToTask(DynModels.taskName, self.sNavTransRec)
+        self.AddModelToTask(DynModels.taskName2, self.sNavTrans2Rec)
+        self.AddModelToTask(DynModels.taskName, self.sNavAttRec)
+        self.AddModelToTask(DynModels.taskName, self.sNavAtt2Rec)
+        self.AddModelToTask(DynModels.taskName, self.attErrRec)
+        self.AddModelToTask(DynModels.taskName2, self.attErr2Rec)
+        self.AddModelToTask(DynModels.taskName, self.scStateRec)
+        self.AddModelToTask(DynModels.taskName2, self.scState2Rec)
+        self.AddModelToTask(DynModels.taskName2, self.attRef2Msg)
+        self.AddModelToTask(DynModels.taskName2, self.cmdTor2Msg)
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        r_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
-        r_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", list(range(3)))
+        r_BN_N_chief = self.sNavTransRec.r_BN_N
+        r_BN_N_deputy = self.sNavTrans2Rec.r_BN_N
 
-        v_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
-        v_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", list(range(3)))
+        v_BN_N_chief = self.sNavTransRec.v_BN_N
+        v_BN_N_deputy = self.sNavTrans2Rec.v_BN_N
 
-        sigma_BN_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
-        sigma_BN_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputAttName + ".sigma_BN", list(range(3)))
+        sigma_BN_chief = self.sNavAttRec.sigma_BN
+        sigma_BN_deputy = self.sNavAtt2Rec.sigma_BN
 
         # FSW process outputs
-        omega_BR_B_chief = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        omega_BR_B_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", list(range(3)))
+        omega_BR_B_chief = self.attErrRec.omega_BR_B
+        omega_BR_B_deputy = self.attErr2Rec.omega_BR_B
 
-        sigma_BR_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", list(range(3)))
+        sigma_BR_deputy = self.attErr2Rec.sigma_BR
 
-        sigma_RN = self.pullMessageLogData(self.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".sigma_RN", list(range(3)))
-        omega_RN_N = self.pullMessageLogData(self.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".omega_RN_N", list(range(3)))
-
+        sigma_RN = self.attRef2Msg.sigma_RN
+        omega_RN_N = self.attRef2Msg.omega_RN_N
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeData = sigma_BR_deputy[:, 0] * macros.NANO2MIN
+        timeData = self.sNavTransRec.times() * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR_deputy)
         BSK_plt.plot_rel_orbit(timeData, r_BN_N_chief, r_BN_N_deputy)
-        BSK_plt.plot_sigma(sigma_RN)
-        BSK_plt.plot_sigma(sigma_BN_deputy)
-        BSK_plt.plot_sigma(sigma_BR_deputy)
+        BSK_plt.plot_sigma(timeData, sigma_RN)
+        BSK_plt.plot_sigma(timeData, sigma_BN_deputy)
+        BSK_plt.plot_sigma(timeData, sigma_BR_deputy)
 
         figureList = {}
         if showPlots:
@@ -278,6 +280,9 @@ class scenario_RelativePointingFormation(BSKSim, BSKScenario):
 def runScenario(scenario):
     # Initialize simulation
     scenario.InitializeSimulation()
+
+    # Configure FSW mode
+    scenario.modeRequest = 'spacecraftPointing'
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.0)

@@ -55,11 +55,15 @@ These two files have been created for this specific formation flying implementat
 
 After initializing the interfaces and making sure that the :ref:`scenario_BasicOrbitFormation`
 class inherits from the BSKSim class,
-it is time to configure the initial conditions using the ``configure_initial_conditions`` method. It can be observed that two sets of
-orbital elements are created. Each set corresponding to one spacecraft. After that the initial conditions are set for each spacecraft.
+it is time to configure the initial conditions using the ``configure_initial_conditions`` method.
+It can be observed that two sets of
+orbital elements are created. Each set corresponding to one spacecraft. After that the initial
+conditions are set for each spacecraft.
 
-After that the function that logs the outputs can be observed. Again this looks very similar to the log_outputs method
-in the :ref:`scenario_BasicOrbit` file, however one discrepancy can be noticed. Looking at the code below it can be observed that
+After that the function that logs the outputs can be observed. Again this looks very similar to
+the log_outputs method
+in the :ref:`scenario_BasicOrbit` file, however one discrepancy can be noticed. Looking at
+the code below it can be observed that
 two instances of the ``simpleNavObject`` are logged (``simpleNavObject`` and ``simpleNavObject2`` respectively).
 Each object corresponds
 two one of the spacecraft. The same is true for the FSW objects. More on this will be discussed later.
@@ -83,7 +87,8 @@ as a separate object to each spacecraft.
 
 After that each object is added to the corresponding task. Something that is very important is the message names.
 In case multiple spacecraft are implemented in Basilisk it is necessary to manually connect an output message of
-one module to the input of a different module. This can be seen in the module-initialization methods in the :ref:`BSK_FormationDynamics.py <BSK_FormationDynamics>` file.
+one module to the input of a different module. This can be seen in the module-initialization methods
+in the :ref:`BSK_FormationDynamics.py <BSK_FormationDynamics>` file.
 
 BSK_FormationFsw file description
 ---------------------------------
@@ -154,33 +159,29 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
         super(scenario_BasicOrbitFormation, self).__init__()
         self.name = 'scenario_BasicOrbitFormation'
 
+        # declare empty class variables
+        self.sNavTransRec = None
+        self.sNavTrans2Rec = None
+        self.attErrRec = None
+        self.attErr2Rec = None
+        self.scStateRec = None
+        self.scState2Rec = None
+
         self.set_DynModel(BSK_FormationDynamics)
         self.set_FswModel(BSK_FormationFsw)
-        self.initInterfaces()
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         if vizFound:
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynamicsProcessName,
-                                                      gravBodies=self.DynModels.gravFactory,
-                                                      saveFile=__file__)
-            scData = vizInterface.VizSpacecraftData()
-            viz.scData.clear()
-            # first spacecraft uses all the default msg names
-            scData.spacecraftName = "chief"
-            viz.scData.push_back(scData)
-            # must provide unique message name to second spacecraft
-            scData.spacecraftName = "deputy"
-            scData.scPlusInMsgName = "inertial_state_output2"
-            viz.scData.push_back(scData)
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName
+                                                      , [self.get_DynModel().scObject, self.get_DynModel().scObject2]
+                                                      , rwEffectorList=[self.DynModels.rwStateEffector, self.DynModels.rwStateEffector2]
+                                                      , saveFile=__file__
+                                                      )
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
-        # Configure FSW mode
-        self.modeRequest = 'inertial3D'
-
         self.mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
 
         # Configure Dynamics initial conditions
@@ -214,45 +215,46 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
         self.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-
         samplingTime = self.get_DynModel().processTasksTimeStep
+        DynModels = self.get_DynModel()
+        FswModel = self.get_FswModel()
 
-        # Dynamics process outputs
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject.outputTransName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_DynModel().simpleNavObject2.outputTransName, samplingTime)
+        self.sNavTransRec = DynModels.simpleNavObject.transOutMsg.recorder(samplingTime)
+        self.sNavTrans2Rec = DynModels.simpleNavObject2.transOutMsg.recorder(samplingTime)
+        self.attErrRec = FswModel.attGuidMsg.recorder(samplingTime)
+        self.attErr2Rec = FswModel.attGuid2Msg.recorder(samplingTime)
+        self.scStateRec = DynModels.scObject.scStateOutMsg.recorder(samplingTime)
+        self.scState2Rec = DynModels.scObject2.scStateOutMsg.recorder(samplingTime)
 
-        # FSW process outputs
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData2.outputDataName, samplingTime)
-
-        self.TotalSim.logThisMessage(self.get_DynModel().scObject.scStateOutMsgName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_DynModel().scObject2.scStateOutMsgName, samplingTime)
+        self.AddModelToTask(DynModels.taskName, self.sNavTransRec)
+        self.AddModelToTask(DynModels.taskName2, self.sNavTrans2Rec)
+        self.AddModelToTask(DynModels.taskName, self.attErrRec)
+        self.AddModelToTask(DynModels.taskName2, self.attErr2Rec)
+        self.AddModelToTask(DynModels.taskName, self.scStateRec)
+        self.AddModelToTask(DynModels.taskName2, self.scState2Rec)
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        r_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
-        r_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", list(range(3)))
+        r_BN_N_chief = self.sNavTransRec.r_BN_N
+        r_BN_N_deputy = self.sNavTrans2Rec.r_BN_N
 
-        v_BN_N_chief = self.pullMessageLogData(self.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
-        v_BN_N_deputy = self.pullMessageLogData(self.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", list(range(3)))
+        v_BN_N_chief = self.sNavTransRec.v_BN_N
+        v_BN_N_deputy = self.sNavTrans2Rec.v_BN_N
 
         # FSW process outputs
-        omega_BR_B_chief = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
-        omega_BR_B_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", list(range(3)))
+        omega_BR_B_chief = self.attErrRec.omega_BR_B
+        omega_BR_B_deputy = self.attErr2Rec.omega_BR_B
 
-        sigma_BR_chief = self.pullMessageLogData(self.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
-        sigma_BR_deputy = self.pullMessageLogData(self.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", list(range(3)))
+        sigma_BR_chief = self.attErrRec.sigma_BR
+        sigma_BR_deputy = self.attErr2Rec.sigma_BR
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeData = sigma_BR_deputy[:, 0] * macros.NANO2MIN
+        timeData = self.sNavTransRec.times() * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR_chief)
         BSK_plt.plot_rate_error(timeData, omega_BR_B_chief)
         BSK_plt.plot_attitude_error(timeData, sigma_BR_deputy)
         BSK_plt.plot_rate_error(timeData, omega_BR_B_deputy)
-        BSK_plt.plot_planet(self.oe, self.get_DynModel().gravFactory.gravBodies['earth'])
         BSK_plt.plot_peri_and_orbit(self.oe, self.mu, r_BN_N_chief, v_BN_N_chief)
         BSK_plt.plot_peri_and_orbit(self.oe2, self.mu, r_BN_N_deputy, v_BN_N_deputy)
 
@@ -269,6 +271,9 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
 
 def runScenario(scenario):
     scenario.InitializeSimulation()
+
+    # Configure FSW mode
+    scenario.modeRequest = 'inertial3D'
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
