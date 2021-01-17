@@ -72,10 +72,10 @@ Here a small initial tumble is simulated.  The
 resulting attitude and control torque histories are shown below.  The spacecraft quickly
 regains a stable orientation without tumbling past 180 degrees.
 
-.. image:: /_images/Scenarios/scenarioAttitudePointing1.svg
+.. image:: /_images/Scenarios/scenarioAttitudePointingPy1.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudePointing2.svg
+.. image:: /_images/Scenarios/scenarioAttitudePointingPy2.svg
    :align: center
 
 """

@@ -218,8 +218,8 @@ Formation Flying Dynamics
 .. toctree::
    :maxdepth: 1
 
-   Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
    Basic Servicer/Debris Simulation <scenarioFormationBasic>
+   Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
 
 
 Formation Flying Control
@@ -241,7 +241,7 @@ Advanced Simulation Options
    :maxdepth: 1
 
    Setting Type of Integrator <scenarioIntegrators>
-   Using a Python BSK Module <scenarioAttitudePythonPD>
+   Using a Python BSK Module <scenarioAttitudePointingPy>
    Changing the bskLog Verbosity from Python <scenarioBskLog>
 
 

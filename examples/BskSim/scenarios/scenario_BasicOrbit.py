@@ -173,7 +173,7 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
 
         # declare empty class variables
         self.sNavAttRec = None
-        self.sNavTransRed = None
+        self.sNavTransRec = None
 
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
@@ -182,7 +182,7 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.get_DynModel().scObject
+        vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynModels.scObject
                                             # , saveFile=__file__
                                             , rwEffectorList=self.DynModels.rwStateEffector
                                             )
@@ -210,16 +210,16 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         # Dynamics process outputs
         DynModels = self.get_DynModel()
         self.sNavAttRec = DynModels.simpleNavObject.attOutMsg.recorder()
-        self.sNavTransRed = DynModels.simpleNavObject.transOutMsg.recorder()
+        self.sNavTransRec = DynModels.simpleNavObject.transOutMsg.recorder()
         self.AddModelToTask(DynModels.taskName, self.sNavAttRec)
-        self.AddModelToTask(DynModels.taskName, self.sNavTransRed)
+        self.AddModelToTask(DynModels.taskName, self.sNavTransRec)
 
 
     def pull_outputs(self, showPlots):
         # Dynamics process outputs
         sigma_BN = self.sNavAttRec.sigma_BN
-        r_BN_N = self.sNavTransRed.r_BN_N
-        v_BN_N = self.sNavTransRed.v_BN_N
+        r_BN_N = self.sNavTransRec.r_BN_N
+        v_BN_N = self.sNavTransRec.v_BN_N
 
         # Plot results
         BSK_plt.clear_all_plots()
