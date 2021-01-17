@@ -37,5 +37,5 @@ set_target_properties(ModuleIdGenerator PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBU
 set_target_properties(ModuleIdGenerator PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
 
 if(WIN32)
-    add_custom_command(TARGET ModuleIdGenerator POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ModuleIdGenerator> "${CMAKE_BINARY_DIR}/Basilisk/architecture/")
+    add_custom_command(TARGET ModuleIdGenerator POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ModuleIdGenerator> "${CMAKE_BINARY_DIR}/Basilisk/")
 endif()

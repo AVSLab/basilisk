@@ -94,4 +94,4 @@ def to_message(struct_data):
 
 template_call = 'INSTANTIATE_TEMPLATES({:dat})'
 for line in lines:
-    it = parse.parse(template_call, line, dict(dat=to_message))
+    it = parse.parse(template_call, line.strip(), dict(dat=to_message))

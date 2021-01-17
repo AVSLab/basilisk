@@ -217,7 +217,7 @@ class BasiliskConan(ConanFile):
         os.chdir(os.path.join(bskPath, "src/architecture/messaging2/msgTemplateInputs"))
         cmdString = list()
         if platform.system() == "Windows":
-            cmdString.append("py")
+            cmdString.append("python")
         else:
             cmdString.append("python3")
         cmdString.append("GenCMessages.py")
