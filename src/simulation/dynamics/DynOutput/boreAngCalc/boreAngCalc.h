@@ -55,7 +55,7 @@ public:
     bool ReinitSelf;                  //!< (-) Indicator to reset conversion type
     double boreVec_B[3];              //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
-    BoreAngleMsgPayload boresightAng; //!< (-) Boresigt angles relative to target
+    BoreAngleMsgPayload boresightAng; //!< (-) Boresight angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
