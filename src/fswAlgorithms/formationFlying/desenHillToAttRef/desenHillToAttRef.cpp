@@ -191,7 +191,7 @@ void DesenHillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
     for(row = currentStateMat.begin(); row != currentStateMat.end(); ++row, ++row_ind){
         col_ind = 0;
         for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
-            stateGainMat[row_ind][col_ind] = *col; //   WIP - this line segfaults? Might be fucking up python initialization.
+            stateGainMat[row_ind][col_ind] = *col; 
             }
     }
     row_ind = 0;

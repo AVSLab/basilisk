@@ -188,10 +188,10 @@ def comparison_sweep():
     plt.title('CDOC Difference vs. LQR')
 
 if __name__=='__main__':
-    # # # drag_sensitivity_analysis('lqr', rerunSims=True)
-    # drag_sensitivity_analysis('tv_lqr', rerunSims=True)
-    # drag_sensitivity_analysis('desen', rerunSims=True)
-    # drag_sensitivity_analysis('ddesen', rerunSims=True)
+    # # drag_sensitivity_analysis('lqr', rerunSims=True)
+    drag_sensitivity_analysis('tv_lqr', rerunSims=False)
+    drag_sensitivity_analysis('desen', rerunSims=False)
+    drag_sensitivity_analysis('ddesen', rerunSims=False)
     comparison_sweep()
     
     plt.show()

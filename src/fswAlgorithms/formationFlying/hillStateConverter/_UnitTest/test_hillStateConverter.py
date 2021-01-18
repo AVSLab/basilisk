@@ -15,8 +15,11 @@ from Basilisk.fswAlgorithms import hillStateConverter
 from Basilisk.simulation import simFswInterfaceMessages
 
 def test_hillStateConverter(show_plots):
-
-
+    """
+    Tests the hillStateConverter module for the following:
+    1. Accepts both a hill and deputy message;
+    2. Correctly converts those messages into the hill frame.
+    """
     sim = sbc.SimBaseClass()
     procName = 'process'
     taskName = 'task'
