@@ -7,7 +7,7 @@ SPICE can be patched into the FSW directly instead of generating data
 from an ephemeris model.
 
 The module
-:download:`PDF Description </../../src/simulation/environment/ephemeris_converter/_Documentation/Basilisk-EPHEMERIS_CONVERTER20170712.pdf>`
+:download:`PDF Description </../../src/simulation/environment/ephemerisConverter/_Documentation/Basilisk-EPHEMERIS_CONVERTER20170712.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 

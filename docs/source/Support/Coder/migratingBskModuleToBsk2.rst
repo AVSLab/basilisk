@@ -121,7 +121,7 @@ Updating a C Module
 
       .. code:: cpp
 
-        ModuleFswMsgPayload msgBuffer;
+        ModuleMsgPayload msgBuffer;
 
     - To read in a message, replace
 
@@ -145,7 +145,7 @@ Updating a C Module
       - To get the ID of the module who wrote the message, use ``ModuleMsg_C_moduleID()``
 
     - To zero a message payload variable ``someMsgBuffer`` of type ``SomeMsgPayload``,
-      while enjoyoing strong type checking, you can remove the use of ``memset()`` and use instead
+      while enjoying strong type checking, you can remove the use of ``memset()`` and use instead
 
       .. code:: cpp
 
@@ -178,7 +178,7 @@ Updating a C Module
     - In the ``GEN_SIZEOF()`` commands used to be used to get the size of a message in Python.  This is no longer
       required with the new message system.  Thus, these ``GEN_SIZEOF()`` commands can be removed.  To create and access
       messages from Python the ``message2`` package is now used.
-    - Update the ``#include`` statement and add the ``struct`` statement to red
+    - Update the ``#include`` statement and add the ``struct`` statement to read
 
       .. code:: cpp
 
@@ -320,21 +320,17 @@ Updating a C++ Module
       - To get the time when a message was written, use ``this->moduleInMsg.timeWritten()``
       - To get the ID of the module who wrote the message, use ``this->moduleInMsg.moduleID()``
 
-
-    - To check if an input message has been connected to, check the status of
-      ``this->moduleInMsg.linked()``
-
     - To zero a local message structure variable ``someMsgBuffer`` of type ``SomeMsgPayload``, remove
       the use of ``memset()`` and rather use the following.  If the msg buffer variable is for use
-      with an input message ``someInMsg``, then use
+      with an output message ``someOutMsg``, then use
 
       .. code:: cpp
 
          SomeMsgPayload someMsgBuffer;
-         someMsgBuffer = this->someInMsg.zeroMsgPayload();
+         someMsgBuffer = this->someOutMsg.zeroMsgPayload();
 
-      If the buffer is related to an output message ``someOutMsg``, the same basic syntax works.
-      Just replace ``someInMsg`` with ``someOutMsg`` above.  This ensures the correct message type is zero'd
+      If the buffer is related to an input message ``someInMsg``, the same basic syntax works.
+      Just replace ``someOutMsg`` with ``someInMsg`` above.  This ensures the correct message type is zero'd
       and assigned to the local buffer variable.
 
     - To write to an output message, replace this old code:
