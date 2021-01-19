@@ -216,17 +216,17 @@ def run(show_plots):
                                               , saveFile=__file__
                                               , gravBodies=gravFactory
                                               )
-    vizSupport.addGroundLocation(viz, stationName="Boulder Station"
-                                 , parentBodyName='earth'
-                                 , r_GP_P=groundStation.r_LP_P_Init
-                                 , fieldOfView=np.radians(160.)
-                                 , color='pink'
-                                 , range=1000.0
-                                 )
+    vizSupport.addLocation(viz, stationName="Boulder Station"
+                           , parentBodyName='earth'
+                           , r_GP_P=groundStation.r_LP_P_Init
+                           , fieldOfView=np.radians(160.)
+                           , color='pink'
+                           , range=1000.0
+                           )
     viz.settings.spacecraftSizeMultiplier = 1.5
-    viz.settings.showGroundLocationCommLines = 1
-    viz.settings.showGroundLocationCones = 1
-    viz.settings.showGroundLocationLabels = 1
+    viz.settings.showLocationCommLines = 1
+    viz.settings.showLocationCones = 1
+    viz.settings.showLocationLabels = 1
 
 
     # Need to call the self-init and cross-init methods

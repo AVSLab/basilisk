@@ -155,13 +155,13 @@ default setting for that behavior.
       - double
       - Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0,
         use negative value to use viz default
-    * - ``showGroundLocationCommLines``
+    * - ``showLocationCommLines``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    * - ``showGroundLocationCones``
+    * - ``showLocationCones``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    * - ``showGroundLocationLabels``
+    * - ``showLocationLabels``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 
@@ -655,23 +655,25 @@ Note that if the maximum force of a thruster is less than 0.01N (i.e. a micro-th
 The thruster information for each spacecraft can also be set directly by specifying the ``sc.thrMsgData``
 as demonstrated in :ref:`test_dataFileToViz`.
 
-Adding Ground Location/Stations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The :ref:`groundLocation` is able to simulate a ground target, including if a satellite is within the
-field of view of this ground object.  Vizard can illustrate this ground location using the
-``addGroundLocation()`` method, such as::
+Adding Location or Communication Stations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The :ref:`Location` is able to simulate a location on a celestial body like Earth.
+The location can also be on a satellite.  Vizard will show a line between a satellite
+and this location including if the satellite is within the
+field of view of this location.  Vizard can illustrate this ground location using the
+``addLocation()`` method, such as::
 
-    vizSupport.addGroundLocation(viz, stationName="Boulder Station"
-                                 , parentBodyName='earth'
-                                 , r_GP_P=groundStation.r_LP_P_Init
-                                 , fieldOfView=np.radians(160.)
-                                 , color='pink'
-                                 , range=1000.0
-                                 )
+    vizSupport.addLocation(viz, stationName="Boulder Station"
+                           , parentBodyName='earth'
+                           , r_GP_P=groundStation.r_LP_P_Init
+                           , fieldOfView=np.radians(160.)
+                           , color='pink'
+                           , range=1000.0
+                           )
 
-The following table lists all required and optional arguments that can be provided to ``addGroundLocation``:
+The following table lists all required and optional arguments that can be provided to ``addLocation``:
 
-.. list-table:: Ground Location Parameter Options
+.. list-table:: Location Parameter Options
     :widths: 20 10 10 10 100
     :header-rows: 1
 
@@ -694,24 +696,24 @@ The following table lists all required and optional arguments that can be provid
       - float(3)
       - m
       - Yes
-      - position vector of the ground location G relatiave to planet frame P in P frame components
+      - position vector of the location G relatiave to parent body (planet or spacecraft) frame P in P frame components
     * - ``gHat_P``
       - float(3)
       -
       - No
-      - normal vector of the ground station boresight, default is unit vector of ``r_GP_P``
+      - normal vector of the location station boresight, default is unit vector of ``r_GP_P``
     * - ``fieldOfView``
       - float
       - rad
       - No
-      - edge-to-edge ground station field of view, default is :math:`\pi`
+      - edge-to-edge location station field of view, default is :math:`\pi`
     * - ``color``
       - int(4)
       -
       - No
-      - specify the ground station color using RGBA value of 0-255
+      - specify the location station color using RGBA value of 0-255
     * - ``range``
       - double
       - m
       - No
-      - range of the ground location, use 0 (protobuffer default) to use viz default
+      - range of the location station, use 0 (protobuffer default) to use viz default

@@ -99,13 +99,13 @@ def setSprite(shape, **kwargs):
 
     return answer
 
-groundLocationList = []
-def addGroundLocation(viz, **kwargs):
+locationList = []
+def addLocation(viz, **kwargs):
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
 
-    vizElement = vizInterface.GroundLocationPbMsg()
+    vizElement = vizInterface.LocationPbMsg()
 
     unitTestSupport.checkMethodKeyword(
         ['stationName', 'parentBodyName', 'r_GP_P', 'gHat_P', 'fieldOfView', 'color', 'range'],
@@ -118,7 +118,7 @@ def addGroundLocation(viz, **kwargs):
             exit(1)
         vizElement.stationName = stationName
     else:
-        print("ERROR: stationName argument must be provided to addGroundLocation")
+        print("ERROR: stationName argument must be provided to addLocation")
         exit(0)
 
     if 'parentBodyName' in kwargs:
@@ -128,7 +128,7 @@ def addGroundLocation(viz, **kwargs):
             exit(1)
         vizElement.parentBodyName = parentBodyName
     else:
-        print("ERROR: parentBodyName argument must be provided to addGroundLocation")
+        print("ERROR: parentBodyName argument must be provided to addLocation")
         exit(1)
 
     if 'r_GP_P' in kwargs:
@@ -150,7 +150,7 @@ def addGroundLocation(viz, **kwargs):
             except:
                 pass
     else:
-        print("ERROR: r_GP_P argument must be provided to addGroundLocation")
+        print("ERROR: r_GP_P argument must be provided to addLocation")
         exit(0)
 
     if 'gHat_P' in kwargs:
@@ -186,16 +186,17 @@ def addGroundLocation(viz, **kwargs):
             exit(1)
 
         shapeList = ["CIRCLE", "SQUARE", "TRIANGLE", "STAR"]
-        if (spriteName not in shapeList):
-            print("The sprite argument was provided this unknown sprite shape primitive: " + shape)
+        if spriteName not in shapeList:
+            print("The sprite argument was provided this unknown sprite shape primitive: " + spriteName)
             exit(1)
         vizElement.sprite = spriteName
 
-    groundLocationList.append(vizElement)
-    del viz.groundLocations[:]  # clear settings list to replace it with updated list
-    viz.groundLocations = vizInterface.GroundLocationConfig(groundLocationList)
+    locationList.append(vizElement)
+    del viz.locations[:]  # clear settings list to replace it with updated list
+    viz.locations = vizInterface.LocationConfig(locationList)
 
     return
+
 
 pointLineList = []
 def createPointLine(viz, **kwargs):

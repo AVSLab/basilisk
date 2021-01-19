@@ -24,7 +24,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Added support for Location scripting in Vizard 1.7.1
 
 Version 1.8.8
 -------------

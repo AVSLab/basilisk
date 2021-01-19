@@ -577,9 +577,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_relativeorbitchief(this->settings.relativeOrbitChief);
         vizSettings->set_spacecraftshadowbrightness(this->settings.spacecraftShadowBrightness);
         vizSettings->set_spacecraftsizemultiplier(this->settings.spacecraftSizeMultiplier);
-        vizSettings->set_showgroundlocationcommlines(this->settings.showGroundLocationCommLines);
-        vizSettings->set_showgroundlocationcones(this->settings.showGroundLocationCones);
-        vizSettings->set_showgroundlocationlabels(this->settings.showGroundLocationLabels);
+        vizSettings->set_showlocationcommlines(this->settings.showLocationCommLines);
+        vizSettings->set_showlocationcones(this->settings.showLocationCones);
+        vizSettings->set_showlocationlabels(this->settings.showLocationLabels);
         
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -669,10 +669,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         this->epochMsgID.dataFresh = false;
     }
 
-    /*! write the groundLocations protobuffer messages */
-    std::vector<GroundLocationPbMsg>::iterator glIt;
-    for (glIt = groundLocations.begin(); glIt != groundLocations.end(); glIt++) {
-        vizProtobufferMessage::VizMessage::GroundLocation* glp = message->add_groundlocations();
+    /*! write the Locations protobuffer messages */
+    std::vector<LocationPbMsg>::iterator glIt;
+    for (glIt = locations.begin(); glIt != locations.end(); glIt++) {
+        vizProtobufferMessage::VizMessage::Location* glp = message->add_locations();
         glp->set_stationname(glIt->stationName);
         glp->set_parentbodyname(glIt->parentBodyName);
         glp->set_fieldofview(glIt->fieldOfView*R2D);
