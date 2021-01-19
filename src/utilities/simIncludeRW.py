@@ -76,7 +76,7 @@ class rwFactory(object):
         # process optional input arguments
         if 'RWModel' in kwargs:
             varRWModel =  kwargs['RWModel']
-            if not isinstance(varRWModel, (int)):
+            if not isinstance(varRWModel, int):
                 print('ERROR: RWModel must be a INT argument')
                 exit(1)
         else:
@@ -84,7 +84,7 @@ class rwFactory(object):
 
         if 'useRWfriction' in kwargs:
             varUseRWfriction = kwargs['useRWfriction']
-            if not isinstance(varUseRWfriction, (bool)):
+            if not isinstance(varUseRWfriction, bool):
                 print('ERROR: useRWfriction must be a BOOL argument')
                 exit(1)
         else:
@@ -92,23 +92,23 @@ class rwFactory(object):
 
         if 'useMinTorque' in kwargs:
             varUseMinTorque =  kwargs['useMinTorque']
-            if not isinstance(varUseMinTorque, (bool)):
+            if not isinstance(varUseMinTorque, bool):
                 print('ERROR: useMinTorque must be a BOOL argument')
                 exit(1)
         else:
             varUseMinTorque = False             # default value
 
         if 'useMaxTorque' in kwargs:
-            varUseMaxTorque =  kwargs['useMaxTorque']
-            if not isinstance(varUseMaxTorque, (bool)):
+            varUseMaxTorque = kwargs['useMaxTorque']
+            if not isinstance(varUseMaxTorque, bool):
                 print('ERROR: useMaxTorque must be a BOOL argument')
                 exit(1)
         else:
             varUseMaxTorque = True              # default value
 
         if 'maxMomentum' in kwargs:
-            varMaxMomentum =  kwargs['maxMomentum']
-            if not isinstance(varMaxMomentum, (float)):
+            varMaxMomentum = kwargs['maxMomentum']
+            if not isinstance(varMaxMomentum, float):
                 print('ERROR: maxMomentum must be a FLOAT argument')
                 exit(1)
         else:
@@ -116,8 +116,8 @@ class rwFactory(object):
         self.maxMomentum = varMaxMomentum
 
         if 'fCoulomb' in kwargs:
-            varfCoulomb =  kwargs['fCoulomb']
-            if not isinstance(varfCoulomb, (float)):
+            varfCoulomb = kwargs['fCoulomb']
+            if not isinstance(varfCoulomb, float):
                 print('ERROR: fCoulomb must be a FLOAT argument')
                 exit(1)
         else:
@@ -125,8 +125,8 @@ class rwFactory(object):
         RW.fCoulomb = varfCoulomb
 
         if 'fStatic' in kwargs:
-            varfStatic =  kwargs['fStatic']
-            if not isinstance(varfStatic, (float)):
+            varfStatic = kwargs['fStatic']
+            if not isinstance(varfStatic, float):
                 print('ERROR: fStatic must be a FLOAT argument')
                 exit(1)
         else:
@@ -134,8 +134,8 @@ class rwFactory(object):
         RW.fStatic = varfStatic
 
         if 'betaStatic' in kwargs:
-            varbetaStatic =  kwargs['betaStatic']
-            if not isinstance(varbetaStatic, (float)):
+            varbetaStatic = kwargs['betaStatic']
+            if not isinstance(varbetaStatic, float):
                 print('ERROR: betaStatic must be a FLOAT argument')
                 exit(1)
             if varbetaStatic == 0:
@@ -147,7 +147,7 @@ class rwFactory(object):
 
         if 'cViscous' in kwargs:
             varcViscous =  kwargs['cViscous']
-            if not isinstance(varcViscous, (float)):
+            if not isinstance(varcViscous, float):
                 print('ERROR: cViscous must be a FLOAT argument')
                 exit(1)
         else:
@@ -158,7 +158,7 @@ class rwFactory(object):
         # set device label name
         if 'label' in kwargs:
             varLabel = kwargs['label']
-            if not isinstance(varLabel, (str)):
+            if not isinstance(varLabel, str):
                 print('ERROR: label must be a string')
                 exit(1)
             if len(varLabel) > 5:
@@ -176,12 +176,12 @@ class rwFactory(object):
             exit(1)
 
         # spin axis gs inertia [kg*m^2]
-        RW.Js = self.maxMomentum / (RW.Omega_max)
+        RW.Js = self.maxMomentum / RW.Omega_max
         RW.Jt = 0.5 * RW.Js
         RW.Jg = RW.Jt
 
         # set RW axes
-        self.setGsHat(RW,gsHat_B)
+        self.setGsHat(RW, gsHat_B)
 
         # set RW position vector
         if 'rWB_B' in kwargs:
@@ -495,5 +495,17 @@ class rwFactory(object):
         RW.mass = 0.130
         RW.U_s = 1E-7 # Guestimate
         RW.U_d = 1E-8 # Guestimate
+
+        return
+
+    #
+    # CUSTOM RW
+    #
+    def custom(self, RW):
+        # maximum allowable wheel speed
+        RW.Omega_max = 6000.0*macros.RPM
+
+        if self.maxMomentum == 0.0:
+            print("ERROR: simIncludeRW.create() custom RW must have a non-zero maximum wheel momentum specified.")
 
         return
