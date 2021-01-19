@@ -195,4 +195,5 @@ Related Publications
    Vizard/VizardReleaseNotes
    Vizard/VizardGUI
    Vizard/vizardSettings
+   Vizard/vizardCommandLine
    Vizard/vizardGallery
