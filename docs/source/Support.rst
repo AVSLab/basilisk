@@ -11,7 +11,7 @@ as how to code up C or C++ Basilisk modules.
    Support/bskReleaseNotes
    Support/bskKnownIssues
    Support/User
-   Support/Coder
+   Support/Developer
 
 
 

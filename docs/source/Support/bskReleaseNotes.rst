@@ -23,6 +23,46 @@ Basilisk Release Notes
         - support for multi-threading when simulating multiple satellite systems
         - more flexible manner to build Basilisk with custom external modules and messages
 
+Version 2.0.0
+-------------
+.. Warning::
+
+   This next generation of Basilisk introduces a new messaging syste and file architecture.  As a result
+   using BSK2 will required upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
+   (see :ref:`migratingModuleToBsk2`) will need to be upgraded to use 2.0.  All unit test and example scenario scripts
+   have been updated and form a good source for examples on how to use the new software framework.
+
+- New message system with strong type checking.  You now get a much simpler method to create message objects,
+  how to connect them within python, create stand-alone messages in python, etc.  If you engage with a message
+  of the wrong type you get immediate compiler warnings.
+- New C++ based message recording system that is much faster than the older python based message logging
+- New messaging recording now stores the message data separately from the time a message was recorded
+  and the time the message was written
+- Removed the arbitrary distinction between ``FSW``, ``SIM`` and ``INT`` messages.  All messages are now
+  available to all modules
+- Both C and C++ based message interfaces are now auto-generated when running ``python3 conanfile.py`` command
+- New ability to create zero'd message structures in the modules
+- Seamless message subscribing in Python across all modules types (C, C++ or Python)
+- New generic RW device type in :ref:`simIncludeRW` and updated the support library to work with BSK2
+- Updated :ref:`simIncludeGravBody` to work with BSK2.  If needed the :ref:`spiceInterface` and
+  :ref:`EpochMsgPayload` message is created within the gravity factory class.
+- Updated :ref:`simIncludeThruster` to work with BSK2
+- Updated :ref:`fswSetupRW` to work with BSK2
+- Updated :ref:`fswSetupThrusters` to work with BSK2
+- Update Basilisk module documentation that shows all input and output message variables, their
+  type and explanation
+- Cleaned up the Basilisk `src` folder layout by moving all Basilisk architecture support files
+  to `src/architecture`.  This impacts some include statements
+- Made the C/C++ ``#include`` statements all relative to `src` to make it easier to find the associated
+  files in the source code
+- Updated message names to now all comply with the Basilisk message naming convention.  See
+  :ref:`migratingToBsk2` for a table of how some message names have changed
+- Updated :ref:`vizSupport` to work with BSK2.  It is now much easier to include RW, thruster and CSS devices.
+  Further, the simulation gravity bodies don't have to be explicitly provided to the
+  ``vizSupport.enableUnityVisualization()`` method.  Rather, these are pulled from the spacecraft object
+  directly.
+
+
 Version |release|
 -----------------
 
