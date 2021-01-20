@@ -53,6 +53,7 @@ class rwFactory(object):
                 Spin axis unit vector gsHat in B-frame components
             kwargs :
                 Omega : initial RW speed in RPM
+                Omega_max : maximum RW speed in RPM
                 rWB_B : 3x1 list of RW center of mass position coordinates
                 RWModel : RW model type such as BalancedWheels, JitterSimple and JitterFullyCoupled
                 useRWfriction : BOOL to turn on RW internal wheel friction
@@ -154,7 +155,6 @@ class rwFactory(object):
             varcViscous = 0.0       # default value
         RW.cViscous = varcViscous
 
-
         # set device label name
         if 'label' in kwargs:
             varLabel = kwargs['label']
@@ -173,6 +173,17 @@ class rwFactory(object):
             eval('self.' + rwType + '(RW)')
         except:
             print('ERROR: RW type ' + rwType + ' is not implemented')
+            exit(1)
+
+        # set initial RW states
+        if 'Omega_max' in kwargs:
+            varOmega_max = kwargs['Omega_max']
+            if not isinstance(varOmega_max, (float)):
+                print('ERROR: Omega_max must be a FLOAT argument')
+                exit(1)
+            RW.Omega_max = varOmega_max * macros.RPM
+        if RW.Omega_max <= 0.0:
+            print('ERROR: RW is being setup with non-positive Omega_max value')
             exit(1)
 
         # spin axis gs inertia [kg*m^2]
@@ -465,15 +476,18 @@ class rwFactory(object):
         return
 
 
-    #
-    #   BCT RWP015
-    #
-    #   RW Information Source:
-    #   https://storage.googleapis.com/blue-canyon-tech-news/1/2019/10/BCT_DataSheet_Components_ReactionWheels_F2.pdf
-    #
-    #   Not complete; fields not listed are estimates.
-
     def BCT_RWP015(self, RW):
+        """
+        BCT RWP015
+
+        RW Information Source:
+        https://storage.googleapis.com/blue-canyon-tech-news/1/2019/10/BCT_DataSheet_Components_ReactionWheels_F2.pdf
+
+        Not complete; fields not listed are estimates.
+
+        :param RW: reaction wheel configuration message
+        :return:
+        """
 
         # maximum allowable wheel speed
         RW.Omega_max = 6000.0*macros.RPM
@@ -498,14 +512,18 @@ class rwFactory(object):
 
         return
 
-    #
-    # CUSTOM RW
-    #
     def custom(self, RW):
-        # maximum allowable wheel speed
-        RW.Omega_max = 6000.0*macros.RPM
+        """
+        Creates an empty reaction wheel configuration message.  This assumes the user provided the
+        RW maximum speed and maximum angular momentum information.
+
+        :param RW: reaction wheel configuration message
+        :return:
+        """
+        if self.Omega_max == 0.0:
+            print("ERROR: simIncludeRW.create() custom RW must have a non-zero Omega_max specified.")
 
         if self.maxMomentum == 0.0:
-            print("ERROR: simIncludeRW.create() custom RW must have a non-zero maximum wheel momentum specified.")
+            print("ERROR: simIncludeRW.create() custom RW must have a non-zero maxMomentum specified.")
 
         return
