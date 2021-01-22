@@ -38,6 +38,9 @@ tr td p, th.head p {
 	font-size: small;
 }
 
+img.logo {
+	filter: drop-shadow(0px 0px 8px #fff);
+}
 /* override table no-wrap */
 .wy-table-responsive table td, .wy-table-responsive table th {
     white-space: normal;
@@ -73,7 +76,9 @@ code, .rst-content tt, .rst-content code {
 		color:  #ccc;
 	}
 	
-	
+	img.logo {
+		filter: drop-shadow(0px 0px 8px #000);
+	}
 	
 	.rst-content code {
 		background: #0004;
