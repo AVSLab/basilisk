@@ -5,6 +5,10 @@ a.reference, a.internal, a.current {
 	font-weight: bold;
 }
 
+a.icon-home, a.icon-home:visited {
+	color: #666;
+}
+
 div.wy-menu > p.caption > span.caption-text {
 	color: white;
 	font-weight: bold;
