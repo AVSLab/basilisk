@@ -267,6 +267,19 @@ def add_basilisk_to_sys_path():
     else:
         print("This resulted in the output: \n%s" % output.decode())
 
+def add_basilisk_to_sys_path():
+    print("Adding Basilisk module to python\n")
+    add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
+    if not is_running_virtual_env():
+        add_basilisk_module_command.append("--user")
+
+    process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = process.communicate()
+    if err:
+        print("Error %s while running %s" % (err, add_basilisk_module_command))
+    else:
+        print("This resulted in the output: \n%s" % output.decode())
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
     # define the optional arguments
@@ -310,3 +323,6 @@ if __name__ == "__main__":
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
     os.system(cmakeCmdString)
+
+    add_basilisk_to_sys_path()
+
