@@ -17,7 +17,26 @@ Release Notes
     - show the hard drive state
     - Add the rate gyro visualization
 
+**Version 1.7.1**
+
+- extended GroundLocation from celestial bodies to spacecraft and changed the name to Location to reflect
+  new capability. Now a Location can be added to any celestial body or spacecraft and used to
+  detect line-of-sight with other spacecraft or locations.
+- added setting to the Save Message panel (under File) to opt in to saving a copy of all messages
+  to a file on Vizard exit
+- added command line argument -saveMsgFile to allow user to opt in to saving message file during launch of Vizard
+- changed how opNav stores its received messages: unless the -saveMsgFile argument is used on launch,
+  the message dictionary will retain only the most recent 20 messages. This was done to prevent unnecessary
+  memory usage by Vizard during long opNav runs.
+- brought Phobos and Deimos prefabs to current standard Celestial Body prefab configuration.
+- Add was changed to Edit for the three items under the View menu
+- Added a script for protection for 2 finger scrolling to all scroll bars in the Viz:
+  If the mouse cursor is over a scroll window, the zoom function of the main camera is disabled
+- added a new ``View/Display VizMessageLog`` option which brings up a panel to see the raw
+  protobuffer messages being displayed.
+
 **Version 1.7.0**
+
 - added a protobuffer setting and a GUI setting to allow users to set the Spacecraft scale size in Planet
   View or Solar System View.
 - changed the standard camera positioning in Planet View such that the cameras will be repositioned

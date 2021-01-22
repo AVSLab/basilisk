@@ -161,8 +161,8 @@ The ``View`` menu tab contains a range of Vizard options. A range of coordinate 
    :width: 90 %
 
 
-Add Pointing Vector
-^^^^^^^^^^^^^^^^^^^
+Edit Pointing Vector
+^^^^^^^^^^^^^^^^^^^^
 This allows a line to be drawn from the spacecraft aimed at another
 celestial body such as the sun, a planet, etc. The spacecraft location
 is referred to as “Inertial”. The purpose of these lines is to have a
@@ -175,8 +175,8 @@ heading, etc. However, each line color can be customized as needed.
    :align: center
    :width: 90 %
 
-Add Keep Out/In Cone
-^^^^^^^^^^^^^^^^^^^^
+Edit Keep Out/In Cone
+^^^^^^^^^^^^^^^^^^^^^
 This feature allows for a cone to be added relative to the spacecraft
 which indicates if a cone about a particular body-fixed axis intersects
 with a celestial object. For example, this can be used to add a cone to
@@ -189,6 +189,19 @@ becomes solid.
 .. image:: ../_images/static/vizard-ImgCones.jpg
    :align: center
    :width: 90 %
+
+Edit Location
+^^^^^^^^^^^^^
+Here you can control what ground or satellite locations are shown, as well as toggle if the location
+boresight vector should be shown, or/and the location coverage cone.  These locations can also be scripted
+in python.  However, this panel allows for locations to be added or edited on the fly.
+
+Display VizMessage Log
+^^^^^^^^^^^^^^^^^^^^^^
+This opens up a panel which displays all the raw protobuffer message states.  You can downselect
+what type of messages to how with toggles on the left side.  The messages are updated in realtime
+as the simulation progresses.  Note, if a message is sent only once on start-up, it is only shown
+on the first simulation frame.  This panel is useful when debugging protobuffer communication features.
 
 Adjust GUI Scale
 ^^^^^^^^^^^^^^^^^

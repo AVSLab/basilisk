@@ -18,13 +18,15 @@ Basilisk Release Notes
     - atmospheric drag evaluation using multi-faceted spacecraft model
     - Basilisk 2.0 that includes:
 
-        - working on a new messaging system that is much faster to log, avoids ever connecting
-          to the wrong message type, etc.
+        - working on a new messaging system that is much faster to log,
+        - has strong type checking in C/C++ and Python to avoid ever connecting to the wrong message type, etc.
         - support for multi-threading when simulating multiple satellite systems
+        - more flexible manner to build Basilisk with custom external modules and messages
+        - expanded installation instructions making use of virtual environments
 
 Version |release|
 -----------------
-- Added support for Location scripting in Vizard 1.7.1
+- Added support for ``Location`` scripting in Vizard 1.7.1
 - Added a new documentation page discussing how to launch Vizard from the command line
   and what optional arguments are available
 
