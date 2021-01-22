@@ -26,6 +26,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 1.8.9
+-------------
 - Added support for ``Location`` scripting in Vizard 1.7.1
 - Added a new documentation page discussing how to launch Vizard from the command line
   and what optional arguments are available

@@ -9,6 +9,11 @@ Version |release|
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
 
+Version 1.8.9
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
 Version 1.8.8
 -------------
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
@@ -25,7 +30,7 @@ Version 1.8.6
   The code compiles, but auto-completion etc. doesn't work in that module.
 
 Version 1.8.5
--------------
+
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
 
