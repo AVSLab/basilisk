@@ -427,6 +427,11 @@ def pullVectorSetFromData(inpMat):
     return outMat[1:].transpose()
 
 
+def addTimeColumn(time, data):
+    """Add a time column to the data set"""
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
+
+
 def decimalYearToDateTime(start):
     """convert a decimal Year format to a regular dataTime object"""
     year = int(start)

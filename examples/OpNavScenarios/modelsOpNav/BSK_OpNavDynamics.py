@@ -28,19 +28,20 @@ the instantiation of :ref:`vizInterface`, and the camera module.
 
 
 import numpy as np
-import math, sys, os, inspect
+import math, os, inspect
 from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport as sp
-from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
-                                 reactionWheelStateEffector, coarse_sun_sensor, eclipse, alg_contain, bore_ang_calc,
-                                 thrusterDynamicEffector, ephemeris_converter, vizInterface,
+from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import (spacecraftPlus, extForceTorque, simpleNav,
+                                 reactionWheelStateEffector, coarseSunSensor, eclipse,
+                                 thrusterDynamicEffector, ephemerisConverter, vizInterface,
                                  camera)
-from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.topLevelModules import pyswice
 from Basilisk import __path__
 
-from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.utilities import vizSupport
+from Basilisk.architecture import messaging2
 
 bskPath = __path__[0]
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -51,11 +52,21 @@ class BSKDynamicModels():
     BSK Dynamics model for the op nav simulations
     """
     def __init__(self, SimBase, dynRate):
+        # define empty class variables
+        self.cameraRate = None
+        self.cameraSize = None
+        self.cameraFocal = None
+        self.sun = None
+        self.earth = None
+        self.mars = None
+        self.jupiter = None
+
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName
         self.taskName = "DynamicsTask"
         self.taskCamera = "CameraTask"
         self.processTasksTimeStep = mc.sec2nano(dynRate)
+
         # Create task
         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep), 1000)
         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskCamera, mc.sec2nano(60)), 999)
@@ -65,41 +76,27 @@ class BSKDynamicModels():
         self.cameraMRP_CB =[]
         self.cameraRez = []
 
-        self.SpiceObject = spice_interface.SpiceInterface()
-        self.scObject = spacecraftPlus.SpacecraftPlus()
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
+        self.rwFactory = simIncludeRW.rwFactory()
+
+        self.scObject = spacecraftPlus.SpacecraftPlus()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
-        self.SimpleNavObject = simple_nav.SimpleNav()
-        self.TruthNavObject = simple_nav.SimpleNav()
+        self.SimpleNavObject = simpleNav.SimpleNav()
         self.vizInterface = vizInterface.VizInterface()
-        self.instrumentSunBore = bore_ang_calc.BoreAngCalc()
         self.eclipseObject = eclipse.Eclipse()
-        self.CSSConstellationObject = coarse_sun_sensor.CSSConstellation()
+        self.CSSConstellationObject = coarseSunSensor.CSSConstellation()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
         self.cameraMod = camera.Camera()
+        self.ephemObject = ephemerisConverter.EphemerisConverter()
 
-        self.ephemObject = ephemeris_converter.EphemerisConverter()
-
-        # Initialize all modules and write init one-time messages
-        self.InitAllDynObjects()
-        # self.WriteInitDynMessages(SimBase)
-
-        self.truthRefErrors = attTrackingError.attTrackingErrorConfig()
-        self.truthRefErrorsWrap = alg_contain.AlgContain(self.truthRefErrors,
-                                                         attTrackingError.Update_attTrackingError,
-                                                         attTrackingError.SelfInit_attTrackingError,
-                                                         attTrackingError.CrossInit_attTrackingError,
-                                                         attTrackingError.Reset_attTrackingError)
-        self.truthRefErrorsWrap.ModelTag = "truthRefErrors"
-
-        self.InitAllAnalysisObjects()
+        # Initialize all modules
+        self.InitAllDynObjects(SimBase)
 
         # Assign initialized modules to tasks
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
         SimBase.AddModelToTask(self.taskName, self.SimpleNavObject, None, 109)
-        SimBase.AddModelToTask(self.taskName, self.TruthNavObject, None, 110)
-        SimBase.AddModelToTask(self.taskName, self.SpiceObject, 200)
+        SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, None, 200)
         SimBase.AddModelToTask(self.taskName, self.ephemObject, 199)
         SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 299)
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
@@ -112,9 +109,7 @@ class BSKDynamicModels():
     # These are module-initialization methods
 
     def SetCamera(self):
-        self.cameraMod.imageInMsgName = "unity_image"
-        self.cameraMod.imageOutMsgName = "opnav_image"
-        self.cameraMod.cameraOutMsgName = "camera_config_data"
+        self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsg)
         self.cameraMod.saveImages = 0
         self.cameraMod.saveDir = 'Test/'
 
@@ -130,45 +125,25 @@ class BSKDynamicModels():
         self.cameraMod.cameraID = 1
         self.cameraRate = 60
         self.cameraMod.renderRate = int(mc.sec2nano(self.cameraRate))  # in
-        self.cameraMRP_CB = [0.,0.,0.] # Arbitrary camera orientation
+        self.cameraMRP_CB = [0., 0., 0.]  # Arbitrary camera orientation
         self.cameraMod.sigma_CB = self.cameraMRP_CB
         self.cameraMod.cameraPos_B = [0., 0.2, 0.2]  # in meters
-        self.cameraRez = [512, 512]  #[1024,1024] # in pixels
+        self.cameraRez = [512, 512]  # [1024,1024] # in pixels
         self.cameraSize = [10.*1E-3, self.cameraRez[1]/self.cameraRez[0]*10.*1E-3]  # in m
         self.cameraMod.resolution = self.cameraRez
         self.cameraMod.fieldOfView = np.deg2rad(55)
         self.cameraMod.parentName = 'inertial'
         self.cameraMod.skyBox = 'black'
-        self.cameraFocal = self.cameraSize[1]/2./np.tan(self.cameraMod.fieldOfView/2.) #in m
+        self.cameraFocal = self.cameraSize[1]/2./np.tan(self.cameraMod.fieldOfView/2.)  # in m
 
-
-    def SetVizInterface(self):
-        fileName = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
-        home = os.path.dirname(fileName)
-        if len(home) != 0:
-            home += '/'
-        namePath, name = os.path.split(fileName)
-        if not os.path.isdir(home + '_VizFiles'):
-            os.mkdir(home + '_VizFiles')
-        fileName = home + '_VizFiles/' + name
-
-        scData = vizInterface.VizSpacecraftData()
-        scData.spacecraftName = 'inertial'
-        self.vizInterface.scData.push_back(scData)
+    def SetVizInterface(self, SimBase):
+        self.vizInterface = vizSupport.enableUnityVisualization(
+            SimBase, self.taskName, [self.scObject]
+            # , saveFile=__file__
+            , rwEffectorList=[self.rwStateEffector]
+            )
+        self.vizInterface.cameraConfInMsg.subscribeTo(self.cameraMod.cameraConfigOutMsg)
         self.vizInterface.opNavMode = 2
-        self.vizInterface.opnavImageOutMsgName = "unity_image"#"opnav_image"#
-        self.vizInterface.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
-                                                                "mars barycenter_planet_data",
-                                                                "sun_planet_data",
-                                                                "jupiter barycenter_planet_data"
-                                                                ])
-        self.vizInterface.planetNames = vizInterface.StringVector(
-            ["earth", "mars barycenter", "sun", "jupiter barycenter"])
-
-        # self.vizInterface.spiceInMsgName = vizInterface.StringVector(["mars barycenter_planet_data"])
-        # self.vizInterface.planetNames = vizInterface.StringVector(["mars barycenter"])
-        # vizMessager.numRW = 4
-        self.vizInterface.protoFilename = fileName
 
     def SetSpacecraftHub(self):
         self.scObject.ModelTag = "spacecraftBody"
@@ -178,53 +153,44 @@ class BSKDynamicModels():
                      0., 0., 600.]
         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-        self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
-        self.scObject.scStateOutMsgName = "inertial_state_output"
+        self.scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(self.I_sc)
 
+    def SetGravityEffector(self):
+        """
+        Specify what gravitational bodies to include in the simulation
+        """
 
-    def SetTruthErrorsData(self):
-        self.truthRefErrors.inputRefName = "att_ref_output"
-        self.truthRefErrors.inputNavName = "truth_att_nav_output"
-        self.truthRefErrors.outputDataName = "truth_att_errors"
-    
-    
-    def SetgravityEffector(self):
-        self.earthGravBody = gravityEffector.GravBodyData()
-        self.earthGravBody.bodyInMsgName = "earth_planet_data"
-        self.earthGravBody.mu = 0.3986004415E+15  # meters!
-        self.earthGravBody.isCentralBody = False
-        self.earthGravBody.useSphericalHarmParams = False
+        timeInitString = "2019 DECEMBER 12 18:00:00.0"
+        gravBodies = self.gravFactory.createBodies(['sun', 'earth', 'mars barycenter', 'jupiter barycenter'])
+        gravBodies['mars barycenter'].isCentralBody = True
+        self.sun = 0
+        self.earth = 1
+        self.mars = 2
+        self.jupiter = 3
 
-        self.sunGravBody = gravityEffector.GravBodyData()
-        self.sunGravBody.bodyInMsgName = "sun_planet_data"
-        self.sunGravBody.mu = 1.32712440018E20  # meters!
-        self.sunGravBody.isCentralBody = False
-        self.sunGravBody.useSphericalHarmParams = False
+        simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM2BData.txt'
+                                            , gravBodies['mars barycenter'].spherHarm
+                                            , 2
+                                            )
 
-        self.marsGravBody = gravityEffector.GravBodyData()
-        self.marsGravBody.bodyInMsgName = "mars barycenter_planet_data"
-        self.marsGravBody.mu = 4.2828371901284001E+13  # meters!
-        self.marsGravBody.isCentralBody = True
-        self.marsGravBody.useSphericalHarmParams = True
-        gravityEffector.loadGravFromFile(
-            self.simBasePath + '/supportData/LocalGravData/GGM2BData.txt',
-                                         self.marsGravBody.spherHarm, 2)
+        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                              timeInitString,
+                                              epochInMsg=True)
 
-        self.jupiterGravBody = gravityEffector.GravBodyData()
-        self.jupiterGravBody.bodyInMsgName = "jupiter barycenter_planet_data"
-        self.jupiterGravBody.mu = 1.266865349093058E17  # meters!
-        self.jupiterGravBody.isCentralBody = False
-        self.jupiterGravBody.useSphericalHarmParams = False
+        self.gravFactory.spiceObject.referenceBase = "J2000"
+        self.gravFactory.spiceObject.zeroBase = 'mars barycenter'
 
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([self.earthGravBody,
-                                                                                self.sunGravBody, self.jupiterGravBody,
-                                                                               self.marsGravBody])
-        # self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([self.marsGravBody])
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
 
     def SetEclipseObject(self):
-        self.eclipseObject.sunInMsgName = 'sun_planet_data'
-        self.eclipseObject.addPlanetName('mars barycenter')
-        self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
+        self.eclipseObject.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
+        for c in range(1, len(self.gravFactory.spiceObject.planetStateOutMsgs)):
+            self.eclipseObject.addPlanetToModel(self.gravFactory.spiceObject.planetStateOutMsgs[c])
+        self.eclipseObject.addSpacecraftToModel(self.scObject.scStateOutMsg)
 
     def SetExternalForceTorqueObject(self):
         self.extForceTorqueObject.ModelTag = "externalDisturbance"
@@ -254,21 +220,12 @@ class BSKDynamicModels():
         self.SimpleNavObject.crossTrans = True
         self.SimpleNavObject.crossAtt = False
 
-    def SetTruthNavObject(self):
-        self.TruthNavObject.ModelTag = "TruthNavigation"
-        PMatrix = np.zeros_like(np.eye(18))
-        errorBounds = [0.0] * 18  # Accumulated DV
-        self.TruthNavObject.walkBounds = np.array(errorBounds)
-        self.TruthNavObject.PMatrix = PMatrix
-        self.TruthNavObject.outputAttName = "truth_att_output"
-        self.TruthNavObject.outputTransName = "truth_trans_output"
+        self.SimpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
 
     def SetReactionWheelDynEffector(self):
-        # Make a fresh RW factory instance, this is critical to run multiple times
-        rwFactory = simIncludeRW.rwFactory()
-
+        """Set the 4 reaction wheel devices."""
         # specify RW momentum capacity
-        maxRWMomentum = 50. # Nms
+        maxRWMomentum = 50.  # Nms
 
         # Define orthogonal RW pyramid
         # -- Pointing directions
@@ -282,12 +239,12 @@ class BSKDynamicModels():
 
         for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
             gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
-            rwFactory.create('Honeywell_HR16',
-                             gsHat,
-                             maxMomentum=maxRWMomentum,
-                             rWB_B=posVector)
+            self.rwFactory.create('Honeywell_HR16',
+                                  gsHat,
+                                  maxMomentum=maxRWMomentum,
+                                  rWB_B=posVector)
 
-        rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
+        self.rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
 
     def SetACSThrusterStateEffector(self):
         # Make a fresh TH factory instance, this is critical to run multiple times
@@ -326,13 +283,15 @@ class BSKDynamicModels():
                                   self.scObject)
 
     def SetCSSConstellation(self):
+        """Set the 8 CSS sensors"""
         self.CSSConstellationObject.ModelTag = "cssConstellation"
-        self.CSSConstellationObject.outputConstellationMessage = "CSSConstellation_output"
 
-        # define single CSS element
-        CSS_default = coarse_sun_sensor.CoarseSunSensor()
-        CSS_default.fov = 80. * mc.D2R         # half-angle field of view value
-        CSS_default.scaleFactor = 2.0
+        def setupCSS(cssDevice):
+            cssDevice.fov = 80. * mc.D2R         # half-angle field of view value
+            cssDevice.scaleFactor = 2.0
+            cssDevice.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
+            cssDevice.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
+            cssDevice.sunEclipseInMsg.subscribeTo(self.eclipseObject.eclipseOutMsgs[0])
 
         # setup CSS sensor normal vectors in body frame components
         nHat_B_List = [
@@ -349,95 +308,40 @@ class BSKDynamicModels():
 
         # store all
         cssList = []
-        for nHat_B, i in zip(nHat_B_List,range(1,numCSS+1)):
-            CSS = coarse_sun_sensor.CoarseSunSensor(CSS_default)
-            CSS.ModelTag = "CSS" + str(i) + "_sensor"
-            CSS.cssDataOutMsgName = "CSS" + str(i) + "_output"
+        for nHat_B, i in zip(nHat_B_List, list(range(1,numCSS+1))):
+            CSS = coarseSunSensor.CoarseSunSensor()
+            setupCSS(CSS)
+            CSS.ModelTag = "CSS" + str(i)
             CSS.nHat_B = np.array(nHat_B)
-            CSS.sunEclipseInMsgName = "eclipse_data_0"
             cssList.append(CSS)
 
         # assign the list of CSS devices to the CSS array class
-        self.CSSConstellationObject.sensorList = coarse_sun_sensor.CSSVector(cssList)
+        self.CSSConstellationObject.sensorList = coarseSunSensor.CSSVector(cssList)
 
     def SetEphemConvert(self):
         # Initialize the ephermis module
         self.ephemObject.ModelTag = 'EphemData'
-        planets = ["mars barycenter"]
-        messageMap = {}
-        for planet in planets:
-            messageMap[planet + '_planet_data'] = planet + '_ephemeris_data'
-        self.ephemObject.messageNameMap = ephemeris_converter.map_string_string(messageMap)
-
-    def SetinstrumentSunBore(self):
-        self.instrumentSunBore.ModelTag = "instrumentBoreSun"
-        self.instrumentSunBore.StateString = "inertial_state_output"
-        self.instrumentSunBore.celBodyString = "sun_planet_data"
-        self.instrumentSunBore.OutputDataString = "instrument_sun_bore"
-        self.instrumentSunBore.boreVec_B = [0.0, 1.0, 0.0]
+        self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.mars])
 
     def SetSimpleGrav(self):
-        # clear prior gravitational body and SPICE setup definitions
-        self.marsGravBody = gravityEffector.GravBodyData()
-        self.marsGravBody.bodyInMsgName = "mars barycenter_planet_data"
-        self.marsGravBody.mu = 4.2828371901284001E+13  # meters!
-        self.marsGravBody.isCentralBody = True
-        self.marsGravBody.useSphericalHarmParams = False
-
-        # attach gravity model to spaceCraftPlus
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([self.marsGravBody])
-
-    def SetSpiceObject(self):
-        self.SpiceObject.ModelTag = "SpiceInterfaceData"
-        self.SpiceObject.SPICEDataPath = self.simBasePath + '/supportData/EphemerisData/'
-        self.SpiceObject.UTCCalInit = "2019 DECEMBER 12 18:00:00.0"
-        self.SpiceObject.outputBufferCount = 2
-        self.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "jupiter barycenter"])
-        # self.SpiceObject.planetNames = spice_interface.StringVector(["mars barycenter"])
-        self.SpiceObject.referenceBase = "J2000"
-        self.SpiceObject.zeroBase = "mars barycenter"
-
-        pyswice.furnsh_c(self.SpiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(self.SpiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-        pyswice.furnsh_c(self.SpiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(self.SpiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+        planet = self.gravFactory.createMarsBarycenter()
+        planet.isCentralBody = True
+        self.scObject.gravField.gravBodies = \
+            spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
 
     # Global call to initialize every module
-    def InitAllDynObjects(self):
+    def InitAllDynObjects(self, SimBase):
         self.SetSpacecraftHub()
-        # self.SetgravityEffector()
-        self.SetSimpleGrav()
+        self.SetGravityEffector()
+        # self.SetSimpleGrav()
         self.SetEclipseObject()
         self.SetExternalForceTorqueObject()
         self.SetSimpleNavObject()
         self.SetReactionWheelDynEffector()
         self.SetACSThrusterStateEffector()
         self.SetCSSConstellation()
-        self.SetVizInterface()
+        self.SetVizInterface(SimBase)
         self.SetEphemConvert()
         self.SetCamera()
-
-        self.SetSpiceObject()
-
-
-    def InitAllAnalysisObjects(self):
-        self.SetTruthNavObject()
-        self.SetTruthErrorsData()
-        self.SetinstrumentSunBore()
-
-    # Global call to create every required one-time message
-    def WriteInitDynMessages(self, SimBase):
-        msgName = 'mars barycenter_planet_data'
-        ephemData = spice_interface.SpicePlanetStateSimMsg()
-        ephemData.J2000Current = 0.0
-        ephemData.PositionVector = [0.0, 0.0, 0.0]
-        ephemData.VelocityVector = [0.0, 0.0, 0.0]
-        ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        ephemData.PlanetName = 'mars barycenter'
-        # setting the msg structure name is required below to all the planet msg to be logged
-        unitTestSupport.setMessage(SimBase.TotalSim, self.processName, msgName,
-                                   ephemData, "SpicePlanetStateSimMsg")
-        return
 
 

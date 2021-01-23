@@ -31,10 +31,10 @@ provides information on what this message is used for.
     * - imageInMsg
       - :ref:`CameraImageMsgPayload`
       - camera input message
-    * - cameraOutMsg
+    * - cameraConfigOutMsg
       - :ref:`CameraConfigMsgPayload`
       - camera parameters output message
-    * - imageOutMsgName
+    * - imageOutMsg
       - :ref:`CameraImageMsgPayload`
       - camera output message
 

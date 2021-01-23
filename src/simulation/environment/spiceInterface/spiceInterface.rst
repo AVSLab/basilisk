@@ -30,6 +30,6 @@ provides information on what this message is used for.
     * - epochInMsg
       - :ref:`EpochMsgPayload`
       - (optional) input epoch message
-    * - planetStateOutMsg
+    * - planetStateOutMsgs
       - :ref:`SpicePlanetStateMsgPayload`
       - vector of planet state output messages

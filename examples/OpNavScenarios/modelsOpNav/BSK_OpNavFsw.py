@@ -21,8 +21,8 @@ Overview
 
 ``OpNavScenarios/models/BSK_OpNavFsw.py`` contains the FSW algorithms used in the scenarios. Examples are the
 Orbit Determination
-filters, the pointing guidance module, the CNN module, and more. This file also contains the ``modeRequest`` definitions which
-enable all the tasks necessary to perform a specific action.
+filters, the pointing guidance module, the CNN module, and more. This file also contains
+the ``modeRequest`` definitions which enable all the tasks necessary to perform a specific action.
 
 
 
@@ -32,12 +32,15 @@ enable all the tasks necessary to perform a specific action.
 import math
 import numpy as np
 
-from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, MRP_Feedback,
-                                    rwMotorTorque, fswMessages, opNavPoint, velocityPoint,
-                                    sunSafePoint, cssWlsEst, headingSuKF, relativeODuKF , horizonOpNav,
+from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrpFeedback,
+                                    rwMotorTorque, opNavPoint, velocityPoint,
+                                    cssWlsEst, headingSuKF, relativeODuKF, horizonOpNav,
                                     pixelLineConverter, faultDetection, pixelLineBiasUKF)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW, unitTestSupport, orbitalMotion, macros
+from Basilisk.architecture import messaging2
+import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
+
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -51,54 +54,38 @@ try:
     centerRadiusCNNIncluded = True
 except ImportError:
     centerRadiusCNNIncluded = False
+centerRadiusCNNIncluded = False  # HPS: temp hack to not load CNN module
 
 class BSKFswModels():
     """
     OpNav BSK FSW Models
     """
     def __init__(self, SimBase, fswRate):
+        # define empty class variables
+        self.vcMsg = None
+        self.fswRwConfigMsg = None
+        self.attGuidMsg = None
+        self.opnavMsg = None
+        self.opnavCirclesMsg = None
+
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
-        self.processTasksTimeStep = macros.sec2nano(fswRate)  # 0.5
+        self.processTasksTimeStep = macros.sec2nano(fswRate)
         
         # Create module data and module wraps
-        self.inertial3DData = inertial3D.inertial3DConfig()
-        self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
-        self.inertial3DWrap.ModelTag = "inertial3D"
-        
         self.hillPointData = hillPoint.hillPointConfig()
         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
         self.hillPointWrap.ModelTag = "hillPoint"
-        
-        self.sunSafePointData = sunSafePoint.sunSafePointConfig()
-        self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
-        self.sunSafePointWrap.ModelTag = "sunSafePoint"
 
         self.opNavPointData = opNavPoint.OpNavPointConfig()
         self.opNavPointWrap = SimBase.setModelDataWrap(self.opNavPointData)
         self.opNavPointWrap.ModelTag = "opNavPoint"
-        
-        self.velocityPointData = velocityPoint.velocityPointConfig()
-        self.velocityPointWrap = SimBase.setModelDataWrap(self.velocityPointData)
-        self.velocityPointWrap.ModelTag  = "velocityPoint"
-        
-        self.cssWlsEstData = cssWlsEst.CSSWLSConfig()
-        self.cssWlsEstWrap = SimBase.setModelDataWrap(self.cssWlsEstData)
-        self.cssWlsEstWrap.ModelTag = "cssWlsEst"
-        
-        self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
-        self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
-        self.trackingErrorWrap.ModelTag = "trackingError"
 
         self.trackingErrorCamData = attTrackingError.attTrackingErrorConfig()
         self.trackingErrorCamWrap = SimBase.setModelDataWrap(self.trackingErrorCamData)
         self.trackingErrorCamWrap.ModelTag = "trackingErrorCam"
 
-        self.mrpFeedbackControlData = MRP_Feedback.MRP_FeedbackConfig()
-        self.mrpFeedbackControlWrap = SimBase.setModelDataWrap(self.mrpFeedbackControlData)
-        self.mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
-
-        self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
+        self.mrpFeedbackRWsData = mrpFeedback.mrpFeedbackConfig()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
         
@@ -140,17 +127,18 @@ class BSKFswModels():
         self.headingUKFWrap = SimBase.setModelDataWrap(self.headingUKFData)
         self.headingUKFWrap.ModelTag = "headingUKF"
 
+        # create the FSW module gateway messages
+        self.setupGatewayMsgs()
+
         # Initialize all modules
         self.InitAllFSWObjects(SimBase)
         
         # Create tasks
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("headingPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavPointLimbTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavAttODLimbTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavPointTaskCheat", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 15)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 15)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavODTask", self.processTasksTimeStep), 5)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("imageProcTask", self.processTasksTimeStep), 9)
@@ -162,75 +150,68 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("attODFaultDet", self.processTasksTimeStep), 9)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("cnnFaultDet", self.processTasksTimeStep), 9)
 
-        SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
-        SimBase.AddModelToTask("hillPointTask", self.trackingErrorCamWrap, self.trackingErrorCamData, 9)
-
         SimBase.AddModelToTask("opNavPointTask", self.imageProcessing, None, 15)
         SimBase.AddModelToTask("opNavPointTask", self.pixelLineWrap, self.pixelLineData, 12)
         SimBase.AddModelToTask("opNavPointTask", self.opNavPointWrap, self.opNavPointData, 9)
 
-        SimBase.AddModelToTask("headingPointTask", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("headingPointTask", self.pixelLineWrap, self.pixelLineData, 12)
-        SimBase.AddModelToTask("headingPointTask", self.headingUKFWrap, self.headingUKFData, 10)
-        SimBase.AddModelToTask("headingPointTask", self.opNavPointWrap, self.opNavPointData, 9)
+        # SimBase.AddModelToTask("headingPointTask", self.imageProcessing, None, 15)
+        # SimBase.AddModelToTask("headingPointTask", self.pixelLineWrap, self.pixelLineData, 12)
+        # SimBase.AddModelToTask("headingPointTask", self.headingUKFWrap, self.headingUKFData, 10)
+        # SimBase.AddModelToTask("headingPointTask", self.opNavPointWrap, self.opNavPointData, 9)
 
-        SimBase.AddModelToTask("opNavPointLimbTask", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
-        SimBase.AddModelToTask("opNavPointLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
+        # SimBase.AddModelToTask("opNavPointLimbTask", self.limbFinding, None, 25)
+        # SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
+        # SimBase.AddModelToTask("opNavPointLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
 
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.relativeODWrap, self.relativeODData, 9)
+        # SimBase.AddModelToTask("opNavAttODLimbTask", self.limbFinding, None, 25)
+        # SimBase.AddModelToTask("opNavAttODLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
+        # SimBase.AddModelToTask("opNavAttODLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
+        # SimBase.AddModelToTask("opNavAttODLimbTask", self.relativeODWrap, self.relativeODData, 9)
 
-        SimBase.AddModelToTask("opNavODTaskLimb", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavODTaskLimb", self.horizonNavWrap, self.horizonNavData, 22)
-        SimBase.AddModelToTask("opNavODTaskLimb", self.relativeODWrap, self.relativeODData, 20)
+        # SimBase.AddModelToTask("opNavODTaskLimb", self.limbFinding, None, 25)
+        # SimBase.AddModelToTask("opNavODTaskLimb", self.horizonNavWrap, self.horizonNavData, 22)
+        # SimBase.AddModelToTask("opNavODTaskLimb", self.relativeODWrap, self.relativeODData, 20)
 
-        SimBase.AddModelToTask("opNavPointTaskCheat", self.hillPointWrap, self.hillPointData, 10)
-        SimBase.AddModelToTask("opNavPointTaskCheat", self.trackingErrorCamWrap, self.trackingErrorCamData, 9)
+        # SimBase.AddModelToTask("opNavPointTaskCheat", self.hillPointWrap, self.hillPointData, 10)
+        # SimBase.AddModelToTask("opNavPointTaskCheat", self.trackingErrorCamWrap, self.trackingErrorCamData, 9)
 
-        SimBase.AddModelToTask("opNavODTask", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("opNavODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        SimBase.AddModelToTask("opNavODTask", self.relativeODWrap, self.relativeODData, 13)
+        # SimBase.AddModelToTask("opNavODTask", self.imageProcessing, None, 15)
+        # SimBase.AddModelToTask("opNavODTask", self.pixelLineWrap, self.pixelLineData, 14)
+        # SimBase.AddModelToTask("opNavODTask", self.relativeODWrap, self.relativeODData, 13)
 
-        SimBase.AddModelToTask("opNavODTaskB", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("opNavODTaskB", self.pixelLineFilterWrap, self.pixelLineFilterData, 13)
+        # SimBase.AddModelToTask("opNavODTaskB", self.imageProcessing, None, 15)
+        # SimBase.AddModelToTask("opNavODTaskB", self.pixelLineFilterWrap, self.pixelLineFilterData, 13)
 
-        SimBase.AddModelToTask("imageProcTask", self.imageProcessing, None, 15)
+        # SimBase.AddModelToTask("imageProcTask", self.imageProcessing, None, 15)
 
-        SimBase.AddModelToTask("opNavAttODTask", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("opNavAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        SimBase.AddModelToTask("opNavAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
-        # SimBase.AddModelToTask("opNavAttODTask", self.pixelLineFilterWrap, self.pixelLineFilterData, 9)
-        SimBase.AddModelToTask("opNavAttODTask", self.relativeODWrap, self.relativeODData, 9)
+        # SimBase.AddModelToTask("opNavAttODTask", self.imageProcessing, None, 15)
+        # SimBase.AddModelToTask("opNavAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
+        # SimBase.AddModelToTask("opNavAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
+        # SimBase.AddModelToTask("opNavAttODTask", self.relativeODWrap, self.relativeODData, 9)
 
-        if centerRadiusCNNIncluded:
-            SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
-        SimBase.AddModelToTask("cnnAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        SimBase.AddModelToTask("cnnAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
-        # SimBase.AddModelToTask("opNavAttODTask", self.pixelLineFilterWrap, self.pixelLineFilterData, 9)
-        SimBase.AddModelToTask("cnnAttODTask", self.relativeODWrap, self.relativeODData, 9)
-
-        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10) #used for external torque
+        # if centerRadiusCNNIncluded:
+        #     SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
+        # SimBase.AddModelToTask("cnnAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
+        # SimBase.AddModelToTask("cnnAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
+        # SimBase.AddModelToTask("cnnAttODTask", self.relativeODWrap, self.relativeODData, 9)
 
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
 
-        SimBase.AddModelToTask("attODFaultDet", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("attODFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
-        SimBase.AddModelToTask("attODFaultDet", self.imageProcessing, None, 18)
-        SimBase.AddModelToTask("attODFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-        SimBase.AddModelToTask("attODFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-        SimBase.AddModelToTask("attODFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
-        SimBase.AddModelToTask("attODFaultDet", self.relativeODWrap, self.relativeODData, 9)
+        # SimBase.AddModelToTask("attODFaultDet", self.limbFinding, None, 25)
+        # SimBase.AddModelToTask("attODFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
+        # SimBase.AddModelToTask("attODFaultDet", self.imageProcessing, None, 18)
+        # SimBase.AddModelToTask("attODFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
+        # SimBase.AddModelToTask("attODFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
+        # SimBase.AddModelToTask("attODFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
+        # SimBase.AddModelToTask("attODFaultDet", self.relativeODWrap, self.relativeODData, 9)
 
-        SimBase.AddModelToTask("opNavFaultDet", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
-        SimBase.AddModelToTask("opNavFaultDet", self.imageProcessing, None, 18)
-        SimBase.AddModelToTask("opNavFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-        SimBase.AddModelToTask("opNavFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-        SimBase.AddModelToTask("opNavFaultDet", self.relativeODWrap, self.relativeODData, 9)
+        # SimBase.AddModelToTask("opNavFaultDet", self.limbFinding, None, 25)
+        # SimBase.AddModelToTask("opNavFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
+        # SimBase.AddModelToTask("opNavFaultDet", self.imageProcessing, None, 18)
+        # SimBase.AddModelToTask("opNavFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
+        # SimBase.AddModelToTask("opNavFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
+        # SimBase.AddModelToTask("opNavFaultDet", self.relativeODWrap, self.relativeODData, 9)
 
         if centerRadiusCNNIncluded:
             SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, None, 25)
@@ -247,104 +228,120 @@ class BSKFswModels():
         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'standby'"],
                                ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()"
                                 ])
 
-        SimBase.createNewEvent("prepOpNav", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'prepOpNav'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavPointTaskCheat')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("prepOpNav", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'prepOpNav'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavPointTaskCheat')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("imageGen", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'imageGen'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('imageProcTask')",
-                                "self.enableTask('opNavPointTaskCheat')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("imageGen", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'imageGen'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('imageProcTask')",
+        #                         "self.enableTask('opNavPointTaskCheat')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("pointOpNav", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'pointOpNav'"],
                                ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("pointHead", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'pointHead'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('headingPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("pointHead", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'pointHead'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('headingPointTask')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("pointLimb", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'pointLimb'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavPointLimbTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("pointLimb", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'pointLimb'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavPointLimbTask')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("OpNavOD", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'OpNavOD'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavPointTaskCheat')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.enableTask('opNavODTask')"])
+        # SimBase.createNewEvent("OpNavOD", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'OpNavOD'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavPointTaskCheat')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')",
+        #                         "self.enableTask('opNavODTask')"])
 
-        SimBase.createNewEvent("DoubleOD", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'DoubleOD'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavPointTaskCheat')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.enableTask('opNavODTaskLimb')",
-                                "self.enableTask('opNavODTask')"])
+        # SimBase.createNewEvent("DoubleOD", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'DoubleOD'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavPointTaskCheat')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')",
+        #                         "self.enableTask('opNavODTaskLimb')",
+        #                         "self.enableTask('opNavODTask')"])
 
-        SimBase.createNewEvent("OpNavODLimb", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'OpNavODLimb'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavPointTaskCheat')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.enableTask('opNavODTaskLimb')"])
+        # SimBase.createNewEvent("OpNavODLimb", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'OpNavODLimb'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavPointTaskCheat')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')",
+        #                         "self.enableTask('opNavODTaskLimb')"])
 
-        SimBase.createNewEvent("OpNavODB", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'OpNavODB'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavPointTaskCheat')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.enableTask('opNavODTaskB')"])
+        # SimBase.createNewEvent("OpNavODB", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'OpNavODB'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavPointTaskCheat')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')",
+        #                         "self.enableTask('opNavODTaskB')"])
 
-        SimBase.createNewEvent("OpNavAttOD", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'OpNavAttOD'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavAttODTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("OpNavAttOD", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'OpNavAttOD'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavAttODTask')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("OpNavAttODLimb", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'OpNavAttODLimb'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavAttODLimbTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("OpNavAttODLimb", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'OpNavAttODLimb'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavAttODLimbTask')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("CNNAttOD", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'CNNAttOD'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('cnnAttODTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("CNNAttOD", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'CNNAttOD'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('cnnAttODTask')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("FaultDet", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'FaultDet'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('attODFaultDet')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("FaultDet", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'FaultDet'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('attODFaultDet')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        SimBase.createNewEvent("ODFaultDet", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'ODFaultDet'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('opNavPointTaskCheat')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.enableTask('opNavFaultDet')"])
+        # SimBase.createNewEvent("ODFaultDet", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'ODFaultDet'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('opNavPointTaskCheat')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')",
+        #                         "self.enableTask('opNavFaultDet')"])
 
-        SimBase.createNewEvent("FaultDetCNN", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'FaultDetCNN'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('cnnFaultDet')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+        # SimBase.createNewEvent("FaultDetCNN", self.processTasksTimeStep, True,
+        #                        ["self.modeRequest == 'FaultDetCNN'"],
+        #                        ["self.fswProc.disableAllTasks()",
+        #                         "self.FSWModels.zeroGateWayMsgs()",
+        #                         "self.enableTask('cnnFaultDet')",
+        #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -354,15 +351,15 @@ class BSKFswModels():
         self.hillPointData.inputCelMessName = "mars barycenter_ephemeris_data"
 
     def SetOpNavPointGuidance(self, SimBase):
-        self.opNavPointData.attGuidanceOutMsgName = "att_guidance"
-        self.opNavPointData.imuInMsgName = SimBase.DynModels.SimpleNavObject.outputAttName
-        self.opNavPointData.cameraConfigMsgName = "camera_config_data"
-        self.opNavPointData.opnavDataInMsgName = "output_nav_msg" #"heading_filtered"
+        cMsgPy.AttGuidMsg_C_addAuthor(self.opNavPointData.attGuidanceOutMsg, self.attGuidMsg)
+        self.opNavPointData.imuInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.opNavPointData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.opNavPointData.opnavDataInMsg.subscribeTo(self.opnavMsg)
         self.opNavPointData.smallAngle = 0.001*np.pi/180.
-        self.opNavPointData.timeOut = 1000 # Max time in sec between images before engaging search
+        self.opNavPointData.timeOut = 1000  # Max time in sec between images before engaging search
         # self.opNavPointData.opNavAxisSpinRate = 0.1*np.pi/180.
         self.opNavPointData.omega_RN_B = [0.001, 0.0, -0.001]
-        self.opNavPointData.alignAxis_C = [0.,0.,1]
+        self.opNavPointData.alignAxis_C = [0., 0., 1]
 
     def SetHeadingUKF(self):
         self.headingUKFData.opnavOutMsgName = "heading_filtered"
@@ -388,12 +385,6 @@ class BSKFswModels():
         self.headingUKFData.qNoise = qNoiseIn.reshape(25).tolist()
         self.headingUKFData.qObsVal = 0.001
 
-    def SetAttitudeTrackingError(self, SimBase):
-        self.trackingErrorData.inputNavName = SimBase.DynModels.SimpleNavObject.outputAttName
-        # Note: SimBase.DynModels.SimpleNavObject.outputAttName = "simple_att_nav_output"
-        self.trackingErrorData.inputRefName = "att_reference"
-        self.trackingErrorData.outputDataName = "att_guidance"
-
     ## Celestial point to Mars
     def SetCelTwoBodyMarsPoint(self):
         self.celTwoBodyMarsData.inputNavDataName = "simple_trans_nav_output"
@@ -414,70 +405,24 @@ class BSKFswModels():
         self.trackingErrorCamData.sigma_R0R = MRP
         # self.trackingErrorCamData.sigma_R0R = [1./3+0.1, 1./3-0.1, 0.1-1/3]
 
-    def SetCSSWlsEst(self, SimBase):
-        cssConfig = fswMessages.CSSConfigFswMsg()
-        totalCSSList = []
-        nHat_B_vec = [
-            [0.0, 0.707107, 0.707107],
-            [0.707107, 0., 0.707107],
-            [0.0, -0.707107, 0.707107],
-            [-0.707107, 0., 0.707107],
-            [0.0, -0.965926, -0.258819],
-            [-0.707107, -0.353553, -0.612372],
-            [0., 0.258819, -0.965926],
-            [0.707107, -0.353553, -0.612372]
-        ]
-        for CSSHat in nHat_B_vec:
-            CSSConfigElement = fswMessages.CSSUnitConfigFswMsg()
-            CSSConfigElement.CBias = 1.0
-            CSSConfigElement.nHat_B = CSSHat
-            totalCSSList.append(CSSConfigElement)
-            cssConfig.cssVals = totalCSSList
-
-        cssConfig.nCSS = len(SimBase.DynModels.CSSConstellationObject.sensorList)
-        cssConfigSize = cssConfig.getStructSize()
-        SimBase.TotalSim.CreateNewMessage("FSWProcess", "css_config_data", cssConfigSize, 2, "CSSConstellation")
-        SimBase.TotalSim.WriteMessageData("css_config_data", cssConfigSize, 0, cssConfig)
-
-        self.cssWlsEstData.cssDataInMsgName = SimBase.DynModels.CSSConstellationObject.outputConstellationMessage
-        self.cssWlsEstData.cssConfigInMsgName = "css_config_data"
-        self.cssWlsEstData.navStateOutMsgName = "sun_point_data"
-
-    def SetMRPFeedbackControl(self, SimBase):
-        self.mrpFeedbackControlData.inputGuidName = "att_guidance"
-        self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
-        self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
-        # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
-        
-        self.mrpFeedbackControlData.K = 3.5
-        self.mrpFeedbackControlData.Ki = -1.0 # Note: make value negative to turn off integral feedback
-        self.mrpFeedbackControlData.P = 30.0
-        self.mrpFeedbackControlData.integralLimit = 2. / self.mrpFeedbackControlData.Ki * 0.1
-
-
-    def SetMRPFeedbackRWA(self):
+    def SetMRPFeedbackRWA(self, SimBase):
         self.mrpFeedbackRWsData.K = 3.5
         self.mrpFeedbackRWsData.Ki = -1  # Note: make value negative to turn off integral feedback
         self.mrpFeedbackRWsData.P = 30.0
         self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
 
-        self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
-        self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states"
-        self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data"
-        self.mrpFeedbackRWsData.inputGuidName = "att_guidance"
-        self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
+        self.mrpFeedbackRWsData.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackRWsData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
+        self.mrpFeedbackRWsData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.mrpFeedbackRWsData.guidInMsg.subscribeTo(self.attGuidMsg)
 
-
-    def SetVehicleConfiguration(self, SimBase):
-        vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    def SetVehicleConfiguration(self):
+        vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
         # use the same inertia in the FSW algorithm as in the simulation
         vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
-        unitTestSupport.setMessage(SimBase.TotalSim,
-                                   SimBase.FSWProcessName,
-                                    "adcs_config_data",
-                                    vehicleConfigOut)
+        self.vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
 
-    def SetRWConfigMsg(self, SimBase):
+    def SetRWConfigMsg(self):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * macros.D2R
         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * macros.D2R
@@ -490,19 +435,18 @@ class BSKFswModels():
                               wheelJs,  # kg*m^2
                               0.2)  # Nm        uMax
         
-        fswSetupRW.writeConfigMessage("rwa_config_data", SimBase.TotalSim, SimBase.FSWProcessName)
-
+        self.fswRwConfigMsg = fswSetupRW.writeConfigMessage()
 
     def SetRWMotorTorque(self, SimBase):
         controlAxes_B = [
-        1.0, 0.0, 0.0
-        , 0.0, 1.0, 0.0
-        , 0.0, 0.0, 1.0
-        ]
+                        1.0, 0.0, 0.0
+                        , 0.0, 1.0, 0.0
+                        , 0.0, 0.0, 1.0
+                        ]
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
-        self.rwMotorTorqueData.outputDataName = SimBase.DynModels.rwStateEffector.InputCmds  # "reactionwheel_cmds"
-        self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
+        self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.mrpFeedbackRWsData.cmdTorqueOutMsg)
+        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.rwMotorTorqueData.rwMotorTorqueOutMsg)
+        self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
     def SetCNNOpNav(self):
         self.opNavCNN.imageInMsgName = "opnav_image"
@@ -511,9 +455,9 @@ class BSKFswModels():
         self.opNavCNN.pathToNetwork = bskPath +  "/../../src/fswAlgorithms/imageProcessing/centerRadiusCNN/CAD.onnx"#large_dataset_CAD.onnx"
         #"/../../src/fswAlgorithms/imageProcessing/centerRadiusCNN/position_net2_trained_11-14.onnx"
 
-    def SetImageProcessing(self):
-        self.imageProcessing.imageInMsgName = "opnav_image"
-        self.imageProcessing.opnavCirclesOutMsgName = "circles_data"
+    def SetImageProcessing(self, SimBase):
+        self.imageProcessing.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
+        self.imageProcessing.opnavCirclesOutMsg.write = self.opnavCirclesMsg.addAuthor()
 
         self.imageProcessing.saveImages = 0
         self.imageProcessing.expectedCircles = 1
@@ -525,14 +469,14 @@ class BSKFswModels():
         self.imageProcessing.noiseSF = 1
         self.imageProcessing.dpValue = 1
         self.imageProcessing.saveDir = 'Test/'
-        self.imageProcessing.houghMaxRadius = 0#int(512 / 1.25)
+        self.imageProcessing.houghMaxRadius = 0  # int(512 / 1.25)
 
-    def SetPixelLineConversion(self):
-        self.pixelLineData.circlesInMsgName = "circles_data"
-        self.pixelLineData.cameraConfigMsgName = "camera_config_data"
-        self.pixelLineData.attInMsgName = "simple_att_nav_output"
+    def SetPixelLineConversion(self, SimBase):
+        self.pixelLineData.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
+        self.pixelLineData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.pixelLineData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
         self.pixelLineData.planetTarget = 2
-        self.pixelLineData.opNavOutMsgName = "output_nav_msg"
+        cMsgPy.OpNavMsg_C_addAuthor(self.pixelLineData.opNavOutMsg, self.opnavMsg)
 
     def SetLimbFinding(self):
         self.limbFinding.imageInMsgName = "opnav_image"
@@ -630,39 +574,54 @@ class BSKFswModels():
                                               0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0,
                                               0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1]
 
-
         qNoiseIn = np.identity(9)
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
         qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
         qNoiseIn[6:9, 6:9] = qNoiseIn[6:9, 6:9] * 1E-8 * 1E-8
         self.pixelLineFilterData.qNoise = qNoiseIn.reshape(9 * 9).tolist()
 
-
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
-        self.SetHillPointGuidance(SimBase)
-        self.SetCSSWlsEst(SimBase)
-        self.SetAttitudeTrackingError(SimBase)
-        self.SetMRPFeedbackControl(SimBase)
-        self.SetVehicleConfiguration(SimBase)
-        self.SetRWConfigMsg(SimBase)
-        self.SetMRPFeedbackRWA()
+        # self.SetHillPointGuidance(SimBase)
+        # self.SetCSSWlsEst(SimBase)
+        # self.SetAttitudeTrackingError(SimBase)
+        self.SetVehicleConfiguration()
+        self.SetRWConfigMsg()
+        self.SetMRPFeedbackRWA(SimBase)
         self.SetRWMotorTorque(SimBase)
-        self.SetAttTrackingErrorCam(SimBase)
-        self.SetImageProcessing()
-        self.SetPixelLineConversion()
-
-        if centerRadiusCNNIncluded:
-            self.SetCNNOpNav()
-        self.SetRelativeODFilter()
-        self.SetFaultDetection()
-        # J. Christian methods
-        self.SetLimbFinding()
-        self.SetHorizonNav()
-
+        # self.SetAttTrackingErrorCam(SimBase)
+        self.SetImageProcessing(SimBase)
+        self.SetPixelLineConversion(SimBase)
+        #
+        # if centerRadiusCNNIncluded:
+        #     self.SetCNNOpNav()
+        # self.SetRelativeODFilter()
+        # self.SetFaultDetection()
+        # # J. Christian methods
+        # self.SetLimbFinding()
+        # self.SetHorizonNav()
+        #
         self.SetOpNavPointGuidance(SimBase)
-        self.SetHeadingUKF()
-        self.SetPixelLineFilter()
+        # self.SetHeadingUKF()
+        # self.SetPixelLineFilter()
 
+    def setupGatewayMsgs(self):
+        """create gateway messages such that different modules can write to this message
+        and provide a common input msg for down-stream modules"""
+        # C wrapped gateway messages
+        self.attGuidMsg = cMsgPy.AttGuidMsg_C()
+        self.opnavMsg = cMsgPy.OpNavMsg_C()
 
-#BSKFswModels()
+        # C++ wrapped gateway messages
+        self.opnavCirclesMsg = messaging2.CirclesOpNavMsg()
+
+        self.zeroGateWayMsgs()
+
+    def zeroGateWayMsgs(self):
+        """Zero all the FSW gateway message payloads"""
+        self.attGuidMsg.write(messaging2.AttGuidMsgPayload())
+        self.opnavMsg.write(messaging2.OpNavMsgPayload())
+
+        self.opnavCirclesMsg.write(messaging2.CirclesOpNavMsgPayload(), 0, 0)
+
+# BSKFswModels()

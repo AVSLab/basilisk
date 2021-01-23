@@ -345,7 +345,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
 
     /* zero output messages */
     imageOut = this->imageOutMsg.zeroMsgPayload();
-    cameraMsg = this->cameraOutMsg.zeroMsgPayload();
+    cameraMsg = this->cameraConfigOutMsg.zeroMsgPayload();
     
     /*! - Populate the camera message */
     cameraMsg.cameraID = this->cameraID;
@@ -360,7 +360,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     strcpy(cameraMsg.skyBox, this->skyBox);
     
     /*! - Update the camera config data no matter if an image is present*/
-    this->cameraOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
+    this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
     
     cv::Mat imageCV, blurred;
     if (this->saveDir !=""){
