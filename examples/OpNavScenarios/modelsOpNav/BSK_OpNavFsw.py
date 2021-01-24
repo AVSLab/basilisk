@@ -54,7 +54,7 @@ try:
     centerRadiusCNNIncluded = True
 except ImportError:
     centerRadiusCNNIncluded = False
-centerRadiusCNNIncluded = False  # HPS: temp hack to not load CNN module
+
 
 class BSKFswModels():
     """
@@ -189,11 +189,11 @@ class BSKFswModels():
         SimBase.AddModelToTask("opNavAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
         SimBase.AddModelToTask("opNavAttODTask", self.relativeODWrap, self.relativeODData, 9)
 
-        # if centerRadiusCNNIncluded:
-        #     SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
-        # SimBase.AddModelToTask("cnnAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        # SimBase.AddModelToTask("cnnAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
-        # SimBase.AddModelToTask("cnnAttODTask", self.relativeODWrap, self.relativeODData, 9)
+        if centerRadiusCNNIncluded:
+            SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
+        SimBase.AddModelToTask("cnnAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
+        SimBase.AddModelToTask("cnnAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
+        SimBase.AddModelToTask("cnnAttODTask", self.relativeODWrap, self.relativeODData, 9)
 
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
@@ -314,12 +314,12 @@ class BSKFswModels():
                                 "self.enableTask('opNavAttODLimbTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("CNNAttOD", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'CNNAttOD'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('cnnAttODTask')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("CNNAttOD", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'CNNAttOD'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('cnnAttODTask')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         # SimBase.createNewEvent("FaultDet", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'FaultDet'"],
@@ -447,12 +447,11 @@ class BSKFswModels():
         SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.rwMotorTorqueData.rwMotorTorqueOutMsg)
         self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
-    def SetCNNOpNav(self):
-        self.opNavCNN.imageInMsgName = "opnav_image"
-        self.opNavCNN.opnavCirclesOutMsgName = "circles_data"
+    def SetCNNOpNav(self, SimBase):
+        self.opNavCNN.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
+        self.opNavCNN.opnavCirclesOutMsg = self.opnavCirclesMsg
         self.opNavCNN.pixelNoise = [5,5,5]
-        self.opNavCNN.pathToNetwork = bskPath +  "/../../src/fswAlgorithms/imageProcessing/centerRadiusCNN/CAD.onnx"#large_dataset_CAD.onnx"
-        #"/../../src/fswAlgorithms/imageProcessing/centerRadiusCNN/position_net2_trained_11-14.onnx"
+        self.opNavCNN.pathToNetwork = bskPath + "/../../src/fswAlgorithms/imageProcessing/centerRadiusCNN/CAD.onnx"
 
     def SetImageProcessing(self, SimBase):
         self.imageProcessing.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
@@ -587,8 +586,8 @@ class BSKFswModels():
         self.SetImageProcessing(SimBase)
         self.SetPixelLineConversion(SimBase)
 
-        # if centerRadiusCNNIncluded:
-        #     self.SetCNNOpNav()
+        if centerRadiusCNNIncluded:
+            self.SetCNNOpNav(SimBase)
         self.SetRelativeODFilter()
         # self.SetFaultDetection()
 
