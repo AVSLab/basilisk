@@ -59,10 +59,7 @@ class scenario_OpNav(BSKScenario):
 
         # declare additional class variables
         self.rwMotorRec = None
-        self.opNavRec = None
         self.attGuidRec = None
-        self.circlesRec = None
-        self.scRec = None
         self.rwLogs = []
 
     def configure_initial_conditions(self):

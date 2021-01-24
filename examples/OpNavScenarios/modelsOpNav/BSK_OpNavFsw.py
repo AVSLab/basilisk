@@ -172,15 +172,15 @@ class BSKFswModels():
         # SimBase.AddModelToTask("opNavODTaskLimb", self.horizonNavWrap, self.horizonNavData, 22)
         # SimBase.AddModelToTask("opNavODTaskLimb", self.relativeODWrap, self.relativeODData, 20)
 
-        # SimBase.AddModelToTask("opNavPointTaskCheat", self.hillPointWrap, self.hillPointData, 10)
-        # SimBase.AddModelToTask("opNavPointTaskCheat", self.trackingErrorCamWrap, self.trackingErrorCamData, 9)
+        SimBase.AddModelToTask("opNavPointTaskCheat", self.hillPointWrap, self.hillPointData, 10)
+        SimBase.AddModelToTask("opNavPointTaskCheat", self.trackingErrorCamWrap, self.trackingErrorCamData, 9)
 
-        # SimBase.AddModelToTask("opNavODTask", self.imageProcessing, None, 15)
-        # SimBase.AddModelToTask("opNavODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        # SimBase.AddModelToTask("opNavODTask", self.relativeODWrap, self.relativeODData, 13)
+        SimBase.AddModelToTask("opNavODTask", self.imageProcessing, None, 15)
+        SimBase.AddModelToTask("opNavODTask", self.pixelLineWrap, self.pixelLineData, 14)
+        SimBase.AddModelToTask("opNavODTask", self.relativeODWrap, self.relativeODData, 13)
 
-        # SimBase.AddModelToTask("opNavODTaskB", self.imageProcessing, None, 15)
-        # SimBase.AddModelToTask("opNavODTaskB", self.pixelLineFilterWrap, self.pixelLineFilterData, 13)
+        SimBase.AddModelToTask("opNavODTaskB", self.imageProcessing, None, 15)
+        SimBase.AddModelToTask("opNavODTaskB", self.pixelLineFilterWrap, self.pixelLineFilterData, 13)
 
         # SimBase.AddModelToTask("imageProcTask", self.imageProcessing, None, 15)
 
@@ -231,12 +231,12 @@ class BSKFswModels():
                                 "self.FSWModels.zeroGateWayMsgs()"
                                 ])
 
-        # SimBase.createNewEvent("prepOpNav", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'prepOpNav'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavPointTaskCheat')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("prepOpNav", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'prepOpNav'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('opNavPointTaskCheat')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         # SimBase.createNewEvent("imageGen", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'imageGen'"],
@@ -267,13 +267,13 @@ class BSKFswModels():
                                 "self.enableTask('opNavPointLimbTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("OpNavOD", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'OpNavOD'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavPointTaskCheat')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')",
-        #                         "self.enableTask('opNavODTask')"])
+        SimBase.createNewEvent("OpNavOD", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'OpNavOD'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('opNavPointTaskCheat')",
+                                "self.enableTask('mrpFeedbackRWsTask')",
+                                "self.enableTask('opNavODTask')"])
 
         # SimBase.createNewEvent("DoubleOD", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'DoubleOD'"],
@@ -292,13 +292,13 @@ class BSKFswModels():
         #                         "self.enableTask('mrpFeedbackRWsTask')",
         #                         "self.enableTask('opNavODTaskLimb')"])
 
-        # SimBase.createNewEvent("OpNavODB", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'OpNavODB'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavPointTaskCheat')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')",
-        #                         "self.enableTask('opNavODTaskB')"])
+        SimBase.createNewEvent("OpNavODB", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'OpNavODB'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('opNavPointTaskCheat')",
+                                "self.enableTask('mrpFeedbackRWsTask')",
+                                "self.enableTask('opNavODTaskB')"])
 
         # SimBase.createNewEvent("OpNavAttOD", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'OpNavAttOD'"],
@@ -346,9 +346,8 @@ class BSKFswModels():
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
     def SetHillPointGuidance(self, SimBase):
-        self.hillPointData.outputDataName = "att_reference"
-        self.hillPointData.inputNavDataName = SimBase.DynModels.SimpleNavObject.outputTransName
-        self.hillPointData.inputCelMessName = "mars barycenter_ephemeris_data"
+        self.hillPointData.transNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.transOutMsg)
+        self.hillPointData.celBodyInMsg.subscribeTo(SimBase.DynModels.ephemObject.ephemOutMsgs[0])
 
     def SetOpNavPointGuidance(self, SimBase):
         cMsgPy.AttGuidMsg_C_addAuthor(self.opNavPointData.attGuidanceOutMsg, self.attGuidMsg)
@@ -393,9 +392,8 @@ class BSKFswModels():
         self.celTwoBodyMarsData.singularityThresh = 1.0 * math.pi / 180.0
 
     def SetAttTrackingErrorCam(self, SimBase):
-        self.trackingErrorCamData.inputRefName = "att_reference"
-        self.trackingErrorCamData.inputNavName = "simple_att_nav_output"
-        self.trackingErrorCamData.outputDataName = "att_guidance"
+        self.trackingErrorCamData.attRefInMsg.subscribeTo(self.hillPointData.attRefOutMsg)
+        self.trackingErrorCamData.attNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
 
         M2 =  rbk.euler2(90 * macros.D2R) #rbk.euler2(-90 * macros.D2R) #
         M3 =  rbk.euler1(90 * macros.D2R) #rbk.euler3(90 * macros.D2R) #
@@ -492,13 +490,11 @@ class BSKFswModels():
         self.horizonNavData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
         self.horizonNavData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
         self.horizonNavData.planetTarget = 2
-        self.horizonNavData.noiseSF = 1 #2 should work though
+        self.horizonNavData.noiseSF = 1  # 2 should work though
         cMsgPy.OpNavMsg_C_addAuthor(self.horizonNavData.opNavOutMsg, self.opnavMsg)
 
     def SetRelativeODFilter(self):
-        self.relativeODData.navStateOutMsgName = "relod_state_estimate"
-        self.relativeODData.filtDataOutMsgName = "relod_filter_data"
-        self.relativeODData.opNavInMsgName = "output_nav_msg"
+        self.relativeODData.opNavInMsg.subscribeTo(self.opnavMsg)
 
         self.relativeODData.planetIdInit = 2
         self.relativeODData.alpha = 0.02
@@ -538,12 +534,10 @@ class BSKFswModels():
         self.opNavFaultData.sigmaFault = 0.3
         self.opNavFaultData.faultMode = 0
 
-    def SetPixelLineFilter(self):
-        self.pixelLineFilterData.navStateOutMsgName = "pixelLine_state_estimate"
-        self.pixelLineFilterData.filtDataOutMsgName = "pixelLine_filter_data"
-        self.pixelLineFilterData.circlesInMsgName = "circles_data"
-        self.pixelLineFilterData.cameraConfigMsgName = "camera_config_data"
-        self.pixelLineFilterData.attInMsgName = "simple_att_nav_output"
+    def SetPixelLineFilter(self, SimBase):
+        self.pixelLineFilterData.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
+        self.pixelLineFilterData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.pixelLineFilterData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
 
         self.pixelLineFilterData.planetIdInit = 2
         self.pixelLineFilterData.alpha = 0.02
@@ -581,28 +575,29 @@ class BSKFswModels():
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
-        # self.SetHillPointGuidance(SimBase)
+        self.SetHillPointGuidance(SimBase)
         # self.SetCSSWlsEst(SimBase)
         # self.SetAttitudeTrackingError(SimBase)
         self.SetVehicleConfiguration()
         self.SetRWConfigMsg()
         self.SetMRPFeedbackRWA(SimBase)
         self.SetRWMotorTorque(SimBase)
-        # self.SetAttTrackingErrorCam(SimBase)
+        self.SetAttTrackingErrorCam(SimBase)
         self.SetImageProcessing(SimBase)
         self.SetPixelLineConversion(SimBase)
-        #
+
         # if centerRadiusCNNIncluded:
         #     self.SetCNNOpNav()
-        # self.SetRelativeODFilter()
+        self.SetRelativeODFilter()
         # self.SetFaultDetection()
-        # # J. Christian methods
+
+        # J. Christian methods
         self.SetLimbFinding(SimBase)
         self.SetHorizonNav(SimBase)
-        #
+
         self.SetOpNavPointGuidance(SimBase)
         # self.SetHeadingUKF()
-        # self.SetPixelLineFilter()
+        self.SetPixelLineFilter(SimBase)
 
     def setupGatewayMsgs(self):
         """create gateway messages such that different modules can write to this message

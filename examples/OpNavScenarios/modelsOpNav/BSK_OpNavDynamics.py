@@ -321,7 +321,7 @@ class BSKDynamicModels():
         self.CSSConstellationObject.sensorList = coarseSunSensor.CSSVector(cssList)
 
     def SetEphemConvert(self):
-        # Initialize the ephermis module
+        # Initialize the ephemeris module
         self.ephemObject.ModelTag = 'EphemData'
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.mars])
 
