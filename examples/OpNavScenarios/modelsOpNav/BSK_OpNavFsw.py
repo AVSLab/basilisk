@@ -159,9 +159,9 @@ class BSKFswModels():
         # SimBase.AddModelToTask("headingPointTask", self.headingUKFWrap, self.headingUKFData, 10)
         # SimBase.AddModelToTask("headingPointTask", self.opNavPointWrap, self.opNavPointData, 9)
 
-        # SimBase.AddModelToTask("opNavPointLimbTask", self.limbFinding, None, 25)
-        # SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
-        # SimBase.AddModelToTask("opNavPointLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
+        SimBase.AddModelToTask("opNavPointLimbTask", self.limbFinding, None, 25)
+        SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
+        SimBase.AddModelToTask("opNavPointLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
 
         # SimBase.AddModelToTask("opNavAttODLimbTask", self.limbFinding, None, 25)
         # SimBase.AddModelToTask("opNavAttODLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
@@ -260,12 +260,12 @@ class BSKFswModels():
         #                         "self.enableTask('headingPointTask')",
         #                         "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("pointLimb", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'pointLimb'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavPointLimbTask')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("pointLimb", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'pointLimb'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('opNavPointLimbTask')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         # SimBase.createNewEvent("OpNavOD", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'OpNavOD'"],
@@ -478,9 +478,8 @@ class BSKFswModels():
         self.pixelLineData.planetTarget = 2
         cMsgPy.OpNavMsg_C_addAuthor(self.pixelLineData.opNavOutMsg, self.opnavMsg)
 
-    def SetLimbFinding(self):
-        self.limbFinding.imageInMsgName = "opnav_image"
-        self.limbFinding.opnavLimbOutMsgName = "limb_data"
+    def SetLimbFinding(self, SimBase):
+        self.limbFinding.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
 
         self.limbFinding.saveImages = 0
         self.limbFinding.cannyThreshLow = 50
@@ -488,13 +487,13 @@ class BSKFswModels():
         self.limbFinding.blurrSize = 5
         self.limbFinding.limbNumThresh = 0
 
-    def SetHorizonNav(self):
-        self.horizonNavData.limbInMsgName = "limb_data"
-        self.horizonNavData.cameraConfigMsgName = "camera_config_data"
-        self.horizonNavData.attInMsgName = "simple_att_nav_output"
+    def SetHorizonNav(self, SimBase):
+        self.horizonNavData.limbInMsg.subscribeTo(self.limbFinding.opnavLimbOutMsg)
+        self.horizonNavData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.horizonNavData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
         self.horizonNavData.planetTarget = 2
         self.horizonNavData.noiseSF = 1 #2 should work though
-        self.horizonNavData.opNavOutMsgName = "output_nav_msg"
+        cMsgPy.OpNavMsg_C_addAuthor(self.horizonNavData.opNavOutMsg, self.opnavMsg)
 
     def SetRelativeODFilter(self):
         self.relativeODData.navStateOutMsgName = "relod_state_estimate"
@@ -598,8 +597,8 @@ class BSKFswModels():
         # self.SetRelativeODFilter()
         # self.SetFaultDetection()
         # # J. Christian methods
-        # self.SetLimbFinding()
-        # self.SetHorizonNav()
+        self.SetLimbFinding(SimBase)
+        self.SetHorizonNav(SimBase)
         #
         self.SetOpNavPointGuidance(SimBase)
         # self.SetHeadingUKF()

@@ -57,9 +57,15 @@ class scenario_OpNav(BSKScenario):
         self.masterSim = masterSim
         self.filterUse = "bias" #"relOD"
 
-    def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
+        # declare additional class variables
+        self.rwMotorRec = None
+        self.opNavRec = None
+        self.attGuidRec = None
+        self.circlesRec = None
+        self.scRec = None
+        self.rwLogs = []
 
+    def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 18000*1E3 # meters
@@ -67,8 +73,8 @@ class scenario_OpNav(BSKScenario):
         oe.i = 20 * macros.D2R
         oe.Omega = 25. * macros.D2R
         oe.omega = 190. * macros.D2R
-        oe.f = 100. * macros.D2R #90 good
-        mu = self.masterSim.get_DynModel().marsGravBody.mu
+        oe.f = 100. * macros.D2R  # 90 good
+        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
@@ -87,134 +93,44 @@ class scenario_OpNav(BSKScenario):
         self.masterSim.get_FswModel().opNavPointData.omega_RN_B = [0.001, 0.0, -0.001]
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-
         # Dynamics process outputs: log messages below if desired.
+        FswModel = self.masterSim.get_FswModel()
+        DynModel = self.masterSim.get_DynModel()
 
         # FSW process outputs
         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
-        # self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorCamData.outputDataName, samplingTime)
 
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().opNavPointData.attGuidanceOutMsgName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().scObject.scStateOutMsgName,samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
-        rwOutName = ["RWStateEffector_rw_config_0_data", "RWStateEffector_rw_config_1_data",
-                     "RWStateEffector_rw_config_2_data", "RWStateEffector_rw_config_3_data"]
-        for item in rwOutName:
-            self.masterSim.TotalSim.logThisMessage(item, samplingTime)
+        self.attGuidRec = FswModel.attGuidMsg.recorder(samplingTime)
+        self.rwMotorRec = FswModel.rwMotorTorqueData.rwMotorTorqueOutMsg.recorder(samplingTime)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.attGuidRec)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.rwMotorRec)
+
+        self.rwLogs = []
+        for item in range(4):
+            self.rwLogs.append(DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
+            self.masterSim.AddModelToTask(DynModel.taskName, self.rwLogs[item])
+
         return
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
 
-        # Dynamics process outputs: pull log messages below if any
-        # Lr = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().mrpFeedbackControlData.outputDataName + ".torqueRequestBody", range(3))
-
-        ## Spacecraft true states
-        position_N = self.masterSim.pullMessageLogData(
-            self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", range(3))
-        velocity_N = self.masterSim.pullMessageLogData(
-            self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".v_BN_N", range(3))
-        ## Attitude
-        sigma_BN = self.masterSim.pullMessageLogData(
-            self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".sigma_BN", range(3))
-        ## Image processing
-        # circleCenters = self.masterSim.pullMessageLogData(
-        #     self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName+ ".circlesCenters", range(2*10))
-        circleRadii = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName+ ".circlesRadii", range(10))
-        validCircle = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().imageProcessing.opnavCirclesOutMsgName+ ".valid", range(1))
-
-        # sigma_RN = self.masterSim.pullMessageLogData(
-        #     self.masterSim.get_FswModel().opNavPointData.attGuidanceOutMsgName + ".sigma_RN", list(range(3)))
-        # omega_RN_N = self.masterSim.pullMessageLogData(
-        #     self.masterSim.get_FswModel().opNavPointData.attGuidanceOutMsgName + ".omega_RN_B", list(range(3)))
-        sigma_BR = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorCamData.outputDataName + ".sigma_BR", list(range(3)))
-        omega_BR_B = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorCamData.outputDataName + ".omega_BR_B", list(range(3)))
-
+        sigma_BR = unitTestSupport.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.sigma_BR)
+        omega_BR_B = unitTestSupport.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.omega_BR_B)
 
         numRW = 4
-        dataUsReq = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(numRW)))
-        rwOutName = ["RWStateEffector_rw_config_0_data", "RWStateEffector_rw_config_1_data",
-                     "RWStateEffector_rw_config_2_data", "RWStateEffector_rw_config_3_data"]
+        dataUsReq = unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwMotorRec.motorTorque)
         dataRW = []
-        for i in range(0, numRW):
-            dataRW.append(self.masterSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
+        for i in range(numRW):
+            dataRW.append(unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
 
-        measPos = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName + ".r_BN_N", range(3))
-        r_C = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName + ".r_BN_C", range(3))
-        measCovar = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName + ".covar_N", range(3*3))
-        covar_C = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName + ".covar_C", range(3*3))
-
-        sigma_CB = self.masterSim.get_DynModel().cameraMRP_CB
-        sizeMM = self.masterSim.get_DynModel().cameraSize
-        sizeOfCam = self.masterSim.get_DynModel().cameraRez
-        focal = self.masterSim.get_DynModel().cameraFocal #in m
-
-        pixelSize = []
-        pixelSize.append(sizeMM[0] / sizeOfCam[0])
-        pixelSize.append(sizeMM[1] / sizeOfCam[1])
-
-        dcm_CB = rbk.MRP2C(sigma_CB)
         # Plot results
         BSK_plt.clear_all_plots()
-        # pixCovar = np.ones([len(circleCenters[:,0]), 3*3+1])
-        # pixCovar[:,0] = circleCenters[:,0]
-        # pixCovar[:,1:]*=np.array([1,0,0,0,1,0,0,0,2])
 
-        measError = np.full([len(measPos[:,0]), 4], np.nan)
-        measError[:,0] = measPos[:,0]
-        measError_C = np.full([len(measPos[:,0]), 5], np.nan)
-        measError_C[:,0] = measPos[:,0]
+        timeData = self.attGuidRec.times() * macros.NANO2MIN
 
-        # trueRhat_C = np.full([len(circleCenters[:,0]), 4], np.nan)
-        # trueCircles = np.full([len(circleCenters[:,0]), 4], np.nan)
-        # trueCircles[:,0] = circleCenters[:,0]
-        # trueRhat_C[:,0] = circleCenters[:,0]
-
-        # centerBias = np.copy(circleCenters)
-        # radBias = np.copy(circleRadii)
-
-        # ModeIdx = 0
-        # Rmars = 3396.19*1E3
-        # for j in range(len(position_N[:, 0])):
-        #     if position_N[j, 0] in circleCenters[:, 0]:
-        #         ModeIdx = j
-        #         break
-        # for i in range(len(circleCenters[:,0])):
-        #     if circleCenters[i,1:].any() > 1E-8 or circleCenters[i,1:].any() < -1E-8:
-        #         trueRhat_C[i,1:] = np.dot(np.dot(dcm_CB, rbk.MRP2C(sigma_BN[ModeIdx+i , 1:4])) ,position_N[ModeIdx+i, 1:4])/np.linalg.norm(position_N[ModeIdx+i, 1:4])
-        #         trueCircles[i,3] = focal*np.tan(np.arcsin(Rmars/np.linalg.norm(position_N[ModeIdx+i,1:4])))/pixelSize[0]
-        #         trueRhat_C[i,1:] *= focal/trueRhat_C[i,3]
-        #         trueCircles[i, 1] = trueRhat_C[i, 1] / pixelSize[0] + sizeOfCam[0]/2 - 0.5
-        #         trueCircles[i, 2] = trueRhat_C[i, 2] / pixelSize[1] + sizeOfCam[1]/2 - 0.5
-        #
-        #         measError[i, 1:4] = position_N[ModeIdx+i, 1:4] - measPos[i, 1:4]
-        #         measError_C[i, 4] = np.linalg.norm(position_N[ModeIdx+i, 1:4]) - np.linalg.norm(r_C[i, 1:4])
-        #         measError_C[i, 1:4] = trueRhat_C[i,1:] - r_C[i, 1:4]/np.linalg.norm(r_C[i, 1:4])
-        #     else:
-        #         measCovar[i,1:] = np.full(3*3, np.nan)
-        #         covar_C[i, 1:] = np.full(3 * 3, np.nan)
-
-        timeData = position_N[:, 0] * macros.NANO2MIN
-
-        # BSK_plt.AnimatedScatter(sizeOfCam, circleCenters, circleRadii, validCircle)
-        # BSK_plt.plot_cirlces(timeData[switchIdx:], circleCenters, circleRadii, validCircle, sizeOfCam)
         BSK_plt.plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
-
-        # BSK_plt.imgProcVsExp(trueCircles, circleCenters, circleRadii, np.array(sizeOfCam))
-        # BSK_plt.centerXY(circleCenters, np.array(sizeOfCam))
 
         figureList = {}
         if showPlots:
@@ -227,13 +143,12 @@ class scenario_OpNav(BSKScenario):
         return figureList
 
 
-def run(showPlots, simTime = None):
+def run(showPlots, simTime=None):
 
     # Instantiate base simulation
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
     TheBSKSim.set_DynModel(BSK_OpNavDynamics)
     TheBSKSim.set_FswModel(BSK_OpNavFsw)
-    TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_OpNav(TheBSKSim, showPlots)
