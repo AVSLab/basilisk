@@ -39,7 +39,6 @@ Camera::Camera()
     this->pointImageOut = NULL;
     
     /*! Default values for the camera.  */
-    strcpy(this->parentName, "spacecraft");
     this->cameraID = 1;
     this->resolution[0] = 512;
     this->resolution[1] = 512;
@@ -50,6 +49,8 @@ Camera::Camera()
     this->filename = "";
     this->fieldOfView = 0.7;
     strcpy(this->skyBox, "black");
+    this->saveImages = 0;
+    this->saveDir = "";
 
     /*! Default values for the perturbations.  */
     this->gaussian = 0;
@@ -377,7 +378,9 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
         ApplyFilters(imageCV, blurred, this->gaussian, this->darkCurrent, this->saltPepper, this->cosmicRays, this->blurParam);
         if (this->saveImages == 1){
-            cv::imwrite(localPath, blurred);
+            if (!cv::imwrite(localPath, blurred)) {
+                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
+            }
         }
     }
     else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
@@ -387,7 +390,9 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         
         ApplyFilters(imageCV, blurred, this->gaussian, this->darkCurrent, this->saltPepper, this->cosmicRays, this->blurParam);
         if (this->saveImages == 1){
-            cv::imwrite(localPath, blurred);
+            if (!cv::imwrite(localPath, blurred)) {
+                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
+            }
         }
         /*! If the permanent image buffer is not populated, it will be equal to null*/
         if (this->pointImageOut != NULL) {

@@ -206,7 +206,7 @@ class scenario_OpNav(BSKScenario):
         return figureList
 
 
-def run(showPlots, simTime = None):
+def run(showPlots, simTime=None):
 
     # Instantiate base simulation
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
@@ -219,7 +219,7 @@ def run(showPlots, simTime = None):
         TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
-    TheBSKSim.get_DynModel().cameraMod.saveImages = 0
+    TheBSKSim.get_DynModel().cameraMod.saveImages = 1
     # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 

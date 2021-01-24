@@ -76,10 +76,9 @@ class BSKDynamicModels():
         self.cameraMRP_CB =[]
         self.cameraRez = []
 
-        self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.rwFactory = simIncludeRW.rwFactory()
-
         self.scObject = spacecraftPlus.SpacecraftPlus()
+        self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
         self.SimpleNavObject = simpleNav.SimpleNav()
         self.vizInterface = vizInterface.VizInterface()
@@ -111,7 +110,7 @@ class BSKDynamicModels():
     def SetCamera(self):
         self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsg)
         self.cameraMod.saveImages = 0
-        self.cameraMod.saveDir = 'Test/'
+        self.cameraMod.saveDir = 'TestCameraImages'
 
         # Noise parameters
         # self.cameraMod.gaussian = 2
@@ -132,7 +131,7 @@ class BSKDynamicModels():
         self.cameraSize = [10.*1E-3, self.cameraRez[1]/self.cameraRez[0]*10.*1E-3]  # in m
         self.cameraMod.resolution = self.cameraRez
         self.cameraMod.fieldOfView = np.deg2rad(55)
-        self.cameraMod.parentName = 'inertial'
+        self.cameraMod.parentName = self.scObject.ModelTag
         self.cameraMod.skyBox = 'black'
         self.cameraFocal = self.cameraSize[1]/2./np.tan(self.cameraMod.fieldOfView/2.)  # in m
 
@@ -142,11 +141,12 @@ class BSKDynamicModels():
             # , saveFile=__file__
             , rwEffectorList=[self.rwStateEffector]
             )
+        # setup OpNav behavior by connecting camera module config message
         self.vizInterface.cameraConfInMsg.subscribeTo(self.cameraMod.cameraConfigOutMsg)
         self.vizInterface.opNavMode = 2
 
     def SetSpacecraftHub(self):
-        self.scObject.ModelTag = "spacecraftBody"
+        self.scObject.ModelTag = "bskSat"
         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
         self.I_sc = [900., 0., 0.,
                      0., 800., 0.,

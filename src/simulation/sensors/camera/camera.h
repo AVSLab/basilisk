@@ -58,7 +58,7 @@ public:
     ReadFunctor<CameraImageMsgPayload> imageInMsg;      //!< camera image input message
     Message<CameraImageMsgPayload> imageOutMsg;         //!< camera image output message
     Message<CameraConfigMsgPayload> cameraConfigOutMsg; //!< The name of the CameraConfigMsg output message
-    std::string saveDir;                //!< The name of the directory to save images
+    std::string saveDir;                 //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     
