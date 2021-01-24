@@ -110,6 +110,8 @@ class BSKDynamicModels():
     def SetCamera(self):
         self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsg)
         self.cameraMod.saveImages = 0
+        # Note, if the `saveDir` variable is a path to a file, then the folders must already exist
+        # for the image saving to work.
         self.cameraMod.saveDir = 'TestCameraImages'
 
         # Noise parameters

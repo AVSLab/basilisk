@@ -98,7 +98,7 @@ class scenario_OpNav(BSKScenario):
         # FSW process outputs
         samplingTime = FswModel.processTasksTimeStep
 
-        self.opNavRec = FswModel.pixelLineData.opNavOutMsg.recorder(samplingTime)
+        self.opNavRec = FswModel.opnavMsg.recorder(samplingTime)
         self.attGuidRec = FswModel.attGuidMsg.recorder(samplingTime)
         self.rwMotorRec = FswModel.rwMotorTorqueData.rwMotorTorqueOutMsg.recorder(samplingTime)
         self.circlesRec = FswModel.opnavCirclesMsg.recorder(samplingTime)
@@ -219,7 +219,7 @@ def run(showPlots, simTime=None):
         TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
-    TheBSKSim.get_DynModel().cameraMod.saveImages = 1
+    TheBSKSim.get_DynModel().cameraMod.saveImages = 0
     # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 

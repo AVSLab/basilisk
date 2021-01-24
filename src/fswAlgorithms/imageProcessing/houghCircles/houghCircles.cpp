@@ -114,13 +114,16 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         if (this->saveImages == 1){
-            cv::imwrite(this->saveDir, imageCV);
+            if (!cv::imwrite(this->saveDir, imageCV)) {
+                bskLogger.bskLog(BSK_WARNING, "houghCircles: wasn't able to save images.");
+            }
         }
     }
     else{
         /*! - If no image is present, write zeros in message */
         this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
-        return;}
+        return;
+    }
 
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);

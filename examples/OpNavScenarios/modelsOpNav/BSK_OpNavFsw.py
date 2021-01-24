@@ -457,7 +457,7 @@ class BSKFswModels():
 
     def SetImageProcessing(self, SimBase):
         self.imageProcessing.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
-        self.imageProcessing.opnavCirclesOutMsg.write = self.opnavCirclesMsg.addAuthor()
+        self.imageProcessing.opnavCirclesOutMsg = self.opnavCirclesMsg
 
         self.imageProcessing.saveImages = 0
         self.imageProcessing.expectedCircles = 1
@@ -468,7 +468,7 @@ class BSKFswModels():
         self.imageProcessing.blurrSize = 9
         self.imageProcessing.noiseSF = 1
         self.imageProcessing.dpValue = 1
-        self.imageProcessing.saveDir = 'Test/'
+        self.imageProcessing.saveDir = 'Test'
         self.imageProcessing.houghMaxRadius = 0  # int(512 / 1.25)
 
     def SetPixelLineConversion(self, SimBase):
@@ -622,6 +622,6 @@ class BSKFswModels():
         self.attGuidMsg.write(messaging2.AttGuidMsgPayload())
         self.opnavMsg.write(messaging2.OpNavMsgPayload())
 
-        self.opnavCirclesMsg.write(messaging2.CirclesOpNavMsgPayload(), 0, 0)
+        self.opnavCirclesMsg.write(messaging2.CirclesOpNavMsgPayload())
 
 # BSKFswModels()
