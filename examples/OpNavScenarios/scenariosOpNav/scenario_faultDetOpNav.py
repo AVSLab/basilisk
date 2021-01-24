@@ -37,7 +37,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
 # Get current file path
-import sys, os, inspect, time, signal, subprocess
+import sys, os, inspect, time
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -47,11 +47,14 @@ from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics
 import BSK_OpNavFsw
 import numpy as np
-from sys import platform
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../plottingOpNav')
 import OpNav_Plotting as BSK_plt
+
+from Basilisk.architecture import messaging2
+import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
+
 
 # Create your own scenario child class
 class scenario_OpNav(BSKScenario):
@@ -62,9 +65,14 @@ class scenario_OpNav(BSKScenario):
         self.name = 'scenario_opnav'
         self.masterSim = masterSim
 
-    def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
+        # declare additional class variables
+        self.opNavRec = None
+        self.opNavPrimRec = None
+        self.opNavSecRec = None
+        self.scRec = None
+        self.filtRec = None
 
+    def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 18000 * 1E3  # meters
@@ -73,7 +81,7 @@ class scenario_OpNav(BSKScenario):
         oe.Omega = 25. * macros.D2R
         oe.omega = 190. * macros.D2R
         oe.f = 80. * macros.D2R  # 90 good
-        mu = self.masterSim.get_DynModel().marsGravBody.mu
+        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
@@ -86,9 +94,10 @@ class scenario_OpNav(BSKScenario):
         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
         self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
-        #primary_opnav, secondary_opnav
-        self.masterSim.get_FswModel().horizonNavData.opNavOutMsgName = "primary_opnav"
-        self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName ="secondary_opnav"
+        # primary_opnav, secondary_opnav
+        FswModel = self.masterSim.get_FswModel()
+        cMsgPy.OpNavMsg_C_addAuthor(FswModel.horizonNavData.opNavOutMsg, FswModel.opnavPrimaryMsg)
+        cMsgPy.OpNavMsg_C_addAuthor(FswModel.pixelLineData.opNavOutMsg, FswModel.opnavSecondaryMsg)
 
         # Filter noise param
         self.masterSim.get_FswModel().relativeODData.noiseSF = 5
@@ -105,67 +114,57 @@ class scenario_OpNav(BSKScenario):
         self.masterSim.get_FswModel().opNavFaultData.faultMode = 0
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-
         # Dynamics process outputs: log messages below if desired.
+        FswModel = self.masterSim.get_FswModel()
+        DynModel = self.masterSim.get_DynModel()
 
         # FSW process outputs
         samplingTimeFsw = self.masterSim.get_FswModel().processTasksTimeStep
         samplingTimeDyn = self.masterSim.get_DynModel().processTasksTimeStep
-        # self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorCamData.outputDataName, samplingTime)
-        # self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
 
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().relativeODData.filtDataOutMsgName,samplingTimeFsw)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().opNavFaultData.opNavOutMsgName,samplingTimeFsw)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().scObject.scStateOutMsgName, samplingTimeDyn)
+        self.filtRec = FswModel.relativeODData.filtDataOutMsg.recorder(samplingTimeFsw)
+        self.opNavRec = FswModel.opnavMsg.recorder(samplingTimeFsw)
+        self.scRec = DynModel.scObject.scStateOutMsg.recorder(samplingTimeDyn)
+        self.opNavPrimRec = FswModel.opnavPrimaryMsg.recorder(samplingTimeFsw)
+        self.opNavSecRec = FswModel.opnavSecondaryMsg.recorder(samplingTimeFsw)
 
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName,
-                                               samplingTimeFsw)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().horizonNavData.opNavOutMsgName,
-                                               samplingTimeFsw)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.filtRec)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.opNavRec)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.scRec)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.opNavPrimRec)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.opNavSecRec)
 
         return
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
         NUM_STATES = 6
 
         ## Spacecraft true states
-        position_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", range(3))
-        velocity_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".v_BN_N", range(3))
-        # position_N[:,1:] -= mars_pos[:,1:]
-        # velocity_N[:,1:] -= mars_vel[:,1:]
+        position_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
+        velocity_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.v_BN_N)
+
         ## Attitude
-        sigma_BN = self.masterSim.pullMessageLogData(
-            self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".sigma_BN", range(3))
+        sigma_BN = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
+
         ## Navigation results
-        navState = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().relativeODData.filtDataOutMsgName + ".state", range(NUM_STATES))
-        navCovar = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().relativeODData.filtDataOutMsgName + ".covar",
-            range(NUM_STATES * NUM_STATES))
-        validLimb = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().horizonNavData.opNavOutMsgName + ".valid", range(1))
-        validHough = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().pixelLineData.opNavOutMsgName + ".valid", range(1))
+        navState = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.state)
+        navCovar = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.covar)
+
+        validLimb = unitTestSupport.addTimeColumn(self.opNavPrimRec.times(), self.opNavPrimRec.valid)
+        validHough = unitTestSupport.addTimeColumn(self.opNavSecRec.times(), self.opNavSecRec.valid)
+
         ## Fault Detection
-        measPos = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().opNavFaultData.opNavOutMsgName + ".r_BN_N", range(3))
-        valid = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().opNavFaultData.opNavOutMsgName + ".valid", range(1))
-        faults = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().opNavFaultData.opNavOutMsgName + ".faultDetected", range(1))
-        r_C = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().opNavFaultData.opNavOutMsgName + ".r_BN_C", range(3))
-        measCovar = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().opNavFaultData.opNavOutMsgName + ".covar_N", range(3 * 3))
-        covar_C = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().opNavFaultData.opNavOutMsgName + ".covar_C", range(3 * 3))
+        measPos = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
+        valid = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.valid)
+        faults = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.faultDetected)
+        r_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
+        measCovar = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
+        covar_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
 
         sigma_CB = self.masterSim.get_DynModel().cameraMRP_CB
         sizeMM = self.masterSim.get_DynModel().cameraSize
         sizeOfCam = self.masterSim.get_DynModel().cameraRez
-        focal = self.masterSim.get_DynModel().cameraFocal #in m
+        focal = self.masterSim.get_DynModel().cameraFocal  # in m
 
         pixelSize = []
         pixelSize.append(sizeMM[0] / sizeOfCam[0])
@@ -241,7 +240,6 @@ def run(showPlots, simTime = None):
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
     TheBSKSim.set_DynModel(BSK_OpNavDynamics)
     TheBSKSim.set_FswModel(BSK_OpNavFsw)
-    TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_OpNav(TheBSKSim, showPlots)

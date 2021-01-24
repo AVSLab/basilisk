@@ -66,6 +66,8 @@ class BSKFswModels():
         self.fswRwConfigMsg = None
         self.attGuidMsg = None
         self.opnavMsg = None
+        self.opnavPrimaryMsg = None
+        self.opnavSecondaryMsg = None
         self.opnavCirclesMsg = None
 
         # Define process name and default time-step for all FSW tasks defined later on
@@ -198,13 +200,13 @@ class BSKFswModels():
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
 
-        # SimBase.AddModelToTask("attODFaultDet", self.limbFinding, None, 25)
-        # SimBase.AddModelToTask("attODFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
-        # SimBase.AddModelToTask("attODFaultDet", self.imageProcessing, None, 18)
-        # SimBase.AddModelToTask("attODFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-        # SimBase.AddModelToTask("attODFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-        # SimBase.AddModelToTask("attODFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
-        # SimBase.AddModelToTask("attODFaultDet", self.relativeODWrap, self.relativeODData, 9)
+        SimBase.AddModelToTask("attODFaultDet", self.limbFinding, None, 25)
+        SimBase.AddModelToTask("attODFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
+        SimBase.AddModelToTask("attODFaultDet", self.imageProcessing, None, 18)
+        SimBase.AddModelToTask("attODFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
+        SimBase.AddModelToTask("attODFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
+        SimBase.AddModelToTask("attODFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
+        SimBase.AddModelToTask("attODFaultDet", self.relativeODWrap, self.relativeODData, 9)
 
         # SimBase.AddModelToTask("opNavFaultDet", self.limbFinding, None, 25)
         # SimBase.AddModelToTask("opNavFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
@@ -321,12 +323,12 @@ class BSKFswModels():
                                 "self.enableTask('cnnAttODTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("FaultDet", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'FaultDet'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('attODFaultDet')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("FaultDet", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'FaultDet'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('attODFaultDet')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         # SimBase.createNewEvent("ODFaultDet", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'ODFaultDet'"],
@@ -525,12 +527,12 @@ class BSKFswModels():
         qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
         self.relativeODData.qNoise = qNoiseIn.reshape(36).tolist()
 
-    def SetFaultDetection(self):
-        self.opNavFaultData.navMeasPrimaryMsgName = "primary_opnav"
-        self.opNavFaultData.navMeasSecondaryMsgName = "secondary_opnav"
-        self.opNavFaultData.cameraConfigMsgName = "camera_config_data"
-        self.opNavFaultData.attInMsgName = "simple_att_nav_output"
-        self.opNavFaultData.opNavOutMsgName = "output_nav_msg"
+    def SetFaultDetection(self, SimBase):
+        self.opNavFaultData.navMeasPrimaryInMsg.subscribeTo(self.opnavPrimaryMsg)
+        self.opNavFaultData.navMeasSecondaryInMsg.subscribeTo(self.opnavSecondaryMsg)
+        self.opNavFaultData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.opNavFaultData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        cMsgPy.OpNavMsg_C_addAuthor(self.opNavFaultData.opNavOutMsg, self.opnavMsg)
         self.opNavFaultData.sigmaFault = 0.3
         self.opNavFaultData.faultMode = 0
 
@@ -589,7 +591,7 @@ class BSKFswModels():
         if centerRadiusCNNIncluded:
             self.SetCNNOpNav(SimBase)
         self.SetRelativeODFilter()
-        # self.SetFaultDetection()
+        self.SetFaultDetection(SimBase)
 
         # J. Christian methods
         self.SetLimbFinding(SimBase)
@@ -605,6 +607,8 @@ class BSKFswModels():
         # C wrapped gateway messages
         self.attGuidMsg = cMsgPy.AttGuidMsg_C()
         self.opnavMsg = cMsgPy.OpNavMsg_C()
+        self.opnavPrimaryMsg = cMsgPy.OpNavMsg_C()
+        self.opnavSecondaryMsg = cMsgPy.OpNavMsg_C()
 
         # C++ wrapped gateway messages
         self.opnavCirclesMsg = messaging2.CirclesOpNavMsg()
@@ -615,6 +619,8 @@ class BSKFswModels():
         """Zero all the FSW gateway message payloads"""
         self.attGuidMsg.write(messaging2.AttGuidMsgPayload())
         self.opnavMsg.write(messaging2.OpNavMsgPayload())
+        self.opnavPrimaryMsg.write(messaging2.OpNavMsgPayload())
+        self.opnavSecondaryMsg.write(messaging2.OpNavMsgPayload())
 
         self.opnavCirclesMsg.write(messaging2.CirclesOpNavMsgPayload())
 

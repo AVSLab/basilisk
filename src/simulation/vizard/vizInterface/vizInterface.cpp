@@ -89,14 +89,16 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         memcpy(message, "PING", 4);
         zmq_msg_t request;
 
-        std::cout << "Waiting for Vizard at " + this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber << std::endl;
+        std::string text;
+        text = "Waiting for Vizard at " + this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber;
+        bskLogger.bskLog(BSK_INFORMATION, text.c_str());
 
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, this->requester_socket, 0);
         char buffer[4];
         zmq_recv (this->requester_socket, buffer, 4, 0);
         zmq_send (this->requester_socket, "PING", 4, 0);
-        std::cout << "Basilisk-Vizard connection made" << std::endl;
+        bskLogger.bskLog(BSK_INFORMATION, "Basilisk-Vizard connection made");
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;

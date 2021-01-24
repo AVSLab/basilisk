@@ -173,10 +173,10 @@ def plot_faults(dataFaults, valid1, valid2):
     for i in range(10):
         colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
 
-    for i in range(len(dataFaults[:,0])):
-        if (dataFaults[i,0]*ns2min%1 != 0):
-            valid1[i, 1] = np.nan
-            valid2[i, 1] = np.nan
+    # for i in range(len(dataFaults[:,0])):
+    #     if (dataFaults[i,0]*ns2min%1 != 0):
+    #         valid1[i, 1] = np.nan
+    #         valid2[i, 1] = np.nan
 
     plt.figure(10101, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.xlabel('Time (min)')
