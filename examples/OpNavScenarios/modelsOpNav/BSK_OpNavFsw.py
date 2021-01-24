@@ -394,6 +394,7 @@ class BSKFswModels():
     def SetAttTrackingErrorCam(self, SimBase):
         self.trackingErrorCamData.attRefInMsg.subscribeTo(self.hillPointData.attRefOutMsg)
         self.trackingErrorCamData.attNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        cMsgPy.AttGuidMsg_C_addAuthor(self.trackingErrorCamData.attGuidOutMsg, self.attGuidMsg)
 
         M2 =  rbk.euler2(90 * macros.D2R) #rbk.euler2(-90 * macros.D2R) #
         M3 =  rbk.euler1(90 * macros.D2R) #rbk.euler3(90 * macros.D2R) #

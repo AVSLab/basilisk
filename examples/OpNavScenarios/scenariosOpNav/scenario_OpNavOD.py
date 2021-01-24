@@ -129,8 +129,6 @@ class scenario_OpNav(BSKScenario):
         circleCenters = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesCenters)
         circleRadii = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
         validCircle = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.valid)
-        print("HPS: circles")
-        print(circleCenters)
         if self.filterUse == "bias":
             NUM_STATES = 9
             ## Navigation results
@@ -147,10 +145,7 @@ class scenario_OpNav(BSKScenario):
             r_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
             measCovar = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
             covar_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
-        print("HPS: navState")
-        print(navState)
-        print("HPS: measPos")
-        print(measPos)
+
         sigma_CB = self.masterSim.get_DynModel().cameraMRP_CB
         sizeMM = self.masterSim.get_DynModel().cameraSize
         sizeOfCam = self.masterSim.get_DynModel().cameraRez
@@ -223,8 +218,9 @@ class scenario_OpNav(BSKScenario):
         if self.filterUse == "relOD":
             BSK_plt.plot_TwoOrbits(navState, measPos)
         # BSK_plt.AnimatedCircles(sizeOfCam, circleCenters, circleRadii, validCircle)
-        BSK_plt.diff_vectors(trueR_C, r_C, validCircle, "Circ")
-        BSK_plt.plot_cirlces(circleCenters, circleRadii, validCircle, sizeOfCam)
+        if self.filterUse == "relOD":
+            BSK_plt.diff_vectors(trueR_C, r_C, validCircle, "Circ")
+            BSK_plt.plot_cirlces(circleCenters, circleRadii, validCircle, sizeOfCam)
         BSK_plt.plotStateCovarPlot(stateError, navCovarLong)
         if self.filterUse == "bias":
             circleCenters[i,1:] += centerBias[i,1:]

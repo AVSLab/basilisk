@@ -112,7 +112,7 @@ class BSKDynamicModels():
         self.cameraMod.saveImages = 0
         # Note, if the `saveDir` variable is a path to a file, then the folders must already exist
         # for the image saving to work.
-        self.cameraMod.saveDir = 'TestCameraImages'
+        self.cameraMod.saveDir = 'Test/'
 
         # Noise parameters
         # self.cameraMod.gaussian = 2
