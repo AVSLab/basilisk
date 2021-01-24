@@ -277,7 +277,7 @@ class scenario_OpNav(BSKScenario):
         return figureList
 
 
-def run(showPlots, simTime = None):
+def run(showPlots, simTime=None):
 
     # Instantiate base simulation
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)

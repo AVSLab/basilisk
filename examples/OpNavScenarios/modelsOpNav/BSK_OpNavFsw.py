@@ -163,10 +163,10 @@ class BSKFswModels():
         SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
         SimBase.AddModelToTask("opNavPointLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
 
-        # SimBase.AddModelToTask("opNavAttODLimbTask", self.limbFinding, None, 25)
-        # SimBase.AddModelToTask("opNavAttODLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
-        # SimBase.AddModelToTask("opNavAttODLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
-        # SimBase.AddModelToTask("opNavAttODLimbTask", self.relativeODWrap, self.relativeODData, 9)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.limbFinding, None, 25)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.relativeODWrap, self.relativeODData, 9)
 
         SimBase.AddModelToTask("opNavODTaskLimb", self.limbFinding, None, 25)
         SimBase.AddModelToTask("opNavODTaskLimb", self.horizonNavWrap, self.horizonNavData, 22)
@@ -307,12 +307,12 @@ class BSKFswModels():
                                 "self.enableTask('opNavAttODTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("OpNavAttODLimb", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'OpNavAttODLimb'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavAttODLimbTask')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("OpNavAttODLimb", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'OpNavAttODLimb'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('opNavAttODLimbTask')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         # SimBase.createNewEvent("CNNAttOD", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'CNNAttOD'"],
