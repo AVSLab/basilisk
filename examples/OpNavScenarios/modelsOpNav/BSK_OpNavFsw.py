@@ -184,10 +184,10 @@ class BSKFswModels():
 
         # SimBase.AddModelToTask("imageProcTask", self.imageProcessing, None, 15)
 
-        # SimBase.AddModelToTask("opNavAttODTask", self.imageProcessing, None, 15)
-        # SimBase.AddModelToTask("opNavAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        # SimBase.AddModelToTask("opNavAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
-        # SimBase.AddModelToTask("opNavAttODTask", self.relativeODWrap, self.relativeODData, 9)
+        SimBase.AddModelToTask("opNavAttODTask", self.imageProcessing, None, 15)
+        SimBase.AddModelToTask("opNavAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
+        SimBase.AddModelToTask("opNavAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
+        SimBase.AddModelToTask("opNavAttODTask", self.relativeODWrap, self.relativeODData, 9)
 
         # if centerRadiusCNNIncluded:
         #     SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
@@ -300,12 +300,12 @@ class BSKFswModels():
                                 "self.enableTask('mrpFeedbackRWsTask')",
                                 "self.enableTask('opNavODTaskB')"])
 
-        # SimBase.createNewEvent("OpNavAttOD", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'OpNavAttOD'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavAttODTask')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("OpNavAttOD", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'OpNavAttOD'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('opNavAttODTask')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         # SimBase.createNewEvent("OpNavAttODLimb", self.processTasksTimeStep, True,
         #                        ["self.modeRequest == 'OpNavAttODLimb'"],
