@@ -361,6 +361,22 @@ to it at a later time you simply use::
     msg.write(msgData, time)
 
 Note that stand-alone messages written in Python don't have a module ID.  The message module ID is thus set to -1.
+If you want to specify another module ID, this can be done with::
+
+    msg.write(msgData, time, moduleID)
+
+Next consider a C++ module that needs to not write to it's own C++ wrapped output message
+``module.someOutMsg``, but rather to a stand-alone C++ message ``standAloneMsg`` created in Python.
+Thus the module output is re-directed to another message object.
+This can be done very simply with replacing the module internal message with the external
+message of the same type::
+
+    module.somOutMsg = standAloneMsg
+
+Any module ``nextModule.SomeInMsg`` that needs to read the output of ``module.someOutMsg`` can be setup to
+read the output of the stand-alone message ``standAloneMsg`` instead using::
+
+    nextModule.SomeInMsg.subscribeTo(standAloneMsg)
 
 Setting a C-Wrapped Basilisk Message from Python
 ------------------------------------------------
@@ -401,20 +417,6 @@ Next consider the scenario where you don't want to have a C module to write to i
 module message ``standAloneMsg`` of the same type.  This can be done with::
 
     cMsgPy.ParticularMsg_C_addAuthor(module.someOutMsg, standAloneMsg)
-
-Any module ``nextModule.SomeInMsg`` that needs to read the output of ``module.someOutMsg`` can be setup to
-read the output of the stand-alone message ``standAloneMsg`` instead using::
-
-    nextModule.SomeInMsg.subscribeTo(standAloneMsg)
-
-Redirecting Module Output to Stand-Alone C++-Wrapped Message
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Next consider a C++ module that needs to not write to it's own C++ wrapped output message
-``module.someOutMsg``, but rather to a stand-alone C++ message ``standAloneMsg`` created in Python.
-This can be done very simply with replacing the module internal message with the external
-message of the same type::
-
-    module.somOutMsg = standAloneMsg
 
 Any module ``nextModule.SomeInMsg`` that needs to read the output of ``module.someOutMsg`` can be setup to
 read the output of the stand-alone message ``standAloneMsg`` instead using::
