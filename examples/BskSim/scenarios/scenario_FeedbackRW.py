@@ -25,7 +25,7 @@ This script sets up a 6-DOF spacecraft orbiting Earth. The goal of the scenario 
 #. add reaction wheels to :ref:`BSK_Dynamics`, and
 #. establish a inertial pointing FSW mode in :ref:`BSK_FSW`.
 
-The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_FeedbackRW.py
 

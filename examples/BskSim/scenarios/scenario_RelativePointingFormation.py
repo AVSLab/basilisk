@@ -25,7 +25,7 @@ This script sets up a deputy that points to a chief spacecraft. The goal of the 
 #. How to make sure that a deputy spacecraft is able to read data from a chief spacecraft.
 #. How to implement a module that combines data from two spacecraft into a scenario.
 
-The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_RelativePointingFormation.py
 

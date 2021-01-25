@@ -26,7 +26,7 @@ The difference is that instead of plotting the results after the simulation has 
 thread is created to update the plots live during the simulation run itself.  For more information on doing live
 plotting see help file :ref:`usingLivePlotting`.
 
-The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_BasicOrbit_LivePlot.py
 

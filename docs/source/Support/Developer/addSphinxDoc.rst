@@ -30,4 +30,4 @@ Some modules in Basilisk are organized into sub-folders.  If you want to add doc
 
 Overriding the Folder's Auto-Generated ``index.rst`` File
 ---------------------------------------------------------
-In some cases, such as with the Basilisk example scripts folder in ``src/examples``, we want to over-ride the auto-generated ``index.rst`` file with a custom file to control how the folder contents is rendered.  This is done by placing a restructured text file called ``_default.rst`` inside this folder.  The sample output can be found in :ref:`examples`.
+In some cases, such as with the Basilisk example scripts folder in ``basilisk/examples``, we want to over-ride the auto-generated ``index.rst`` file with a custom file to control how the folder contents is rendered.  This is done by placing a restructured text file called ``_default.rst`` inside this folder.  The sample output can be found in :ref:`examples`.

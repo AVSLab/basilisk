@@ -20,14 +20,14 @@ Overview
 --------
 
 The goal of the OpNav Scenarios is to simulate Optical Navigation methods and performance in Basilisk.
-All of the scenarios provided in ``src/examples/OpNavScenarios`` put a spacecraft on orbit about Mars. By extracting
+All of the scenarios provided in ``basilisk/examples/OpNavScenarios`` put a spacecraft on orbit about Mars. By extracting
 limbs are circles from the images, the spacecraft can point to the planet, and estimate it's position.
 
 .. image:: /_images/static/OpNavScenario.png
    :align: center
 
 This Basilisk Simulation, which inherits ``SimulationBaseClass``, provides the backbone for all the OpNav simulations
-provided in ``src/examples/OpNavScenarios``.
+provided in ``basilisk/examples/OpNavScenarios``.
 These simulations spawn the Basilisk :ref:`Vizard <Vizard>` visualization in order to provide images for processing. These images are
 handled by the vizInterface module found in ``src/simulation/viz_interface``. A figure illustrating the architecture
 is found here:

@@ -26,7 +26,7 @@ This script sets up a 3-DOF spacecraft which is orbiting the Earth. The goal of 
 #. demonstrate how to create a custom BSK_scenario, and
 #. how to customize the ``BSK_Dynamics.py`` and ``BSK_FSW.py`` files.
 
-The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_BasicOrbit.py
 

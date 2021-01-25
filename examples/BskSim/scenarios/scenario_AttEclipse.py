@@ -31,7 +31,7 @@ illustrate
 #. how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs, and
 #. configure a custom timestep for the dynamics and FSW processes.
 
-The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AttitudeEclipse.py
 

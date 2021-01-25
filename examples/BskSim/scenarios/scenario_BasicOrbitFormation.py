@@ -26,7 +26,7 @@ This script sets up two 3-DOF spacecraft orbiting the Earth. The goal of the sce
 #. demonstrate how to create a formation flying scenario, and
 #. how to customize the :ref:`BSK_FormationDynamics.py <BSK_FormationDynamics>` and :ref:`BSK_FormationFSW.py <BSK_FormationFSW>` files.
 
-The script is found in the folder ``src/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_BasicOrbitFormation.py
 
