@@ -30,7 +30,7 @@ ModuleIdGenerator* ModuleIdGenerator::TheInstance = NULL;
  */
 ModuleIdGenerator::ModuleIdGenerator()
 {
-    this->nextModuleID = 0;
+    this->nextModuleID = 1;
 }
 
 /*!

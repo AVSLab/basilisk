@@ -312,8 +312,6 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
     The class uses the following
     virtual functions:
 
-    #. ``selfInit``: initializes the module.
-    #. ``crossInit``: no current need for this,
     #. ``reset``: The method that will initialize any persistent data in your model to a common
        "ready to run" state (e.g. filter states, integral control sums, etc).
     #. ``updateState``: The method that will be called at the rate specified
@@ -343,14 +341,6 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         # Output body torque message name
         self.cmdTorqueOutMsg = messaging2.CmdTorqueBodyMsg()
 
-    def selfInit(self):
-        """used to initialize a module"""
-        return
-
-    def crossInit(self):
-        """depreciated method, should be removed"""
-        return
-
     def reset(self, currentTime):
         """
         The reset method is used to clear out any persistent variables that need to get changed
@@ -360,7 +350,6 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         :return: none
         """
         return
-
 
     def updateState(self, currentTime):
         """

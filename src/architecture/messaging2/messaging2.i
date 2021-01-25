@@ -81,13 +81,13 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %template(messageType) Message<messageTypePayload>;
 %extend Message<messageTypePayload>{
     %pythoncode %{
-        def write(self, payload, time=0, moduleID=-1):
+        def write(self, payload, time=0, moduleID=0):
             """write the message payload.
             The 2nd argument is time in nanoseconds.  It is optional and defaults to 0.
-            The 3rd argument is the module ID which defaults to -1.
+            The 3rd argument is the module ID which defaults to 0.
             """
             writeMsg = self.addAuthor()
-            writeMsg(payload, moduleID, time)  # msgs written in python have -1 module ID
+            writeMsg(payload, moduleID, time)  # msgs written in python have 0 module ID
             return self
 
         def read(self):

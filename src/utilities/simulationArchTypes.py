@@ -78,7 +78,8 @@ class PythonModelClass(object):
         self.modelActive = modelActive
         # The moduleID is a numeric identifier used to track message usage in
         # a given simulation.
-        self.moduleID = moduleIdGenerator.ModuleIdGenerator_GetInstance().checkoutModuleID()
+        # Note: python modules get negative ID numbers
+        self.moduleID = -moduleIdGenerator.ModuleIdGenerator_GetInstance().checkoutModuleID()
         # The modelPriority variable is the setting for which models get run
         # first.  Higher priority indicates that a model will get run sooner.
         self.modelPriority = modelPriority
