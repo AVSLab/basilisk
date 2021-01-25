@@ -190,7 +190,7 @@ Updating a C Module
 
          ARRAYASLIST(FSWdeviceAvailability)
 
-      should be removed the ``module.i`` file and moved to ``src/architecture/messaging2/messaging2.i``
+      should be removed the ``module.i`` file and moved to ``src/architecture/messaging/messaging.i``
       file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
       Basilisk python script.
 
@@ -234,7 +234,7 @@ Updating a C++ Module
 
       .. code:: cpp
 
-         #include "architecture/messaging2/messaging2.h"
+         #include "architecture/messaging/messaging.h"
 
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated
@@ -379,12 +379,12 @@ Updating a C++ Module
 
          %template(RWConfigVector) vector<RWConfigSimMsg>;
 
-      should be removed the ``module.i`` file and moved to ``src/architecture/messaging2/messaging2.i``
-      file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
+      should be removed the ``module.i`` file and moved to ``src/architecture/messaging/messaging.i``
+      file instead.  These interfaces can now be used by any module by importing ``messaging`` in the
       Basilisk python script.
 
     - To create the swig interface to a vector of messages of type ``SomeMsgPayload``,
-      near the bottom of the ``messaging2.i`` file add this line::
+      near the bottom of the ``messaging.i`` file add this line::
 
         %template(SomeMsgsVector) std::vector<Message<SomeMsgPayload>>;
 

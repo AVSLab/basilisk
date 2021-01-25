@@ -39,7 +39,7 @@ unified interface to all flight software and simulation messages.  Thus, instead
 
 just import ``message2`` using::
 
-    from Basilisk.architecture import messaging2
+    from Basilisk.architecture import messaging
 
 Further, the ``sim_model``, ``alg_contain`` and ``MessagingAccess`` packages are now stored
 within the new ``architecture`` library and imported using::
@@ -338,22 +338,22 @@ Setting a Basilisk Message from Python using the default C++ wrapper
 --------------------------------------------------------------------
 Import ``messages2`` to have access to all message definitions::
 
-    from Basilisk.architecture import messaging2
+    from Basilisk.architecture import messaging
 
 To create the message content of type ``ParticularMsgPayload``, first get a copy of the message structure using::
 
-    msgData = messaging2.ParticularMsgPayload()
+    msgData = messaging.ParticularMsgPayload()
 
 Next, fill in ``msgData`` with the needed information.  The structure is always initialized to zero on creation.
 When done, use the following command to create the Msg object and get a copy for other modules to subscribe to.::
 
-    msg = messaging2.ParticularMsg().write(msgData, time)
+    msg = messaging.ParticularMsg().write(msgData, time)
 
 The ``time`` is the message write time in nano-seconds.  It is optional and defaults to 0.
 
 If you want to just create a message from Python, but not write to it, you can use::
 
-    msg = messaging2.ParticularMsg()
+    msg = messaging.ParticularMsg()
 
 This will create a zero'd message payload with a header that indicates it has never been written.  To write
 to it at a later time you simply use::
@@ -395,7 +395,7 @@ The C-wrapped message interface is imported using::
 
 The message payload is still created as before, using for example::
 
-    msgData = messaging2.ParticularMsgPayload()
+    msgData = messaging.ParticularMsgPayload()
 
 To create a C-wrapped message copy use::
 
@@ -531,6 +531,6 @@ If from Python you access ``#define`` values of ``macroDefinitions.h``, such as:
     simFswInterfaceMessages.MAX_EFF_CNT
     fswMessages.MAX_EFF_CNT
 
-then you can now access these definitions using  ``messaging2.i`` using::
+then you can now access these definitions using  ``messaging.i`` using::
 
-    messaging2.MAX_EFF_CNT
+    messaging.MAX_EFF_CNT
