@@ -41,17 +41,6 @@ PowerNodeBase::~PowerNodeBase()
     return;
 }
 
-/*! SelfInit creates a PowerNodeUsageMsgPayload using the provided message output name.
- @return void
-*/
-void PowerNodeBase::SelfInit()
-{
-    //! - call the custom SelfInit() method to add addtional self initialization steps
-    customSelfInit();
-
-    return;
-}
-
 
 /*! This method is used to reset the module. In general, no functionality must be reset.
  @return void
@@ -143,15 +132,6 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-
-
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void PowerNodeBase::customSelfInit()
-{
-    return;
-}
 
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method

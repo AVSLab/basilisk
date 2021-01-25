@@ -41,13 +41,6 @@ StarTracker::~StarTracker()
     return;
 }
 
-/*!
-    self initialization
- */
-void StarTracker::SelfInit()
-{
-}
-
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture

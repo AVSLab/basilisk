@@ -481,14 +481,6 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
     return;
 }
 
-/*! This method is used to clear out the current VSCMG states and make sure
- that the overall model is ready
- @return void
- */
-void VSCMGStateEffector::SelfInit()
-{
-}
-
 
 /*! Reset the module to origina configuration values.
  @return void

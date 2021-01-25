@@ -358,15 +358,6 @@ void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
 }
 
 
-/*! This method is used to clear out the current RW states and make sure
- that the overall model is ready
- @return void
- */
-void ReactionWheelStateEffector::SelfInit()
-{
-}
-
-
 /*! Reset the module to origina configuration values.
  @return void
  */

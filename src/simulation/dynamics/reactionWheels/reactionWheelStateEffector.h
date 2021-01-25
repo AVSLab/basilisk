@@ -56,7 +56,6 @@ public:
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-	void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void addReactionWheel(RWConfigMsgPayload *NewRW);
 	void UpdateState(uint64_t CurrentSimNanos);

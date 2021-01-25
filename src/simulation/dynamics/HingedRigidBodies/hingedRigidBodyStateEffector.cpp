@@ -57,14 +57,6 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output
- messages.
- @return void*/
-void HingedRigidBodyStateEffector::SelfInit()
-{
-    return;
-}
-
 
 /*! This method takes the computed theta states and outputs them to the m
  messaging system.

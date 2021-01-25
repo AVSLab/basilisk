@@ -38,7 +38,6 @@ public:
     PlanetEphemeris();
     ~PlanetEphemeris();
     
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 

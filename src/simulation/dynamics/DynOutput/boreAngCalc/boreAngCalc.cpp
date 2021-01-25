@@ -29,7 +29,6 @@
 BoreAngCalc::BoreAngCalc()
 {
     CallCounts = 0;
-    ReinitSelf = false;
     boreVecPoint[0] = boreVecPoint[1] = boreVecPoint[2]  = 0.0;
     this->localPlanet = this->celBodyInMsg.zeroMsgPayload();
     this->localState = this->scStateInMsg.zeroMsgPayload();
@@ -40,13 +39,6 @@ BoreAngCalc::BoreAngCalc()
 BoreAngCalc::~BoreAngCalc()
 {
     return;
-}
-
-/*! This method initializes the messages that are associated with the object.
- @return void
- */
-void BoreAngCalc::SelfInit()
-{
 }
 
 
@@ -140,12 +132,6 @@ void BoreAngCalc::computeOutputData()
  */
 void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! - If we need to reinit, call SelfInit and set flag false
-    if(ReinitSelf)
-    {
-        SelfInit();
-        ReinitSelf = false;
-    }
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();
    

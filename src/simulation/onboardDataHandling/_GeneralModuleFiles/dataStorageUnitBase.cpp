@@ -39,16 +39,6 @@ DataStorageUnitBase::~DataStorageUnitBase(){
 }
 
 
-/*! SelfInit for this class.
- @return void
- */
-void DataStorageUnitBase::SelfInit(){
-    //! - call the custom SelfInit() method to add additional self initialization steps
-    customSelfInit();
-
-    return;
-}
-
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos
@@ -247,14 +237,6 @@ double DataStorageUnitBase::sumAllData(){
 
 
 
-
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void DataStorageUnitBase::customSelfInit()
-{
-    return;
-}
 
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method

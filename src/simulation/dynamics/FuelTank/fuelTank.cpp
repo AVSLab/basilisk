@@ -60,14 +60,6 @@ FuelTank::~FuelTank()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output
- messages.
- @return void*/
-void FuelTank::SelfInit()
-{
-    return;
-}
-
 
 /*! set fuel tank model
  @return void

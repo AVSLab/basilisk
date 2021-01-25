@@ -82,14 +82,6 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output
- messages.
- @return void*/
-void DualHingedRigidBodyStateEffector::SelfInit()
-{
-    return;
-}
-
 
 /*! This method is used to reset the module.
  @return void

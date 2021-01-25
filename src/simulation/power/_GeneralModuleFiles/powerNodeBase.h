@@ -39,7 +39,6 @@ class PowerNodeBase: public SysModel  {
 public:
     PowerNodeBase();
     ~PowerNodeBase();
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void computePowerStatus(double currentTime);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -48,7 +47,6 @@ protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages(); 
     virtual void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
-    virtual void customSelfInit();//!< Custom output input reading method.  This allows a child class to add additional functionality.
     virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.

@@ -38,7 +38,6 @@ public:
     BoreAngCalc();
     ~BoreAngCalc();
     
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void computeAxisPoint();
@@ -51,7 +50,6 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> celBodyInMsg;   //!< (-) celestial body state msg at which we pointing at
     Message<BoreAngleMsgPayload> angOutMsg;                 //!< (-) bore sight output message
 
-    bool ReinitSelf;                  //!< (-) Indicator to reset conversion type
     double boreVec_B[3];              //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
     BoreAngleMsgPayload boresightAng; //!< (-) Boresight angles relative to target

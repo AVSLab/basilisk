@@ -43,18 +43,6 @@ LimbFinding::LimbFinding()
 }
 
 
-/*! @brief
- \verbatim embed:rst
-    This method creates the module output message of type :ref:`LimbOpNavMsg`.
- \endverbatim
- @return void
- */
-
-void LimbFinding::SelfInit()
-{
-}
-
-
 /*! This is the destructor */
 LimbFinding::~LimbFinding()
 {

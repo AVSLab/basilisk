@@ -47,12 +47,6 @@ RadiationPressure::~RadiationPressure()
     return;
 }
 
-/*! This method is used to create any messages published by this module.
- @return void
- */
-void RadiationPressure::SelfInit()
-{
-}
 
 
 /*! Reset the module to origina configuration values.

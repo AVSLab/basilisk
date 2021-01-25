@@ -55,17 +55,6 @@ void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tm
     return;
 }
 
-/*! SelfInit creates one PowerStorageMsgPayload for the simPowerStorageBase instance.
-  @return void
-*/
-void PowerStorageBase::SelfInit()
-{
-    //! - call the custom SelfInit() method to add addtional self initialization steps
-    customSelfInit();
-
-    return;
-}
-
 
 /*! This method is used to reset the module.
  @return void
@@ -180,15 +169,6 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
     //! - write out neutral density message
     this->writeMessages(currentSimNanos);
 
-    return;
-}
-
-
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void PowerStorageBase::customSelfInit()
-{
     return;
 }
 

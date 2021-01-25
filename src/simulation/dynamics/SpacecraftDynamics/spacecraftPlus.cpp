@@ -51,12 +51,6 @@ SpacecraftPlus::~SpacecraftPlus()
     return;
 }
 
-/*! This method creates the messages for s/c output data and initializes the gravity field*/
-void SpacecraftPlus::SelfInit()
-{
-    return;
-}
-
 
 /*! This method is used to reset the module.
  @return void

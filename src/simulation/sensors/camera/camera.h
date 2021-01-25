@@ -43,7 +43,6 @@ public:
     ~Camera();
     
     void UpdateState(uint64_t CurrentSimNanos);
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void HSVAdjust(const cv::Mat, cv::Mat &mDst);
     void BGRAdjustPercent(const cv::Mat, cv::Mat &mDst);

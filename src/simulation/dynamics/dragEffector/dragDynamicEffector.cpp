@@ -42,14 +42,6 @@ DragDynamicEffector::~DragDynamicEffector()
 	return;
 }
 
-/*! This method currently does very little.
- @return void
- */
-void DragDynamicEffector::SelfInit()
-{
-  return;
-}
-
 
 /*! This method is used to reset the module.
  @return void

@@ -318,11 +318,6 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
     return;
 }
 
-/*! This method creates the messages for s/c output data and initializes the gravity field*/
-void SpacecraftDynamics::SelfInit()
-{
-}
-
 
 /*! This method is used to reset the module.
  @return void

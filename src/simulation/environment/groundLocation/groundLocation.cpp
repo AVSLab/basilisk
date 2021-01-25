@@ -91,12 +91,6 @@ void GroundLocation::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpSc
     this->accessMsgBuffer.push_back(accMsg);
 }
 
-/*! Module self initialization
-*/
-void GroundLocation::SelfInit()
-{
-}
-
 
 /*! Read module messages
 */

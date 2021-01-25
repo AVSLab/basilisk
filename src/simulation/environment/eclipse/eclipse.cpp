@@ -33,11 +33,6 @@ Eclipse::~Eclipse()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output messages auto-named ``eclipse_data_0`` etc.
- @return void*/
-void Eclipse::SelfInit()
-{
-}
 
 
 /*! Reset the module to origina configuration values.

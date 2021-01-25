@@ -40,15 +40,6 @@ ClockSynch::~ClockSynch()
     return;
 }
 
-/*! This is the self-init routine for the clock synch model.  It initializes the 
-    output message for the model which is used for diagnostic information on the 
-	model's behavior.
-    @return void
-*/
-void ClockSynch::SelfInit()
-{
-}
-
 
 /*! Reset the module variables.
     @param currentSimNanos

@@ -50,13 +50,6 @@ DataFileToViz::~DataFileToViz()
     return;
 }
 
-/*! Initialization method
- */
-void DataFileToViz::SelfInit()
-{
-    return;
-}
-
 
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds

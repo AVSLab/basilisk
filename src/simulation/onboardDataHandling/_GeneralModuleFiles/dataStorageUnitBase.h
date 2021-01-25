@@ -37,7 +37,6 @@ class DataStorageUnitBase: public SysModel {
 public:
     DataStorageUnitBase();
     ~DataStorageUnitBase();
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg); //!< Adds dataNode to the storageUnit
     void UpdateState(uint64_t CurrentSimNanos);
@@ -48,7 +47,6 @@ protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void integrateDataStatus(double currentTime); //!< Integrates the dataStatus over all of the dataNodes
-    virtual void customSelfInit(); //!< Custom output input reading method.  This allows a child class to add additional functionality.
     virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock); //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.

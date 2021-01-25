@@ -20,13 +20,6 @@
 #include "solarFlux.h"
 #include "architecture/utilities/astroConstants.h"
 
-/*! This method is used to create messages
- @return void
- */
-void SolarFlux::SelfInit()
-{
-}
-
 
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void

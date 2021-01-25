@@ -40,19 +40,6 @@ DataNodeBase::~DataNodeBase()
     return;
 }
 
-/*!
- \verbatim embed:rst
-    SelfInit 
- \endverbatim
- @return void
- */
-void DataNodeBase::SelfInit()
-{
-    customSelfInit();
-
-    return;
-}
-
 
 /*! This method is used to reset the module. In general, no functionality is reset.
  @param CurrentSimNanos
@@ -136,15 +123,6 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
     }
 
     this->writeMessages(CurrentSimNanos);
-    return;
-}
-
-
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void DataNodeBase::customSelfInit()
-{
     return;
 }
 

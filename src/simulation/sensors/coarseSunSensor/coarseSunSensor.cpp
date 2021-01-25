@@ -110,14 +110,6 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
     this->dcm_PB = cArray2EigenMatrix3d(dcm_PBcArray);
 }
 
-/*! This method performs all of the internal initialization for the model itself. 
- Primarily that involves initializing the random number generator and creates
- the output message*/
-void CoarseSunSensor::SelfInit()
-{
-    return;
-}
-
 
 
 /*! This method is used to reset the module.
@@ -340,12 +332,6 @@ CSSConstellation::CSSConstellation()
 CSSConstellation::~CSSConstellation()
 {
     this->sensorList.clear();
-}
-
-/*! This method loops through the sensor list and calls the self init method for 
- all of them.*/
-void CSSConstellation::SelfInit()
-{
 }
 
 

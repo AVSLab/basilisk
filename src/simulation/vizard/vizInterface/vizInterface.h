@@ -48,7 +48,6 @@ class VizInterface : public SysModel {
 public:
     VizInterface();
     ~VizInterface();
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadBSKMessages();

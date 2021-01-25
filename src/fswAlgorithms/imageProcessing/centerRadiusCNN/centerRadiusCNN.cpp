@@ -40,24 +40,6 @@ CenterRadiusCNN::CenterRadiusCNN()
     this->pathToNetwork = "./position_net2_trained_11-14.onnx";
 }
 
-/*! Selfinit performs the first stage of initialization for this module.
- It's primary function is to create messages that will be written to.
- @return void
- */
-void CenterRadiusCNN::SelfInit()
-{
-    /*! - Read in the CNN */
-    std::ifstream test(this->pathToNetwork);
-    if (!test)
-    {
-        std::cout << "The CNN file was not found" << std::endl;
-    }
-    this->positionNet2 = cv::dnn::readNetFromONNX(this->pathToNetwork);
-    this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
-    this->positionNet2.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
-    
-}
-
 
 /*! This is the destructor */
 CenterRadiusCNN::~CenterRadiusCNN()
@@ -72,6 +54,16 @@ CenterRadiusCNN::~CenterRadiusCNN()
  */
 void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
 {
+    /*! - Read in the CNN */
+    std::ifstream test(this->pathToNetwork);
+    if (!test)
+    {
+        std::cout << "The CNN file was not found" << std::endl;
+    }
+    this->positionNet2 = cv::dnn::readNetFromONNX(this->pathToNetwork);
+    this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
+    this->positionNet2.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+
     return;
 }
 

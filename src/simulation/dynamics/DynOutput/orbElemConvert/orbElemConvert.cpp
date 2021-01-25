@@ -33,14 +33,6 @@ OrbElemConvert::~OrbElemConvert()
     return;
 }
 
-/*! This method initializes the messages that are associated with the object.
- It does detect which "direction" it is and sets the sizing appropriately.
- @return void
- */
-void OrbElemConvert::SelfInit()
-{
-}
-
 
 /*! This method is used to reset the module.
  @return void

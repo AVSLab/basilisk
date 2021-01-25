@@ -40,7 +40,6 @@ class MagneticFieldBase: public SysModel  {
 public:
     MagneticFieldBase();
     ~MagneticFieldBase();
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -51,7 +50,6 @@ protected:
     void updateLocalMagField(double currentTime);
     void updateRelativePos(SpicePlanetStateMsgPayload  *planetState, SCPlusStatesMsgPayload *scState);
     virtual void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime) = 0; //!< class method
-    virtual void customSelfInit();
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();

@@ -37,14 +37,6 @@ ExtPulsedTorque::~ExtPulsedTorque()
     return;
 }
 
-/*! No Action is performed in this function.
- @return void
- */
-void ExtPulsedTorque::SelfInit()
-{
-    return;
-}
-
 
 /*! link the states */
 void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)

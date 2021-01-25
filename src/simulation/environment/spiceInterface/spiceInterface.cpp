@@ -74,15 +74,6 @@ void SpiceInterface::clearKeeper()
     kclear_c();
 }
 
-/*! This method initializes the object.  It creates the output messages,
- initializes the SPICE kernels, and initializes the planet/time data that
- gets used at run.
- @return void*/
-void SpiceInterface::SelfInit()
-{
-    return;
-}
-
 
 /*! Reset the module to origina configuration values.
  @return void

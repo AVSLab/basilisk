@@ -29,10 +29,6 @@ EphemerisConverter::~EphemerisConverter()
 {
 }
 
-void EphemerisConverter::SelfInit()
-{
-}
-
 
 /*!
  add a planet spice input message

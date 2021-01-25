@@ -60,14 +60,6 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
     return this->dcm_SB;
 }
 
-/*! This method performs all of the internal initialization for the model itself.
- Primarily that involves initializing the random number generator and creates
- the output message. */
-void Magnetometer::SelfInit()
-{
-    return;
-}
-
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture

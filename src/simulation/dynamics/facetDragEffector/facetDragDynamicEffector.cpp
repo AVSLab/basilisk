@@ -40,13 +40,6 @@ FacetDragDynamicEffector::~FacetDragDynamicEffector()
 	return;
 }
 
-/*! This method currently does very little.
- @return void
- */
-void FacetDragDynamicEffector::SelfInit()
-{
-  return;
-}
 
 
 void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)

@@ -28,13 +28,6 @@ PlanetHeading::PlanetHeading()
 
 }
 
-/*! This method is used to create the body heading message for the heading to the planet
- @return void
- */
-void PlanetHeading::SelfInit()
-{
-}
-
 
 /*! This method reads messages, calculates the planet heading, and writes out the heading message
  @return void

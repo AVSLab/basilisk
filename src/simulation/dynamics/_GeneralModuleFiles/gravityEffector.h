@@ -112,7 +112,6 @@ class GravityEffector : public SysModel {
 public:
     GravityEffector();
     ~GravityEffector();
-    void SelfInit(); //!< class method
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn); //!< class method

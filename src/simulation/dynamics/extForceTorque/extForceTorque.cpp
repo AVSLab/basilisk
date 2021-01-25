@@ -40,13 +40,6 @@ ExtForceTorque::~ExtForceTorque()
     return;
 }
 
-/*! No Action is performed in this function.
- @return void
- */
-void ExtForceTorque::SelfInit()
-{
-}
-
 
 /*! This method is used to reset the module. 
  @return void

@@ -52,12 +52,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
     }
 }
 
-/*! This method initializes the object.
- @return void
- */
-void PlanetEphemeris::SelfInit()
-{
-}
+
 
 void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
 {

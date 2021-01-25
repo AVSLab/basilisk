@@ -53,14 +53,6 @@ ThrusterDynamicEffector::~ThrusterDynamicEffector()
     return;
 }
 
-/*! This method is used to clear out the current thruster states and make sure
- that the overall model is ready for firing
- @return void
- */
-void ThrusterDynamicEffector::SelfInit()
-{
-}
-
 
 /*! This method is used to reset the module.
  @return void

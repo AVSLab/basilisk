@@ -402,11 +402,6 @@ GravityEffector::~GravityEffector()
     return;
 }
 
-void GravityEffector::SelfInit()
-{
-    return;
-}
-
 
 /*! This method is used to reset the module.
  @return void

@@ -59,13 +59,6 @@ VizInterface::~VizInterface()
     return;
 }
 
-/*! Initialization method for subscription to messages. This module does not output messages, but files containing the protobuffers for Vizard
- */
-void VizInterface::SelfInit()
-{
-    return;
-}
-
 
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds

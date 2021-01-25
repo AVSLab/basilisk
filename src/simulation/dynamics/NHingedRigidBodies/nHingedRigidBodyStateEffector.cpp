@@ -44,13 +44,6 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output messages.
- @return void*/
-void NHingedRigidBodyStateEffector::SelfInit()
-{
-    return;
-}
-
 
 /*! This method reads necessary input messages
  @return void */

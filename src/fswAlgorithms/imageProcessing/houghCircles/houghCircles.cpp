@@ -47,14 +47,6 @@ HoughCircles::HoughCircles()
     this->houghMaxRadius = 0; // Maximum circle radius. If <= 0, uses the maximum image dimension. If < 0, returns centers without finding the radius
 }
 
-/*! Selfinit performs the first stage of initialization for this module.
- It's primary function is to create messages that will be written to.
- @return void
- */
-void HoughCircles::SelfInit()
-{
-}
-
 
 /*! This is the destructor */
 HoughCircles::~HoughCircles()

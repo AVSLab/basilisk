@@ -33,14 +33,6 @@ GravityGradientEffector::~GravityGradientEffector()
 	return;
 }
 
-/*! Create the outgoing gravity gradient torque message.
- @return void
- */
-void GravityGradientEffector::SelfInit()
-{
-    return;
-}
-
 
 /*! This method is used to set the effector, and check same module variables
 @return void

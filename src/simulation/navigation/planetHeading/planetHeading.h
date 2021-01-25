@@ -36,7 +36,6 @@ public:
     PlanetHeading();
     ~PlanetHeading(){};
     
-    void SelfInit() override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void Reset(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);

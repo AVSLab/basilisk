@@ -41,7 +41,6 @@ class GroundLocation:  public SysModel {
 public:
     GroundLocation();
     ~GroundLocation();
-    void SelfInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
     bool ReadMessages();

@@ -60,7 +60,6 @@ public:
     Albedo();
     ~Albedo();
 
-    void SelfInit();                                          //!< @brief initializes its own message
     void UpdateState(uint64_t CurrentSimNanos);               //!< @brief updates the state
     void Reset(uint64_t CurrentSimNanos);                     //!< @brief resets the module
 

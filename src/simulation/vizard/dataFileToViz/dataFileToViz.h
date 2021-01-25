@@ -35,7 +35,6 @@ class DataFileToViz : public SysModel {
 public:
     DataFileToViz();
     ~DataFileToViz();
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void appendThrPos(double pos_B[3]);

@@ -64,14 +64,6 @@ Camera::Camera()
     return;
 }
 
-/*! Selfinit performs the first stage of initialization for this module.
- It's primary function is to create messages that will be written to.
- @return void
- */
-void Camera::SelfInit()
-{
-}
-
 
 /*! This is the destructor */
 Camera::~Camera()

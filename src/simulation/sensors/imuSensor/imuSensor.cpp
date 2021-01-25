@@ -96,14 +96,6 @@ ImuSensor::~ImuSensor()
     return;
 }
 
-/*!
- self initialization
- */
-void ImuSensor::SelfInit()
-{
-    return;
-}
-
 
 /*! Reset the module
  @return void

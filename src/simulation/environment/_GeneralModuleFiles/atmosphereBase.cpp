@@ -91,18 +91,6 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpSc
 }
 
 
-/*! SelfInit for this method creates a seperate magnetic field message for each of the spacecraft
-that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.
- @return void
-*/
-void AtmosphereBase::SelfInit()
-{
-    //! - call the custom SelfInit() method to add addtional self initialization steps
-    customSelfInit();
-
-    return;
-}
-
 
 /*! This method is used to reset the module.
  @return void
@@ -140,15 +128,6 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
  @return void
  */
 void AtmosphereBase::customSetEpochFromVariable()
-{
-    return;
-}
-
-
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void AtmosphereBase::customSelfInit()
 {
     return;
 }

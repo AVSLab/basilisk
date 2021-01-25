@@ -38,7 +38,6 @@ class Magnetometer : public SysModel {
 public:
     Magnetometer();
     ~Magnetometer();
-    void SelfInit();                            //!< Method for initializing own messages
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void UpdateState(uint64_t CurrentSimNanos); //!< Method to update state for runtime
     void readInputMessages();                   //!< Method to read the input messages

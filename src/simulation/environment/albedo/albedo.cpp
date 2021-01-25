@@ -208,12 +208,6 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *pl
     this->planetMsgData.push_back(plMsg);
 }
 
-/*! This method initializes the object. It creates the module's output
- @return void
- */
-void Albedo::SelfInit()
-{
-}
 
 
 /*! Read Messages, calculate albedo then write it out

@@ -46,7 +46,6 @@ public:
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime);
     void computeStateContribution(double integTime);
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     //! Add a new thruster to the thruster set
     void addThruster(THRSimConfigMsgPayload *newThruster);

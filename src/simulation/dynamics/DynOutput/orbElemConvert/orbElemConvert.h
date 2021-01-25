@@ -39,7 +39,6 @@ public:
     OrbElemConvert();
     ~OrbElemConvert();
     
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);

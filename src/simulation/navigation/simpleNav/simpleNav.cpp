@@ -47,13 +47,6 @@ SimpleNav::~SimpleNav()
     return;
 }
 
-/*! This is the self-init routine for the simple navigation model.
-    @return void
-*/
-void SimpleNav::SelfInit()
-{
-}
-
 
 /*! This method is used to reset the module. It
  initializes the various containers used in the model as well as creates the
