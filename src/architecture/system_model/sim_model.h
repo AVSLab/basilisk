@@ -26,11 +26,6 @@
 #include "architecture/utilities/bskLogging.h"
 
 
-typedef enum varAccessType {
-    messageBuffer = 0,
-    logBuffer = 1
-}VarAccessType;
-
 //! The top-level container for an entire simulation
 class SimModel
 {

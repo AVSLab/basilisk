@@ -251,24 +251,4 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
     bskLogger.bskLog(BSK_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
 }
 
-//void SysProcess::getAllMessageDefinitions()
-//{
-//    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-//    std::set<std::string>::iterator it;
-//    messageSys->selectMessageBuffer(this->messageBuffer);
-//    for(it=unknownPublisher.begin(); it!=unknownPublisher.end(); it++)
-//    {
-//        int64_t messageID = messageSys->FindMessageID(*it);
-//        if(messageID >= 0)
-//        {
-//            MessageInterfaceMatch newMessage;
-//            newMessage.source = -1;
-//            newMessage.destination = -1;
-//            newMessage.messageSource = *it;
-//            newMessage.messageDest = "";
-//            newMessage.updateCounter = 0;
-//            messageTraffic.push_back(newMessage);
-//        }
-//    }
-//}
 

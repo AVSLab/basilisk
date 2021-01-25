@@ -26,7 +26,6 @@ import six
 
 from Basilisk.architecture import sim_model
 from Basilisk.architecture import alg_contain
-from Basilisk.utilities import MessagingAccess
 import numpy as np
 import array
 import xml.etree.ElementTree as ET
@@ -427,15 +426,15 @@ class SimBaseClass:
             procStopTimes = []
             for pyProc in self.pyProcList:
                 nextCallTime = pyProc.nextCallTime()
-                if(nextCallTime<=self.TotalSim.CurrentNanos):
+                if nextCallTime<=self.TotalSim.CurrentNanos:
                     pyProc.executeTaskList(self.TotalSim.CurrentNanos)
                 nextCallTime = pyProc.nextCallTime()
                 procStopTimes.append(nextCallTime)
 
-            if(pyProcPresent and nextStopTime >= min(procStopTimes)):
+            if pyProcPresent and nextStopTime >= min(procStopTimes):
                 nextStopTime = min(procStopTimes)
                 nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
-            if(nextLogTime >= 0 and nextLogTime < nextStopTime):
+            if nextLogTime >= 0 and nextLogTime < nextStopTime:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
@@ -498,147 +497,6 @@ class SimBaseClass:
                                                      newStruct})
         self.indexParsed = True
 
-    def findSimulationMessage(self, searchString):
-        searchComplete = False
-        msgMatchList = MessagingAccess.findMessageMatches(searchString,
-                                                          self.TotalSim)
-        exactMessage = -1
-        for message in msgMatchList:
-            if message == searchString:
-                exactMessage = message
-                continue
-            print(message)
-
-        if (exactMessage == searchString):
-            searchComplete = True
-            headerData = sim_model.MessageHeaderData()
-            self.TotalSim.populateMessageHeader(exactMessage, headerData)
-            print(headerData.MessageName + ": " + headerData.messageStruct)
-            if self.indexParsed == False:
-                self.parseDataIndex()
-            if headerData.messageStruct in self.dataStructureDictionary:
-                xmlDataPath = os.path.dirname(self.dataStructIndex)
-                self.dataStructureDictionary[
-                    headerData.messageStruct].populateElem(xmlDataPath)
-                self.dataStructureDictionary[
-                    headerData.messageStruct].printElem()
-        return searchComplete
-
-
-    def pullMultiMessageLogData(self, varNames, indices, types, numRecords = -1):
-        """
-        Pulls the log data from multiple messages at the same time. When pulling multiple messages, or start/stopping the sim often,
-        produces faster performance than pullMessageLogData.
-
-        Inputs:
-        @param varNames: list : list of message names and parameters.
-        @param indices: list : list of message indices to be pulled.
-        @param types: list: list of strings describing types of data to be pulled (i.e. "bool" or "double").
-        @param numRecords : int : number of logged messages to pull. Defaults to -1, which returns all logged messages.
-
-        Outputs:
-        @param pullDict : dict : dict using names from varNames as keys and the corresponding pulled message data as the values.
-        """
-
-        attributeDict = {}
-        structToName = {}
-        indexDict = {}
-        typeDict = {}
-        headerDict = {}
-        foundDict = {}
-        pullDict = {}
-
-        #   Create entrices in header/index/id/foundDict corresponding to each varName
-        for idx, varName in enumerate(varNames):
-            #   Work out the message, attribute names:
-            splitName = varName.split('.')
-            msgName = splitName[0]
-            msgAttribute = splitName[1]
-
-            if msgName in attributeDict.keys():
-                attributeDict[msgName].append(msgAttribute)
-            else:
-                attributeDict[msgName] = [msgAttribute]
-
-            #   Find some identifying information we'll need to pull it
-            messageID = self.TotalSim.getMessageID(splitName[0])
-            if not (messageID.itemFound):
-                print("Failed to pull log due to invalid ID for this message: " + splitName[0])
-                return []
-            #   Populate a header for the message
-            headerData = sim_model.MessageHeaderData()
-            self.TotalSim.populateMessageHeader(splitName[0], headerData)
-
-            if headerData.messageStruct in headerDict.keys():
-                headerDict[headerData.messageStruct].append(headerData)
-                structToName[headerData.messageStruct].append(msgName)
-            else:
-                headerDict[headerData.messageStruct] = [headerData]
-                structToName[headerData.messageStruct] = [msgName]
-
-            foundDict[varName] = False
-            indexDict[varName] = indices[idx]
-            typeDict[varName] = types[idx]
-
-
-        headerList = list(headerDict.keys())
-
-        if len(self.allModules) == 0:
-            # Create a new set into which we add the SWIG'd simMessages definitions
-            # and union it with the simulation's modules set. We do this so that
-            # python modules can have message structs resolved
-            self.allModules = set()
-            self.allModules.add(simMessages)
-            self.allModules = self.allModules | self.simModules
-
-        #   Search for any of the modules in the list:
-        for module in self.allModules:
-            #   If all the values are "true", we found everything. Kill it
-            if all(value == True for value in foundDict.values()):
-                break
-            for name, obj in inspect.getmembers(module):
-                if inspect.isclass(obj):
-                    #   Check to see if the module has a
-                    if obj.__name__ in headerList:
-                        #   Get all the local variables corresponding to this module, since we aren't garunteed what order
-                        #   we'll find this header name:
-                        structName = obj.__name__
-                        moduleFound = module.__name__
-                        msgNames = structToName[structName]
-                        headerDatas = headerDict[obj.__name__]
-
-                        for idx,msgName in enumerate(msgNames):
-                            headerData = headerDatas[idx]
-                            msgAttributes = attributeDict[msgName]
-                            messageID = self.TotalSim.getMessageID(msgName)
-                            messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
-                            bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
-
-                            maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
-                            messageCount = messageCount if messageCount > 0 else maxCountMessager
-                            messageCount = messageCount if numRecords < 0 else numRecords
-
-                            #   Opportunistically grab all the attributes we can before we clear this message struct:
-                            for attr in msgAttributes:
-                                indices = indexDict[msgName+'.'+attr]
-                                type = typeDict[msgName+'.'+attr]
-                                if (len(indices) <= 0):
-                                    indices_use = [0]
-                                else:
-                                    indices_use = indices
-
-                                dataUse = MessagingAccess.obtainMessageVector(msgName, moduleFound,
-                                                                              structName, messageCount,
-                                                                              self.TotalSim,
-                                                                              attr,
-                                                                              type,
-                                                                              indices_use[0], indices_use[-1], bufferUse)
-                                pullDict.update({msgName+'.'+attr:dataUse})
-
-                                foundDict.update({msgName+'.'+attr:True})
-
-        return pullDict
-
     def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
                        conditionList=[], actionList=[]):
         if (eventName in list(self.eventMap.keys())):
@@ -662,100 +520,11 @@ class SimBaseClass:
                 nextTime = localNextTime
         return nextTime
 
-
     def setEventActivity(self, eventName, activityCommand):
         if eventName not in list(self.eventMap.keys()):
             print("You asked me to set the status of an event that I don't have.")
             return
         self.eventMap[eventName].eventActive = activityCommand
-
-    # Only instances of following three functions is within SimBaseClass
-    # TODO: Investigate origin and need for these functions
-    def findMessagePairs(self, messageName, processList):
-        dataPairs = self.TotalSim.getMessageExchangeData(messageName, processList)
-        outputDataPairs = []
-        for messagePair in dataPairs:
-            namePairs = [None, None]
-            for proc in self.procList:
-                for intDef in proc.processData.intRefs:
-                    for singInt in intDef.interfaceDef:
-                        for i in range(2):
-                            if singInt.moduleID == messagePair[i]:
-                                if singInt.ModelTag != "":
-                                    namePairs[i] = singInt.ModelTag
-                                else:
-                                    namePairs[i] = singInt.moduleID
-            for task in self.TaskList:
-                for module in task.TaskData.TaskModels:
-                    for i in range(2):
-                        if module.ModelPtr.moduleID == messagePair[i]:
-                            if namePairs[i] == None:
-                                if module.ModelPtr.ModelTag != "":
-                                    namePairs[i] = module.ModelPtr.ModelTag
-                                else:
-                                    namePairs[i] = module.ModelPtr.moduleID
-            outputDataPairs.append(namePairs)
-        return(outputDataPairs)
-    def getDataMap(self, processList):
-        mapDict = {}
-        messNames = self.TotalSim.getUniqueMessageNames()
-        for name in messNames:
-            dataPairs = self.findMessagePairs(name, processList)
-            for transPair in dataPairs:
-                if transPair[0] in mapDict:
-                    if name not in mapDict[transPair[0]].outputMessages and name is not None:
-                        mapDict[transPair[0]].outputDict[name] = [transPair[1]]
-                    elif name is not None:
-                        mapDict[transPair[0]].outputDict[name].append(transPair[1])
-                    mapDict[transPair[0]].outputMessages.add(name)
-                else:
-                    newElem = DataPairClass()
-                    newElem.outputMessages.add(name)
-                    newElem.name = transPair[0]
-                    newElem.outputDict[name] = [transPair[1]]
-                    mapDict[transPair[0]] = newElem
-                if transPair[1] in mapDict:
-                    mapDict[transPair[1]].inputMessages.add(name)
-                else:
-                    newElem = DataPairClass()
-                    newElem.inputMessages.add(name)
-                    newElem.name = transPair[1]
-                    mapDict[transPair[1]] = newElem
-        return(mapDict)
-    def writeDataMapDot(self, processList = [], outputFileName='SimDataMap.dot'):
-        fDesc = open(outputFileName, 'w')
-        messageDataMap = self.getDataMap(processList)
-        fDesc.write('digraph messages {\n')
-        fDesc.write('node [shape=record];\n')
-        for key, value in messageDataMap.items():
-            if(str(key) == 'None'):
-                continue
-            fDesc.write('    ' + str(key))
-            fDesc.write('[shape=record,label="{')
-            i=1
-            for input in value.inputMessages:
-                fDesc.write('{<' + input + 'In> ' + input + '}')
-                if i < len(value.inputMessages):
-                    fDesc.write(' | ')
-                i += 1
-            fDesc.write('} | ' + str(key) + ' | {')
-            i=1
-            for output in value.outputMessages:
-                fDesc.write('{<' + output + 'Out> ' + output + '}')
-                if i < len(value.outputMessages):
-                    fDesc.write(' | ')
-                i += 1
-            fDesc.write('}"];\n')
-            for outputConn, ConnValue in value.outputDict.items():
-                for outputModule in ConnValue:
-                    if(outputModule == None):
-                        continue
-                    fDesc.write('    ' + str(key) + ':' + outputConn + 'Out')
-                    fDesc.write(' -> ' + str(outputModule) + ':' + outputConn +'In;\n')
-
-
-        fDesc.write('\n}')
-        fDesc.close()
 
     def setModelDataWrap(self, modelData):
         """
