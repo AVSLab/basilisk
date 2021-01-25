@@ -181,7 +181,8 @@ def run(showPlots, simTime=None):
     t2 = time.time()
     print('Finished Execution in ', t2-t1, ' seconds. Post-processing results')
     # Terminate vizard and show plots
-    TheScenario.end_scenario()
+    figureList = TheScenario.end_scenario()
+    return figureList
 
 
 if __name__ == "__main__":

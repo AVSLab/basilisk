@@ -35,8 +35,8 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/OpNavScenarios/scenariosOpNav')
-sys.path.append(path + '/../examples/OpNavScenarios/')
+sys.path.append(path + '/../../examples/OpNavScenarios/scenariosOpNav')
+sys.path.append(path + '/../../examples/OpNavScenarios/')
 
 r"""
 Skip the following tests if all necessary modules do not exist
@@ -47,8 +47,8 @@ Requirements:
 
 import BSK_OpNav
 SimBase = BSK_OpNav.BSKSim(1, 1)
-if os.path.exists(SimBase.vizPath) == False:
-    pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_masters")
+if not os.path.exists(SimBase.vizPath):
+    pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_OpNav.py")
 
 testScripts = [
       'scenario_faultDetOpNav'
@@ -97,9 +97,8 @@ def test_opnavBskScenarios(show_plots, bskSimCase):
     try:
         figureList = scene_plt.run(False, 10)
 
-        # save the figures to the Doxygen scenario images folder
-
-        if(figureList != {}):
+        # save the figures to the RST scenario images folder
+        if figureList != {} and figureList is not None:
             for pltName, plt in list(figureList.items()):
                 unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
@@ -112,3 +111,5 @@ def test_opnavBskScenarios(show_plots, bskSimCase):
 
     assert testFailCount < 1, testMessages
 
+if __name__ == "__main__":
+    test_opnavBskScenarios(True, 'scenario_OpNavAttODLimb')

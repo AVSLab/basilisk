@@ -82,8 +82,7 @@ the scenario is run with python. Saving is left to the user's discretion.
 
 
 # Import architectural modules
-from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.architecture import sim_model
+from Basilisk.utilities import SimulationBaseClass
 
 # Get current file path
 import sys, os, inspect
@@ -95,8 +94,10 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/modelsOpNav')
 
 # TODO : Modify the path to the viz here
-appPath = '/Applications/vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
+appPath = '/Applications/Vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
 # appPath = './../../Applications/Vizard.app' #If on Linux
+
+
 class BSKSim(SimulationBaseClass.SimBaseClass):
     """
     BSK Simulation base class for opNav scenarios
@@ -186,9 +187,12 @@ class BSKScenario(object):
             print("vizard application is not launched")
             exit(1)
         self.vizard.kill()
+
         # Pull the results of the base simulation running the chosen scenario
+        figureList = {}
         if self.showPlots:
-            self.pull_outputs(self.showPlots)
+            figureList = self.pull_outputs(self.showPlots)
+        return figureList
 
 
 

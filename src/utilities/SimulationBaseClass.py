@@ -788,7 +788,7 @@ class SimBaseClass:
                 if type(methodObject).__name__ == "SwigPyObject":
                     algNames.append(methodName)
             return algNames
-        
+
         # Check the type of the algorithm, i.e. SelfInit, Update or Reset,
         # and return the key to create a new dictionary D[str_method] = method
         def checkMethodType(methodName):
