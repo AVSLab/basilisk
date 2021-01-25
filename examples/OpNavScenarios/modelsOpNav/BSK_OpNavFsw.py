@@ -208,12 +208,12 @@ class BSKFswModels():
         SimBase.AddModelToTask("attODFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
         SimBase.AddModelToTask("attODFaultDet", self.relativeODWrap, self.relativeODData, 9)
 
-        # SimBase.AddModelToTask("opNavFaultDet", self.limbFinding, None, 25)
-        # SimBase.AddModelToTask("opNavFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
-        # SimBase.AddModelToTask("opNavFaultDet", self.imageProcessing, None, 18)
-        # SimBase.AddModelToTask("opNavFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-        # SimBase.AddModelToTask("opNavFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-        # SimBase.AddModelToTask("opNavFaultDet", self.relativeODWrap, self.relativeODData, 9)
+        SimBase.AddModelToTask("opNavFaultDet", self.limbFinding, None, 25)
+        SimBase.AddModelToTask("opNavFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
+        SimBase.AddModelToTask("opNavFaultDet", self.imageProcessing, None, 18)
+        SimBase.AddModelToTask("opNavFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
+        SimBase.AddModelToTask("opNavFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
+        SimBase.AddModelToTask("opNavFaultDet", self.relativeODWrap, self.relativeODData, 9)
 
         if centerRadiusCNNIncluded:
             SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, None, 25)
@@ -240,13 +240,13 @@ class BSKFswModels():
                                 "self.enableTask('opNavPointTaskCheat')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("imageGen", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'imageGen'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('imageProcTask')",
-        #                         "self.enableTask('opNavPointTaskCheat')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("imageGen", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'imageGen'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('imageProcTask')",
+                                "self.enableTask('opNavPointTaskCheat')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("pointOpNav", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'pointOpNav'"],
@@ -321,20 +321,20 @@ class BSKFswModels():
                                 "self.enableTask('attODFaultDet')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("ODFaultDet", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'ODFaultDet'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavPointTaskCheat')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')",
-        #                         "self.enableTask('opNavFaultDet')"])
+        SimBase.createNewEvent("ODFaultDet", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'ODFaultDet'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('opNavPointTaskCheat')",
+                                "self.enableTask('mrpFeedbackRWsTask')",
+                                "self.enableTask('opNavFaultDet')"])
 
-        # SimBase.createNewEvent("FaultDetCNN", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'FaultDetCNN'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('cnnFaultDet')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("FaultDetCNN", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'FaultDetCNN'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('cnnFaultDet')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -567,8 +567,6 @@ class BSKFswModels():
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
         self.SetHillPointGuidance(SimBase)
-        # self.SetCSSWlsEst(SimBase)
-        # self.SetAttitudeTrackingError(SimBase)
         self.SetVehicleConfiguration()
         self.SetRWConfigMsg()
         self.SetMRPFeedbackRWA(SimBase)
