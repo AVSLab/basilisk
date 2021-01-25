@@ -243,7 +243,7 @@ class fileCrawler():
                     "cmake" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
                     "outputFiles" in dirs_in_dir[i] or \
-                    "msgTemplateInputs" in dirs_in_dir[i] or \
+                    "msgAutoSource" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):

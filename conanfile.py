@@ -214,7 +214,7 @@ class BasiliskConan(ConanFile):
         # auto-generate C message definition files
         print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
         bskPath = os.getcwd()
-        os.chdir(os.path.join(bskPath, "src/architecture/messaging/msgTemplateInputs"))
+        os.chdir(os.path.join(bskPath, "src/architecture/messaging/msgAutoSource"))
         cmdString = list()
         if platform.system() == "Windows":
             cmdString.append("python")
