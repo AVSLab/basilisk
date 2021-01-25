@@ -96,7 +96,7 @@ public:
             bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unconnected msg of type %s.", typeid(var).name());
             return 0;
         }
-        if (!this->headerPointer->timeWritten) {
+        if (!this->headerPointer->isWritten) {
             messageType var;
             bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unwritten msg of type %s.", typeid(var).name());
             return 0;
