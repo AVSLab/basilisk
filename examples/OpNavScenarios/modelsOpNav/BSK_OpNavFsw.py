@@ -156,10 +156,10 @@ class BSKFswModels():
         SimBase.AddModelToTask("opNavPointTask", self.pixelLineWrap, self.pixelLineData, 12)
         SimBase.AddModelToTask("opNavPointTask", self.opNavPointWrap, self.opNavPointData, 9)
 
-        # SimBase.AddModelToTask("headingPointTask", self.imageProcessing, None, 15)
-        # SimBase.AddModelToTask("headingPointTask", self.pixelLineWrap, self.pixelLineData, 12)
-        # SimBase.AddModelToTask("headingPointTask", self.headingUKFWrap, self.headingUKFData, 10)
-        # SimBase.AddModelToTask("headingPointTask", self.opNavPointWrap, self.opNavPointData, 9)
+        SimBase.AddModelToTask("headingPointTask", self.imageProcessing, None, 15)
+        SimBase.AddModelToTask("headingPointTask", self.pixelLineWrap, self.pixelLineData, 12)
+        SimBase.AddModelToTask("headingPointTask", self.headingUKFWrap, self.headingUKFData, 10)
+        SimBase.AddModelToTask("headingPointTask", self.opNavPointWrap, self.opNavPointData, 9)
 
         SimBase.AddModelToTask("opNavPointLimbTask", self.limbFinding, None, 25)
         SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
@@ -255,12 +255,12 @@ class BSKFswModels():
                                 "self.enableTask('opNavPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
-        # SimBase.createNewEvent("pointHead", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'pointHead'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('headingPointTask')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')"])
+        SimBase.createNewEvent("pointHead", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'pointHead'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('headingPointTask')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("pointLimb", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'pointLimb'"],
@@ -276,15 +276,6 @@ class BSKFswModels():
                                 "self.enableTask('opNavPointTaskCheat')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
                                 "self.enableTask('opNavODTask')"])
-
-        # SimBase.createNewEvent("DoubleOD", self.processTasksTimeStep, True,
-        #                        ["self.modeRequest == 'DoubleOD'"],
-        #                        ["self.fswProc.disableAllTasks()",
-        #                         "self.FSWModels.zeroGateWayMsgs()",
-        #                         "self.enableTask('opNavPointTaskCheat')",
-        #                         "self.enableTask('mrpFeedbackRWsTask')",
-        #                         "self.enableTask('opNavODTaskLimb')",
-        #                         "self.enableTask('opNavODTask')"])
 
         SimBase.createNewEvent("OpNavODLimb", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'OpNavODLimb'"],
@@ -362,11 +353,9 @@ class BSKFswModels():
         self.opNavPointData.omega_RN_B = [0.001, 0.0, -0.001]
         self.opNavPointData.alignAxis_C = [0., 0., 1]
 
-    def SetHeadingUKF(self):
-        self.headingUKFData.opnavOutMsgName = "heading_filtered"
-        self.headingUKFData.filtDataOutMsgName = "heading_filter_data"
-        self.headingUKFData.opnavDataInMsgName = "output_nav_msg"
-        self.headingUKFData.cameraConfigMsgName = "camera_config_data"
+    def SetHeadingUKF(self, SimBase):
+        self.headingUKFData.opnavDataInMsg.subscribeTo(self.opnavMsg)
+        self.headingUKFData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
 
         self.headingUKFData.alpha = 0.02
         self.headingUKFData.beta = 2.0
@@ -598,7 +587,7 @@ class BSKFswModels():
         self.SetHorizonNav(SimBase)
 
         self.SetOpNavPointGuidance(SimBase)
-        # self.SetHeadingUKF()
+        self.SetHeadingUKF(SimBase)
         self.SetPixelLineFilter(SimBase)
 
     def setupGatewayMsgs(self):

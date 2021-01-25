@@ -51,8 +51,7 @@ if os.path.exists(SimBase.vizPath) == False:
     pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_masters")
 
 testScripts = [
-    'scenario_DoubleOpNavOD'
-    , 'scenario_faultDetOpNav'
+      'scenario_faultDetOpNav'
     , 'scenario_OpNavAttOD'
     , 'scenario_OpNavAttODLimb'
     , 'scenario_OpNavHeading'
