@@ -7,7 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import pixelLineConverter
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import os, inspect
 import numpy as np
@@ -80,15 +80,15 @@ def pixelLineConverterTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, pixelLineWrap, pixelLine)
 
     # Create the input messages.
-    inputCamera = messaging2.CameraConfigMsgPayload()
-    inputCircles = messaging2.CirclesOpNavMsgPayload()
-    inputAtt = messaging2.NavAttMsgPayload()
+    inputCamera = messaging.CameraConfigMsgPayload()
+    inputCircles = messaging.CirclesOpNavMsgPayload()
+    inputAtt = messaging.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
-    camInMsg = messaging2.CameraConfigMsg().write(inputCamera)
+    camInMsg = messaging.CameraConfigMsg().write(inputCamera)
     pixelLine.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set circles
@@ -96,12 +96,12 @@ def pixelLineConverterTestFunction():
     inputCircles.circlesRadii = [75]
     inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     inputCircles.timeTag = 12345
-    circlesInMsg = messaging2.CirclesOpNavMsg().write(inputCircles)
+    circlesInMsg = messaging.CirclesOpNavMsg().write(inputCircles)
     pixelLine.circlesInMsg.subscribeTo(circlesInMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    attInMsg = messaging2.NavAttMsg().write(inputAtt)
+    attInMsg = messaging.NavAttMsg().write(inputAtt)
     pixelLine.attInMsg.subscribeTo(attInMsg)
 
     # Set module for Mars

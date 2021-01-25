@@ -31,7 +31,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.simulation import extForceTorque
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 
@@ -88,25 +88,25 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     if torqueInput==1 or torqueInput==3:
         extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
     if torqueInput==2 or torqueInput==3:
-        msgData = messaging2.CmdTorqueBodyMsgPayload()
+        msgData = messaging.CmdTorqueBodyMsgPayload()
         msgData.torqueRequestBody = [-1.0, 1.0, -1.0]
-        cmdTorqueMsg = messaging2.CmdTorqueBodyMsg().write(msgData)
+        cmdTorqueMsg = messaging.CmdTorqueBodyMsg().write(msgData)
         extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
 
     if forceNInput==1 or forceNInput==3:
         extFTObject.extForce_N = [[-10.], [-5.], [5.]]
     if forceNInput==2 or forceNInput==3:
-        msgData = messaging2.CmdForceInertialMsgPayload()
+        msgData = messaging.CmdForceInertialMsgPayload()
         msgData.forceRequestInertial = [-10.0, -5.0, 5.0]
-        cmdForceInertialMsg = messaging2.CmdForceInertialMsg().write(msgData)
+        cmdForceInertialMsg = messaging.CmdForceInertialMsg().write(msgData)
         extFTObject.cmdForceInertialInMsg.subscribeTo(cmdForceInertialMsg)
 
     if forceBInput==1 or forceBInput==3:
         extFTObject.extForce_B = [[10.], [20.], [30.]]
     if forceBInput==2 or forceBInput==3:
-        msgData = messaging2.CmdForceBodyMsgPayload()
+        msgData = messaging.CmdForceBodyMsgPayload()
         msgData.forceRequestBody = [10.0, 20.0, 30.0]
-        cmdForceBodyMsg = messaging2.CmdForceBodyMsg().write(msgData)
+        cmdForceBodyMsg = messaging.CmdForceBodyMsg().write(msgData)
         extFTObject.cmdForceBodyInMsg.subscribeTo(cmdForceBodyMsg)
 
     scSim.AddModelToTask(unitTaskName, extFTObject)

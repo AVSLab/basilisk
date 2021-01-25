@@ -8,7 +8,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import dvGuidance
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import matplotlib.pyplot as plt
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -52,14 +52,14 @@ def dvGuidanceTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # The dvGuidance module reads in from the dvBurnCmd, so create that message here
-    dvBurnCmdMsg = messaging2.DvBurnCmdMsgPayload()
+    dvBurnCmdMsg = messaging.DvBurnCmdMsgPayload()
     # NOTE: This is nonsense. These are random numbers
     dvBurnCmdMsg.dvInrtlCmd = [5, 5, 5]
     dvBurnCmdMsg.dvRotVecUnit = [1, 0, 0]
     dvBurnCmdMsg.dvRotVecMag = .5
     dvBurnCmdMsg.burnStartTime = macros.sec2nano(0.5)
     # Write this message
-    dvBurnInMsg = messaging2.DvBurnCmdMsg().write(dvBurnCmdMsg)
+    dvBurnInMsg = messaging.DvBurnCmdMsg().write(dvBurnCmdMsg)
 
     # Log the output message
     # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)

@@ -25,7 +25,7 @@ import os
 from Basilisk.simulation import simpleNav
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 def listNorm(inputList):
    normValue = 0.0
@@ -68,8 +68,8 @@ def unitSimpleNav(show_plots):
     sNavObject = simpleNav.SimpleNav()
     unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
-    spiceMessage = messaging2.SpicePlanetStateMsgPayload()
-    stateMessage = messaging2.SCPlusStatesMsgPayload()
+    spiceMessage = messaging.SpicePlanetStateMsgPayload()
+    stateMessage = messaging.SCPlusStatesMsgPayload()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
@@ -78,11 +78,11 @@ def unitSimpleNav(show_plots):
     spiceMessage.PlanetName = "sun"
 
     # Inertial State output Message
-    scStateMsg = messaging2.SCPlusStatesMsg().write(stateMessage)
+    scStateMsg = messaging.SCPlusStatesMsg().write(stateMessage)
     sNavObject.scStateInMsg.subscribeTo(scStateMsg)
 
     # Sun Planet Data Message
-    sunStateMsg = messaging2.SpicePlanetStateMsg().write(spiceMessage)
+    sunStateMsg = messaging.SpicePlanetStateMsg().write(spiceMessage)
     sNavObject.sunStateInMsg.subscribeTo(sunStateMsg)
 
     sNavObject.ModelTag = "SimpleNavigation"

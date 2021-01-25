@@ -33,7 +33,7 @@ from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import prvSteering
 from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -90,7 +90,7 @@ def subModuleTestFunction(show_plots, simCase):
     #   is not part of the test.
 
     #   attGuidOut Message:
-    guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
+    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
 
     sigma_BR = []
     if simCase == 0:
@@ -105,25 +105,25 @@ def subModuleTestFunction(show_plots, simCase):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
+    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
+    rwSpeedMessage = messaging.RWSpeedMsgPayload()
     Omega = [10.0, 25.0, 50.0, 100.0]
     rwSpeedMessage.wheelSpeeds = Omega
-    rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
+        rwConfigParams = messaging.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = [
             0.0, 0.0, 0.0,
             0.0, 0.0, 0.0,
@@ -132,17 +132,17 @@ def subModuleTestFunction(show_plots, simCase):
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = 4
-        rwParamInMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+        rwParamInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
         return rwParamInMsg
 
     rwParamInMsg = writeMsgInWheelConfiguration()
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
-        rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
-        avail = [messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE]
+        rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
+        avail = [messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE]
         rwAvailabilityMessage.wheelAvailability = avail
-        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+        rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
         return rwAvailInMsg
 
     rwAvailInMsg = writeMsgInWheelAvailability()

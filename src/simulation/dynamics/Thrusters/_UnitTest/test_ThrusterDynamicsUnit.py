@@ -47,7 +47,7 @@ from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import stateArchitecture
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 class ResultsStore:
@@ -147,7 +147,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     angledeg_lat = lat_angle
     anglerad_long = angledeg_long * math.pi/180.0
     anglerad_lat = angledeg_lat * math.pi / 180.0
-    thruster1 = messaging2.THRSimConfigMsgPayload()
+    thruster1 = messaging.THRSimConfigMsgPayload()
     thruster1.thrLoc_B = location # Parametrized location for thruster
     thruster1.thrDir_B = [[math.cos(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_lat)]]
     thruster1.MaxThrust = 1.0
@@ -159,7 +159,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     dir1 = np.array([thruster1.thrDir_B[0][0], thruster1.thrDir_B[1][0], thruster1.thrDir_B[2][0]])
 
     if thrustNumber==2:
-        thruster2 = messaging2.THRSimConfigMsgPayload()
+        thruster2 = messaging.THRSimConfigMsgPayload()
         thruster2.thrLoc_B =np.array([[1.], [0.0], [0.0]]).reshape([3,1])
         thruster2.thrDir_B = np.array([[math.cos(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_lat-math.pi/4.)]]).reshape([3,1])
         thruster2.MaxThrust = 1.0
@@ -194,12 +194,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.mDotTotal', testRate, 0, 0)
 
-    ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
+    ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
     if thrustNumber==1:
         ThrustMessage.OnTimeRequest = [0.]
     if thrustNumber==2:
         ThrustMessage.OnTimeRequest = [0., 0.]
-    thrCmdMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+    thrCmdMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
     thrusterSet.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     TotalSim.InitializeSimulation()
@@ -352,12 +352,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         rampOffList = []
         # Note that this ramp is totally linear and ramps up 30 ms using 30 steps
         for i in range(rampsteps):
-            newElement = messaging2.THRTimePairMsgPayload()
+            newElement = messaging.THRTimePairMsgPayload()
             newElement.TimeDelta = (i + 1.) * 0.1
             newElement.ThrustFactor = (i + 1.0) / 10.0
             newElement.IspFactor = (i + 1.0) / 10.0
             rampOnList.append(newElement)
-            newElement = messaging2.THRTimePairMsgPayload()
+            newElement = messaging.THRTimePairMsgPayload()
             newElement.TimeDelta = (i + 1) * 0.1
             newElement.ThrustFactor = 1.0 - (i + 1.0) / 10.0
             newElement.IspFactor = newElement.ThrustFactor

@@ -25,7 +25,7 @@ import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 class BSKFswModels():
@@ -227,9 +227,9 @@ class BSKFswModels():
 
     def SetVehicleConfiguration(self):
         # use the same inertia in the FSW algorithm as in the simulation
-        vcData = messaging2.VehicleConfigMsgPayload()
+        vcData = messaging.VehicleConfigMsgPayload()
         vcData.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
-        self.vcMsg = messaging2.VehicleConfigMsg().write(vcData)
+        self.vcMsg = messaging.VehicleConfigMsg().write(vcData)
 
     def SetMRPFeedbackControl(self):
         self.mrpFeedbackControlData.guidInMsg.subscribeTo(self.attGuid2Msg)
@@ -274,14 +274,14 @@ class BSKFswModels():
 
     def zeroGateWayMsgs(self):
         """Zero all the FSW gateway message payloads"""
-        self.cmdTorqueMsg.write(messaging2.CmdTorqueBodyMsgPayload())
-        self.cmdTorque2Msg.write(messaging2.CmdTorqueBodyMsgPayload())
-        self.cmdTorqueDirectMsg.write(messaging2.CmdTorqueBodyMsgPayload())
-        self.attRefMsg.write(messaging2.AttRefMsgPayload())
-        self.attRef2Msg.write(messaging2.AttRefMsgPayload())
-        self.attGuidMsg.write(messaging2.AttGuidMsgPayload())
-        self.attGuid2Msg.write(messaging2.AttGuidMsgPayload())
-        self.cmdRwMotorMsg.write(messaging2.ArrayMotorTorqueMsgPayload())
-        self.cmdRwMotor2Msg.write(messaging2.ArrayMotorTorqueMsgPayload())
+        self.cmdTorqueMsg.write(messaging.CmdTorqueBodyMsgPayload())
+        self.cmdTorque2Msg.write(messaging.CmdTorqueBodyMsgPayload())
+        self.cmdTorqueDirectMsg.write(messaging.CmdTorqueBodyMsgPayload())
+        self.attRefMsg.write(messaging.AttRefMsgPayload())
+        self.attRef2Msg.write(messaging.AttRefMsgPayload())
+        self.attGuidMsg.write(messaging.AttGuidMsgPayload())
+        self.attGuid2Msg.write(messaging.AttGuidMsgPayload())
+        self.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())
+        self.cmdRwMotor2Msg.write(messaging.ArrayMotorTorqueMsgPayload())
 
 

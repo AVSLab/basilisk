@@ -36,7 +36,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import ReactionWheelPower
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging
 
@@ -118,7 +118,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     testModule = ReactionWheelPower.ReactionWheelPower()
     testModule.ModelTag = "bskSat"
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
-    rwMsg = messaging2.RWConfigLogMsg()
+    rwMsg = messaging.RWConfigLogMsg()
     testModule.rwStateInMsg.subscribeTo(rwMsg)
 
     if setEta_e2m:
@@ -137,16 +137,16 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     # set the RW status input message
     OmegaValue = OmegaValue * macros.RPM        # convert to rad/sec
     if setRwMsg:
-        rwStatusMsg = messaging2.RWConfigLogMsgPayload()
+        rwStatusMsg = messaging.RWConfigLogMsgPayload()
         rwStatusMsg.Omega = OmegaValue          # rad/sec
         rwStatusMsg.u_current = 0.010           # Nm
         rwMsg.write(rwStatusMsg)
 
     # set device status message
     if setDeviceStatusMsg > 0:
-        deviceStatusMsg = messaging2.DeviceStatusMsgPayload()
+        deviceStatusMsg = messaging.DeviceStatusMsgPayload()
         deviceStatusMsg.deviceStatus = setDeviceStatusMsg - 1
-        statusMsg = messaging2.DeviceStatusMsg().write(deviceStatusMsg)
+        statusMsg = messaging.DeviceStatusMsg().write(deviceStatusMsg)
         testModule.nodeStatusInMsg.subscribeTo(statusMsg)
 
     dataLog = testModule.nodePowerOutMsg.recorder()

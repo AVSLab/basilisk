@@ -26,7 +26,7 @@
 #include <chrono>
 
 #include "architecture/msgPayloadDefC/SynchClockMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 

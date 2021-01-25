@@ -176,7 +176,7 @@ from Basilisk.utilities import vizSupport
 from Basilisk.simulation import spacecraftPlus
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import copy
 
 # The path to the location of Basilisk
@@ -246,14 +246,14 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #
     # create simulation messages
     #
-    sunPositionMsgData = messaging2.SpicePlanetStateMsgPayload()
+    sunPositionMsgData = messaging.SpicePlanetStateMsgPayload()
     sunPositionMsgData.PositionVector = [0.0, om.AU*1000.0, 0.0]
-    sunPositionMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsgData)
+    sunPositionMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsgData)
 
     if useEclipse:
-        eclipseMsgData = messaging2.EclipseMsgPayload()
+        eclipseMsgData = messaging.EclipseMsgPayload()
         eclipseMsgData.shadowFactor = 0.5
-        eclipseMsg = messaging2.EclipseMsg().write(eclipseMsgData)
+        eclipseMsg = messaging.EclipseMsg().write(eclipseMsgData)
 
     def setupCSS(CSS):
         CSS.fov = 80. * macros.D2R

@@ -30,7 +30,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import inertial3DSpin                   # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -77,14 +77,14 @@ def test_subModuleTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = messaging2.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    refStateMsg = messaging2.AttRefMsg().write(RefStateOutData)
+    refStateMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     moduleLog = moduleConfig.attRefOutMsg.recorder()
@@ -210,7 +210,7 @@ def test_subModuleTestFunction2(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = messaging2.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
 
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
@@ -218,7 +218,7 @@ def test_subModuleTestFunction2(show_plots):
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    refStateMsg = messaging2.AttRefMsg().write(RefStateOutData)
+    refStateMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     moduleLog = moduleConfig.attRefOutMsg.recorder()

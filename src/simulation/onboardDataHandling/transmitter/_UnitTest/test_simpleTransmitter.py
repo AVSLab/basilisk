@@ -29,7 +29,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import simpleTransmitter
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name

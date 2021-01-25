@@ -100,7 +100,7 @@ from Basilisk.utilities import orbitalMotion
 
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport

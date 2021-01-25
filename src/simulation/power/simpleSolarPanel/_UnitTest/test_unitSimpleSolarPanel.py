@@ -36,7 +36,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -95,20 +95,20 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     #   Input message set-up
-    eclipseMessage = messaging2.EclipseMsgPayload()
+    eclipseMessage = messaging.EclipseMsgPayload()
     eclipseMessage.shadowFactor = eclipseValue  # Set it to be totally in shadow
-    eclipseMsg = messaging2.EclipseMsg().write(eclipseMessage)
+    eclipseMsg = messaging.EclipseMsg().write(eclipseMessage)
 
 
-    sunMessage = messaging2.SpicePlanetStateMsgPayload()
+    sunMessage = messaging.SpicePlanetStateMsgPayload()
     sunMessage.PlanetName = "Sun"
     sunMessage.PositionVector = [0, 0, 0]
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunMessage)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
-    scMessage = messaging2.SCPlusStatesMsgPayload()
+    scMessage = messaging.SCPlusStatesMsgPayload()
     scMessage.r_BN_N = [-orbitDistance, 0, 0]
     scMessage.sigma_BN = scAttitude
-    scMsg = messaging2.SCPlusStatesMsg().write(scMessage)
+    scMsg = messaging.SCPlusStatesMsg().write(scMessage)
 
     #   Module set-up
     panel = simpleSolarPanel.SimpleSolarPanel()

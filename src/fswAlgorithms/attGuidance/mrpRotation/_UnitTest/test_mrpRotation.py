@@ -35,7 +35,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import mrpRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 sys.path.append(path + '/Support')
@@ -98,12 +98,12 @@ def run(show_plots, cmdStateFlag, testReset):
 
 
     if cmdStateFlag:
-        desiredAtt = messaging2.AttStateMsgPayload()
+        desiredAtt = messaging.AttStateMsgPayload()
         sigma_RR0 = np.array([0.1, 0.0, -0.2])
         desiredAtt.state = sigma_RR0
         omega_RR0_R = np.array([0.1, 1.0, 0.5]) * mc.D2R
         desiredAtt.rate = omega_RR0_R
-        desInMsg = messaging2.AttStateMsg().write(desiredAtt)
+        desInMsg = messaging.AttStateMsg().write(desiredAtt)
         moduleConfig.desiredAttInMsg.subscribeTo(desInMsg)
 
         unitTestSupport.writeTeXSnippet("sigma_RR0Cmd", str(sigma_RR0), path)
@@ -113,14 +113,14 @@ def run(show_plots, cmdStateFlag, testReset):
     #
     # Reference Frame Message
     #
-    RefStateInData = messaging2.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateInData = messaging.AttRefMsgPayload()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateInData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
     RefStateInData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateInData.domega_RN_N = domega_R0N_N
-    attRefMsg = messaging2.AttRefMsg().write(RefStateInData)
+    attRefMsg = messaging.AttRefMsg().write(RefStateInData)
     moduleConfig.attRefInMsg.subscribeTo(attRefMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

@@ -37,7 +37,7 @@ bskPath = path.split('src')[0]
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import magnetometer
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
@@ -119,20 +119,20 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # Set-up fake magnetic field
-    magFieldMsg = messaging2.MagneticFieldMsgPayload()
+    magFieldMsg = messaging.MagneticFieldMsgPayload()
     trueMagField = [1e-5, 2e-5, 1.5e-5]  # [T] true magnetic field outputs in inertial frame
     magFieldMsg.magField_N = trueMagField
-    magMsg = messaging2.MagneticFieldMsg().write(magFieldMsg)
+    magMsg = messaging.MagneticFieldMsg().write(magFieldMsg)
     testModule.magInMsg.subscribeTo(magMsg)
 
     # Set-up fake attitude
-    satelliteStateMsg = messaging2.SCPlusStatesMsgPayload()
+    satelliteStateMsg = messaging.SCPlusStatesMsgPayload()
     angles = np.linspace(0., 2 * np.pi, 59000)
     sigmas = np.zeros(len(angles))
     for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
         sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
         satelliteStateMsg.sigma_BN = [0.3, 0.2, sigmas[i]]
-    scMsg = messaging2.SCPlusStatesMsg().write(satelliteStateMsg)
+    scMsg = messaging.SCPlusStatesMsg().write(satelliteStateMsg)
     testModule.stateInMsg.subscribeTo(scMsg)
     dcm_BN = rbk.MRP2C(satelliteStateMsg.sigma_BN)
 

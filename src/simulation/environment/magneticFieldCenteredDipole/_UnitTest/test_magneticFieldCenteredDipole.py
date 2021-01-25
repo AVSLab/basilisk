@@ -36,7 +36,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import magneticFieldCenteredDipole
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simSetPlanetEnvironment
@@ -104,18 +104,18 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     planetPosition = np.array([0.0, 0.0, 0.0])
     refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))
     if usePlanetEphemeris:
-        planetStateMsg = messaging2.SpicePlanetStateMsgPayload()
+        planetStateMsg = messaging.SpicePlanetStateMsgPayload()
         planetPosition = [1000.0, 2000.0, -1000.0]
         planetStateMsg.PositionVector = planetPosition
         refPlanetDCM = np.array(((-1, 0, 0), (0, -1, 0), (0, 0, 1)))
         planetStateMsg.J20002Pfix = refPlanetDCM.tolist()
-        planetMsg = messaging2.SpicePlanetStateMsg().write(planetStateMsg)
+        planetMsg = messaging.SpicePlanetStateMsg().write(planetStateMsg)
         testModule.planetPosInMsg.subscribeTo(planetMsg)
 
 
     # add spacecraft to environment model
-    sc0StateMsg = messaging2.SCPlusStatesMsg()
-    sc1StateMsg = messaging2.SCPlusStatesMsg()
+    sc0StateMsg = messaging.SCPlusStatesMsg()
+    sc1StateMsg = messaging.SCPlusStatesMsg()
     testModule.addSpacecraftToModel(sc0StateMsg)
     testModule.addSpacecraftToModel(sc1StateMsg)
 
@@ -140,11 +140,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
 
     # create the input messages
-    sc0StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsgData = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc0StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc0StateMsg.write(sc0StateMsgData)
 
-    sc1StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsgData = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc1StateMsgData.r_BN_N = np.array(r1N) + np.array(planetPosition)
     sc1StateMsg.write(sc1StateMsgData)
 

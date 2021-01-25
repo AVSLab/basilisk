@@ -23,7 +23,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -119,13 +119,13 @@ def filterMethods():
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
-    st1 = messaging2.STAttMsgPayload()
+    st1 = messaging.STAttMsgPayload()
     st1.timeTag = macros.sec2nano(1.25)
     st1.MRP_BdyInrtl = [0.1, 0.2, 0.3]
-    st2 = messaging2.STAttMsgPayload()
+    st2 = messaging.STAttMsgPayload()
     st2.timeTag = macros.sec2nano(1.0)
     st2.MRP_BdyInrtl = [0.2, 0.2, 0.3]
-    st3 = messaging2.STAttMsgPayload()
+    st3 = messaging.STAttMsgPayload()
     st3.timeTag = macros.sec2nano(0.75)
     st3.MRP_BdyInrtl = [0.3, 0.2, 0.3]
 
@@ -154,26 +154,26 @@ def filterMethods():
         testMessages.append("Failed to capture wheel acceleration in inertialStateProp")
 
     setupFilterData(moduleConfig)
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
      0., 800., 0.,
      0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     moduleConfig.STDatasStruct.STMessages = STList
     moduleConfig.STDatasStruct.numST = len(STList)
     unitTestSim.AddVariableForLogging('inertialUKF.stSensorOrder', testProcessRate, 0, 3, 'double')
 
     # create ST input messages
-    st1InMsg = messaging2.STAttMsg().write(st1)
-    st2InMsg = messaging2.STAttMsg().write(st2)
-    st3InMsg = messaging2.STAttMsg().write(st3)
+    st1InMsg = messaging.STAttMsg().write(st1)
+    st2InMsg = messaging.STAttMsg().write(st2)
+    st3InMsg = messaging.STAttMsg().write(st3)
 
     # make input messages but don't write to them
-    rwSpeedInMsg = messaging2.RWSpeedMsg()
-    rwConfigInMsg = messaging2.RWArrayConfigMsg()
-    gyroInMsg = messaging2.AccDataMsg()
+    rwSpeedInMsg = messaging.RWSpeedMsg()
+    rwConfigInMsg = messaging.RWArrayConfigMsg()
+    gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
     moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
@@ -239,20 +239,20 @@ def stateUpdateInertialAttitude(show_plots):
     setupFilterData(moduleConfig)
     moduleConfig.maxTimeJump = 10
 
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
-    stMessage1 = messaging2.STAttMsgPayload()
+    stMessage1 = messaging.STAttMsgPayload()
     stMessage1.MRP_BdyInrtl = [0.3, 0.4, 0.5]
-    st1InMsg = messaging2.STAttMsg()
+    st1InMsg = messaging.STAttMsg()
 
-    stMessage2 = messaging2.STAttMsgPayload()
+    stMessage2 = messaging.STAttMsgPayload()
     stMessage2.MRP_BdyInrtl = [0.3, 0.4, 0.5]
-    st2InMsg = messaging2.STAttMsg()
+    st2InMsg = messaging.STAttMsg()
 
 #    stateTarget = testVector.tolist()
 #    stateTarget.extend([0.0, 0.0, 0.0])
@@ -261,9 +261,9 @@ def stateUpdateInertialAttitude(show_plots):
     unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate*10, 0, 5, 'double')
 
     # make input messages but don't write to them
-    rwSpeedInMsg = messaging2.RWSpeedMsg()
-    rwConfigInMsg = messaging2.RWArrayConfigMsg()
-    gyroInMsg = messaging2.AccDataMsg()
+    rwSpeedInMsg = messaging.RWSpeedMsg()
+    rwConfigInMsg = messaging.RWArrayConfigMsg()
+    gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
     moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
@@ -387,23 +387,23 @@ def statePropInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
 
     unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35)
     unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate*10, 0, 5)
 
     # make input messages but don't write to them
-    rwSpeedInMsg = messaging2.RWSpeedMsg()
-    rwConfigInMsg = messaging2.RWArrayConfigMsg()
-    gyroInMsg = messaging2.AccDataMsg()
-    st1InMsg = messaging2.STAttMsg()
-    st2InMsg = messaging2.STAttMsg()
+    rwSpeedInMsg = messaging.RWSpeedMsg()
+    rwConfigInMsg = messaging.RWArrayConfigMsg()
+    gyroInMsg = messaging.AccDataMsg()
+    st1InMsg = messaging.STAttMsg()
+    st2InMsg = messaging.STAttMsg()
 
     # connect messages
     moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
@@ -481,30 +481,30 @@ def stateUpdateRWInertialAttitude(show_plots):
 
     setupFilterData(moduleConfig)
 
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
-    rwArrayConfigOut = messaging2.RWArrayConfigMsgPayload()
+    rwArrayConfigOut = messaging.RWArrayConfigMsgPayload()
     rwArrayConfigOut.numRW = 3
-    rwConfigInMsg = messaging2.RWArrayConfigMsg().write(rwArrayConfigOut)
+    rwConfigInMsg = messaging.RWArrayConfigMsg().write(rwArrayConfigOut)
 
 
-    rwSpeedIntMsg = messaging2.RWSpeedMsgPayload()
+    rwSpeedIntMsg = messaging.RWSpeedMsgPayload()
     rwSpeedIntMsg.wheelSpeeds = [0.1, 0.01, 0.1]
     rwSpeedIntMsg.wheelThetas = [0.,0.,0.]
-    rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedIntMsg)
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedIntMsg)
 
-    stMessage1 = messaging2.STAttMsgPayload()
+    stMessage1 = messaging.STAttMsgPayload()
     stMessage1.MRP_BdyInrtl = [0.3, 0.4, 0.5]
-    st1InMsg = messaging2.STAttMsg()
+    st1InMsg = messaging.STAttMsg()
 
-    stMessage2 = messaging2.STAttMsgPayload()
+    stMessage2 = messaging.STAttMsgPayload()
     stMessage2.MRP_BdyInrtl = [0.3, 0.4, 0.5]
-    st2InMsg = messaging2.STAttMsg()
+    st2InMsg = messaging.STAttMsg()
 
     #    stateTarget = testVector.tolist()
     #    stateTarget.extend([0.0, 0.0, 0.0])
@@ -513,7 +513,7 @@ def stateUpdateRWInertialAttitude(show_plots):
     unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate * 10, 0, 5, 'double')
 
     # make input messages but don't write to them
-    gyroInMsg = messaging2.AccDataMsg()
+    gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
     moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
@@ -666,12 +666,12 @@ def statePropRateInertialAttitude(show_plots):
     lpDataUse.omegCutoff = 15.0 / (2.0 * math.pi)
     moduleConfig.gyroFilt = [lpDataUse, lpDataUse, lpDataUse]
 
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     stateInit = [0.0, 0.0, 0.0, math.pi/18.0, 0.0, 0.0]
     moduleConfig.stateInit = stateInit
@@ -679,15 +679,15 @@ def statePropRateInertialAttitude(show_plots):
     unitTestSim.AddVariableForLogging('InertialUKF.sigma_BNOut', testProcessRate*10, 0, 2)
     unitTestSim.AddVariableForLogging('InertialUKF.omega_BN_BOut', testProcessRate*10, 0, 2)
 
-    stMessage1 = messaging2.STAttMsgPayload()
+    stMessage1 = messaging.STAttMsgPayload()
     stMessage1.MRP_BdyInrtl = [0., 0., 0.]
     stMessage1.timeTag = int(1* 1E9)
-    st1InMsg = messaging2.STAttMsg()
+    st1InMsg = messaging.STAttMsg()
 
     # make input messages but don't write to them
-    rwSpeedInMsg = messaging2.RWSpeedMsg()
-    rwConfigInMsg = messaging2.RWArrayConfigMsg()
-    gyroInMsg = messaging2.AccDataMsg()
+    rwSpeedInMsg = messaging.RWSpeedMsg()
+    rwConfigInMsg = messaging.RWArrayConfigMsg()
+    gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
     moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
@@ -698,7 +698,7 @@ def statePropRateInertialAttitude(show_plots):
 
     unitTestSim.InitializeSimulation()
     st1InMsg.write(stMessage1, int(1 * 1E9))
-    gyroBufferData = messaging2.AccDataMsgPayload()
+    gyroBufferData = messaging.AccDataMsgPayload()
     for i in range(3600*2+1):
         gyroBufferData.accPkts[i%inertialUKF.MAX_ACC_BUF_PKT].measTime = (int(i*0.5*1E9))
         gyroBufferData.accPkts[i%inertialUKF.MAX_ACC_BUF_PKT].gyro_B = \
@@ -813,7 +813,7 @@ def faultScenarios(show_plots):
     #moduleConfigClean1.IInv = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
 
     # Bad Time and Measurement Update
-    st1 = messaging2.STAttMsgPayload()
+    st1 = messaging.STAttMsgPayload()
     st1.timeTag = macros.sec2nano(1.)
     st1.MRP_BdyInrtl = [0.1, 0.2, 0.3]
 
@@ -825,9 +825,9 @@ def faultScenarios(show_plots):
     STList = [ST1Data]
 
     # make input messages but don't write to them
-    # rwSpeedInMsg = messaging2.RWSpeedMsg()
-    # rwConfigInMsg = messaging2.RWArrayConfigMsg()
-    # gyroInMsg = messaging2.AccDataMsg()
+    # rwSpeedInMsg = messaging.RWSpeedMsg()
+    # rwConfigInMsg = messaging.RWArrayConfigMsg()
+    # gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
     # moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)

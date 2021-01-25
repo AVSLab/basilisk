@@ -36,7 +36,7 @@ bskPath = path.split('src')[0]
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import magneticFieldWMM
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -103,7 +103,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         testModule.epochDateFractionalYear = decimalYear
 
     if useMsg:
-        epochMsgData = messaging2.EpochMsgPayload()
+        epochMsgData = messaging.EpochMsgPayload()
         dt = unitTestSupport.decimalYearToDateTime(decimalYear)
         epochMsgData.year = dt.year
         epochMsgData.month = dt.month
@@ -111,7 +111,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         epochMsgData.hours = dt.hour
         epochMsgData.minutes = dt.minute
         epochMsgData.seconds = dt.second
-        epMsg = messaging2.EpochMsg().write(epochMsgData)
+        epMsg = messaging.EpochMsg().write(epochMsgData)
         testModule.epochInMsg.subscribeTo(epMsg)
 
         if not useDefault:
@@ -128,17 +128,17 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     planetPosition = np.array([0.0, 0.0, 0.0])
     refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))
     if usePlanetEphemeris:
-        planetStateMsg = messaging2.SpicePlanetStateMsgPayload()
+        planetStateMsg = messaging.SpicePlanetStateMsgPayload()
         planetPosition = [1000.0, 2000.0, -1000.0]
         planetStateMsg.PositionVector = planetPosition
         refPlanetDCM = np.array(((-1, 0, 0), (0, -1, 0), (0, 0, 1)))
         planetStateMsg.J20002Pfix = refPlanetDCM.tolist()
-        plMsg = messaging2.SpicePlanetStateMsg().write(planetStateMsg)
+        plMsg = messaging.SpicePlanetStateMsg().write(planetStateMsg)
         testModule.planetPosInMsg.subscribeTo(plMsg)
 
     # add spacecraft to environment model
-    sc0StateMsg = messaging2.SCPlusStatesMsg()
-    sc1StateMsg = messaging2.SCPlusStatesMsg()
+    sc0StateMsg = messaging.SCPlusStatesMsg()
+    sc1StateMsg = messaging.SCPlusStatesMsg()
     testModule.addSpacecraftToModel(sc0StateMsg)
     testModule.addSpacecraftToModel(sc1StateMsg)
 
@@ -152,11 +152,11 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     r0N = np.dot(refPlanetDCM.transpose(),r0P)
 
     # create the input messages
-    sc0StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsgData = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc0StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc0StateMsg.write(sc0StateMsgData)
 
-    sc1StateMsgData = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsgData = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc1StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc1StateMsg.write(sc1StateMsgData)
 

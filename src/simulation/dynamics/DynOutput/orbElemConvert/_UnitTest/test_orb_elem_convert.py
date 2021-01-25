@@ -41,7 +41,7 @@ from Basilisk.simulation import orbElemConvert
 from Basilisk.utilities import macros
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # Class in order to plot using data across the different parameterized scenarios
 class DataStore:
@@ -188,8 +188,8 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     TotalSim.AddVariableForLogging('OrbElemConvertData.v_N', testProcessRate, 0, 2, 'double')
 
     # Create and write messages
-    ElemMessage = messaging2.ClassicElementsMsgPayload()
-    elemMsg = messaging2.ClassicElementsMsg()
+    ElemMessage = messaging.ClassicElementsMsgPayload()
+    elemMsg = messaging.ClassicElementsMsg()
 
     if e == 1.0:
         ElemMessage.a = 0.0
@@ -339,16 +339,16 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         orb_elemObject.mu = mu
 
         if g == 0:
-            CartMessage = messaging2.SCPlusStatesMsgPayload()
+            CartMessage = messaging.SCPlusStatesMsgPayload()
             CartMessage.r_BN_N = rSim
             CartMessage.v_BN_N = vSim
-            stateScMsg = messaging2.SCPlusStatesMsg().write(CartMessage)
+            stateScMsg = messaging.SCPlusStatesMsg().write(CartMessage)
             orb_elemObject.scStateInMsg.subscribeTo(stateScMsg)
         else:
-            CartMessage = messaging2.SpicePlanetStateMsgPayload()
+            CartMessage = messaging.SpicePlanetStateMsgPayload()
             CartMessage.PositionVector = rSim
             CartMessage.VelocityVector = vSim
-            stateSpMsg = messaging2.SpicePlanetStateMsg().write(CartMessage)
+            stateSpMsg = messaging.SpicePlanetStateMsg().write(CartMessage)
             orb_elemObject.spiceStateInMsg.subscribeTo(stateSpMsg)
 
         dataElemLog = orb_elemObject.elemOutMsg.recorder()

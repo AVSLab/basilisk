@@ -33,7 +33,7 @@ from Basilisk.simulation import spacecraftPlus, radiationPressure
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 unitTestSupport)
 from Basilisk.utilities.simIncludeGravBody import gravBodyFactory
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

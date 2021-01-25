@@ -1,4 +1,4 @@
-SET(LIB_DIR "${CMAKE_SOURCE_DIR}/simulation/architecture/messaging2/cMsgCInterface/")
+SET(LIB_DIR "${CMAKE_SOURCE_DIR}/simulation/architecture/messaging/cMsgCInterface/")
 
 # Determine the name of the parent directory of _GeneralModuleFiles (i.e. dynamics, environment, etc)
 get_filename_component(PARENT_DIR ${LIB_DIR} DIRECTORY) # Relative to the source directory (e.g. simulation/power)

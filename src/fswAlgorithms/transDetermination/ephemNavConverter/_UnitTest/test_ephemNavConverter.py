@@ -7,7 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephemNavConverter
 from Basilisk.utilities import astroFunctions
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -46,14 +46,14 @@ def ephemNavConverterTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, ephemNavWrap, ephemNavConfig)
 
     # Create the input message.
-    inputEphem = messaging2.EphemerisMsgPayload()
+    inputEphem = messaging.EphemerisMsgPayload()
 
     # Get the Earth's position and velocity
     position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
     inputEphem.r_BdyZero_N = position
     inputEphem.v_BdyZero_N = velocity
     inputEphem.timeTag = 1.0  # sec
-    inMsg = messaging2.EphemerisMsg().write(inputEphem)
+    inMsg = messaging.EphemerisMsg().write(inputEphem)
     ephemNavConfig.ephInMsg.subscribeTo(inMsg)
 
     dataLog = ephemNavConfig.stateOutMsg.recorder()

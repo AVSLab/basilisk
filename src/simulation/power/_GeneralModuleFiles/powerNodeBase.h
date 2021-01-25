@@ -27,7 +27,7 @@
 #include <vector>
 #include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
 #include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"

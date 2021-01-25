@@ -31,13 +31,13 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import vscmgStateEffector
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 mpl.rc("figure", figsize=(5.75,4))
 
 
 def defaultVSCMG():
-    VSCMG = messaging2.VSCMGConfigMsgPayload()
+    VSCMG = messaging.VSCMGConfigMsgPayload()
 
     VSCMG.rGB_B = [[0.],[0.],[0.]]
     VSCMG.gsHat0_B = [[0.],[0.],[0.]]
@@ -199,14 +199,14 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.addStateEffector(rwStateEffector)
 
     # set RW torque command
-    cmdArray = messaging2.VSCMGArrayTorqueMsgPayload()
+    cmdArray = messaging.VSCMGArrayTorqueMsgPayload()
     if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
         cmdArray.wheelTorque = [0.0, 0.0, 0.0]  # [Nm]
         cmdArray.gimbalTorque = [0.0, 0.0, 0.0]  # [Nm]
     else:
         cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]
         cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm]
-    cmdMsg = messaging2.VSCMGArrayTorqueMsg().write(cmdArray)
+    cmdMsg = messaging.VSCMGArrayTorqueMsg().write(cmdArray)
     rwStateEffector.cmdsInMsg.subscribeTo(cmdMsg)
 
     # Add test module to runtime call list

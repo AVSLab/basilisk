@@ -33,7 +33,7 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import nHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("testCase", [
     ('NoGravity'),

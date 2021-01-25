@@ -1,5 +1,5 @@
 #include "{type}_C.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bsk_Print.h"
 #include<string.h>
 

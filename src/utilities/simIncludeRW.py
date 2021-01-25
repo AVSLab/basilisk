@@ -24,7 +24,7 @@ import sys
 import numpy
 
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 try:
     from collections.abc import OrderedDict
@@ -72,7 +72,7 @@ class rwFactory(object):
         """
 
         # create the blank RW object
-        RW = messaging2.RWConfigMsgPayload()
+        RW = messaging.RWConfigMsgPayload()
 
         # process optional input arguments
         if 'RWModel' in kwargs:
@@ -81,7 +81,7 @@ class rwFactory(object):
                 print('ERROR: RWModel must be a INT argument')
                 exit(1)
         else:
-            varRWModel = messaging2.BalancedWheels    # default value
+            varRWModel = messaging.BalancedWheels    # default value
 
         if 'useRWfriction' in kwargs:
             varUseRWfriction = kwargs['useRWfriction']
@@ -312,13 +312,13 @@ class rwFactory(object):
             JsList.extend([rw.Js])
             uMaxList.extend([rw.u_max])
 
-        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
+        rwConfigParams = messaging.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = GsMatrix_B
         rwConfigParams.JsList = JsList
         rwConfigParams.uMax = uMaxList
         rwConfigParams.numRW = len(self.rwList)
 
-        rwConfigMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+        rwConfigMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
         rwConfigMsg.this.disown()
 
         return rwConfigMsg

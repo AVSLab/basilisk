@@ -149,7 +149,7 @@ from Basilisk.fswAlgorithms import hillPoint
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -374,9 +374,9 @@ def run(show_plots, useAltBodyFrame):
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    configDataMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines

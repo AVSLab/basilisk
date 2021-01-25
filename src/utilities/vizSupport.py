@@ -28,7 +28,7 @@ import numpy as np
 from Basilisk.utilities import unitTestSupport
 from Basilisk import __path__
 bskPath = __path__[0]
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # set the string type that works with Python 2 and 3
 try:
@@ -870,7 +870,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 # RWs have been added to this spacecraft
                 for rwLogMsg in rwEffectorScList[c].rwOutMsgs:
                     rwList.append(rwLogMsg.addSubscriber())
-            scData.rwInMsgs = messaging2.RWConfigLogInMsgsVector(rwList)
+            scData.rwInMsgs = messaging.RWConfigLogInMsgsVector(rwList)
 
         # process THR effectors
         if thrEffectorScList:
@@ -888,7 +888,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                         thrList.append(thrLogMsg.addSubscriber())
                         thrInfo.append(thSet)
                     clusterCounter += 1
-            scData.thrInMsgs = messaging2.THROutputInMsgsVector(thrList)
+            scData.thrInMsgs = messaging.THROutputInMsgsVector(thrList)
             scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
 
         # process CSS information
@@ -897,13 +897,13 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             if cssScList[c] is not None:  # CSS list has been added to this spacecraft
                 for css in cssScList[c]:
                     cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
-                scData.cssInMsgs = messaging2.CSSConfigLogInMsgsVector(cssDeviceList)
+                scData.cssInMsgs = messaging.CSSConfigLogInMsgsVector(cssDeviceList)
 
         vizMessenger.scData.push_back(scData)
         c += 1
 
     vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
-    vizMessenger.spiceInMsgs = messaging2.SpicePlanetStateInMsgsVector(spiceMsgList)
+    vizMessenger.spiceInMsgs = messaging.SpicePlanetStateInMsgsVector(spiceMsgList)
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.

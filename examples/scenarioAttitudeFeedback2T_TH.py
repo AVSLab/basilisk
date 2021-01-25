@@ -232,7 +232,7 @@ from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.fswAlgorithms import thrFiringSchmitt
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -610,9 +610,9 @@ def run(show_plots, useDVThrusters):
 
     # create the FSW vehicle configuration message
 
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # create the FSW Thruster configuration message
     if useDVThrusters:

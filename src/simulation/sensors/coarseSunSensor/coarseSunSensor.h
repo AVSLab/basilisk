@@ -30,7 +30,7 @@
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
 #include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/saturate.h"

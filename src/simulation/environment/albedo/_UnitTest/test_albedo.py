@@ -31,7 +31,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import albedo
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -86,7 +86,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
     # create planet input message
-    planetInMsg = messaging2.SpicePlanetStateMsg()
+    planetInMsg = messaging.SpicePlanetStateMsg()
 
     # Albedo A1
     albModule = albedo.Albedo()
@@ -110,10 +110,10 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     if useEclipse:
         albModule.eclipseCase = True
     # Create dummy sun message
-    sunPositionMsg = messaging2.SpicePlanetStateMsgPayload()
+    sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
 
     # Create dummy planet message
-    planetPositionMsg = messaging2.SpicePlanetStateMsgPayload()
+    planetPositionMsg = messaging.SpicePlanetStateMsgPayload()
     planetPositionMsg.PositionVector = [0., 0., 0.]
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -129,7 +129,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     req = planet.radEquator
     sunMessage = "sun_message"
     # Create dummy spacecraft message
-    scStateMsg = messaging2.SCPlusStatesMsgPayload()
+    scStateMsg = messaging.SCPlusStatesMsgPayload()
     rSC = req + 6000 * 1000  # meters
     alpha = 71. * macros.D2R
     scStateMsg.r_BN_N = np.dot(rSC, [np.cos(alpha), np.sin(alpha), 0.0])
@@ -142,12 +142,12 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     config1.r_IB_B = np.array([0., 0., 0.])
     albModule.addInstrumentConfig(config1)
 
-    sunInMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsg)
+    sunInMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
     albModule.sunPositionInMsg.subscribeTo(sunInMsg)
 
     planetInMsg.write(planetPositionMsg)
 
-    scInMsg = messaging2.SCPlusStatesMsg().write(scStateMsg)
+    scInMsg = messaging.SCPlusStatesMsg().write(scStateMsg)
     albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
 
     unitTestSim.AddModelToTask(testTaskName, albModule)

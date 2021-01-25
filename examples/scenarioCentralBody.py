@@ -92,7 +92,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 from Basilisk.utilities import planetStates
 from numpy import array
 from numpy.linalg import norm
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport

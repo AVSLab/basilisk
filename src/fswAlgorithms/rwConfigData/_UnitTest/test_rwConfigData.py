@@ -8,7 +8,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import rwConfigData
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import numpy as np
 
@@ -40,7 +40,7 @@ def rwConfigDataTestFunction():
     moduleConfig = rwConfigData.rwConfigData_Config() # Create a config struct
 
     # Create the messages
-    rwConstellationFswMsg = messaging2.RWConstellationMsgPayload()
+    rwConstellationFswMsg = messaging.RWConstellationMsgPayload()
     numRW = 3
     rwConstellationFswMsg.numRW = 3
     gsHat_initial = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
@@ -50,7 +50,7 @@ def rwConfigDataTestFunction():
     # Iterate over all of the reaction wheels, create a rwConfigElementFswMsg, and add them to the rwConstellationFswMsg
     rwConfigElementList = list()
     for rw in range(numRW):
-        rwConfigElementMsg = messaging2.RWConfigElementMsgPayload()
+        rwConfigElementMsg = messaging.RWConfigElementMsgPayload()
         rwConfigElementMsg.gsHat_B = gsHat_initial[rw]  # Spin axis unit vector of the wheel in structure # [1, 0, 0]
         rwConfigElementMsg.Js = js_initial[rw]  # Spin axis inertia of wheel [kgm2]
         rwConfigElementMsg.uMax = uMax_initial[rw]  # maximum RW motor torque [Nm]
@@ -62,7 +62,7 @@ def rwConfigDataTestFunction():
     rwConstellationFswMsg.reactionWheels = rwConfigElementList
 
     # Set these messages
-    rwConstInMsg = messaging2.RWConstellationMsg().write(rwConstellationFswMsg)
+    rwConstInMsg = messaging.RWConstellationMsg().write(rwConstellationFswMsg)
     moduleConfig.rwConstellationInMsg.subscribeTo(rwConstInMsg)
 
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig) # This calls the algContain to setup the selfInit, crossInit, and update

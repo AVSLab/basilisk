@@ -17,7 +17,7 @@
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */

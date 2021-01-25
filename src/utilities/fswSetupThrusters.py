@@ -25,7 +25,7 @@ import sys, os, inspect
 import math
 import numpy
 
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 thrList = []
@@ -49,7 +49,7 @@ def create(
     global thrList
 
     # create the blank Thruster object
-    thrPointer = messaging2.THRConfigMsgPayload()
+    thrPointer = messaging.THRConfigMsgPayload()
 
     thrPointer.rThrust_B = rThrust_B
     thrPointer.tHatThrust_B = tHatThrust_B
@@ -70,15 +70,15 @@ def writeConfigMessage():
     """
     global thrList
 
-    thrClass = messaging2.THRArrayConfigMsgPayload()
+    thrClass = messaging.THRArrayConfigMsgPayload()
 
     i = 0
     for item in thrList:
-        messaging2.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
+        messaging.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
         i += 1
 
     thrClass.numThrusters = len(thrList)
-    thrConfigInMsg = messaging2.THRArrayConfigMsg().write(thrClass)
+    thrConfigInMsg = messaging.THRArrayConfigMsg().write(thrClass)
     thrConfigInMsg.this.disown()
 
     return thrConfigInMsg

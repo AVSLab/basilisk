@@ -24,7 +24,7 @@
 import sys
 import numpy
 
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -68,7 +68,7 @@ class thrusterFactory(object):
                 A handle to the thruster configuration message
         """
         # create the blank thruster object
-        TH = messaging2.THRSimConfigMsgPayload()
+        TH = messaging.THRSimConfigMsgPayload()
 
         # set default thruster values
         TH.areaNozzle = 0.1         # [m^2]
@@ -203,21 +203,21 @@ class thrusterFactory(object):
         :return: thrMessage: THRArrayConfigMsg instance
         """
 
-        thrMessage = messaging2.THRArrayConfigMsgPayload()
+        thrMessage = messaging.THRArrayConfigMsgPayload()
 
         i = 0
         for simThruster in self.thrusterList.values():
             #   Converts from THRConfigSimMsg to THRConfigFswMsg
-            fswThruster = messaging2.THRConfigMsgPayload()
+            fswThruster = messaging.THRConfigMsgPayload()
             fswThruster.maxThrust = simThruster.MaxThrust
             fswThruster.rThrust_B = [val for sublist in simThruster.thrLoc_B for val in sublist]
             fswThruster.tHatThrust_B = [val for sublist in simThruster.thrDir_B for val in sublist]
-            messaging2.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
+            messaging.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
             i += 1
 
         thrMessage.numThrusters = len(self.thrusterList.values())
 
-        thrConfigMsg = messaging2.THRArrayConfigMsg().write(thrMessage)
+        thrConfigMsg = messaging.THRArrayConfigMsg().write(thrMessage)
         thrConfigMsg.this.disown()
 
         return thrConfigMsg

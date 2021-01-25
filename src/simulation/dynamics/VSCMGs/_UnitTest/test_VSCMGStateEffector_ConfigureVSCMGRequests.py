@@ -29,7 +29,7 @@ import numpy as np
 
 from Basilisk.utilities import macros
 from Basilisk.simulation import vscmgStateEffector
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):
@@ -38,7 +38,7 @@ def listStack(vec,simStopTime,unitProcRate):
 
 def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
     NewVSCMGCmdsVec = vscmgStateEffector.VSCMGCmdVector(numVSCMG)
-    cmds = messaging2.VSCMGCmdMsgPayload()
+    cmds = messaging.VSCMGCmdMsgPayload()
     for i in range(0,numVSCMG):
         cmds.u_s_cmd = u_s_cmd[i]
         cmds.u_g_cmd = u_g_cmd[i]
@@ -46,7 +46,7 @@ def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
     self.newVSCMGCmds = NewVSCMGCmdsVec  # set in module
 
 def defaultVSCMG():
-    VSCMG = messaging2.VSCMGConfigMsgPayload()
+    VSCMG = messaging.VSCMGConfigMsgPayload()
     VSCMG.rGB_B = [[0.],[0.],[0.]]
     VSCMG.gsHat0_B = [[1.],[0.],[0.]]
     VSCMG.gtHat0_B = [[1.],[0.],[0.]]

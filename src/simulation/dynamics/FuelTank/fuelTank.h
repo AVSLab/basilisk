@@ -32,7 +32,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 
 #include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 #include "architecture/utilities/bskLogging.h"

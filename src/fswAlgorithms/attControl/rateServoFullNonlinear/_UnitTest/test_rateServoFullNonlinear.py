@@ -30,7 +30,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import rateServoFullNonlinear  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -94,7 +94,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
+    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -103,27 +103,27 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
+    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
+    rwSpeedMessage = messaging.RWSpeedMsgPayload()
     Omega = [10.0, 25.0, 50.0, 100.0]
     rwSpeedMessage.wheelSpeeds = Omega
-    rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
     jsList = []
     GsMatrix_B = []
     def writeMsgInWheelConfiguration():
-        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
+        rwConfigParams = messaging.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
@@ -132,34 +132,34 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = rwNum
-        rwParamInMsg = messaging2.RWArrayConfigMsg().write((rwConfigParams))
+        rwParamInMsg = messaging.RWArrayConfigMsg().write((rwConfigParams))
         return rwConfigParams.JsList, rwConfigParams.GsMatrix_B, rwParamInMsg
 
     jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
 
     # wheelAvailability message
-    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
+    rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
     if useRwAvailability != "NO":
         if useRwAvailability == "ON":
-            rwAvailabilityMessage.wheelAvailability  = [messaging2.AVAILABLE, messaging2.AVAILABLE,
-                                                        messaging2.AVAILABLE, messaging2.AVAILABLE]
+            rwAvailabilityMessage.wheelAvailability  = [messaging.AVAILABLE, messaging.AVAILABLE,
+                                                        messaging.AVAILABLE, messaging.AVAILABLE]
         elif useRwAvailability == "OFF":
-            rwAvailabilityMessage.wheelAvailability  = [messaging2.UNAVAILABLE, messaging2.UNAVAILABLE,
-                                                        messaging2.UNAVAILABLE, messaging2.UNAVAILABLE]
+            rwAvailabilityMessage.wheelAvailability  = [messaging.UNAVAILABLE, messaging.UNAVAILABLE,
+                                                        messaging.UNAVAILABLE, messaging.UNAVAILABLE]
         else:
             print("WARNING: unknown rw availability status")
-        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+        rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
     else:
         # set default availability
-        rwAvailabilityMessage.wheelAvailability = [messaging2.AVAILABLE, messaging2.AVAILABLE,
-                                                   messaging2.AVAILABLE, messaging2.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = [messaging.AVAILABLE, messaging.AVAILABLE,
+                                                   messaging.AVAILABLE, messaging.AVAILABLE]
 
 
     # rateSteering message
-    rateSteeringMsg = messaging2.RateCmdMsgPayload()
+    rateSteeringMsg = messaging.RateCmdMsgPayload()
     rateSteeringMsg.omega_BastR_B = omega_BastR_B
     rateSteeringMsg.omegap_BastR_B = omegap_BastR_B
-    rateCmdInMsg = messaging2.RateCmdMsg().write(rateSteeringMsg)
+    rateCmdInMsg = messaging.RateCmdMsg().write(rateSteeringMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.cmdTorqueOutMsg.recorder()

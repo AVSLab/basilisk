@@ -17,9 +17,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define SWIGPYTHON_BUILTIN
 
-%include messaging2.header.auto.i
+%include messaging.header.auto.i
 
-%module messaging2
+%module messaging
 %pythoncode %{
     from Basilisk.architecture.swig_common_model import *
 %}
@@ -44,13 +44,13 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %};
 %{
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "messaging2.h"
+#include "messaging.h"
 #include <vector>
 %}
 %template(TimeVector) std::vector<uint64_t>;
 %include "std_vector.i"
 %include "architecture/_GeneralModuleFiles/sys_model.h"
-%include "messaging2.h"
+%include "messaging.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
 %rename(__time_vector) times;  // It's not really useful to give the user back a time vector
@@ -136,7 +136,7 @@ typedef struct messageType;
 };
 %enddef
 
-%include messaging2.auto.i
+%include messaging.auto.i
 
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
@@ -167,5 +167,5 @@ typedef struct messageType;
 %template(THROutputInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
 %template(CSSConfigLogInMsgsVector) std::vector<ReadFunctor<CSSConfigLogMsgPayload>>;
 
-%include "messaging2.h"
+%include "messaging.h"
 

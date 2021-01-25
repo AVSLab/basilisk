@@ -20,7 +20,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
-#include "architecture/messaging2/msg2Header.h"
+#include "architecture/messaging/msg2Header.h"
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
 

@@ -32,7 +32,7 @@ from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
 from Basilisk.simulation import spacecraftDynamics
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False, 'NoGravity'),
@@ -324,9 +324,9 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.theta2DotInit = 0.0
 
     # set a fixed motor torque message
-    motorMsgData = messaging2.ArrayMotorTorqueMsgPayload()
+    motorMsgData = messaging.ArrayMotorTorqueMsgPayload()
     motorMsgData.motorTorque = [2.0, 4.0]
-    motorMsg = messaging2.ArrayMotorTorqueMsg().write(motorMsgData)
+    motorMsg = messaging.ArrayMotorTorqueMsg().write(motorMsgData)
     unitTestSim.panel1.motorTorqueInMsg.subscribeTo(motorMsg)
 
     # Define Variables for panel 2

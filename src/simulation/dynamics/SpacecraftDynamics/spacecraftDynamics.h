@@ -34,7 +34,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 

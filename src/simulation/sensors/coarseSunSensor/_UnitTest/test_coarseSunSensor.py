@@ -37,7 +37,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import coarseSunSensor
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -94,12 +94,12 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #   Input Message Setup
     #   Creates inputs from sun, spacecraft, and eclipse so that those modules don't have to be included
     # Create dummy sun message
-    sunPositionMsg = messaging2.SpicePlanetStateMsgPayload()
+    sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
     sunPositionMsg.PositionVector = [om.AU * 1000. * sunDistInput, 0.0, 0.0]
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsg)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
 
     # Create dummy spacecraft message
-    satelliteStateMsg = messaging2.SCPlusStatesMsgPayload()
+    satelliteStateMsg = messaging.SCPlusStatesMsgPayload()
     satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
     angles = np.linspace(0., 2 * np.pi, 360)
     sigmas = np.zeros(len(angles))
@@ -107,7 +107,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
         sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
     satelliteStateMsg.sigma_BN = [0., 0., sigmas[0]]
-    scMsg = messaging2.SCPlusStatesMsg().write(satelliteStateMsg)
+    scMsg = messaging.SCPlusStatesMsg().write(satelliteStateMsg)
 
     # Calculate sun distance factor
     r_Sun_Sc = [0.0, 0.0, 0.0]
@@ -118,9 +118,9 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     sunDistanceFactor = ((om.AU * 1000.0) ** 2) / (sunDist ** 2)
 
     # create dummy eclipse message
-    eclipseMsg = messaging2.EclipseMsgPayload()
+    eclipseMsg = messaging.EclipseMsgPayload()
     eclipseMsg.shadowFactor = visibilityFactor
-    ecMsg = messaging2.EclipseMsg().write(eclipseMsg)
+    ecMsg = messaging.EclipseMsg().write(eclipseMsg)
 
     def setupCSS(CSS):
         CSS.fov = fov

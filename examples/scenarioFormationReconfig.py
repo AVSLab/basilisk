@@ -90,7 +90,7 @@ from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import spacecraftReconfig
 from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -214,9 +214,9 @@ def run(show_plots, useRefAttitude):
     attErrorData.attNavInMsg.subscribeTo(simpleNavObject2.attOutMsg)
 
     # VehicleConfigFswMsg
-    vehicleConfigOut2 = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut2 = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut2.ISCPntB_B = I
-    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut2)
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut2)
 
     # MRP_FeedBack
     mrpControlData = mrpFeedback.mrpFeedbackConfig()

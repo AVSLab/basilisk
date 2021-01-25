@@ -39,7 +39,7 @@ from Basilisk.utilities import vizSupport
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 try:
     from Basilisk.simulation import vizInterface
@@ -306,14 +306,14 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
                     for i in range(thrNumList[c][k]):
                         thrInfo.append(info)
                     k += 1
-                scData.thrInMsgs = messaging2.THROutputInMsgsVector(thrList)
+                scData.thrInMsgs = messaging.THROutputInMsgsVector(thrList)
                 scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
 
             if checkRW:
                 rwList = []
                 for rwLogMsg in testModule.rwScOutMsgs[c]:
                     rwList.append(rwLogMsg.addSubscriber())
-                scData.rwInMsgs = messaging2.RWConfigLogInMsgsVector(rwList)
+                scData.rwInMsgs = messaging.RWConfigLogInMsgsVector(rwList)
 
             viz.scData.push_back(scData)
 

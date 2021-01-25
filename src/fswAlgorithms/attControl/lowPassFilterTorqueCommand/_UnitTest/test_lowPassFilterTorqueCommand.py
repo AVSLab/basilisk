@@ -32,7 +32,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import lowPassFilterTorqueCommand       # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -77,9 +77,9 @@ def subModuleTestFunction(show_plots):
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
-    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()
+    inputMessageData = messaging.CmdTorqueBodyMsgPayload()
     inputMessageData.torqueRequestBody = [1.0, -0.5, 0.7]
-    inMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
+    inMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
     # setup msg connection
     moduleConfig.cmdTorqueInMsg.subscribeTo(inMsg)

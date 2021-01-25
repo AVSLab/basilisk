@@ -36,7 +36,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import opNavPoint                   # import the module that is to be tested
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
 
 
@@ -95,7 +95,7 @@ def opNavPointTestFunction(show_plots, case):
     # Create input messages
     #
     planet_B = [1.,1.,0.]
-    inputOpNavData = messaging2.OpNavMsgPayload()  # Create a structure for the input message
+    inputOpNavData = messaging.OpNavMsgPayload()  # Create a structure for the input message
     inputOpNavData.r_BN_C = planet_B
     inputOpNavData.valid = 1
     if (case == 2): #No valid measurement
@@ -104,19 +104,19 @@ def opNavPointTestFunction(show_plots, case):
         inputOpNavData.r_BN_C = [0.,0.,-1.]
     if (case == 4): #No valid measurement
         inputOpNavData.valid = 0
-    opnavInMsg = messaging2.OpNavMsg().write(inputOpNavData)
+    opnavInMsg = messaging.OpNavMsg().write(inputOpNavData)
 
-    inputIMUData = messaging2.NavAttMsgPayload()  # Create a structure for the input message
+    inputIMUData = messaging.NavAttMsgPayload()  # Create a structure for the input message
     omega_BN_B = np.array([0.01, 0.50, -0.2])
     inputIMUData.omega_BN_B = omega_BN_B
-    imuInMsg = messaging2.NavAttMsg().write(inputIMUData)
+    imuInMsg = messaging.NavAttMsg().write(inputIMUData)
     omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
     if (case ==2 or case==4):
         moduleConfig.omega_RN_B = omega_RN_B_Search
 
-    cam = messaging2.CameraConfigMsgPayload()  # Create a structure for the input message
+    cam = messaging.CameraConfigMsgPayload()  # Create a structure for the input message
     cam.sigma_CB = [0.,0.,0]
-    camInMsg = messaging2.CameraConfigMsg().write(cam)
+    camInMsg = messaging.CameraConfigMsg().write(cam)
 
 
     # Setup logging on the test module output message so that we get all the writes to it

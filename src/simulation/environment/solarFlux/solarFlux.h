@@ -27,7 +27,7 @@
 #include "architecture/msgPayloadDefC/SolarFluxMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 
 /*! @brief solar flux class */

@@ -2,14 +2,14 @@
 #include "cMsgCInterface/{type}_C.h"
 %}}
 %include "cMsgCInterface/{type}_C.h"
-%include "architecture/messaging2/msg2Header.h"
+%include "architecture/messaging/msg2Header.h"
 typedef struct {type};
 %extend {type}_C {{
     %pythoncode %{{
 
     def subscribeTo(self, source):
         """subscribe to another message source"""
-        from Basilisk.architecture.messaging2 import {type}
+        from Basilisk.architecture.messaging import {type}
         if type(source) == type(self):
             {type}_C_subscribe(self, source)
         elif type(source) == {type}:
@@ -19,7 +19,7 @@ typedef struct {type};
 
     def recorder(self, timeDiff=0):
         """create a recorder module for this message"""
-        from Basilisk.architecture.messaging2 import {type}Recorder
+        from Basilisk.architecture.messaging import {type}Recorder
         self.header.isLinked = 1
         return {type}Recorder(self, timeDiff)
 

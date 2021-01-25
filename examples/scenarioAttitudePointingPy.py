@@ -109,7 +109,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -337,9 +337,9 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         # Derivative gain term used in control
         self.P = 0
         # Input guidance structure message
-        self.guidInMsg = messaging2.AttGuidMsgReader()
+        self.guidInMsg = messaging.AttGuidMsgReader()
         # Output body torque message name
-        self.cmdTorqueOutMsg = messaging2.CmdTorqueBodyMsg()
+        self.cmdTorqueOutMsg = messaging.CmdTorqueBodyMsg()
 
     def reset(self, currentTime):
         """
@@ -366,7 +366,7 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         guidMsgBuffer = self.guidInMsg()
 
         # create output message buffer
-        torqueOutMsgBuffer = messaging2.CmdTorqueBodyMsgPayload()
+        torqueOutMsgBuffer = messaging.CmdTorqueBodyMsgPayload()
 
         # compute control solution
         lrCmd = np.array(guidMsgBuffer.sigma_BR) * self.K + np.array(guidMsgBuffer.omega_BR_B) * self.P

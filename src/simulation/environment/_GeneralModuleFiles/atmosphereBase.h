@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 

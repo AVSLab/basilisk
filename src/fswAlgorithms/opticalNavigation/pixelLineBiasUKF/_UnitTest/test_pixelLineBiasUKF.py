@@ -23,7 +23,7 @@ from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is
 from Basilisk.utilities import RigidBodyKinematics as rbk
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 def addTimeColumn(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))
@@ -118,7 +118,7 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
-    msg = messaging2.CirclesOpNavMsgPayload()
+    msg = messaging.CirclesOpNavMsgPayload()
     msg.circlesCenters = [100, 200]
     msg.circlesRadii = [100]
     msg.planetIds = [2]
@@ -148,7 +148,7 @@ def relOD_method_test(show_plots):
     # Set up a measurement test
     data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
     # Set up a circle input message
-    msg = messaging2.CirclesOpNavMsgPayload()
+    msg = messaging.CirclesOpNavMsgPayload()
     msg.circlesCenters = [100, 200]
     msg.circlesRadii = [100]
     msg.planetIds = [2]
@@ -158,13 +158,13 @@ def relOD_method_test(show_plots):
     data.numStates = len(state)
 
     # Set up attitud message
-    att = messaging2.NavAttMsgPayload()
+    att = messaging.NavAttMsgPayload()
     att.sigma_BN = [0, 0.2,-0.1]
     att.omega_BN_B = [0.,0.,0.]
     data.attInfo = att
 
     # Set up a camera message
-    cam = messaging2.CameraConfigMsgPayload()
+    cam = messaging.CameraConfigMsgPayload()
     cam.sigma_CB = [-0.2, 0., 0.3]
     cam.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     cam.resolution = [512, 512]
@@ -266,22 +266,22 @@ def StatePropRelOD(show_plots, dt):
     setupFilterData(moduleConfig)
 
     # Create the input messages.
-    inputCamera = messaging2.CameraConfigMsgPayload()
-    inputAtt = messaging2.NavAttMsgPayload()
+    inputCamera = messaging.CameraConfigMsgPayload()
+    inputAtt = messaging.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / 0.01)  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
-    camInMsg = messaging2.CameraConfigMsg().write(inputCamera)
+    camInMsg = messaging.CameraConfigMsg().write(inputCamera)
     moduleConfig.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    attInMsg = messaging2.NavAttMsg().write(inputAtt)
+    attInMsg = messaging.NavAttMsg().write(inputAtt)
     moduleConfig.attInMsg.subscribeTo(attInMsg)
 
-    circlesInMsg = messaging2.CirclesOpNavMsg()
+    circlesInMsg = messaging.CirclesOpNavMsg()
     moduleConfig.circlesInMsg.subscribeTo(circlesInMsg)
 
     dataLog = moduleConfig.filtDataOutMsg.recorder()

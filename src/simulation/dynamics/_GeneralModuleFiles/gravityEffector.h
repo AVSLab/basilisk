@@ -27,7 +27,7 @@
 #include <Eigen/Dense>
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 /*! @brief spherical harmonics class */
 class SphericalHarmonics

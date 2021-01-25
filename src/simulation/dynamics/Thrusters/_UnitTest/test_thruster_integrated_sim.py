@@ -26,7 +26,7 @@ from Basilisk.simulation import spiceInterface
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import fuelTank
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -88,9 +88,9 @@ def test_thrusterIntegratedTest(show_plots):
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
 
     # set thruster commands
-    ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
+    ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
     ThrustMessage.OnTimeRequest = [9.9]
-    thrCmdMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+    thrCmdMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
     thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     # Add test module to runtime call list

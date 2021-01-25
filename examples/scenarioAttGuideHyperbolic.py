@@ -124,7 +124,7 @@ from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
 from Basilisk.simulation import extForceTorque, simpleNav, spacecraftPlus
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 from Basilisk.utilities import vizSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -324,9 +324,9 @@ def run(show_plots, useAltBodyFrame):
     attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()

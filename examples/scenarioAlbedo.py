@@ -150,7 +150,7 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import spacecraftPlus
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -187,9 +187,9 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         simulationTimeStep = macros.sec2nano(simTimeStep)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
     # Create sun message
-    sunPositionMsg = messaging2.SpicePlanetStateMsgPayload()
+    sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
     sunPositionMsg.PositionVector = [-om.AU * 1000., 0.0, 0.0]
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsg)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
 
     # Create planet message (earth)
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -199,19 +199,19 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     planet1.isCentralBody = True  # ensure this is the central gravitational body
     req1 = planet1.radEquator
 
-    planetPositionMsg1 = messaging2.SpicePlanetStateMsgPayload()
+    planetPositionMsg1 = messaging.SpicePlanetStateMsgPayload()
     planetPositionMsg1.PositionVector = [0., 0., 0.]
     planetPositionMsg1.PlanetName = planetCase1
     planetPositionMsg1.J20002Pfix = np.identity(3)
-    pl1Msg = messaging2.SpicePlanetStateMsg().write(planetPositionMsg1)
+    pl1Msg = messaging.SpicePlanetStateMsg().write(planetPositionMsg1)
     if multiplePlanet:
         # Create planet message (moon)
         planetCase2 = 'moon'
-        planetPositionMsg2 = messaging2.SpicePlanetStateMsgPayload()
+        planetPositionMsg2 = messaging.SpicePlanetStateMsgPayload()
         planetPositionMsg2.PositionVector = [0., 384400. * 1000, 0.]
         planetPositionMsg2.PlanetName = planetCase2
         planetPositionMsg2.J20002Pfix = np.identity(3)
-        pl2Msg = messaging2.SpicePlanetStateMsg().write(planetPositionMsg2)
+        pl2Msg = messaging.SpicePlanetStateMsg().write(planetPositionMsg2)
 
     #
     # Initialize spacecraftPlus object and set properties

@@ -21,7 +21,7 @@ import pytest
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import planetHeading
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 def test_planetHeading(show_plots=False, relTol=1e-8):
@@ -48,13 +48,13 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
 
-    earthPositionMessage = messaging2.SpicePlanetStateMsgPayload()
+    earthPositionMessage = messaging.SpicePlanetStateMsgPayload()
     earthPositionMessage.PositionVector = [0., 0., 0.]
-    plMsg = messaging2.SpicePlanetStateMsg().write(earthPositionMessage)
+    plMsg = messaging.SpicePlanetStateMsg().write(earthPositionMessage)
 
-    scPositionMessage = messaging2.SCPlusStatesMsgPayload()
+    scPositionMessage = messaging.SCPlusStatesMsgPayload()
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
-    scMsg = messaging2.SCPlusStatesMsg().write(scPositionMessage)
+    scMsg = messaging.SCPlusStatesMsg().write(scPositionMessage)
 
     ph = planetHeading.PlanetHeading()
     ph.ModelTag = "planetHeading"

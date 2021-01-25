@@ -42,7 +42,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrFiringRemainder            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -127,12 +127,12 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
 
     # setup thruster impulse request message
-    thrMessageData = messaging2.THRArrayCmdForceMsgPayload()
+    thrMessageData = messaging.THRArrayCmdForceMsgPayload()
     if dvOn:
         thrMessageData.thrForce = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
     else:
         thrMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
-    thrForceMsg = messaging2.THRArrayCmdForceMsg().write(thrMessageData)
+    thrForceMsg = messaging.THRArrayCmdForceMsg().write(thrMessageData)
 
 
 

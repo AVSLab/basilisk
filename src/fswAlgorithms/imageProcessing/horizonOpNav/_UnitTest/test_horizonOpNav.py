@@ -8,7 +8,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import horizonOpNav
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import os, inspect
 import numpy as np
@@ -245,15 +245,15 @@ def horizonOpNav_update():
        384., 189., 384., 190., 385., 191., 385., 192., 386.]
 
     # Create the input messages.
-    inputCamera = messaging2.CameraConfigMsgPayload()
-    inputLimbMsg = messaging2.LimbOpNavMsgPayload()
-    inputAtt = messaging2.NavAttMsgPayload()
+    inputCamera = messaging.CameraConfigMsgPayload()
+    inputLimbMsg = messaging.LimbOpNavMsgPayload()
+    inputAtt = messaging.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / 1. )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.2,0.3]
-    camInMsg = messaging2.CameraConfigMsg().write(inputCamera)
+    camInMsg = messaging.CameraConfigMsg().write(inputCamera)
     opNav.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set circles
@@ -261,13 +261,13 @@ def horizonOpNav_update():
     inputLimbMsg.limbPoints = inputPoints
     inputLimbMsg.numLimbPoints = int(len(inputPoints)/2)
     inputLimbMsg.timeTag = 12345
-    limbInMsg = messaging2.LimbOpNavMsg().write(inputLimbMsg)
+    limbInMsg = messaging.LimbOpNavMsg().write(inputLimbMsg)
     opNav.limbInMsg.subscribeTo(limbInMsg)
 
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    attInMsg = messaging2.NavAttMsg().write(inputAtt)
+    attInMsg = messaging.NavAttMsg().write(inputAtt)
     opNav.attInMsg.subscribeTo(attInMsg)
 
 

@@ -33,7 +33,7 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'NoGravity'),
@@ -143,9 +143,9 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
 
         # set thruster commands
-        ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
+        ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
         ThrustMessage.OnTimeRequest = [5.0]
-        thrInMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+        thrInMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
         thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrInMsg)
 
         # Add test module to runtime call list

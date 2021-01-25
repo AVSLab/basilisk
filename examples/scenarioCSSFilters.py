@@ -273,7 +273,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 from Basilisk.simulation import spacecraftPlus, spiceInterface, coarseSunSensor
 from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import SunLineKF_test_utilities as Fplot
 
@@ -406,8 +406,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #   setup the simulation tasks/objects
     #
     # create sun position message at origin
-    sunMsgData = messaging2.SpicePlanetStateMsgPayload()
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunMsgData)
+    sunMsgData = messaging.SpicePlanetStateMsgPayload()
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunMsgData)
     sunLog = sunMsg.recorder()
     scSim.AddModelToTask(simTaskName, sunLog)
 
@@ -466,18 +466,18 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
     #   add the FSW CSS information
     #
-    cssConstVehicle = messaging2.CSSConfigMsgPayload()
+    cssConstVehicle = messaging.CSSConfigMsgPayload()
 
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        newCSS = messaging2.CSSUnitConfigMsgPayload()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.nHat_B = CSSHat
         newCSS.CBias = 1.0
         totalCSSList.append(newCSS)
     cssConstVehicle.nCSS = len(CSSOrientationList)
     cssConstVehicle.cssVals = totalCSSList
 
-    cssConstMsg = messaging2.CSSConfigMsg().write(cssConstVehicle)
+    cssConstMsg = messaging.CSSConfigMsg().write(cssConstVehicle)
 
     #
     # Setup filter

@@ -43,7 +43,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 try:
     from Basilisk.fswAlgorithms import limbFinding
 except ImportError:
@@ -129,10 +129,10 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
         refPoints = 2*270.0
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging2.CameraImageMsgPayload()
+    inputMessageData = messaging.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    imageInMsg = messaging2.CameraImageMsg().write(inputMessageData)
+    imageInMsg = messaging.CameraImageMsg().write(inputMessageData)
     moduleConfig.imageInMsg.subscribeTo(imageInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

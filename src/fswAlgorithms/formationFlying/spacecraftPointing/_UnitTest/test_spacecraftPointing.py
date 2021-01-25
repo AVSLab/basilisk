@@ -41,7 +41,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import spacecraftPointing           # import the module that is to be tested
 from Basilisk.utilities import macros
 import numpy as np
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("case", [
      (1)        # Regular alignment vector
@@ -105,16 +105,16 @@ def spacecraftPointingTestFunction(show_plots, case):
     #
     #   Chief Input Message
     #
-    chiefInputData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
+    chiefInputData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     chiefInputData.r_BN_N = r_BN_N[0]
-    chiefInMsg = messaging2.NavTransMsg().write(chiefInputData)
+    chiefInMsg = messaging.NavTransMsg().write(chiefInputData)
 
     #
     #   Deputy Input Message
     #
-    deputyInputData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
+    deputyInputData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     deputyInputData.r_BN_N = r_BN_N2[0]
-    deputyInMsg = messaging2.NavTransMsg().write(deputyInputData)
+    deputyInMsg = messaging.NavTransMsg().write(deputyInputData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.attReferenceOutMsg.recorder()

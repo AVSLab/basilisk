@@ -24,7 +24,7 @@
 
 #include "architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.h"
 #include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 

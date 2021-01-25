@@ -164,7 +164,7 @@ from Basilisk.simulation import magneticFieldCenteredDipole
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import simSetPlanetEnvironment
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport

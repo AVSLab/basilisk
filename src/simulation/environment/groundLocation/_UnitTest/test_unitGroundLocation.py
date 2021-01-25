@@ -24,7 +24,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import orbitalMotion
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.simulation import groundLocation
 from Basilisk.utilities import unitTestSupport
 
@@ -62,19 +62,19 @@ def test_range(show_plots):
     scSim.AddModelToTask(simTaskName, groundTarget)
 
     #   Write out mock planet rotation, spacecraft position messages
-    sc1_message = messaging2.SCPlusStatesMsgPayload()
+    sc1_message = messaging.SCPlusStatesMsgPayload()
     sc1_message.r_BN_N = [orbitalMotion.REQ_EARTH*1e3 + 100e3, 0, 0]  # SC1 is in range
-    sc1Msg = messaging2.SCPlusStatesMsg().write(sc1_message)
+    sc1Msg = messaging.SCPlusStatesMsg().write(sc1_message)
 
-    sc2_message = messaging2.SCPlusStatesMsgPayload()
+    sc2_message = messaging.SCPlusStatesMsgPayload()
     #   SC2 is placed inside/outside the visibility cone for the ground station
     sc2_message.r_BN_N = [orbitalMotion.REQ_EARTH*1e3 + 101e3,0, 0]
-    sc2Msg = messaging2.SCPlusStatesMsg().write(sc2_message)
+    sc2Msg = messaging.SCPlusStatesMsg().write(sc2_message)
 
-    sc3_message = messaging2.SCPlusStatesMsgPayload()
+    sc3_message = messaging.SCPlusStatesMsgPayload()
     #   SC3 is inside the altitude limit,  but outside the visibility cone
     sc3_message.r_BN_N = rbk.euler3(np.radians(11.)).dot(np.array([orbitalMotion.REQ_EARTH * 1e3 + 100e3, 0, 0]))
-    sc3Msg = messaging2.SCPlusStatesMsg().write(sc3_message)
+    sc3Msg = messaging.SCPlusStatesMsg().write(sc3_message)
 
     groundTarget.addSpacecraftToModel(sc1Msg)
     groundTarget.addSpacecraftToModel(sc2Msg)
@@ -153,14 +153,14 @@ def test_rotation(show_plots):
     scSim.AddModelToTask(simTaskName, groundTarget)
 
     #   Write out mock planet rotation, spacecraft position messages
-    sc1_message = messaging2.SCPlusStatesMsgPayload()
+    sc1_message = messaging.SCPlusStatesMsgPayload()
     sc1_message.r_BN_N = np.array([orbitalMotion.REQ_EARTH*1e3 + 90e3, 0, 0])  # SC1 is in range
-    scMsg = messaging2.SCPlusStatesMsg().write(sc1_message)
+    scMsg = messaging.SCPlusStatesMsg().write(sc1_message)
     groundTarget.addSpacecraftToModel(scMsg)
 
-    planet_message = messaging2.SpicePlanetStateMsgPayload()
+    planet_message = messaging.SpicePlanetStateMsgPayload()
     planet_message.J20002Pfix = rbk.euler3(np.radians(-10.)).tolist()
-    planetMsg = messaging2.SpicePlanetStateMsg().write(planet_message)
+    planetMsg = messaging.SpicePlanetStateMsg().write(planet_message)
     groundTarget.planetInMsg.subscribeTo(planetMsg)
 
     # Log the access indicator

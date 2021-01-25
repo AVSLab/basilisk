@@ -107,7 +107,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.simulation import coarseSunSensor
 import math
@@ -150,10 +150,10 @@ def run(show_plots):
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # create sun position message
-    sunMessage = messaging2.SpicePlanetStateMsgPayload()
+    sunMessage = messaging.SpicePlanetStateMsgPayload()
     sunMessage.PlanetName = "Sun"
     sunMessage.PositionVector = [0, orbitalMotion.AU*1000, 0]
-    sunStateMsg = messaging2.SpicePlanetStateMsg().write(sunMessage)
+    sunStateMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()

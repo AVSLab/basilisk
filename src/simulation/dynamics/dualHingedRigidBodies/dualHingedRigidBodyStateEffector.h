@@ -32,7 +32,7 @@
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 
 

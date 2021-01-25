@@ -37,7 +37,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import rateMsgConverter
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -78,9 +78,9 @@ def rateMsgConvertFunction(show_plots):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging2.IMUSensorBodyMsgPayload()
+    inputMessageData = messaging.IMUSensorBodyMsgPayload()
     inputMessageData.AngVelBody = [-0.1, 0.2, -0.3]
-    inMsg = messaging2.IMUSensorBodyMsg().write(inputMessageData)
+    inMsg = messaging.IMUSensorBodyMsg().write(inputMessageData)
     moduleConfig.imuRateInMsg.subscribeTo(inMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

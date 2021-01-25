@@ -39,7 +39,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -96,9 +96,9 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
 
     if useTorqueLoop:
         moduleConfig.K = 1.5
-        rwSpeedMessage = messaging2.RWSpeedMsgPayload()
+        rwSpeedMessage = messaging.RWSpeedMsgPayload()
         rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
-        rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
+        rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
         moduleConfig.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
         unitTestSupport.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
@@ -124,22 +124,22 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     numRW = fswSetupRW.getNumOfDevices()
 
     # Create RW motor torque input message
-    usMessageData = messaging2.ArrayMotorTorqueMsgPayload()
+    usMessageData = messaging.ArrayMotorTorqueMsgPayload()
     if useLargeVoltage:
         usMessageData.motorTorque = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
     else:
         usMessageData.motorTorque = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
-    rwMotorTorqueInMsg = messaging2.ArrayMotorTorqueMsg().write(usMessageData)
+    rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(usMessageData)
     moduleConfig.torqueInMsg.subscribeTo(rwMotorTorqueInMsg)
 
     # create RW availability message
     if useAvailability:
-        rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
-        rwAvailArray = np.zeros(messaging2.MAX_EFF_CNT)
-        rwAvailArray.fill(messaging2.AVAILABLE)
-        rwAvailArray[2] = messaging2.UNAVAILABLE        # make 3rd RW unavailable
+        rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
+        rwAvailArray = np.zeros(messaging.MAX_EFF_CNT)
+        rwAvailArray.fill(messaging.AVAILABLE)
+        rwAvailArray[2] = messaging.UNAVAILABLE        # make 3rd RW unavailable
         rwAvailabilityMessage.wheelAvailability = rwAvailArray
-        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+        rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
         moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

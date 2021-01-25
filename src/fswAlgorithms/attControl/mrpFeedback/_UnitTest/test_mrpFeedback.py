@@ -39,7 +39,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -126,7 +126,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
     # create input messages
     #   AttGuidFswMsg Message:
-    guidCmdData = messaging2.AttGuidMsgPayload()
+    guidCmdData = messaging.AttGuidMsgPayload()
     sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = [0.010, -0.020, 0.015]
@@ -135,27 +135,27 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = [0.0002, 0.0003, 0.0001]
     guidCmdData.domega_RN_B = domega_RN_B
-    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
+    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfig = messaging2.VehicleConfigMsgPayload()
+    vehicleConfig = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfig.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfig)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfig)
 
     # wheelSpeeds Message
-    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
+    rwSpeedMessage = messaging.RWSpeedMsgPayload()
     Omega = [10.0, 25.0, 50.0, 100.0]  # rad/sec
     rwSpeedMessage.wheelSpeeds = Omega
-    rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
     jsList = []
     GsMatrix_B = []
     def writeMsgInWheelConfiguration():
-        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
+        rwConfigParams = messaging.RWArrayConfigMsgPayload()
 
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
@@ -165,28 +165,28 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = rwNum
-        msg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+        msg = messaging.RWArrayConfigMsg().write(rwConfigParams)
         return rwConfigParams.JsList, rwConfigParams.GsMatrix_B, msg
 
     if rwNum > 0:
         jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
 
     # wheelAvailability message
-    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
+    rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
     if useRwAvailability != "NO":
         if useRwAvailability == "ON":
-            rwAvailabilityMessage.wheelAvailability = [messaging2.AVAILABLE, messaging2.AVAILABLE,
-                                                       messaging2.AVAILABLE, messaging2.AVAILABLE]
+            rwAvailabilityMessage.wheelAvailability = [messaging.AVAILABLE, messaging.AVAILABLE,
+                                                       messaging.AVAILABLE, messaging.AVAILABLE]
         elif useRwAvailability == "OFF":
-            rwAvailabilityMessage.wheelAvailability = [messaging2.UNAVAILABLE, messaging2.UNAVAILABLE,
-                                                       messaging2.UNAVAILABLE, messaging2.UNAVAILABLE]
+            rwAvailabilityMessage.wheelAvailability = [messaging.UNAVAILABLE, messaging.UNAVAILABLE,
+                                                       messaging.UNAVAILABLE, messaging.UNAVAILABLE]
         else:
             print("WARNING: unknown rw availability status")
-        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+        rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
     else:
         # set default availability
-        rwAvailabilityMessage.wheelAvailability = [messaging2.AVAILABLE, messaging2.AVAILABLE,
-                                                   messaging2.AVAILABLE, messaging2.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = [messaging.AVAILABLE, messaging.AVAILABLE,
+                                                   messaging.AVAILABLE, messaging.AVAILABLE]
 
     LrTrue = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfig, jsList,
                              rwNum, GsMatrix_B, rwAvailabilityMessage)

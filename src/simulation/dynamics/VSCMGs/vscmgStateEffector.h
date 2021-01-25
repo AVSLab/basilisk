@@ -32,7 +32,7 @@
 #include "architecture/msgPayloadDefC/VSCMGCmdMsgPayload.h"
 #include "architecture/msgPayloadDefC/VSCMGArrayTorqueMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/VSCMGConfigMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"

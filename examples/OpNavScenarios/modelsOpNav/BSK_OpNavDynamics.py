@@ -41,7 +41,7 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk import __path__
 
 from Basilisk.utilities import vizSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 bskPath = __path__[0]
 filename = inspect.getframeinfo(inspect.currentframe()).filename

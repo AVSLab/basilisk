@@ -39,7 +39,7 @@ from Basilisk.simulation import msisAtmosphere
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -172,9 +172,9 @@ def run(show_plots, orbitCase, setEpoch):
 
     swMsgList = []
     for c in range(len(sw_msg_names)):
-        swMsgData = messaging2.SwDataMsgPayload()
+        swMsgData = messaging.SwDataMsgPayload()
         swMsgData.dataValue = 0
-        swMsgList.append(messaging2.SwDataMsg().write(swMsgData))
+        swMsgList.append(messaging.SwDataMsg().write(swMsgData))
         newAtmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
 
     dataLog = scObject.scStateOutMsg.recorder()

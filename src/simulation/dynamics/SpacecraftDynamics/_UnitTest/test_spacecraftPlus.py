@@ -33,7 +33,7 @@ from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import GravityGradientEffector
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))
@@ -950,11 +950,11 @@ def test_scAttRef(show_plots, accuracy):
     scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
     # write attitude reference message
-    attRef = messaging2.AttRefMsgPayload()
+    attRef = messaging.AttRefMsgPayload()
     attRef.sigma_RN = [0.0, 0.0, 1.0]
     attRef.omega_RN_N = [1.0, 2.0, 3.0]
     attRef.omega_RN_N = [0.0001, 0.0002, 0.0003]
-    attRefMsg = messaging2.AttRefMsg().write(attRef)
+    attRefMsg = messaging.AttRefMsg().write(attRef)
     scObject.attRefInMsg.subscribeTo(attRefMsg)
 
     unitTestSim.InitializeSimulation()

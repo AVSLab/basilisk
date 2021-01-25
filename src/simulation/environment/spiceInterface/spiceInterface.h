@@ -30,7 +30,7 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 /*! @brief spice interface class */
 class SpiceInterface: public SysModel {

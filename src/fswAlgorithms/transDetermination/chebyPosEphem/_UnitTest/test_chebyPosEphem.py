@@ -32,7 +32,7 @@ from Basilisk.fswAlgorithms import chebyPosEphem
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 orbitPosAccuracy = 1.0
 orbitVelAccuracy = 0.01
@@ -105,11 +105,11 @@ def test_sineCosine(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = pyswice.doubleArray_getitem(et, 0)
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationDays/2.0*86400.0
 
-    clockCorrData = messaging2.TDBVehicleClockCorrelationMsgPayload()
+    clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
-    clockInMsg = messaging2.TDBVehicleClockCorrelationMsg().write(clockCorrData)
+    clockInMsg = messaging.TDBVehicleClockCorrelationMsg().write(clockCorrData)
     chebyFitModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
     xFitData = numpy.polynomial.chebyshev.chebval(fitTimes, chebCosCoeff)
@@ -210,11 +210,11 @@ def test_earthOrbitFit(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
 
-    clockCorrData = messaging2.TDBVehicleClockCorrelationMsgPayload()
+    clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
-    clockInMsg = messaging2.TDBVehicleClockCorrelationMsg().write(clockCorrData)
+    clockInMsg = messaging.TDBVehicleClockCorrelationMsg().write(clockCorrData)
     chebyFitModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
     dataLog = chebyFitModel.posFitOutMsg.recorder()

@@ -163,7 +163,7 @@ from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import fswSetupRW
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -426,9 +426,9 @@ def run(show_plots, simCase):
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation

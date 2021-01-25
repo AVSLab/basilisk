@@ -7,7 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import faultDetection
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import os, inspect, pytest
 import numpy as np
@@ -105,21 +105,21 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     unitTestSim.AddModelToTask(unitTaskName, faultsWrap, faults)
 
     # Create the input messages.
-    inputPrimary = messaging2.OpNavMsgPayload()
-    inputSecondary = messaging2.OpNavMsgPayload()
-    inputCamera = messaging2.CameraConfigMsgPayload()
-    inputAtt = messaging2.NavAttMsgPayload()
+    inputPrimary = messaging.OpNavMsgPayload()
+    inputSecondary = messaging.OpNavMsgPayload()
+    inputCamera = messaging.CameraConfigMsgPayload()
+    inputAtt = messaging.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.3,0.1]
-    camInMsg = messaging2.CameraConfigMsg().write(inputCamera)
+    camInMsg = messaging.CameraConfigMsg().write(inputCamera)
     faults.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    attInMsg = messaging2.NavAttMsg().write(inputAtt)
+    attInMsg = messaging.NavAttMsg().write(inputAtt)
     faults.attInMsg.subscribeTo(attInMsg)
 
     BN = rbk.MRP2C(inputAtt.sigma_BN)
@@ -132,7 +132,7 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     inputPrimary.covar_C = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     inputPrimary.covar_N = np.dot(np.dot(NC, np.array([0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]).reshape([3,3])), NC.T).flatten().tolist()
     inputPrimary.timeTag = 12345
-    op1InMsg = messaging2.OpNavMsg().write(inputPrimary)
+    op1InMsg = messaging.OpNavMsg().write(inputPrimary)
     faults.navMeasPrimaryInMsg.subscribeTo(op1InMsg)
 
     # Set secondary
@@ -142,7 +142,7 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     inputSecondary.covar_C = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     inputSecondary.covar_N = np.dot(np.dot(NC, np.array([0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]).reshape([3,3])), NC.T).flatten().tolist()
     inputSecondary.timeTag = 12345
-    op2InMsg = messaging2.OpNavMsg().write(inputSecondary)
+    op2InMsg = messaging.OpNavMsg().write(inputSecondary)
     faults.navMeasSecondaryInMsg.subscribeTo(op2InMsg)
 
     dataLog = faults.opNavOutMsg.recorder()

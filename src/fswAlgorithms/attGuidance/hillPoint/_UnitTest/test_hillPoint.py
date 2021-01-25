@@ -31,7 +31,7 @@ from Basilisk.fswAlgorithms import hillPoint                        # import the
 from Basilisk.utilities import macros
 import numpy as np
 from Basilisk.utilities import astroFunctions as af
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -89,20 +89,20 @@ def hillPointTestFunction(show_plots, celMsgSet):
     #
     #   Navigation Input Message
     #
-    NavStateOutData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
+    NavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     NavStateOutData.r_BN_N = r_BN_N
     NavStateOutData.v_BN_N = v_BN_N
-    navMsg = messaging2.NavTransMsg().write(NavStateOutData)
+    navMsg = messaging.NavTransMsg().write(NavStateOutData)
     moduleConfig.transNavInMsg.subscribeTo(navMsg)
 
     #
     #   Spice Input Message
     #
     if (celMsgSet):
-        CelBodyData = messaging2.EphemerisMsgPayload()
+        CelBodyData = messaging.EphemerisMsgPayload()
         CelBodyData.r_BdyZero_N = planetPos
         CelBodyData.v_BdyZero_N = planetVel
-        celBodyMsg = messaging2.EphemerisMsg().write(CelBodyData)
+        celBodyMsg = messaging.EphemerisMsg().write(CelBodyData)
         moduleConfig.celBodyInMsg.subscribeTo(celBodyMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

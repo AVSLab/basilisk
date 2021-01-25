@@ -6,7 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, fswSetupThrusters
 from Basilisk.fswAlgorithms import thrustRWDesat
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 def test_thrustRWDesat():
@@ -52,18 +52,18 @@ def thrustRWDesatTestFunction():
 
     numRW = 3
 
-    inputRWConstellationMsg = messaging2.RWConstellationMsgPayload()
+    inputRWConstellationMsg = messaging.RWConstellationMsgPayload()
     inputRWConstellationMsg.numRW = numRW
 
     # Initialize the msg that gives the speed of the reaction wheels
-    inputSpeedMsg = messaging2.RWSpeedMsgPayload()
+    inputSpeedMsg = messaging.RWSpeedMsgPayload()
 
     gsHat = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
     # Iterate over all of the reaction wheels, create a rwConfigElementFswMsg, and add them to the rwConstellationFswMsg
     rwConfigElementList = list()
     for rw in range(numRW):
-        rwConfigElementMsg = messaging2.RWConfigElementMsgPayload()
+        rwConfigElementMsg = messaging.RWConfigElementMsgPayload()
         rwConfigElementMsg.gsHat_B = gsHat[rw]  # Spin axis unit vector of the wheel in structure # [1, 0, 0]
         rwConfigElementMsg.Js = 0.08  # Spin axis inertia of wheel [kgm2]
         rwConfigElementMsg.uMax = 0.2  # maximum RW motor torque [Nm]
@@ -77,7 +77,7 @@ def thrustRWDesatTestFunction():
     inputRWConstellationMsg.reactionWheels = rwConfigElementList
 
     # Initialize the msg that gives the mass properties. This just needs the center of mass value
-    inputVehicleMsg = messaging2.VehicleConfigMsgPayload()
+    inputVehicleMsg = messaging.VehicleConfigMsgPayload()
     inputVehicleMsg.CoM_B = [0, 0, 0] # This is random.
 
     # setup thruster cluster message
@@ -110,9 +110,9 @@ def thrustRWDesatTestFunction():
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # Set these messages
-    rwSpeedInMsg = messaging2.RWSpeedMsg().write(inputSpeedMsg)
-    rwConstInMsg = messaging2.RWConstellationMsg().write(inputRWConstellationMsg)
-    vcConfigInMsg = messaging2.VehicleConfigMsg().write(inputVehicleMsg)
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(inputSpeedMsg)
+    rwConstInMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
+    vcConfigInMsg = messaging.VehicleConfigMsg().write(inputVehicleMsg)
 
     dataLog = moduleConfig.thrCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)

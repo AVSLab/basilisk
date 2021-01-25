@@ -22,7 +22,7 @@
 
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"

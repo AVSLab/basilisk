@@ -280,7 +280,7 @@ from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, 
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -428,9 +428,9 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     rwFactory = simIncludeRW.rwFactory()
 
     # store the RW dynamical model type
-    varRWModel = messaging2.BalancedWheels
+    varRWModel = messaging.BalancedWheels
     if useJitterSimple:
-        varRWModel = messaging2.JitterSimple
+        varRWModel = messaging.JitterSimple
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
@@ -558,9 +558,9 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Two options are shown to setup the FSW RW configuration message.
     # First case: The FSW RW configuration message

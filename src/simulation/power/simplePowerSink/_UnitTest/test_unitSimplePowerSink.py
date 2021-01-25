@@ -35,7 +35,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name
@@ -123,9 +123,9 @@ def test_status():
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # create the input messages
-    powerStatusMsg = messaging2.DeviceStatusMsgPayload()  # Create a structure for the input message
+    powerStatusMsg = messaging.DeviceStatusMsgPayload()  # Create a structure for the input message
     powerStatusMsg.deviceStatus = 0
-    powerMsg = messaging2.DeviceStatusMsg().write(powerStatusMsg)
+    powerMsg = messaging.DeviceStatusMsg().write(powerStatusMsg)
     testModule.nodeStatusInMsg.subscribeTo(powerMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

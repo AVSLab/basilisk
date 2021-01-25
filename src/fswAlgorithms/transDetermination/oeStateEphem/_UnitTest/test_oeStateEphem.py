@@ -28,7 +28,7 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -92,7 +92,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     timeHistory = numpy.linspace(etStart, etEnd, numCurvePoints)
     posCArray = pyswice.new_doubleArray(3)
     velCArray = pyswice.new_doubleArray(3)
-    orbEl = messaging2.ClassicElementsMsgPayload()
+    orbEl = messaging.ClassicElementsMsgPayload()
     rpArray = []
     eccArray = []
     incArray = []
@@ -166,12 +166,12 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     if not (anomFlag == -1):
         oeStateModel.ephArray[0].anomalyFlag = anomFlag
 
-    clockCorrData = messaging2.TDBVehicleClockCorrelationMsgPayload()
+    clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = oeStateModel.ephArray[0].ephemTimeMid - \
         oeStateModel.ephArray[0].ephemTimeRad
 
-    clockInMsg = messaging2.TDBVehicleClockCorrelationMsg().write(clockCorrData)
+    clockInMsg = messaging.TDBVehicleClockCorrelationMsg().write(clockCorrData)
     oeStateModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
     dataLog = oeStateModel.stateFitOutMsg.recorder()

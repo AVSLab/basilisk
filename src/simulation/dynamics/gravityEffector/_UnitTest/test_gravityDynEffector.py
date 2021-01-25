@@ -35,7 +35,7 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import stateArchitecture
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.simulation.gravityEffector import loadGravFromFileToList
 
 #script to check spherical harmonics calcs out to 20th degree
@@ -465,7 +465,7 @@ def multiBodyGravity(show_plots):
 
 
     #Create a message struct to place gravBody1 where it is wanted
-    localPlanetEditor = messaging2.SpicePlanetStateMsgPayload()
+    localPlanetEditor = messaging.SpicePlanetStateMsgPayload()
     localPlanetEditor.PositionVector = [om.AU/10., 0., 0.]
     localPlanetEditor.VelocityVector = [0., 0., 0.]
 

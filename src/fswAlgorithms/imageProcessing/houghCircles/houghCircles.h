@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"

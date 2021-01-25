@@ -33,7 +33,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -85,12 +85,12 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     oe.omega = 0.4
     oe.f = 0.5
     (r_BN_N, v_BN_N) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe)
-    chiefNavStateOutData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
+    chiefNavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     chiefNavStateOutData.timeTag = 0
     chiefNavStateOutData.r_BN_N = r_BN_N
     chiefNavStateOutData.v_BN_N = v_BN_N
     chiefNavStateOutData.vehAccumDV = [0, 0, 0]
-    chiefInMsg = messaging2.NavTransMsg().write(chiefNavStateOutData)
+    chiefInMsg = messaging.NavTransMsg().write(chiefNavStateOutData)
     moduleConfig.chiefTransInMsg.subscribeTo(chiefInMsg)
     #
     # Deputy Navigation Message
@@ -103,23 +103,23 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     oe2.omega = 0.0 + 0.0002
     oe2.f = 0.0001
     (r_BN_N2, v_BN_N2) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe2)
-    deputyNavStateOutData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
+    deputyNavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     deputyNavStateOutData.timeTag = 0
     deputyNavStateOutData.r_BN_N = r_BN_N2
     deputyNavStateOutData.v_BN_N = v_BN_N2
     deputyNavStateOutData.vehAccumDV = [0, 0, 0]
-    deputyInMsg = messaging2.NavTransMsg().write(deputyNavStateOutData)
+    deputyInMsg = messaging.NavTransMsg().write(deputyNavStateOutData)
     moduleConfig.deputyTransInMsg.subscribeTo(deputyInMsg)
 
     # 
     # reference attitude message
     #
     if useRefAttitude:
-        attRefInData = messaging2.AttRefMsgPayload()
+        attRefInData = messaging.AttRefMsgPayload()
         attRefInData.sigma_RN = [1.0, 0.0, 0.0]
         attRefInData.omega_RN_N = [0.0, 0.0, 0.0]
         attRefInData.domega_RN_N = [0.0, 0.0, 0.0]
-        attRefInMsg = messaging2.AttRefMsg().write(attRefInData)
+        attRefInMsg = messaging.AttRefMsg().write(attRefInData)
         moduleConfig.attRefInMsg.subscribeTo(attRefInMsg)
 
     #

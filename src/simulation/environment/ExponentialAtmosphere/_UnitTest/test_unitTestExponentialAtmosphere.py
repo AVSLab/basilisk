@@ -37,7 +37,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simSetPlanetEnvironment
@@ -104,10 +104,10 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
         testModule.planetRadius =  6378136.6
     planetPosition = [0.0, 0.0, 0.0]
     if usePlanetEphemeris:
-        planetStateMsg = messaging2.SpicePlanetStateMsgPayload()
+        planetStateMsg = messaging.SpicePlanetStateMsgPayload()
         planetPosition = [1000.0, 2000.0, -1000.0]
         planetStateMsg.PositionVector = planetPosition
-        plMsg = messaging2.SpicePlanetStateMsg().write(planetStateMsg)
+        plMsg = messaging.SpicePlanetStateMsg().write(planetStateMsg)
         testModule.planetPosInMsg.subscribeTo(plMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -130,13 +130,13 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     r1N, v1N = orbitalMotion.elem2rv(mu, oe)
 
     # create the input messages
-    sc0StateMsg = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsg = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc0StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
-    sc0InMsg = messaging2.SCPlusStatesMsg().write(sc0StateMsg)
+    sc0InMsg = messaging.SCPlusStatesMsg().write(sc0StateMsg)
 
-    sc1StateMsg = messaging2.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsg = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
     sc1StateMsg.r_BN_N = np.array(r1N) + np.array(planetPosition)
-    sc1InMsg = messaging2.SCPlusStatesMsg().write(sc1StateMsg)
+    sc1InMsg = messaging.SCPlusStatesMsg().write(sc1StateMsg)
 
     # add spacecraft to environment model
     testModule.addSpacecraftToModel(sc0InMsg)

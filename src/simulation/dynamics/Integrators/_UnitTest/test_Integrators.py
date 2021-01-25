@@ -40,7 +40,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename

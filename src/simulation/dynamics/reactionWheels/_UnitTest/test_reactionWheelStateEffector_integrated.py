@@ -33,7 +33,7 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 mpl.rc("figure", figsize=(5.75, 4))
 
@@ -170,14 +170,14 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = messaging2.ArrayMotorTorqueMsgPayload()
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
     if testCase == 'BOE' or testCase == 'FrictionSpinDown':
         cmdArray.motorTorque = [0.0] # [Nm]
     if testCase == 'FrictionSpinUp':
         cmdArray.motorTorque = [0.1, -0.1]
-    cmdMsg = messaging2.ArrayMotorTorqueMsg().write(cmdArray)
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
 
     # Add test module to runtime call list

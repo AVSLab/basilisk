@@ -34,7 +34,7 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import eclipse
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 from Basilisk import __path__
 bskPath = __path__[0]

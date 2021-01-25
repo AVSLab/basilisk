@@ -8,7 +8,7 @@ with open("../../../../LICENSE", 'r') as f:
     license = "/*"
     license += f.read()
     license += "*/\n\n"
-messaging2_template = license
+messaging_template = license
 header_template = license
 
 # clear out an old folder and create a fresh folder of wrapped C message interfaces
@@ -29,30 +29,30 @@ os.makedirs(os.path.dirname(destination_dir))
 swig_template = open(autoSourceDestDir + 'cMsgCInterfacePy.auto.i', 'w')
 
 
-# append all C msg definitions to the dist3/autoSource/messaging2.auto.i file that is imported into messaging2.i
-messaging2_header_i_template = ""
+# append all C msg definitions to the dist3/autoSource/messaging.auto.i file that is imported into messaging.i
+messaging_header_i_template = ""
 if platform == "linux" or platform == "linux2":
-    messaging2_header_i_template = "#define SWIGWORDSIZE64\n"
-with open(autoSourceDestDir + 'messaging2.header.auto.i', 'w') as w:
-    w.write(messaging2_header_i_template)
+    messaging_header_i_template = "#define SWIGWORDSIZE64\n"
+with open(autoSourceDestDir + 'messaging.header.auto.i', 'w') as w:
+    w.write(messaging_header_i_template)
 
-messaging2_i_template = "//C messages:"
+messaging_i_template = "//C messages:"
 for file in os.listdir("../../msgPayloadDefC"):
     if file.endswith(".h"):
         msgName = (os.path.splitext(file)[0])[:-7]
-        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
+        messaging_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
                                  + msgName + "Payload, msgPayloadDefC)"
-with open(autoSourceDestDir + 'messaging2.auto.i', 'w') as w:
-    w.write(messaging2_i_template)
+with open(autoSourceDestDir + 'messaging.auto.i', 'w') as w:
+    w.write(messaging_i_template)
 
 
 with open('./README.in', 'r') as r:
     README = r.read()
-messaging2_template += README
+messaging_template += README
 header_template += README
 
 with open('./msg_C.cpp.in', 'r') as f:
-    messaging2_template += f.read()
+    messaging_template += f.read()
 
 with open('./msg_C.h.in', 'r') as f:
     header_template += f.read()
@@ -60,19 +60,19 @@ with open('./msg_C.h.in', 'r') as f:
 with open('./cMsgCInterfacePy.i.in', 'r') as f:
     swig_template_block = f.read()
 
-with open(autoSourceDestDir + 'messaging2.auto.i', 'r') as fb:
+with open(autoSourceDestDir + 'messaging.auto.i', 'r') as fb:
     lines = fb.readlines()
 
 # The following cpp message definitions must be included after the `lines` variable is set above.
 # We only need to create Python interfaces to C++ messages, not C wrappers.
-messaging2_i_template = "\n\n//C++ messages:"
+messaging_i_template = "\n\n//C++ messages:"
 for file in os.listdir("../../msgPayloadDefCpp"):
     if file.endswith(".h"):
         msgName = (os.path.splitext(file)[0])[:-7]
-        messaging2_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
+        messaging_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
                                  + msgName + "Payload, msgPayloadDefCpp)"
-with open(autoSourceDestDir + 'messaging2.auto.i', 'a') as w:
-    w.write(messaging2_i_template)
+with open(autoSourceDestDir + 'messaging.auto.i', 'a') as w:
+    w.write(messaging_i_template)
 
 
 def to_message(struct_data):
@@ -80,7 +80,7 @@ def to_message(struct_data):
         struct_data = struct_data.replace(' ', '').split(',')
         struct_name = struct_data[0]
         source_header_file = 'msgPayloadDefC/' + struct_name + 'Payload.h'
-        definitions = messaging2_template.format(type=struct_name)
+        definitions = messaging_template.format(type=struct_name)
         header = header_template.format(type=struct_name, structHeader=source_header_file)
         swig_template.write(swig_template_block.format(type=struct_name))
         file_name = destination_dir + struct_name + '_C'

@@ -27,7 +27,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.simulation import simplePowerMonitor
 from Basilisk.utilities import macros
 
@@ -66,12 +66,12 @@ def test_storage_limits(show_plots):
     test_battery = simplePowerMonitor.SimplePowerMonitor()
     test_battery.storedCharge_Init = 0
 
-    powerMsg1 = messaging2.PowerNodeUsageMsgPayload()
+    powerMsg1 = messaging.PowerNodeUsageMsgPayload()
     powerMsg1.netPower = 5.0
-    pw1Msg = messaging2.PowerNodeUsageMsg().write(powerMsg1)
-    powerMsg2 = messaging2.PowerNodeUsageMsgPayload()
+    pw1Msg = messaging.PowerNodeUsageMsg().write(powerMsg1)
+    powerMsg2 = messaging.PowerNodeUsageMsgPayload()
     powerMsg2.netPower = 5.0
-    pw2Msg = messaging2.PowerNodeUsageMsg().write(powerMsg2)
+    pw2Msg = messaging.PowerNodeUsageMsg().write(powerMsg2)
 
 
     # Test the addNodeToStorage method:

@@ -39,7 +39,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import sunSafePoint                   # import the module that is to be tested
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
 
 
@@ -104,7 +104,7 @@ def sunSafePointTestFunction(show_plots, case):
 
     # Create input messages
     #
-    inputSunVecData = messaging2.NavAttMsgPayload()  # Create a structure for the input message
+    inputSunVecData = messaging.NavAttMsgPayload()  # Create a structure for the input message
     sunVec_B = np.array([1.0, 1.0, 0.0])
     if (case == 2 or case == 6): # no sun visible, providing a near zero norm direction vector */
         sunVec_B = [0.0, moduleConfig.minUnitMag/2, 0.0]
@@ -113,12 +113,12 @@ def sunSafePointTestFunction(show_plots, case):
     if (case == 4 or case == 5):
         sunVec_B = -sHat_Cmd_B
     inputSunVecData.vehSunPntBdy = sunVec_B
-    sunInMsg = messaging2.NavAttMsg().write(inputSunVecData)
+    sunInMsg = messaging.NavAttMsg().write(inputSunVecData)
 
-    inputIMUData = messaging2.NavAttMsgPayload()  # Create a structure for the input message
+    inputIMUData = messaging.NavAttMsgPayload()  # Create a structure for the input message
     omega_BN_B = np.array([0.01, 0.50, -0.2])
     inputIMUData.omega_BN_B = omega_BN_B
-    imuInMsg = messaging2.NavAttMsg().write(inputIMUData)
+    imuInMsg = messaging.NavAttMsg().write(inputIMUData)
 
     if case == 7:
         moduleConfig.sunAxisSpinRate = 1.5*mc.D2R

@@ -46,7 +46,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import rwVoltageInterface               # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -97,9 +97,9 @@ def run(show_plots, voltage):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    voltageData = messaging2.RWArrayVoltageMsgPayload()
+    voltageData = messaging.RWArrayVoltageMsgPayload()
     voltageData.voltage = [voltage, voltage+1.0, voltage+1.5]
-    voltageMsg = messaging2.RWArrayVoltageMsg().write(voltageData)
+    voltageMsg = messaging.RWArrayVoltageMsg().write(voltageData)
     testModule.rwVoltageInMsg.subscribeTo(voltageMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

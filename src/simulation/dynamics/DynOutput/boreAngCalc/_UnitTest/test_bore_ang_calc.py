@@ -32,7 +32,7 @@ from Basilisk.simulation import boreAngCalc
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import pytest
 import numpy
 import os
@@ -105,9 +105,9 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(1.0)))
 
-    spiceMessage = messaging2.SpicePlanetStateMsgPayload()
-    stateMessage = messaging2.SCPlusStatesMsgPayload()
-    angMessage = messaging2.BoreAngleMsgPayload()
+    spiceMessage = messaging.SpicePlanetStateMsgPayload()
+    stateMessage = messaging.SCPlusStatesMsgPayload()
+    angMessage = messaging.BoreAngleMsgPayload()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
     stateMessage.r_BN_N = vehPosition
@@ -119,10 +119,10 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     spiceMessage.PositionVector = sunPosition
     spiceMessage.PlanetName = "sun"
     # Inertial State output Message
-    scMsg = messaging2.SCPlusStatesMsg().write(stateMessage)
+    scMsg = messaging.SCPlusStatesMsg().write(stateMessage)
 
     # Sun Planet Data Message
-    sunMsg = messaging2.SpicePlanetStateMsg().write(spiceMessage)
+    sunMsg = messaging.SpicePlanetStateMsg().write(spiceMessage)
 
     # Initialize the spice modules that we are using.
     BACObject = boreAngCalc.BoreAngCalc()

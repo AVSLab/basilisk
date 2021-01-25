@@ -31,7 +31,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.simulation import starTracker
 
 # methods
@@ -87,7 +87,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     setRandomWalk(StarTracker)
 
     # configure module input message
-    OutputStateData = messaging2.SCPlusStatesMsgPayload()
+    OutputStateData = messaging.SCPlusStatesMsgPayload()
     OutputStateData.r_BN_N = [0,0,0]
     OutputStateData.v_BN_N = [0,0,0]
     OutputStateData.sigma_BN = [0,0,0]
@@ -138,7 +138,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitSim.AddModelToTask(unitTaskName, dataLog)
 
     # configure spacecraft state message
-    scMsg = messaging2.SCPlusStatesMsg().write(OutputStateData)
+    scMsg = messaging.SCPlusStatesMsg().write(OutputStateData)
     StarTracker.scStateInMsg.subscribeTo(scMsg)
 
     unitSim.InitializeSimulation()

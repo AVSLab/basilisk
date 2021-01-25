@@ -42,7 +42,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 try:
     from Basilisk.simulation import camera
@@ -144,10 +144,10 @@ def cameraColorTest(image, HSV, BGR):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging2.CameraImageMsgPayload()
+    inputMessageData = messaging.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    inCamMsg = messaging2.CameraImageMsg().write(inputMessageData)
+    inCamMsg = messaging.CameraImageMsg().write(inputMessageData)
     moduleConfig.imageInMsg.subscribeTo(inCamMsg)
     moduleConfig.cameraIsOn = 1
     moduleConfig.sigma_CB = [0, 0, 1]

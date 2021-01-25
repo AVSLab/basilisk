@@ -26,7 +26,7 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import fuelTank
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -92,9 +92,9 @@ def test_massDepletionTest(show_plots):
     unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
 
     # set thruster commands
-    ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
+    ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
     ThrustMessage.OnTimeRequest = [9.9]
-    thrCmdMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+    thrCmdMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
     thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     # Add test module to runtime call list
@@ -262,9 +262,9 @@ def axisChangeHelper(r_BcB_B):
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
 
     # set thruster commands
-    ThrustMessage = messaging2.THRArrayOnTimeCmdMsgPayload()
+    ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
     ThrustMessage.OnTimeRequest = [9.9]
-    thrCmdMsg = messaging2.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+    thrCmdMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
     thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     # Add test module to runtime call list

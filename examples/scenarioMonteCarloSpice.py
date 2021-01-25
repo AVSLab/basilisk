@@ -74,7 +74,7 @@ from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import spacecraftPlus
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 

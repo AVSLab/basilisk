@@ -264,7 +264,7 @@ from Basilisk.utilities import fswSetupRW
 from Basilisk.fswAlgorithms import rwMotorVoltage
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
@@ -569,7 +569,7 @@ def createScenarioAttitudeFeedbackRW():
     rwFactory = simIncludeRW.rwFactory()
 
     # store the RW dynamical model type
-    varRWModel = messaging2.BalancedWheels
+    varRWModel = messaging.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     RW1 = rwFactory.create('Honeywell_HR16'
@@ -616,9 +616,9 @@ def createScenarioAttitudeFeedbackRW():
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation

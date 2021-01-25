@@ -13,7 +13,7 @@ First, the planet magnetic field model must be imported and initialized:
 \end{verbatim}
 By default the model assumes the BSK epoch date and time.  To set a common epoch time across various BSK modules, then the {\tt EpochMsgPayload} must be created and written.
 \begin{verbatim}
-     epochMsgData = messaging2.EpochMsgPayload()
+     epochMsgData = messaging.EpochMsgPayload()
      dt = unitTestSupport.decimalYearToDateTime(decimalYear)
      epochMsgData.year = year
      epochMsgData.month = month
@@ -21,7 +21,7 @@ By default the model assumes the BSK epoch date and time.  To set a common epoch
      epochMsgData.hours = hour
      epochMsgData.minutes = minute
      epochMsgData.seconds = second
-     epMsg = messaging2.EpochMsg().write(epochMsgData)
+     epMsg = messaging.EpochMsg().write(epochMsgData)
      magModule.epochInMsg.subscribeTo(epMsg)
 \end{verbatim}
 If the user wants to set the WMM epoch directly, this is done by defining the {\tt epochDate} variable in terms of a decimal year format required by WMM. 

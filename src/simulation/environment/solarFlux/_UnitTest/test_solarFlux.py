@@ -21,7 +21,7 @@ import numpy as np
 import pytest
 
 from Basilisk.simulation import solarFlux
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
@@ -51,17 +51,17 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
 
-    sunPositionMessage = messaging2.SpicePlanetStateMsgPayload()
+    sunPositionMessage = messaging.SpicePlanetStateMsgPayload()
     sunPositionMessage.PositionVector = [0., 0., 0.]
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMessage)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMessage)
 
-    scPositionMessage = messaging2.SCPlusStatesMsgPayload()
+    scPositionMessage = messaging.SCPlusStatesMsgPayload()
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
-    scMsg = messaging2.SCPlusStatesMsg().write(scPositionMessage)
+    scMsg = messaging.SCPlusStatesMsg().write(scPositionMessage)
 
-    eclipseMessage = messaging2.EclipseMsgPayload()
+    eclipseMessage = messaging.EclipseMsgPayload()
     eclipseMessage.shadowFactor = shadowFactor
-    eclMsg = messaging2.EclipseMsg().write(eclipseMessage)
+    eclMsg = messaging.EclipseMsg().write(eclipseMessage)
 
     sf = solarFlux.SolarFlux()
     sim.AddModelToTask(task.Name, sf)

@@ -120,7 +120,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -183,7 +183,7 @@ def run(show_plots, missionType, saveVizardFile):
         gravFactory.spiceObject.zeroBase = 'earth'
         scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
         # Setup Camera.
-        cameraConfig = messaging2.CameraConfigMsgPayload()
+        cameraConfig = messaging.CameraConfigMsgPayload()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = 0
         cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
@@ -197,14 +197,14 @@ def run(show_plots, missionType, saveVizardFile):
         mars = gravFactory.createMarsBarycenter()
         mars.isCentralBody = True  # ensure this is the central gravitational body
         mu = mars.mu
-        cameraConfig = messaging2.CameraConfigMsgPayload()
+        cameraConfig = messaging.CameraConfigMsgPayload()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = 0
         cameraConfig.sigma_CB = [-0.333333, 0.333333, -0.333333]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 50.*macros.D2R
         cameraConfig.resolution = [512, 512]  # in pixels
-    camMsg = messaging2.CameraConfigMsg().write(cameraConfig)
+    camMsg = messaging.CameraConfigMsg().write(cameraConfig)
 
     #
     #   setup the simulation tasks/objects
@@ -270,9 +270,9 @@ def run(show_plots, missionType, saveVizardFile):
         earthPoint = np.array([0.,0.,0.1])
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # setup inertial3D guidance module
     inertial3DConfig = inertial3D.inertial3DConfig()

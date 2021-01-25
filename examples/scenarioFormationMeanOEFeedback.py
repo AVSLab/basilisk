@@ -82,7 +82,7 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
 from Basilisk.fswAlgorithms import meanOEFeedback
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 from Basilisk import __path__
 bskPath = __path__[0]

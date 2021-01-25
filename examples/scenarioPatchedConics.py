@@ -106,7 +106,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 from Basilisk.simulation import spacecraftPlus, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
 
 def run(show_plots):
@@ -159,22 +159,22 @@ def run(show_plots):
     # and to discount Jupiter's velocity upon
     # entering Jupiter's Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative
     # positions and velocities even when the planets are not moving.
-    earthStateMsg = messaging2.SpicePlanetStateMsgPayload()
+    earthStateMsg = messaging.SpicePlanetStateMsgPayload()
     earthStateMsg.PositionVector = [0.0, -149598023 * 1000, 0.0]
     earthStateMsg.VelocityVector = [0.0, 0.0, 0.0]
-    earthMsg = messaging2.SpicePlanetStateMsg().write(earthStateMsg)
+    earthMsg = messaging.SpicePlanetStateMsg().write(earthStateMsg)
     gravFactory.gravBodies['earth'].planetBodyInMsg.subscribeTo(earthMsg)
 
-    jupiterStateMsg = messaging2.SpicePlanetStateMsgPayload()
+    jupiterStateMsg = messaging.SpicePlanetStateMsgPayload()
     jupiterStateMsg.PositionVector = [0.0, 778298361 * 1000, 0.0]
     jupiterStateMsg.VelocityVector = [0.0, 0.0, 0.0]
-    jupiterMsg = messaging2.SpicePlanetStateMsg().write(jupiterStateMsg)
+    jupiterMsg = messaging.SpicePlanetStateMsg().write(jupiterStateMsg)
     gravFactory.gravBodies['jupiter barycenter'].planetBodyInMsg.subscribeTo(jupiterMsg)
 
-    sunStateMsg = messaging2.SpicePlanetStateMsgPayload()
+    sunStateMsg = messaging.SpicePlanetStateMsgPayload()
     sunStateMsg.PositionVector = [0.0, 0.0, 0.0]
     sunStateMsg.VelocityVector = [0.0, 0.0, 0.0]
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunStateMsg)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunStateMsg)
     gravFactory.gravBodies['sun'].planetBodyInMsg.subscribeTo(sunMsg)
 
     #  Earth Centered Circular orbit and hyperbolic departure

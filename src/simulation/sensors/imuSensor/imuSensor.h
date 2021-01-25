@@ -29,7 +29,7 @@
 
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"

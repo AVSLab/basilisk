@@ -158,7 +158,7 @@ from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.simulation import extForceTorque
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport

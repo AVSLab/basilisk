@@ -31,7 +31,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineEphem  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import numpy as np
 
 
@@ -106,14 +106,14 @@ def sunlineEphemTestFunction(show_plots):
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
 
-    vehAttData = messaging2.NavAttMsgPayload()
-    vehPosData = messaging2.NavTransMsgPayload()
-    sunData = messaging2.EphemerisMsgPayload()
+    vehAttData = messaging.NavAttMsgPayload()
+    vehPosData = messaging.NavTransMsgPayload()
+    sunData = messaging.EphemerisMsgPayload()
 
 
     # Artificially put sun at the origin.
     sunData.r_BdyZero_N = [0.0, 0.0, 0.0]
-    vehAttInMsg = messaging2.NavAttMsg().write(vehAttData)
+    vehAttInMsg = messaging.NavAttMsg().write(vehAttData)
 
 
     # Place spacecraft unit length away on each coordinate axis
@@ -127,8 +127,8 @@ def sunlineEphemTestFunction(show_plots):
 
     estVector = np.zeros((6, 3))
 
-    vehPosInMsg = messaging2.NavTransMsg()
-    sunDataInMsg = messaging2.EphemerisMsg().write(sunData)
+    vehPosInMsg = messaging.NavTransMsg()
+    sunDataInMsg = messaging.EphemerisMsg().write(sunData)
     sunlineEphemConfig.sunPositionInMsg.subscribeTo(sunDataInMsg)
     sunlineEphemConfig.scPositionInMsg.subscribeTo(vehPosInMsg)
     sunlineEphemConfig.scAttitudeInMsg.subscribeTo(vehAttInMsg)

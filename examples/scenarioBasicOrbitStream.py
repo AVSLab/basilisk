@@ -87,7 +87,7 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 from Basilisk.simulation import simSynch
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):

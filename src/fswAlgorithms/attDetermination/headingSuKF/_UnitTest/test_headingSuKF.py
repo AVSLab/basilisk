@@ -24,7 +24,7 @@ import math
 from Basilisk.utilities import SimulationBaseClass, macros
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import headingSuKF
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import headingSuKF_test_utilities as FilterPlots
 
@@ -395,8 +395,8 @@ def StateUpdateSunLine(show_plots):
 
     testVector = np.array([0.9, 0.1, 0.02])
     testOmega = np.array([0.01, 0.05, 0.001])
-    inputData = messaging2.OpNavMsgPayload()
-    opnavDataInMsg = messaging2.OpNavMsg()
+    inputData = messaging.OpNavMsgPayload()
+    opnavDataInMsg = messaging.OpNavMsg()
 
     stateTarget = testVector.tolist()
     inputData.r_BN_B = stateTarget
@@ -506,8 +506,8 @@ def StatePropSunLine(show_plots):
     dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    inData = messaging2.OpNavMsgPayload()
-    inDataMsg = messaging2.OpNavMsg().write(inData)
+    inData = messaging.OpNavMsgPayload()
+    inDataMsg = messaging.OpNavMsg().write(inData)
 
     # setup message connections
     moduleConfig.opnavDataInMsg.subscribeTo(inDataMsg)

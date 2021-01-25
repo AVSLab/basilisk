@@ -29,7 +29,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to be tested
 from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 
@@ -112,30 +112,30 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
+    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
     guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
     guidCmdData.omega_RN_B = [-0.02, -0.01, 0.005]
     guidCmdData.domega_RN_B = [0.0002, 0.0003, 0.0001]
-    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
+    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
+    rwSpeedMessage = messaging.RWSpeedMsgPayload()
     Omega = [10.0, 25.0, 50.0, 100.0]
     rwSpeedMessage.wheelSpeeds = Omega
-    rwInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
+    rwInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = messaging2.RWArrayConfigMsgPayload()
+        rwConfigParams = messaging.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
@@ -144,7 +144,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = 4
-        msg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+        msg = messaging.RWArrayConfigMsg().write(rwConfigParams)
         jsList = rwConfigParams.JsList
         GsMatrix_B = rwConfigParams.GsMatrix_B
         return jsList, GsMatrix_B, msg
@@ -153,10 +153,10 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
 
     # wheelAvailability message
     rwAvailList = []
-    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
-    rwAvail = [messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE]
+    rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
+    rwAvail = [messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE]
     rwAvailabilityMessage.wheelAvailability = rwAvail
-    rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+    rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
     rwAvailList.append(rwAvail)
 
     # Setup logging on the test module output message so that we get all the writes to it

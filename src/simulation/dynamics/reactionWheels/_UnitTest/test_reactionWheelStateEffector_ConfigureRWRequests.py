@@ -33,7 +33,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 # methods
@@ -45,7 +45,7 @@ def listStack(vec,simStopTime,unitProcRate):
 def writeNewRWCmds(self, u_cmd, numRW):
     # create standard vector from SWIG template (see .i file)
     NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW)
-    cmds = messaging2.RWCmdMsgPayload()
+    cmds = messaging.RWCmdMsgPayload()
     for i in range(0, numRW):
         cmds.u_cmd = u_cmd[i]
         NewRWCmdsVec[i] = cmds  # set the data
@@ -53,7 +53,7 @@ def writeNewRWCmds(self, u_cmd, numRW):
 
 
 def defaultReactionWheel():
-    RW = messaging2.RWConfigMsgPayload()
+    RW = messaging.RWConfigMsgPayload()
     RW.rWB_B = [[0.], [0.], [0.]]
     RW.gsHat_B = [[1.], [0.], [0.]]
     RW.w2Hat0_B = [[0.], [1.], [0.]]

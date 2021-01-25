@@ -44,7 +44,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 try:
     from Basilisk.fswAlgorithms import houghCircles
@@ -126,10 +126,10 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
         circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging2.CameraImageMsgPayload()
+    inputMessageData = messaging.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    imgInMsg = messaging2.CameraImageMsg().write(inputMessageData)
+    imgInMsg = messaging.CameraImageMsg().write(inputMessageData)
     moduleConfig.imageInMsg.subscribeTo(imgInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

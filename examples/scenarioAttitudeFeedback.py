@@ -169,7 +169,7 @@ from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -300,13 +300,13 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     # The MRP Feedback algorithm requires the vehicle configuration structure. This defines various spacecraft
     # related states such as the inertia tensor and the position vector between the primary Body-fixed frame
     # B origin and the center of mass (defaulted to zero).  The message payload is created through
-    configData = messaging2.VehicleConfigMsgPayload()
+    configData = messaging.VehicleConfigMsgPayload()
     configData.ISCPntB_B = I
     # Two methods are shown to create either a C++ or C wrapped msg object in python.  The
     # preferred method is to just create C++ wrapped messages.
     if not useCMsg:
         # create standard C++ wrapped C-msg copy
-        configDataMsg = messaging2.VehicleConfigMsg()
+        configDataMsg = messaging.VehicleConfigMsg()
     else:
         # example of how to create a C-wrapped C-msg in Python, have it init and write the data
         configDataMsg = cMsgPy.VehicleConfigMsg_C().init(configData)

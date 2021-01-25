@@ -10,7 +10,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import cssComm
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import os, inspect
 
@@ -20,7 +20,7 @@ path = os.path.dirname(os.path.abspath(filename))
 @pytest.mark.parametrize("numSensors, sensorData", [
     (4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6]),  # Five data inputs used despite four sensors to ensure all reset conditions are tested.
     pytest.param(0, [-100e-6, 200e-6, 600e-6, 300e-6]), # Zero sensor number to ensure all reset conditions are tested
-    pytest.param(messaging2.MAX_NUM_CSS_SENSORS+1, [200e-6]*messaging2.MAX_NUM_CSS_SENSORS)  # Indicate more sensor devices than is allowed.  The output should be clipped to the allowed length
+    pytest.param(messaging.MAX_NUM_CSS_SENSORS+1, [200e-6]*messaging.MAX_NUM_CSS_SENSORS)  # Indicate more sensor devices than is allowed.  The output should be clipped to the allowed length
 ])
 
 
@@ -72,11 +72,11 @@ def cssCommTestFunction(numSensors, sensorData):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # The cssComm module reads in from the sensor list, so create that message here
-    cssArrayMsg = messaging2.CSSArraySensorMsgPayload()
+    cssArrayMsg = messaging.CSSArraySensorMsgPayload()
 
     # NOTE: This is nonsense. These are more or less random numbers
     cssArrayMsg.CosValue = sensorData
-    cssInMsg = messaging2.CSSArraySensorMsg().write(cssArrayMsg)
+    cssInMsg = messaging.CSSArraySensorMsg().write(cssArrayMsg)
     moduleConfig.sensorListInMsg.subscribeTo(cssInMsg)
 
     # Log the output message
@@ -90,7 +90,7 @@ def cssCommTestFunction(numSensors, sensorData):
     unitTestSim.ExecuteSimulation()
 
     # Get the output from this simulation
-    MAX_NUM_CSS_SENSORS = messaging2.MAX_NUM_CSS_SENSORS
+    MAX_NUM_CSS_SENSORS = messaging.MAX_NUM_CSS_SENSORS
     outputData = dataLog.CosValue
 
     trueCssList= [0]*MAX_NUM_CSS_SENSORS

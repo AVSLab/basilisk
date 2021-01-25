@@ -36,7 +36,7 @@
 
 #include "hubEffector.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 
 

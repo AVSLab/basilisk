@@ -141,7 +141,7 @@ from Basilisk.simulation import magneticFieldWMM
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport

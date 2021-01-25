@@ -35,7 +35,7 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import spacecraftDynamics
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -1238,9 +1238,9 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.ModelTag = "panel1"
 
     # set a fixed motor torque message
-    motorMsgData = messaging2.ArrayMotorTorqueMsgPayload()
+    motorMsgData = messaging.ArrayMotorTorqueMsgPayload()
     motorMsgData.motorTorque = [2.0]
-    motorMsg = messaging2.ArrayMotorTorqueMsg().write(motorMsgData)
+    motorMsg = messaging.ArrayMotorTorqueMsg().write(motorMsgData)
     unitTestSim.panel1.motorTorqueInMsg.subscribeTo(motorMsg)
 
     # Define Variables for panel 2

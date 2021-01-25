@@ -28,7 +28,7 @@ import math
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineUKF
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import SunLineuKF_test_utilities as FilterPlots
 
 def addTimeColumn(time, data):
@@ -362,7 +362,7 @@ def testStateUpdateSunLine(show_plots):
 
     setupFilterData(moduleConfig)
 
-    cssConstelation = messaging2.CSSConfigMsgPayload()
+    cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
@@ -376,23 +376,23 @@ def testStateUpdateSunLine(show_plots):
     ]
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        newCSS = messaging2.CSSUnitConfigMsgPayload()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.CBias = 1.0
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
-    cssConstInMsg = messaging2.CSSConfigMsg().write(cssConstelation)
+    cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
 
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
-    inputData = messaging2.CSSArraySensorMsgPayload()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
         dotList.append(dotProd)
     inputData.CosValue = dotList
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
@@ -427,7 +427,7 @@ def testStateUpdateSunLine(show_plots):
             testMessages.append("State update failure")
 
     testVector = numpy.array([-0.8, -0.9, 0.0])
-    inputData = messaging2.CSSArraySensorMsgPayload()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
@@ -501,8 +501,8 @@ def testStatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    cssConstInMsg = messaging2.CSSConfigMsg()
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
+    cssConstInMsg = messaging.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
     moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
     moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
 

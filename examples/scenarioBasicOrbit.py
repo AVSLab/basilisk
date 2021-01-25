@@ -218,7 +218,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 # always import the Basilisk messaging support
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """

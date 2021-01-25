@@ -34,7 +34,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrMomentumDumping            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -116,14 +116,14 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    DeltaPInMsgData = messaging2.THRArrayCmdForceMsgPayload()
+    DeltaPInMsgData = messaging.THRArrayCmdForceMsgPayload()
     DeltaPInMsgData.thrForce = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
-    deltaPInMsg = messaging2.THRArrayCmdForceMsg().write(DeltaPInMsgData)
+    deltaPInMsg = messaging.THRArrayCmdForceMsg().write(DeltaPInMsgData)
 
     # setup the commanded angular momentum change message
-    DeltaHInMsgData = messaging2.CmdTorqueBodyMsgPayload()
+    DeltaHInMsgData = messaging.CmdTorqueBodyMsgPayload()
     DeltaHInMsgData.torqueRequestBody = [0., 0., 0.]
-    deltaHInMsg = messaging2.CmdTorqueBodyMsg()
+    deltaHInMsg = messaging.CmdTorqueBodyMsg()
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.thrusterOnTimeOutMsg.recorder()

@@ -34,7 +34,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import cssWlsEst
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -194,20 +194,20 @@ def cssWlsEstTestFunction(show_plots):
     numCSS = len(CSSOrientationList)
 
     # set the CSS unit vectors
-    cssConfigData = messaging2.CSSConfigMsgPayload()
+    cssConfigData = messaging.CSSConfigMsgPayload()
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        CSSConfigElement = messaging2.CSSUnitConfigMsgPayload()
+        CSSConfigElement = messaging.CSSUnitConfigMsgPayload()
         CSSConfigElement.CBias = 1.0
         CSSConfigElement.nHat_B = CSSHat
         totalCSSList.append(CSSConfigElement)
     cssConfigData.nCSS = numCSS
     cssConfigData.cssVals = totalCSSList
-    cssConfigDataInMsg = messaging2.CSSConfigMsg().write(cssConfigData)
+    cssConfigDataInMsg = messaging.CSSConfigMsg().write(cssConfigData)
 
     # Initialize CSS input message
-    cssDataMsg = messaging2.CSSArraySensorMsgPayload()
-    cssDataInMsg = messaging2.CSSArraySensorMsg().write(cssDataMsg)
+    cssDataMsg = messaging.CSSArraySensorMsgPayload()
+    cssDataInMsg = messaging.CSSArraySensorMsg().write(cssDataMsg)
 
     angleFailCriteria = 17.5 * math.pi / 180.0  # Get 95% effective charging in this case
     numActiveFailCriteria = 0.000001  # basically zero
@@ -455,25 +455,25 @@ def cssRateTestFunction(show_plots):
     numCSS = len(CSSOrientationList)
 
     # set the CSS unit vectors
-    cssConfigData = messaging2.CSSConfigMsgPayload()
+    cssConfigData = messaging.CSSConfigMsgPayload()
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        CSSConfigElement = messaging2.CSSUnitConfigMsgPayload()
+        CSSConfigElement = messaging.CSSUnitConfigMsgPayload()
         CSSConfigElement.CBias = 1.0
         CSSConfigElement.nHat_B = CSSHat
         totalCSSList.append(CSSConfigElement)
     cssConfigData.nCSS = numCSS
     cssConfigData.cssVals = totalCSSList
-    cssConfigDataInMsg = messaging2.CSSConfigMsg().write(cssConfigData)
+    cssConfigDataInMsg = messaging.CSSConfigMsg().write(cssConfigData)
 
     # Log the output message as well as the internal numACtiveCss variables
     dataLog = moduleConfig.navStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Get observation data based on sun pointing and CSS orientation data
-    cssDataMsg = messaging2.CSSArraySensorMsgPayload()
+    cssDataMsg = messaging.CSSArraySensorMsgPayload()
     cssDataMsg.CosValue = createCosList([1.0, 0.0, 0.0], CSSOrientationList)
-    cssDataInMsg = messaging2.CSSArraySensorMsg().write(cssDataMsg)
+    cssDataInMsg = messaging.CSSArraySensorMsg().write(cssDataMsg)
 
     # connect messages
     moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)

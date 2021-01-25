@@ -35,7 +35,7 @@
 #include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
 
 #include "architecture/utilities/avsEigenMRP.h"

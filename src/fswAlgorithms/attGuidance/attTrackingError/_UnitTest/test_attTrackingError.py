@@ -43,7 +43,7 @@ from Basilisk.utilities import unitTestSupport              # general support fi
 from Basilisk.fswAlgorithms import attTrackingError                  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -86,24 +86,24 @@ def subModuleTestFunction(show_plots):
     #
     # Navigation Message
     #
-    NavStateOutData = messaging2.NavAttMsgPayload()  # Create a structure for the input message
+    NavStateOutData = messaging.NavAttMsgPayload()  # Create a structure for the input message
     sigma_BN = [0.25, -0.45, 0.75]
     NavStateOutData.sigma_BN = sigma_BN
     omega_BN_B = [-0.015, -0.012, 0.005]
     NavStateOutData.omega_BN_B = omega_BN_B
-    navStateInMsg = messaging2.NavAttMsg().write(NavStateOutData)
+    navStateInMsg = messaging.NavAttMsg().write(NavStateOutData)
 
     #
     # Reference Frame Message
     #
-    RefStateOutData = messaging2.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
     sigma_RN = [0.35, -0.25, 0.15]
     RefStateOutData.sigma_RN = sigma_RN
     omega_RN_N = [0.018, -0.032, 0.015]
     RefStateOutData.omega_RN_N = omega_RN_N
     domega_RN_N = [0.048, -0.022, 0.025]
     RefStateOutData.domega_RN_N = domega_RN_N
-    refInMsg = messaging2.AttRefMsg().write(RefStateOutData)
+    refInMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.attGuidOutMsg.recorder()

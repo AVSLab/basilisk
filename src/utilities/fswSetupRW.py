@@ -15,7 +15,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import numpy
 
 #
@@ -40,7 +40,7 @@ def create(
     global rwList
 
     # create the blank RW object
-    RW = messaging2.RWConfigElementMsgPayload()
+    RW = messaging.RWConfigElementMsgPayload()
 
     norm = numpy.linalg.norm(gsHat_B)
     if norm > 1e-10:
@@ -78,12 +78,12 @@ def writeConfigMessage():
         JsList.extend([rw.Js])
         uMaxList.extend([rw.uMax])
 
-    rwConfigParams = messaging2.RWArrayConfigMsgPayload()
+    rwConfigParams = messaging.RWArrayConfigMsgPayload()
     rwConfigParams.GsMatrix_B = GsMatrix_B
     rwConfigParams.JsList = JsList
     rwConfigParams.uMax = uMaxList
     rwConfigParams.numRW = len(rwList)
-    rwConfigMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+    rwConfigMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
     rwConfigMsg.this.disown()
 
     return rwConfigMsg

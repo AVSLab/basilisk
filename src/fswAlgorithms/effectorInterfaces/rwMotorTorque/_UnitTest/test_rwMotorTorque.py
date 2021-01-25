@@ -29,7 +29,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -80,13 +80,13 @@ def rwMotorTorqueTest(show_plots):
 
 
     # attControl message
-    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
+    inputMessageData = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
     inputMessageData.torqueRequestBody = requestedTorque # write torque request to input message
-    cmdTorqueInMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
+    cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
     # wheelConfigData message
-    rwConfigParams = messaging2.RWArrayConfigMsgPayload()
+    rwConfigParams = messaging.RWArrayConfigMsgPayload()
     rwConfigParams.GsMatrix_B = [
         1.0, 0.0, 0.0,
         0.0, 1.0, 0.0,
@@ -95,13 +95,13 @@ def rwMotorTorqueTest(show_plots):
     ]
     rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
     rwConfigParams.numRW = 4
-    rwConfigInMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+    rwConfigInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
 
     # wheelAvailability message
-    rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
-    avail = [messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE, messaging2.AVAILABLE]
+    rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
+    avail = [messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE]
     rwAvailabilityMessage.wheelAvailability = avail
-    rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+    rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
@@ -132,7 +132,7 @@ def rwMotorTorqueTest(show_plots):
     # print('\n', moduleOutput)
 
     # set the output truth states
-    ans = [0]*messaging2.MAX_EFF_CNT
+    ans = [0]*messaging.MAX_EFF_CNT
     ans[0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
     trueVector = [
                    ans,

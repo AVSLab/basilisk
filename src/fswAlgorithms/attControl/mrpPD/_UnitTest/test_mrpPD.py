@@ -31,7 +31,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import mrpPD  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -100,19 +100,19 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = messaging2.AttGuidMsgPayload()
+    guidCmdData = messaging.AttGuidMsgPayload()
     guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
     guidCmdData.omega_RN_B = [-0.02, -0.01, 0.005]
     guidCmdData.domega_RN_B = [0.0002, 0.0003, 0.0001]
-    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
+    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfig FSW Message:
-    vehicleConfigIn = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigIn = messaging.VehicleConfigMsgPayload()
     vehicleConfigIn.ISCPntB_B = [1000., 0., 0.,
                                   0., 800., 0.,
                                   0., 0., 800.]
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigIn)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigIn)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.cmdTorqueOutMsg.recorder()

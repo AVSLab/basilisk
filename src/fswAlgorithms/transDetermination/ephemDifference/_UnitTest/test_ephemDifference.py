@@ -12,7 +12,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephemDifference
 from Basilisk.utilities import astroFunctions
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("ephBdyCount", [3, 0])
 
@@ -47,13 +47,13 @@ def ephemDifferenceTestFunction(ephBdyCount):
     unitTestSim.AddModelToTask(unitTaskName, ephemDiffWrap, ephemDiffConfig)
 
     # Create the input message.
-    inputEphemBase = messaging2.EphemerisMsgPayload() # The clock correlation message ?
+    inputEphemBase = messaging.EphemerisMsgPayload() # The clock correlation message ?
     # Get the Earth's position and velocity
     position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
     inputEphemBase.r_BdyZero_N = position
     inputEphemBase.v_BdyZero_N = velocity
     inputEphemBase.timeTag = 1234.0
-    ephBaseInMsg = messaging2.EphemerisMsg().write(inputEphemBase)
+    ephBaseInMsg = messaging.EphemerisMsg().write(inputEphemBase)
     ephemDiffConfig.ephBaseInMsg.subscribeTo(ephBaseInMsg)
     functions = [astroFunctions.Mars_RV, astroFunctions.Jupiter_RV, astroFunctions.Saturn_RV]
 
@@ -67,14 +67,14 @@ def ephemDifferenceTestFunction(ephBdyCount):
             changeBodyList.append(changeBodyMsg)
 
             # Create the input message to the change body config
-            inputMsg = messaging2.EphemerisMsgPayload()
+            inputMsg = messaging.EphemerisMsgPayload()
             position, velocity = functions[i](astroFunctions.JulianDate([2018, 10, 16]))
             inputMsg.r_BdyZero_N = position
             inputMsg.v_BdyZero_N = velocity
             inputMsg.timeTag = 321.0
 
             # Set this message
-            ephInMsgList.append(messaging2.EphemerisMsg().write(inputMsg))
+            ephInMsgList.append(messaging.EphemerisMsg().write(inputMsg))
             changeBodyMsg.ephInMsg.subscribeTo(ephInMsgList[-1])
 
     ephemDiffConfig.changeBodies = changeBodyList

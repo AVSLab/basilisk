@@ -38,7 +38,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Support import results_rwMotorTorque
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -49,7 +49,7 @@ from Support import results_rwMotorTorque
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numControlAxes", [0, 1, 2, 3])
-@pytest.mark.parametrize("numWheels", [2, 4, messaging2.MAX_EFF_CNT])
+@pytest.mark.parametrize("numWheels", [2, 4, messaging.MAX_EFF_CNT])
 @pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF", "MIXED"])
 
 
@@ -109,14 +109,14 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 
 
     # attControl message
-    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
+    inputMessageData = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
     inputMessageData.torqueRequestBody = requestedTorque # write torque request to input message
-    cmdTorqueInMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
+    cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
     # wheelConfigData message
-    rwConfigParams = messaging2.RWArrayConfigMsgPayload()
-    MAX_EFF_CNT = messaging2.MAX_EFF_CNT
+    rwConfigParams = messaging.RWArrayConfigMsgPayload()
+    MAX_EFF_CNT = messaging.MAX_EFF_CNT
 
     if numWheels == MAX_EFF_CNT:
         rwConfigParams.GsMatrix_B = [
@@ -166,24 +166,24 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         rwConfigParams.JsList = [0.1]*numWheels
 
     rwConfigParams.numRW = numWheels
-    rwConfigInMsg = messaging2.RWArrayConfigMsg().write(rwConfigParams)
+    rwConfigInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
 
     if RWAvailMsg != "NO":
-        rwAvailabilityMessage = messaging2.RWAvailabilityMsgPayload()
+        rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
 
-        avail = [messaging2.UNAVAILABLE] * numWheels
+        avail = [messaging.UNAVAILABLE] * numWheels
         for i in range(numWheels):
             if RWAvailMsg == "ON":
-                avail[i] = messaging2.AVAILABLE
+                avail[i] = messaging.AVAILABLE
             elif RWAvailMsg == "OFF":
-                avail[i] = messaging2.UNAVAILABLE
+                avail[i] = messaging.UNAVAILABLE
             else:
                 if i < int(numWheels / 2):
-                    avail[i] = messaging2.AVAILABLE
+                    avail[i] = messaging.AVAILABLE
 
         rwAvailabilityMessage.wheelAvailability = avail
 
-        rwAvailInMsg = messaging2.RWAvailabilityMsg().write(rwAvailabilityMessage)
+        rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
         moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     else:

@@ -125,7 +125,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport

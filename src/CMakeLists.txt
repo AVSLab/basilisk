@@ -493,7 +493,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Targets that must be built first
 add_subdirectory("architecture/utilities")
 add_subdirectory("utilities") # has protobuffers included
-add_subdirectory("architecture/messaging2/cMsgCInterface")
+add_subdirectory("architecture/messaging/cMsgCInterface")
 
 
 

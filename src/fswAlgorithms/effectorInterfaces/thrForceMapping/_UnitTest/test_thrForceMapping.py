@@ -34,7 +34,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import numpy as np
 
@@ -98,17 +98,17 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     moduleConfig.use2ndLoop = use2ndLoop
 
     # write vehicle configuration message
-    vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     if useCOMOffset == 1:
         CoM_B = [0.03,0.001,0.02]
     else:
         CoM_B = [0,0,0]
     vehicleConfigOut.CoM_B = CoM_B
-    vcInMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging2.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
+    inputMessageData = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
     if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
@@ -118,11 +118,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         moduleConfig.angErrThresh = 40.0*macros.D2R
 
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
-    cmdTorqueInMsg = messaging2.CmdTorqueBodyMsg().write(inputMessageData)
+    cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
     moduleConfig.epsilon = 0.0005
     fswSetupThrusters.clearSetup()
-    MAX_EFF_CNT = messaging2.MAX_EFF_CNT
+    MAX_EFF_CNT = messaging.MAX_EFF_CNT
     rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
     rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
 

@@ -42,7 +42,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrFiringSchmitt            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -130,8 +130,8 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     moduleConfig.thrConfInMsg.subscribeTo(thrConfMsg)
 
     # setup thruster impulse request message
-    inputMessageData = messaging2.THRArrayCmdForceMsgPayload()
-    thrCmdMsg = messaging2.THRArrayCmdForceMsg()
+    inputMessageData = messaging.THRArrayCmdForceMsgPayload()
+    thrCmdMsg = messaging.THRArrayCmdForceMsg()
     moduleConfig.thrForceInMsg.subscribeTo(thrCmdMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

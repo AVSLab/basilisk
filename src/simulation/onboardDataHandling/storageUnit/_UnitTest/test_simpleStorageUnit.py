@@ -27,7 +27,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simpleStorageUnit
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
 def test_module(show_plots):
@@ -61,15 +61,15 @@ def testStorage_limits(show_plots):
     test_storage_unit = simpleStorageUnit.SimpleStorageUnit()
     test_storage_unit.storageCapacity = 2400. # bit capacity.
 
-    dataMsg1 = messaging2.DataNodeUsageMsgPayload()
+    dataMsg1 = messaging.DataNodeUsageMsgPayload()
     dataMsg1.baudRate = 1200. # baud
     dataMsg1.dataName = "node_1_msg"
-    dat1Msg = messaging2.DataNodeUsageMsg().write(dataMsg1)
+    dat1Msg = messaging.DataNodeUsageMsg().write(dataMsg1)
 
-    dataMsg2 = messaging2.DataNodeUsageMsgPayload()
+    dataMsg2 = messaging.DataNodeUsageMsgPayload()
     dataMsg2.baudRate = 1200. # baud
     dataMsg2.dataName = "node_2_msg"
-    dat2Msg = messaging2.DataNodeUsageMsg().write(dataMsg2)
+    dat2Msg = messaging.DataNodeUsageMsg().write(dataMsg2)
 
     # Test the addNodeToStorage method:
     test_storage_unit.addDataNodeToModel(dat1Msg)

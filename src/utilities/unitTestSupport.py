@@ -23,7 +23,7 @@ import os, errno
 import numpy as np
 import matplotlib as mpl
 from datetime import datetime, timedelta
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.topLevelModules import pyswice
 
 mpl.rc("figure", facecolor="white")
@@ -464,7 +464,7 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     datetime_object = datetime.strptime(ep1, '%Y %b %d %H:%M:%S.%f')
 
     # populate the epochMsg with the gregorian UTC date/time information
-    epochMsgStructure = messaging2.EpochMsgPayload()
+    epochMsgStructure = messaging.EpochMsgPayload()
     epochMsgStructure.year = datetime_object.year
     epochMsgStructure.month = datetime_object.month
     epochMsgStructure.day = datetime_object.day
@@ -472,7 +472,7 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     epochMsgStructure.minutes = datetime_object.minute
     epochMsgStructure.seconds = datetime_object.second + datetime_object.microsecond / 1e6
 
-    epochMsg = messaging2.EpochMsg().write(epochMsgStructure)
+    epochMsg = messaging.EpochMsg().write(epochMsgStructure)
     epochMsg.this.disown()
 
     return epochMsg

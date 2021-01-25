@@ -6,7 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import dvAccumulation
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from numpy import random
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -17,7 +17,7 @@ def generateAccData():
     """ Returns a list of random AccPktDataFswMsg."""
     accPktList = list()
     for _ in range(120):
-        accPacketData = messaging2.AccPktDataMsgPayload()
+        accPacketData = messaging.AccPktDataMsgPayload()
         accPacketData.measTime = abs(int(random.normal(5e7, 1e7)))
         accPacketData.accel_B = random.normal(0.1, 0.2, 3)  # Acceleration in platform frame [m/s2]
         accPktList.append(accPacketData)
@@ -41,23 +41,23 @@ def dvAccumulationTestFunction():
     # Generate (1) random packet measurement times and (2) completely inverted measurement times
     randMeasTimes = []
     invMeasTimes = []
-    randData = messaging2.AccDataMsgPayload()
-    invData = messaging2.AccDataMsgPayload()
-    for i in range(0, messaging2.MAX_ACC_BUF_PKT):
+    randData = messaging.AccDataMsgPayload()
+    invData = messaging.AccDataMsgPayload()
+    for i in range(0, messaging.MAX_ACC_BUF_PKT):
         randMeasTimes.append(random.randint(0, 1000000))
         randData.accPkts[i].measTime = randMeasTimes[i]
 
-        invMeasTimes.append(messaging2.MAX_ACC_BUF_PKT - i)
+        invMeasTimes.append(messaging.MAX_ACC_BUF_PKT - i)
         invData.accPkts[i].measTime = invMeasTimes[i]
 
     # Run module quicksort function
-    dvAccumulation.dvAccumulation_QuickSort(randData.accPkts[0], 0, messaging2.MAX_ACC_BUF_PKT - 1)
-    dvAccumulation.dvAccumulation_QuickSort(invData.accPkts[0], 0, messaging2.MAX_ACC_BUF_PKT - 1)
+    dvAccumulation.dvAccumulation_QuickSort(randData.accPkts[0], 0, messaging.MAX_ACC_BUF_PKT - 1)
+    dvAccumulation.dvAccumulation_QuickSort(invData.accPkts[0], 0, messaging.MAX_ACC_BUF_PKT - 1)
 
     # Check that sorted packets properly
     randMeasTimes.sort()
     invMeasTimes.sort()
-    for i in range(0, messaging2.MAX_ACC_BUF_PKT):
+    for i in range(0, messaging.MAX_ACC_BUF_PKT):
         if randData.accPkts[i].measTime != randMeasTimes[i]:
             testFailCount += 1
         if invData.accPkts[i].measTime != invMeasTimes[i]:
@@ -90,12 +90,12 @@ def dvAccumulationTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Create the input message.
-    inputAccData = messaging2.AccDataMsgPayload()
+    inputAccData = messaging.AccDataMsgPayload()
 
     # Set this as the packet data in the acceleration data
     random.seed(12345)
     inputAccData.accPkts = generateAccData()
-    inMsg = messaging2.AccDataMsg()
+    inMsg = messaging.AccDataMsg()
     moduleConfig.accPktInMsg.subscribeTo(inMsg)
 
     # Initialize the simulation
@@ -107,7 +107,7 @@ def dvAccumulationTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # Create the input message again to simulate multiple acceleration inputs.
-    inputAccData = messaging2.AccDataMsgPayload()
+    inputAccData = messaging.AccDataMsgPayload()
 
     # Set this as the packet data in the acceleration data. Test the module with different inputs.
     inputAccData.accPkts = generateAccData()

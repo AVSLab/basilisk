@@ -29,7 +29,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import eulerRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -83,14 +83,14 @@ def test_run(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = messaging2.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    attRefInMsg = messaging2.AttRefMsg().write(RefStateOutData)
+    attRefInMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.attRefOutMsg.recorder()
@@ -217,22 +217,22 @@ def test_run2(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = messaging2.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    attRefMsg = messaging2.AttRefMsg().write(RefStateOutData)
+    attRefMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Set the desired state and rate to 0.
-    desiredAtt = messaging2.AttStateMsgPayload()
+    desiredAtt = messaging.AttStateMsgPayload()
     desiredState = np.array([0, 0, 0])
     desiredAtt.state = desiredState
     desiredRate = np.array([0, 0, 0])
     desiredAtt.rate = desiredRate
-    desInMsg = messaging2.AttStateMsg().write(desiredAtt)
+    desInMsg = messaging.AttStateMsg().write(desiredAtt)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.attRefOutMsg.recorder()

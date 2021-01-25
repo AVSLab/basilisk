@@ -42,7 +42,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import navAggregate
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -110,31 +110,31 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Create input messages
-    navAtt1Msg = messaging2.NavAttMsgPayload()
+    navAtt1Msg = messaging.NavAttMsgPayload()
     navAtt1Msg.timeTag = 11.11
     navAtt1Msg.sigma_BN = [0.1, 0.01, -0.1]
     navAtt1Msg.omega_BN_B = [1., 1., -1.]
     navAtt1Msg.vehSunPntBdy = [-0.1, 0.1, 0.1]
-    navAtt1InMsg = messaging2.NavAttMsg().write(navAtt1Msg)
-    navAtt2Msg = messaging2.NavAttMsgPayload()
+    navAtt1InMsg = messaging.NavAttMsg().write(navAtt1Msg)
+    navAtt2Msg = messaging.NavAttMsgPayload()
     navAtt2Msg.timeTag = 22.22
     navAtt2Msg.sigma_BN = [0.2, 0.02, -0.2]
     navAtt2Msg.omega_BN_B = [2., 2., -2.]
     navAtt2Msg.vehSunPntBdy = [-0.2, 0.2, 0.2]
-    navAtt2InMsg = messaging2.NavAttMsg().write(navAtt2Msg)
+    navAtt2InMsg = messaging.NavAttMsg().write(navAtt2Msg)
 
-    navTrans1Msg = messaging2.NavTransMsgPayload()
+    navTrans1Msg = messaging.NavTransMsgPayload()
     navTrans1Msg.timeTag = 11.1
     navTrans1Msg.r_BN_N = [1000.0, 100.0, -1000.0]
     navTrans1Msg.v_BN_N = [1., 1., -1.]
     navTrans1Msg.vehAccumDV = [-10.1, 10.1, 10.1]
-    navTrans1InMsg = messaging2.NavTransMsg().write(navTrans1Msg)
-    navTrans2Msg = messaging2.NavTransMsgPayload()
+    navTrans1InMsg = messaging.NavTransMsg().write(navTrans1Msg)
+    navTrans2Msg = messaging.NavTransMsgPayload()
     navTrans2Msg.timeTag = 22.2
     navTrans2Msg.r_BN_N = [2000.0, 200.0, -2000.0]
     navTrans2Msg.v_BN_N = [2., 2., -2.]
     navTrans2Msg.vehAccumDV = [-20.2, 20.2, 20.2]
-    navTrans2InMsg = messaging2.NavTransMsg().write(navTrans2Msg)
+    navTrans2InMsg = messaging.NavTransMsg().write(navTrans2Msg)
 
     # create input navigation message containers
     navAtt1 = navAggregate.AggregateAttInput()

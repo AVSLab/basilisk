@@ -44,7 +44,7 @@ from Basilisk.simulation import radiationPressure
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
@@ -122,9 +122,9 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         sigma_BN = [0., 0., 0.]
 
     if eclipseOn:
-        sunEclipseMsgData = messaging2.EclipseMsgPayload()
+        sunEclipseMsgData = messaging.EclipseMsgPayload()
         sunEclipseMsgData.shadowFactor = 0.5
-        sunEclMsg = messaging2.EclipseMsg().write(sunEclipseMsgData)
+        sunEclMsg = messaging.EclipseMsg().write(sunEclipseMsgData)
         srpDynEffector.sunEclipseInMsg.subscribeTo(sunEclMsg)
         srpDynEffector2.sunEclipseInMsg.subscribeTo(sunEclMsg)
 
@@ -135,9 +135,9 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     scObject.hub.sigma_BNInit = sigma_BN
 
 
-    sunSpiceMsg = messaging2.SpicePlanetStateMsgPayload()
+    sunSpiceMsg = messaging.SpicePlanetStateMsgPayload()
     sunSpiceMsg.PositionVector = sun_r_N
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunSpiceMsg)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunSpiceMsg)
     srpDynEffector.sunEphmInMsg.subscribeTo(sunMsg)
     srpDynEffector2.sunEphmInMsg.subscribeTo(sunMsg)
 

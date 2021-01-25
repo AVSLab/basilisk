@@ -27,7 +27,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to be tested
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 
@@ -101,7 +101,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
-    guidCmdData = messaging2.AttGuidMsgPayload()  # Create a structure for the input message
+    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -110,7 +110,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    guidInMsg = messaging2.AttGuidMsg().write(guidCmdData)
+    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.rateCmdOutMsg.recorder()

@@ -21,7 +21,7 @@ import pytest
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 from Basilisk.fswAlgorithms import relativeODuKF  # import the module that is to be tested
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
@@ -117,7 +117,7 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = relativeODuKF.RelODuKFConfig()
-    msg = messaging2.OpNavMsgPayload()
+    msg = messaging.OpNavMsgPayload()
     msg.r_BN_N = [300, 200, 100]
     data.planetId = 2
     data.opNavInBuffer = msg
@@ -219,8 +219,8 @@ def StateUpdateRelOD(show_plots):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
-    inputData = messaging2.OpNavMsgPayload()
-    opnavInMsg = messaging2.OpNavMsg()
+    inputData = messaging.OpNavMsgPayload()
+    opnavInMsg = messaging.OpNavMsg()
     moduleConfig.opNavInMsg.subscribeTo(opnavInMsg)
 
     inputData.planetID = 2
@@ -326,7 +326,7 @@ def StatePropRelOD(show_plots, dt):
     dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    opnavInMsg = messaging2.OpNavMsg()
+    opnavInMsg = messaging.OpNavMsg()
     moduleConfig.opNavInMsg.subscribeTo(opnavInMsg)
 
     timeSim = 60

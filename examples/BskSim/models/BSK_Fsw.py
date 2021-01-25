@@ -29,7 +29,7 @@ import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
 
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 
@@ -217,7 +217,7 @@ class BSKFswModels:
 
     def SetCSSWlsEst(self, SimBase):
         """Set the FSW CSS configuration information """
-        cssConfig = messaging2.CSSConfigMsgPayload()
+        cssConfig = messaging.CSSConfigMsgPayload()
         totalCSSList = []
         nHat_B_vec = [
             [0.0, 0.707107, 0.707107],
@@ -230,14 +230,14 @@ class BSKFswModels:
             [0.707107, -0.353553, -0.612372]
         ]
         for CSSHat in nHat_B_vec:
-            CSSConfigElement = messaging2.CSSUnitConfigMsgPayload()
+            CSSConfigElement = messaging.CSSUnitConfigMsgPayload()
             CSSConfigElement.CBias = 1.0
             CSSConfigElement.nHat_B = CSSHat
             totalCSSList.append(CSSConfigElement)
         cssConfig.cssVals = totalCSSList
 
         cssConfig.nCSS = len(nHat_B_vec)
-        self.cssConfigMsg = messaging2.CSSConfigMsg().write(cssConfig)
+        self.cssConfigMsg = messaging.CSSConfigMsg().write(cssConfig)
 
         self.cssWlsEstData.cssDataInMsg.subscribeTo(SimBase.DynModels.CSSConstellationObject.constellationOutMsg)
         self.cssWlsEstData.cssConfigInMsg.subscribeTo(self.cssConfigMsg)
@@ -290,10 +290,10 @@ class BSKFswModels:
 
     def SetVehicleConfiguration(self):
         """Set the spacecraft configuration information"""
-        vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+        vehicleConfigOut = messaging.VehicleConfigMsgPayload()
         # use the same inertia in the FSW algorithm as in the simulation
         vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
-        self.vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+        self.vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     def SetRWConfigMsg(self):
         """Set the RW device information"""
@@ -360,10 +360,10 @@ class BSKFswModels:
 
     def zeroGateWayMsgs(self):
         """Zero all the FSW gateway message payloads"""
-        self.cmdTorqueMsg.write(messaging2.CmdTorqueBodyMsgPayload())
-        self.cmdTorqueDirectMsg.write(messaging2.CmdTorqueBodyMsgPayload())
-        self.attRefMsg.write(messaging2.AttRefMsgPayload())
-        self.attGuidMsg.write(messaging2.AttGuidMsgPayload())
-        self.cmdRwMotorMsg.write(messaging2.ArrayMotorTorqueMsgPayload())
+        self.cmdTorqueMsg.write(messaging.CmdTorqueBodyMsgPayload())
+        self.cmdTorqueDirectMsg.write(messaging.CmdTorqueBodyMsgPayload())
+        self.attRefMsg.write(messaging.AttRefMsgPayload())
+        self.attGuidMsg.write(messaging.AttGuidMsgPayload())
+        self.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())
 
 

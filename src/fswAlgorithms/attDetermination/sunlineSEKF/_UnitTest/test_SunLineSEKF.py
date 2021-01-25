@@ -27,7 +27,7 @@ import pytest
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.fswAlgorithms import sunlineSEKF
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros, RigidBodyKinematics
 import SunLineSEKF_test_utilities as FilterPlots
 
@@ -602,8 +602,8 @@ def StatePropStatic():
     unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate * 10, 0, 4)
 
     # connect messages
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
-    cssConfigInMsg = messaging2.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+    cssConfigInMsg = messaging.CSSConfigMsg()
     moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
     moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
 
@@ -673,8 +673,8 @@ def StatePropVariable(show_plots):
     unitTestSim.AddVariableForLogging('sunlineSEKF.x', testProcessRate , 0, 4)
 
     # connect messages
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
-    cssConfigInMsg = messaging2.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+    cssConfigInMsg = messaging.CSSConfigMsg()
     moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
     moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
 
@@ -816,7 +816,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Set up some test parameters
 
-    cssConstelation = messaging2.CSSConfigMsgPayload()
+    cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -835,7 +835,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     # layer between the above list and the actual C variables.
     i = 0
     for CSSHat in CSSOrientationList:
-        newCSS = messaging2.CSSUnitConfigMsgPayload()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.CBias = CSSBias[i]
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
@@ -843,10 +843,10 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
 
-    inputData = messaging2.CSSArraySensorMsgPayload()
+    inputData = messaging.CSSArraySensorMsgPayload()
 
-    cssConstInMsg = messaging2.CSSConfigMsg().write(cssConstelation)
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
+    cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
     # connect messages
     moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
@@ -894,7 +894,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     stateTarget2 = testVector2
     stateTarget2 = stateTarget2+[0.,0.]
 
-    inputData = messaging2.CSSArraySensorMsgPayload()
+    inputData = messaging.CSSArraySensorMsgPayload()
     for i in range(SimHalfLength):
         if i > 20:
             dotList = []

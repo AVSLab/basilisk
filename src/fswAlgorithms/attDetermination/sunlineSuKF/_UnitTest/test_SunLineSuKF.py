@@ -22,7 +22,7 @@ import pytest
 
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
 from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 import SunLineSuKF_test_utilities as FilterPlots
 
@@ -250,7 +250,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig, False)
-    cssConstelation = messaging2.CSSConfigMsgPayload()
+    cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
@@ -264,13 +264,13 @@ def StateUpdateSunLine(show_plots, kellyOn):
     ]
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        newCSS = messaging2.CSSUnitConfigMsgPayload()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.CBias = 1.0
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
-    cssConstInMsg = messaging2.CSSConfigMsg().write(cssConstelation)
+    cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
 
     dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
@@ -288,14 +288,14 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
     testVector/=numpy.linalg.norm(testVector)
-    inputData = messaging2.CSSArraySensorMsgPayload()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)/(numpy.linalg.norm(element)*numpy.linalg.norm(testVector))
         dotList.append(dotProd)
 
     inputData.CosValue = dotList
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 1.])
@@ -342,7 +342,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     testVector = numpy.array([-0.7, 0.75, 0.0])
     testVector /= numpy.linalg.norm(testVector)
-    inputData = messaging2.CSSArraySensorMsgPayload()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
@@ -426,8 +426,8 @@ def StatePropSunLine(show_plots):
     dataLog = moduleConfig.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    cssConstInMsg = messaging2.CSSConfigMsg()
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
+    cssConstInMsg = messaging.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
     # connect messages
     moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
@@ -523,8 +523,8 @@ def FaultScenarios():
         testFailCount += 1
         testMessages.append("sunlineSuKFClean sBar failed")
 
-    cssConstInMsg = messaging2.CSSConfigMsg()
-    cssDataInMsg = messaging2.CSSArraySensorMsg()
+    cssConstInMsg = messaging.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
     # connect messages
     moduleConfigClean1.cssDataInMsg.subscribeTo(cssDataInMsg)

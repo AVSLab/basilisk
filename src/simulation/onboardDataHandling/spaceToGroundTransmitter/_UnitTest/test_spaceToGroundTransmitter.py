@@ -30,7 +30,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import spaceToGroundTransmitter
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
 
@@ -75,13 +75,13 @@ def run(deviceStatus, accessStatus):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create fake access messages
-    accMsg1 = messaging2.AccessMsgPayload()
+    accMsg1 = messaging.AccessMsgPayload()
     accMsg1.hasAccess = 0 # We'll never see this one, sadly
-    acc1Msg = messaging2.AccessMsg().write(accMsg1)
+    acc1Msg = messaging.AccessMsg().write(accMsg1)
 
-    accMsg2 = messaging2.AccessMsgPayload()
+    accMsg2 = messaging.AccessMsgPayload()
     accMsg2.hasAccess = accessStatus
-    acc2Msg = messaging2.AccessMsg().write(accMsg2)
+    acc2Msg = messaging.AccessMsg().write(accMsg2)
 
     # Create the test module
     testModule = spaceToGroundTransmitter.SpaceToGroundTransmitter()

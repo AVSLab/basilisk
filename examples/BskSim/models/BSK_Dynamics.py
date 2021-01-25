@@ -27,7 +27,7 @@ from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.topLevelModules import pyswice
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 from Basilisk import __path__
 bskPath = __path__[0]

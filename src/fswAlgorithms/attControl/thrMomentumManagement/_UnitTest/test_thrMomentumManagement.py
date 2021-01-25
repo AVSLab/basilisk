@@ -40,7 +40,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrMomentumManagement            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupRW
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -94,9 +94,9 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
 
     # wheelSpeeds Message
-    rwSpeedMessage = messaging2.RWSpeedMsgPayload()
+    rwSpeedMessage = messaging.RWSpeedMsgPayload()
     rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
-    rwSpeedInMsg = messaging2.RWSpeedMsg().write(rwSpeedMessage)
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
 
     # wheelConfigData Message

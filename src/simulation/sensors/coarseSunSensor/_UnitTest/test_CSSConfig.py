@@ -25,7 +25,7 @@ from Basilisk.utilities import unitTestSupport
 
 from Basilisk.utilities import macros
 from Basilisk.simulation import coarseSunSensor
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
@@ -93,17 +93,17 @@ def run(show_plots, accuracy):
     scSim.AddModelToTask(simTaskName, dataLog2)
 
     # create sun position input message
-    sunPositionMsg = messaging2.SpicePlanetStateMsgPayload()
+    sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
     sunPositionMsg.PositionVector = [0.0, 0.0, 0.0]
-    sunMsg = messaging2.SpicePlanetStateMsg().write(sunPositionMsg)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
     CSS1.sunInMsg.subscribeTo(sunMsg)
     CSS2.sunInMsg.subscribeTo(sunMsg)
 
     # create spacecraft state message
-    scStateMsg = messaging2.SCPlusStatesMsgPayload()
+    scStateMsg = messaging.SCPlusStatesMsgPayload()
     scStateMsg.r_BN_N = [-10.0, 0.0, 0.0]
     scStateMsg.sigma_BN = [0.0, 0.0, 0.0]
-    scMsg = messaging2.SCPlusStatesMsg().write(scStateMsg)
+    scMsg = messaging.SCPlusStatesMsg().write(scStateMsg)
     CSS1.stateInMsg.subscribeTo(scMsg)
     CSS2.stateInMsg.subscribeTo(scMsg)
 

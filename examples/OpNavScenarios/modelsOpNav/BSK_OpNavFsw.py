@@ -38,7 +38,7 @@ from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrp
                                     pixelLineConverter, faultDetection, pixelLineBiasUKF)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW, unitTestSupport, orbitalMotion, macros
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 from Basilisk import __path__
@@ -407,10 +407,10 @@ class BSKFswModels():
         self.mrpFeedbackRWsData.guidInMsg.subscribeTo(self.attGuidMsg)
 
     def SetVehicleConfiguration(self):
-        vehicleConfigOut = messaging2.VehicleConfigMsgPayload()
+        vehicleConfigOut = messaging.VehicleConfigMsgPayload()
         # use the same inertia in the FSW algorithm as in the simulation
         vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
-        self.vcMsg = messaging2.VehicleConfigMsg().write(vehicleConfigOut)
+        self.vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     def SetRWConfigMsg(self):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
@@ -598,17 +598,17 @@ class BSKFswModels():
         self.opnavSecondaryMsg = cMsgPy.OpNavMsg_C()
 
         # C++ wrapped gateway messages
-        self.opnavCirclesMsg = messaging2.CirclesOpNavMsg()
+        self.opnavCirclesMsg = messaging.CirclesOpNavMsg()
 
         self.zeroGateWayMsgs()
 
     def zeroGateWayMsgs(self):
         """Zero all the FSW gateway message payloads"""
-        self.attGuidMsg.write(messaging2.AttGuidMsgPayload())
-        self.opnavMsg.write(messaging2.OpNavMsgPayload())
-        self.opnavPrimaryMsg.write(messaging2.OpNavMsgPayload())
-        self.opnavSecondaryMsg.write(messaging2.OpNavMsgPayload())
+        self.attGuidMsg.write(messaging.AttGuidMsgPayload())
+        self.opnavMsg.write(messaging.OpNavMsgPayload())
+        self.opnavPrimaryMsg.write(messaging.OpNavMsgPayload())
+        self.opnavSecondaryMsg.write(messaging.OpNavMsgPayload())
 
-        self.opnavCirclesMsg.write(messaging2.CirclesOpNavMsgPayload())
+        self.opnavCirclesMsg.write(messaging.CirclesOpNavMsgPayload())
 
 # BSKFswModels()

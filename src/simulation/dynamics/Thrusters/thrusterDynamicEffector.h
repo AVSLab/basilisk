@@ -30,7 +30,7 @@
 #include "architecture/msgPayloadDefCpp/THRSimConfigMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>

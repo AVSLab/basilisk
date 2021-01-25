@@ -26,7 +26,7 @@
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
 #include "architecture/msgPayloadDefC/TAMDataMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/saturate.h"

@@ -52,7 +52,7 @@ import numpy as np
 sys.path.append(path + '/../plottingOpNav')
 import OpNav_Plotting as BSK_plt
 
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 

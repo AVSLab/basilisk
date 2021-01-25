@@ -186,7 +186,7 @@ from Basilisk.utilities import unitTestSupport
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -33,7 +33,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import fswModuleTemplate                 # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging2                      # import the message definitions
+from Basilisk.architecture import messaging                      # import the message definitions
 import numpy as np
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -104,9 +104,9 @@ def fswModuleTestFunction(show_plots):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging2.FswModuleTemplateMsgPayload()  # Create a structure for the input message
+    inputMessageData = messaging.FswModuleTemplateMsgPayload()  # Create a structure for the input message
     inputMessageData.outputVector = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
-    inputMsg = messaging2.FswModuleTemplateMsg().write(inputMessageData)
+    inputMsg = messaging.FswModuleTemplateMsg().write(inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.dataOutMsg.recorder()

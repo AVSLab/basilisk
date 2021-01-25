@@ -33,7 +33,7 @@ from Basilisk.fswAlgorithms import celestialTwoBodyPoint  # module that is to be
 from Basilisk.utilities import macros
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging2
+from Basilisk.architecture import messaging
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -153,17 +153,17 @@ def celestialTwoBodyPointTestFunction(show_plots):
     # is not part of the test.
     #   Navigation Input Message
 
-    NavStateOutData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
+    NavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     NavStateOutData.r_BN_N = r_BN_N
     NavStateOutData.v_BN_N = v_BN_N
-    navMsg = messaging2.NavTransMsg().write(NavStateOutData)
+    navMsg = messaging.NavTransMsg().write(NavStateOutData)
 
     #   Spice Input Message of Primary Body
 
-    CelBodyData = messaging2.EphemerisMsgPayload()
+    CelBodyData = messaging.EphemerisMsgPayload()
     CelBodyData.r_BdyZero_N = celPositionVec
     CelBodyData.v_BdyZero_N = celVelocityVec
-    celBodyMsg = messaging2.EphemerisMsg().write(CelBodyData)
+    celBodyMsg = messaging.EphemerisMsg().write(CelBodyData)
 
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -319,24 +319,24 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     # is not part of the test.
 
     #   Navigation Input Message
-    NavStateOutData = messaging2.NavTransMsgPayload()  # Create a structure for the input message
+    NavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     NavStateOutData.r_BN_N = r_BN_N
     NavStateOutData.v_BN_N = v_BN_N
-    navMsg = messaging2.NavTransMsg().write(NavStateOutData)
+    navMsg = messaging.NavTransMsg().write(NavStateOutData)
 
     #   Spice Input Message of Primary Body
-    CelBodyData = messaging2.EphemerisMsgPayload()
+    CelBodyData = messaging.EphemerisMsgPayload()
     CelBodyData.r_BdyZero_N = celPositionVec
     CelBodyData.v_BdyZero_N = celVelocityVec
-    celBodyMsg = messaging2.EphemerisMsg().write(CelBodyData)
+    celBodyMsg = messaging.EphemerisMsg().write(CelBodyData)
 
     #   Spice Input Message of Secondary Body
-    SecBodyData = messaging2.EphemerisMsgPayload()
+    SecBodyData = messaging.EphemerisMsgPayload()
     secPositionVec = [500., 500., 500.]
     SecBodyData.r_BdyZero_N = secPositionVec
     secVelocityVec = [0., 0., 0.]
     SecBodyData.v_BdyZero_N = secVelocityVec
-    cel2ndBodyMsg = messaging2.EphemerisMsg().write(SecBodyData)
+    cel2ndBodyMsg = messaging.EphemerisMsg().write(SecBodyData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.attRefOutMsg.recorder()

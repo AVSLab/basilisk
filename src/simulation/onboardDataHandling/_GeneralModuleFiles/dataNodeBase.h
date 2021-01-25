@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 #include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 #include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
-#include "architecture/messaging2/messaging2.h"
+#include "architecture/messaging/messaging.h"
 
 
 /*! @brief data node base class */
