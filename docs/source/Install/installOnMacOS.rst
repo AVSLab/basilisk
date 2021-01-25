@@ -217,9 +217,7 @@ When all the prerequisite installations are complete, the project can be built a
 
        (.venv) $ python3 scenarioBasicOrbit.py
 
-#. Deactivate the virtual environment::
 
-    (venv) $ deactivate
 FAQs
 ----
 
