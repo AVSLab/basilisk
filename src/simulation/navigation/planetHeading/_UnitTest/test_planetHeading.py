@@ -43,7 +43,6 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
 
 """
     sim = SimulationBaseClass.SimBaseClass()
-    sim.TotalSim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)

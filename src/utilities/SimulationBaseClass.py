@@ -180,7 +180,6 @@ class SimBaseClass:
     """Simulation Base Class"""
     def __init__(self):
         self.TotalSim = sim_model.SimModel()
-        self.TotalSim.terminateSimulation()
         self.TaskList = []
         self.procList = []
         self.pyProcList = []
@@ -669,9 +668,6 @@ class SimBaseClass:
             print("You asked me to set the status of an event that I don't have.")
             return
         self.eventMap[eventName].eventActive = activityCommand
-    def terminateSimulation(self):
-        self.TotalSim.terminateSimulation()
-
 
     # Only instances of following three functions is within SimBaseClass
     # TODO: Investigate origin and need for these functions

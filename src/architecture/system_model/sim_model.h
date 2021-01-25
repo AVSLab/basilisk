@@ -44,7 +44,6 @@ public:
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void addNewProcess(SysProcess *newProc);
     void ResetSimulation();  //!< Reset simulation back to zero
-    void terminateSimulation();
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 

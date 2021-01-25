@@ -862,9 +862,6 @@ class SimulationExecutor:
             if simParams.verbose:
                 print("Terminating simulation")
 
-            # terminate the simulation
-            simInstance.terminateSimulation()
-
             if simParams.verbose:
                 print("Thread", os.getpid(), "Job", simParams.index, "finished successfully")
 

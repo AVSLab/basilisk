@@ -169,11 +169,3 @@ void SimModel::ResetSimulation()
 }
 
 
-/*! This method clears all messages.  Note that once you do this, the simulation
-    object itself is really dead.
-    @return void
-*/
-void SimModel::terminateSimulation()
-{
-}
-

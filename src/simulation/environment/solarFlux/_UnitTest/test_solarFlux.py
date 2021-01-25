@@ -46,7 +46,6 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     """
 
     sim = SimulationBaseClass.SimBaseClass()
-    sim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)

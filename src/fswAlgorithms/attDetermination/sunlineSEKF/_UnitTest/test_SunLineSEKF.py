@@ -618,8 +618,6 @@ def StatePropStatic():
             testFailCount += 1
             testMessages.append("State propagation failure \n")
 
-    unitTestSim.terminateSimulation()
-
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + "SEKF static state propagation")

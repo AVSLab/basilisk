@@ -46,7 +46,6 @@ def test_range(show_plots):
     simTaskName = "simTask"
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(10.)
     simulationTimeStep = macros.sec2nano(1.)
@@ -137,7 +136,6 @@ def test_rotation(show_plots):
     simTaskName = "simTask"
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(simTime)
     simulationTimeStep = macros.sec2nano(1.)
