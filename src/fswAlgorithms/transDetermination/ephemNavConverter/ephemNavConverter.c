@@ -35,14 +35,6 @@ void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t modul
     NavTransMsg_C_init(&configData->stateOutMsg);
 }
 
-/*! This method subscribes to the ephemeris interface message
- @return void
- @param configData The configuration data associated with the ephemeris model
- @param moduleID The module identification integer
- */
-void CrossInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
-{
-}
 
 /*! This resets the module to original states.
  @return void

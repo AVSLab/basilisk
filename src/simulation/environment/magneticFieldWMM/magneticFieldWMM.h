@@ -43,7 +43,6 @@ private:
     void cleanupEarthMagFieldModel();
     void computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]);
     void customReset(uint64_t CurrentClock);
-    void customCrossInit();
     void customSetEpochFromVariable();
     void decimalYear2Gregorian(double fractionalYear, struct tm *gregorian);
     double gregorian2DecimalYear(double currentTime);

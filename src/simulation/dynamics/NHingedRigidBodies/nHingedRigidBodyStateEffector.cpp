@@ -51,12 +51,6 @@ void NHingedRigidBodyStateEffector::SelfInit()
     return;
 }
 
-/*! This method subscribes to messages the HRB needs.
- @return void*/
-void NHingedRigidBodyStateEffector::CrossInit()
-{
-    return;
-}
 
 /*! This method reads necessary input messages
  @return void */

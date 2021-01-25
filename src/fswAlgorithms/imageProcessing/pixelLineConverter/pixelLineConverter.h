@@ -49,7 +49,6 @@ extern "C" {
 #endif
     
     void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID);
-    void CrossInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID);
     void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, int64_t moduleID);

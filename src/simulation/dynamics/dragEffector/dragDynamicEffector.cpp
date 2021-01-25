@@ -50,14 +50,6 @@ void DragDynamicEffector::SelfInit()
   return;
 }
 
-/*! This method is used to connect the input density message to the drag effector.
- It sets the message ID based on what it finds for the input string.
- @return void
- */
-void DragDynamicEffector::CrossInit()
-{
-}
-
 
 /*! This method is used to reset the module.
  @return void

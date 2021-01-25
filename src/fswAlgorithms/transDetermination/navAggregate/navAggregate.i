@@ -26,8 +26,6 @@
 %ignore Update_aggregateNav;
 %constant void SelfInit_aggregateNav(void*, uint64_t);
 %ignore SelfInit_aggregateNav;
-%constant void CrossInit_aggregateNav(void*, uint64_t);
-%ignore CrossInit_aggregateNav;
 %constant void Reset_aggregateNav(void*, uint64_t, uint64_t);
 %ignore Reset_aggregateNav;
 STRUCTASLIST(AggregateAttInput)

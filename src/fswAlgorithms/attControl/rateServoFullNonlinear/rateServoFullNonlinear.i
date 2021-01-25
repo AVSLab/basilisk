@@ -26,8 +26,6 @@
 %ignore Update_rateServoFullNonlinear;
 %constant void SelfInit_rateServoFullNonlinear(void*, uint64_t);
 %ignore SelfInit_rateServoFullNonlinear;
-%constant void CrossInit_rateServoFullNonlinear(void*, uint64_t);
-%ignore CrossInit_rateServoFullNonlinear;
 %constant void Reset_rateServoFullNonlinear(void*, uint64_t, uint64_t);
 %ignore Reset_rateServoFullNonlinear;
 

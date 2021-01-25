@@ -43,7 +43,6 @@ public:
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
 	std::string getCurrentTimeString();         //!< class method
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void initTimeData();
     void computeGPSData();

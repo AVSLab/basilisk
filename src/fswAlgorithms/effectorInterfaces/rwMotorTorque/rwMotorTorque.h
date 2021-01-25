@@ -56,7 +56,6 @@ extern "C" {
 #endif
     
     void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
-    void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
     void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
     

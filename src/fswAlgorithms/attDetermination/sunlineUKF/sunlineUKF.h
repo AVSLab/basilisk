@@ -89,7 +89,6 @@ extern "C" {
 #endif
     
     void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID);
-    void CrossInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID);
     void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
         int64_t moduleID);
 	void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,

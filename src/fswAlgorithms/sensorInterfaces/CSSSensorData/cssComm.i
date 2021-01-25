@@ -26,8 +26,6 @@
 %ignore Update_cssProcessTelem;
 %constant void SelfInit_cssProcessTelem(void*, uint64_t);
 %ignore SelfInit_cssProcessTelem;
-%constant void CrossInit_cssProcessTelem(void*, uint64_t);
-%ignore CrossInit_cssProcessTelem;
 %constant void Reset_cssProcessTelem(void*, uint64_t, uint64_t);
 %ignore Reset_cssProcessTelem;
 

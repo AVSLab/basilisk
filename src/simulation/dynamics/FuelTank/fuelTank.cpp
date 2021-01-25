@@ -68,13 +68,6 @@ void FuelTank::SelfInit()
     return;
 }
 
-/*! This method allows for cross initialization between different modules
- @return void*/
-void FuelTank::CrossInit()
-{
-    //Fuel does not need to cross init with anything
-    return;
-}
 
 /*! set fuel tank model
  @return void

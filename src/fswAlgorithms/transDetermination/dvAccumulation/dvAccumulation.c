@@ -36,16 +36,6 @@ void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
     NavTransMsg_C_init(&configData->dvAcumOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the nav aggregration
-    interface.  For each configured message, it subscribes to the target message
-    and saves the ID.
- @return void
- @param configData The configuration data associated with the aggregate nav interface
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
-{
-}
 
 void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
                           int64_t moduleID)

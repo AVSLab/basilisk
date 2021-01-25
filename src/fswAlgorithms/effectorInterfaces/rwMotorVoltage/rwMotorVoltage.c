@@ -38,14 +38,6 @@ void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
     RWArrayVoltageMsg_C_init(&configData->voltageOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
-*/
-void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that retain
  time varying states between function calls are reset to their default values.

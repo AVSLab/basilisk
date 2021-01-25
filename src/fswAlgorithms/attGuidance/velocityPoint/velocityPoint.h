@@ -54,7 +54,6 @@ extern "C" {
 #endif
     
     void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID);
-    void CrossInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID);
     void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID);
 

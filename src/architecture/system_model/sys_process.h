@@ -43,7 +43,6 @@ public:
     ~SysProcess();
     void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
     void selfInitProcess(); //!< class method
-    void crossInitProcess(); //!< class method
     void resetProcess(uint64_t currentTime); //!< class method
     void reInitProcess(); //!< class method
     void enableProcess() {this->processActive = true;} //!< class method

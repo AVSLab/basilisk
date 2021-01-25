@@ -61,7 +61,6 @@ extern "C" {
 #endif
     
     void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID);
-    void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID);
     void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,

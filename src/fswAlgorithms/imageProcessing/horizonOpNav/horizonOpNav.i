@@ -24,8 +24,6 @@
 %include "swig_conly_data.i"
 %constant void SelfInit_horizonOpNav(void*, uint64_t);
 %ignore SelfInit_horizonOpNav;
-%constant void CrossInit_horizonOpNav(void*, uint64_t);
-%ignore CrossInit_horizonOpNav;
 %constant void Reset_horizonOpNav(void*, uint64_t, uint64_t);
 %ignore Reset_horizonOpNav;
 %constant void Update_horizonOpNav(void*, uint64_t, uint64_t);

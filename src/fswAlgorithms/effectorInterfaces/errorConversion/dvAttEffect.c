@@ -43,15 +43,6 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
     
 }
 
-/*! This method performs the second stage of initialization for the sun safe ACS
- interface.
- @return void
- @param configData The configuration data associated with the sun safe ACS control
- @param moduleID The ID associated with the configData
- */
-void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
-{
-}
 
 void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
                         int64_t moduleID)

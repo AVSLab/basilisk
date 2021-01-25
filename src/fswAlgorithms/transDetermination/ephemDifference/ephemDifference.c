@@ -32,30 +32,13 @@
 void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
     uint32_t i;
-    configData->ephBdyCount = 0;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
-        if (!EphemerisMsg_C_isLinked(&configData->changeBodies[i].ephInMsg)) {
-            break;
-        }
         EphemerisMsg_C_init(&configData->changeBodies[i].ephOutMsg);
-        configData->ephBdyCount++;
     }
 
-    if (configData->ephBdyCount == 0) {
-        _bskLog(configData->bskLogger, BSK_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
-    }
 }
 
-/*! @brief This method subscribes to the body ephemeris messages which will be
-    augmented relative to another base frame.
- @return void
- @param configData The configuration data associated with the ephemeris model
- @param moduleID The module identification integer
- */
-void CrossInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
-{
-}
 
 /*! @brief This method resets the module.
  @return void
@@ -66,7 +49,20 @@ void CrossInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID
 void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
-    
+    uint32_t i;
+    configData->ephBdyCount = 0;
+    for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
+    {
+        if (EphemerisMsg_C_isLinked(&configData->changeBodies[i].ephInMsg)) {
+            configData->ephBdyCount++;
+        } else {
+            break;
+        }
+    }
+
+    if (configData->ephBdyCount == 0) {
+        _bskLog(configData->bskLogger, BSK_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
+    }
 }
 
 /*! @brief This method recomputes the body postions and velocities relative to

@@ -26,8 +26,6 @@
 %ignore Update_fswModuleTemplate;
 %constant void SelfInit_fswModuleTemplate(void*, uint64_t);
 %ignore SelfInit_fswModuleTemplate;
-%constant void CrossInit_fswModuleTemplate(void*, uint64_t);
-%ignore CrossInit_fswModuleTemplate;
 %constant void Reset_fswModuleTemplate(void*, uint64_t, uint64_t);
 %ignore Reset_fswModuleTemplate;
 

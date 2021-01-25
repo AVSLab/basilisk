@@ -26,8 +26,6 @@
 %ignore Update_simpleDeadband;
 %constant void SelfInit_simpleDeadband(void*, uint64_t);
 %ignore SelfInit_simpleDeadband;
-%constant void CrossInit_simpleDeadband(void*, uint64_t);
-%ignore CrossInit_simpleDeadband;
 %constant void Reset_simpleDeadband(void*, uint64_t, uint64_t);
 %ignore Reset_simpleDeadband;
 

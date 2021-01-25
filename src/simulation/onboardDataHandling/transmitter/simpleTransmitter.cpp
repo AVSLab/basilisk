@@ -46,9 +46,6 @@ void SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsg
     return;
 }
 
-void SimpleTransmitter::customCrossInit(){
-    return;
-}
 
 bool SimpleTransmitter::customReadMessages(){
 

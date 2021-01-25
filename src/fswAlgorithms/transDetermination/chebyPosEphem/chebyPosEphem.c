@@ -36,14 +36,6 @@ void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
     EphemerisMsg_C_init(&configData->posFitOutMsg);
 }
 
-/*! This method initializes the input time correlation factor structure
- @return void
- @param configData The configuration data associated with the ephemeris model
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
-{
-}
 
 /*! This method takes the chebyshev coefficients loaded for the position
     estimator and computes the coefficients needed to estimate the time

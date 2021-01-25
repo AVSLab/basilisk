@@ -41,16 +41,6 @@ void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
 
-/*! @brief This method performs the second stage of initialization for this module.
-
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The module identifier
-*/
-void CrossInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
-{
-
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

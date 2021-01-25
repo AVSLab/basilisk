@@ -27,8 +27,6 @@
 %ignore Update_sunlineUKF;
 %constant void SelfInit_sunlineUKF(void*, uint64_t);
 %ignore SelfInit_sunlineUKF;
-%constant void CrossInit_sunlineUKF(void*, uint64_t);
-%ignore CrossInit_sunlineUKF;
 %constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineUKF;
 

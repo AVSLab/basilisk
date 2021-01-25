@@ -26,8 +26,6 @@
 %ignore Update_stProcessTelem;
 %constant void SelfInit_stProcessTelem(void*, uint64_t);
 %ignore SelfInit_stProcessTelem;
-%constant void CrossInit_stProcessTelem(void*, uint64_t);
-%ignore CrossInit_stProcessTelem;
 
 %include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 struct STSensorMsg_C;

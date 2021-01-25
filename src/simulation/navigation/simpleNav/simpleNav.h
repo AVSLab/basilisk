@@ -38,7 +38,6 @@ public:
     ~SimpleNav();
 
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void computeTrueOutput(uint64_t Clock);

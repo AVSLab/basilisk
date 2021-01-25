@@ -90,12 +90,6 @@ void DualHingedRigidBodyStateEffector::SelfInit()
     return;
 }
 
-/*! This method subscribes to messages the HRB needs.
- @return void*/
-void DualHingedRigidBodyStateEffector::CrossInit()
-{
-    return;
-}
 
 /*! This method is used to reset the module.
  @return void

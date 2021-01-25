@@ -27,8 +27,6 @@
 %ignore Update_sunlineSEKF;
 %constant void SelfInit_sunlineSEKF(void*, uint64_t);
 %ignore SelfInit_sunlineSEKF;
-%constant void CrossInit_sunlineSEKF(void*, uint64_t);
-%ignore CrossInit_sunlineSEKF;
 %constant void Reset_sunlineSEKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineSEKF;
 

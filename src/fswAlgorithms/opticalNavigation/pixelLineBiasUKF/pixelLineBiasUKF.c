@@ -34,14 +34,6 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t modul
     PixelLineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the OD filter.
- @return void
- @param configData The configuration data associated with the OD filter
- @param moduleId The ID associated with the configData
- */
-void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
-{
-}
 
 /*! This method resets the relative OD filter to an initial state and
  initializes the internal estimation matrices.

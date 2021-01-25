@@ -26,8 +26,6 @@
 %ignore Update_meanOEFeedback;
 %constant void SelfInit_meanOEFeedback(void*, uint64_t);
 %ignore SelfInit_meanOEFeedback;
-%constant void CrossInit_meanOEFeedback(void*, uint64_t);
-%ignore CrossInit_meanOEFeedback;
 %constant void Reset_meanOEFeedback(void*, uint64_t, uint64_t);
 %ignore Reset_meanOEFeedback;
 

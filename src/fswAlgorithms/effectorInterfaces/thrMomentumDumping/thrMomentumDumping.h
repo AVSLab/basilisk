@@ -61,7 +61,6 @@ extern "C" {
 #endif
     
     void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID);
-    void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID);
     void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID);
     

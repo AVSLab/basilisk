@@ -26,8 +26,6 @@
 %ignore Update_rwMotorTorque;
 %constant void SelfInit_rwMotorTorque(void*, uint64_t);
 %ignore SelfInit_rwMotorTorque;
-%constant void CrossInit_rwMotorTorque(void*, uint64_t);
-%ignore CrossInit_rwMotorTorque;
 %constant void Reset_rwMotorTorque(void*, uint64_t, uint64_t);
 %ignore Reset_rwMotorTorque;
 

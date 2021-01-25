@@ -27,8 +27,6 @@
 %ignore Update_relODuKF;
 %constant void SelfInit_relODuKF(void*, uint64_t);
 %ignore SelfInit_relODuKF;
-%constant void CrossInit_relODuKF(void*, uint64_t);
-%ignore CrossInit_relODuKF;
 %constant void Reset_relODuKF(void*, uint64_t, uint64_t);
 %ignore Reset_relODuKF;
 

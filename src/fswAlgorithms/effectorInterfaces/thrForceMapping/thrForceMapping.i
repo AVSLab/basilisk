@@ -26,8 +26,6 @@
 %ignore Update_thrForceMapping;
 %constant void SelfInit_thrForceMapping(void*, uint64_t);
 %ignore SelfInit_thrForceMapping;
-%constant void CrossInit_thrForceMapping(void*, uint64_t);
-%ignore CrossInit_thrForceMapping;
 %constant void Reset_thrForceMapping(void*, uint64_t, uint64_t);
 %ignore Reset_thrForceMapping;
 

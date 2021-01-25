@@ -34,14 +34,6 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
     OpNavFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with the OD filter
- @param moduleId The ID associated with the configData
- */
-void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
-{
-}
 
 /*! This method resets the relative OD filter to an initial state and
  initializes the internal estimation matrices.

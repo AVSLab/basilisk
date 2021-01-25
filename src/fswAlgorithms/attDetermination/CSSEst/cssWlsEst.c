@@ -36,16 +36,6 @@ void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
     }
 }
 
-/*! This method performs the second stage of initialization for the CSS sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the CSS interface
- @param moduleID The module identifier
- */
-void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

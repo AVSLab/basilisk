@@ -26,8 +26,6 @@
 %ignore Update_dvGuidance;
 %constant void SelfInit_dvGuidance(void*, uint64_t);
 %ignore SelfInit_dvGuidance;
-%constant void CrossInit_dvGuidance(void*, uint64_t);
-%ignore CrossInit_dvGuidance;
 %constant void Reset_dvGuidance(void*, uint64_t, uint64_t);
 %ignore Reset_dvGuidance;
 

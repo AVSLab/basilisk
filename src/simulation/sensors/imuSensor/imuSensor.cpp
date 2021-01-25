@@ -104,13 +104,6 @@ void ImuSensor::SelfInit()
     return;
 }
 
-/*!
- cross initialization
- */
-void ImuSensor::CrossInit()
-{
-    return;
-}
 
 /*! Reset the module
  @return void

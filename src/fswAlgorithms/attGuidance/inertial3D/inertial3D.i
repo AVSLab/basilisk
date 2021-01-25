@@ -26,8 +26,6 @@
 %ignore Update_inertial3D;
 %constant void SelfInit_inertial3D(void*, uint64_t);
 %ignore SelfInit_inertial3D;
-%constant void CrossInit_inertial3D(void*, uint64_t);
-%ignore CrossInit_inertial3D;
 %constant void Reset_inertial3D(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3D;
 GEN_SIZEOF(inertial3DConfig);

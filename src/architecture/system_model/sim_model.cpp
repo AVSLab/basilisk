@@ -74,19 +74,7 @@ void SimModel::selfInitSimulation()
     it=this->processList.begin();
     this->nextProcPriority = (*it)->processPriority;
 }
-/*! This method goes through all of the processes in the simulation,
- *  all of the tasks within each process, and all of the models within
- *  each task and cross-inits them.
- @return void
- */
-void SimModel::crossInitSimulation()
-{
-    std::vector<SysProcess *>::iterator it;
-    for(it=this->processList.begin(); it!= this->processList.end(); it++)
-    {
-        (*it)->crossInitProcess();
-    }
-}
+
 /*! This method goes through all of the processes in the simulation,
  *  all of the tasks within each process, and all of the models within
  *  each task and resets them.

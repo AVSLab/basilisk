@@ -45,7 +45,6 @@ extern "C" {
 #endif
     
     void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
-    void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
     void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,

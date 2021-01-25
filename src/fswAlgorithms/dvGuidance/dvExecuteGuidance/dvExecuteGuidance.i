@@ -26,8 +26,6 @@
 %ignore Update_dvExecuteGuidance;
 %constant void SelfInit_dvExecuteGuidance(void*, uint64_t);
 %ignore SelfInit_dvExecuteGuidance;
-%constant void CrossInit_dvExecuteGuidance(void*, uint64_t);
-%ignore CrossInit_dvExecuteGuidance;
 
 %include "dvExecuteGuidance.h"
 

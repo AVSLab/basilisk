@@ -26,8 +26,6 @@
 %ignore Update_sunlineEphem;
 %constant void SelfInit_sunlineEphem(void*, uint64_t);
 %ignore SelfInit_sunlineEphem;
-%constant void CrossInit_sunlineEphem(void*, uint64_t);
-%ignore CrossInit_sunlineEphem;
 %constant void Reset_sunlineEphem(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineEphem;
 

@@ -86,7 +86,6 @@ extern "C" {
 #endif
     
     void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID);
-    void CrossInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID);
 	void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
 		int64_t moduleID);
     void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,

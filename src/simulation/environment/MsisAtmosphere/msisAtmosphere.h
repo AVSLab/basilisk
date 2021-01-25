@@ -45,7 +45,6 @@ public:
     ~MsisAtmosphere();
 
 private:
-    void customCrossInit();
     void customWriteMessages(uint64_t CurrentClock);
     bool customReadMessages();
     void customReset(uint64_t CurrentClock);

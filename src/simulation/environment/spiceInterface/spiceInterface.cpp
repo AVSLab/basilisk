@@ -83,14 +83,6 @@ void SpiceInterface::SelfInit()
     return;
 }
 
-/*! Should subscribe to module input messages.  However, the epoch message is subscribed to in the SelfInit() routine due to how Spice is being loaded and setup.
- @return void
- */
-void SpiceInterface::CrossInit()
-{
-
-    return;
-}
 
 /*! Reset the module to origina configuration values.
  @return void

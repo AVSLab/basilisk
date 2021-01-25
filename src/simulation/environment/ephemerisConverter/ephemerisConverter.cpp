@@ -33,9 +33,6 @@ void EphemerisConverter::SelfInit()
 {
 }
 
-void EphemerisConverter::CrossInit()
-{
-}
 
 /*!
  add a planet spice input message

@@ -95,16 +95,6 @@ void MagneticFieldBase::SelfInit()
     return;
 }
 
-/*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
- @return void
- */
-void MagneticFieldBase::CrossInit()
-{
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-
-    return;
-}
 
 /*! This method is used to reset the module.
  @return void
@@ -143,13 +133,6 @@ void MagneticFieldBase::customSelfInit()
     return;
 }
 
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void MagneticFieldBase::customCrossInit()
-{
-    return;
-}
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void

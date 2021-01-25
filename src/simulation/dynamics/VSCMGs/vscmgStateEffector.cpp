@@ -489,14 +489,6 @@ void VSCMGStateEffector::SelfInit()
 {
 }
 
-/*! This method is used to connect the input command message to the VSCMGs.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
- @return void
- */
-void VSCMGStateEffector::CrossInit()
-{
-}
 
 /*! Reset the module to origina configuration values.
  @return void

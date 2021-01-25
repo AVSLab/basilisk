@@ -66,16 +66,6 @@ void PowerStorageBase::SelfInit()
     return;
 }
 
-/*! Subscribes to messages with the names provided by addPowerNodeToModel. Also calls customCrossInit.
- @return void
- */
-void PowerStorageBase::CrossInit()
-{
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-
-    return;
-}
 
 /*! This method is used to reset the module.
  @return void
@@ -202,13 +192,6 @@ void PowerStorageBase::customSelfInit()
     return;
 }
 
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void PowerStorageBase::customCrossInit()
-{
-    return;
-}
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void

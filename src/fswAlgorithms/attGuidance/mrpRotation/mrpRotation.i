@@ -27,8 +27,6 @@
 %ignore Update_mrpRotation;
 %constant void SelfInit_mrpRotation(void*, uint64_t);
 %ignore SelfInit_mrpRotation;
-%constant void CrossInit_mrpRotation(void*, uint64_t);
-%ignore CrossInit_mrpRotation;
 %constant void Reset_mrpRotation(void*, uint64_t, uint64_t);
 %ignore Reset_mrpRotation;
 

@@ -11,8 +11,7 @@ The user only needs to setup the module and link the proper message names:
 \texttt{  moduleWrap = alg\_contain.AlgContain(moduleConfig,} \\
 \texttt{  attTrackingError.Update\_attTrackingError,} \\
 \texttt{ attTrackingError.SelfInit\_attTrackingError,} \\
-\texttt{ attTrackingError.CrossInit\_attTrackingError)} \\
-\texttt{ moduleWrap.ModelTag = "attTrackingError"} 
+\texttt{ moduleWrap.ModelTag = "attTrackingError"}
 \item Add the module to the task: \\
  \texttt{ unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)}
 \item  Set the R0R vector: \\

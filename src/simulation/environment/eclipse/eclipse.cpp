@@ -39,12 +39,6 @@ void Eclipse::SelfInit()
 {
 }
 
-/*! This method subscribes to the spice planet states, the spacecraft state messages and the sun state message.
- @return void*/
-void Eclipse::CrossInit()
-{
-}
-
 
 /*! Reset the module to origina configuration values.
  @return void

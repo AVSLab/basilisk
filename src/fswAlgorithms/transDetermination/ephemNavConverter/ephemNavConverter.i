@@ -26,8 +26,6 @@
 %ignore Update_ephemNavConverter;
 %constant void SelfInit_ephemNavConverter(void*, uint64_t);
 %ignore SelfInit_ephemNavConverter;
-%constant void CrossInit_ephemNavConverter(void*, uint64_t);
-%ignore CrossInit_ephemNavConverter;
 %constant void Reset_ephemNavConverter(void*, uint64_t, uint64_t);
 %ignore Reset_ephemNavConverter;
 

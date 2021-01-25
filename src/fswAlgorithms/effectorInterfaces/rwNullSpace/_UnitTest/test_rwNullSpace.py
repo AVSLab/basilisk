@@ -59,7 +59,7 @@ def rwNullSpaceTestFunction(numWheels):
     # Set the necessary data in the module. NOTE: This information is more or less random
     moduleConfig.OmegaGain = .5 # The feedback gain value applied for the RW despin control law
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rwNullSpace"
 

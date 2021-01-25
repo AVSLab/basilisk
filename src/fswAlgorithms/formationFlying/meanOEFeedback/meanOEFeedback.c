@@ -46,15 +46,6 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
     CmdForceInertialMsg_C_init(&configData->forceOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- Nothing else should be happening in this function.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID) {
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the

@@ -37,7 +37,6 @@ public:
 private:
     void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime);
     bool customReadMessages();
-    void customCrossInit();
 
 public:
     double packetSize; //!< Size of packet to downklink (bytes)

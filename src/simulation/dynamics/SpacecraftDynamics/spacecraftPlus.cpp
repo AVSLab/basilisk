@@ -57,11 +57,6 @@ void SpacecraftPlus::SelfInit()
     return;
 }
 
-/*! This method is used to cross link the messages and to initialize the dynamics */
-void SpacecraftPlus::CrossInit()
-{
-    return;
-}
 
 /*! This method is used to reset the module.
  @return void

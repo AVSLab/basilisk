@@ -79,7 +79,7 @@ def dvAccumulationTestFunction():
     # Set the names for the input messages
     moduleConfig = dvAccumulation.DVAccumulationData()  # Create a config struct
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "dvAccumulation"
 

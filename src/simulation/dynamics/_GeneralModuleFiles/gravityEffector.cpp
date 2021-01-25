@@ -407,9 +407,6 @@ void GravityEffector::SelfInit()
     return;
 }
 
-void GravityEffector::CrossInit()
-{
-}
 
 /*! This method is used to reset the module.
  @return void

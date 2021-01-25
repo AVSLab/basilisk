@@ -48,7 +48,6 @@ extern "C" {
 #endif
     
     void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID);
-    void CrossInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID);
     void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t moduleID);
     void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t moduleID);
     

@@ -43,11 +43,6 @@ void SysModel :: SelfInit()
     return;
 }
 
-void SysModel :: CrossInit()
-{
-    return;
-}
-
 void SysModel :: IntegratedInit()
 {
     return;

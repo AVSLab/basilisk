@@ -235,8 +235,6 @@ public:
     //! -- self initialization
     void SelfInit(){};
     //! -- cross initialization
-    void CrossInit(){};
-    //! Method description
     void IntegratedInit(){};
     //! -- Read and record the message
     void UpdateState(uint64_t CurrentSimNanos){

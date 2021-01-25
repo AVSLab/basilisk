@@ -33,16 +33,6 @@ void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID
     VehicleConfigMsg_C_init(&configData->vecConfigOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the vehicle config
-    data interface.  No operations are performed here currently.
- @return void
- @param configData The configuration data associated with the veh config interface
- @param moduleID The ID associated with the configData
- */
-void CrossInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
-{
-    /*! Nothing done in this method.  Make sure this is still true!*/
-}
 
 void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
 {

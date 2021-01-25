@@ -26,8 +26,6 @@
 %ignore Update_ephemDifference;
 %constant void SelfInit_ephemDifference(void*, uint64_t);
 %ignore SelfInit_ephemDifference;
-%constant void CrossInit_ephemDifference(void*, uint64_t);
-%ignore CrossInit_ephemDifference;
 %constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
 %ignore Reset_ephemDifference;
 

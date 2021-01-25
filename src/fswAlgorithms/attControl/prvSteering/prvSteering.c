@@ -41,15 +41,6 @@ void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID)
     RateCmdMsg_C_init(&configData->rateCmdOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The module identifier
-*/
-void CrossInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

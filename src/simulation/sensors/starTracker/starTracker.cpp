@@ -48,12 +48,6 @@ void StarTracker::SelfInit()
 {
 }
 
-/*!
-    cross initialization
- */
-void StarTracker::CrossInit()
-{
-}
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture

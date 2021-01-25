@@ -26,8 +26,6 @@
 %ignore Update_tamProcessTelem;
 %constant void SelfInit_tamProcessTelem(void*, uint64_t);
 %ignore SelfInit_tamProcessTelem;
-%constant void CrossInit_tamProcessTelem(void*, uint64_t);
-%ignore CrossInit_tamProcessTelem;
 
 %include "tamComm.h"
 

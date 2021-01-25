@@ -97,7 +97,7 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     faults.faultMode = faultMode
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     faultsWrap = unitTestSim.setModelDataWrap(faults)
     faultsWrap.ModelTag = "faultDet"
 

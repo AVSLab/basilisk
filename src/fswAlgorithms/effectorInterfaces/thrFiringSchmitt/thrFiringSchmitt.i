@@ -26,8 +26,6 @@
 %ignore Update_thrFiringSchmitt;
 %constant void SelfInit_thrFiringSchmitt(void*, uint64_t);
 %ignore SelfInit_thrFiringSchmitt;
-%constant void CrossInit_thrFiringSchmitt(void*, uint64_t);
-%ignore CrossInit_thrFiringSchmitt;
 %constant void Reset_thrFiringSchmitt(void*, uint64_t, uint64_t);
 %ignore Reset_thrFiringSchmitt;
 

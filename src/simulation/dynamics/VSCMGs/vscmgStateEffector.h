@@ -50,7 +50,6 @@ public:
 	void linkInStates(DynParamManager& states);
     void updateEffectorMassProps(double integTime);
 	void SelfInit();
-	void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG); 
 	void UpdateState(uint64_t CurrentSimNanos);

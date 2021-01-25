@@ -35,16 +35,6 @@ void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
     
 }
 
-/*! This method performs the second stage of initialization for the IMU sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the IMU interface
- @param moduleID The ID associated with the configData
- */
-void CrossInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
-{
-}
 
 /*! This method resets the module.
  @return void

@@ -51,14 +51,6 @@ void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

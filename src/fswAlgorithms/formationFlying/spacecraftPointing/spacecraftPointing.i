@@ -27,8 +27,6 @@
 %ignore Update_spacecraftPointing;
 %constant void SelfInit_spacecraftPointing(void*, uint64_t);
 %ignore SelfInit_spacecraftPointing;
-%constant void CrossInit_spacecraftPointing(void*, uint64_t);
-%ignore CrossInit_spacecraftPointing;
 %constant void Reset_spacecraftPointing(void*, uint64_t, uint64_t);
 %ignore Reset_spacecraftPointing;
 

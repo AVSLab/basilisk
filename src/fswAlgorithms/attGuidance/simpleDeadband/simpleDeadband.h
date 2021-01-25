@@ -52,7 +52,6 @@ extern "C" {
 #endif
     
     void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID);
-    void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID);
     void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID);
     void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData);

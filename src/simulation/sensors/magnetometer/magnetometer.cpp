@@ -68,12 +68,6 @@ void Magnetometer::SelfInit()
     return;
 }
 
-/*! This method simply calls the LinkMessages method to ensure that input messages
- are matched correctly.*/
-void Magnetometer::CrossInit()
-{
-    return;
-}
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture

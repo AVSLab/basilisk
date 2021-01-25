@@ -24,8 +24,6 @@
 %include "swig_conly_data.i"
 %constant void SelfInit_pixelLineConverter(void*, uint64_t);
 %ignore SelfInit_pixelLineConverter;
-%constant void CrossInit_pixelLineConverter(void*, uint64_t);
-%ignore CrossInit_pixelLineConverter;
 %constant void Reset_pixelLineConverter(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineConverter;
 %constant void Update_pixelLineConverter(void*, uint64_t, uint64_t);

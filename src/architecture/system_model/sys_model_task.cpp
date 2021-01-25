@@ -73,23 +73,6 @@ void SysModelTask::SelfInitTaskList()
     return;
 }
 
-/*! This method cross-initializes all of the models that have been added to the Task.
- @return void
- */
-void SysModelTask::CrossInitTaskList()
-{
-    std::vector<ModelPriorityPair>::iterator ModelPair;
-    SysModel* NonIt;
-    
-    //! - Loop over all of the models and do the CrossInit
-    for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-        ModelPair++)
-    {
-        NonIt = (ModelPair->ModelPtr);
-        NonIt->CrossInit();
-    }
-    return;
-}
 
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
  * See sys_model_task.h for related method ResetTask()

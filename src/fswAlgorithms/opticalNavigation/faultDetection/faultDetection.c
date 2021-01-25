@@ -34,14 +34,6 @@ void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
     OpNavMsg_C_init(&configData->opNavOutMsg);
 }
 
-/*! This method subscribes to the camera and attitude, and navigation messages
- @return void
- @param configData The configuration data associated with the model
- @param moduleID The module identification integer
- */
-void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
-{
-}
 
 /*! This resets the module to original states.
  @return void

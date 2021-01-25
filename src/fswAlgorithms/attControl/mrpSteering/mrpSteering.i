@@ -26,8 +26,6 @@
 %ignore Update_mrpSteering;
 %constant void SelfInit_mrpSteering(void*, uint64_t);
 %ignore SelfInit_mrpSteering;
-%constant void CrossInit_mrpSteering(void*, uint64_t);
-%ignore CrossInit_mrpSteering;
 %constant void Reset_mrpSteering(void*, uint64_t, uint64_t);
 %ignore Reset_mrpSteering;
 

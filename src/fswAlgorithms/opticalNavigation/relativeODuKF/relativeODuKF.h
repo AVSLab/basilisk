@@ -99,7 +99,6 @@ extern "C" {
 #endif
     
     void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId);
-    void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId);
     void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                             int64_t moduleId);
     void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,

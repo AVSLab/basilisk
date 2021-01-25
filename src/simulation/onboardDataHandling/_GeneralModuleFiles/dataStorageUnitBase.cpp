@@ -49,15 +49,6 @@ void DataStorageUnitBase::SelfInit(){
     return;
 }
 
-/*! CrossInit for this class. Subscribes to dataNodes that will send data to storage unit.
- @return void
- */
-void DataStorageUnitBase::CrossInit(){
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-
-    return;
-}
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos
@@ -265,13 +256,6 @@ void DataStorageUnitBase::customSelfInit()
     return;
 }
 
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void DataStorageUnitBase::customCrossInit()
-{
-    return;
-}
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void

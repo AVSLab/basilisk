@@ -54,14 +54,6 @@ void RadiationPressure::SelfInit()
 {
 }
 
-/*! This method is used to subscribe to systems message from this module.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
- @return void
- */
-void RadiationPressure::CrossInit()
-{
-}
 
 /*! Reset the module to origina configuration values.
  @return void

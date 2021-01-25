@@ -26,8 +26,6 @@
 %ignore Update_attTrackingError;
 %constant void SelfInit_attTrackingError(void*, uint64_t);
 %ignore SelfInit_attTrackingError;
-%constant void CrossInit_attTrackingError(void*, uint64_t);
-%ignore CrossInit_attTrackingError;
 %constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
 %ignore Reset_attTrackingError;
 %include "attTrackingError.h"

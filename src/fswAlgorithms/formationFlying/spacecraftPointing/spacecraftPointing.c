@@ -37,15 +37,6 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t m
     AttRefMsg_C_init(&configData->attReferenceOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the spacecraft pointing
- module interface.
- @return void
- @param configData The configuration data associated with the spacecraft pointing module
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

@@ -55,7 +55,6 @@ extern "C" {
 #endif
     
     void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
-    void CrossInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
     void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     

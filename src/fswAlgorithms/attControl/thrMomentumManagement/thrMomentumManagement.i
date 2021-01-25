@@ -26,8 +26,6 @@
 %ignore Update_thrMomentumManagement;
 %constant void SelfInit_thrMomentumManagement(void*, uint64_t);
 %ignore SelfInit_thrMomentumManagement;
-%constant void CrossInit_thrMomentumManagement(void*, uint64_t);
-%ignore CrossInit_thrMomentumManagement;
 %constant void Reset_thrMomentumManagement(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumManagement;
 

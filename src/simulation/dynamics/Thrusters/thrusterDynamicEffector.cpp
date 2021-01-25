@@ -61,12 +61,6 @@ void ThrusterDynamicEffector::SelfInit()
 {
 }
 
-/*! This method is used to connect the input command message to the thrusters.
- @return void
- */
-void ThrusterDynamicEffector::CrossInit()
-{
-}
 
 /*! This method is used to reset the module.
  @return void

@@ -48,7 +48,6 @@ extern "C" {
 #endif
     
     void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID);
-    void CrossInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID);
     void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
 

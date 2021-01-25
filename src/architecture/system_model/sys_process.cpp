@@ -67,20 +67,7 @@ void SysProcess::selfInitProcess()
     }
 }
 
-/*! This method asks all process tasks to CrossInitTaskLists.
- @return void
- */
-void SysProcess::crossInitProcess()
-{
-    std::vector<ModelScheduleEntry>::iterator it;
 
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
-        SysModelTask *localTask = it->TaskPtr;
-        localTask->CrossInitTaskList();
-    }
-    return;
-}
 
 /*! This method resets each task and associated model-set inside the process
     ensuring that all parameters go back to their default state.

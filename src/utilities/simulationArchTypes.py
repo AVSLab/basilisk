@@ -85,19 +85,11 @@ class PythonModelClass(object):
         self.modelPriority = modelPriority
 
     # The selfInit method is used to initialize all of the output messages of a class.
-    # It is important that ALL outputs are initialized here so that other models can
-    # subscribe to these messages in their crossInit method.
     def selfInit(self):
         return
 
-    # The crossInit method is used to initialize all of the input messages of a class.
-    #  This subscription assumes that all of the other models present in a given simulation
-    #  instance have initialized their messages during the selfInit step.
-    def crossInit(self):
-        return
-
     # The reset method is used to clear out any persistent variables that need to get changed
-    #  when a task is restarted.  This method is typically only called once after selfInit/crossInit,
+    #  when a task is restarted.  This method is typically only called once after selfInit,
     #  but it should be written to allow the user to call it multiple times if necessary.
     def reset(self, currentTime):
         return
@@ -123,10 +115,6 @@ class PythonTaskClass(object):
     def selfInitTask(self):
         for model in self.modelList:
             model.selfInit()
-
-    def crossInitTask(self):
-        for model in self.modelList:
-            model.crossInit()
 
     def resetTask(self, currentTime):
         for model in self.modelList:
@@ -196,10 +184,6 @@ class PythonProcessClass(ProcessBaseClass):
             task.selfInitTask()
         self.nextTaskTime = 0
         self.scheduleTask(self.taskList[-1])
-
-    def crossInitProcess(self):
-        for task in self.taskList:
-            task.crossInitTask()
 
     def resetProcess(self, currentTime):
         self.executionOrder = []

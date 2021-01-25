@@ -93,7 +93,6 @@ public:
     HingedRigidBodyStateEffector();  //!< -- Contructor
     ~HingedRigidBodyStateEffector();  //!< -- Destructor
     void SelfInit();
-    void CrossInit();
     void writeOutputStateMessages(uint64_t CurrentClock);
 	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states

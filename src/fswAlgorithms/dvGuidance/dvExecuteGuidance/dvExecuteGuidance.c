@@ -37,15 +37,6 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t mod
     THRArrayOnTimeCmdMsg_C_init(&configData->thrCmdOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the delta-V maneuver
- interface.
- @return void
- @param configData The configuration data associated with the attitude maneuver guidance
- @param moduleID The ID associated with the configData
- */
-void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method takes its own internal variables and creates an output attitude 
     command to use for burn execution.  It also flags whether the burn should 

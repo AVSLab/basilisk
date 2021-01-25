@@ -57,7 +57,6 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
 	void SelfInit();
-	void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void addReactionWheel(RWConfigMsgPayload *NewRW);
 	void UpdateState(uint64_t CurrentSimNanos);

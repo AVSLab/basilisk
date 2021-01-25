@@ -37,15 +37,6 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the RW null space control
- interface.  
- @return void
- @param configData The configuration data associated with the sun safe ACS control
- @param moduleID The ID associated with the configData
- */
-void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
-{
-}
 
 /*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any module specific variables.  The output message is reset to zero.
     @return void

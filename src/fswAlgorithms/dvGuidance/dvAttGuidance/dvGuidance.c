@@ -36,15 +36,6 @@ void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the delta-V maneuver
- interface.
- @return void
- @param configData The configuration data associated with the attitude maneuver guidance
- @param moduleID The unique module identifier
- */
-void CrossInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
-{
-}
 
 /*! @brief This resets the module.
  @return void

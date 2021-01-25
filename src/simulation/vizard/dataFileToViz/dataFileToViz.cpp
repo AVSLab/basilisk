@@ -57,12 +57,6 @@ void DataFileToViz::SelfInit()
     return;
 }
 
-/*! Cross initialization. This module does not subscribe to any other messages.
- */
-void DataFileToViz::CrossInit()
-{
-    return;
-}
 
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds

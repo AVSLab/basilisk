@@ -41,13 +41,6 @@ void GravityGradientEffector::SelfInit()
     return;
 }
 
-/*! This method is used to connect to incoming message.  For this module there are none.
- @return void
- */
-void GravityGradientEffector::CrossInit()
-{
-    return;
-}
 
 /*! This method is used to set the effector, and check same module variables
 @return void

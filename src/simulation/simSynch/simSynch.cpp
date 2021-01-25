@@ -49,14 +49,6 @@ void ClockSynch::SelfInit()
 {
 }
 
-/*! This method is blank but included in case we need to add functionality to the 
-     model.
-    @return void
-*/
-void ClockSynch::CrossInit()
-{
-
-}
 
 /*! Reset the module variables.
     @param currentSimNanos

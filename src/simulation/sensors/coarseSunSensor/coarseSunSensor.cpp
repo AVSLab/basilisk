@@ -118,12 +118,7 @@ void CoarseSunSensor::SelfInit()
     return;
 }
 
-/*! This method simply calls the LinkMessages method to ensure that input messages 
- are matched correctly.*/
-void CoarseSunSensor::CrossInit()
-{
-    return;
-}
+
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
@@ -353,11 +348,6 @@ void CSSConstellation::SelfInit()
 {
 }
 
-/*! This method loops through the sensor list and calls the CrossInit method for 
- all of those sensors.*/
-void CSSConstellation::CrossInit()
-{
-}
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture

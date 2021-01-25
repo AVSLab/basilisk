@@ -27,12 +27,6 @@ void SolarFlux::SelfInit()
 {
 }
 
-/*! This method is used to subscribe to modules
- @return void
- */
-void SolarFlux::CrossInit()
-{
-}
 
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void

@@ -45,7 +45,6 @@ extern "C" {
 #endif
     
     void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
-    void CrossInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
     void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);
     void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,

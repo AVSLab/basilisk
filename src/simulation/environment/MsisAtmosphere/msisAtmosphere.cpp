@@ -96,16 +96,6 @@ MsisAtmosphere::~MsisAtmosphere()
 }
 
 
-
-
-/*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
- @return void
- */
-void MsisAtmosphere::customCrossInit()
-{
-    return;
-}
-
 /*! This method is used to reset the module.
  @return void
  */

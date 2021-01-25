@@ -36,16 +36,6 @@ void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
     AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the opNav attitude
- interface.
- @return void
- @param configData The configuration data associated with the opNav attitude guidance
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
-{
-
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

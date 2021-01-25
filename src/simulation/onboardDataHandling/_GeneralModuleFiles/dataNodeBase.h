@@ -37,7 +37,6 @@ public:
     DataNodeBase();
     ~DataNodeBase();
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void computeDataStatus(double currentTime);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -47,7 +46,6 @@ protected:
     bool readMessages();
     virtual void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime)=0; //!< Virtual void method used to compute module-wise data usage/generation.
     virtual void customSelfInit();
-    virtual void customCrossInit();   
     virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.

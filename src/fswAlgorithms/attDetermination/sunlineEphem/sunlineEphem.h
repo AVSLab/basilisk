@@ -47,7 +47,6 @@ extern "C" {
 #endif
     
     void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID);
-    void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID);
     void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
     

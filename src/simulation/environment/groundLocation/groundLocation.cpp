@@ -97,11 +97,6 @@ void GroundLocation::SelfInit()
 {
 }
 
-/*! Module cross initialization
-*/
-void GroundLocation::CrossInit()
-{
-}
 
 /*! Read module messages
 */

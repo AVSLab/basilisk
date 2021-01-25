@@ -27,8 +27,6 @@
 %ignore Update_eulerRotation;
 %constant void SelfInit_eulerRotation(void*, uint64_t);
 %ignore SelfInit_eulerRotation;
-%constant void CrossInit_eulerRotation(void*, uint64_t);
-%ignore CrossInit_eulerRotation;
 %constant void Reset_eulerRotation(void*, uint64_t, uint64_t);
 %ignore Reset_eulerRotation;
 

@@ -11,7 +11,8 @@ This module makes no additional assumptions outside of those already made in the
 
 Message Connection Descriptions
 -------------------------------
-This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional :ref:`DataStorageStatusMsgPayload` input message subscribed to and read in `customCrossInit()` and `customRead()` methods, respectively.
+This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional
+:ref:`DataStorageStatusMsgPayload` input message subscribed to and read in `customRead()` method.
 
 .. list-table:: Module I/O Messages
     :widths: 25 25 50

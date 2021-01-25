@@ -27,8 +27,6 @@
 %ignore Update_pixelLineBiasUKF;
 %constant void SelfInit_pixelLineBiasUKF(void*, uint64_t);
 %ignore SelfInit_pixelLineBiasUKF;
-%constant void CrossInit_pixelLineBiasUKF(void*, uint64_t);
-%ignore CrossInit_pixelLineBiasUKF;
 %constant void Reset_pixelLineBiasUKF(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineBiasUKF;
 

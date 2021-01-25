@@ -49,12 +49,6 @@ void BoreAngCalc::SelfInit()
 {
 }
 
-/*! This method links up the desired input messages with whoever created them.
- @return void
- */
-void BoreAngCalc::CrossInit()
-{
-}
 
 /*! This method is used to reset the module.
  @return void
@@ -146,11 +140,10 @@ void BoreAngCalc::computeOutputData()
  */
 void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! - If we need to reinit, call SelfInit, CrossInit, and set flag false
+    //! - If we need to reinit, call SelfInit and set flag false
     if(ReinitSelf)
     {
         SelfInit();
-        CrossInit();
         ReinitSelf = false;
     }
     //! - Read the input message and convert it over appropriately depending on switch

@@ -46,7 +46,6 @@ extern "C" {
 #endif
     
     void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID);
-    void CrossInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID);
     void Update_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
 

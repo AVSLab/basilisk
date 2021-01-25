@@ -36,15 +36,6 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

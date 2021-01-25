@@ -47,14 +47,6 @@ void ExtForceTorque::SelfInit()
 {
 }
 
-/*! This method is used to connect the input message.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
- @return void
- */
-void ExtForceTorque::CrossInit()
-{
-}
 
 /*! This method is used to reset the module. 
  @return void

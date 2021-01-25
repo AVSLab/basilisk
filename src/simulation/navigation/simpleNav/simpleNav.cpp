@@ -54,14 +54,6 @@ void SimpleNav::SelfInit()
 {
 }
 
-/*! This method pulls the input message IDs from the messaging system.  It will
-    alert the user if either of them are not found in the messaging database
-    @return void
-*/
-void SimpleNav::CrossInit()
-{
-    return;
-}
 
 /*! This method is used to reset the module. It
  initializes the various containers used in the model as well as creates the

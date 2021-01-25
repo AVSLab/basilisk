@@ -41,7 +41,6 @@ public:
     
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);

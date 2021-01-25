@@ -53,15 +53,6 @@ void DataNodeBase::SelfInit()
     return;
 }
 
-/*! This method subscribes to anything that would tell the data node to turn on/off.
- @return void
- */
-void DataNodeBase::CrossInit()
-{
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-    return;
-}
 
 /*! This method is used to reset the module. In general, no functionality is reset.
  @param CurrentSimNanos
@@ -157,13 +148,6 @@ void DataNodeBase::customSelfInit()
     return;
 }
 
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void DataNodeBase::customCrossInit()
-{
-    return;
-}
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void

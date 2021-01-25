@@ -48,7 +48,6 @@ extern "C" {
 #endif
     
     void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID);
-    void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID);
     void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int64_t moduleID);

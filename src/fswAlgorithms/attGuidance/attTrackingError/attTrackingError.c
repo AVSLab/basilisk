@@ -36,16 +36,6 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t modul
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with the attitude tracking error module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
-{
-    return;
-}
 
 /*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
  @return void

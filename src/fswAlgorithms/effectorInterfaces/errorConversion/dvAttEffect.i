@@ -26,8 +26,6 @@
 %ignore Update_dvAttEffect;
 %constant void SelfInit_dvAttEffect(void*, uint64_t);
 %ignore SelfInit_dvAttEffect;
-%constant void CrossInit_dvAttEffect(void*, uint64_t);
-%ignore CrossInit_dvAttEffect;
 %constant void Reset_dvAttEffect(void*, uint64_t, uint64_t);
 %ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)

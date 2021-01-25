@@ -46,16 +46,6 @@ void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
-/*! This method performs the second stage of initialization
- interface.  This module has no messages to subscribe to.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
-{
-
-}
 
 /*! This method performs the module reset capability.  This module has no actions.
  @return void

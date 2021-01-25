@@ -65,12 +65,6 @@ void HingedRigidBodyStateEffector::SelfInit()
     return;
 }
 
-/*! This method subscribes to messages the HRB needs.
- @return void*/
-void HingedRigidBodyStateEffector::CrossInit()
-{
-    return;
-}
 
 /*! This method takes the computed theta states and outputs them to the m
  messaging system.

@@ -40,7 +40,6 @@ public:
     ~Eclipse();
     
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrenSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);

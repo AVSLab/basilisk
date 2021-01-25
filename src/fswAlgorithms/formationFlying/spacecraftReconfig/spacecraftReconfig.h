@@ -67,7 +67,6 @@ typedef struct {
 extern "C" {
 #endif
     void SelfInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t moduleID);
-    void CrossInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t moduleID);
     void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
 

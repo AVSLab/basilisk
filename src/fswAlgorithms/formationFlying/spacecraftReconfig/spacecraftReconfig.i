@@ -26,8 +26,6 @@
 %ignore Update_spacecraftReconfig;
 %constant void SelfInit_spacecraftReconfig(void*, uint64_t);
 %ignore SelfInit_spacecraftReconfig;
-%constant void CrossInit_spacecraftReconfig(void*, uint64_t);
-%ignore CrossInit_spacecraftReconfig;
 %constant void Reset_spacecraftReconfig(void*, uint64_t, uint64_t);
 %ignore Reset_spacecraftReconfig;
 

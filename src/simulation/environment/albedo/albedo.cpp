@@ -215,13 +215,6 @@ void Albedo::SelfInit()
 {
 }
 
-/*! This method subscribes to the spice planet states,
- spaceccraft and instrument's configuration state messages.
- @return void
- */
-void Albedo::CrossInit()
-{
-}
 
 /*! Read Messages, calculate albedo then write it out
  @return void

@@ -26,8 +26,6 @@
 %ignore Update_prvSteering;
 %constant void SelfInit_prvSteering(void*, uint64_t);
 %ignore SelfInit_prvSteering;
-%constant void CrossInit_prvSteering(void*, uint64_t);
-%ignore CrossInit_prvSteering;
 %constant void Reset_prvSteering(void*, uint64_t, uint64_t);
 %ignore Reset_prvSteering;
 

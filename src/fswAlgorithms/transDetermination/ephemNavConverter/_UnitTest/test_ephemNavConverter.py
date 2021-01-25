@@ -38,7 +38,7 @@ def ephemNavConverterTestFunction():
     # Set the names for the input messages
     ephemNavConfig = ephemNavConverter.EphemNavConverterData()  # Create a config struct
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     ephemNavWrap = unitTestSim.setModelDataWrap(ephemNavConfig)
     ephemNavWrap.ModelTag = "ephemNavConverter"
 

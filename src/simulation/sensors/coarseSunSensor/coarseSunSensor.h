@@ -56,7 +56,6 @@ public:
     ~CoarseSunSensor();
 
     void SelfInit();  //!< @brief method for initializing own messages
-    void CrossInit(); //!< @brief method for initializing cross dependencies
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
@@ -120,7 +119,6 @@ class CSSConstellation: public SysModel {
  public:
     CSSConstellation();                         //!< @brief [-] Default constructor
     ~CSSConstellation();                        //!< @brief [-] Default Destructor
-    void CrossInit();                           //!< @brief [-] Method for initializing cross dependencies
     void SelfInit();                            //!< @brief [-] Method for initializing own messages
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation

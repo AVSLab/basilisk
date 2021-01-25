@@ -35,15 +35,6 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
     THRArrayOnTimeCmdMsg_C_init(&configData->thrData.thrOnTimeOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the sun safe ACS
- interface.
- @return void
- @param configData The configuration data associated with the sun safe ACS control
- @param moduleID The ID associated with the configData
- */
-void CrossInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
-{    
-}
 
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.

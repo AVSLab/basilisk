@@ -27,8 +27,6 @@
 %ignore Update_sunSafePoint;
 %constant void SelfInit_sunSafePoint(void*, uint64_t);
 %ignore SelfInit_sunSafePoint;
-%constant void CrossInit_sunSafePoint(void*, uint64_t);
-%ignore CrossInit_sunSafePoint;
 %constant void Reset_sunSafePoint(void*, uint64_t, uint64_t);
 %ignore Reset_sunSafePoint;
 

@@ -52,16 +52,6 @@ MagneticFieldWMM::~MagneticFieldWMM()
 }
 
 
-/*! Custom CrossInit() method.  Subscribe to the epoch message.
- @return void
- */
-void MagneticFieldWMM::customCrossInit()
-{
-    return;
-}
-
-
-
 /*! Custom Reset() method.  This loads the WMM coefficient file and gets the model setup.
  @return void
  */

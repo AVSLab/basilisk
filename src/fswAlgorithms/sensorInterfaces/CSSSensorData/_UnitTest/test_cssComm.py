@@ -65,7 +65,7 @@ def cssCommTestFunction(numSensors, sensorData):
     moduleConfig.chebyCount = len(ChebyList)
     moduleConfig.kellyCheby = ChebyList
 
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig) # This calls the algContain to setup the selfInit, crossInit, and update
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "cssComm"
 
     # Add the module to the task

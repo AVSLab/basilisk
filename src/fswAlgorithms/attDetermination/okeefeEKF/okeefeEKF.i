@@ -27,8 +27,6 @@
 %ignore Update_okeefeEKF;
 %constant void SelfInit_okeefeEKF(void*, uint64_t);
 %ignore SelfInit_okeefeEKF;
-%constant void CrossInit_okeefeEKF(void*, uint64_t);
-%ignore CrossInit_okeefeEKF;
 %constant void Reset_okeefeEKF(void*, uint64_t, uint64_t);
 %ignore Reset_okeefeEKF;
 

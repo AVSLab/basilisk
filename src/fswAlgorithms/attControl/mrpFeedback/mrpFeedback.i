@@ -26,8 +26,6 @@
 %ignore Update_mrpFeedback;
 %constant void SelfInit_mrpFeedback(void*, uint64_t);
 %ignore SelfInit_mrpFeedback;
-%constant void CrossInit_mrpFeedback(void*, uint64_t);
-%ignore CrossInit_mrpFeedback;
 %constant void Reset_mrpFeedback(void*, uint64_t, uint64_t);
 %ignore Reset_mrpFeedback;
 

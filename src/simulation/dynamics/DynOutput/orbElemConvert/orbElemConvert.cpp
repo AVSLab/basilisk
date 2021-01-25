@@ -41,12 +41,6 @@ void OrbElemConvert::SelfInit()
 {
 }
 
-/*! This method links up the desired input method with whoever created it.
- @return void
- */
-void OrbElemConvert::CrossInit()
-{
-}
 
 /*! This method is used to reset the module.
  @return void

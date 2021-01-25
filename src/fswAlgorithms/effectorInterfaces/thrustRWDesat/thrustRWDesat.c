@@ -36,15 +36,6 @@ void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
     THRArrayOnTimeCmdMsg_C_init(&configData->thrCmdOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the thruster RW desat
- interface.  
- @return void
- @param configData The configuration data associated with the RW desat logic
- @param moduleID The module ID associated with configData
- */
-void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
-{
-}
 
 void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID)
 {

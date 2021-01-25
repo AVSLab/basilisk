@@ -43,7 +43,7 @@ def thrustRWDesatTestFunction():
     moduleConfig.currDMDir = [1, 0, 0] # The current direction of momentum reduction
     moduleConfig.maxFiring = 5 # Maximum time to fire a jet for [s]
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "thrustRWDesat"
 

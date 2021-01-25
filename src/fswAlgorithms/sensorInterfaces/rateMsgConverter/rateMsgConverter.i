@@ -26,8 +26,6 @@
 %ignore Update_rateMsgConverter;
 %constant void SelfInit_rateMsgConverter(void*, uint64_t);
 %ignore SelfInit_rateMsgConverter;
-%constant void CrossInit_rateMsgConverter(void*, uint64_t);
-%ignore CrossInit_rateMsgConverter;
 %constant void Reset_rateMsgConverter(void*, uint64_t, uint64_t);
 %ignore Reset_rateMsgConverter;
 

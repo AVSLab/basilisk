@@ -26,8 +26,6 @@
 %ignore Update_thrMomentumDumping;
 %constant void SelfInit_thrMomentumDumping(void*, uint64_t);
 %ignore SelfInit_thrMomentumDumping;
-%constant void CrossInit_thrMomentumDumping(void*, uint64_t);
-%ignore CrossInit_thrMomentumDumping;
 %constant void Reset_thrMomentumDumping(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumDumping;
 

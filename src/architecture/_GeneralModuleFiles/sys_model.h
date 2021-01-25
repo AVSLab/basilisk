@@ -33,7 +33,6 @@ public:
     SysModel(const SysModel &obj);  //!< constructor definition
     virtual ~SysModel();
     virtual void SelfInit();  //!< -- initialize the module, create messages
-    virtual void CrossInit();  //!< -- link to other modules' messages and any necessary init based on them
     virtual void IntegratedInit();  //!< -- ???
     virtual void UpdateState(uint64_t CurrentSimNanos);  //!< -- What the module does each time step
     virtual void Reset(uint64_t CurrentSimNanos);  //!< -- Reset module to specified time

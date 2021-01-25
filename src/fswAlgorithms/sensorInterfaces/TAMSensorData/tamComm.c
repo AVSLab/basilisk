@@ -36,16 +36,6 @@ void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
     TAMSensorBodyMsg_C_init(&configData->tamOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the TAM sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the TAM interface
- @param moduleID The ID associated with the configData
- */
-void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

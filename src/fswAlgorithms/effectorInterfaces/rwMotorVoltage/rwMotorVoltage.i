@@ -26,8 +26,6 @@
 %ignore Update_rwMotorVoltage;
 %constant void SelfInit_rwMotorVoltage(void*, uint64_t);
 %ignore SelfInit_rwMotorVoltage;
-%constant void CrossInit_rwMotorVoltage(void*, uint64_t);
-%ignore CrossInit_rwMotorVoltage;
 %constant void Reset_rwMotorVoltage(void*, uint64_t, uint64_t);
 %ignore Reset_rwMotorVoltage;
 

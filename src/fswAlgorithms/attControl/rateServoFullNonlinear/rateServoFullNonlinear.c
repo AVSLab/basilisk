@@ -41,14 +41,6 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, i
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
 
-/*! Cross init method
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The module identifier
- */
-void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

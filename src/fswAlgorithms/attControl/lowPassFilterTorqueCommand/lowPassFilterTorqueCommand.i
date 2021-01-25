@@ -26,8 +26,6 @@
 %ignore Update_lowPassFilterTorqueCommand;
 %constant void SelfInit_lowPassFilterTorqueCommand(void*, uint64_t);
 %ignore SelfInit_lowPassFilterTorqueCommand;
-%constant void CrossInit_lowPassFilterTorqueCommand(void*, uint64_t);
-%ignore CrossInit_lowPassFilterTorqueCommand;
 %constant void Reset_lowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
 %ignore Reset_lowPassFilterTorqueCommand;
 

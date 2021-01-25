@@ -52,16 +52,6 @@ void PowerNodeBase::SelfInit()
     return;
 }
 
-/*! This method subscribes to anything that would tell the power node to turn on/off.
- @return void
- */
-void PowerNodeBase::CrossInit()
-{
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-
-    return;
-}
 
 /*! This method is used to reset the module. In general, no functionality must be reset.
  @return void
@@ -163,13 +153,6 @@ void PowerNodeBase::customSelfInit()
     return;
 }
 
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void PowerNodeBase::customCrossInit()
-{
-    return;
-}
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void

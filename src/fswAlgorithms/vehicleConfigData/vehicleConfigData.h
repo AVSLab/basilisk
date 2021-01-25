@@ -43,7 +43,6 @@ extern "C" {
 void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID);
 void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID);
 void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID);
-void CrossInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID);
 #ifdef __cplusplus
 }
 #endif

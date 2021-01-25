@@ -45,15 +45,6 @@ void ExtPulsedTorque::SelfInit()
     return;
 }
 
-/*! This method is used to connect the input message.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
- @return void
- */
-void ExtPulsedTorque::CrossInit()
-{
-    return;
-}
 
 /*! link the states */
 void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)

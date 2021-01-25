@@ -26,8 +26,6 @@
 %ignore Update_inertial3DSpin;
 %constant void SelfInit_inertial3DSpin(void*, uint64_t);
 %ignore SelfInit_inertial3DSpin;
-%constant void CrossInit_inertial3DSpin(void*, uint64_t);
-%ignore CrossInit_inertial3DSpin;
 %constant void Reset_inertial3DSpin(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3DSpin;
 

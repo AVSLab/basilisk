@@ -48,18 +48,6 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
     FswModuleTemplateMsg_C_init(&configData->dataOutMsg);
 }
 
-/*!
- \verbatim embed:rst
-    Perform any steps required after all modules have run Self-Init.
- \endverbatim
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The module identifier
-*/
-void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
-{
-
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the

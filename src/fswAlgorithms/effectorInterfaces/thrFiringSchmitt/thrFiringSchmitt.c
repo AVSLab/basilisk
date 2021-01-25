@@ -45,14 +45,6 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modul
     THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
 }
 
-/*! cross init method
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

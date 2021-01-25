@@ -49,7 +49,6 @@ public:
     VizInterface();
     ~VizInterface();
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadBSKMessages();

@@ -42,15 +42,6 @@ void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t modul
     NavAttMsg_C_init(&configData->navRateOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

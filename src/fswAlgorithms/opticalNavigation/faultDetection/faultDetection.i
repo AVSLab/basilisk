@@ -24,8 +24,6 @@
 %include "swig_conly_data.i"
 %constant void SelfInit_faultDetection(void*, uint64_t);
 %ignore SelfInit_faultDetection;
-%constant void CrossInit_faultDetection(void*, uint64_t);
-%ignore CrossInit_faultDetection;
 %constant void Reset_faultDetection(void*, uint64_t, uint64_t);
 %ignore Reset_faultDetection;
 %constant void Update_faultDetection(void*, uint64_t, uint64_t);

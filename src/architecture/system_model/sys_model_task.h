@@ -42,7 +42,6 @@ public:
     ~SysModelTask();
     void AddNewObject(SysModel *NewModel, int32_t Priority = -1); //!< class method
     void SelfInitTaskList(); //!< class method
-    void CrossInitTaskList(); //!< class method
     void ExecuteTaskList(uint64_t CurrentSimTime); //!< class method
 	void ResetTaskList(uint64_t CurrentSimTime); //!< class method
     void ResetTask() {this->NextStartTime = this->FirstTaskTime;} //!< class method

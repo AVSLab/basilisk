@@ -39,15 +39,6 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
     HeadingFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the heading filter.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the heading filter
- @param moduleID The module identifier
- */
-void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method resets the heading attitude filter to an initial state and
  initializes the internal estimation matrices.

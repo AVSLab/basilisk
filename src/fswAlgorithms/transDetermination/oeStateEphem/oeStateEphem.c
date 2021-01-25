@@ -39,14 +39,6 @@ void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
     EphemerisMsg_C_init(&configData->stateFitOutMsg);
 }
 
-/*! This method initializes the input time correlation factor structure
- @return void
- @param configData The configuration data associated with the ephemeris model
- @param moduleID The module identification integer
- */
-void CrossInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
-{
-}
 
 /*! This Reset method is empty
  @return void

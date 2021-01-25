@@ -45,7 +45,6 @@ extern "C" {
 #endif
 
     void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID);
-    void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID);
     void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
 

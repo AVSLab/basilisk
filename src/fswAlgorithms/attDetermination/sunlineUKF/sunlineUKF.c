@@ -38,16 +38,6 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
     SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the CSS sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the CSS interface
- @param moduleID The module identifier
-*/
-void CrossInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
-{
-}
 
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.

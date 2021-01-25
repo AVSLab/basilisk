@@ -57,7 +57,6 @@ extern "C" {
 #endif
     
     void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
-    void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
     void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
     

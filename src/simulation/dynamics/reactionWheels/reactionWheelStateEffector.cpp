@@ -366,14 +366,6 @@ void ReactionWheelStateEffector::SelfInit()
 {
 }
 
-/*! This method is used to connect the input command message to the RWs.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
- @return void
- */
-void ReactionWheelStateEffector::CrossInit()
-{
-}
 
 /*! Reset the module to origina configuration values.
  @return void

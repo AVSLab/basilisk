@@ -108,7 +108,6 @@ extern "C" {
 #endif
     
     void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID);
-    void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID);
     void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
         int64_t moduleID);
 	void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,

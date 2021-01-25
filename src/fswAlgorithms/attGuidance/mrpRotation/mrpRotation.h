@@ -54,7 +54,6 @@ extern "C" {
 #endif
     
     void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID);
-    void CrossInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID);
     void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     

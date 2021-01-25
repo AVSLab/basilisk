@@ -34,16 +34,6 @@ void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
     NavTransMsg_C_init(&configData->navTransOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the nav aggregration
-    interface.  For each configured input message, it subscribes to the associated target message
-    and saves the ID.
- @return void
- @param configData The configuration data associated with the aggregate nav interface
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
-{
-}
 
 /*! This resets the module to original states.
  @return void

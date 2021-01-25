@@ -65,7 +65,7 @@ def rwConfigDataTestFunction():
     rwConstInMsg = messaging.RWConstellationMsg().write(rwConstellationFswMsg)
     moduleConfig.rwConstellationInMsg.subscribeTo(rwConstInMsg)
 
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig) # This calls the algContain to setup the selfInit, crossInit, and update
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rwConfigData"
 
     # Add the module to the task

@@ -33,16 +33,6 @@ void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
     STAttMsg_C_init(&configData->stAttOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the ST sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the ST interface
- @param moduleID The ID associated with the configData
- */
-void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
-{
-}
 
 
 /*! This method resets the module.

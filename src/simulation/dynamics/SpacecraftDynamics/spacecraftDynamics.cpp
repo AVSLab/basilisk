@@ -323,10 +323,6 @@ void SpacecraftDynamics::SelfInit()
 {
 }
 
-/*! This method is used to cross link the messages and to initialize the dynamics */
-void SpacecraftDynamics::CrossInit()
-{
-}
 
 /*! This method is used to reset the module.
  @return void

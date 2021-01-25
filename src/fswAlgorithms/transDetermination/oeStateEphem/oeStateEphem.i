@@ -26,8 +26,6 @@
 %ignore Update_oeStateEphem;
 %constant void SelfInit_oeStateEphem(void*, uint64_t);
 %ignore SelfInit_oeStateEphem;
-%constant void CrossInit_oeStateEphem(void*, uint64_t);
-%ignore CrossInit_oeStateEphem;
 %constant void Reset_oeStateEphem(void*, uint64_t, uint64_t);
 %ignore Reset_oeStateEphem;
 STRUCTASLIST(ChebyOERecord)

@@ -27,8 +27,6 @@
 %ignore Update_opNavPoint;
 %constant void SelfInit_opNavPoint(void*, uint64_t);
 %ignore SelfInit_opNavPoint;
-%constant void CrossInit_opNavPoint(void*, uint64_t);
-%ignore CrossInit_opNavPoint;
 %constant void Reset_opNavPoint(void*, uint64_t, uint64_t);
 %ignore Reset_opNavPoint;
 

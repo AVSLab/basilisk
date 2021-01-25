@@ -26,8 +26,6 @@
 %ignore Update_rwConfigData;
 %constant void SelfInit_rwConfigData(void*, uint64_t);
 %ignore SelfInit_rwConfigData;
-%constant void CrossInit_rwConfigData(void*, uint64_t);
-%ignore CrossInit_rwConfigData;
 %constant void Reset_rwConfigData(void*, uint64_t, uint64_t);
 %ignore Reset_rwConfigData;
 

@@ -27,8 +27,6 @@
 %ignore Update_sunlineSuKF;
 %constant void SelfInit_sunlineSuKF(void*, uint64_t);
 %ignore SelfInit_sunlineSuKF;
-%constant void CrossInit_sunlineSuKF(void*, uint64_t);
-%ignore CrossInit_sunlineSuKF;
 %constant void Reset_sunlineSuKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineSuKF;
 STRUCTASLIST(SunlineSuKFCFit)

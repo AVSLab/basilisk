@@ -26,8 +26,6 @@
 %ignore Update_mrpPD;
 %constant void SelfInit_mrpPD(void*, uint64_t);
 %ignore SelfInit_mrpPD;
-%constant void CrossInit_mrpPD(void*, uint64_t);
-%ignore CrossInit_mrpPD;
 %constant void Reset_mrpPD(void*, uint64_t, uint64_t);
 %ignore Reset_mrpPD;
 

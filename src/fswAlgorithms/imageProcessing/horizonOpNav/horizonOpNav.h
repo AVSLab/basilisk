@@ -50,7 +50,6 @@ extern "C" {
 #endif
     
     void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID);
-    void CrossInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID);
     void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime,
         uint64_t moduleID);
     void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_t moduleID);

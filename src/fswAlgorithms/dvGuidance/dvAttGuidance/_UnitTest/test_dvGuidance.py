@@ -44,7 +44,7 @@ def dvGuidanceTestFunction(show_plots):
     # Construct the dvGuidance module
     moduleConfig = dvGuidance.dvGuidanceConfig()  # Create a config struct
 
-    # This calls the algContain to setup the selfInit, crossInit, and update
+    # This calls the algContain to setup the selfInit, and update
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "dvGuidance"
 

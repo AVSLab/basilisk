@@ -165,7 +165,7 @@ def horizonOpNav_update():
     opNav.noiseSF = 2
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     opNavWrap = unitTestSim.setModelDataWrap(opNav)
     opNavWrap.ModelTag = "limbNav"
 

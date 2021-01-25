@@ -44,16 +44,6 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
     return;
 }
 
-/*! @brief This method performs the second stage of initialization for the mrpRotation model
- interface. It subscribes to the input reference frame message, and an optional desired
- attitude scanning message.
- @return void
- @param configData The configuration data associated with the null space control
- @param moduleID The ID associated with the configData
- */
-void CrossInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
-{
-}
 
 /*! @brief This resets the module to original states.
  @return void

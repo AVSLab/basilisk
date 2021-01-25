@@ -73,14 +73,6 @@ void Camera::SelfInit()
 }
 
 
-/*! CrossInit performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- */
-void Camera::CrossInit()
-{
-}
-
 /*! This is the destructor */
 Camera::~Camera()
 {

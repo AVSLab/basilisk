@@ -38,7 +38,6 @@ public:
     AtmosphereBase();
     ~AtmosphereBase();
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -50,7 +49,6 @@ protected:
     void updateRelativePos(SpicePlanetStateMsgPayload  *planetState, SCPlusStatesMsgPayload *scState);
     virtual void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime) = 0;     //!< class method
     virtual void customSelfInit();
-    virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();

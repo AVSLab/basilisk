@@ -37,7 +37,6 @@ public:
     ~ClockSynch();
    
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t currentSimNanos);
     void UpdateState(uint64_t currentSimNanos);
     

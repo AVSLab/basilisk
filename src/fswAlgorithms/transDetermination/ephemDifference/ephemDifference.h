@@ -48,7 +48,6 @@ extern "C" {
 #endif
     
     void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID);
-    void CrossInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID);
     void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,

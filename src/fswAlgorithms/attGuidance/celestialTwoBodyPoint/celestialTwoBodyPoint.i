@@ -27,8 +27,6 @@
 %ignore Update_celestialTwoBodyPoint;
 %constant void SelfInit_celestialTwoBodyPoint(void*, uint64_t);
 %ignore SelfInit_celestialTwoBodyPoint;
-%constant void CrossInit_celestialTwoBodyPoint(void*, uint64_t);
-%ignore CrossInit_celestialTwoBodyPoint;
 %constant void Reset_celestialTwoBodyPoint(void*, uint64_t, uint64_t);
 %ignore Reset_celestialTwoBodyPoint;
 

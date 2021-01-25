@@ -34,14 +34,6 @@ void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
     OpNavMsg_C_init(&configData->opNavOutMsg);
 }
 
-/*! This method subscribes to the camera and circle messages
- @return void
- @param configData The configuration data associated with the ephemeris model
- @param moduleID The module identification integer
- */
-void CrossInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
-{
-}
 
 /*! This resets the module to original states.
  @return void

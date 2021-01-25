@@ -26,8 +26,6 @@
 %ignore Update_rwNullSpace;
 %constant void SelfInit_rwNullSpace(void*, uint64_t);
 %ignore SelfInit_rwNullSpace;
-%constant void CrossInit_rwNullSpace(void*, uint64_t);
-%ignore CrossInit_rwNullSpace;
 %constant void Reset_rwNullSpace(void*, uint64_t, uint64_t);
 %ignore Reset_rwNullSpace;
 

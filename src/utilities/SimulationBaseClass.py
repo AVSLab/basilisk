@@ -360,9 +360,6 @@ class SimBaseClass:
         self.TotalSim.selfInitSimulation()
         for proc in self.pyProcList:
             proc.selfInitProcess()
-        self.TotalSim.crossInitSimulation()
-        for proc in self.pyProcList:
-            proc.crossInitProcess()
         self.TotalSim.resetInitSimulation()
         for proc in self.pyProcList:
             proc.resetProcess(0)
@@ -766,10 +763,10 @@ class SimBaseClass:
 
     def setModelDataWrap(self, modelData):
         """
-        Takes a module and returns an object that provides access to said module's SelfInit, CrossInit, Update, and Reset
+        Takes a module and returns an object that provides access to said module's SelfInit, Update, and Reset
         methods.
 
-        Takes the module instance, collects all SwigPyObjects generated from the .i file (SelfInit, CrossInit,
+        Takes the module instance, collects all SwigPyObjects generated from the .i file (SelfInit,
         Update and Reset), and attaches it to a alg_contain model instance so the modules standard functions can be
         run at the python level.
 
@@ -778,12 +775,11 @@ class SimBaseClass:
         """
         algDict = {}
         STR_SELFINIT = 'SelfInit'
-        STR_CROSSINIT = 'CrossInit'
         STR_UPDATE = 'Update'
         STR_RESET = 'Reset'
 
         # SwigPyObject's Parsing:
-        # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, CrossInit, Update and Restart
+        # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, Update and Restart
         # are wrapped by Swig in the .i files. Therefore they are the only SwigPyObjects
         def parseDirList(dirList):
             algNames = []
@@ -792,20 +788,19 @@ class SimBaseClass:
                 if type(methodObject).__name__ == "SwigPyObject":
                     algNames.append(methodName)
             return algNames
-        # Check the type of the algorithm, i.e. SelfInit, CrossInit, Update or Reset,
+        
+        # Check the type of the algorithm, i.e. SelfInit, Update or Reset,
         # and return the key to create a new dictionary D[str_method] = method
         def checkMethodType(methodName):
             if methodName[0:len(STR_SELFINIT)] == STR_SELFINIT:
                 return STR_SELFINIT
-            elif methodName[0:len(STR_CROSSINIT)] == STR_CROSSINIT:
-                return STR_CROSSINIT
             elif methodName[0:len(STR_UPDATE)] == STR_UPDATE:
                 return STR_UPDATE
             elif methodName[0:len(STR_RESET)] == STR_RESET:
                 return STR_RESET
             else:
                 raise ValueError('Cannot recognize the method'
-                                 '(I only assess SelfInit, CrossInit, Update and Reset methods). '
+                                 '(I only assess SelfInit, Update and Reset methods). '
                                  'Parse better.')
 
         module = modelData.__module__
@@ -831,13 +826,12 @@ class SimBaseClass:
 
         update = eval(moduleString + algDict[STR_UPDATE])
         selfInit = eval(moduleString + algDict[STR_SELFINIT])
-        crossInit = eval(moduleString + algDict[STR_CROSSINIT])
         try:
             resetArg = algDict[STR_RESET]
             reset = eval(moduleString + resetArg)
-            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit, reset)
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, reset)
         except:
-            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit)
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit)
         return modelWrap
 
 

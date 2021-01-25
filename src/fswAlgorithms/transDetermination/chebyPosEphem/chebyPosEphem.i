@@ -26,8 +26,6 @@
 %ignore Update_chebyPosEphem;
 %constant void SelfInit_chebyPosEphem(void*, uint64_t);
 %ignore SelfInit_chebyPosEphem;
-%constant void CrossInit_chebyPosEphem(void*, uint64_t);
-%ignore CrossInit_chebyPosEphem;
 %constant void Reset_chebyPosEphem(void*, uint64_t, uint64_t);
 %ignore Reset_chebyPosEphem;
 STRUCTASLIST(ChebyEphemRecord)

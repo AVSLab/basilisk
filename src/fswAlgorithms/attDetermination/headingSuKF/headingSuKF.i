@@ -27,8 +27,6 @@
 %ignore Update_headingSuKF;
 %constant void SelfInit_headingSuKF(void*, uint64_t);
 %ignore SelfInit_headingSuKF;
-%constant void CrossInit_headingSuKF(void*, uint64_t);
-%ignore CrossInit_headingSuKF;
 %constant void Reset_headingSuKF(void*, uint64_t, uint64_t);
 %ignore Reset_headingSuKF;
 

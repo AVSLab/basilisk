@@ -26,8 +26,6 @@
 %ignore Update_cssWlsEst;
 %constant void SelfInit_cssWlsEst(void*, uint64_t);
 %ignore SelfInit_cssWlsEst;
-%constant void CrossInit_cssWlsEst(void*, uint64_t);
-%ignore CrossInit_cssWlsEst;
 %constant void Reset_cssWlsEst(void*, uint64_t, uint64_t);
 %ignore Reset_cssWlsEst;
 

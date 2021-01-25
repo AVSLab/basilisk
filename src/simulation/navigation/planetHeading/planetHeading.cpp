@@ -35,12 +35,6 @@ void PlanetHeading::SelfInit()
 {
 }
 
-/*! This method is used to subscribe to planet and spacecraft messages
- @return void
- */
-void PlanetHeading::CrossInit()
-{
-}
 
 /*! This method reads messages, calculates the planet heading, and writes out the heading message
  @return void

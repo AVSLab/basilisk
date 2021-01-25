@@ -66,12 +66,6 @@ void VizInterface::SelfInit()
     return;
 }
 
-/*! Cross initialization. Module subscribes to other messages. In viz interface, many messages are subscribed to in order to extract information from the viz and give it to the visualization tool.
- */
-void VizInterface::CrossInit()
-{
-    return;
-}
 
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds

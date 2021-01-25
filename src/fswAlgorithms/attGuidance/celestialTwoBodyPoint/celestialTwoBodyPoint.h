@@ -62,7 +62,6 @@ extern "C" {
 #endif
     
     void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, int64_t moduleID);
-    void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, int64_t moduleID);
     void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleID);

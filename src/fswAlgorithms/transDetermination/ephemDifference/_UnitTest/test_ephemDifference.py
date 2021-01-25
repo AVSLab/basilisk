@@ -39,7 +39,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
     ephemDiffConfig = ephemDifference.EphemDifferenceData()  # Create a config struct
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     ephemDiffWrap = unitTestSim.setModelDataWrap(ephemDiffConfig)
     ephemDiffWrap.ModelTag = "ephemDifference"
 

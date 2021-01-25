@@ -26,8 +26,6 @@
 %ignore Update_sunSafeACS;
 %constant void SelfInit_sunSafeACS(void*, uint64_t);
 %ignore SelfInit_sunSafeACS;
-%constant void CrossInit_sunSafeACS(void*, uint64_t);
-%ignore CrossInit_sunSafeACS;
 %include "dvAttEffect.h"
 
 %include "sunSafeACS.h"

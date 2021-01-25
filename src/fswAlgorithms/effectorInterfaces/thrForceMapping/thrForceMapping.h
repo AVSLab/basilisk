@@ -63,7 +63,6 @@ extern "C" {
 #endif
     
     void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID);
-    void CrossInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID);
     void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID);
 

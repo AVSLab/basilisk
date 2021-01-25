@@ -160,7 +160,6 @@ public:
     void updateSystemMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void initializeSCPosVelocity(Spacecraft& spacecraft); //!< class method
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
-    void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
     void Reset(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch

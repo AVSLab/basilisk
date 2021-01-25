@@ -58,10 +58,6 @@ void SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayloa
     return;
 }
 
-void SpaceToGroundTransmitter::customCrossInit()
-{
-    return;
-}
 
 bool SpaceToGroundTransmitter::customReadMessages(){
 

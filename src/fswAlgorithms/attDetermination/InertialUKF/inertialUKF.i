@@ -27,8 +27,6 @@
 %ignore Update_inertialUKF;
 %constant void SelfInit_inertialUKF(void*, uint64_t);
 %ignore SelfInit_inertialUKF;
-%constant void CrossInit_inertialUKF(void*, uint64_t);
-%ignore CrossInit_inertialUKF;
 %constant void Reset_inertialUKF(void*, uint64_t, uint64_t);
 %ignore Reset_inertialUKF;
 
