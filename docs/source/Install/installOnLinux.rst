@@ -147,3 +147,6 @@ Build Process via Terminal
 
        (venv) $ python3 scenarioBasicOrbit.py
 
+#. Deactivate the virtual environment::
+
+    (venv) $ deactivate

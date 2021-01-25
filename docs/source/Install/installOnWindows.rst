@@ -97,6 +97,18 @@ steps work regardless if done within a virtual environment or not.
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- We strong recommend using python virtual environment while installing or running basilisk. For more info, `read this <https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/>`__.
+	
+	- Create virtual environment::
+		
+		$ python -m venv venv
+	
+	- Activate virtual environment::
+		
+		$ venv\Scripts\activate
+
+        If the virtual environment is activated, users will see (venv) before the prompt
+
 - Basilisk uses conan for package managing. In order to do so, users
   must install conan::
 
@@ -148,3 +160,6 @@ When all the prerequisite installations are complete, the project can be built a
 
        (venv) $ python scenarioBasicOrbit.py
 
+#. Deactivate the virtual environment::
+
+     (venv) $ deactivate
