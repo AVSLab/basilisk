@@ -49,7 +49,7 @@ import scenarioOrbitMultiBody
 @pytest.mark.scenarioTest
 
 def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0                       # zero unit test result counter
@@ -57,7 +57,6 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 
     # provide a unique test method name, starting with test_
     rBSK, rTrue, figureList = scenarioOrbitMultiBody.run(show_plots, scCase)
-
 
     # compare the results to the truth values
     accuracy = 300.0  # meters
