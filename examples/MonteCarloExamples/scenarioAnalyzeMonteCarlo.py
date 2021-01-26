@@ -65,7 +65,7 @@ def plotSuite(dataDir):
 
     """
     plotList = []
-    sigma_BR = pull_and_format_df(dataDir + "att_guidance.sigma_BR.data", 3)
+    sigma_BR = pull_and_format_df(dataDir + "attGuidMsg.sigma_BR.data", 3)
     sigmaPlot = DS_Plot(sigma_BR, title="Attitude Error",
                         xAxisLabel='time [s]', yAxisLabel='Sigma_BR',
                         macro_x=macros.NANO2SEC,
@@ -73,7 +73,7 @@ def plotSuite(dataDir):
                         plotFcn=curve_per_df_component)
     plotList.append(sigmaPlot)
 
-    sigma_BR = pull_and_format_df(dataDir + "att_guidance.omega_BR_B.data", 3)
+    sigma_BR = pull_and_format_df(dataDir + "attGuidMsg.omega_BR_B.data", 3)
     sigmaPlot = DS_Plot(sigma_BR, title="Attitude Rate Error",
                         xAxisLabel='time [s]', yAxisLabel='omega_BR_B',
                         macro_x=macros.NANO2SEC, macro_y=macros.R2D,
@@ -117,7 +117,7 @@ def run(show_plots):
         plotList.extend(plotSuite(analysis.dataDir))
 
     if show_extreme_data:
-        analysis.variableName = "solar_array_sun_bore.missAngle"
+        analysis.variableName = "attGuidMsg.omega_BR_B"
         analysis.variableDim = 1
 
         extremaRunNumbers = analysis.getExtremaRunIndices(numExtrema=1, window=[500 * 1E9, 550 * 1E9])

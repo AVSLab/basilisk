@@ -89,7 +89,7 @@ def run(time=None):
     # Step 4: Add any additional retention policies desired
     retentionPolicy = RetentionPolicy()
     retentionPolicy.logRate = int(2E9)
-    retentionPolicy.addMessageLog("eclipse_data_0", [("shadowFactor", range(1))]) # 1.0 is no eclipse
+    retentionPolicy.addMessageLog("attGuidMsg", ["sigma_BR"]) 
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
 

@@ -47,9 +47,9 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
         self.name = 'scenario_AttFeedbackMC'
 
         # declare additional class variables
-        self.rwSpeedRec = None
-        self.rwMotorRec = None
-        self.attErrRec = None
+        self.msgRecList = {}
+        self.sNavTransName = "sNavTransMsg"
+        self.attGuidName = "attGuidMsg"
 
         self.set_DynModel(BSK_Dynamics)
         self.set_FswModel(BSK_Fsw)
@@ -59,10 +59,10 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModels = self.get_DynModel()
-        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=DynModels.rwStateEffector
-                                            )
+        # vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
+        #                                     # , saveFile=__file__
+        #                                     , rwEffectorList=DynModels.rwStateEffector
+        #                                     )
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
@@ -87,23 +87,25 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
         FswModel = self.get_FswModel()
         DynModel = self.get_DynModel()
         samplingTime = FswModel.processTasksTimeStep
-        self.rwSpeedRec = DynModel.rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
-        self.rwMotorRec = FswModel.cmdRwMotorMsg.recorder(samplingTime)
-        self.attErrRec = FswModel.attGuidMsg.recorder(samplingTime)
-        self.AddModelToTask(DynModel.taskName, self.rwSpeedRec)
-        self.AddModelToTask(DynModel.taskName, self.rwMotorRec)
-        self.AddModelToTask(DynModel.taskName, self.attErrRec)
+
+        self.msgRecList[self.attGuidName] = FswModel.attGuidMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.attGuidName])
+
+        self.msgRecList[self.sNavTransName] = DynModel.simpleNavObject.transOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.sNavTransName])
 
         return
 
     def pull_outputs(self, showPlots):
         # FSW process outputs, remove first data point as it is before FSW is called
-        sigma_BR = np.delete(self.attErrRec.sigma_BR, 0, 0)
-        omega_BR_B = np.delete(self.attErrRec.omega_BR_B, 0, 0)
+        attErrRec = self.msgRecList[self.attGuidName]
+
+        sigma_BR = np.delete(attErrRec.sigma_BR, 0, 0)
+        omega_BR_B = np.delete(attErrRec.omega_BR_B, 0, 0)
 
         # Plot results
         BSK_plt.clear_all_plots()
-        timeData = np.delete(self.attErrRec.times(), 0, 0) * macros.NANO2MIN
+        timeData = np.delete(attErrRec.times(), 0, 0) * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
         figureList = {}

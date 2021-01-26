@@ -49,6 +49,9 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
 sys.path.append(path+"/../BskSim/scenarios/")
 import scenario_AttFeedback
 
+sNavTransName = "sNavTransMsg"
+attGuidName = "attGuidMsg"
+
 def run(show_plots):
     """This function is called by the py.test environment."""
 
@@ -86,8 +89,8 @@ def run(show_plots):
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     samplingTime = int(2E9)
-    retentionPolicy.addMessageLog("simple_trans_nav_output", [("r_BN_N", list(range(3)))], samplingTime)
-    retentionPolicy.addMessageLog("att_guidance", [("sigma_BR", list(range(3))), ("omega_BR_B", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog(sNavTransName, ["r_BN_N"])
+    retentionPolicy.addMessageLog(attGuidName, ["sigma_BR", "omega_BR_B"])
     retentionPolicy.setDataCallback(displayPlots)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -100,11 +103,12 @@ def run(show_plots):
     return
 
 def displayPlots(data, retentionPolicy):
-    states = data["messages"]["att_guidance.sigma_BR"]
+    states = data["messages"][attGuidName + ".sigma_BR"]
+    time = data["messages"][attGuidName + ".times"]
     plt.figure(1)
-    plt.plot(states[:,0], states[:,1],
-             states[:,0], states[:,2],
-             states[:,0], states[:,3])
+    plt.plot(time, states[:,0],
+             time, states[:,1],
+             time, states[:,2])
 
 
 
