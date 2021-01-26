@@ -47,7 +47,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/MonteCarloExamples')
+sys.path.append(path + '/../../examples/MonteCarloExamples')
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -82,9 +82,9 @@ def test_scenarioBskMcScenarios(show_plots):
             testMessages.append("OS error: {0}".format(err))
 
 
-    print(path+ "/../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
-    if os.path.exists(path+ "/../examples/MonteCarloExamples/scenario_AttFeedbackMC/"):
-        shutil.rmtree(path+ "/../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
+    print(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
+    if os.path.exists(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/"):
+        shutil.rmtree(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
 
