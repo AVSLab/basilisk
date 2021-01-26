@@ -262,7 +262,6 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
     # Model Wraps
     SelfInit_dict = {}  # dictionary D = {modelTag: SelfInit alg address, moduleID}
-    CrossInit_dict = {}  # dictionary D = {modelTag: CrossInit alg address, moduleID}
     Update_dict = {}  # dictionary D = {modelTag: Update alg address, moduleID}
     Reset_dict = {}  # dictionary D = {modelTag: Reset alg address, moduleID}
     TheSimList = dir(eval(simTag))
@@ -271,7 +270,6 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
         elem = eval(simTag + '.' + elemName)
         if type(elem) == alg_contain.AlgContain:
             SelfInit_dict[elem.ModelTag] = (int(elem.getSelfInitAddress()), i)
-            CrossInit_dict[elem.ModelTag] = (int(elem.getCrossInitAddress()), i)
             Update_dict[elem.ModelTag] = (int(elem.getUpdateAddress()), i)
             hasResetAddress = int(elem.getResetAddress())
             if (hasResetAddress):
@@ -281,7 +279,6 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     # Model Data
     NameReplaceList = TheSim.NameReplace
     allAlgSelfInit = [] # global list for all models' SelfInit algorithms
-    allAlgCrossInit = [] # global list for all models' CrossInit algorithms
     globalAllAlgReset = [] # global list for all models' Reset algorithms
     globalAlgUpdate = [] #
     theConfigDataList = []
@@ -331,13 +328,11 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
                 if not(reset in globalAllAlgReset):
                     globalAllAlgReset.append(reset)
     algNameAllSelfInit = str_ConfigData + '_AllAlg_SelfInit'
-    algNameAllCrossInit = str_ConfigData + '_AllAlg_CrossInit'
     algNameAllReset = str_ConfigData + '_AllAlg_Reset'
     taskNameUpdate = str_ConfigData + '_AllTasks_Update'
     algNameDataInit = str_ConfigData + '_DataInit'
 
     writeTaskAlgs(algNameAllSelfInit + ConfigData, allAlgSelfInit, theVoidList, theAlgList)
-    writeTaskAlgs(algNameAllCrossInit  + ConfigData, allAlgCrossInit, theVoidList, theAlgList)
     writeTaskAlgs(algNameAllReset + ConfigData_callTime, globalAllAlgReset, theVoidList, theAlgList)
     writeUpdateTaskActivityAlg(taskNameUpdate  + ConfigData_callTime, globalAlgUpdate, theVoidList, theAlgList)
     varType = 'uint32_t'
@@ -408,7 +403,6 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     algNames = [
         algNameDataInit +configData_paramsDefault,
         algNameAllSelfInit + configData_paramsDefault,
-        algNameAllCrossInit + configData_paramsDefault,
         algNameAllReset + configData_paramsCallTime,
         taskNameUpdate + configData_paramsCallTime
     ]

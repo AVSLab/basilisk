@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging
 
 
 def create_rw_lists():
@@ -42,12 +42,12 @@ def CreateRWAClass():
         Create Dynamics RW class and initialize it
     """
     RWAGsMatrix, RWAJsList = create_rw_lists()
-    rwClass = fswMessages.RWConstellationFswMsg()
+    rwClass = messaging.RWConstellationMsgPayload()
     rwPointerList = list()
     rwClass.numRW = 4
     i = 0
     while i < 4:
-        rwPointer = fswMessages.RWConfigElementFswMsg()
+        rwPointer = messaging.RWConfigElementMsgPayload()
         rwPointer.gsHat_B = RWAGsMatrix[i * 3:i * 3 + 3]
         rwPointer.Js = RWAJsList[i]
         rwPointer.uMax = 0.2
@@ -62,15 +62,15 @@ def CreateRWAClassDyn():
         Create FSW RW Config class and initialize it
     """
     RWAGsMatrix, RWAJsList = create_rw_lists()
-    rwConfigData = fswMessages.RWArrayConfigFswMsg()
-    gsList = np.zeros(3 * fswMessages.MAX_EFF_CNT)
+    rwConfigData = messaging.RWArrayConfigMsgPayload()
+    gsList = np.zeros(3 * messaging.MAX_EFF_CNT)
     gsList[0:3 * 3 + 3] = RWAGsMatrix[0:3 * 3 + 3]
     rwConfigData.GsMatrix_B = gsList
-    jsList = np.zeros(fswMessages.MAX_EFF_CNT)
+    jsList = np.zeros(messaging.MAX_EFF_CNT)
     jsList[0:4] = RWAJsList[0:4]
     rwConfigData.JsList = jsList
     rwConfigData.numRW = 4
-    torqueMax = np.zeros(fswMessages.MAX_EFF_CNT)
+    torqueMax = np.zeros(messaging.MAX_EFF_CNT)
     torqueMax[0:4] = [0.2] * 4
     rwConfigData.uMax = torqueMax
     return rwConfigData

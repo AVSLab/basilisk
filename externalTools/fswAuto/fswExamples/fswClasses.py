@@ -1,4 +1,4 @@
-from Basilisk.fswAlgorithms import (vehicleConfigData, rwConfigData, MRP_Feedback, inertial3D,
+from Basilisk.fswAlgorithms import (vehicleConfigData, rwConfigData, mrpFeedback, inertial3D,
                                     rwMotorTorque, attTrackingError)
 
 
@@ -34,7 +34,7 @@ class FSWClasses(object):
         return attTrackingData_base, attTrackingWrap_base
 
     def MRP_FeedbackRWAClass(self):
-        MRP_FeedbackRWAData = MRP_Feedback.MRP_FeedbackConfig()
+        MRP_FeedbackRWAData = mrpFeedback.mrpFeedbackConfig()
         MRP_FeedbackRWAWrap = self.masterSim.setModelDataWrap(MRP_FeedbackRWAData)
         MRP_FeedbackRWAWrap.ModelTag = "MRP_FeedbackRWA"
         return MRP_FeedbackRWAData, MRP_FeedbackRWAWrap

@@ -36,22 +36,22 @@ def run_auto_setter():
     taskActivityDir["initOnlyTask"] = str(0)
     taskActivityDir["inertial3DPointTask"] = str(0)
     taskActivityDir["feedbackControlTask"] = str(0)
-
+    print("HPS: 0")
     # Define the path where the C++ wrapper classes will be stored
     output_path = os.path.dirname(os.path.abspath(filename)) + "/outputFiles"
     empty_sets_folder(outputPath=output_path)
-
+    print("HPS: 1")
     # Pick names for your output C data
     outputFileName = 'fswAutoset'
     str_ConfigData = 'config_data'
-
+    print("HPS: 2")
     # Run the auto-setter
     methodsParser.parseSimAlgorithms(TheSim=TheSim, taskActivityDir=taskActivityDir,
                                      outputCFileName=outputFileName,
                                      str_ConfigData=str_ConfigData,
                                      simTag="TheSim.fswModels",
                                      localPath=output_path)
-
+    print("HPS: 3")
 
 if __name__ == "__main__":
     run_auto_setter()

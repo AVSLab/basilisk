@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from Basilisk.simulation import (sim_model, alg_contain)
+from Basilisk.architecture import (sim_model, alg_contain)
 import copy
 import warnings
 
@@ -19,7 +19,6 @@ class CppWrapperClass(object):
         self.name_replace = TheSim.NameReplace
 
         self.SelfInit_dict = dict() # {modelTag: SelfInit alg address, moduleID}
-        self.CrossInit_dict = dict()  # dictionary D = {modelTag: CrossInit alg address, moduleID}
         self.Update_dict = dict()  # dictionary D = {modelTag: Update alg address, moduleID}
         self.Reset_dict = dict()  # dictionary D = {modelTag: Reset alg address, moduleID}
         self.fill_dictionaries(simTag, TheSim)
@@ -35,7 +34,6 @@ class CppWrapperClass(object):
             elem = eval(simTag + '.' + elemName)
             if type(elem) == alg_contain.AlgContain:
                 self.SelfInit_dict[elem.ModelTag] = (int(elem.getSelfInitAddress()), i)
-                self.CrossInit_dict[elem.ModelTag] = (int(elem.getCrossInitAddress()), i)
                 self.Update_dict[elem.ModelTag] = (int(elem.getUpdateAddress()), i)
                 hasResetAddress = int(elem.getResetAddress())
                 if (hasResetAddress):
@@ -94,7 +92,7 @@ class CppWrapperClass(object):
     def parseSwigVars(self, list):
         """
             First Parsing Method: Gets rid of all the variables that come after a built-in.
-            The methods SelfInit, CrossInit, Update and Restart will always come first, and so will
+            The methods SelfInit, Update and Restart will always come first, and so will
             the variables that are capitalized (this is based on how "dir()" command works in the Python interpreter).
             Returns a reduced array.
         """
@@ -112,7 +110,7 @@ class CppWrapperClass(object):
     def evalParsedList(self, list, module):
         """
             Second Parsing Method: Collects all the SwigPyObjects present in the list.
-            Only the methods ``SelfInit_(...)``, ``CrossInit_(...)``, ``Update_(...)`` and ``Restart_(...)``
+            Only the methods ``SelfInit_(...)``, ``Update_(...)`` and ``Restart_(...)``
             are wrapped by Swig in the ``.i`` files. Therefore they are the only ``SwigPyObjects``.
 
         :return: a dictionary D = {method, address}
@@ -132,17 +130,14 @@ class CppWrapperClass(object):
         :return: methodName: name of the model data algorithm
         """
         str_selfInit = 'SelfInit'
-        str_crossInit = 'CrossInit'
         str_update = 'Update'
         str_reset = 'Reset'
 
-        str_blank = ''  # the methods SelfInit and CrossInit don't need the callTime parameter
+        str_blank = ''  # the methods SelfInit doesn't need the callTime parameter
         str_callTime = ', callTime'  # the methods Reset and Update need an extra parameter for callTine
 
         if methodName[0:len(str_selfInit)] == str_selfInit:
             return str_selfInit, str_blank
-        elif methodName[0:len(str_crossInit)] == str_crossInit:
-            return str_crossInit, str_blank
         elif methodName[0:len(str_update)] == str_update:
             return str_update, str_callTime
         elif methodName[0:len(str_reset)] == str_reset:
@@ -359,7 +354,6 @@ class MpyWrapCodeTemplate(object):
         self.str_mpy_wrap_struct_names = "struct %s" % struct_name + \
                                          "\n{\n" + \
                                          "\tfunc_name_def(SelfInit)\n" + \
-                                         "\tfunc_name_def(CrossInit)\n" + \
                                          "\tfunc_name_def(Update)\n"
         if 'Reset' in algs_dict:
             self.str_mpy_wrap_struct_names += "\tfunc_name_def(Reset)\n"
@@ -369,7 +363,6 @@ class MpyWrapCodeTemplate(object):
                                  % (self.class_name, self.wrap_name, self.class_name) + \
                                  '\t%s.DefInit <> ();\n' % self.wrap_name + \
                                  '\t%s.Def < %s::SelfInit > (& %s::SelfInit);\n' % (self.wrap_name, struct_name, self.class_name) + \
-                                 '\t%s.Def < %s::CrossInit > (& %s::CrossInit);\n' % (self.wrap_name, struct_name, self.class_name) + \
                                  '\t%s.Def < %s::Update > (& %s::UpdateState);\n' % (self.wrap_name, struct_name, self.class_name)
 
         if 'Reset' in algs_dict:
@@ -449,7 +442,6 @@ class CppWrapClassTemplate(object):
                          '\t~%s(){return;}\n' % class_name
 
         str_callbacks = '\tvoid SelfInit(%s){ %s }\n' % (algs_dict['SelfInit'][1], algs_dict['SelfInit'][0]) + \
-                        '\tvoid CrossInit(%s){ %s }\n' % (algs_dict['CrossInit'][1], algs_dict['CrossInit'][0]) + \
                         '\tvoid UpdateState(%s){ %s }\n' % (algs_dict['Update'][1], algs_dict['Update'][0])
         if 'Reset' in algs_dict:
             str_callbacks += '\tvoid Reset(%s){ %s }\n\n' % (algs_dict['Reset'][1], algs_dict['Reset'][0])
