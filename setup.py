@@ -158,7 +158,7 @@ else:
     package_dir = "dist"
 
 f = open('docs/source/bskVersion.txt', 'r')
-bskVersion = f.read()
+bskVersion = f.read().strip()
 
 setup(
     name='Basilisk',

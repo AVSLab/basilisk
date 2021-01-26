@@ -41,3 +41,5 @@ externalTools/fswAuto/autowrapper/wraps/*
 
 **/tests/report/
 **/__pycache__/
+venv/
+.venv/

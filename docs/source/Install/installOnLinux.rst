@@ -52,6 +52,12 @@ Dependencies
        # Python PIP
        $ apt-get install python3-pip
 
+       #Check python version installed
+       $ python3 --version
+
+       #Python virtual environment with same version as Python. For example, python3.7-venv for python3.7.x
+       $apt-get install python3.x-venv
+
 #. SWIG: Available using::
 
     $ apt-get install swig
@@ -60,9 +66,39 @@ Dependencies
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
+#. Using a Python Virtual Environment
+
+   .. attention:: We strongly recommend using a python virtual environment while installing basilisk or running basilisk modules.
+      For more info, `read this <https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/>`__.
+      The virtual environment has the benefit that you won't have conflicts with other versions of Python or
+      python packages that your computer has installed.  It lets you install packages specific to this environment
+      and they won't interfere with other python projects you may have.
+      However, you must turn this environment on and off each time you want to use it.
+
+   The following steps show how to create, active ad de-activate a virtual environment.  The remaining installation
+   steps work regardless if done within a virtual environment or not.
+
+   - In a Terminal window change your current directory to be the Basilisk folder,
+     then create a virtual environment using::
+
+        $ python3 -m venv .venv
+
+     This creates a hidden folder inside the Basilisk folder which will store all the python packages and
+     environment information.
+
+   - Activate virtual environment when needing configure, build or run Basilisk::
+
+        $ source .venv/bin/activate
+
+     The above step will add (venv) before the prompt.
+
+   - Deactivate the virtual environment to return to the normal operating system environment::
+
+        (venv) $ deactivate
+
 #. Install Conan using pip, an example is below::
 
-       $ pip3 install --user conan
+       (venv) $ pip3 install conan
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 
@@ -74,9 +110,10 @@ Dependencies
 #. CMake: You can install cmake using pip3.  This makes it easy to overcome limitations of which version of ``cmake``
    the ``apt-get`` command provides::
 
-       $ pip3 install --user cmake
+       (venv) $ pip3 install cmake
 
-#. Note, if you choose to install python packages local in your user directory ``.local`` folder, be sure to add
+#. Note, if are you not using a virtual environment and you choose to install python packages
+   local in your user directory ``.local`` folder, be sure to add
    ``~/.local/bin`` to your ``PATH`` variable.
 
 #. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
@@ -87,7 +124,7 @@ Build Process via Terminal
 #. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::
 
-        python3 conanfile.py
+        (venv) $ python3 conanfile.py
 
    For other configure and build options, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
@@ -96,15 +133,17 @@ Build Process via Terminal
 
 #. Next, move to the distribution folder to build using a makefile::
 
-        cd dist3
+        (venv) $ cd dist3
 
-#. Can do a multi core make by running ``make -j<number of cores +1>`` such as ``make -j5``.
+#. Can do a multi core make by running ``make -j<number of cores +1>`` such as::
+
+       (venv) $ make -j5
 
 #. To test your setup you can run one of the :ref:`examples`:
 
-   -  For example, in the terminal window, switch ``/src/examples/`` to the
+   -  For example, in the terminal window, switch ``/basilisk/examples/`` to the
       current directory.
    -  Run one of the example scripts, such as::
 
-       $ python3 scenarioBasicOrbit.py
+       (venv) $ python3 scenarioBasicOrbit.py
 

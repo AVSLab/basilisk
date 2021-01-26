@@ -22,11 +22,10 @@ Basilisk Release Notes
         - has strong type checking in C/C++ and Python to avoid ever connecting to the wrong message type, etc.
         - support for multi-threading when simulating multiple satellite systems
         - more flexible manner to build Basilisk with custom external modules and messages
-        - expanded installation instructions making use of virtual environments
 
 Version |release|
 -----------------
-- text here
+- Added support and expanded installation instructions making use of virtual environments
 
 Version 1.8.9
 -------------

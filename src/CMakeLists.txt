@@ -645,15 +645,6 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
 file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
-set(ARG setup.py develop --user)
-execute_process(COMMAND ${PYTHON_EXECUTABLE} ${ARG}
-								WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../
-								RESULT_VARIABLE rv
-								OUTPUT_VARIABLE out)
-message(STATUS "Adding Basilisk module to python with: ${PROGRAM} ${ARG} in ${CMAKE_SOURCE_DIR}/..
-This resulted in the output:
-${out}")
-
 
 #run python script to modify swig gen code
 add_custom_target(OverwriteSwig ALL)

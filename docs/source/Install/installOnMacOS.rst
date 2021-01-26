@@ -62,11 +62,17 @@ Install HomeBrew Support Packages
 Setting up the Python Environment
 ---------------------------------
 
-.. Note:: The following instructions recommend installing all the required python packages in the user ``~/Library/Python`` folder. This has the benefit that no ``sudo`` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed. If you are familiar with python you can install in other locations as well.
+.. Note:: The following instructions recommend installing all the required python packages
+   either in a virtual environment or in the user ``~/Library/Python`` folder. This has the benefit that
+   no ``sudo`` command is required to install and run Basilisk, and the user Python folder can readily
+   be replaced if needed. If you are familiar with python you can install in other locations as well.
 
-.. Note:: If you wish to use the HomeBrew version of python, or generally have multiple copies of python installed on your system, configure the CMake Python paths as described in :ref:`customPython` after following these instructions.
+.. Note:: If you wish to use the HomeBrew version of python, or generally have multiple copies of
+   python installed on your system, configure the CMake Python paths as described in
+   :ref:`customPython` after following these instructions.
 
-.. Note:: We suggest you remove any other python packages (such as Anaconda), or change the path in your terminal shell if you really want to keep it.
+.. Note:: We suggest you remove any other python packages (such as Anaconda), or change the path in
+   your terminal shell if you really want to keep it.
 
 In the following instructions, be sure to follow the sequence of tasks as outlined below.
 
@@ -102,13 +108,43 @@ must be setup within the terminal environment.
 #. Save and close the file
 #. Open a new terminal window for the path to take effect
 
+
+Using A Python Virtual Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. attention:: We strongly recommend using a python virtual environment while installing basilisk or running basilisk modules.
+    For more info, `read this <https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/>`__.
+    The virtual environment has the benefit that you won't have conflicts with other versions of Python or
+    python packages that your computer has installed.  It lets you install packages specific to this environment
+    and they won't interfere with other python projects you may have.
+    However, you must turn this environment on and off each time you want to use it.
+
+The following steps show how to create, active ad de-activate a virtual environment.  The remaining installation
+steps work regardless if done within a virtual environment or not.
+
+- In a Terminal window change your current directory to be the Basilisk folder,
+  then create a virtual environment using::
+
+    $ python3 -m venv .venv
+
+  This creates a hidden folder inside the Basilisk folder which will store all the python packages and
+  environment information.
+
+- Activate virtual environment when needing configure, build or run Basilisk::
+
+    $ source .venv/bin/activate
+
+  The above step will add (.venv) before the prompt.
+
+- Deactivate the virtual environment to return to the normal operating system environment::
+
+    (.venv) $ deactivate
+
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 -  Basilisk uses conan for package managing. In order to do so, users
    must install conan::
 
-       $ pip3 install --user conan
+       (.venv) $ pip3 install conan
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 
@@ -133,7 +169,7 @@ When all the prerequisite installations are complete, the project can be built a
 #. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::
 
-        python3 conanfile.py
+        (.venv) $ python3 conanfile.py
 
    For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
    ``dist3``.
@@ -175,11 +211,11 @@ When all the prerequisite installations are complete, the project can be built a
 
 #. To test your setup you can run one of the :ref:`examples`:
 
-   -  For example, in the terminal window, make ``basilisk/src/examples/`` the
+   -  For example, in the terminal window, make ``basilisk/examples/`` the
       current directory.
    -  Run one of the tutorial scenarios, such as::
 
-       $ python3 scenarioBasicOrbit.py
+       (.venv) $ python3 scenarioBasicOrbit.py
 
 
 FAQs

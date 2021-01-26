@@ -25,11 +25,15 @@ bskModuleOptionsFlag = {
 # see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
 os.system("")
 
+
 # define the print color codes
 statusColor = '\033[92m'
 failColor = '\033[91m'
 warningColor = '\033[93m'
 endColor = '\033[0m'
+
+def is_running_virtual_env():
+    return sys.prefix != sys.base_prefix
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
@@ -110,23 +114,29 @@ class BasiliskConan(ConanFile):
                 pkg_resources.require(elem)
                 print("Found: " + statusColor + elem + endColor)
             except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
-                if self.options.autoKey:
-                    choice = self.options.autoKey
-                else:
-                    choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
-                                   "\nInstall for user (u), system (s) or cancel(c)? ")
                 installCmd = [sys.executable, "-m", "pip", "install"]
-                if choice in ['s', 'u']:
-                    if choice == 'u':
-                        installCmd.append("--user")
-                    installCmd.append(elem)
 
-                    try:
-                        subprocess.check_call(installCmd)
-                    except subprocess.CalledProcessError:
-                        print(failColor + "Was not able to install " + elem + endColor)
+                if is_running_virtual_env():
+                    choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
+                                   "\nInstall (i) or cancel(c)? ")
                 else:
-                    print(warningColor + "Skipping installing " + elem + endColor)
+                    if self.options.autoKey:
+                        choice = self.options.autoKey
+                    else:
+                        choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
+                                       "\nInstall for user (u), system (s) or cancel(c)? ")
+                    if choice in ['s', 'u']:
+                        if choice == 'u':
+                            installCmd.append("--user")
+                        installCmd.append(elem)
+                if choice == 'c':
+                    print(warningColor + "Skipping inst Addingalling " + elem + endColor)
+                    continue
+                installCmd.append(elem)
+                try:
+                    subprocess.check_call(installCmd)
+                except subprocess.CalledProcessError:
+                    print(failColor + "Was not able to install " + elem + endColor)
 
         # check the version of Python
         print("\nChecking Python version:")
@@ -213,7 +223,7 @@ class BasiliskConan(ConanFile):
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.parallel = True
         cmake.configure()
-
+        add_basilisk_to_sys_path()
         if self.options.buildProject: 
             start = datetime.now()
             if self.generator == "Xcode":
@@ -224,6 +234,18 @@ class BasiliskConan(ConanFile):
             print("Total Build Time: " + str(datetime.now()-start))
         return
 
+def add_basilisk_to_sys_path():
+    print("Adding Basilisk module to python\n")
+    add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
+    if not is_running_virtual_env():
+        add_basilisk_module_command.append("--user")
+
+    process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = process.communicate()
+    if err:
+        print("Error %s while running %s" % (err, add_basilisk_module_command))
+    else:
+        print("This resulted in the output: \n%s" % output.decode())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
