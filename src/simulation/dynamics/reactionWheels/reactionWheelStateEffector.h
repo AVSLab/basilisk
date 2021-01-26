@@ -64,7 +64,7 @@ public:
 	void ConfigureRWRequests(double CurrentTime);
     
 public:
-	std::vector<RWConfigMsgPayload> ReactionWheelData;          //!< -- RW information
+	std::vector<RWConfigMsgPayload *> ReactionWheelData;          //!< -- RW information
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 
 	ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message

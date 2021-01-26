@@ -51,6 +51,7 @@ struct ArrayMotorTorqueMsg_C;
 %include "std_vector.i"
 namespace std {
     %template(RWConfigVector) vector<RWConfigMsgPayload>;
+    %template(RWConfigPointerVector) vector<RWConfigMsgPayload *>;
 	%template(RWCmdVector) vector<RWCmdMsgPayload>;
 }
 

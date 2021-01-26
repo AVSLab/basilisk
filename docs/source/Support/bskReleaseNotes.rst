@@ -61,6 +61,9 @@ Version 2.0.0
   Further, the simulation gravity bodies don't have to be explicitly provided to the
   ``vizSupport.enableUnityVisualization()`` method.  Rather, these are pulled from the spacecraft object
   directly.
+- :ref:`reactionWheelStateEffector` is updated where the list of RW configuration parameters are now linked
+  from python, not copied.  As a result it is now possible to stop the simulation and change RW parameters on
+  the fly, emulating a failure with a physical change in the RW mechanics.
 
 
 Version |release|
